@@ -3,7 +3,7 @@
 This project follows the **Conventional Commit Message Guidelines**, which help maintain a clear and consistent Git history. The format is:
 
 ```
-<type> (<scope>): <content>
+<type>(<scope>): <content>
 ```
 
 ### Common Types
@@ -14,6 +14,7 @@ This project follows the **Conventional Commit Message Guidelines**, which help 
 - style: Changes that do not affect the meaning of the code (white-space, formatting, etc.)
 - refactor: Code changes that neither fix a bug nor add a feature
 - test: Adding or correcting tests
+- perf: A performance improvement
 - upt: Updating an element that is not a refactor
 - rm: Remove a line of code or a file from the repo
 - memo: Add a new documentation element
