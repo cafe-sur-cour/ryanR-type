@@ -18,12 +18,12 @@ COMMIT_MSG_FILE=$1
 COMMIT_MSG=$(cat $COMMIT_MSG_FILE)
 
 # Regex for conventional commit
-REGEX="^(feat|fix|rm|upt|docs|style|refactor|perf|test|chore)(\(.+\))?: .+"
+REGEX="^(feat|fix|docs|style|refactor|test|perf|upt|rm|memo)(\(.+\))?: .+"
 
 if ! [[ $COMMIT_MSG =~ $REGEX ]]; then
     echo -e "\033[0;31mERROR: Commit message does not follow conventional commit format.\033[0m"
     echo -e "\033[0;33mExpected format: type(scope): description\033[0m"
-    echo -e "\033[0;33mTypes: feat, fix, rm, upt, docs, style, refactor, perf, test, chore\033[0m"
+    echo -e "\033[0;33mTypes: feat, fix, docs, style, refactor, test, perf, upt, rm, memo\033[0m"
     echo -e "\033[0;33mExample: feat: add new feature\033[0m"
     echo -e "\033[0;33mYour message: $COMMIT_MSG\033[0m"
     exit 1
