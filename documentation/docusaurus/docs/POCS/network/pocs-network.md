@@ -2,24 +2,31 @@
 
 ## Overview
 
-This document presents our network Proof of Concept (POC) focused on critical communications for R-Type multiplayer gameplay.
+This document presents our network Proof of Concepts (POCs) focused on critical communications for R-Type multiplayer gameplay.
 
 ## Critical Communications POC
 
-We have implemented a single POC that compares two approaches for handling critical information in real-time multiplayer games:
+We have implemented a POC that compares two approaches for handling critical information in real-time multiplayer games:
 
 - **TCP**: Traditional reliable protocol
 - **UDP with Handshake**: Low-latency protocol with custom reliability layer
 
 See [Critical Communications Comparison POC](poc-network-critical-comparison.md)
 
+## Reliability and Security POC
+
+A dedicated POC implementing and testing the reliability and security policies for our UDP-based network architecture.
+
+See [Reliability and Security POC](poc-network-reliability-security.md)
+
 ## Objective
 
-The goal of this POC is to determine the best network approach for R-Type by evaluating:
+The goal of these POCs is to determine the best network approach for R-Type by evaluating:
 
 - **Reliability**: Ensuring critical game state is delivered
 - **Latency**: Minimizing delay for responsive gameplay
 - **Performance**: Optimizing for real-time shooter mechanics
+- **Security**: Protecting against network attacks and ensuring fair play
 - **Implementation complexity**: Balancing features with development effort
 
 ## Conclusion
