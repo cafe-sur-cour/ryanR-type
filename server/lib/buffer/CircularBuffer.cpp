@@ -29,7 +29,7 @@ void CircularBuffer::createBuffer(size_t size) {
         deleteBuffer();
     }
     this->_capacity = size;
-    this->_buffer = new char[size];
+    this->_buffer = new uint8_t[size];
     this->_readPos = 0;
     this->_writePos = 0;
     this->_usedSize = 0;
@@ -52,11 +52,11 @@ void CircularBuffer::clear() {
     this->_usedSize = 0;
 }
 
-char *CircularBuffer::getBuffer() const {
+uint8_t *CircularBuffer::getBuffer() const {
     return this->_buffer;
 }
 
-bool CircularBuffer::writeBuffer(const char *data, size_t size) {
+bool CircularBuffer::writeBuffer(const uint8_t *data, size_t size) {
     if (this->_buffer == nullptr)
         return false;
     if (size == 0)
@@ -99,7 +99,7 @@ bool CircularBuffer::writeBuffer(const char *data, size_t size) {
     return true;
 }
 
-size_t CircularBuffer::readBuffer(char *data, size_t size) {
+size_t CircularBuffer::readBuffer(uint8_t *data, size_t size) {
     if (this->_buffer == nullptr || data == nullptr || size == 0
         || isEmpty())
         return 0;
@@ -117,7 +117,7 @@ size_t CircularBuffer::readBuffer(char *data, size_t size) {
     return bytesRead;
 }
 
-size_t CircularBuffer::peek(char *data, size_t size, size_t offset) const {
+size_t CircularBuffer::peek(uint8_t *data, size_t size, size_t offset) const {
     if (this->_buffer == nullptr || data == nullptr || size == 0 ||
         isEmpty() || offset >= this->_usedSize)
         return 0;

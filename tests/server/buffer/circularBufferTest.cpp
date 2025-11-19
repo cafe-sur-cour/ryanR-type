@@ -28,7 +28,7 @@ TEST_F(CircularBufferTest, ConstructorInitializesCorrectly) {
 TEST_F(CircularBufferTest, WriteIncreasesSize) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const char* data = "hello";
+    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello");
 
     EXPECT_TRUE(buffer.writeBuffer(data, 5));
     EXPECT_EQ(buffer.getUsedSize(), 5);
@@ -38,20 +38,20 @@ TEST_F(CircularBufferTest, WriteIncreasesSize) {
 TEST_F(CircularBufferTest, WriteToFullBuffer) {
     CircularBuffer buffer;
     buffer.createBuffer(5);
-    const char* data = "hello";
+    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello");
 
     EXPECT_TRUE(buffer.writeBuffer(data, 5));
     EXPECT_TRUE(buffer.isFull());
 
     // Try to write more data to full buffer
-    const char* moreData = "world";
+    const uint8_t* moreData = reinterpret_cast<const uint8_t*>("world");
     EXPECT_TRUE(buffer.writeBuffer(moreData, 5));
 }
 
 TEST_F(CircularBufferTest, WritePartialData) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const char* data = "hello world";
+    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello world");
     // Write 5 bytes to buffer with capacity 10
     EXPECT_TRUE(buffer.writeBuffer(data, 5));
     EXPECT_EQ(buffer.getUsedSize(), 5);
@@ -64,7 +64,7 @@ TEST_F(CircularBufferTest, WritePartialData) {
 TEST_F(CircularBufferTest, WriteExceedsCapacity) {
     CircularBuffer buffer;
     buffer.createBuffer(5);
-    const char* data = "hello world";
+    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello world");
 
     // Try to write 11 bytes to buffer with capacity 5
     EXPECT_TRUE(buffer.writeBuffer(data, 11));
@@ -75,7 +75,7 @@ TEST_F(CircularBufferTest, WriteExceedsCapacity) {
 TEST_F(CircularBufferTest, ReadFromEmptyBuffer) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    char output[10];
+    uint8_t output[10];
 
     EXPECT_EQ(buffer.readBuffer(output, 5), 0);
 }
@@ -83,8 +83,8 @@ TEST_F(CircularBufferTest, ReadFromEmptyBuffer) {
 TEST_F(CircularBufferTest, ReadDecreasesSize) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const char* data = "hello";
-    char output[10];
+    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello");
+    uint8_t output[10];
 
     buffer.writeBuffer(data, 5);
     EXPECT_EQ(buffer.readBuffer(output, 3), 3);
@@ -94,8 +94,8 @@ TEST_F(CircularBufferTest, ReadDecreasesSize) {
 TEST_F(CircularBufferTest, ReadWriteDataIntegrity) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const char* data = "hello";
-    char output[10];
+    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello");
+    uint8_t output[10];
 
     buffer.writeBuffer(data, 5);
     size_t bytesRead = buffer.readBuffer(output, 5);
@@ -108,8 +108,8 @@ TEST_F(CircularBufferTest, ReadWriteDataIntegrity) {
 TEST_F(CircularBufferTest, ReadMoreThanAvailable) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const char* data = "hi";
-    char output[10];
+    const uint8_t* data = reinterpret_cast<const uint8_t*>("hi");
+    uint8_t output[10];
 
     buffer.writeBuffer(data, 2);
     size_t bytesRead = buffer.readBuffer(output, 5);
@@ -123,17 +123,17 @@ TEST_F(CircularBufferTest, ReadMoreThanAvailable) {
 TEST_F(CircularBufferTest, CircularWrapAround) {
     CircularBuffer buffer;
     buffer.createBuffer(5);
-    char output[10];
+    uint8_t output[10];
 
     // Fill buffer
-    EXPECT_TRUE(buffer.writeBuffer("12345", 5));
+    EXPECT_TRUE(buffer.writeBuffer(reinterpret_cast<const uint8_t*>("12345"), 5));
 
     // Read 3 bytes
     EXPECT_EQ(buffer.readBuffer(output, 3), 3);
     EXPECT_EQ(memcmp(output, "123", 3), 0);
 
     // Write 3 more bytes (should wrap around)
-    EXPECT_TRUE(buffer.writeBuffer("abc", 3));
+    EXPECT_TRUE(buffer.writeBuffer(reinterpret_cast<const uint8_t*>("abc"), 3));
     EXPECT_EQ(buffer.getUsedSize(), 5);
 
     // Read all remaining data
@@ -144,10 +144,10 @@ TEST_F(CircularBufferTest, CircularWrapAround) {
 TEST_F(CircularBufferTest, MultipleWrapArounds) {
     CircularBuffer buffer;
     buffer.createBuffer(4);
-    char output[10];
+    uint8_t output[10];
 
     for (int i = 0; i < 3; ++i) {
-        buffer.writeBuffer("abcd", 4);
+        buffer.writeBuffer(reinterpret_cast<const uint8_t*>("abcd"), 4);
         EXPECT_EQ(buffer.readBuffer(output, 2), 2);
         EXPECT_EQ(memcmp(output, "ab", 2), 0);
         EXPECT_EQ(buffer.readBuffer(output, 2), 2);
@@ -160,8 +160,8 @@ TEST_F(CircularBufferTest, MultipleWrapArounds) {
 TEST_F(CircularBufferTest, PeekDoesNotModifyBuffer) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const char* data = "hello";
-    char output[10];
+    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello");
+    uint8_t output[10];
 
     buffer.writeBuffer(data, 5);
     size_t originalSize = buffer.getUsedSize();
@@ -177,7 +177,7 @@ TEST_F(CircularBufferTest, PeekDoesNotModifyBuffer) {
 TEST_F(CircularBufferTest, ClearEmptiesBuffer) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const char* data = "hello";
+    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello");
 
     buffer.writeBuffer(data, 5);
     buffer.clear();
@@ -191,8 +191,8 @@ TEST_F(CircularBufferTest, ClearEmptiesBuffer) {
 TEST_F(CircularBufferTest, ZeroCapacityBuffer) {
     CircularBuffer buffer;
     buffer.createBuffer(0);
-    const char* data = "test";
-    char output[10];
+    const uint8_t* data = reinterpret_cast<const uint8_t*>("test");
+    uint8_t output[10];
 
     EXPECT_FALSE(buffer.writeBuffer(data, 4));
     EXPECT_EQ(buffer.readBuffer(output, 4), 0);
@@ -203,9 +203,9 @@ TEST_F(CircularBufferTest, ZeroCapacityBuffer) {
 TEST_F(CircularBufferTest, WriteReadZeroBytes) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    char output[10];
+    uint8_t output[10];
 
-    EXPECT_TRUE(buffer.writeBuffer("test", 0));
+    EXPECT_TRUE(buffer.writeBuffer(reinterpret_cast<const uint8_t*>("test"), 0));
     EXPECT_EQ(buffer.readBuffer(output, 0), 0);
     EXPECT_EQ(buffer.getUsedSize(), 0);
 }
@@ -222,8 +222,8 @@ TEST_F(CircularBufferTest, NullPointerHandling) {
 TEST_F(CircularBufferTest, StressTestWriteRead) {
     CircularBuffer buffer;
     buffer.createBuffer(100);
-    std::vector<char> testData(50, 'A');
-    std::vector<char> readData(50);
+    std::vector<uint8_t> testData(50, 'A');
+    std::vector<uint8_t> readData(50);
 
     for (int i = 0; i < 1000; ++i) {
         // Fill with pattern
@@ -244,10 +244,10 @@ TEST_F(CircularBufferTest, AvailableSpace) {
 
     EXPECT_EQ(buffer.getAvailableSize(), 10);
 
-    buffer.writeBuffer("hello", 5);
+    buffer.writeBuffer(reinterpret_cast<const uint8_t*>("hello"), 5);
     EXPECT_EQ(buffer.getAvailableSize(), 5);
 
-    char output[5];
+    uint8_t output[5];
     buffer.readBuffer(output, 2);
     EXPECT_EQ(buffer.getAvailableSize(), 7);
 }
