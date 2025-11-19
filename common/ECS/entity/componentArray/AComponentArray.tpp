@@ -46,4 +46,13 @@ bool AComponentArray<T>::has(int entityId) const
     return false;
 }
 
+template <typename T>
+void AComponentArray<T>::removeAllComponentsWithState(ComponentState state) {
+    for (auto& comp : _components) {
+        if (comp && comp->getState() == state) {
+            comp = nullptr;
+        }
+    }
+}
+
 #endif /* !AComponentArray_TPP_ */
