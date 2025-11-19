@@ -19,7 +19,7 @@ void ARegistry::registerComponent()
 {
     const char *typeName = typeid(T).name();
     if (_components.find(typeName) == _components.end()) {
-        _components[typeName] = std::make_shared<IComposantType<T>>();
+        _components[typeName] = std::make_shared<AComponentArray<T>>();
     }
 }
 
@@ -29,18 +29,18 @@ void ARegistry::addComponent(int entityId, std::shared_ptr<T> component)
     const char *typeName = typeid(T).name();
     auto it = _components.find(typeName);
     if (it != _components.end()) {
-        auto array = std::static_pointer_cast<IComposantType<T>>(it->second);
+        auto array = std::static_pointer_cast<AComponentArray<T>>(it->second);
         array->add(entityId, component);
     }
 }
 
 template <typename T>
-std::shared_ptr<T> ARegistry::getComponent(int entityId)
+std::shared_ptr<T> ARegistry::getComponent(int entityId) const
 {
     const char *typeName = typeid(T).name();
     auto it = _components.find(typeName);
     if (it != _components.end()) {
-        auto array = std::static_pointer_cast<IComposantType<T>>(it->second);
+        auto array = std::static_pointer_cast<AComponentArray<T>>(it->second);
         return array->get(entityId);
     }
     return nullptr;
@@ -52,25 +52,25 @@ void ARegistry::removeComponent(int entityId)
     const char *typeName = typeid(T).name();
     auto it = _components.find(typeName);
     if (it != _components.end()) {
-        auto array = std::static_pointer_cast<IComposantType<T>>(it->second);
+        auto array = std::static_pointer_cast<AComponentArray<T>>(it->second);
         array->remove(entityId);
     }
 }
 
 template <typename T>
-bool ARegistry::hasComponent(int entityId)
+bool ARegistry::hasComponent(int entityId) const
 {
     const char *typeName = typeid(T).name();
     auto it = _components.find(typeName);
     if (it != _components.end()) {
-        auto array = std::static_pointer_cast<IComposantType<T>>(it->second);
+        auto array = std::static_pointer_cast<AComponentArray<T>>(it->second);
         return array->has(entityId);
     }
     return false;
 }
 
 void ARegistry::removeAllComponentsWithState(ComponentState state) {
-    for (auto& pair : _components) {
+    for (const auto& pair : _components) {
         pair.second->removeAllComponentsWithState(state);
     }
 }
