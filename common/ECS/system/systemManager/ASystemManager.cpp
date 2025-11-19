@@ -6,6 +6,7 @@
 */
 
 #include "ASystemManager.hpp"
+#include "../../context/AContext.hpp"
 #include <algorithm>
 
 ASystemManager::ASystemManager() {
@@ -14,9 +15,9 @@ ASystemManager::ASystemManager() {
 ASystemManager::~ASystemManager() {
 }
 
-void ASystemManager::updateAllSystems(float deltaTime) {
+void ASystemManager::updateAllSystems(std::shared_ptr<AContext> context, float deltaTime) {
     for (auto& system : _systems)
-        system->updateSystem(deltaTime);
+        system->updateSystem(context, deltaTime);
 }
 
 void ASystemManager::addSystem(std::shared_ptr<ISystem> system) {
