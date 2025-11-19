@@ -24,6 +24,8 @@ class AComponentArray : public IComponentArray {
         void remove(int entityId);
         bool has(int entityId) const;
 
+        void removeAllComponentsWithState(ComponentState state) override;
+
     private:
         std::vector<std::shared_ptr<T>> _components;
 };
