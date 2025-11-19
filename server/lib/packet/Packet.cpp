@@ -24,7 +24,6 @@ Packet::~Packet() {
     if (this->_serializer) {
         this->_serializer.reset();
     }
-
     this->_buffer = nullptr;
     this->_serializer = nullptr;
 }
