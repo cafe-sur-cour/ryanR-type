@@ -1,0 +1,9 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/matissemarsac/EPITECH/tek3/R-Type/build/cmake_install.cmake",
+		"/Users/matissemarsac/EPITECH/tek3/R-Type/build/server/cmake_install.cmake",
+		"/Users/matissemarsac/EPITECH/tek3/R-Type/build/tests/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libserver.a CMakeFiles/server.dir/Server.cpp.o CMakeFiles/server.dir/ServerConfig.cpp.o
+/opt/homebrew/opt/llvm@20/bin/llvm-ranlib libserver.a
