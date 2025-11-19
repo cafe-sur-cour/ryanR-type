@@ -9,14 +9,19 @@
 #define ASystem_HPP_
 
 #include "ISystem.hpp"
+#include "../context/AContext.hpp"
+#include <memory>
+
 
 class ASystem : public ISystem {
     public:
         ASystem();
         ~ASystem() = default;
-        void updateSystem(float deltaTime); // window to add
+        void updateSystem(std::shared_ptr<AContext> context, float deltaTime) override;
 
     protected:
+        virtual void update(std::shared_ptr<AContext> context, float deltaTime) = 0;
+
     private:
 };
 
