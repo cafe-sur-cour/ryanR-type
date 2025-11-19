@@ -1,0 +1,70 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** ARegistry
+*/
+
+
+#include "ARegistry.hpp"
+
+ARegistry::ARegistry() {
+}
+
+ARegistry::~ARegistry() {
+}
+
+template <typename T>
+void ARegistry::registerComponent()
+{
+    const char *typeName = typeid(T).name();
+    if (_components.find(typeName) == _components.end()) {
+        _components[typeName] = std::make_shared<IComposantType<T>>();
+    }
+}
+
+template <typename T>
+void ARegistry::addComponent(int entityId, std::shared_ptr<T> component)
+{
+    const char *typeName = typeid(T).name();
+    auto it = _components.find(typeName);
+    if (it != _components.end()) {
+        auto array = std::static_pointer_cast<IComposantType<T>>(it->second);
+        array->add(entityId, component);
+    }
+}
+
+template <typename T>
+std::shared_ptr<T> ARegistry::getComponent(int entityId)
+{
+    const char *typeName = typeid(T).name();
+    auto it = _components.find(typeName);
+    if (it != _components.end()) {
+        auto array = std::static_pointer_cast<IComposantType<T>>(it->second);
+        return array->get(entityId);
+    }
+    return nullptr;
+}
+
+template <typename T>
+void ARegistry::removeComponent(int entityId)
+{
+    const char *typeName = typeid(T).name();
+    auto it = _components.find(typeName);
+    if (it != _components.end()) {
+        auto array = std::static_pointer_cast<IComposantType<T>>(it->second);
+        array->remove(entityId);
+    }
+}
+
+template <typename T>
+bool ARegistry::hasComponent(int entityId)
+{
+    const char *typeName = typeid(T).name();
+    auto it = _components.find(typeName);
+    if (it != _components.end()) {
+        auto array = std::static_pointer_cast<IComposantType<T>>(it->second);
+        return array->has(entityId);
+    }
+    return false;
+}
