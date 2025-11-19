@@ -57,10 +57,14 @@ char *CircularBuffer::getBuffer() const {
 }
 
 bool CircularBuffer::writeBuffer(const char *data, size_t size) {
-    if (this->_buffer == nullptr || size == 0) {
+    if (this->_buffer == nullptr)
         return false;
-    }
-
+    if (size == 0)
+        return true;
+    if (data == nullptr)
+        return false;
+    if (this->_capacity == 0)
+        return false;
     if (size > this->_capacity) {
         if (this->_overflowPolicy == OverflowPolicy::REJECT) {
             return false;
@@ -68,7 +72,6 @@ bool CircularBuffer::writeBuffer(const char *data, size_t size) {
         data += (size - this->_capacity);
         size = this->_capacity;
     }
-
     if (this->_overflowPolicy == OverflowPolicy::REJECT && size >
         getAvailableSize()) {
         return false;
@@ -90,19 +93,16 @@ bool CircularBuffer::writeBuffer(const char *data, size_t size) {
         _advanceWritePos(writeChunk);
         bytesToWrite -= writeChunk;
         if (this->_overflowPolicy == OverflowPolicy::REJECT &&
-            bytesToWrite > 0) {
+            bytesToWrite > 0)
             return false;
-        }
     }
-
     return true;
 }
 
 size_t CircularBuffer::readBuffer(char *data, size_t size) {
     if (this->_buffer == nullptr || data == nullptr || size == 0
-        || isEmpty()) {
+        || isEmpty())
         return 0;
-    }
     size_t bytesToRead = std::min(size, this->_usedSize);
     size_t bytesRead = 0;
     while (bytesRead < bytesToRead) {
@@ -119,9 +119,8 @@ size_t CircularBuffer::readBuffer(char *data, size_t size) {
 
 size_t CircularBuffer::peek(char *data, size_t size, size_t offset) const {
     if (this->_buffer == nullptr || data == nullptr || size == 0 ||
-        isEmpty() || offset >= this->_usedSize) {
+        isEmpty() || offset >= this->_usedSize)
         return 0;
-    }
 
     size_t bytesToPeek = std::min(size, this->_usedSize - offset);
     size_t peekPos = _getNextPos(this->_readPos, offset);
