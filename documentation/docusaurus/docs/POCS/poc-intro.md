@@ -13,6 +13,11 @@ Exploration of different approaches to implement Entity Component System pattern
 
 See [ECS Documentation](./ecs/pocs-ecs.md)
 
+### Package Managers
+Comparison of package managers (vcpkg, Conan, CPM) for dependency management in the R-Type project.
+
+See [Package Managers Documentation](./package-managers/overview.md)
+
 ### Scene Management (GSM)
 Game State Machine implementation for managing different game scenes and states with basic ECS integration.
 
