@@ -20,7 +20,7 @@ class AComponentArray : public IComponentArray {
         ~AComponentArray();
 
         void add(int entityId, std::shared_ptr<T> component);
-        std::shared_ptr<T> get(int entityId);
+        std::shared_ptr<T> get(int entityId) const;
         void remove(int entityId);
         bool has(int entityId) const;
 

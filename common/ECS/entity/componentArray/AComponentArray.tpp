@@ -26,7 +26,7 @@ void AComponentArray<T>::add(int entityId, std::shared_ptr<T> component) {
 }
 
 template <typename T>
-std::shared_ptr<T> AComponentArray<T>::get(int entityId) {
+std::shared_ptr<T> AComponentArray<T>::get(int entityId) const {
     if (entityId < static_cast<int>(_components.size()))
         return _components[entityId];
     return nullptr;
