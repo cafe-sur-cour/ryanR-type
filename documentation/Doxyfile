@@ -5,7 +5,6 @@ INPUT                  = ../client \
                         ../common
 EXCLUDE                = documentation/
 
-# Defensive patterns to avoid scanning large generated or dependency trees
 EXCLUDE_PATTERNS      = */node_modules/* \
                         */doc/latex/* \
                         */docusaurus/* \
