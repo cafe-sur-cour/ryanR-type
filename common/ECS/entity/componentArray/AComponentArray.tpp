@@ -2,48 +2,48 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** AComposantType template implementation
+** AComponentArray template implementation
 */
 
-#ifndef AComposantType_TPP_
-#define AComposantType_TPP_
+#ifndef AComponentArray_TPP_
+#define AComponentArray_TPP_
 
-#include "ComposantType.hpp"
+#include "AComponentArray.hpp"
 
 template <typename T>
-AComposantType<T>::AComposantType() {
+AComponentArray<T>::AComponentArray() {
 }
 
 template <typename T>
-AComposantType<T>::~AComposantType() {
+AComponentArray<T>::~AComponentArray() {
 }
 
 template <typename T>
-void AComposantType<T>::add(int entityId, std::shared_ptr<T> component) {
+void AComponentArray<T>::add(int entityId, std::shared_ptr<T> component) {
     if (entityId >= static_cast<int>(_components.size()))
         _components.resize(entityId + 1);
     _components[entityId] = component;
 }
 
 template <typename T>
-std::shared_ptr<T> AComposantType<T>::get(int entityId) {
+std::shared_ptr<T> AComponentArray<T>::get(int entityId) {
     if (entityId < static_cast<int>(_components.size()))
         return _components[entityId];
     return nullptr;
 }
 
 template <typename T>
-void AComposantType<T>::remove(int entityId) {
+void AComponentArray<T>::remove(int entityId) {
     if (entityId < static_cast<int>(_components.size()))
         _components[entityId] = nullptr;
 }
 
 template <typename T>
-bool AComposantType<T>::has(int entityId) const
+bool AComponentArray<T>::has(int entityId) const
 {
     if (entityId < static_cast<int>(_components.size()))
         return _components[entityId] != nullptr;
     return false;
 }
 
-#endif /* !AComposantType_TPP_ */
+#endif /* !AComponentArray_TPP_ */
