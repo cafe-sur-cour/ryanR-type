@@ -29,16 +29,18 @@ function HomepageHeader() {
           <Link className="button button--secondary button--lg" to="docs/category/server-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
             📲 Server Architecture
           </Link>
-          <Link className="button button--secondary button--lg" to="docs/category/ecs-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
-            📲 ECS Communication
-          </Link>
-          <Link className="button button--secondary button--lg" to="docs/category/pocs-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
-            📲 POCS and librairy choices
-          </Link>
-          <Link className="button button--secondary button--lg" to="docs/category/security-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
-            🪪 Security
-          </Link>
-        </div>
+          </div>
+          <div style={{ marginTop: '3rem' }}>
+            <Link className="button button--secondary button--lg" to="docs/category/ecs-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
+              📲 ECS Communication
+            </Link>
+            <Link className="button button--secondary button--lg" to="docs/category/pocs-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
+              📲 POCS and librairy choices
+            </Link>
+            <Link className="button button--secondary button--lg" to="docs/category/security-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
+              🪪 Security
+            </Link>
+          </div>
       </div>
     </header>
   );
