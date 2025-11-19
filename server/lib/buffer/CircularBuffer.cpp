@@ -16,7 +16,6 @@ CircularBuffer::CircularBuffer() {
     this->_readPos = 0;
     this->_writePos = 0;
     this->_usedSize = 0;
-    this->_buffer = nullptr;
     this->_overflowPolicy = OverflowPolicy::OVERWRITE;
 }
 
@@ -25,21 +24,16 @@ CircularBuffer::~CircularBuffer() {
 }
 
 void CircularBuffer::createBuffer(size_t size) {
-    if (this->_buffer != nullptr) {
-        deleteBuffer();
-    }
+    this->_buffer.clear();
     this->_capacity = size;
-    this->_buffer = new uint8_t[size];
+    this->_buffer.resize(size);
     this->_readPos = 0;
     this->_writePos = 0;
     this->_usedSize = 0;
 }
 
 void CircularBuffer::deleteBuffer() {
-    if (this->_buffer != nullptr) {
-        delete[] this->_buffer;
-        this->_buffer = nullptr;
-    }
+    this->_buffer.clear();
     this->_capacity = 0;
     this->_readPos = 0;
     this->_writePos = 0;
@@ -52,32 +46,34 @@ void CircularBuffer::clear() {
     this->_usedSize = 0;
 }
 
-uint8_t *CircularBuffer::getBuffer() const {
+std::vector<uint8_t> CircularBuffer::getBuffer() const {
     return this->_buffer;
 }
 
-bool CircularBuffer::writeBuffer(const uint8_t *data, size_t size) {
-    if (this->_buffer == nullptr)
+bool CircularBuffer::writeBuffer(const std::vector<uint8_t> &data, size_t size) {
+    if (this->_buffer.empty())
         return false;
     if (size == 0)
         return true;
-    if (data == nullptr)
+    if (data.empty())
         return false;
     if (this->_capacity == 0)
         return false;
-    if (size > this->_capacity) {
+
+    size_t actualSize = std::min(size, data.size());
+    if (actualSize > this->_capacity) {
         if (this->_overflowPolicy == OverflowPolicy::REJECT) {
             return false;
         }
-        data += (size - this->_capacity);
-        size = this->_capacity;
+        actualSize = this->_capacity;
     }
-    if (this->_overflowPolicy == OverflowPolicy::REJECT && size >
+    if (this->_overflowPolicy == OverflowPolicy::REJECT && actualSize >
         getAvailableSize()) {
         return false;
     }
 
-    size_t bytesToWrite = size;
+    size_t bytesToWrite = actualSize;
+    size_t dataOffset = (actualSize < size) ? data.size() - actualSize : 0;
     while (bytesToWrite > 0) {
         if (isFull() && _overflowPolicy == OverflowPolicy::OVERWRITE) {
             _advanceReadPos(1);
@@ -88,8 +84,10 @@ bool CircularBuffer::writeBuffer(const uint8_t *data, size_t size) {
         if (this->_overflowPolicy == OverflowPolicy::REJECT) {
             writeChunk = std::min(writeChunk, getAvailableSize());
         }
-        std::memcpy(this->_buffer + this->_writePos, data +
-            (size - bytesToWrite), writeChunk);
+
+        std::memcpy(this->_buffer.data() + this->_writePos,
+                   data.data() + dataOffset + (actualSize - bytesToWrite),
+                   writeChunk);
         _advanceWritePos(writeChunk);
         bytesToWrite -= writeChunk;
         if (this->_overflowPolicy == OverflowPolicy::REJECT &&
@@ -99,43 +97,46 @@ bool CircularBuffer::writeBuffer(const uint8_t *data, size_t size) {
     return true;
 }
 
-size_t CircularBuffer::readBuffer(uint8_t *data, size_t size) {
-    if (this->_buffer == nullptr || data == nullptr || size == 0
-        || isEmpty())
-        return 0;
+std::shared_ptr<std::vector<uint8_t>> CircularBuffer::readBuffer(size_t size) {
+    if (this->_buffer.empty() || size == 0 || isEmpty())
+        return std::make_unique<std::vector<uint8_t>>();
     size_t bytesToRead = std::min(size, this->_usedSize);
+    auto data = std::make_unique<std::vector<uint8_t>>(bytesToRead);
     size_t bytesRead = 0;
+
     while (bytesRead < bytesToRead) {
         size_t contiguousData = std::min(
             this->_capacity - this->_readPos,
             bytesToRead - bytesRead);
-        std::memcpy(data + bytesRead, this->_buffer + this->_readPos,
-            contiguousData);
+        std::memcpy(data->data() + bytesRead,
+                   this->_buffer.data() + this->_readPos,
+                   contiguousData);
         _advanceReadPos(contiguousData);
         bytesRead += contiguousData;
     }
-    return bytesRead;
+    return data;
 }
 
-size_t CircularBuffer::peek(uint8_t *data, size_t size, size_t offset) const {
-    if (this->_buffer == nullptr || data == nullptr || size == 0 ||
-        isEmpty() || offset >= this->_usedSize)
-        return 0;
-
+std::shared_ptr<std::vector<uint8_t>> CircularBuffer::peek(size_t size, size_t offset) const {
+    if (this->_buffer.empty() || size == 0 || isEmpty() || offset >= this->_usedSize)
+        return std::make_unique<std::vector<uint8_t>>();
     size_t bytesToPeek = std::min(size, this->_usedSize - offset);
+    auto data = std::make_unique<std::vector<uint8_t>>(bytesToPeek);
     size_t peekPos = _getNextPos(this->_readPos, offset);
     size_t bytesPeeked = 0;
+
     while (bytesPeeked < bytesToPeek) {
         size_t contiguousData = std::min(
             this->_capacity - peekPos,
             bytesToPeek - bytesPeeked);
-        std::memcpy(data + bytesPeeked, this->_buffer + peekPos,
-            contiguousData);
+        std::memcpy(data->data() + bytesPeeked,
+                   this->_buffer.data() + peekPos,
+                   contiguousData);
         peekPos = _getNextPos(peekPos, contiguousData);
         bytesPeeked += contiguousData;
     }
 
-    return bytesPeeked;
+    return data;
 }
 
 size_t CircularBuffer::getCapacity() const {
