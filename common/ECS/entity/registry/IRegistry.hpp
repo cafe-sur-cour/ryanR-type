@@ -11,8 +11,9 @@
 #include <memory>
 #include <unordered_map>
 #include <typeinfo>
+#include <vector>
+#include "../../component/IComponent.hpp"
 
-// I cant make method vitual because they are templates
 class IRegistry {
     public:
         virtual ~IRegistry() = default;
@@ -31,6 +32,8 @@ class IRegistry {
 
         template <typename T>
         bool hasComponent(int entityId);
+
+        virtual void removeAllComponentsWithState(ComponentState state) = 0;
 };
 
 #endif /* !IREGISTRY_HPP_ */

@@ -68,3 +68,9 @@ bool ARegistry::hasComponent(int entityId)
     }
     return false;
 }
+
+void ARegistry::removeAllComponentsWithState(ComponentState state) {
+    for (auto& pair : _components) {
+        pair.second->removeAllComponentsWithState(state);
+    }
+}
