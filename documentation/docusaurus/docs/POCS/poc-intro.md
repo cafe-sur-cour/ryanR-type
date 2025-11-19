@@ -18,8 +18,10 @@ Game State Machine implementation for managing different game scenes and states 
 
 See [Scene Management Documentation](./scene-management/scene-management.md)
 
-### Future POCs
-- Networking and synchronization
+### Network Communications
+Comparison of TCP vs UDP with handshake for critical information in real-time multiplayer games.
+
+See [Network Documentation](./network/pocs-network.md)
 - AI and pathfinding
 - Physics and collisions
 - Audio and effects
