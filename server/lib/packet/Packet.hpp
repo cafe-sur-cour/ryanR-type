@@ -11,6 +11,8 @@
 #include "../buffer/IBuffer.hpp"
 #include "ISerializer.hpp"
 
+#define MAGIC_NUMBER 0x93
+
 #ifndef PACKET_HPP_
 #define PACKET_HPP_
 
@@ -24,8 +26,8 @@ class Packet : public IPacket {
         size_t getSequenceNumber() const;
         void incrementSequenceNumber();
 
-        bool packPacket(IBuffer &buffer) override;
-        bool unpackPacket(IBuffer &buffer) override;
+        bool packPacket(const IBuffer &buffer) override;
+        bool unpackPacket(const IBuffer &buffer) override;
 
     protected:
     private:
