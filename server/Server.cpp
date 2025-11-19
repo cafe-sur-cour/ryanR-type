@@ -11,6 +11,8 @@
 #include <asio.hpp>
 #include "Server.hpp"
 
+/* Constructor and Destructor */
+
 Server::Server(unsigned int port) {
     this->_config = std::make_shared<ServerConfig>(port);
 }
@@ -19,6 +21,8 @@ Server::~Server() {
     if (this->getState() == 1)
         this->stop();
 }
+
+/* Lifecycle */
 
 void Server::init() {
     this->setState(0);
@@ -72,9 +76,13 @@ void Server::stop() {
     std::cout << "[Server] Server stopped." << std::endl;
 }
 
+/* Operators */
+
 Server::operator int() const noexcept {
     return this->getState();
 }
+
+/* Getters */
 
 std::shared_ptr<ServerConfig> Server::getConfig() {
     return this->_config;
@@ -91,6 +99,8 @@ int Server::getFd() const {
 unsigned int Server::getPort() const {
     return this->_config->getPort();
 }
+
+/* Setters */
 
 void Server::setState(int state) {
     this->_config->setState(state);
