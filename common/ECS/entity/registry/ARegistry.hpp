@@ -27,11 +27,11 @@ class ARegistry : public IRegistry {
         template <typename T>
         void addComponent(int entityId, std::shared_ptr<T> component);
         template <typename T>
-        std::shared_ptr<T> getComponent(int entityId);
+        std::shared_ptr<T> getComponent(int entityId) const;
         template <typename T>
         void removeComponent(int entityId);
         template <typename T>
-        bool hasComponent(int entityId);
+        bool hasComponent(int entityId) const;
 
         void removeAllComponentsWithState(ComponentState state) override;
 
