@@ -6,11 +6,15 @@
 */
 
 #include "ASystem.hpp"
+#include "../context/AContext.hpp"
 
 ASystem::ASystem() {
 }
 
-ASystem::~ASystem() {
+void ASystem::updateSystem(std::shared_ptr<AContext> context, float deltaTime) {
+    if (context) {
+        update(context, deltaTime);
+    }
 }
 
 
