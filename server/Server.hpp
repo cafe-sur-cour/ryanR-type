@@ -9,6 +9,7 @@
     #define SERVER_HPP_
 
 #include <memory>
+#include <asio.hpp>
 #include "IServer.hpp"
 #include "ServerConfig.hpp"
 
@@ -26,6 +27,10 @@ class Server : public IServer {
         int getState() const;
         int getFd() const;
         unsigned int getPort() const;
+
+        void setState(int state);
+        void setFd(int fd);
+        void setPort(unsigned int port);
 
     private:
         std::shared_ptr<ServerConfig> _config;
