@@ -15,19 +15,25 @@
 
 class Server : public IServer {
     public:
+        /* Constructor and Destructor */
         Server(unsigned int port);
         ~Server();
 
+        /* Lifecycle */
         void init() override;
         void start() override;
         void stop() override;
+
+        /* Operators */
         operator int() const noexcept override;
 
+        /* Getters */
         std::shared_ptr<ServerConfig> getConfig();
         int getState() const;
         int getFd() const;
         unsigned int getPort() const;
 
+        /* Setters */
         void setState(int state);
         void setFd(int fd);
         void setPort(unsigned int port);
