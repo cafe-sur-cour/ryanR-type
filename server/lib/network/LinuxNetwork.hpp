@@ -18,7 +18,7 @@ class LinuxNetwork : public ANetwork {
         void init() override;
         void stop() override;
         void sendData(const IPacket &data, size_t size) override;
-        IPacket &receiveData(char *buffer, size_t size) const override;
+        IPacket &receiveData(const IBuffer &buffer, size_t size) const override;
     protected:
     private:
 };

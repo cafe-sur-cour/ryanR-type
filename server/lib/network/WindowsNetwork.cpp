@@ -23,9 +23,7 @@ void WindowsNetwork::stop() {
 void WindowsNetwork::sendData(const IPacket &data, size_t size) {
 }
 
-IPacket &WindowsNetwork::receiveData(char *buffer, size_t size) const {
-    IPacket *packet = nullptr;
-    return *packet;
+IPacket &WindowsNetwork::receiveData(const IBuffer &buffer, size_t size) const {
 }
 
 extern "C" {

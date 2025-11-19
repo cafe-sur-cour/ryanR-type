@@ -17,7 +17,7 @@ class ANetwork : public INetwork {
         virtual void init() override = 0;
         virtual void stop() override = 0;
         virtual void sendData(const IPacket &data, size_t size) override = 0;
-        virtual IPacket &receiveData(char *buffer, size_t size) const override = 0;
+        virtual IPacket &receiveData(const IBuffer &buffer, size_t size) const override = 0;
     protected:
     private:
 };

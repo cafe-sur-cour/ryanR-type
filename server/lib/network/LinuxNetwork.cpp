@@ -24,9 +24,7 @@ void LinuxNetwork::stop() {
 void LinuxNetwork::sendData(const IPacket &data, size_t size) {
 }
 
-IPacket &LinuxNetwork::receiveData(char *buffer, size_t size) const {
-    IPacket *packet = nullptr;
-    return *packet;
+IPacket &LinuxNetwork::receiveData(const IBuffer &buffer, size_t size) const {
 }
 
 extern "C" {
