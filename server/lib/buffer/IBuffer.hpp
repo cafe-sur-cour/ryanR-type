@@ -5,6 +5,7 @@
 ** IBuffer
 */
 
+#include <vector>
 #include <stdio.h>
 #include <cstdint>
 
@@ -20,8 +21,8 @@ class IBuffer {
         virtual void deleteBuffer() = 0;
         virtual void clear() = 0;
 
-        virtual bool writeBuffer(const uint8_t* data, size_t size) = 0;
-        virtual size_t readBuffer(uint8_t* data, size_t size) = 0;
+        virtual bool writeBuffer(const std::vector<uint8_t> &data, size_t size) = 0;
+        virtual std::shared_ptr<std::vector<uint8_t>> readBuffer(size_t size) = 0;
 
         virtual size_t getCapacity() const = 0;
         virtual size_t getUsedSize() const = 0;
@@ -29,7 +30,7 @@ class IBuffer {
         virtual bool isEmpty() const = 0;
         virtual bool isFull() const = 0;
 
-        virtual uint8_t *getBuffer() const = 0;
+        virtual std::vector<uint8_t> getBuffer() const = 0;
     protected:
     private:
 };

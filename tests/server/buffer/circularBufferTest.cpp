@@ -2,6 +2,7 @@
 #include "../../../server/lib/buffer/CircularBuffer.hpp"
 #include <vector>
 #include <cstring>
+#include <memory>
 
 class CircularBufferTest : public ::testing::Test {
 protected:
@@ -28,7 +29,7 @@ TEST_F(CircularBufferTest, ConstructorInitializesCorrectly) {
 TEST_F(CircularBufferTest, WriteIncreasesSize) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello");
+    std::vector<uint8_t> data = {'h', 'e', 'l', 'l', 'o'};
 
     EXPECT_TRUE(buffer.writeBuffer(data, 5));
     EXPECT_EQ(buffer.getUsedSize(), 5);
@@ -38,33 +39,33 @@ TEST_F(CircularBufferTest, WriteIncreasesSize) {
 TEST_F(CircularBufferTest, WriteToFullBuffer) {
     CircularBuffer buffer;
     buffer.createBuffer(5);
-    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello");
+    std::vector<uint8_t> data = {'h', 'e', 'l', 'l', 'o'};
 
     EXPECT_TRUE(buffer.writeBuffer(data, 5));
     EXPECT_TRUE(buffer.isFull());
 
     // Try to write more data to full buffer
-    const uint8_t* moreData = reinterpret_cast<const uint8_t*>("world");
+    std::vector<uint8_t> moreData = {'w', 'o', 'r', 'l', 'd'};
     EXPECT_TRUE(buffer.writeBuffer(moreData, 5));
 }
 
 TEST_F(CircularBufferTest, WritePartialData) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello world");
+    std::vector<uint8_t> data = {'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd'};
     // Write 5 bytes to buffer with capacity 10
     EXPECT_TRUE(buffer.writeBuffer(data, 5));
     EXPECT_EQ(buffer.getUsedSize(), 5);
 
     // Write 3 more bytes (total 8, still under capacity)
-    EXPECT_TRUE(buffer.writeBuffer(data + 5, 3));
+    EXPECT_TRUE(buffer.writeBuffer(std::vector<uint8_t>(data.begin() + 5, data.begin() + 8), 3));
     EXPECT_EQ(buffer.getUsedSize(), 8);
 }
 
 TEST_F(CircularBufferTest, WriteExceedsCapacity) {
     CircularBuffer buffer;
     buffer.createBuffer(5);
-    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello world");
+    std::vector<uint8_t> data = {'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd'};
 
     // Try to write 11 bytes to buffer with capacity 5
     EXPECT_TRUE(buffer.writeBuffer(data, 11));
@@ -75,47 +76,46 @@ TEST_F(CircularBufferTest, WriteExceedsCapacity) {
 TEST_F(CircularBufferTest, ReadFromEmptyBuffer) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    uint8_t output[10];
 
-    EXPECT_EQ(buffer.readBuffer(output, 5), 0);
+    auto result = buffer.readBuffer(5);
+    EXPECT_EQ(result->size(), 0);
 }
 
 TEST_F(CircularBufferTest, ReadDecreasesSize) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello");
-    uint8_t output[10];
+    std::vector<uint8_t> data = {'h', 'e', 'l', 'l', 'o'};
 
     buffer.writeBuffer(data, 5);
-    EXPECT_EQ(buffer.readBuffer(output, 3), 3);
+    auto result = buffer.readBuffer(3);
+    EXPECT_EQ(result->size(), 3);
     EXPECT_EQ(buffer.getUsedSize(), 2);
 }
 
 TEST_F(CircularBufferTest, ReadWriteDataIntegrity) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello");
-    uint8_t output[10];
+    std::vector<uint8_t> data = {'h', 'e', 'l', 'l', 'o'};
 
     buffer.writeBuffer(data, 5);
-    size_t bytesRead = buffer.readBuffer(output, 5);
+    auto result = buffer.readBuffer(5);
 
-    EXPECT_EQ(bytesRead, 5);
-    EXPECT_EQ(memcmp(data, output, 5), 0);
+    EXPECT_EQ(result->size(), 5);
+    EXPECT_EQ(*result, data);
     EXPECT_TRUE(buffer.isEmpty());
 }
 
 TEST_F(CircularBufferTest, ReadMoreThanAvailable) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const uint8_t* data = reinterpret_cast<const uint8_t*>("hi");
-    uint8_t output[10];
+    std::vector<uint8_t> data = {'h', 'i'};
+    std::vector<uint8_t> output(10);
 
     buffer.writeBuffer(data, 2);
-    size_t bytesRead = buffer.readBuffer(output, 5);
+    auto result = buffer.readBuffer(5);
 
-    EXPECT_EQ(bytesRead, 2);
-    EXPECT_EQ(memcmp(data, output, 2), 0);
+    EXPECT_EQ(result->size(), 2);
+    EXPECT_EQ(*result, data);
     EXPECT_TRUE(buffer.isEmpty());
 }
 
@@ -123,35 +123,40 @@ TEST_F(CircularBufferTest, ReadMoreThanAvailable) {
 TEST_F(CircularBufferTest, CircularWrapAround) {
     CircularBuffer buffer;
     buffer.createBuffer(5);
-    uint8_t output[10];
 
     // Fill buffer
-    EXPECT_TRUE(buffer.writeBuffer(reinterpret_cast<const uint8_t*>("12345"), 5));
+    std::vector<uint8_t> data = {'1', '2', '3', '4', '5'};
+    EXPECT_TRUE(buffer.writeBuffer(data, 5));
 
     // Read 3 bytes
-    EXPECT_EQ(buffer.readBuffer(output, 3), 3);
-    EXPECT_EQ(memcmp(output, "123", 3), 0);
+    auto result1 = buffer.readBuffer(3);
+    EXPECT_EQ(result1->size(), 3);
+    EXPECT_EQ(*result1, std::vector<uint8_t>({'1', '2', '3'}));
 
     // Write 3 more bytes (should wrap around)
-    EXPECT_TRUE(buffer.writeBuffer(reinterpret_cast<const uint8_t*>("abc"), 3));
+    std::vector<uint8_t> moreData = {'a', 'b', 'c'};
+    EXPECT_TRUE(buffer.writeBuffer(moreData, 3));
     EXPECT_EQ(buffer.getUsedSize(), 5);
 
     // Read all remaining data
-    EXPECT_EQ(buffer.readBuffer(output, 5), 5);
-    EXPECT_EQ(memcmp(output, "45abc", 5), 0);
+    auto result2 = buffer.readBuffer(5);
+    EXPECT_EQ(result2->size(), 5);
+    EXPECT_EQ(*result2, std::vector<uint8_t>({'4', '5', 'a', 'b', 'c'}));
 }
 
 TEST_F(CircularBufferTest, MultipleWrapArounds) {
     CircularBuffer buffer;
     buffer.createBuffer(4);
-    uint8_t output[10];
 
     for (int i = 0; i < 3; ++i) {
-        buffer.writeBuffer(reinterpret_cast<const uint8_t*>("abcd"), 4);
-        EXPECT_EQ(buffer.readBuffer(output, 2), 2);
-        EXPECT_EQ(memcmp(output, "ab", 2), 0);
-        EXPECT_EQ(buffer.readBuffer(output, 2), 2);
-        EXPECT_EQ(memcmp(output, "cd", 2), 0);
+        std::vector<uint8_t> data = {'a', 'b', 'c', 'd'};
+        buffer.writeBuffer(data, 4);
+        auto result1 = buffer.readBuffer(2);
+        EXPECT_EQ(result1->size(), 2);
+        EXPECT_EQ(*result1, std::vector<uint8_t>({'a', 'b'}));
+        auto result2 = buffer.readBuffer(2);
+        EXPECT_EQ(result2->size(), 2);
+        EXPECT_EQ(*result2, std::vector<uint8_t>({'c', 'd'}));
         EXPECT_TRUE(buffer.isEmpty());
     }
 }
@@ -160,24 +165,24 @@ TEST_F(CircularBufferTest, MultipleWrapArounds) {
 TEST_F(CircularBufferTest, PeekDoesNotModifyBuffer) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello");
-    uint8_t output[10];
+    std::vector<uint8_t> data = {'h', 'e', 'l', 'l', 'o'};
+    std::vector<uint8_t> output(10);
 
     buffer.writeBuffer(data, 5);
     size_t originalSize = buffer.getUsedSize();
 
     // Peek method exists
-    size_t peek_result = buffer.peek(output, 3);
-    EXPECT_EQ(peek_result, 3);
+    auto peeked = buffer.peek(3);
+    EXPECT_EQ(peeked->size(), 3);
     EXPECT_EQ(buffer.getUsedSize(), originalSize); // Size should not change
-    EXPECT_EQ(memcmp(output, "hel", 3), 0);
+    EXPECT_EQ(*peeked, std::vector<uint8_t>({'h', 'e', 'l'}));
 }
 
 // Test clear operation
 TEST_F(CircularBufferTest, ClearEmptiesBuffer) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    const uint8_t* data = reinterpret_cast<const uint8_t*>("hello");
+    std::vector<uint8_t> data = {'h', 'e', 'l', 'l', 'o'};
 
     buffer.writeBuffer(data, 5);
     buffer.clear();
@@ -191,11 +196,11 @@ TEST_F(CircularBufferTest, ClearEmptiesBuffer) {
 TEST_F(CircularBufferTest, ZeroCapacityBuffer) {
     CircularBuffer buffer;
     buffer.createBuffer(0);
-    const uint8_t* data = reinterpret_cast<const uint8_t*>("test");
-    uint8_t output[10];
+    std::vector<uint8_t> data = {'t', 'e', 's', 't'};
 
     EXPECT_FALSE(buffer.writeBuffer(data, 4));
-    EXPECT_EQ(buffer.readBuffer(output, 4), 0);
+    auto result = buffer.readBuffer(4);
+    EXPECT_EQ(result->size(), 0);
     EXPECT_TRUE(buffer.isEmpty());
     EXPECT_TRUE(buffer.isFull());
 }
@@ -203,19 +208,21 @@ TEST_F(CircularBufferTest, ZeroCapacityBuffer) {
 TEST_F(CircularBufferTest, WriteReadZeroBytes) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
-    uint8_t output[10];
 
-    EXPECT_TRUE(buffer.writeBuffer(reinterpret_cast<const uint8_t*>("test"), 0));
-    EXPECT_EQ(buffer.readBuffer(output, 0), 0);
+    EXPECT_TRUE(buffer.writeBuffer(std::vector<uint8_t>{'t', 'e', 's', 't'}, 0));
+    auto result = buffer.readBuffer(0);
+    EXPECT_EQ(result->size(), 0);
     EXPECT_EQ(buffer.getUsedSize(), 0);
 }
 
 TEST_F(CircularBufferTest, NullPointerHandling) {
     CircularBuffer buffer;
     buffer.createBuffer(10);
+    std::vector<uint8_t> emptyData;
 
-    EXPECT_FALSE(buffer.writeBuffer(nullptr, 5));
-    EXPECT_EQ(buffer.readBuffer(nullptr, 5), 0);
+    EXPECT_FALSE(buffer.writeBuffer(emptyData, 5));
+    auto result = buffer.readBuffer(5);
+    EXPECT_EQ(result->size(), 0);
 }
 
 // Stress test
@@ -223,17 +230,16 @@ TEST_F(CircularBufferTest, StressTestWriteRead) {
     CircularBuffer buffer;
     buffer.createBuffer(100);
     std::vector<uint8_t> testData(50, 'A');
-    std::vector<uint8_t> readData(50);
 
     for (int i = 0; i < 1000; ++i) {
         // Fill with pattern
         std::fill(testData.begin(), testData.end(), 'A' + (i % 26));
 
-        buffer.writeBuffer(testData.data(), 50);
-        size_t bytesRead = buffer.readBuffer(readData.data(), 50);
+        buffer.writeBuffer(testData, 50);
+        auto result = buffer.readBuffer(50);
 
-        EXPECT_EQ(bytesRead, 50);
-        EXPECT_EQ(testData, readData);
+        EXPECT_EQ(result->size(), 50);
+        EXPECT_EQ(*result, testData);
     }
 }
 
@@ -244,10 +250,10 @@ TEST_F(CircularBufferTest, AvailableSpace) {
 
     EXPECT_EQ(buffer.getAvailableSize(), 10);
 
-    buffer.writeBuffer(reinterpret_cast<const uint8_t*>("hello"), 5);
+    std::vector<uint8_t> data = {'h', 'e', 'l', 'l', 'o'};
+    buffer.writeBuffer(data, 5);
     EXPECT_EQ(buffer.getAvailableSize(), 5);
 
-    uint8_t output[5];
-    buffer.readBuffer(output, 2);
+    auto result = buffer.readBuffer(2);
     EXPECT_EQ(buffer.getAvailableSize(), 7);
 }

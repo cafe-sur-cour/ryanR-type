@@ -1,10 +1,11 @@
-/*
+ /*
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
 ** Buffer
 */
 #include <vector>
+#include <memory>
 
 #include "IBuffer.hpp"
 
@@ -25,23 +26,23 @@ class CircularBuffer : public IBuffer {
         void createBuffer(size_t size) override;
         void deleteBuffer() override;
         void clear() override;
-        bool writeBuffer(const uint8_t* data, size_t size) override;
-        size_t readBuffer(uint8_t* data, size_t size) override;
+        bool writeBuffer(const std::vector<uint8_t> &data, size_t size) override;
+        std::shared_ptr<std::vector<uint8_t>> readBuffer(size_t size) override;
         size_t getCapacity() const override;
         size_t getUsedSize() const override;
         size_t getAvailableSize() const override;
         bool isEmpty() const override;
         bool isFull() const override;
-        uint8_t* getBuffer() const override;
+        std::vector<uint8_t> getBuffer() const override;
 
 
         /* This function allows use to read a section of the buffer without deleting it contrary ti the read buffer */
-        size_t peek(uint8_t* data, size_t size, size_t offset = 0) const;
+        std::shared_ptr<std::vector<uint8_t>> peek(size_t size, size_t offset = 0) const;
         void setOverflowPolicy(OverflowPolicy policy);
         OverflowPolicy getOverflowPolicy() const;
 
     private:
-        uint8_t *_buffer;
+        std::vector<uint8_t> _buffer;
         size_t _capacity;
         size_t _readPos;
         size_t _writePos;
