@@ -1,0 +1,6 @@
+coding-style*
+*.o
+*.gcno
+*.gcda
+*.gcov
+obj/
