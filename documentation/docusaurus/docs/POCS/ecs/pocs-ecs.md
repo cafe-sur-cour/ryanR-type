@@ -18,27 +18,27 @@ The goal of these POCs is to identify the most suitable ECS implementation appro
 ### Direct System Interaction
 Systems directly call each other or access shared data for immediate interactions.
 
-See [Direct System POC](POC_ECS_direct_system.md)
+See [Direct System POC](poc-ecs-direct-system.md)
 
 ### Event Bus Pattern
 Decoupled communication through an event system where systems publish and subscribe to events.
 
-See [Event Bus POC](POC_ECS_event_bus.md)
+See [Event Bus POC](poc-ecs-event-bus.md)
 
 ### Message Queue / Command Buffer
 Thread-safe interactions using queues for deferred command execution.
 
-See [Command Buffer POC](POC_ECS_command_buffer.md)
+See [Command Buffer POC](poc-ecs-command-buffer.md)
 
 ### Component-Driven Interaction
 Effects stored as temporary components that systems process and clean up.
 
-See [Component-Driven POC](POC_ECS_component_driven.md)
+See [Component-Driven POC](poc-ecs-component-driven.md)
 
 ### Tags/Filters Optimization
 Entity filtering using tags to optimize system queries and reduce unnecessary processing.
 
-See [Tags POC](POC_ECS_tags_filters.md)
+See [Tags POC](poc-ecs-tags-filters.md)
 
 ## Conclusion
 
@@ -48,4 +48,4 @@ We will complement this with **Tags/Filters** for system logic optimization, usi
 
 ## Creating New POCs
 
-To explore additional ECS patterns or variations, use the [generic template](POC_ECS_generic_template.md) as a starting point. This template provides a structured approach to evaluate new implementations against our established criteria.
+To explore additional ECS patterns or variations, use the [generic template](poc-ecs-generic-template.md) as a starting point. This template provides a structured approach to evaluate new implementations against our established criteria.
