@@ -87,4 +87,9 @@ To run the doxygen generations script you will need to have the Doxygen and pdf-
 - [Doxygen](https://www.doxygen.nl/manual/install.html)
 - [PDF Latex](https://www.latex-project.org/get/)
 
-You also need to make sur the the script is executable.
+You also need to make sure the the script is executable.
+
+``` bash
+cd ./script
+chmod +x generateDoc.sh
+```
