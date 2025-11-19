@@ -10,8 +10,11 @@
 
 #include "IRegistry.hpp"
 #include "../../component/IComponent.hpp"
+#include "../componentArray/IComponentArray.hpp"
 #include <memory>
 #include <unordered_map>
+#include <vector>
+#include <vector>
 
 class ARegistry : public IRegistry {
     public:
@@ -29,9 +32,12 @@ class ARegistry : public IRegistry {
         void removeComponent(int entityId);
         template <typename T>
         bool hasComponent(int entityId);
+
+        void removeAllComponentsWithState(ComponentState state) override;
+
     protected:
     private:
-        std::unordered_map<const char *, std::shared_ptr<IComponent>> _components; //the char * is typeid(T).name()
+        std::unordered_map<const char *, std::shared_ptr<IComponentArray>> _components;
 };
 
 #endif /* !AREGISTRY_HPP_ */
