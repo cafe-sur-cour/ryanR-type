@@ -8,17 +8,16 @@
 #ifndef AComposantType_HPP_
 #define AComposantType_HPP_
 
-#include "../component/IComponent.hpp"
-#include "IComposantType.hpp"
+#include "../../component/IComponent.hpp"
 #include <vector>
 #include <memory>
 
 
 template <typename T>
-class AComposantType : public IAComposantType {
+class AComponentArray : public IComponentArray {
     public:
-        AComposantType();
-        ~AComposantType();
+        AComponentArray();
+        ~AComponentArray();
 
         void add(int entityId, std::shared_ptr<T> component);
         std::shared_ptr<T> get(int entityId);
