@@ -9,8 +9,12 @@ Exploration of different approaches to implement Entity Component System pattern
 
 See [ECS Documentation](./ECS/POCs_ECS.md)
 
+### Scene Management (GSM)
+Game State Machine implementation for managing different game scenes and states with basic ECS integration.
+
+See [Scene Management Documentation](./Scene_Management/Scene_Management.md)
+
 ### Future POCs
-- Scene Management
 - Networking and synchronization
 - AI and pathfinding
 - Physics and collisions
