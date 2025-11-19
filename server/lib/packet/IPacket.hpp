@@ -14,8 +14,8 @@ class IPacket {
     public:
         virtual ~IPacket() {}
 
-        virtual bool packPacket(IBuffer &buffer) = 0;
-        virtual bool unpackPacket(IBuffer &buffer) = 0;
+        virtual bool packPacket(const IBuffer &buffer) = 0;
+        virtual bool unpackPacket(const IBuffer &buffer) = 0;
     protected:
     private:
 };

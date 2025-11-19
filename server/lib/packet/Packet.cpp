@@ -10,7 +10,7 @@
 
 
 Packet::Packet(int idClient) {
-    this->_magicNumber = 0x93;
+    this->_magicNumber = MAGIC_NUMBER;
     this->_idClient = idClient;
     this->_sequenceNumber = 0;
     this->_buffer = nullptr;
@@ -44,11 +44,11 @@ void Packet::incrementSequenceNumber() {
     this->_sequenceNumber++;
 }
 
-bool Packet::packPacket(IBuffer &buffer) {
+bool Packet::packPacket(const IBuffer &buffer) {
     return false;
 }
 
-bool Packet::unpackPacket(IBuffer &buffer) {
+bool Packet::unpackPacket(const IBuffer &buffer) {
     return false;
 }
 
