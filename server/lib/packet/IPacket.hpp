@@ -5,12 +5,14 @@
 ** IPacket
 */
 
+#include "../buffer/IBuffer.hpp"
+
 #ifndef IPACKET_HPP_
 #define IPACKET_HPP_
 
 class IPacket {
     public:
-        virtual ~IPacket() = 0;
+        virtual ~IPacket() {}
 
         virtual bool packPacket(IBuffer &buffer) = 0;
         virtual bool unpackPacket(IBuffer &buffer) = 0;
