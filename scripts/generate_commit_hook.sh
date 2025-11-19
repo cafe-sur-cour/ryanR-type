@@ -17,6 +17,11 @@ cat > "$HOOK_FILE" << 'EOF'
 COMMIT_MSG_FILE=$1
 COMMIT_MSG=$(cat $COMMIT_MSG_FILE)
 
+# Allow merge commits
+if [[ $COMMIT_MSG =~ ^Merge ]]; then
+    exit 0
+fi
+
 # Regex for conventional commit
 REGEX="^(feat|fix|docs|style|refactor|test|perf|upt|rm|memo)(\(.+\))?: .+"
 
