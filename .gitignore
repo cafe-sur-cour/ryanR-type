@@ -4,3 +4,7 @@ coding-style*
 *.gcda
 *.gcov
 obj/
+.vscode/
+.DS_Store
+Makefile
+*.so
