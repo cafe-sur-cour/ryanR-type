@@ -28,15 +28,15 @@ class Server : public IServer {
         operator int() const noexcept override;
 
         /* Getters */
-        std::shared_ptr<ServerConfig> getConfig();
-        int getState() const;
-        int getFd() const;
-        unsigned int getPort() const;
+        std::shared_ptr<ServerConfig> getConfig() const override;
+        int getState() const override;
+        int getFd() const override;
+        unsigned int getPort() const override;
 
         /* Setters */
-        void setState(int state);
-        void setFd(int fd);
-        void setPort(unsigned int port);
+        void setState(int state) override;
+        void setFd(int fd) override;
+        void setPort(unsigned int port) override;
 
     private:
         std::shared_ptr<ServerConfig> _config;
