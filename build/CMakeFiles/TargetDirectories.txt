@@ -1,8 +1,0 @@
-/Users/matissemarsac/EPITECH/tek3/R-Type/build/CMakeFiles/edit_cache.dir
-/Users/matissemarsac/EPITECH/tek3/R-Type/build/CMakeFiles/rebuild_cache.dir
-/Users/matissemarsac/EPITECH/tek3/R-Type/build/server/CMakeFiles/server.dir
-/Users/matissemarsac/EPITECH/tek3/R-Type/build/server/CMakeFiles/edit_cache.dir
-/Users/matissemarsac/EPITECH/tek3/R-Type/build/server/CMakeFiles/rebuild_cache.dir
-/Users/matissemarsac/EPITECH/tek3/R-Type/build/tests/CMakeFiles/ServerConfigTests.dir
-/Users/matissemarsac/EPITECH/tek3/R-Type/build/tests/CMakeFiles/edit_cache.dir
-/Users/matissemarsac/EPITECH/tek3/R-Type/build/tests/CMakeFiles/rebuild_cache.dir
