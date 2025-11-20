@@ -3,3 +3,4 @@ coding-style*
 *.gcno
 *.gcda
 *.gcov
+obj/
