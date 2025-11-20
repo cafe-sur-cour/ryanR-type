@@ -7,12 +7,6 @@ assignees: ''
 
 ---
 
----
-name: Documentation update
-about: Request a documentation improvement or addition
-labels: documentation
----
-
 ## Affected part
 Section, file, or page that needs improvement.
 

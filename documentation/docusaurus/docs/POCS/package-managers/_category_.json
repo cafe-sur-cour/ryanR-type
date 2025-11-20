@@ -1,0 +1,8 @@
+{
+  "label": "Package Managers",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Comparison of package managers for dependency management"
+  }
+}
