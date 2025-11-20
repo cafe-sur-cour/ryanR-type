@@ -84,7 +84,7 @@ Server::operator int() const noexcept {
 
 /* Getters */
 
-std::shared_ptr<ServerConfig> Server::getConfig() {
+std::shared_ptr<ServerConfig> Server::getConfig() const {
     return this->_config;
 }
 
