@@ -6,41 +6,41 @@ namespace gsm {
 AGameStateMachine::AGameStateMachine() {}
 
 void AGameStateMachine::changeState(std::shared_ptr<IGameState> newState) {
-    if (!states_.empty()) {
-        states_.top()->exit();
-        states_.pop();
+    if (!_states.empty()) {
+        _states.top()->exit();
+        _states.pop();
     }
-    states_.push(newState);
-    states_.top()->enter();
+    _states.push(newState);
+    _states.top()->enter();
 }
 
 void AGameStateMachine::pushState(std::shared_ptr<IGameState> newState) {
-    if (!states_.empty()) {
-        states_.top()->exit();
+    if (!_states.empty()) {
+        _states.top()->exit();
     }
-    states_.push(newState);
-    states_.top()->enter();
+    _states.push(newState);
+    _states.top()->enter();
 }
 
 void AGameStateMachine::popState() {
-    if (!states_.empty()) {
-        states_.top()->exit();
-        states_.pop();
+    if (!_states.empty()) {
+        _states.top()->exit();
+        _states.pop();
     }
-    if (!states_.empty()) {
-        states_.top()->enter();
+    if (!_states.empty()) {
+        _states.top()->enter();
     }
 }
 
 void AGameStateMachine::update(float deltaTime) {
-    if (!states_.empty()) {
-        states_.top()->update(deltaTime);
+    if (!_states.empty()) {
+        _states.top()->update(deltaTime);
     }
 }
 
 void AGameStateMachine::render() {
-    if (!states_.empty()) {
-        states_.top()->render();
+    if (!_states.empty()) {
+        _states.top()->render();
     }
 }
 
