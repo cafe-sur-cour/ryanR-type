@@ -16,6 +16,8 @@
 #ifndef PACKET_HPP_
 #define PACKET_HPP_
 
+namespace net {
+
 class Packet : public IPacket {
     public:
         Packet(int idClient);
@@ -37,6 +39,8 @@ class Packet : public IPacket {
         std::shared_ptr<IBuffer> _buffer;
         std::shared_ptr<ISerializer> _serializer;
 };
+
+} // namespace net
 
 #endif /* !PACKET_HPP_ */
 

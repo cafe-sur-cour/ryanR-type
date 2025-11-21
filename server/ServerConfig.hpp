@@ -8,6 +8,8 @@
 #ifndef SERVERCONFIG_HPP_
 #define SERVERCONFIG_HPP_
 
+namespace net {
+
 class ServerConfig {
     public:
         ServerConfig();
@@ -16,5 +18,7 @@ class ServerConfig {
     protected:
     private:
 };
+
+} // namespace net
 
 #endif /* !SERVERCONFIG_HPP_ */

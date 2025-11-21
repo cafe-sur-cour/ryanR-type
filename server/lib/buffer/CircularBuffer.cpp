@@ -11,6 +11,8 @@
 #include "CircularBuffer.hpp"
 #include "../../../common/LoaderType.hpp"
 
+namespace net {
+
 CircularBuffer::CircularBuffer() {
     this->_capacity = 0;
     this->_readPos = 0;
@@ -181,10 +183,11 @@ void CircularBuffer::_advanceWritePos(size_t count) {
     this->_usedSize = std::min(this->_usedSize + count, this->_capacity);
 }
 
+}  // namespace net
 
 extern "C" {
-    IBuffer *createBufferInstance() {
-        return new CircularBuffer();
+    void *createBufferInstance() {
+        return new net::CircularBuffer();
     }
     int getType() {
         return BUFFER_MODULE;

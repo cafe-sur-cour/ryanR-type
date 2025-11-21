@@ -8,6 +8,8 @@
 #include "LinuxNetwork.hpp"
 #include "../../../common/LoaderType.hpp"
 
+namespace net {
+
 LinuxNetwork::LinuxNetwork() {
 }
 
@@ -27,9 +29,11 @@ void LinuxNetwork::sendData(const IPacket &data, size_t size) {
 IPacket &LinuxNetwork::receiveData(const IBuffer &buffer, size_t size) const {
 }
 
+}  // namespace net
+
 extern "C" {
-    INetwork *createNetworkInstance() {
-        return new LinuxNetwork();
+    void *createNetworkInstance() {
+        return new net::LinuxNetwork();
     }
     int getType() {
         return NETWORK_MODULE;
