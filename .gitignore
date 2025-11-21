@@ -4,3 +4,4 @@ coding-style*
 *.gcda
 *.gcov
 obj/
+.vscode/

@@ -14,6 +14,7 @@
 #include <vector>
 #include <memory>
 
+namespace ecs {
 
 class ASystemManager : public ISystemManager {
     public:
@@ -26,5 +27,7 @@ class ASystemManager : public ISystemManager {
     private:
         std::vector<std::shared_ptr<ISystem>> _systems;
 };
+
+} // namespace ecs
 
 #endif /* !ASystemMANAGER_HPP_ */

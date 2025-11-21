@@ -8,6 +8,8 @@
 #ifndef ICOMPONENT_HPP_
 #define ICOMPONENT_HPP_
 
+namespace ecs {
+
 enum ComponentState {
     Permanent = 0,
     Temporary = 1,
@@ -25,5 +27,7 @@ class IComponent {
     protected:
     private:
 };
+
+} // namespace ecs
 
 #endif /* !ICOMPONENT_HPP_ */

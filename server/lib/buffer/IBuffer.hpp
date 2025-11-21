@@ -12,6 +12,8 @@
 #ifndef IBUFFER_HPP_
 #define IBUFFER_HPP_
 
+namespace net {
+
 class IBuffer {
     public:
         virtual ~IBuffer() = default;
@@ -34,5 +36,7 @@ class IBuffer {
     protected:
     private:
 };
+
+} // namespace net
 
 #endif /* !IBUFFER_HPP_ */

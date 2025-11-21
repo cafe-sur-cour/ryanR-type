@@ -12,7 +12,9 @@
 #include <unordered_map>
 #include <typeinfo>
 #include <vector>
-#include "../../component/IComponent.hpp"
+#include "../../../component/IComponent.hpp"
+
+namespace ecs {
 
 class IRegistry {
     public:
@@ -35,5 +37,7 @@ class IRegistry {
 
         virtual void removeAllComponentsWithState(ComponentState state) = 0;
 };
+
+} // namespace ecs
 
 #endif /* !IREGISTRY_HPP_ */

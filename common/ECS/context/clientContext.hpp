@@ -10,11 +10,14 @@
 
 #include "AContext.hpp"
 
+namespace ecs {
 
 class ClientContext : public AContext {
 public:
     ClientContext() = default;
     ~ClientContext() override = default;
 };
+
+} // namespace ecs
 
 #endif /* !CLIENTCONTEXT_HPP_ */

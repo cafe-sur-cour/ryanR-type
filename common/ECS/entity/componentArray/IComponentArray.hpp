@@ -9,12 +9,16 @@
 #define ICOMPONENTARRAY_HPP_
 
 #include <vector>
-#include "../component/IComponent.hpp"
+#include "../../component/IComponent.hpp"
+
+namespace ecs {
 
 class IComponentArray {
     public:
         virtual ~IComponentArray() = default;
         virtual void removeAllComponentsWithState(ComponentState state) = 0;
 };
+
+} // namespace ecs
 
 #endif /* !ICOMPONENTARRAY_HPP_ */

@@ -8,6 +8,8 @@
 #include "ASystem.hpp"
 #include "../context/AContext.hpp"
 
+namespace ecs {
+
 ASystem::ASystem() {
 }
 
@@ -17,4 +19,4 @@ void ASystem::updateSystem(std::shared_ptr<AContext> context, float deltaTime) {
     }
 }
 
-
+}  // namespace ecs

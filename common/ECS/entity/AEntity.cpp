@@ -7,6 +7,8 @@
 
 #include "AEntity.hpp"
 
+namespace ecs {
+
 AEntity::AEntity(): _id(0) {
 }
 
@@ -19,3 +21,5 @@ AEntity::operator size_t() const {
 
 AEntity::AEntity(size_t id): _id(id) {
 }
+
+}  // namespace ecs

@@ -15,4 +15,4 @@ void AGameState::update(float deltaTime) {
 void AGameState::exit() {
 }
 
-}
+}  // namespace gsm
