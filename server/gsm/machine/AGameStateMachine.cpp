@@ -38,4 +38,4 @@ void AGameStateMachine::update(float deltaTime) {
     }
 }
 
-}
+}  // namespace gsm

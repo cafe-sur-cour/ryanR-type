@@ -20,4 +20,4 @@ protected:
     std::stack<std::shared_ptr<IGameState>> _states;
 };
 
-}
+} // namespace gsm

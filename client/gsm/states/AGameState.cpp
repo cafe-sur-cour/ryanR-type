@@ -18,4 +18,4 @@ void AGameState::render() {
 void AGameState::exit() {
 }
 
-}
+}  // namespace gsm
