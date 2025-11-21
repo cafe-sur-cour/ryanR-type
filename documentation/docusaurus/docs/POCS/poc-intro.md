@@ -27,6 +27,12 @@ See [Scene Management Documentation](./scene-management/scene-management.md)
 Comparison of TCP vs UDP with handshake for critical information in real-time multiplayer games.
 
 See [Network Documentation](./network/pocs-network.md)
+
+### Graphics Libraries
+Evaluation of SFML, SDL2, and Raylib for 2D rendering in our C++ game project.
+
+See [Graphics Documentation](./graphics/pocs-graphics.md)
+
 - AI and pathfinding
 - Physics and collisions
 - Audio and effects
