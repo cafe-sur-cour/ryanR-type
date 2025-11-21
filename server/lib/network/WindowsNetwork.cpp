@@ -8,6 +8,8 @@
 #include "WindowsNetwork.hpp"
 #include "../../../common/LoaderType.hpp"
 
+namespace net {
+
 WindowsNetwork::WindowsNetwork() {
 }
 
@@ -26,9 +28,11 @@ void WindowsNetwork::sendData(const IPacket &data, size_t size) {
 IPacket &WindowsNetwork::receiveData(const IBuffer &buffer, size_t size) const {
 }
 
+}  // namespace net
+
 extern "C" {
-    INetwork *createNetworkInstance() {
-        return new WindowsNetwork();
+    void *createNetworkInstance() {
+        return new net::WindowsNetwork();
     }
     int getType() {
         return NETWORK_MODULE;

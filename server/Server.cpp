@@ -7,8 +7,18 @@
 
 #include "Server.hpp"
 
+namespace net {
+
 Server::Server() {
 }
 
 Server::~Server() {
 }
+
+void Server::start() {
+}
+
+void Server::stop() {
+}
+
+}  // namespace net
