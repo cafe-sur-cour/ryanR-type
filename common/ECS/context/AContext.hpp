@@ -12,6 +12,8 @@
 #include "../resourceManager/ResourceManager.hpp"
 #include <memory>
 
+namespace ecs {
+
 class AContext {
     public:
         AContext() : _registry(std::make_shared<ARegistry>()),
@@ -40,5 +42,7 @@ class AContext {
         std::shared_ptr<ARegistry> _registry;
         std::shared_ptr<ResourceManager> _resourceManager;
 };
+
+} // namespace ecs
 
 #endif /* !ACONTEXT_HPP_ */

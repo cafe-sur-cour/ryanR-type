@@ -12,6 +12,7 @@
 #include "../context/AContext.hpp"
 #include <memory>
 
+namespace ecs {
 
 class ASystem : public ISystem {
     public:
@@ -24,5 +25,7 @@ class ASystem : public ISystem {
 
     private:
 };
+
+} // namespace ecs
 
 #endif /* !ASystem_HPP_ */

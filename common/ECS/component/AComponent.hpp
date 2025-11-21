@@ -10,6 +10,8 @@
 
 #include "IComponent.hpp"
 
+namespace ecs {
+
 class AComponent : public IComponent {
     public:
         AComponent();
@@ -23,5 +25,7 @@ class AComponent : public IComponent {
 
     private:
 };
+
+} // namespace ecs
 
 #endif /* !ACOMPONENT_HPP_ */

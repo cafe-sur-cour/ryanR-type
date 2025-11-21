@@ -9,12 +9,14 @@
 #define AREGISTRY_HPP_
 
 #include "IRegistry.hpp"
-#include "../../component/IComponent.hpp"
-#include "../componentArray/IComponentArray.hpp"
+#include "../../../component/IComponent.hpp"
+#include "../../componentArray/IComponentArray.hpp"
 #include <memory>
 #include <unordered_map>
 #include <vector>
 #include <vector>
+
+namespace ecs {
 
 class ARegistry : public IRegistry {
     public:
@@ -39,5 +41,7 @@ class ARegistry : public IRegistry {
     private:
         std::unordered_map<const char *, std::shared_ptr<IComponentArray>> _components;
 };
+
+} // namespace ecs
 
 #endif /* !AREGISTRY_HPP_ */

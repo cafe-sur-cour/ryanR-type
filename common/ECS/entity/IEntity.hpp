@@ -10,6 +10,8 @@
 
 #include <cstddef>
 
+namespace ecs {
+
 class IEntity {
     public:
         IEntity();
@@ -19,4 +21,7 @@ class IEntity {
     private:
         explicit IEntity(size_t id);
 };
+
+} // namespace ecs
+
 #endif /* !IENTITY_HPP_ */
