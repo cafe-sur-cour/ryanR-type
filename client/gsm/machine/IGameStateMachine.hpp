@@ -19,4 +19,4 @@ public:
     virtual void render() = 0;
 };
 
-}
+} // namespace gsm

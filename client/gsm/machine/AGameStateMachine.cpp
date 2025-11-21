@@ -44,4 +44,4 @@ void AGameStateMachine::render() {
     }
 }
 
-}
+}  // namespace gsm

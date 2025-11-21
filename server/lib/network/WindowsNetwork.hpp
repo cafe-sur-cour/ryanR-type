@@ -9,6 +9,8 @@
 #ifndef WINDOWSNETWORK_HPP_
 #define WINDOWSNETWORK_HPP_
 
+namespace net {
+
 class WindowsNetwork : public ANetwork {
     public:
         WindowsNetwork();
@@ -22,8 +24,10 @@ class WindowsNetwork : public ANetwork {
     private:
 };
 
+} // namespace net
+
 extern "C" {
-    INetwork *createNetworkInstance();
+    void *createNetworkInstance();
     int getType();
 }
 

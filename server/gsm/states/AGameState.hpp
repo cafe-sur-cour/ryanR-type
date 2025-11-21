@@ -17,4 +17,4 @@ protected:
     std::shared_ptr<IGameStateMachine> _gsm;
 };
 
-}
+} // namespace gsm

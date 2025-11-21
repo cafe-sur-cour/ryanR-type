@@ -12,6 +12,8 @@
 #ifndef CircularBuffer_HPP_
 #define CircularBuffer_HPP_
 
+namespace net {
+
 enum class OverflowPolicy {
     OVERWRITE,
     REJECT,
@@ -54,8 +56,10 @@ class CircularBuffer : public IBuffer {
         void _advanceWritePos(size_t count);
 };
 
+} // namespace net
+
 extern "C" {
-    IBuffer *createBufferInstance();
+    void *createBufferInstance();
     int getType();
 }
 

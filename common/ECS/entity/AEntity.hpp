@@ -10,6 +10,8 @@
 
 #include "IEntity.hpp"
 
+namespace ecs {
+
 class AEntity : public IEntity {
     public:
         AEntity();
@@ -20,5 +22,7 @@ class AEntity : public IEntity {
         explicit AEntity(size_t id);
         size_t _id;
 };
+
+}  // namespace ecs
 
 #endif /* !AENTITY_HPP_ */

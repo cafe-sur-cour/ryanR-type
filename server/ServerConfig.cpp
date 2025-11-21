@@ -7,8 +7,12 @@
 
 #include "ServerConfig.hpp"
 
+namespace net {
+
 ServerConfig::ServerConfig() {
 }
 
 ServerConfig::~ServerConfig() {
 }
+
+}  // namespace net
