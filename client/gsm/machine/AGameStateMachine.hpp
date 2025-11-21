@@ -18,7 +18,7 @@ public:
     void render() override;
 
 protected:
-    std::stack<std::shared_ptr<IGameState>> states_;
+    std::stack<std::shared_ptr<IGameState>> _states;
 };
 
 }
