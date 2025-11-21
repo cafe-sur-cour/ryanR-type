@@ -13,6 +13,8 @@
 #include <utility>
 #include <memory>
 
+namespace gfx {
+
 struct color_t {
     int r;
     int g;
@@ -37,5 +39,7 @@ class IWindow {
         virtual bool isMouseOver(std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
         virtual std::pair<int, int> getWindowSize() = 0;
 };
+
+} // namespace gfx
 
 #endif /* !IWINDOW_HPP_ */
