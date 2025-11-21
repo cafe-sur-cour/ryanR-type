@@ -11,6 +11,8 @@
 #include <unordered_map>
 #include <memory>
 
+namespace ecs {
+
 class ResourceManager {
     public:
         template<typename T>
@@ -25,5 +27,7 @@ class ResourceManager {
     private:
         std::unordered_map<size_t, std::shared_ptr<void>> resources;
 };
+
+} // namespace ecs
 
 #endif /* !RESOURCEMANAGER_HPP_ */

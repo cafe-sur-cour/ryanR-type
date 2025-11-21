@@ -9,6 +9,8 @@
 #include "../../context/AContext.hpp"
 #include <algorithm>
 
+namespace ecs {
+
 ASystemManager::ASystemManager() {
 }
 
@@ -28,4 +30,4 @@ void ASystemManager::removeSystem(std::shared_ptr<ISystem> system) {
     _systems.erase(std::remove(_systems.begin(), _systems.end(), system), _systems.end());
 }
 
-
+}  // namespace ecs

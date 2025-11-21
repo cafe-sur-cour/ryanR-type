@@ -7,6 +7,8 @@
 
 #include "AComponent.hpp"
 
+namespace ecs {
+
 AComponent::AComponent() {
 }
 
@@ -20,3 +22,5 @@ ComponentState AComponent::getState() const {
 void AComponent::setState(ComponentState newState) {
     _state = newState;
 }
+
+}  // namespace ecs
