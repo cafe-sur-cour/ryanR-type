@@ -5,3 +5,6 @@ coding-style*
 *.gcov
 obj/
 .vscode/
+idea/
+build/
+bin/
