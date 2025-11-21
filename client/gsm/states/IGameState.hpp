@@ -15,4 +15,4 @@ public:
     virtual void exit() = 0;
 };
 
-}
+} // namespace gsm
