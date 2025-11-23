@@ -5,10 +5,10 @@
 ** IPacket
 */
 
-#include "../buffer/IBuffer.hpp"
-
 #ifndef IPACKET_HPP_
 #define IPACKET_HPP_
+
+#include "../buffer/IBuffer.hpp"
 
 namespace net {
 

@@ -6,7 +6,6 @@
 */
 
 #include "Packet.hpp"
-#include "../../../common/LoaderType.hpp"
 
 namespace net {
 
