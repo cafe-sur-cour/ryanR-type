@@ -11,6 +11,8 @@
 #include <utility>
 #include <memory>
 
+namespace gfx {
+
 class IEvent {
     public:
         typedef enum event_e {
@@ -41,5 +43,7 @@ class IEvent {
         virtual void setMapSize(std::pair<int, int> size) = 0;
 
 };
+
+} // namespace gfx
 
 #endif /* !IEVENT_HPP_ */

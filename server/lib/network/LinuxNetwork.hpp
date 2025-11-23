@@ -10,6 +10,8 @@
 #ifndef LINUXNETWORK_HPP_
 #define LINUXNETWORK_HPP_
 
+namespace net {
+
 class LinuxNetwork : public ANetwork {
     public:
         LinuxNetwork();
@@ -23,8 +25,11 @@ class LinuxNetwork : public ANetwork {
     private:
 };
 
+} // namespace net
+
 extern "C" {
-    INetwork *createNetworkInstance();
+    void *createNetworkInstance();
     int getType();
 }
+
 #endif /* !LINUXNETWORK_HPP_ */

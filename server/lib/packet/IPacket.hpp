@@ -10,6 +10,8 @@
 #ifndef IPACKET_HPP_
 #define IPACKET_HPP_
 
+namespace net {
+
 class IPacket {
     public:
         virtual ~IPacket() {}
@@ -19,5 +21,7 @@ class IPacket {
     protected:
     private:
 };
+
+} // namespace net
 
 #endif /* !IPACKET_HPP_ */

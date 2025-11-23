@@ -10,6 +10,8 @@
 
 #include "AComponentArray.hpp"
 
+namespace ecs {
+
 template <typename T>
 AComponentArray<T>::AComponentArray() {
 }
@@ -54,5 +56,7 @@ void AComponentArray<T>::removeAllComponentsWithState(ComponentState state) {
         }
     }
 }
+
+} // namespace ecs
 
 #endif /* !AComponentArray_TPP_ */

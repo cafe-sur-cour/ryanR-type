@@ -8,6 +8,8 @@
 #ifndef SERVER_CONFIG_HPP_
     #define SERVER_CONFIG_HPP_
 
+namespace net {
+
 class ServerConfig {
     public:
         /* Constructor and Destructor */

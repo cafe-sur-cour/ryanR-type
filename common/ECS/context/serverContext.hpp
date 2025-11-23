@@ -10,10 +10,14 @@
 
 #include "AContext.hpp"
 
+namespace ecs {
+
 class ServerContext : public AContext {
     public:
         ServerContext() = default;
         ~ServerContext() override = default;
 };
+
+} // namespace ecs
 
 #endif /* !SERVERCONTEXT_HPP_ */

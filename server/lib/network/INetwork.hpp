@@ -13,6 +13,8 @@
 #ifndef INETWORK_HPP_
 #define INETWORK_HPP_
 
+namespace net {
+
 class INetwork {
     public:
 
@@ -26,5 +28,7 @@ class INetwork {
     protected:
     private:
 };
+
+} // namespace net
 
 #endif /* !INETWORK_HPP_ */
