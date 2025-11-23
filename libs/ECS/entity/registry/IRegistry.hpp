@@ -9,10 +9,7 @@
 #define IREGISTRY_HPP_
 
 #include <memory>
-#include <unordered_map>
-#include <typeinfo>
-#include <vector>
-#include "../../../component/IComponent.hpp"
+#include "../../component/IComponent.hpp"
 
 namespace ecs {
 
