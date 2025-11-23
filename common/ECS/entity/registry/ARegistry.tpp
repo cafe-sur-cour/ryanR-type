@@ -8,6 +8,8 @@
 
 #include "ARegistry.hpp"
 
+namespace ecs {
+
 ARegistry::ARegistry() {
 }
 
@@ -74,3 +76,5 @@ void ARegistry::removeAllComponentsWithState(ComponentState state) {
         pair.second->removeAllComponentsWithState(state);
     }
 }
+
+} // namespace ecs

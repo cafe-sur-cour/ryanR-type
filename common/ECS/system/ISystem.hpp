@@ -11,10 +11,14 @@
 #include "../context/AContext.hpp"
 #include <memory>
 
+namespace ecs {
+
 class ISystem {
     public:
         virtual ~ISystem();
         virtual void updateSystem(std::shared_ptr<AContext> context, float deltaTime) = 0;
 };
+
+} // namespace ecs
 
 #endif /* !ISystem_HPP_ */

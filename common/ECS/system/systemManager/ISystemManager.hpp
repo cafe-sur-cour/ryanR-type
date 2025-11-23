@@ -12,6 +12,8 @@
 #include "../context/AContext.hpp"
 #include <memory>
 
+namespace ecs {
+
 class ISystemManager {
     public:
         virtual ~ISystemManager();
@@ -19,5 +21,7 @@ class ISystemManager {
         virtual void addSystem(std::shared_ptr<ISystem> system) = 0;
         virtual void removeSystem(std::shared_ptr<ISystem> system) = 0;
 };
+
+} // namespace ecs
 
 #endif /* !ISystemMANAGER_HPP_ */

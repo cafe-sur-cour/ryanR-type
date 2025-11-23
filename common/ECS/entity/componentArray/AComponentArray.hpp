@@ -12,6 +12,7 @@
 #include <vector>
 #include <memory>
 
+namespace ecs {
 
 template <typename T>
 class AComponentArray : public IComponentArray {
@@ -29,5 +30,7 @@ class AComponentArray : public IComponentArray {
     private:
         std::vector<std::shared_ptr<T>> _components;
 };
+
+} // namespace ecs
 
 #endif /* !AComposantType_HPP_ */

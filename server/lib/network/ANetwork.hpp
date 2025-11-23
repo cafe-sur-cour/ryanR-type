@@ -9,6 +9,8 @@
 #ifndef ANETWORK_HPP_
 #define ANETWORK_HPP_
 
+namespace net {
+
 class ANetwork : public INetwork {
     public:
 
@@ -21,5 +23,7 @@ class ANetwork : public INetwork {
     protected:
     private:
 };
+
+} // namespace net
 
 #endif /* !ANETWORK_HPP_ */
