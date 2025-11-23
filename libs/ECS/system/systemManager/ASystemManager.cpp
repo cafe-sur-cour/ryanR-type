@@ -5,9 +5,9 @@
 ** ASystemManager
 */
 
-#include "ASystemManager.hpp"
-#include "../../context/AContext.hpp"
 #include <algorithm>
+
+#include "ASystemManager.hpp"
 
 namespace ecs {
 
