@@ -1,3 +1,41 @@
+# Ryan R-Type
+
+## Installing Ryan R-Type
+
+To install our project, you just need to go to our release page and download the latest version for your operating system.
+
+## Prerequisites to Contribute
+
+Before participating in the Ryan R-Type project, ensure you have the following installed on your system:
+
+- **CMake**: Version 3.16 or higher
+- **g++**: Version 9 or higher
+- **Make**: Version 4.1 or higher
+- **git**: Version 2.20 or higher
+- **vcpkg**: Latest version
+
+### Installation of Prerequisites
+
+#### On Ubuntu/Debian-based systems:
+
+```bash
+sudo apt install cmake g++ make git
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+export VCPKG_ROOT=$(pwd)
+```
+
+#### On Fedora-based systems:
+
+```bash
+sudo dnf install cmake gcc-c++ make
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+export VCPKG_ROOT=$(pwd)
+```
+
 ## Commit Guidelines
 
 This project follows the **Conventional Commit Message Guidelines**, which help maintain a clear and consistent Git history. The format is:
