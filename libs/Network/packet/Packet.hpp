@@ -5,16 +5,16 @@
 ** Packet
 */
 
+#ifndef PACKET_HPP_
+#define PACKET_HPP_
+
 #include <memory>
 
 #include "IPacket.hpp"
 #include "../buffer/IBuffer.hpp"
-#include "ISerializer.hpp"
+#include "serializer/ISerializer.hpp"
 
 #define MAGIC_NUMBER 0x93
-
-#ifndef PACKET_HPP_
-#define PACKET_HPP_
 
 namespace net {
 
@@ -43,4 +43,3 @@ class Packet : public IPacket {
 } // namespace net
 
 #endif /* !PACKET_HPP_ */
-
