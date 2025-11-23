@@ -9,12 +9,10 @@
 #define AREGISTRY_HPP_
 
 #include "IRegistry.hpp"
-#include "../../../component/IComponent.hpp"
-#include "../../componentArray/IComponentArray.hpp"
+#include "../../component/IComponent.hpp"
+#include "../componentArray/IComponentArray.hpp"
 #include <memory>
 #include <unordered_map>
-#include <vector>
-#include <vector>
 
 namespace ecs {
 
