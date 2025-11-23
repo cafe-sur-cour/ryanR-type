@@ -4,13 +4,14 @@
 ** File description:
 ** Buffer
 */
+
+#ifndef CircularBuffer_HPP_
+#define CircularBuffer_HPP_
+
 #include <vector>
 #include <memory>
 
 #include "IBuffer.hpp"
-
-#ifndef CircularBuffer_HPP_
-#define CircularBuffer_HPP_
 
 namespace net {
 

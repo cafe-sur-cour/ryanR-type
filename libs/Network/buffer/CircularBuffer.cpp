@@ -9,7 +9,6 @@
 #include <cstring>
 
 #include "CircularBuffer.hpp"
-#include "../../../common/LoaderType.hpp"
 
 namespace net {
 
