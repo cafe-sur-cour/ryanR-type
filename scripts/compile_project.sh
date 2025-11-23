@@ -7,17 +7,17 @@ fi
 
 if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
     echo "Usage: $0 [<target>]"
-    echo "  <target> : (Optional) The specific target to build."
+    echo "  <target> : (Optional) The specific target to build (all, server, client, tests)."
     exit 0
 fi
 
 target=$1
 
-cmake --preset "release"
+cmake --preset "release-unix"
 
-if [ -z "$target" ]; then
-    cmake --build --preset "release"
+if [ -z "$target" || "$target" == "all" ]; then
+    cmake --build --preset "release-unix"
     exit $?
 fi
 
-cmake --build --preset "release" --target "$target"
+cmake --build --preset "release-unix" --target "$target"

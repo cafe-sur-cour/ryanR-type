@@ -36,6 +36,18 @@ cd vcpkg
 export VCPKG_ROOT=$(pwd)
 ```
 
+## Compiling the Project
+
+Assuming you have all the prerequisites installed, and that you are on a Unix-based system, you can just run the premade script to compile the project.
+```bash
+./scripts/compile_project.sh [<target>]
+```
+Where optional `<target>` can be:
+- `all` (default): Compiles both server and client (and tests)
+- `server`: Compiles only the server
+- `client`: Compiles only the client
+- `tests`: Compiles only the tests
+
 ## Commit Guidelines
 
 This project follows the **Conventional Commit Message Guidelines**, which help maintain a clear and consistent Git history. The format is:
