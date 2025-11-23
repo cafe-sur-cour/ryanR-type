@@ -5,12 +5,12 @@
 ** IBuffer
 */
 
-#include <vector>
-#include <stdio.h>
-#include <cstdint>
-
 #ifndef IBUFFER_HPP_
 #define IBUFFER_HPP_
+
+#include <memory>
+#include <vector>
+#include <cstdint>
 
 namespace net {
 
