@@ -8,6 +8,7 @@
 #ifndef AComposantType_HPP_
 #define AComposantType_HPP_
 
+#include "IComponentArray.hpp"
 #include "../../component/IComponent.hpp"
 #include <vector>
 #include <memory>

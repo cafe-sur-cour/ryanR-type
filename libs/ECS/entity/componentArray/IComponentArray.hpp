@@ -8,7 +8,6 @@
 #ifndef ICOMPONENTARRAY_HPP_
 #define ICOMPONENTARRAY_HPP_
 
-#include <vector>
 #include "../../component/IComponent.hpp"
 
 namespace ecs {
