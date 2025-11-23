@@ -4,7 +4,7 @@ add_executable(${CLIENT_BIN_NAME}
     main.cpp
 )
 
-find_package(SFML COMPONENTS graphics window system audio REQUIRED)
+find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
 
 target_link_libraries(${CLIENT_BIN_NAME}
     PRIVATE
@@ -13,10 +13,10 @@ target_link_libraries(${CLIENT_BIN_NAME}
         Packet
         Buffer
         DLLoader
-        sfml-graphics
-        sfml-window
-        sfml-system
-        sfml-audio
+        SFML::Graphics
+        SFML::Window
+        SFML::System
+        SFML::Audio
 )
 
 add_subdirectory(gsm)
