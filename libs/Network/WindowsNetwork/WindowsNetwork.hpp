@@ -4,10 +4,13 @@
 ** File description:
 ** WindowsNetwork
 */
-#include "ANetwork.hpp"
 
 #ifndef WINDOWSNETWORK_HPP_
 #define WINDOWSNETWORK_HPP_
+
+#include "../ANetwork.hpp"
+#include "../packet/IPacket.hpp"
+#include "../buffer/IBuffer.hpp"
 
 namespace net {
 

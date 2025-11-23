@@ -4,10 +4,13 @@
 ** File description:
 ** ANetwork
 */
-#include "INetwork.hpp"
 
 #ifndef ANETWORK_HPP_
 #define ANETWORK_HPP_
+
+#include "INetwork.hpp"
+#include "packet/IPacket.hpp"
+#include "buffer/IBuffer.hpp"
 
 namespace net {
 

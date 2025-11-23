@@ -5,13 +5,11 @@
 ** INetwork
 */
 
-#include <stdio.h>
-
-#include "../packet/IPacket.hpp"
-#include "../buffer/IBuffer.hpp"
-
 #ifndef INETWORK_HPP_
 #define INETWORK_HPP_
+
+#include "packet/IPacket.hpp"
+#include "buffer/IBuffer.hpp"
 
 namespace net {
 
