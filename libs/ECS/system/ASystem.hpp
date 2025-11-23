@@ -8,9 +8,10 @@
 #ifndef ASystem_HPP_
 #define ASystem_HPP_
 
+#include <memory>
+
 #include "ISystem.hpp"
 #include "../context/AContext.hpp"
-#include <memory>
 
 namespace ecs {
 
