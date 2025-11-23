@@ -12,19 +12,44 @@
             "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
         },
         {
-            "name": "release",
+            "name": "release-unix",
             "inherits": ["vcpkg"],
-            "binaryDir": "${sourceDir}/bin",
+            "binaryDir": "${sourceDir}/build/unix/bin/",
+            "generator": "Unix Makefiles",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_CXX_STANDARD": "20"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "release-windows",
+            "inherits": ["vcpkg"],
+            "binaryDir": "${sourceDir}/build/windows/bin/",
+            "generator": "Visual Studio 17 2022",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CXX_STANDARD": "20"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
             }
         }
     ],
     "buildPresets": [
         {
-            "name": "release",
-            "configurePreset": "release"
+            "name": "release-unix",
+            "configurePreset": "release-unix"
+        },
+        {
+            "name": "release-windows",
+            "configurePreset": "release-windows"
         }
     ]
 }
