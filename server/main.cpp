@@ -1,11 +1,13 @@
-#include "Server.hpp"
+/*
+** EPITECH PROJECT, 2025
+** R-Type
+** File description:
+** Main
+*/
+
 #include <iostream>
+#include "Server.hpp"
 
 int main() {
-    Server server(8080);
-
-    server.init();
-    server.start();
-    server.stop();
     return 0;
 }
