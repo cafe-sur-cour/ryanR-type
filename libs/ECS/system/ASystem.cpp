@@ -6,7 +6,6 @@
 */
 
 #include "ASystem.hpp"
-#include "../context/AContext.hpp"
 
 namespace ecs {
 
