@@ -1,6 +1,9 @@
-//
-// Created by alban on 23/11/2025.
-//
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** main
+*/
 
 int main()
 {
