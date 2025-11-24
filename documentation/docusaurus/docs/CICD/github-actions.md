@@ -79,7 +79,18 @@ check_coding_style:
 This job depends on CHECK CODING STYLE. It compiles the program; if an error occurs, the pipeline will be stopped:
 
 ```yml
-# This job should be updated when compilation script is ready
+check_compilation:
+    name: check project compilation
+    needs: [check_coding_style]
+    runs-on: ubuntu-latest
+    steps:
+      - name: CHECKOUT
+        uses: actions/checkout@v4
+
+      - name: RUN COMPILATION
+        run: |
+          chmod +x ./scripts/compile_project.sh
+          ./scripts/compile_project.sh
 ```
 
 **Run All Tests**
