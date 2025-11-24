@@ -19,7 +19,8 @@ ASystemManager::~ASystemManager() {
 }
 
 void ASystemManager::updateAllSystems(
-    std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) {
+    std::shared_ptr<ResourceManager> resourceManager,
+    std::shared_ptr<ARegistry> registry, float deltaTime) {
     for (auto& system : _systems)
         system->updateSystem(resourceManager, registry, deltaTime);
 }

@@ -5,12 +5,14 @@
 ** initRessourcesManager
 */
 
-#include "../../common/ECS/resourceManager/ResourceManager.hpp"
 #include <iostream>
+#include <memory>
+#include "../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "initRessourcesManager.hpp"
 
-std::shared_ptr<ecs::ResourceManager> initRessourcesManager()
-{
-    std::shared_ptr<ecs::ResourceManager> resourceManager = std::make_shared<ecs::ResourceManager>();
+std::shared_ptr<ecs::ResourceManager> initRessourcesManager() {
+    std::shared_ptr<ecs::ResourceManager> resourceManager =
+        std::make_shared<ecs::ResourceManager>();
 
     // Initialize and load resources here
     // window
