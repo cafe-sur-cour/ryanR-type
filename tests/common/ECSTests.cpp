@@ -8,10 +8,8 @@
 #include <gtest/gtest.h>
 #include "../../common/ECS/component/AComponent.hpp"
 #include "../../common/ECS/entity/AEntity.hpp"
-#include "../../common/ECS/system/ASystem.hpp"
-#include "../../common/ECS/system/systemManager/ASystemManager.hpp"
 #include "../../common/ECS/entity/registry/ARegistry.hpp"
-#include "../../common/ECS/context/AContext.hpp"
+#include "../../client/initRessourcesManager/initRessourcesManager.hpp"
 
 using namespace ecs;
 
@@ -34,34 +32,6 @@ TEST(AEntityTest, OperatorSizeT) {
     AEntity e;
     size_t id = e;
     EXPECT_GE(id, 0);
-}
-
-/* ASystemManager Tests */
-
-class TestSystem : public ASystem {
-protected:
-    void update(std::shared_ptr<AContext> context, float deltaTime) override {
-        // Do nothing for test
-    }
-};
-
-TEST(ASystemManagerTest, AddAndUpdateSystems) {
-    ASystemManager manager;
-    auto system = std::make_shared<TestSystem>();
-    manager.addSystem(std::static_pointer_cast<ISystem>(system));
-
-    auto context = std::make_shared<AContext>();
-    manager.updateAllSystems(context, 0.1f);  // Should not crash
-}
-
-TEST(ASystemManagerTest, RemoveSystem) {
-    ASystemManager manager;
-    auto system = std::make_shared<TestSystem>();
-    manager.addSystem(std::static_pointer_cast<ISystem>(system));
-    manager.removeSystem(std::static_pointer_cast<ISystem>(system));
-
-    auto context = std::make_shared<AContext>();
-    manager.updateAllSystems(context, 0.1f);  // Should not crash
 }
 
 /* ARegistry Tests */
@@ -129,6 +99,29 @@ TEST(ARegistryTest, RemoveAllComponentsWithState) {
 
     registry.removeAllComponentsWithState(ComponentState::Temporary);
     EXPECT_FALSE(registry.hasComponent<TestComponent>(entityId));
+}
+
+/* InitRessourcesManager Tests */
+
+TEST(InitRessourcesManagerTest, ReturnsValidPointer) {
+    auto resourceManager = initRessourcesManager();
+    ASSERT_NE(resourceManager, nullptr);
+}
+
+TEST(InitRessourcesManagerTest, ReturnsEmptyResourceManager) {
+    auto resourceManager = initRessourcesManager();
+
+    // Test that no resources are initially loaded
+    // Since we don't know what types might be added, we'll test with a common type
+    EXPECT_FALSE(resourceManager->has<std::string>());
+}
+
+TEST(InitRessourcesManagerTest, ReturnsDifferentInstances) {
+    auto resourceManager1 = initRessourcesManager();
+    auto resourceManager2 = initRessourcesManager();
+
+    // Each call should return a different instance
+    EXPECT_NE(resourceManager1, resourceManager2);
 }
 
 int main(int argc, char **argv) {
