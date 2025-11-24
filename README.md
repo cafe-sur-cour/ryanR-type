@@ -19,17 +19,27 @@ Before participating in the Ryan R-Type project, ensure you have the following i
 #### On Ubuntu/Debian-based systems:
 
 ```bash
-sudo apt install cmake g++ make git
+sudo apt install cmake g++ make git build-essential cmake ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 ./bootstrap-vcpkg.sh
-export VCPKG_ROOT=$(pwd)
+export VCPKG_ROOT=$(pwd)    # add this to bashrc
 ```
 
 #### On Fedora-based systems:
 
 ```bash
-sudo dnf install cmake gcc-c++ make
+sudo dnf install cmake gcc-c++ make ninja-build libX11-devel libXi-devel libXrandr-devel libXcursor-devel systemd-devel mesa-libGL-devel
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+export VCPKG_ROOT=$(pwd)    # add this to bashrc
+```
+
+#### On macOS-based systems:
+
+```bash
+brew install cmake gcc make
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 ./bootstrap-vcpkg.sh

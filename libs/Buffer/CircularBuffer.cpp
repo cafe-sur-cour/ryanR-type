@@ -6,11 +6,13 @@
 */
 
 #include <algorithm>
+#include <memory>
+#include <vector>
 #include <cstring>
 
 #include "CircularBuffer.hpp"
+#include "../../common/DLLoader/LoaderType.hpp"
 
-namespace net {
 
 CircularBuffer::CircularBuffer() {
     this->_capacity = 0;
@@ -51,7 +53,8 @@ std::vector<uint8_t> CircularBuffer::getBuffer() const {
     return this->_buffer;
 }
 
-bool CircularBuffer::writeBuffer(const std::vector<uint8_t> &data, size_t size) {
+bool CircularBuffer::writeBuffer(
+    const std::vector<uint8_t> &data, size_t size) {
     if (this->_buffer.empty())
         return false;
     if (size == 0)
@@ -118,8 +121,10 @@ std::shared_ptr<std::vector<uint8_t>> CircularBuffer::readBuffer(size_t size) {
     return data;
 }
 
-std::shared_ptr<std::vector<uint8_t>> CircularBuffer::peek(size_t size, size_t offset) const {
-    if (this->_buffer.empty() || size == 0 || isEmpty() || offset >= this->_usedSize)
+std::shared_ptr<std::vector<uint8_t>> CircularBuffer::peek(
+    size_t size, size_t offset) const {
+    if (this->_buffer.empty() || size == 0 || isEmpty() ||
+        offset >= this->_usedSize)
         return std::make_unique<std::vector<uint8_t>>();
     size_t bytesToPeek = std::min(size, this->_usedSize - offset);
     auto data = std::make_unique<std::vector<uint8_t>>(bytesToPeek);
@@ -182,11 +187,9 @@ void CircularBuffer::_advanceWritePos(size_t count) {
     this->_usedSize = std::min(this->_usedSize + count, this->_capacity);
 }
 
-}  // namespace net
-
 extern "C" {
     void *createBufferInstance() {
-        return new net::CircularBuffer();
+        return new CircularBuffer();
     }
     int getType() {
         return BUFFER_MODULE;

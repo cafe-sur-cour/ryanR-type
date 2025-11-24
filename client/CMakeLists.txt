@@ -7,11 +7,8 @@ add_executable(${CLIENT_BIN_NAME}
 find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
 
 target_link_libraries(${CLIENT_BIN_NAME}
-    PRIVATE
+    PUBLIC
         ECS
-        Network
-        Packet
-        Buffer
         DLLoader
         SFML::Graphics
         SFML::Window
@@ -21,3 +18,8 @@ target_link_libraries(${CLIENT_BIN_NAME}
 
 add_subdirectory(gsm)
 add_subdirectory(graphicals)
+
+add_custom_command(TARGET ${CLIENT_BIN_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${CLIENT_BIN_NAME}> ${CMAKE_SOURCE_DIR}/
+    COMMENT "Copying ${CLIENT_BIN_NAME} to root directory"
+)
