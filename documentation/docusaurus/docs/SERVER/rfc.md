@@ -249,6 +249,10 @@ Server :
    EPITECH
    Email: matisse.marsac@epitech.eu
 
+   Albane Merian
+   EPITECH
+   Email: albane.merian@epitech.eu
+
    Marin Lamy
    EPITECH
    Email: Marin.lamy@epitech.eu
