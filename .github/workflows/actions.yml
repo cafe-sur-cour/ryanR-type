@@ -1,0 +1,79 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  MIRROR_URL: "git@github.com:EpitechPGE3-2025/G-CPP-500-NAN-5-2-rtype-2.git"
+
+jobs:
+  check_repository:
+    name: Check Repository to Start Jobs
+    runs-on: ubuntu-latest
+    outputs:
+      target: ${{ steps.new_output.outputs.value }}
+    steps:
+      - name: checkout@v4
+        uses: actions/checkout@v4
+
+      - name: Check Target Repository
+        id: new_output
+        run: |
+          temp=$(echo $MIRROR_URL | cut -d ':' -f 2 | sed "s/\.git//")
+          if [ $temp = ${{ github.repository }} ]; then
+            echo "::notice title=The target repository is also the current one::$temp"
+            echo "value=1" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "value=0" >> "$GITHUB_OUTPUT"
+          exit 0
+
+  # check_coding_style:
+  #   name: Check Any Coding Style Errors
+  #   needs: [check_repository]
+  #   if: ${{ needs.check_repository.outputs.target == 0 }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: checkout@v4
+  #       uses: actions/checkout@v4
+
+  #     - name: Run Coding-Style-Checker
+  #       run: check.sh $(pwd) $(pwd)
+
+  #     - name: Check Any Error
+  #       run: |
+  #         cat coding-style-reports.log | while read line; do
+  #           TYPE=$(echo $line | cut -d ':' -f 3 | cut -c 2-)
+  #           temp=$(echo $line | cut -d ':' -f 1)
+  #           NAME=$(echo $temp | cut -d '/' -f 2)
+  #           LINE=$(echo $line | cut -d ':' -f 2)
+  #           NBR=$(echo $line | cut -d ':' -f 4)
+  #           ERROR=$(printf "%s coding style error" "$TYPE")
+  #           echo "::error file=$NAME,line=$LINE,title=$ERROR::$NBR"
+  #         done
+  #         if [ -s coding-style-reports.log ]; then
+  #           exit 1
+  #         else
+  #           exit 0
+  #         fi
+
+  push_to_mirror:
+    name: Push to Target Repository
+    needs: [check_coding_style]
+    if: ${{ github.event_name == 'push' }} && ${{ needs.check_repository.outputs.target == 0 }}
+    environment: RTYPE
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout@v4
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Repository Mirroring
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: ${{ env.MIRROR_URL }}
+          ssh_private_key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
