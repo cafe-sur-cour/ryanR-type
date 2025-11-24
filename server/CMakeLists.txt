@@ -7,6 +7,8 @@ add_executable(${SERVER_BIN_NAME}
     ServerConfig.cpp
     Server.hpp
     Server.cpp
+    initRessourcesManager/initRessourcesManager.cpp
+    initRessourcesManager/initRessourcesManager.hpp
 )
 
 find_package(asio CONFIG REQUIRED)
