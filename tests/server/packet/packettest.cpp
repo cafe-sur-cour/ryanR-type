@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../../../server/lib/packet/Packet.hpp"
+#include "../../../libs/Packet/Packet.hpp"
 #include <vector>
 #include <cstring>
 
