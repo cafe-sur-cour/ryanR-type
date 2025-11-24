@@ -11,7 +11,7 @@
 #include <cstring>
 
 #include "CircularBuffer.hpp"
-#include "../DLLoader/LoaderType.hpp"
+#include "../../common/DLLoader/LoaderType.hpp"
 
 
 CircularBuffer::CircularBuffer() {
