@@ -8,23 +8,25 @@
 #ifndef SERVER_CONFIG_HPP_
     #define SERVER_CONFIG_HPP_
 
-class ServerConfig {
-    public:
-        ServerConfig(unsigned int port);
-        ~ServerConfig();
+namespace net {
+    class ServerConfig {
+        public:
+            ServerConfig(unsigned int port);
+            ~ServerConfig();
 
-        int getState() const;
-        int getFd() const;
-        unsigned int getPort() const;
+            int getState() const;
+            int getFd() const;
+            unsigned int getPort() const;
 
-        void setState(int state);
-        void setFd(int fd);
-        void setPort(unsigned int port);
+            void setState(int state);
+            void setFd(int fd);
+            void setPort(unsigned int port);
 
-    private:
-        int _state;
-        int _fd;
-        unsigned int _port;
-};
+        private:
+            int _state;
+            int _fd;
+            unsigned int _port;
+    };
+} // namespace net
 
 #endif /* !SERVER_CONFIG_HPP_ */
