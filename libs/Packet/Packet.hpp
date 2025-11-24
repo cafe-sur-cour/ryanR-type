@@ -11,7 +11,7 @@
 #include <memory>
 
 #include "IPacket.hpp"
-#include "../buffer/IBuffer.hpp"
+#include "../Buffer/IBuffer.hpp"
 #include "serializer/ISerializer.hpp"
 
 #define MAGIC_NUMBER 0x93
