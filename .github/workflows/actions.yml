@@ -71,13 +71,10 @@ jobs:
 
       - name: INSTALL DEPENDENCIES
         run: |
-          sudo apt install cmake g++ make git build-essential cmake ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
+          sudo apt install -y cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
           git clone https://github.com/Microsoft/vcpkg.git
           cd vcpkg
           ./bootstrap-vcpkg.sh
-
-      - name: SET VCPKG_ROOT
-        run: |
           echo "VCPKG_ROOT=$(pwd)" >> $GITHUB_ENV
 
       - name: RUN COMPILATION
