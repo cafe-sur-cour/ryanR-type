@@ -7,11 +7,8 @@ add_executable(${CLIENT_BIN_NAME}
 find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
 
 target_link_libraries(${CLIENT_BIN_NAME}
-    PRIVATE
+    PUBLIC
         ECS
-        Network
-        Packet
-        Buffer
         DLLoader
         SFML::Graphics
         SFML::Window
