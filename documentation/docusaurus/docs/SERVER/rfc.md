@@ -89,8 +89,8 @@ Client :
    +--------+-------------------+----------------------------------------+
    | Value  | Name              | Description                            |
    +--------+-------------------+----------------------------------------+
-   | 0x01   | CONNECTION         | Client connection request              |
-   | 0x03   | DECONNECTION       | End of connection or window close      |
+   | 0x01   | CONNECTION        | Client connection request              |
+   | 0x03   | DISCONECTION      | End of connection or window close      |
    | 0x04   | EVENT             | Sent when event happens                |
    +--------+-------------------+----------------------------------------+
 ```
@@ -120,7 +120,7 @@ Server :
    - Player name (UTF-8, max 7 chars + null terminator)
 
 
-4.1.2. DECONNECTION (0x03) – Client requests to disconnect to server
+4.1.2. DISCONECTION (0x03) – Client requests to disconnect to server
 
    - Player ID (4 bytes)
 
@@ -179,22 +179,22 @@ Server :
            |            CONNECTIONS                   |
            |<-----------------------------------------|
            |                                          |
-           |            GAME_STATE                      |
+           |            GAME_STATE                    |
            |<-----------------------------------------|
            |                                          |
-           |            MAP_SEND                    |
+           |            MAP_SEND                      |
            |<-----------------------------------------|
            |                                          |
            |            EVENT (if space pressed)      |
            |----------------------------------------->|
            |                                          |
-           |            GAME_STATE (20 fps updates)     |
+           |            GAME_STATE (20 fps updates)   |
            |<-----------------------------------------|
            |                                          |
            |            END GAME                      |
            |----------------------------------------->|
            |                                          |
-           |            DECONNECTION                   |
+           |            DISCONECTION                  |
            |----------------------------------------->|
 
 ```
@@ -255,7 +255,7 @@ Server :
 
    Marin Lamy
    EPITECH
-   Email: Marin.lamy@epitech.eu
+   Email: marin.lamy@epitech.eu
 
    Eliott Tesnier
    EPITECH
