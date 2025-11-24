@@ -23,7 +23,7 @@ sudo apt install cmake g++ make git
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 ./bootstrap-vcpkg.sh
-export VCPKG_ROOT=$(pwd)
+export VCPKG_ROOT=$(pwd)    # add this to bashrc
 ```
 
 #### On Fedora-based systems:
@@ -33,7 +33,7 @@ sudo dnf install cmake gcc-c++ make
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 ./bootstrap-vcpkg.sh
-export VCPKG_ROOT=$(pwd)
+export VCPKG_ROOT=$(pwd)    # add this to bashrc
 ```
 
 ## Compiling the Project
