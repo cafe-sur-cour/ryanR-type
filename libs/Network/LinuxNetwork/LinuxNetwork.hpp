@@ -9,8 +9,8 @@
 #define LINUXNETWORK_HPP_
 
 #include "../ANetwork.hpp"
-#include "../Buffer/IBuffer.hpp"
-#include "../Packet/IPacket.hpp"
+#include "../../Buffer/IBuffer.hpp"
+#include "../../Packet/IPacket.hpp"
 
 namespace net {
 

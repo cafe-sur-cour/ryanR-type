@@ -5,6 +5,9 @@ coding-style*
 *.gcov
 obj/
 .vscode/
+.DS_Store
+Makefile
+*.so
 .idea/
 build/
 bin/

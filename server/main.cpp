@@ -1,11 +1,13 @@
 /*
 ** EPITECH PROJECT, 2025
-** ryanR-type
+** R-Type
 ** File description:
-** main
+** Main
 */
 
-int main()
-{
+#include <iostream>
+#include "Server.hpp"
+
+int main() {
     return 0;
 }

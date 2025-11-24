@@ -1,24 +1,32 @@
 /*
 ** EPITECH PROJECT, 2025
-** ryanR-type
+** Header
 ** File description:
-** ServerConfig
+** Header
 */
 
-#ifndef SERVERCONFIG_HPP_
-#define SERVERCONFIG_HPP_
+#ifndef SERVER_CONFIG_HPP_
+    #define SERVER_CONFIG_HPP_
 
-namespace net {
+namespace rserv {
+    class ServerConfig {
+        public:
+            ServerConfig(unsigned int port);
+            ~ServerConfig();
 
-class ServerConfig {
-    public:
-        ServerConfig();
-        ~ServerConfig();
+            int getState() const;
+            int getFd() const;
+            unsigned int getPort() const;
 
-    protected:
-    private:
-};
+            void setState(int state);
+            void setFd(int fd);
+            void setPort(unsigned int port);
 
-} // namespace net
+        private:
+            int _state;
+            int _fd;
+            unsigned int _port;
+    };
+} // namespace rserv = r-type server
 
-#endif /* !SERVERCONFIG_HPP_ */
+#endif /* !SERVER_CONFIG_HPP_ */

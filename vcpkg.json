@@ -2,6 +2,7 @@
   "name": "r-type",
   "version": "1.0.0",
   "dependencies": [
-    "sfml"
+    "sfml",
+    "asio"
   ]
 }

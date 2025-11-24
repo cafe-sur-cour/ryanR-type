@@ -10,8 +10,6 @@
 
 #include "../Buffer/IBuffer.hpp"
 
-namespace net {
-
 class IPacket {
     public:
         virtual ~IPacket() {}
@@ -22,6 +20,5 @@ class IPacket {
     private:
 };
 
-} // namespace net
 
 #endif /* !IPACKET_HPP_ */
