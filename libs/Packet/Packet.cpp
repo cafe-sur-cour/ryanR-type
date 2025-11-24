@@ -6,7 +6,7 @@
 */
 
 #include "Packet.hpp"
-#include "../DLLoader/LoaderType.hpp"
+#include "../../common/DLLoader/LoaderType.hpp"
 
 Packet::Packet(int idClient) {
     this->_magicNumber = MAGIC_NUMBER;

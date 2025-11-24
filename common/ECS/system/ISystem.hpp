@@ -15,7 +15,7 @@ namespace ecs {
 
 class ISystem {
     public:
-        virtual ~ISystem();
+        virtual ~ISystem() = default;
         virtual void updateSystem(std::shared_ptr<AContext> context, float deltaTime) = 0;
 };
 

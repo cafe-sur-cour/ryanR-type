@@ -18,8 +18,8 @@ enum ComponentState {
 
 class IComponent {
     public:
-        IComponent();
-        virtual ~IComponent();
+        IComponent() = default;
+        virtual ~IComponent() = default;
 
         virtual ComponentState getState() const = 0;
         virtual void setState(ComponentState newState) = 0;

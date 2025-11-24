@@ -1,6 +1,6 @@
 set(NETWORK_LIB_NAME Network)
 
-add_library(${NETWORK_LIB_NAME} STATIC
+add_library(${NETWORK_LIB_NAME} SHARED
     INetwork.hpp
     ANetwork.hpp
 )

@@ -1,4 +1,4 @@
-add_library(${PACKET_LIB_NAME}_serializer STATIC
+target_sources(${PACKET_LIB_NAME} PUBLIC
     ISerializer.hpp
     BigEndianSerialization.hpp
     BigEndianSerialization.cpp
