@@ -12,5 +12,5 @@ target_include_directories(${NETWORK_LIB_NAME}
 if(WIN32)
     add_subdirectory(WindowsNetwork)
 elseif(UNIX)
-    add_subdirectory(LinuxNetwork)
+    add_subdirectory(UnixNetwork)
 endif()

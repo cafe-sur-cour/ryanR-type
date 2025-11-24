@@ -2,11 +2,11 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** LinuxNetwork
+** UnixNetwork
 */
 
-#ifndef LINUXNETWORK_HPP_
-#define LINUXNETWORK_HPP_
+#ifndef UnixNetwork_HPP_
+#define UnixNetwork_HPP_
 
 #include "../ANetwork.hpp"
 #include "../../Buffer/IBuffer.hpp"
@@ -14,10 +14,10 @@
 
 namespace net {
 
-class LinuxNetwork : public ANetwork {
+class UnixNetwork : public ANetwork {
     public:
-        LinuxNetwork();
-        ~LinuxNetwork() override;
+        UnixNetwork();
+        ~UnixNetwork() override;
 
         void init() override;
         void stop() override;
@@ -34,4 +34,4 @@ extern "C" {
     int getType();
 }
 
-#endif /* !LINUXNETWORK_HPP_ */
+#endif /* !UnixNetwork_HPP_ */
