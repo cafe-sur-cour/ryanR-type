@@ -7,7 +7,6 @@ target_include_directories(${ECS_LIB_NAME}
 )
 
 add_subdirectory(component)
-add_subdirectory(context)
 add_subdirectory(entity)
 add_subdirectory(resourceManager)
 add_subdirectory(system)

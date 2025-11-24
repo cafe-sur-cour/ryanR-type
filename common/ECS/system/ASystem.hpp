@@ -11,7 +11,8 @@
 #include <memory>
 
 #include "ISystem.hpp"
-#include "../context/AContext.hpp"
+#include "../resourceManager/ResourceManager.hpp"
+#include "../entity/registry/ARegistry.hpp"
 
 namespace ecs {
 
@@ -19,10 +20,10 @@ class ASystem : public ISystem {
     public:
         ASystem();
         ~ASystem() = default;
-        void updateSystem(std::shared_ptr<AContext> context, float deltaTime) override;
+        void updateSystem(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) override;
 
     protected:
-        virtual void update(std::shared_ptr<AContext> context, float deltaTime) = 0;
+        virtual void update(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) = 0;
 
     private:
 };
