@@ -69,6 +69,10 @@ jobs:
       - name: CHECKOUT
         uses: actions/checkout@v4
 
+      - name: SET VCPKG_ROOT
+        run: |
+          echo "VCPKG_ROOT=$(pwd)" >> $GITHUB_ENV
+
       - name: RUN COMPILATION
         run: |
           chmod +x ./scripts/compile_project.sh
