@@ -8,3 +8,7 @@ obj/
 .DS_Store
 Makefile
 *.so
+.idea/
+build/
+bin/
+cmake-build-*/
