@@ -5,17 +5,19 @@
 ** initRessourcesManager
 */
 
-#include "../../common/ECS/resourceManager/ResourceManager.hpp"
-#include "../ServerConfig.hpp"
 #include <memory>
 #include <iostream>
+#include "../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../ServerConfig.hpp"
+#include "initRessourcesManager.hpp"
 
-std::shared_ptr<ecs::ResourceManager> initRessourcesManager()
-{
-    std::shared_ptr<ecs::ResourceManager> resourceManager = std::make_shared<ecs::ResourceManager>();
+std::shared_ptr<ecs::ResourceManager> initRessourcesManager() {
+    std::shared_ptr<ecs::ResourceManager> resourceManager =
+        std::make_shared<ecs::ResourceManager>();
 
     // Initialize and load resources here
-    // exemple resourceManager->add(std::make_shared<rserv::ServerConfig>(8080));
+    // exemple resourceManager->
+    // add(std::make_shared<rserv::ServerConfig>(8080));
     // networking
     // etc.
     return resourceManager;
