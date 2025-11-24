@@ -13,7 +13,6 @@
 
 #include "IBuffer.hpp"
 
-namespace net {
 
 enum class OverflowPolicy {
     OVERWRITE,
@@ -56,8 +55,6 @@ class CircularBuffer : public IBuffer {
         void _advanceReadPos(size_t count);
         void _advanceWritePos(size_t count);
 };
-
-} // namespace net
 
 extern "C" {
     void *createBufferInstance();

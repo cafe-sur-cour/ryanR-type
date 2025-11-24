@@ -13,7 +13,6 @@
 #include "CircularBuffer.hpp"
 #include "../DLLoader/LoaderType.hpp"
 
-namespace net {
 
 CircularBuffer::CircularBuffer() {
     this->_capacity = 0;
@@ -188,11 +187,9 @@ void CircularBuffer::_advanceWritePos(size_t count) {
     this->_usedSize = std::min(this->_usedSize + count, this->_capacity);
 }
 
-}  // namespace net
-
 extern "C" {
     void *createBufferInstance() {
-        return new net::CircularBuffer();
+        return new CircularBuffer();
     }
     int getType() {
         return BUFFER_MODULE;
