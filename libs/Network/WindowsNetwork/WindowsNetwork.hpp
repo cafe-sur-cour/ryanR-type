@@ -9,8 +9,8 @@
 #define WINDOWSNETWORK_HPP_
 
 #include "../ANetwork.hpp"
-#include "../packet/IPacket.hpp"
-#include "../buffer/IBuffer.hpp"
+#include "../../Packet/IPacket.hpp"
+#include "../../Buffer/IBuffer.hpp"
 
 namespace net {
 

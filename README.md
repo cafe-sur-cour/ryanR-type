@@ -36,6 +36,16 @@ cd vcpkg
 export VCPKG_ROOT=$(pwd)
 ```
 
+#### On macOS-based systems:
+
+```bash
+brew install cmake gcc make
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+export VCPKG_ROOT=$(pwd)
+```
+
 ## Compiling the Project
 
 Assuming you have all the prerequisites installed, and that you are on a Unix-based system, you can just run the premade script to compile the project.

@@ -9,7 +9,7 @@ FILTERS="+whitespace/line_length,+whitespace/operators,+readability/braces,+whit
 
 NOFILTERS="-readability/namespace,-legal/copyright,-build/include_subdir"
 # Run cpplint on all .cpp and .hpp files, excluding tests/ and bonus/
-find . -type f \( -name "*.cpp" \) ! -path "*/tests/*" ! -path "*/bonus/*" ! -path "*/temp/*" | while read -r file; do
+find . -type f \( -name "*.cpp" \) ! -path "*/tests/*" ! -path "*/bonus/*" ! -path "*/temp/*" ! -path "*/build/*" | while read -r file; do
     cpplint --filter=$FILTERS --filter=$NOFILTERS "$file" 2>> "$LOG_FILE"
 done
 

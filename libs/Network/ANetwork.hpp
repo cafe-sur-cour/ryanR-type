@@ -9,15 +9,15 @@
 #define ANETWORK_HPP_
 
 #include "INetwork.hpp"
-#include "packet/IPacket.hpp"
-#include "buffer/IBuffer.hpp"
+#include "../Packet/IPacket.hpp"
+#include "../Buffer/IBuffer.hpp"
 
 namespace net {
 
 class ANetwork : public INetwork {
     public:
 
-        ~ANetwork() override;
+        virtual ~ANetwork() override = default;
 
         virtual void init() override = 0;
         virtual void stop() override = 0;
