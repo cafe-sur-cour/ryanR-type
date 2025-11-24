@@ -101,11 +101,11 @@ Server :
    | Value  | Name              | Description                            |
    +--------+-------------------+----------------------------------------+
    | 0x02   | CONNEXION_ACC     | Server response to connection          |
-   | 0x05   | ETAT_JEU          | Game state update                      |
-   | 0x06   | ENVOIE_MAP        | Sends map state and elements           |
-   | 0x07   | FIN_DE_MAP        | Signals map has ended                  |
-   | 0x08   | FIN_DE_JEU        | Signals a player victory               |
-   | 0x09   | PEU_DEMARER       | Client ready to start movement         |
+   | 0x05   | GAME_STATE        | Game state update                      |
+   | 0x06   | MAP_SEND          | Sends map state and elements           |
+   | 0x07   | END_MAP           | Signals map has ended                  |
+   | 0x08   | END_GAME          | Signals a player victory               |
+   | 0x09   | CAN_START         | Client ready to start movement         |
    +--------+-------------------+----------------------------------------+
 ```
 
@@ -137,28 +137,28 @@ Server :
 
    - Player ID (4 bytes)
 
-4.2.2. ETAT_JEU (0x05) – Server sends games state to clients
+4.2.2. GAME_STATE (0x05) – Server sends games state to clients
 
    - Player ID (4 bytes)
    - State (position, velocity, state...)
 
-4.2.3. ENVOIE_MAP (0x06) – Server sends the map to the clients
+4.2.3. MAP_SEND (0x06) – Server sends the map to the clients
 
    - Player ID (4 bytes)
    -Map Data (json)
 
 
-4.2.4. FIN_DE_MAP (0x07) – Server notify the end of the map
+4.2.4. END_MAP (0x07) – Server notify the end of the map
 
    - Player ID (4 bytes)
 
-4.2.5. FIN_DE_JEU (0x08) – Server notify end of game and who won
+4.2.5. END_GAME (0x08) – Server notify end of game and who won
 
    - Player ID (4 bytes)
    - Player ID who won (4 bytes)
 
 
-4.2.6. PEU_DEMARER (0x09) – Server tells client game can start
+4.2.6. CAN_START (0x09) – Server tells client game can start
 
    - Player ID (4 bytes)
 
@@ -179,16 +179,16 @@ Server :
            |            CONNEXION_ACC                 |
            |<-----------------------------------------|
            |                                          |
-           |            ETAT_JEU                      |
+           |            GAME_STATE                      |
            |<-----------------------------------------|
            |                                          |
-           |            ENVOIE_MAP                    |
+           |            MAP_SEND                    |
            |<-----------------------------------------|
            |                                          |
            |            EVENT (if space pressed)      |
            |----------------------------------------->|
            |                                          |
-           |            ETAT_JEU (20 fps updates)     |
+           |            GAME_STATE (20 fps updates)     |
            |<-----------------------------------------|
            |                                          |
            |            END GAME                      |
