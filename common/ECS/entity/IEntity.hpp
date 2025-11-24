@@ -14,8 +14,8 @@ namespace ecs {
 
 class IEntity {
     public:
-        IEntity();
-        ~IEntity();
+        IEntity() = default;
+        virtual ~IEntity() = default;
         virtual operator size_t() const = 0;
 
     private:

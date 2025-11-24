@@ -12,3 +12,5 @@ Makefile
 build/
 bin/
 cmake-build-*/
+r-type_client
+r-type_server

@@ -1,5 +1,3 @@
-add_subdirectory(DLLoader)
-# add_subdirectory(ECS)
 add_subdirectory(Network)
 add_subdirectory(Buffer)
 add_subdirectory(Packet)
