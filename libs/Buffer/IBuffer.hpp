@@ -12,7 +12,6 @@
 #include <vector>
 #include <cstdint>
 
-namespace net {
 
 class IBuffer {
     public:
@@ -36,7 +35,5 @@ class IBuffer {
     protected:
     private:
 };
-
-} // namespace net
 
 #endif /* !IBUFFER_HPP_ */

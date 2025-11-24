@@ -8,9 +8,7 @@
 #ifndef IPACKET_HPP_
 #define IPACKET_HPP_
 
-#include "../buffer/IBuffer.hpp"
-
-namespace net {
+#include "../Buffer/IBuffer.hpp"
 
 class IPacket {
     public:
@@ -22,6 +20,5 @@ class IPacket {
     private:
 };
 
-} // namespace net
 
 #endif /* !IPACKET_HPP_ */

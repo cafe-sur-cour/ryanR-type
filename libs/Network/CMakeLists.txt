@@ -14,6 +14,3 @@ if(WIN32)
 elseif(UNIX)
     add_subdirectory(LinuxNetwork)
 endif()
-
-add_subdirectory(buffer)
-add_subdirectory(packet)
