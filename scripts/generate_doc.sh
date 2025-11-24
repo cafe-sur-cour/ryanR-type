@@ -9,4 +9,5 @@ mv refman.pdf ../
 cd ..
 rm -rf latex/
 mv refman.pdf R-Type-Doc.pdf
+cp R-Type-Doc.pdf ../docusaurus/static/pdfs/R-Type-Doc.pdf
 
