@@ -11,22 +11,22 @@
 #include <asio.hpp>
 #include "Server.hpp"
 
-net::Server::Server(unsigned int port) {
+rserv::Server::Server(unsigned int port) {
     this->_config = std::make_shared<ServerConfig>(port);
 }
 
-net::Server::~Server() {
+rserv::Server::~Server() {
     if (this->getState() == 1)
         this->stop();
 }
 
-void net::Server::init() {
+void rserv::Server::init() {
     this->setState(0);
     std::cout << "[Server] Initialization complete on port "
         << _config->getPort() << std::endl;
 }
 
-void net::Server::start() {
+void rserv::Server::start() {
     if (this->getState() == 1) {
         std::cerr <<
             "[Server] Error: init() must be called before start()"
@@ -57,7 +57,7 @@ void net::Server::start() {
     }
 }
 
-void net::Server::stop() {
+void rserv::Server::stop() {
     if (this->getState() == -1) {
         std::cerr <<
         "[Server] Error: init() must be called before stop()"
@@ -72,34 +72,34 @@ void net::Server::stop() {
     std::cout << "[Server] Server stopped." << std::endl;
 }
 
-net::Server::operator int() const noexcept {
+rserv::Server::operator int() const noexcept {
     return this->getState();
 }
 
-std::shared_ptr<net::ServerConfig> net::Server::getConfig() const {
+std::shared_ptr<rserv::ServerConfig> rserv::Server::getConfig() const {
     return this->_config;
 }
 
-int net::Server::getState() const {
+int rserv::Server::getState() const {
     return this->_config->getState();
 }
 
-int net::Server::getFd() const {
+int rserv::Server::getFd() const {
     return this->_config->getFd();
 }
 
-unsigned int net::Server::getPort() const {
+unsigned int rserv::Server::getPort() const {
     return this->_config->getPort();
 }
 
-void net::Server::setState(int state) {
+void rserv::Server::setState(int state) {
     this->_config->setState(state);
 }
 
-void net::Server::setFd(int fd) {
+void rserv::Server::setFd(int fd) {
     this->_config->setFd(fd);
 }
 
-void net::Server::setPort(unsigned int port) {
+void rserv::Server::setPort(unsigned int port) {
     this->_config->setPort(port);
 }

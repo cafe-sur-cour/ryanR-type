@@ -14,7 +14,7 @@
 #include "ServerConfig.hpp"
 
 
-namespace net {
+namespace rserv {
     class Server : public IServer {
         public:
             Server(unsigned int port);
@@ -38,6 +38,6 @@ namespace net {
         private:
             std::shared_ptr<ServerConfig> _config;
     };
-} // namespace net
+} // namespace rserv = r-type server
 
 #endif /* !SERVER_HPP_ */
