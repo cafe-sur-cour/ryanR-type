@@ -40,6 +40,9 @@ function HomepageHeader() {
             <Link className="button button--secondary button--lg" to="docs/category/security-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
               🪪 Security
             </Link>
+            <Link className="button button--secondary button--lg" to="docs/category/cicd" style={{ margin: '1rem', fontSize: '1.2rem' }}>
+              👷 CI/CD
+            </Link>
           </div>
       </div>
     </header>
