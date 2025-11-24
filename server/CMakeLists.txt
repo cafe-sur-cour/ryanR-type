@@ -10,11 +10,9 @@ add_executable(${SERVER_BIN_NAME}
 )
 
 target_link_libraries(${SERVER_BIN_NAME}
-    PRIVATE
+    PUBLIC
         ECS
-        Network
-        Packet
-        Buffer
+        DLLoader
 )
 
 add_subdirectory(gsm)
