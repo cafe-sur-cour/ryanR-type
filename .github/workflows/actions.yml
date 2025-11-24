@@ -61,7 +61,7 @@ jobs:
             echo "No CPP coding style errors found."
           fi
 
-  check_compilation: #This job should be updated when compilation script is ready
+  check_compilation: # This job should be updated when compilation script is ready
     name: check project compilation
     needs: [check_coding_style]
     runs-on: ubuntu-latest
@@ -74,9 +74,22 @@ jobs:
       #     chmod +x ./scripts/compile_project.sh
       #     ./scripts/compile_project.sh
 
+  run_all_tests: # This job should be updated when compilation script is ready
+    name: run all tests
+    needs: [check_coding_style]
+    runs-on: ubuntu-latest
+    steps:
+      - name: CHECKOUT
+        uses: actions/checkout@v4
+
+      # - name: RUN UNIT TESTS
+      #   run: |
+      #     chmod +x ./scripts/run_unit_tests.sh
+      #     ./scripts/run_unit_tests.sh
+
   push_to_mirror:
     name: push to target repository
-    needs: [check_compilation]
+    needs: [run_all_tests]
     if: ${{ github.event_name == 'push' }}
     environment: RTYPE
     runs-on: ubuntu-latest
