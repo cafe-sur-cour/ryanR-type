@@ -21,4 +21,4 @@ void ARegistry::removeAllComponentsWithState(ComponentState state) {
     }
 }
 
-} // namespace ecs
+}  // namespace ecs
