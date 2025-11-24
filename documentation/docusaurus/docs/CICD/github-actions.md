@@ -87,6 +87,14 @@ check_compilation:
       - name: CHECKOUT
         uses: actions/checkout@v4
 
+      - name: INSTALL DEPENDENCIES
+        run: |
+          sudo apt install -y cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
+          git clone https://github.com/Microsoft/vcpkg.git
+          cd vcpkg
+          ./bootstrap-vcpkg.sh
+          echo "VCPKG_ROOT=$(pwd)" >> $GITHUB_ENV
+
       - name: RUN COMPILATION
         run: |
           chmod +x ./scripts/compile_project.sh
