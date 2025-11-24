@@ -9,7 +9,6 @@
 #include <memory>
 
 #include "ASystemManager.hpp"
-#include "../../context/AContext.hpp"
 
 namespace ecs {
 
@@ -20,9 +19,9 @@ ASystemManager::~ASystemManager() {
 }
 
 void ASystemManager::updateAllSystems(
-    std::shared_ptr<AContext> context, float deltaTime) {
+    std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) {
     for (auto& system : _systems)
-        system->updateSystem(context, deltaTime);
+        system->updateSystem(resourceManager, registry, deltaTime);
 }
 
 void ASystemManager::addSystem(std::shared_ptr<ISystem> system) {

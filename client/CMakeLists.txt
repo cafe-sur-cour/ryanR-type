@@ -2,6 +2,8 @@ set(CLIENT_BIN_NAME r-type_client)
 
 add_executable(${CLIENT_BIN_NAME}
     main.cpp
+    initRessourcesManager/initRessourcesManager.cpp
+    initRessourcesManager/initRessourcesManager.hpp
 )
 
 find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
