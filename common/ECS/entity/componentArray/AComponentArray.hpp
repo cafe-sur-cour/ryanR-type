@@ -34,4 +34,6 @@ class AComponentArray : public IComponentArray {
 
 } // namespace ecs
 
+#include "AComponentArray.tpp"
+
 #endif /* !AComposantType_HPP_ */
