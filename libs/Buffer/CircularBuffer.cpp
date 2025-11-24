@@ -11,6 +11,7 @@
 #include <cstring>
 
 #include "CircularBuffer.hpp"
+#include "../DLLoader/LoaderType.hpp"
 
 namespace net {
 

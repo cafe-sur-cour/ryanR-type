@@ -6,6 +6,7 @@
 */
 
 #include "LinuxNetwork.hpp"
+#include "../../DLLoader/LoaderType.hpp"
 
 namespace net {
 
