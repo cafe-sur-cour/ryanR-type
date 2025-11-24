@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../../../server/lib/buffer/CircularBuffer.hpp"
+#include "../../../libs/Buffer/CircularBuffer.hpp"
 #include <vector>
 #include <cstring>
 #include <memory>

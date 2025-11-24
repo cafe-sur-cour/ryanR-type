@@ -9,10 +9,13 @@ add_executable(${SERVER_BIN_NAME}
     Server.cpp
 )
 
+find_package(asio CONFIG REQUIRED)
+
 target_link_libraries(${SERVER_BIN_NAME}
     PUBLIC
         ECS
         DLLoader
+        asio::asio
 )
 
 add_subdirectory(gsm)
