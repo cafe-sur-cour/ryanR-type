@@ -5,15 +5,32 @@ if [ -z "$VCPKG_ROOT" ]; then
     exit 1
 fi
 
-if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
-    echo "Usage: $0 [<target>]"
-    echo "  <target> : (Optional) The specific target to build (all, server, client, tests)."
-    exit 0
+build_tests=false
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --with-tests)
+            build_tests=true
+            shift
+            ;;
+        --help|-h)
+            echo "Usage: $0 [--with-tests] [<target>]"
+            echo "  --with-tests : Build with tests"
+            echo "  <target>     : (Optional) The specific target to build (all, server, client, tests)."
+            exit 0
+            ;;
+        *)
+            target=$1
+            shift
+            ;;
+    esac
+done
+
+if [ "$build_tests" = true ]; then
+    cmake --preset "release-unix" -DBUILD_TESTS=ON
+else
+    cmake --preset "release-unix" -DBUILD_TESTS=OFF
 fi
-
-target=$1
-
-cmake --preset "release-unix"
 
 if [ -z "$target" ] || [ "$target" == "all" ]; then
     cmake --build --preset "release-unix"
