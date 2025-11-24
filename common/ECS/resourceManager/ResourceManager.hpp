@@ -30,4 +30,6 @@ class ResourceManager {
 
 } // namespace ecs
 
+#include "ResourceManager.tpp"
+
 #endif /* !RESOURCEMANAGER_HPP_ */
