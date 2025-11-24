@@ -11,22 +11,22 @@
 #include <asio.hpp>
 #include "Server.hpp"
 
-Server::Server(unsigned int port) {
+net::Server::Server(unsigned int port) {
     this->_config = std::make_shared<ServerConfig>(port);
 }
 
-Server::~Server() {
+net::Server::~Server() {
     if (this->getState() == 1)
         this->stop();
 }
 
-void Server::init() {
+void net::Server::init() {
     this->setState(0);
     std::cout << "[Server] Initialization complete on port "
         << _config->getPort() << std::endl;
 }
 
-void Server::start() {
+void net::Server::start() {
     if (this->getState() == 1) {
         std::cerr <<
             "[Server] Error: init() must be called before start()"
@@ -57,7 +57,7 @@ void Server::start() {
     }
 }
 
-void Server::stop() {
+void net::Server::stop() {
     if (this->getState() == -1) {
         std::cerr <<
         "[Server] Error: init() must be called before stop()"
@@ -72,34 +72,34 @@ void Server::stop() {
     std::cout << "[Server] Server stopped." << std::endl;
 }
 
-Server::operator int() const noexcept {
+net::Server::operator int() const noexcept {
     return this->getState();
 }
 
-std::shared_ptr<ServerConfig> Server::getConfig() const {
+std::shared_ptr<net::ServerConfig> net::Server::getConfig() const {
     return this->_config;
 }
 
-int Server::getState() const {
+int net::Server::getState() const {
     return this->_config->getState();
 }
 
-int Server::getFd() const {
+int net::Server::getFd() const {
     return this->_config->getFd();
 }
 
-unsigned int Server::getPort() const {
+unsigned int net::Server::getPort() const {
     return this->_config->getPort();
 }
 
-void Server::setState(int state) {
+void net::Server::setState(int state) {
     this->_config->setState(state);
 }
 
-void Server::setFd(int fd) {
+void net::Server::setFd(int fd) {
     this->_config->setFd(fd);
 }
 
-void Server::setPort(unsigned int port) {
+void net::Server::setPort(unsigned int port) {
     this->_config->setPort(port);
 }

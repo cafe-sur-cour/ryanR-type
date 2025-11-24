@@ -7,33 +7,33 @@
 
 #include "ServerConfig.hpp"
 
-ServerConfig::ServerConfig(unsigned int port) :
+net::ServerConfig::ServerConfig(unsigned int port) :
     _state(-1), _fd(-1), _port(port) {
 }
 
-ServerConfig::~ServerConfig() {
+net::ServerConfig::~ServerConfig() {
 }
 
-int ServerConfig::getState() const {
+int net::ServerConfig::getState() const {
     return this->_state;
 }
 
-int ServerConfig::getFd() const {
+int net::ServerConfig::getFd() const {
     return this->_fd;
 }
 
-unsigned int ServerConfig::getPort() const {
+unsigned int net::ServerConfig::getPort() const {
     return this->_port;
 }
 
-void ServerConfig::setState(int state) {
+void net::ServerConfig::setState(int state) {
     this->_state = state;
 }
 
-void ServerConfig::setFd(int fd) {
+void net::ServerConfig::setFd(int fd) {
     this->_fd = fd;
 }
 
-void ServerConfig::setPort(unsigned int port) {
+void net::ServerConfig::setPort(unsigned int port) {
     this->_port = port;
 }

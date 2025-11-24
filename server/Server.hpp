@@ -13,28 +13,31 @@
 #include "IServer.hpp"
 #include "ServerConfig.hpp"
 
-class Server : public IServer {
-    public:
-        Server(unsigned int port);
-        ~Server();
 
-        void init() override;
-        void start() override;
-        void stop() override;
+namespace net {
+    class Server : public IServer {
+        public:
+            Server(unsigned int port);
+            ~Server();
 
-        operator int() const noexcept override;
+            void init() override;
+            void start() override;
+            void stop() override;
 
-        std::shared_ptr<ServerConfig> getConfig() const override;
-        int getState() const override;
-        int getFd() const override;
-        unsigned int getPort() const override;
+            operator int() const noexcept override;
 
-        void setState(int state) override;
-        void setFd(int fd) override;
-        void setPort(unsigned int port) override;
+            std::shared_ptr<ServerConfig> getConfig() const override;
+            int getState() const override;
+            int getFd() const override;
+            unsigned int getPort() const override;
 
-    private:
-        std::shared_ptr<ServerConfig> _config;
-};
+            void setState(int state) override;
+            void setFd(int fd) override;
+            void setPort(unsigned int port) override;
+
+        private:
+            std::shared_ptr<ServerConfig> _config;
+    };
+} // namespace net
 
 #endif /* !SERVER_HPP_ */
