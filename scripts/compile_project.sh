@@ -15,7 +15,7 @@ target=$1
 
 cmake --preset "release-unix"
 
-if [ -z "$target" || "$target" == "all" ]; then
+if [ -z "$target" ] || [ "$target" == "all" ]; then
     cmake --build --preset "release-unix"
     exit $?
 fi

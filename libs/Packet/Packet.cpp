@@ -6,6 +6,7 @@
 */
 
 #include "Packet.hpp"
+#include "../DLLoader/LoaderType.hpp"
 
 namespace net {
 

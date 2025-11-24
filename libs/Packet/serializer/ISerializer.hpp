@@ -8,7 +8,6 @@
 #include <vector>
 #include <cstdint>
 
-
 #ifndef ISERIALIZER_HPP_
 #define ISERIALIZER_HPP_
 

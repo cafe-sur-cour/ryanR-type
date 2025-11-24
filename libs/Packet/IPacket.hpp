@@ -8,7 +8,7 @@
 #ifndef IPACKET_HPP_
 #define IPACKET_HPP_
 
-#include "../buffer/IBuffer.hpp"
+#include "../Buffer/IBuffer.hpp"
 
 namespace net {
 

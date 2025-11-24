@@ -9,12 +9,14 @@ add_executable(${SERVER_BIN_NAME}
     Server.cpp
 )
 
+find_package(asio CONFIG REQUIRED)
+
 target_link_libraries(${SERVER_BIN_NAME}
     PRIVATE
-        ECS
         Network
         Packet
         Buffer
+        asio::asio
 )
 
 add_subdirectory(gsm)
