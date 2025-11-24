@@ -6,15 +6,16 @@
 */
 
 #include "ASystem.hpp"
-
+#include <memory>
 namespace ecs {
 
 ASystem::ASystem() {
 }
 
-void ASystem::updateSystem(std::shared_ptr<AContext> context, float deltaTime) {
-    if (context) {
-        update(context, deltaTime);
+void ASystem::updateSystem(std::shared_ptr<ResourceManager> resourceManager,
+    std::shared_ptr<ARegistry> registry, float deltaTime) {
+    if (resourceManager && registry) {
+        update(resourceManager, registry, deltaTime);
     }
 }
 
