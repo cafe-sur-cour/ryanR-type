@@ -7,8 +7,6 @@ add_executable(${SERVER_BIN_NAME}
     ServerConfig.cpp
     Server.hpp
     Server.cpp
-    initRessourcesManager/initRessourcesManager.cpp
-    initRessourcesManager/initRessourcesManager.hpp
 )
 
 find_package(asio CONFIG REQUIRED)
@@ -21,6 +19,7 @@ target_link_libraries(${SERVER_BIN_NAME}
 )
 
 add_subdirectory(gsm)
+add_subdirectory(initRessourcesManager)
 
 add_custom_command(TARGET ${SERVER_BIN_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${SERVER_BIN_NAME}> ${CMAKE_SOURCE_DIR}/
