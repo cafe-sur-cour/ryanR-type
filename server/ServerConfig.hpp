@@ -8,7 +8,7 @@
 #ifndef SERVER_CONFIG_HPP_
     #define SERVER_CONFIG_HPP_
 
-namespace net {
+namespace rserv {
     class ServerConfig {
         public:
             ServerConfig(unsigned int port);
@@ -27,6 +27,6 @@ namespace net {
             int _fd;
             unsigned int _port;
     };
-} // namespace net
+} // namespace rserv = r-type server
 
 #endif /* !SERVER_CONFIG_HPP_ */

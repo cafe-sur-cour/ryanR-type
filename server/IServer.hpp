@@ -11,7 +11,7 @@
 #include <memory>
 #include "ServerConfig.hpp"
 
-namespace net {
+namespace rserv {
     class IServer {
         public:
             virtual ~IServer() = default;
@@ -31,5 +31,5 @@ namespace net {
             virtual void setFd(int fd) = 0;
             virtual void setPort(unsigned int port) = 0;
     };
-} // namespace net
+} // namespace rserv = r-type server = r-type server
 #endif /* !ISERVER_HPP_ */
