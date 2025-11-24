@@ -89,8 +89,8 @@ Client :
    +--------+-------------------+----------------------------------------+
    | Value  | Name              | Description                            |
    +--------+-------------------+----------------------------------------+
-   | 0x01   | CONNEXION         | Client connection request              |
-   | 0x03   | DECONNEXION       | End of connection or window close      |
+   | 0x01   | CONNECTION         | Client connection request              |
+   | 0x03   | DECONNECTION       | End of connection or window close      |
    | 0x04   | EVENT             | Sent when event happens                |
    +--------+-------------------+----------------------------------------+
 ```
@@ -100,7 +100,7 @@ Server :
    +--------+-------------------+----------------------------------------+
    | Value  | Name              | Description                            |
    +--------+-------------------+----------------------------------------+
-   | 0x02   | CONNEXION_ACC     | Server response to connection          |
+   | 0x02   | CONNECTIONS       | Server response to connection          |
    | 0x05   | GAME_STATE        | Game state update                      |
    | 0x06   | MAP_SEND          | Sends map state and elements           |
    | 0x07   | END_MAP           | Signals map has ended                  |
@@ -114,13 +114,13 @@ Server :
 4.1 Client Details
 
 
-4.1.1 CONNEXION (0x01) – Sent from client to server
+4.1.1 CONNECTION (0x01) – Sent from client to server
 
 
    - Player name (UTF-8, max 7 chars + null terminator)
 
 
-4.1.2. DECONNEXION (0x03) – Client requests to disconnect to server
+4.1.2. DECONNECTION (0x03) – Client requests to disconnect to server
 
    - Player ID (4 bytes)
 
@@ -133,7 +133,7 @@ Server :
 
 **4.2 Server Details**
 
-4.2.1 CONNEXION_ACC (0x01) – Sent from Server to Client
+4.2.1 CONNECTIONS   (0x01) – Sent from Server to Client
 
    - Player ID (4 bytes)
 
@@ -173,10 +173,10 @@ Server :
    |                  |                      |                  |
    +------------------+                      +------------------+
            |                                          |
-           |            CONNEXION                     |
+           |            CONNECTION                     |
            |----------------------------------------->|
            |                                          |
-           |            CONNEXION_ACC                 |
+           |            CONNECTIONS                   |
            |<-----------------------------------------|
            |                                          |
            |            GAME_STATE                      |
@@ -194,7 +194,7 @@ Server :
            |            END GAME                      |
            |----------------------------------------->|
            |                                          |
-           |            DECONNEXION                   |
+           |            DECONNECTION                   |
            |----------------------------------------->|
 
 ```
