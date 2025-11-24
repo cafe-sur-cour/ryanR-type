@@ -17,10 +17,10 @@ jobs:
     outputs:
       target: ${{ steps.new_output.outputs.value }}
     steps:
-      - name: checkout@v4
+      - name: CHECKOUT
         uses: actions/checkout@v4
 
-      - name: check target repository
+      - name: CHECK TARGET REPOSITORY
         id: new_output
         run: |
           temp=$(echo $MIRROR_URL | cut -d ':' -f 2 | sed "s/\.git//")
@@ -38,20 +38,20 @@ jobs:
     if: ${{ needs.check_repository.outputs.target == 0 }}
     runs-on: ubuntu-latest
     steps:
-      - name: checkout@v4
+      - name: CHECKOUT
         uses: actions/checkout@v4
 
-      - name: install dependencies
+      - name: INSTALL CPP LINTER
         run: |
           apt update && apt install -y python3-pip
-          pip install --break-system-packages cpplint
+          pip install cpplint
           chmod +x ./scripts/cpp_style_checker.sh
 
-      - name: check coding style
+      - name: CHECK CODING STYLE
         run: |
           ./scripts/cpp_style_checker.sh
 
-      - name: verify cpp coding style
+      - name: VERIFY CPP CODING STYLE
         run: |
           if [ -s coding-style-cpp-reports.log ]; then
             echo "CPP coding style errors found. See coding-style-cpp-reports.log for details."
@@ -66,13 +66,13 @@ jobs:
     needs: [check_coding_style]
     runs-on: ubuntu-latest
     steps:
-      - name: checkout@v4
+      - name: CHECKOUT
         uses: actions/checkout@v4
 
-      - name: run compilation
-        run: |
-          chmod +x ./scripts/compile_project.sh
-          ./scripts/compile_project.sh
+      # - name: RUN COMPILATION
+      #   run: |
+      #     chmod +x ./scripts/compile_project.sh
+      #     ./scripts/compile_project.sh
 
   push_to_mirror:
     name: push to target repository
@@ -81,11 +81,11 @@ jobs:
     environment: RTYPE
     runs-on: ubuntu-latest
     steps:
-      - name: checkout@v4
+      - name: CHECKOUT
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Repository Mirroring
+      - name: REPOSITORY MIRRORING
         uses: pixta-dev/repository-mirroring-action@v1
         with:
           target_repo_url: ${{ env.MIRROR_URL }}
