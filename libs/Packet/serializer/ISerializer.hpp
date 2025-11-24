@@ -11,7 +11,6 @@
 #ifndef ISERIALIZER_HPP_
 #define ISERIALIZER_HPP_
 
-namespace net {
 
 class ISerializer {
     public:
@@ -22,7 +21,5 @@ class ISerializer {
     protected:
     private:
 };
-
-} // namespace net
 
 #endif /* !ISERIALIZER_HPP_ */

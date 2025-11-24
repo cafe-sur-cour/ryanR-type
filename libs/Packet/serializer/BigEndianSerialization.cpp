@@ -9,7 +9,6 @@
 
 #include "BigEndianSerialization.hpp"
 
-namespace net {
 
 BigEndianSerialization::BigEndianSerialization() {
 }
@@ -26,5 +25,3 @@ bool BigEndianSerialization::deserialize(const std::vector<uint8_t>& data,
     void* output, size_t expectedSize) {
     return false;
 }
-
-}  // namespace net

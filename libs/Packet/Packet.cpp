@@ -8,8 +8,6 @@
 #include "Packet.hpp"
 #include "../DLLoader/LoaderType.hpp"
 
-namespace net {
-
 Packet::Packet(int idClient) {
     this->_magicNumber = MAGIC_NUMBER;
     this->_idClient = idClient;
@@ -53,7 +51,6 @@ bool Packet::unpackPacket(const IBuffer &buffer) {
     return false;
 }
 
-}  // namespace net
 
 extern "C" {
 

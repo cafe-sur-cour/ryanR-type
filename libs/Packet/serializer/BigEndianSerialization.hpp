@@ -9,8 +9,6 @@
 #ifndef BIGENDIANSERIALIZATION_HPP_
 #define BIGENDIANSERIALIZATION_HPP_
 
-namespace net {
-
 class BigEndianSerialization : public ISerializer {
     public:
         BigEndianSerialization();
@@ -21,7 +19,5 @@ class BigEndianSerialization : public ISerializer {
     protected:
     private:
 };
-
-} // namespace net
 
 #endif /* !BIGENDIANSERIALIZATION_HPP_ */

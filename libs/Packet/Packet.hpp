@@ -16,7 +16,6 @@
 
 #define MAGIC_NUMBER 0x93
 
-namespace net {
 
 class Packet : public IPacket {
     public:
@@ -40,6 +39,5 @@ class Packet : public IPacket {
         std::shared_ptr<ISerializer> _serializer;
 };
 
-} // namespace net
 
 #endif /* !PACKET_HPP_ */
