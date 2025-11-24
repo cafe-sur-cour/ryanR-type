@@ -8,15 +8,15 @@
 #ifndef INETWORK_HPP_
 #define INETWORK_HPP_
 
-#include "packet/IPacket.hpp"
-#include "buffer/IBuffer.hpp"
+#include "../Packet/IPacket.hpp"
+#include "../Buffer/IBuffer.hpp"
 
 namespace net {
 
 class INetwork {
     public:
 
-        virtual ~INetwork() = 0;
+        virtual ~INetwork() = default;
 
         virtual void init() = 0;
         virtual void stop() = 0;

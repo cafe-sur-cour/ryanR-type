@@ -1,18 +1,39 @@
 /*
 ** EPITECH PROJECT, 2025
-** ryanR-type
+** R-Type
 ** File description:
-** ServerConfig
+** Server Config
 */
 
 #include "ServerConfig.hpp"
 
-namespace net {
-
-ServerConfig::ServerConfig() {
+rserv::ServerConfig::ServerConfig(unsigned int port) :
+    _state(-1), _fd(-1), _port(port) {
 }
 
-ServerConfig::~ServerConfig() {
+rserv::ServerConfig::~ServerConfig() {
 }
 
-}  // namespace net
+int rserv::ServerConfig::getState() const {
+    return this->_state;
+}
+
+int rserv::ServerConfig::getFd() const {
+    return this->_fd;
+}
+
+unsigned int rserv::ServerConfig::getPort() const {
+    return this->_port;
+}
+
+void rserv::ServerConfig::setState(int state) {
+    this->_state = state;
+}
+
+void rserv::ServerConfig::setFd(int fd) {
+    this->_fd = fd;
+}
+
+void rserv::ServerConfig::setPort(unsigned int port) {
+    this->_port = port;
+}

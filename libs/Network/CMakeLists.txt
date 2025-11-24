@@ -1,6 +1,6 @@
 set(NETWORK_LIB_NAME Network)
 
-add_library(${NETWORK_LIB_NAME} STATIC
+add_library(${NETWORK_LIB_NAME} SHARED
     INetwork.hpp
     ANetwork.hpp
 )
@@ -14,6 +14,3 @@ if(WIN32)
 elseif(UNIX)
     add_subdirectory(LinuxNetwork)
 endif()
-
-add_subdirectory(buffer)
-add_subdirectory(packet)
