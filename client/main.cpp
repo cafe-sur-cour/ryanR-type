@@ -7,30 +7,33 @@
 
 #include <iostream>
 #include <memory>
+#include <chrono>
 #include "initRessourcesManager/initRessourcesManager.hpp"
 #include "../common/ECS/resourceManager/ResourceManager.hpp"
 #include "../client/graphicals/IWindow.hpp"
 #include "../client/graphicals/IEvent.hpp"
+#include "gsm/machine/GameStateMachine.hpp"
+#include "gsm/states/scenes/DevState.hpp"
 
 int main() {
     std::shared_ptr<ecs::ResourceManager> resourceManager =
         initRessourcesManager();
 
-    // tmp loop to test window and events
+    std::shared_ptr<gsm::GameStateMachine> gsm = std::make_shared<gsm::GameStateMachine>();
+    std::shared_ptr<gsm::DevState> devState = std::make_shared<gsm::DevState>(gsm, resourceManager);
+
+    gsm->changeState(devState);
+
+    auto previousTime = std::chrono::high_resolution_clock::now();
+
     while (resourceManager->get<gfx::IWindow>()->isOpen()) {
-        // tmp to see events
-        auto eventResult = resourceManager->get<gfx::IEvent>
-            ()->pollEvents({0, 0});
-        if (eventResult == gfx::IEvent::CLOSE) {
-            std::cout << "Event: Window closed" << std::endl;
-            break;
-        } else if (eventResult != gfx::IEvent::NOTHING) {
-            std::cout << "press" << static_cast<int>(eventResult) << std::endl;
-        }
-        resourceManager->get<gfx::IWindow>()->clear();
-        resourceManager->get<gfx::IWindow>()->drawRectangle(
-            gfx::color_t{255, 0, 0}, {100, 100}, {200, 150});
-        resourceManager->get<gfx::IWindow>()->display();
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<float> deltaTime = currentTime - previousTime;
+        previousTime = currentTime;
+
+        gsm->update(deltaTime.count());
+        gsm->render();
     }
+
     return 0;
 }
