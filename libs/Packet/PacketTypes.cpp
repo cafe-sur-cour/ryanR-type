@@ -8,7 +8,8 @@
 #include <vector>
 #include "Packet.hpp"
 
-std::vector<std::uint8_t> Packet::connectionPacket(std::vector<std::uint8_t> payload) {
+std::vector<std::uint8_t> Packet::connectionPacket(
+    std::vector<std::uint8_t> payload) {
     std::vector<std::uint8_t> body;
     std::vector<uint8_t> temp;
 
@@ -21,7 +22,8 @@ std::vector<std::uint8_t> Packet::connectionPacket(std::vector<std::uint8_t> pay
     return body;
 }
 
-std::vector<std::uint8_t> Packet::disconnectionPacket(std::vector<std::uint8_t> payload) {
+std::vector<std::uint8_t> Packet::disconnectionPacket(
+    std::vector<std::uint8_t> payload) {
     std::vector<std::uint8_t> body;
     std::vector<uint8_t> temp;
 
@@ -34,7 +36,8 @@ std::vector<std::uint8_t> Packet::disconnectionPacket(std::vector<std::uint8_t> 
     return body;
 }
 
-std::vector<std::uint8_t> Packet::eventPacket(std::vector<std::uint8_t> payload) {
+std::vector<std::uint8_t> Packet::eventPacket(
+    std::vector<std::uint8_t> payload) {
     std::vector<std::uint8_t> body;
     std::vector<uint8_t> temp;
 
