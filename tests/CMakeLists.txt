@@ -16,6 +16,10 @@ add_executable(VelocityComponentTests common/ECS/component/VelocityComponentTest
 target_link_libraries(VelocityComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME VelocityComponentTests COMMAND VelocityComponentTests)
 
+add_executable(TransformComponentTests common/ECS/component/TransformComponentTests.cpp)
+target_link_libraries(TransformComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME TransformComponentTests COMMAND TransformComponentTests)
+
 add_executable(BufferTests server/buffer/circularBufferTest.cpp)
 target_link_libraries(BufferTests Buffer GTest::gtest GTest::gtest_main)
 add_test(NAME BufferTests COMMAND BufferTests)
