@@ -10,7 +10,7 @@
 
 #include <memory>
 
-#include "../ISystem.hpp"
+#include "../base/ISystem.hpp"
 #include "../../resourceManager/ResourceManager.hpp"
 #include "../../entity/registry/ARegistry.hpp"
 
@@ -24,6 +24,6 @@ class ISystemManager {
         virtual void removeSystem(std::shared_ptr<ISystem> system) = 0;
 };
 
-} // namespace ecs
+}  // namespace ecs
 
 #endif /* !ISystemMANAGER_HPP_ */

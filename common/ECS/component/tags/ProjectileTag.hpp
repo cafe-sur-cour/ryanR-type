@@ -8,7 +8,7 @@
 #ifndef PROJECTILETAG_HPP_
 #define PROJECTILETAG_HPP_
 
-#include "AComponent.hpp"
+#include "../base/AComponent.hpp"
 
 namespace ecs {
 

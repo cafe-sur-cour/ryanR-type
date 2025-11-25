@@ -7,6 +7,7 @@
 
 #include "LinuxNetwork.hpp"
 #include "../../common/DLLoader/LoaderType.hpp"
+#include "../Packet/Packet.hpp"
 
 namespace net {
 
@@ -24,9 +25,15 @@ void LinuxNetwork::stop() {
 }
 
 void LinuxNetwork::sendData(const IPacket &data, size_t size) {
+    (void)data;
+    (void)size;
 }
 
 IPacket &LinuxNetwork::receiveData(const IBuffer &buffer, size_t size) const {
+    (void)buffer;
+    (void)size;
+    static Packet tmpPacket(1);
+    return tmpPacket;
 }
 
 }  // namespace net
