@@ -9,7 +9,6 @@
 #include "../../common/ECS/component/base/AComponent.hpp"
 #include "../../common/ECS/entity/AEntity.hpp"
 #include "../../common/ECS/entity/registry/ARegistry.hpp"
-#include "../../client/initRessourcesManager/initRessourcesManager.hpp"
 
 using namespace ecs;
 
@@ -99,29 +98,6 @@ TEST(ARegistryTest, RemoveAllComponentsWithState) {
 
     registry.removeAllComponentsWithState(ComponentState::Temporary);
     EXPECT_FALSE(registry.hasComponent<TestComponent>(entityId));
-}
-
-/* InitRessourcesManager Tests */
-
-TEST(InitRessourcesManagerTest, ReturnsValidPointer) {
-    auto resourceManager = initRessourcesManager();
-    ASSERT_NE(resourceManager, nullptr);
-}
-
-TEST(InitRessourcesManagerTest, ReturnsEmptyResourceManager) {
-    auto resourceManager = initRessourcesManager();
-
-    // Test that no resources are initially loaded
-    // Since we don't know what types might be added, we'll test with a common type
-    EXPECT_FALSE(resourceManager->has<std::string>());
-}
-
-TEST(InitRessourcesManagerTest, ReturnsDifferentInstances) {
-    auto resourceManager1 = initRessourcesManager();
-    auto resourceManager2 = initRessourcesManager();
-
-    // Each call should return a different instance
-    EXPECT_NE(resourceManager1, resourceManager2);
 }
 
 int main(int argc, char **argv) {

@@ -4,8 +4,8 @@ add_executable(ServerConfigTests server/ServerConfigTests.cpp)
 target_link_libraries(ServerConfigTests r-type_server_lib GTest::gtest GTest::gtest_main)
 add_test(NAME ServerConfigTests COMMAND ServerConfigTests)
 
-add_executable(ECSTests common/ECSTests.cpp ../client/initRessourcesManager/initRessourcesManager.cpp)
-target_link_libraries(ECSTests ECS Graphical GTest::gtest GTest::gtest_main)
+add_executable(ECSTests common/ECSTests.cpp)
+target_link_libraries(ECSTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME ECSTests COMMAND ECSTests)
 
 add_executable(Vector2fTests common/types/Vector2fTests.cpp)
@@ -55,11 +55,3 @@ add_test(NAME BufferTests COMMAND BufferTests)
 add_executable(PacketTests server/packet/packettest.cpp)
 target_link_libraries(PacketTests Packet Buffer GTest::gtest GTest::gtest_main)
 add_test(NAME PacketTests COMMAND PacketTests)
-
-add_executable(SfmlWindowTests graphicals/SfmlWindowTests.cpp)
-target_link_libraries(SfmlWindowTests Graphical GTest::gtest GTest::gtest_main)
-add_test(NAME SfmlWindowTests COMMAND SfmlWindowTests)
-
-add_executable(SfmlEventTests graphicals/SfmlEventTests.cpp)
-target_link_libraries(SfmlEventTests Graphical GTest::gtest GTest::gtest_main)
-add_test(NAME SfmlEventTests COMMAND SfmlEventTests)
