@@ -13,6 +13,7 @@ namespace math {
 class Vector2f {
     public:
         Vector2f(float x = 0.0f, float y = 0.0f);
+        Vector2f(Vector2f const &other);
         ~Vector2f() = default;
 
         float getX() const;
