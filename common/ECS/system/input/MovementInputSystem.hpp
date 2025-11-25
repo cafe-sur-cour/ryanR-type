@@ -38,7 +38,7 @@ class MovementInputSystem : public ASystem {
         math::Vector2f _axisInput;
 
         math::Vector2f getMovementDirection() const;
-        void updateMovementIntent(std::shared_ptr<ARegistry> registry, int entityId, math::Vector2f direction);
+        void updateMovementIntent(std::shared_ptr<ARegistry> registry, int entityId, const math::Vector2f &direction);
 };
 
 } // namespace ecs

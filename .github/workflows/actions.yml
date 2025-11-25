@@ -144,3 +144,79 @@ jobs:
         with:
           target_repo_url: ${{ env.MIRROR_URL }}
           ssh_private_key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
+
+  create_unix_release:
+    name: create unix release
+    needs: [run_all_tests]
+    if: ${{ github.event_name == 'push' }}
+    environment: RTYPE
+    runs-on: ubuntu-latest
+    steps:
+      - name: CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: CREATE SOURCE ARCHIVE
+        run: |
+          mkdir -p release-package
+          cp -r client server common libs scripts tests CMakeLists.txt CMakePresets.json vcpkg.json release-package/
+          cd release-package
+          zip -r ../rtype-unix-source-${{ github.run_number }}.zip .
+          cd ..
+
+      - name: CREATE UNIX RELEASE
+        uses: ncipollo/release-action@v1
+        with:
+          tag: unix-latest-${{ github.run_number }}
+          name: Unix Release ${{ github.run_number }}
+          body: |
+            Automated Unix release for run number ${{ github.run_number }}.
+
+            ## Installation
+            1. Download the file `rtype-unix-source-${{ github.run_number }}.zip`
+            2. Unzip the archive: `unzip rtype-unix-source-${{ github.run_number }}.zip`
+            3. Run the compilation script: `chmod +x scripts/compile_project.sh && ./scripts/compile_project.sh`
+          draft: false
+          prerelease: false
+          artifacts: "rtype-unix-source-${{ github.run_number }}.zip"
+          artifactContentType: application/zip
+
+  create_windows_release:
+    name: create windows release
+    needs: [run_all_tests]
+    if: ${{ github.event_name == 'push' }}
+    environment: RTYPE
+    runs-on: windows-latest
+    steps:
+      - name: CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: INSTALL DEPENDENCIES
+        run: |
+          git clone https://github.com/Microsoft/vcpkg.git
+          cd vcpkg
+          .\bootstrap-vcpkg.bat
+          echo "VCPKG_ROOT=$PWD" >> $env:GITHUB_ENV
+
+      - name: BUILD PROJECT
+        run: |
+          .\scripts\compile_project.bat
+
+      - name: CREATE WINDOWS RELEASE
+        uses: ncipollo/release-action@v1
+        with:
+          tag: windows-latest-${{ github.run_number }}
+          name: Windows Release ${{ github.run_number }}
+          body: |
+            Automated Windows release for run number ${{ github.run_number }}.
+
+            ## Installation
+            1. Download the executable files
+            2. Run the client or server executable directly
+          draft: false
+          prerelease: false
+          artifacts: "*.exe"
+          artifactContentType: application/vnd.microsoft.portable-executable

@@ -64,6 +64,7 @@ TEST(ARegistryTest, View_EmptyRegistry) {
     // Should iterate over no entities
     int count = 0;
     for (auto entityId : view) {
+        (void)entityId;
         count++;
     }
     EXPECT_EQ(count, 0);
