@@ -1,5 +1,4 @@
-target_sources(${ECS_LIB_NAME} PUBLIC
-    IComponent.hpp
-    AComponent.hpp
-    AComponent.cpp
-)
+add_subdirectory(base)
+add_subdirectory(permanent)
+add_subdirectory(tags)
+add_subdirectory(temporary)

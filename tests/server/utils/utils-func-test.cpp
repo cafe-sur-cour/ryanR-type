@@ -1,0 +1,56 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** Utils Func Tests
+*/
+
+#include <gtest/gtest.h>
+#include "../../server/Utils.hpp"
+
+class UtilsTest : public ::testing::Test {
+protected:
+    Utils utils;
+};
+
+TEST_F(UtilsTest, HelperPrintsUsage) {
+    testing::internal::CaptureStdout();
+    utils.helper();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("Usage:"), std::string::npos);
+    EXPECT_NE(output.find("-p <port>"), std::string::npos);
+    EXPECT_NE(output.find("-h"), std::string::npos);
+}
+
+TEST_F(UtilsTest, ParsCliSetsConfigCorrectly) {
+    const char* argv[] = {"program", "-p", "8080", "-i", "127001", "-n", "2"};
+    int argc = sizeof(argv) / sizeof(argv[0]);
+    auto config = std::make_shared<rserv::ServerConfig>(0);
+
+    utils.parsCli(argc, const_cast<char**>(argv), config);
+
+    EXPECT_EQ(config->getPort(), 8080);
+    EXPECT_EQ(config->getIp(), 127001);
+    EXPECT_EQ(config->getNbClients(), 2);
+}
+
+TEST_F(UtilsTest, ParsCliInvalidNbClientsExits) {
+    const char* argv[] = {"program", "-p", "8080", "-i", "127001", "-n", "5"};
+    int argc = sizeof(argv) / sizeof(argv[0]);
+    auto config = std::make_shared<rserv::ServerConfig>(0);
+
+    testing::internal::CaptureStderr();
+    EXPECT_EXIT(utils.parsCli(argc, const_cast<char**>(argv), config), ::testing::ExitedWithCode(84), "");
+    testing::internal::GetCapturedStderr();
+}
+
+TEST_F(UtilsTest, ParsCliHelpExits) {
+    const char* argv[] = {"program", "-h"};
+    int argc = sizeof(argv) / sizeof(argv[0]);
+    auto config = std::make_shared<rserv::ServerConfig>(0);
+
+    testing::internal::CaptureStdout();
+    EXPECT_EXIT(utils.parsCli(argc, const_cast<char**>(argv), config), ::testing::ExitedWithCode(0), "");
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("Usage:"), std::string::npos);
+}
