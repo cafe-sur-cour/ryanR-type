@@ -15,7 +15,7 @@
 SfmlWindow::SfmlWindow(std::string title, size_t width, size_t height)
     : _window(std::make_shared<sf::RenderWindow>(
     sf::VideoMode({static_cast<unsigned int>(width),
-    static_cast<unsigned int>(height)}), title)), _fontPath("tmp.ttf") {
+    static_cast<unsigned int>(height)}), title)), _fontPath("./assets/fonts/ARIAL.TTF") {
     if (!_font.openFromFile(_fontPath)) {
         std::cout << "Failed to load font: " << _fontPath << std::endl;
         // throw std::runtime_error("Failed to load font: " + _fontPath);
