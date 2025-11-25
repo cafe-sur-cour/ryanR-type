@@ -8,7 +8,7 @@
 #ifndef PLAYERTAG_HPP_
 #define PLAYERTAG_HPP_
 
-#include "AComponent.hpp"
+#include "../base/AComponent.hpp"
 
 namespace ecs {
 

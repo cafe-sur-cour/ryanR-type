@@ -9,7 +9,8 @@
 #define IREGISTRY_HPP_
 
 #include <memory>
-#include "../../component/IComponent.hpp"
+#include "../../component/base/IComponent.hpp"
+#include "../../view/View.hpp"
 
 namespace ecs {
 
@@ -31,6 +32,14 @@ class IRegistry {
 
         template <typename T>
         bool hasComponent(int entityId);
+
+        template <typename... Components>
+        View<Components...> view();
+
+        template <typename... Components>
+        Group<Components...> group();
+
+        size_t getMaxEntityId() const;
 
         virtual void removeAllComponentsWithState(ComponentState state) = 0;
 };

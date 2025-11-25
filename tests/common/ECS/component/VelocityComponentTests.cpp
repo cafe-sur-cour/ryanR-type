@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../../../common/ECS/component/VelocityComponent.hpp"
+#include "../../../../common/ECS/component/permanent/VelocityComponent.hpp"
 
 using namespace ecs;
 

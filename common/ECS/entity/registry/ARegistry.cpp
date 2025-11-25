@@ -21,4 +21,15 @@ void ARegistry::removeAllComponentsWithState(ComponentState state) {
     }
 }
 
+size_t ARegistry::getMaxEntityId() const {
+    size_t maxId = 0;
+    for (const auto& pair : _components) {
+        size_t componentMaxId = pair.second->getMaxEntityId();
+        if (componentMaxId > maxId) {
+            maxId = componentMaxId;
+        }
+    }
+    return maxId;
+}
+
 }  // namespace ecs

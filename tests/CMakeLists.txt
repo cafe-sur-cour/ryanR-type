@@ -36,6 +36,18 @@ add_executable(ObstacleTagTests common/ECS/component/ObstacleTagTests.cpp)
 target_link_libraries(ObstacleTagTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME ObstacleTagTests COMMAND ObstacleTagTests)
 
+add_executable(MovementIntentComponentTests common/ECS/component/MovementIntentComponentTests.cpp)
+target_link_libraries(MovementIntentComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME MovementIntentComponentTests COMMAND MovementIntentComponentTests)
+
+add_executable(RegistryTests common/ECS/RegistryTests.cpp)
+target_link_libraries(RegistryTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME RegistryTests COMMAND RegistryTests)
+
+add_executable(MovementInputSystemTests common/ECS/MovementInputSystemTests.cpp)
+target_link_libraries(MovementInputSystemTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME MovementInputSystemTests COMMAND MovementInputSystemTests)
+
 add_executable(BufferTests server/buffer/circularBufferTest.cpp)
 target_link_libraries(BufferTests Buffer GTest::gtest GTest::gtest_main)
 add_test(NAME BufferTests COMMAND BufferTests)

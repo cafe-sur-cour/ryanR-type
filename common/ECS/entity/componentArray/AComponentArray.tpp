@@ -57,6 +57,11 @@ void AComponentArray<T>::removeAllComponentsWithState(ComponentState state) {
     }
 }
 
+template <typename T>
+size_t AComponentArray<T>::getMaxEntityId() const {
+    return _components.size();
+}
+
 } // namespace ecs
 
 #endif /* !AComponentArray_TPP_ */
