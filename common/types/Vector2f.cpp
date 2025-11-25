@@ -7,6 +7,8 @@
 
 #include "Vector2f.hpp"
 
+namespace math {
+
 Vector2f::Vector2f(float x, float y) : _x(x), _y(y) {
 }
 
@@ -66,3 +68,4 @@ void Vector2f::operator/=(float scalar) {
     _x /= scalar;
     _y /= scalar;
 }
+}  // namespace math

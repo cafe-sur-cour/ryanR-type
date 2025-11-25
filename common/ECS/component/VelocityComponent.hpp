@@ -15,14 +15,13 @@ namespace ecs {
 
 class VelocityComponent : public AComponent {
     public:
-        VelocityComponent(Vector2f velocity = Vector2f(0.0f, 0.0f)) : _velocity(velocity) {};
+        VelocityComponent(math::Vector2f velocity = math::Vector2f(0.0f, 0.0f)) : _velocity(velocity) {};
         ~VelocityComponent() = default;
 
-        Vector2f getVelocity() const { return _velocity; };
-        void setVelocity(Vector2f velocity) { _velocity = velocity; };
-
+        math::Vector2f getVelocity() const { return _velocity; };
+        void setVelocity(math::Vector2f velocity) { _velocity = velocity; };
     private:
-        Vector2f _velocity;
+        math::Vector2f _velocity;
 };
 
 } // namespace ecs
