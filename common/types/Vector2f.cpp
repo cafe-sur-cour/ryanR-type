@@ -68,5 +68,4 @@ void Vector2f::operator/=(float scalar) {
     _x /= scalar;
     _y /= scalar;
 }
-
-} // namespace math
+}  // namespace math
