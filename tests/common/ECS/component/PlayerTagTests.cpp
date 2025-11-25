@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../../../common/ECS/component/PlayerTag.hpp"
+#include "../../../../common/ECS/component/tags/PlayerTag.hpp"
 
 using namespace ecs;
 

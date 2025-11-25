@@ -4,7 +4,7 @@ add_executable(ServerConfigTests server/ServerConfigTests.cpp)
 target_link_libraries(ServerConfigTests r-type_server_lib GTest::gtest GTest::gtest_main)
 add_test(NAME ServerConfigTests COMMAND ServerConfigTests)
 
-add_executable(ECSTests common/ECSTests.cpp ../client/initRessourcesManager/initRessourcesManager.cpp)
+add_executable(ECSTests common/ECSTests.cpp)
 target_link_libraries(ECSTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME ECSTests COMMAND ECSTests)
 
@@ -35,6 +35,26 @@ add_test(NAME ProjectileTagTests COMMAND ProjectileTagTests)
 add_executable(ObstacleTagTests common/ECS/component/ObstacleTagTests.cpp)
 target_link_libraries(ObstacleTagTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME ObstacleTagTests COMMAND ObstacleTagTests)
+
+add_executable(MovementIntentComponentTests common/ECS/component/MovementIntentComponentTests.cpp)
+target_link_libraries(MovementIntentComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME MovementIntentComponentTests COMMAND MovementIntentComponentTests)
+
+add_executable(SpeedComponentTests common/ECS/component/SpeedComponentTests.cpp)
+target_link_libraries(SpeedComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME SpeedComponentTests COMMAND SpeedComponentTests)
+
+add_executable(RegistryTests common/ECS/RegistryTests.cpp)
+target_link_libraries(RegistryTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME RegistryTests COMMAND RegistryTests)
+
+add_executable(MovementInputSystemTests common/ECS/MovementInputSystemTests.cpp)
+target_link_libraries(MovementInputSystemTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME MovementInputSystemTests COMMAND MovementInputSystemTests)
+
+add_executable(MovementSystemTests common/ECS/system/MovementSystemTests.cpp)
+target_link_libraries(MovementSystemTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME MovementSystemTests COMMAND MovementSystemTests)
 
 add_executable(BufferTests server/buffer/circularBufferTest.cpp)
 target_link_libraries(BufferTests Buffer GTest::gtest GTest::gtest_main)

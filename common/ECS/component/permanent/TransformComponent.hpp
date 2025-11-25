@@ -8,8 +8,8 @@
 #ifndef TRANSFORMCOMPONENT_HPP_
 #define TRANSFORMCOMPONENT_HPP_
 
-#include "AComponent.hpp"
-#include "../../types/Vector2f.hpp"
+#include "../base/AComponent.hpp"
+#include "../../../types/Vector2f.hpp"
 
 namespace ecs {
 

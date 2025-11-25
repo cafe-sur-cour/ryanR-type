@@ -55,5 +55,8 @@ std::vector<std::uint8_t> BigEndianSerialization::serializeChar(uint8_t value) {
 
 bool BigEndianSerialization::deserialize(const std::vector<uint8_t>& data,
     void* output, size_t expectedSize) {
+        (void)data;
+        (void)output;
+        (void)expectedSize;
     return false;
 }

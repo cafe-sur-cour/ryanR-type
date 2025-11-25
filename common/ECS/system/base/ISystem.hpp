@@ -8,8 +8,8 @@
 #ifndef ISystem_HPP_
 #define ISystem_HPP_
 
-#include "../resourceManager/ResourceManager.hpp"
-#include "../entity/registry/ARegistry.hpp"
+#include "../../resourceManager/ResourceManager.hpp"
+#include "../../entity/registry/ARegistry.hpp"
 #include <memory>
 
 namespace ecs {

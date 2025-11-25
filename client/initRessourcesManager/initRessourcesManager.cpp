@@ -9,14 +9,18 @@
 #include <memory>
 #include "../../common/ECS/resourceManager/ResourceManager.hpp"
 #include "initRessourcesManager.hpp"
+#include "../graphicals/IWindow.hpp"
+#include "../graphicals/IEvent.hpp"
+#include "../graphicals/SfmlWindow.hpp"
+#include "../graphicals/SfmlEvent.hpp"
 
 std::shared_ptr<ecs::ResourceManager> initRessourcesManager() {
     std::shared_ptr<ecs::ResourceManager> resourceManager =
         std::make_shared<ecs::ResourceManager>();
 
-    // Initialize and load resources here
-    // window
-    // networking
-    // etc.
+    std::shared_ptr<SfmlWindow> window = std::make_shared<SfmlWindow>();
+    resourceManager->add<gfx::IWindow>(window);
+    resourceManager->add<gfx::IEvent>
+        (std::make_shared<SfmlEvent>(resourceManager, window));
     return resourceManager;
 }
