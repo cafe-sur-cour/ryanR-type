@@ -10,7 +10,7 @@
 #include "../../../common/ECS/system/input/MovementInputSystem.hpp"
 #include "../../../common/ECS/entity/registry/ARegistry.hpp"
 #include "../../../common/ECS/component/tags/PlayerTag.hpp"
-#include "../../../common/ECS/component/temporary/MovementIntentComponent.hpp"
+#include "../../../common/ECS/component/temporary/InputIntentComponent.hpp"
 #include "../../../common/ECS/resourceManager/ResourceManager.hpp"
 
 using namespace ecs;
@@ -34,8 +34,8 @@ TEST_F(MovementInputSystemTest, NoPlayerEntities_NoMovementIntent) {
     // No entities with PlayerTag
     system->updateSystem(resourceManager, registry, 0.016f);
 
-    // Should not create any MovementIntent components
-    EXPECT_FALSE(registry->hasComponent<MovementIntentComponent>(0));
+    // Should not create any InputIntent components
+    EXPECT_FALSE(registry->hasComponent<InputIntentComponent>(0));
 }
 
 TEST_F(MovementInputSystemTest, PlayerEntity_NoInput_NoMovementIntent) {
@@ -47,8 +47,12 @@ TEST_F(MovementInputSystemTest, PlayerEntity_NoInput_NoMovementIntent) {
     // No input simulated
     system->updateSystem(resourceManager, registry, 0.016f);
 
-    // Should not create MovementIntent
-    EXPECT_FALSE(registry->hasComponent<MovementIntentComponent>(0));
+    // Should create InputIntent with zero direction
+    ASSERT_TRUE(registry->hasComponent<InputIntentComponent>(0));
+    auto intent = registry->getComponent<InputIntentComponent>(0);
+    ASSERT_TRUE(intent);
+    EXPECT_EQ(intent->getDirection().getX(), 0.0f);
+    EXPECT_EQ(intent->getDirection().getY(), 0.0f);
 }
 
 TEST_F(MovementInputSystemTest, PlayerEntity_WithInput_CreatesMovementIntent) {
@@ -61,11 +65,10 @@ TEST_F(MovementInputSystemTest, PlayerEntity_WithInput_CreatesMovementIntent) {
     system->simulateKeyPress(MovementKey::Right, true);
     system->updateSystem(resourceManager, registry, 0.016f);
 
-    // Should create MovementIntent
-    ASSERT_TRUE(registry->hasComponent<MovementIntentComponent>(0));
-    auto intent = registry->getComponent<MovementIntentComponent>(0);
+    // Should create InputIntent
+    ASSERT_TRUE(registry->hasComponent<InputIntentComponent>(0));
+    auto intent = registry->getComponent<InputIntentComponent>(0);
     ASSERT_TRUE(intent);
-    EXPECT_TRUE(intent->isActive());
     EXPECT_EQ(intent->getDirection().getX(), 1.0f);
     EXPECT_EQ(intent->getDirection().getY(), 0.0f);
 }
@@ -86,12 +89,11 @@ TEST_F(MovementInputSystemTest, MultiplePlayerEntities_AllGetMovementIntent) {
     system->simulateKeyPress(MovementKey::Up, true);
     system->updateSystem(resourceManager, registry, 0.016f);
 
-    // All players should have MovementIntent
+    // All players should have InputIntent
     for (size_t i = 0; i < 3; ++i) {
-        ASSERT_TRUE(registry->hasComponent<MovementIntentComponent>(i));
-        auto intent = registry->getComponent<MovementIntentComponent>(i);
+        ASSERT_TRUE(registry->hasComponent<InputIntentComponent>(i));
+        auto intent = registry->getComponent<InputIntentComponent>(i);
         ASSERT_TRUE(intent);
-        EXPECT_TRUE(intent->isActive());
         EXPECT_EQ(intent->getDirection().getX(), 0.0f);
         EXPECT_EQ(intent->getDirection().getY(), -1.0f);
     }
@@ -108,11 +110,10 @@ TEST_F(MovementInputSystemTest, DiagonalMovement_Normalized) {
     system->simulateKeyPress(MovementKey::Up, true);
     system->updateSystem(resourceManager, registry, 0.016f);
 
-    // Should create normalized diagonal MovementIntent
-    ASSERT_TRUE(registry->hasComponent<MovementIntentComponent>(0));
-    auto intent = registry->getComponent<MovementIntentComponent>(0);
+    // Should create normalized diagonal InputIntent
+    ASSERT_TRUE(registry->hasComponent<InputIntentComponent>(0));
+    auto intent = registry->getComponent<InputIntentComponent>(0);
     ASSERT_TRUE(intent);
-    EXPECT_TRUE(intent->isActive());
 
     // Check normalization (length should be ~1.0)
     float length = std::sqrt(intent->getDirection().getX() * intent->getDirection().getX() +
@@ -130,18 +131,20 @@ TEST_F(MovementInputSystemTest, InputReleased_IntentRemainsActive) {
     system->simulateKeyPress(MovementKey::Right, true);
     system->updateSystem(resourceManager, registry, 0.016f);
 
-    ASSERT_TRUE(registry->hasComponent<MovementIntentComponent>(0));
-    auto intent = registry->getComponent<MovementIntentComponent>(0);
+    ASSERT_TRUE(registry->hasComponent<InputIntentComponent>(0));
+    auto intent = registry->getComponent<InputIntentComponent>(0);
     ASSERT_TRUE(intent);
     EXPECT_EQ(intent->getState(), ComponentState::Temporary);
 
-    // Now release input - intent should remain active
+    // Now release input - intent direction becomes zero
     system->simulateKeyPress(MovementKey::Right, false);
     system->updateSystem(resourceManager, registry, 0.016f);
 
-    // Intent should remain in Temporary state (not marked as Processed)
-    intent = registry->getComponent<MovementIntentComponent>(0);
+    // Intent should be updated with zero direction and remain Temporary
+    intent = registry->getComponent<InputIntentComponent>(0);
     ASSERT_TRUE(intent);
+    EXPECT_EQ(intent->getDirection().getX(), 0.0f);
+    EXPECT_EQ(intent->getDirection().getY(), 0.0f);
     EXPECT_EQ(intent->getState(), ComponentState::Temporary);
 }
 
@@ -157,8 +160,8 @@ TEST_F(MovementInputSystemTest, AxisInput_OverridesKeyInput) {
     system->updateSystem(resourceManager, registry, 0.016f);
 
     // Should use axis input, not key input
-    ASSERT_TRUE(registry->hasComponent<MovementIntentComponent>(0));
-    auto intent = registry->getComponent<MovementIntentComponent>(0);
+    ASSERT_TRUE(registry->hasComponent<InputIntentComponent>(0));
+    auto intent = registry->getComponent<InputIntentComponent>(0);
     ASSERT_TRUE(intent);
     EXPECT_EQ(intent->getDirection().getX(), 0.5f);
     EXPECT_EQ(intent->getDirection().getY(), 0.8f);
@@ -180,8 +183,8 @@ TEST_F(MovementInputSystemTest, ExistingIntent_UpdatedCorrectly) {
     system->updateSystem(resourceManager, registry, 0.016f);
 
     // Intent should be updated
-    ASSERT_TRUE(registry->hasComponent<MovementIntentComponent>(0));
-    auto intent = registry->getComponent<MovementIntentComponent>(0);
+    ASSERT_TRUE(registry->hasComponent<InputIntentComponent>(0));
+    auto intent = registry->getComponent<InputIntentComponent>(0);
     ASSERT_TRUE(intent);
     EXPECT_EQ(intent->getDirection().getX(), -1.0f);
     EXPECT_EQ(intent->getDirection().getY(), 0.0f);
