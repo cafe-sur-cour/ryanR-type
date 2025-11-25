@@ -32,7 +32,7 @@ void InputToVelocitySystem::update(
         math::Vector2f direction = inputIntent->getDirection();
 
         registry->registerComponent<VelocityComponent>();
-        math::Vector2f velocity = direction * constants::BASE_SPEED;
+        math::Vector2f velocity = direction * constants::PLAYER_BASE_SPEED;
 
         if (registry->hasComponent<VelocityComponent>(entityId)) {
             auto existingVelocity =
