@@ -39,7 +39,6 @@ void SfmlEvent::createReverseKeyboardMapping() {
 }
 
 gfx::IEvent::event_t SfmlEvent::pollEvents() {
-    (void)gridSize;
     auto sfmlWindow = std::dynamic_pointer_cast<SfmlWindow>(_window);
     if (!sfmlWindow)
         return event_t::NOTHING;
