@@ -15,6 +15,7 @@
 #include "../../view/View.hpp"
 #include <memory>
 #include <unordered_map>
+#include <string>
 
 namespace ecs {
 
@@ -47,7 +48,7 @@ class ARegistry : public IRegistry, public std::enable_shared_from_this<ARegistr
 
     protected:
     private:
-        std::unordered_map<const char *, std::shared_ptr<IComponentArray>> _components;
+        std::unordered_map<std::string, std::shared_ptr<IComponentArray>> _components;
 };
 
 } // namespace ecs
