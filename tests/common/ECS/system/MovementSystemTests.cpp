@@ -59,10 +59,10 @@ TEST_F(MovementSystemsTest, EntityWithIntentAndTransform_UsesBaseSpeed) {
     // Process input to velocity
     inputToVelocitySystem->update(resourceManager, registry, 0.016f);
 
-    // Check velocity created: (1,0) * 100 = (100, 0)
+    // Check velocity created: (1,0) * 300 = (300, 0)
     ASSERT_TRUE(registry->hasComponent<VelocityComponent>(entityId));
     auto velocity = registry->getComponent<VelocityComponent>(entityId);
-    EXPECT_EQ(velocity->getVelocity().getX(), 100.0f);
+    EXPECT_EQ(velocity->getVelocity().getX(), 300.0f);
     EXPECT_EQ(velocity->getVelocity().getY(), 0.0f);
 
     // Intent should be processed
@@ -73,9 +73,9 @@ TEST_F(MovementSystemsTest, EntityWithIntentAndTransform_UsesBaseSpeed) {
     float deltaTime = 0.016f;
     movementSystem->update(resourceManager, registry, deltaTime);
 
-    // Position should be updated: 0 + (100,0) * 0.016 = (1.6, 0)
+    // Position should be updated: 0 + (300,0) * 0.016 = (4.8, 0)
     auto updatedTransform = registry->getComponent<TransformComponent>(entityId);
-    EXPECT_EQ(updatedTransform->getPosition().getX(), 1.6f);
+    EXPECT_EQ(updatedTransform->getPosition().getX(), 4.8f);
     EXPECT_EQ(updatedTransform->getPosition().getY(), 0.0f);
 }
 
@@ -91,20 +91,20 @@ TEST_F(MovementSystemsTest, EntityWithIntentAndTransform_MovesVertically) {
     // Process input to velocity
     inputToVelocitySystem->update(resourceManager, registry, 0.02f);
 
-    // Check velocity: (0,1) * 100 = (0, 100)
+    // Check velocity: (0,1) * 300 = (0, 300)
     ASSERT_TRUE(registry->hasComponent<VelocityComponent>(entityId));
     auto velocity = registry->getComponent<VelocityComponent>(entityId);
     EXPECT_EQ(velocity->getVelocity().getX(), 0.0f);
-    EXPECT_EQ(velocity->getVelocity().getY(), 100.0f);
+    EXPECT_EQ(velocity->getVelocity().getY(), 300.0f);
 
     // Now apply movement
     float deltaTime = 0.02f;
     movementSystem->update(resourceManager, registry, deltaTime);
 
-    // Position: (10,20) + (0,100) * 0.02 = (10, 20 + 2) = (10, 22)
+    // Position: (10,20) + (0,300) * 0.02 = (10, 20 + 6) = (10, 26)
     auto updatedTransform = registry->getComponent<TransformComponent>(entityId);
     EXPECT_EQ(updatedTransform->getPosition().getX(), 10.0f);
-    EXPECT_EQ(updatedTransform->getPosition().getY(), 22.0f);
+    EXPECT_EQ(updatedTransform->getPosition().getY(), 26.0f);
 
     // Intent processed
     auto updatedIntent = registry->getComponent<InputIntentComponent>(entityId);
@@ -155,7 +155,7 @@ TEST_F(MovementSystemsTest, EntityWithIntentWithoutTransform_CreatesVelocity) {
     // Velocity should be created
     ASSERT_TRUE(registry->hasComponent<VelocityComponent>(entityId));
     auto velocity = registry->getComponent<VelocityComponent>(entityId);
-    EXPECT_EQ(velocity->getVelocity().getX(), 100.0f);
+    EXPECT_EQ(velocity->getVelocity().getX(), 300.0f);
     EXPECT_EQ(velocity->getVelocity().getY(), 0.0f);
 
     // Intent processed
@@ -206,15 +206,15 @@ TEST_F(MovementSystemsTest, MultipleEntities_UpdatesCorrectly) {
     float deltaTime = 0.01f;
     movementSystem->update(resourceManager, registry, deltaTime);
 
-    // Entity 0: (0,0) + (100,0) * 0.01 = (1, 0)
+    // Entity 0: (0,0) + (300,0) * 0.01 = (3, 0)
     auto updatedTransform0 = registry->getComponent<TransformComponent>(entityId0);
-    EXPECT_EQ(updatedTransform0->getPosition().getX(), 1.0f);
+    EXPECT_EQ(updatedTransform0->getPosition().getX(), 3.0f);
     EXPECT_EQ(updatedTransform0->getPosition().getY(), 0.0f);
 
-    // Entity 1: (100,100) + (0,-100) * 0.01 = (100, 99)
+    // Entity 1: (100,100) + (0,-300) * 0.01 = (100, 97)
     auto updatedTransform1 = registry->getComponent<TransformComponent>(entityId1);
     EXPECT_EQ(updatedTransform1->getPosition().getX(), 100.0f);
-    EXPECT_EQ(updatedTransform1->getPosition().getY(), 99.0f);
+    EXPECT_EQ(updatedTransform1->getPosition().getY(), 97.0f);
 }
 
 int main(int argc, char **argv) {
