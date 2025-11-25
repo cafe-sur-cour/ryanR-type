@@ -5,6 +5,7 @@
 ** MovementSystem
 */
 
+#include <memory>
 #include "MovementSystem.hpp"
 
 namespace ecs {
@@ -12,7 +13,9 @@ namespace ecs {
 MovementSystem::MovementSystem() {
 }
 
-void MovementSystem::update(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) {
+void MovementSystem::update(std::shared_ptr<ResourceManager> resourceManager,
+                             std::shared_ptr<ARegistry> registry,
+                             float deltaTime) {
     (void)resourceManager;
 
     auto view = registry->view<MovementIntentComponent, TransformComponent>();
