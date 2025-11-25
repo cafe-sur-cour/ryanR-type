@@ -40,6 +40,10 @@ add_executable(MovementIntentComponentTests common/ECS/component/MovementIntentC
 target_link_libraries(MovementIntentComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME MovementIntentComponentTests COMMAND MovementIntentComponentTests)
 
+add_executable(SpeedComponentTests common/ECS/component/SpeedComponentTests.cpp)
+target_link_libraries(SpeedComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME SpeedComponentTests COMMAND SpeedComponentTests)
+
 add_executable(RegistryTests common/ECS/RegistryTests.cpp)
 target_link_libraries(RegistryTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME RegistryTests COMMAND RegistryTests)
@@ -47,6 +51,10 @@ add_test(NAME RegistryTests COMMAND RegistryTests)
 add_executable(MovementInputSystemTests common/ECS/MovementInputSystemTests.cpp)
 target_link_libraries(MovementInputSystemTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME MovementInputSystemTests COMMAND MovementInputSystemTests)
+
+add_executable(MovementSystemTests common/ECS/system/MovementSystemTests.cpp)
+target_link_libraries(MovementSystemTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME MovementSystemTests COMMAND MovementSystemTests)
 
 add_executable(BufferTests server/buffer/circularBufferTest.cpp)
 target_link_libraries(BufferTests Buffer GTest::gtest GTest::gtest_main)
@@ -59,3 +67,6 @@ add_test(NAME PacketTests COMMAND PacketTests)
 add_executable(UtilsFuncTests server/utils/utils-func-test.cpp)
 target_link_libraries(UtilsFuncTests r-type_server_lib GTest::gtest GTest::gtest_main)
 add_test(NAME UtilsFuncTests COMMAND UtilsFuncTests)
+add_executable(SerializerTests server/packet/serializer/SerializerTests.cpp)
+target_link_libraries(SerializerTests Packet GTest::gtest GTest::gtest_main)
+add_test(NAME SerializerTests COMMAND SerializerTests)
