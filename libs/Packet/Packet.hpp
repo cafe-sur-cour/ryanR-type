@@ -22,20 +22,26 @@ class Packet : public IPacket {
         Packet(int idClient);
         ~Packet() override;
 
-        uint8_t getMagicNumber() const;
-        int getIdClient() const;
-        size_t getSequenceNumber() const;
-        void incrementSequenceNumber();
+        uint8_t getMagicNumber() const override;
+        size_t getLength() const override;
+        size_t getSequenceNumber() const override;
+        uint8_t getType() const override;
 
-        bool packPacket(const IBuffer &buffer) override;
-        bool unpackPacket(const IBuffer &buffer) override;
+        void setType(uint8_t type) override;
+        void setLength(size_t length) override;
+
+        std::vector<uint8_t> packHeaderPacket(unsigned int idClient) override;
+        std::vector<uint8_t> packPacket(std::vector<std::string> payload) override;
+        bool unpackPacket(std::vector<uint8_t> data) override;
 
     protected:
     private:
         uint8_t _magicNumber;
-        int _idClient;
         size_t _sequenceNumber;
-        std::shared_ptr<IBuffer> _buffer;
+        uint8_t _type;
+        size_t _length;
+        std::vector<std::string> _payload;
+        short _endOfPacket;
         std::shared_ptr<ISerializer> _serializer;
 };
 

@@ -15,6 +15,7 @@ target_link_libraries(${SERVER_BIN_NAME}
     PUBLIC
         ECS
         DLLoader
+        Packet
         asio::asio
 )
 

@@ -14,9 +14,12 @@
 
 class ISerializer {
     public:
-        virtual ~ISerializer();
+        virtual ~ISerializer() = default;
 
-        virtual std::vector<uint8_t> serialize(const void* data, size_t size) = 0;
+        virtual std::vector<std::uint8_t> serializeInt(int value) = 0;
+        virtual std::vector<std::uint8_t> serializeLong(int64_t value) = 0;
+        virtual std::vector<std::uint8_t> serializeShort(uint16_t value) = 0;
+        virtual std::vector<std::uint8_t> serializeChar(uint8_t value) = 0;
         virtual bool deserialize(const std::vector<uint8_t>& data, void* output, size_t expectedSize) = 0;
     protected:
     private:
