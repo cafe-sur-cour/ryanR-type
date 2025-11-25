@@ -9,14 +9,16 @@
 #define AREGISTRY_HPP_
 
 #include "IRegistry.hpp"
-#include "../../component/IComponent.hpp"
+#include "../../component/base/IComponent.hpp"
 #include "../componentArray/IComponentArray.hpp"
+#include "../componentArray/AComponentArray.hpp"
+#include "../../view/View.hpp"
 #include <memory>
 #include <unordered_map>
 
 namespace ecs {
 
-class ARegistry : public IRegistry {
+class ARegistry : public IRegistry, public std::enable_shared_from_this<ARegistry> {
     public:
         ARegistry();
         virtual ~ARegistry();
@@ -33,6 +35,14 @@ class ARegistry : public IRegistry {
         template <typename T>
         bool hasComponent(int entityId) const;
 
+        template <typename... Components>
+        View<Components...> view();
+
+        template <typename... Components>
+        Group<Components...> group();
+
+        size_t getMaxEntityId() const;
+
         void removeAllComponentsWithState(ComponentState state) override;
 
     protected:
@@ -41,5 +51,7 @@ class ARegistry : public IRegistry {
 };
 
 } // namespace ecs
+
+#include "ARegistry.tpp"
 
 #endif /* !AREGISTRY_HPP_ */
