@@ -14,8 +14,8 @@ using namespace ecs;
 
 TEST(TransformComponentTest, DefaultConstructor) {
     TransformComponent comp;
-    Vector2f expectedPos(0.0f, 0.0f);
-    Vector2f expectedScale(1.0f, 1.0f);
+    math::Vector2f expectedPos(0.0f, 0.0f);
+    math::Vector2f expectedScale(1.0f, 1.0f);
     EXPECT_EQ(comp.getPosition().getX(), expectedPos.getX());
     EXPECT_EQ(comp.getPosition().getY(), expectedPos.getY());
     EXPECT_FLOAT_EQ(comp.getRotation(), 0.0f);
@@ -24,9 +24,9 @@ TEST(TransformComponentTest, DefaultConstructor) {
 }
 
 TEST(TransformComponentTest, ParameterizedConstructor) {
-    Vector2f pos(1.0f, 2.0f);
+    math::Vector2f pos(1.0f, 2.0f);
     float rot = 45.0f;
-    Vector2f scale(2.0f, 3.0f);
+    math::Vector2f scale(2.0f, 3.0f);
     TransformComponent comp(pos, rot, scale);
     EXPECT_EQ(comp.getPosition().getX(), 1.0f);
     EXPECT_EQ(comp.getPosition().getY(), 2.0f);
@@ -37,7 +37,7 @@ TEST(TransformComponentTest, ParameterizedConstructor) {
 
 TEST(TransformComponentTest, PositionGettersAndSetters) {
     TransformComponent comp;
-    Vector2f newPos(10.0f, 20.0f);
+    math::Vector2f newPos(10.0f, 20.0f);
     comp.setPosition(newPos);
     EXPECT_EQ(comp.getPosition().getX(), 10.0f);
     EXPECT_EQ(comp.getPosition().getY(), 20.0f);
@@ -51,7 +51,7 @@ TEST(TransformComponentTest, RotationGettersAndSetters) {
 
 TEST(TransformComponentTest, ScaleGettersAndSetters) {
     TransformComponent comp;
-    Vector2f newScale(0.5f, 1.5f);
+    math::Vector2f newScale(0.5f, 1.5f);
     comp.setScale(newScale);
     EXPECT_EQ(comp.getScale().getX(), 0.5f);
     EXPECT_EQ(comp.getScale().getY(), 1.5f);
