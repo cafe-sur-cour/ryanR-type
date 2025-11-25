@@ -4,6 +4,7 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     AComponent.cpp
     TransformComponent.hpp
     VelocityComponent.hpp
+    MovementIntentComponent.hpp
     PlayerTag.hpp
     MobTag.hpp
     ProjectileTag.hpp
