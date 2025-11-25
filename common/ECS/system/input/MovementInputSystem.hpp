@@ -10,16 +10,13 @@
 
 #include "../base/ASystem.hpp"
 #include "../../component/temporary/InputIntentComponent.hpp"
-#include <unordered_map>
+#include <memory>
+
+namespace gfx {
+    class IEvent;
+}
 
 namespace ecs {
-
-enum class MovementKey {
-    Left,
-    Right,
-    Up,
-    Down
-};
 
 class MovementInputSystem : public ASystem {
     public:
@@ -28,17 +25,10 @@ class MovementInputSystem : public ASystem {
 
         void update(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) override;
 
-        // Simulation methods (will be replaced by real input system)
-        void simulateKeyPress(MovementKey key, bool pressed);
-        void simulateAxis(float horizontal, float vertical);
-
     private:
-        // Movement key states
-        std::unordered_map<MovementKey, bool> _movementKeyStates;
-        math::Vector2f _axisInput;
-
-        math::Vector2f getMovementDirection() const;
+        math::Vector2f getMovementDirection(std::shared_ptr<ResourceManager> resourceManager) const;
         void updateInputIntent(std::shared_ptr<ARegistry> registry, int entityId, const math::Vector2f &direction);
+        math::Vector2f getAnalogStickInput(std::shared_ptr<gfx::IEvent> eventSystem) const;
 };
 
 } // namespace ecs

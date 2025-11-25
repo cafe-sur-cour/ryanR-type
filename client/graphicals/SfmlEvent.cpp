@@ -8,8 +8,10 @@
 #include <utility>
 #include <string>
 #include <memory>
+#include <iostream>
 #include "SfmlWindow.hpp"
 #include "SfmlEvent.hpp"
+#include "../../common/constants.hpp"
 
 using event_t = gfx::IEvent::event_t;
 
@@ -93,41 +95,43 @@ event_t SfmlEvent::processJoystickButtonEvent
 
 event_t SfmlEvent::processJoystickAxisEvent
     (const sf::Event::JoystickMoved& joystickMoved) {
+    const float deadzoneThreshold = constants::GAMEPAD_DEADZONE * 100.0f;
+
     if (joystickMoved.axis == sf::Joystick::Axis::PovX) {
-        if (joystickMoved.position < -50.0f)
+        if (joystickMoved.position < -deadzoneThreshold)
             return event_t::GAMEPAD_DPAD_LEFT;
-        else if (joystickMoved.position > 50.0f)
+        else if (joystickMoved.position > deadzoneThreshold)
             return event_t::GAMEPAD_DPAD_RIGHT;
     } else if (joystickMoved.axis == sf::Joystick::Axis::PovY) {
-        if (joystickMoved.position < -50.0f)
+        if (joystickMoved.position < -deadzoneThreshold)
             return event_t::GAMEPAD_DPAD_DOWN;
-        else if (joystickMoved.position > 50.0f)
+        else if (joystickMoved.position > deadzoneThreshold)
             return event_t::GAMEPAD_DPAD_UP;
     } else if (joystickMoved.axis == sf::Joystick::Axis::X) {
-        if (joystickMoved.position < -50.0f)
+        if (joystickMoved.position < -deadzoneThreshold)
             return event_t::GAMEPAD_LEFT_STICK_LEFT;
-        else if (joystickMoved.position > 50.0f)
+        else if (joystickMoved.position > deadzoneThreshold)
             return event_t::GAMEPAD_LEFT_STICK_RIGHT;
     } else if (joystickMoved.axis == sf::Joystick::Axis::Y) {
-        if (joystickMoved.position < -50.0f)
+        if (joystickMoved.position < -deadzoneThreshold)
             return event_t::GAMEPAD_LEFT_STICK_DOWN;
-        else if (joystickMoved.position > 50.0f)
+        else if (joystickMoved.position > deadzoneThreshold)
             return event_t::GAMEPAD_LEFT_STICK_UP;
     } else if (joystickMoved.axis == sf::Joystick::Axis::U) {
-        if (joystickMoved.position < -50.0f)
+        if (joystickMoved.position < -deadzoneThreshold)
             return event_t::GAMEPAD_RIGHT_STICK_LEFT;
-        else if (joystickMoved.position > 50.0f)
+        else if (joystickMoved.position > deadzoneThreshold)
             return event_t::GAMEPAD_RIGHT_STICK_RIGHT;
     } else if (joystickMoved.axis == sf::Joystick::Axis::R) {
-        if (joystickMoved.position < -50.0f)
+        if (joystickMoved.position < -deadzoneThreshold)
             return event_t::GAMEPAD_RIGHT_STICK_DOWN;
-        else if (joystickMoved.position > 50.0f)
+        else if (joystickMoved.position > deadzoneThreshold)
             return event_t::GAMEPAD_RIGHT_STICK_UP;
     } else if (joystickMoved.axis == sf::Joystick::Axis::Z) {
-        if (joystickMoved.position > 50.0f)
+        if (joystickMoved.position > deadzoneThreshold)
             return event_t::GAMEPAD_LEFT_TRIGGER;
     } else if (joystickMoved.axis == sf::Joystick::Axis::V) {
-        if (joystickMoved.position > 50.0f)
+        if (joystickMoved.position > deadzoneThreshold)
             return event_t::GAMEPAD_RIGHT_TRIGGER;
     }
     return event_t::NOTHING;
@@ -152,7 +156,76 @@ bool SfmlEvent::isKeyPressed(event_t key) {
     if (jit != _joystickButtonMap.end())
         return sf::Joystick::isButtonPressed(0, jit->second);
 
-    return false;
+    return isJoystickAxisPressed(key);
+}
+
+bool SfmlEvent::isJoystickAxisPressed(event_t key) {
+    const float deadzoneThreshold = constants::GAMEPAD_DEADZONE * 100.0f;
+    float axisValue = 0.0f;
+    bool result = false;
+
+    switch (key) {
+        case event_t::GAMEPAD_LEFT_STICK_LEFT:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X);
+            result = axisValue < -deadzoneThreshold;
+            break;
+        case event_t::GAMEPAD_LEFT_STICK_RIGHT:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X);
+            result = axisValue > deadzoneThreshold;
+            break;
+        case event_t::GAMEPAD_LEFT_STICK_UP:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y);
+            result = axisValue < -deadzoneThreshold;
+            break;
+        case event_t::GAMEPAD_LEFT_STICK_DOWN:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y);
+            result = axisValue > deadzoneThreshold;
+            break;
+        case event_t::GAMEPAD_RIGHT_STICK_LEFT:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::U);
+            result = axisValue < -deadzoneThreshold;
+            break;
+        case event_t::GAMEPAD_RIGHT_STICK_RIGHT:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::U);
+            result = axisValue > deadzoneThreshold;
+            break;
+        case event_t::GAMEPAD_RIGHT_STICK_UP:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::R);
+            result = axisValue < -deadzoneThreshold;
+            break;
+        case event_t::GAMEPAD_RIGHT_STICK_DOWN:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::R);
+            result = axisValue > deadzoneThreshold;
+            break;
+        case event_t::GAMEPAD_LEFT_TRIGGER:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Z);
+            result = axisValue > deadzoneThreshold;
+            break;
+        case event_t::GAMEPAD_RIGHT_TRIGGER:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::V);
+            result = axisValue > deadzoneThreshold;
+            break;
+        case event_t::GAMEPAD_DPAD_LEFT:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::PovX);
+            result = axisValue < -deadzoneThreshold;
+            break;
+        case event_t::GAMEPAD_DPAD_RIGHT:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::PovX);
+            result = axisValue > deadzoneThreshold;
+            break;
+        case event_t::GAMEPAD_DPAD_UP:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::PovY);
+            result = axisValue > deadzoneThreshold;
+            break;
+        case event_t::GAMEPAD_DPAD_DOWN:
+            axisValue = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::PovY);
+            result = axisValue < -deadzoneThreshold;
+            break;
+        default:
+            return false;
+    }
+
+    return result;
 }
 
 bool SfmlEvent::isMouseButtonPressed(int button) {
@@ -161,4 +234,33 @@ bool SfmlEvent::isMouseButtonPressed(int button) {
     else if (button == 1)
         return sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
     return false;
+}
+
+float SfmlEvent::getAxisValue(event_t axis) {
+    switch (axis) {
+        case event_t::GAMEPAD_LEFT_STICK_LEFT:
+        case event_t::GAMEPAD_LEFT_STICK_RIGHT:
+            return sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X);
+        case event_t::GAMEPAD_LEFT_STICK_UP:
+        case event_t::GAMEPAD_LEFT_STICK_DOWN:
+            return sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y);
+        case event_t::GAMEPAD_RIGHT_STICK_LEFT:
+        case event_t::GAMEPAD_RIGHT_STICK_RIGHT:
+            return sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::U);
+        case event_t::GAMEPAD_RIGHT_STICK_UP:
+        case event_t::GAMEPAD_RIGHT_STICK_DOWN:
+            return sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::R);
+        case event_t::GAMEPAD_LEFT_TRIGGER:
+            return sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Z);
+        case event_t::GAMEPAD_RIGHT_TRIGGER:
+            return sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::V);
+        case event_t::GAMEPAD_DPAD_LEFT:
+        case event_t::GAMEPAD_DPAD_RIGHT:
+            return sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::PovX);
+        case event_t::GAMEPAD_DPAD_UP:
+        case event_t::GAMEPAD_DPAD_DOWN:
+            return sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::PovY);
+        default:
+            return 0.0f;
+    }
 }

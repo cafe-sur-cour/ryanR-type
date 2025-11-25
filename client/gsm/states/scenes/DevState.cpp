@@ -2,12 +2,7 @@
 #include <memory>
 #include <cmath>
 #include <iostream>
-#include "../../../../common/ECS/component/permanent/TransformComponent.hpp"
-#include "../../../../common/ECS/component/permanent/SpeedComponent.hpp"
-#include "../../../../common/ECS/component/permanent/VelocityComponent.hpp"
-#include "../../../../common/ECS/system/movement/InputToVelocitySystem.hpp"
-#include "../../../../common/ECS/entity/registry/ARegistry.hpp"
-#include "../../../../common/ECS/system/systemManager/ASystemManager.hpp"
+#include "../../../../common/ECS/component/tags/PlayerTag.hpp"
 #include "../../../../client/graphicals/IWindow.hpp"
 #include "../../../../client/graphicals/IEvent.hpp"
 
@@ -36,16 +31,15 @@ void DevState::enter() {
 
     auto transform = std::make_shared<ecs::TransformComponent>(
         math::Vector2f(400.0f, 300.0f));
-    auto velocity = std::make_shared<ecs::VelocityComponent>(
-        math::Vector2f(200.0f, 0.0f));
+    auto playerTag = std::make_shared<ecs::PlayerTag>();
 
     _registry->addComponent(entityId, transform);
-    _registry->addComponent(entityId, velocity);
+    _registry->addComponent(entityId, playerTag);
 }
 
 void DevState::update(float deltaTime) {
-    auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents({0, 0});
-    if (eventResult == gfx::IEvent::CLOSE) {
+    auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
+    if (eventResult == gfx::EventType::CLOSE) {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
         return;
     }
