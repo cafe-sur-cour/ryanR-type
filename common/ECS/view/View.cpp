@@ -14,13 +14,16 @@
 namespace ecs {
 
 template <typename... Components>
-View<Components...>::View(std::shared_ptr<ARegistry> registry) : _registry(registry) {
+View<Components...>::View(std::shared_ptr<ARegistry> registry)
+: _registry(registry) {
     (_registry->template registerComponent<Components>(), ...);
 }
 
 template <typename... Components>
-View<Components...>::Iterator::Iterator(std::shared_ptr<ARegistry> registry, size_t entityId, size_t maxEntityId)
-    : _registry(registry), _entityId(entityId), _maxEntityId(maxEntityId) {}
+View<Components...>::Iterator::Iterator(std::shared_ptr<ARegistry> registry,
+                                        size_t entityId, size_t maxEntityId)
+: _registry(registry), _entityId(entityId), _maxEntityId(maxEntityId) {
+}
 
 template <typename... Components>
 bool View<Components...>::Iterator::operator!=(const Iterator& other) const {
@@ -28,7 +31,8 @@ bool View<Components...>::Iterator::operator!=(const Iterator& other) const {
 }
 
 template <typename... Components>
-typename View<Components...>::Iterator& View<Components...>::Iterator::operator++() {
+typename View<Components...>::Iterator&
+View<Components...>::Iterator::operator++() {
     do {
         ++_entityId;
     } while (_entityId < _maxEntityId && !hasAllComponents());
@@ -49,7 +53,8 @@ template <typename... Components>
 typename View<Components...>::Iterator View<Components...>::begin() {
     size_t maxEntityId = _registry->getMaxEntityId();
     size_t startId = 0;
-    while (startId < maxEntityId && !(_registry->template hasComponent<Components>(startId) && ...)) {
+    while (startId < maxEntityId &&
+           !(_registry->template hasComponent<Components>(startId) && ...)) {
         ++startId;
     }
     return Iterator(_registry, startId, maxEntityId);
@@ -62,13 +67,16 @@ typename View<Components...>::Iterator View<Components...>::end() {
 }
 
 template <typename... Components>
-Group<Components...>::Group(std::shared_ptr<ARegistry> registry) : _registry(registry) {
+Group<Components...>::Group(std::shared_ptr<ARegistry> registry)
+: _registry(registry) {
     (_registry->template registerComponent<Components>(), ...);
 }
 
 template <typename... Components>
-Group<Components...>::Iterator::Iterator(std::shared_ptr<ARegistry> registry, size_t entityId, size_t maxEntityId)
-    : _registry(registry), _entityId(entityId), _maxEntityId(maxEntityId) {}
+Group<Components...>::Iterator::Iterator(std::shared_ptr<ARegistry> registry,
+                                         size_t entityId, size_t maxEntityId)
+: _registry(registry), _entityId(entityId), _maxEntityId(maxEntityId) {
+}
 
 template <typename... Components>
 bool Group<Components...>::Iterator::operator!=(const Iterator& other) const {
@@ -76,7 +84,8 @@ bool Group<Components...>::Iterator::operator!=(const Iterator& other) const {
 }
 
 template <typename... Components>
-typename Group<Components...>::Iterator& Group<Components...>::Iterator::operator++() {
+typename Group<Components...>::Iterator&
+Group<Components...>::Iterator::operator++() {
     do {
         ++_entityId;
     } while (_entityId < _maxEntityId && !hasAllComponents());
@@ -97,7 +106,8 @@ template <typename... Components>
 typename Group<Components...>::Iterator Group<Components...>::begin() {
     size_t maxEntityId = _registry->getMaxEntityId();
     size_t startId = 0;
-    while (startId < maxEntityId && !(_registry->template hasComponent<Components>(startId) && ...)) {
+    while (startId < maxEntityId &&
+           !(_registry->template hasComponent<Components>(startId) && ...)) {
         ++startId;
     }
     return Iterator(_registry, startId, maxEntityId);
