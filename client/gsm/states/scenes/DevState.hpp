@@ -5,6 +5,7 @@
 #include "../../../../common/ECS/entity/registry/ARegistry.hpp"
 #include "../../../../common/ECS/system/systemManager/ASystemManager.hpp"
 #include "../../../../common/ECS/system/movement/MovementSystem.hpp"
+#include "../../../../common/ECS/system/movement/InputToVelocitySystem.hpp"
 #include "../../../../common/ECS/system/input/MovementInputSystem.hpp"
 
 namespace gsm {
@@ -24,7 +25,8 @@ private:
     std::shared_ptr<ecs::ARegistry> _registry;
     std::shared_ptr<ecs::ASystemManager> _systemManager;
     std::shared_ptr<ecs::MovementSystem> _movementSystem;
+    std::shared_ptr<ecs::InputToVelocitySystem> _inputToVelocitySystem;
     std::shared_ptr<ecs::MovementInputSystem> _inputSystem;
 };
 
-} // namespace gsm
+}  // namespace gsm

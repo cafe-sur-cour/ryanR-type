@@ -6,7 +6,9 @@
 */
 
 #include <memory>
+#include <cmath>
 #include "MovementSystem.hpp"
+#include "../../component/permanent/VelocityComponent.hpp"
 
 namespace ecs {
 
@@ -18,29 +20,16 @@ void MovementSystem::update(std::shared_ptr<ResourceManager> resourceManager,
                              float deltaTime) {
     (void)resourceManager;
 
-    auto view = registry->view<MovementIntentComponent, TransformComponent>();
+    auto view = registry->view<VelocityComponent, TransformComponent>();
 
     for (auto entityId : view) {
-        auto intent = registry->getComponent<MovementIntentComponent>(entityId);
+        auto velocityComp = registry->getComponent<VelocityComponent>(entityId);
         auto transform = registry->getComponent<TransformComponent>(entityId);
 
-        if (!intent->isActive()) {
-            continue;
-        }
-
-        math::Vector2f direction = intent->getDirection();
-
-        float speed = constants::BASE_SPEED;
-        if (registry->hasComponent<SpeedComponent>(entityId)) {
-            auto speedComp = registry->getComponent<SpeedComponent>(entityId);
-            speed = speedComp->getSpeed();
-        }
-
+        math::Vector2f velocity = velocityComp->getVelocity();
         math::Vector2f currentPos = transform->getPosition();
-        math::Vector2f newPos = currentPos + direction * speed * deltaTime;
+        math::Vector2f newPos = currentPos + velocity * deltaTime;
         transform->setPosition(newPos);
-
-        intent->setState(ComponentState::Processed);
     }
 }
 
