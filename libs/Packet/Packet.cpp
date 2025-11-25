@@ -6,6 +6,8 @@
 */
 
 #include <vector>
+#include <map>
+#include <iostream>
 #include <memory>
 #include <string>
 #include "Packet.hpp"
@@ -17,9 +19,20 @@ Packet::Packet(int seqNumber) {
     this->_sequenceNumber = seqNumber;
     this->_type = 0x00;
     this->_length = 0;
-    this->_payload = std::vector<std::string>();
     this->_endOfPacket = ('\r' << 8) | '\n';
     this->_serializer = std::make_shared<BigEndianSerialization>();
+
+    this->_packetHandlers = {
+        {0x01, std::bind(&Packet::connectionPacket, this, std::placeholders::_1)},
+        {0x02, std::bind(&Packet::disconnectionPacket, this, std::placeholders::_1)},
+        {0x03, std::bind(&Packet::eventPacket, this, std::placeholders::_1)}
+    };
+
+    this->_packetLengths = {
+        {0x01, 11},
+        {0x02, 7},
+        {0x03, 8}
+    };
 }
 
 Packet::~Packet() {
@@ -52,9 +65,11 @@ void Packet::setLength(size_t length) {
     this->_length = length;
 }
 
-std::vector<uint8_t> Packet::packHeaderPacket(unsigned int idClient) {
+std::vector<uint8_t> Packet::packHeaderPacket(unsigned int idClient,
+    unsigned int sequenceNumber, uint8_t type) {
     std::vector<uint8_t> header;
     std::vector<uint8_t> temp;
+    unsigned int length = 0;
 
     temp = this->_serializer->serializeChar(this->_magicNumber);
     header.insert(header.end(), temp.begin(), temp.end());
@@ -62,13 +77,19 @@ std::vector<uint8_t> Packet::packHeaderPacket(unsigned int idClient) {
     temp = this->_serializer->serializeInt(idClient);
     header.insert(header.end(), temp.begin(), temp.end());
 
-    temp = this->_serializer->serializeLong(this->_sequenceNumber);
+    temp = this->_serializer->serializeInt(sequenceNumber);
     header.insert(header.end(), temp.begin(), temp.end());
 
-    temp = this->_serializer->serializeChar(this->_type);
+    temp = this->_serializer->serializeChar(type);
     header.insert(header.end(), temp.begin(), temp.end());
 
-    temp = this->_serializer->serializeLong(this->_length);
+    for (auto &pair : this->_packetLengths) {
+        if (pair.first == type) {
+            length = pair.second;
+            break;
+        }
+    }
+    temp = this->_serializer->serializeInt(length);
     header.insert(header.end(), temp.begin(), temp.end());
 
     temp = this->_serializer->serializeShort(this->_endOfPacket);
@@ -76,17 +97,29 @@ std::vector<uint8_t> Packet::packHeaderPacket(unsigned int idClient) {
     return header;
 }
 
-std::vector<uint8_t> Packet::packPacket(std::vector<std::string> payload) {
-    return std::vector<uint8_t>();
+std::vector<uint8_t> Packet::packBodyPacket(std::vector<std::uint8_t> payload) {
+    std::vector<uint8_t> body;
+    uint8_t type = 0x00;
+
+    if (payload.empty()) {
+        return body;
+    }
+
+    type = payload.at(0);
+    for (auto &handler : this->_packetHandlers) {
+        if (handler.first == type) {
+            body = handler.second(payload);
+            break;
+        }
+    }
+    return body;
 }
 
 bool Packet::unpackPacket(std::vector<uint8_t> data) {
     return false;
 }
 
-
 extern "C" {
-
     int getType() {
         return PACKET_MODULE;
     }

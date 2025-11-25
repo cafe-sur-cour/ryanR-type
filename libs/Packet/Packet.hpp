@@ -9,6 +9,9 @@
 #define PACKET_HPP_
 
 #include <memory>
+#include <map>
+#include <vector>
+#include <functional>
 
 #include "IPacket.hpp"
 #include "../Buffer/IBuffer.hpp"
@@ -30,19 +33,23 @@ class Packet : public IPacket {
         void setType(uint8_t type) override;
         void setLength(size_t length) override;
 
-        std::vector<uint8_t> packHeaderPacket(unsigned int idClient) override;
-        std::vector<uint8_t> packPacket(std::vector<std::string> payload) override;
+        std::vector<uint8_t> packHeaderPacket(unsigned int idClient, unsigned int sequenceNumber, uint8_t type) override;
+        std::vector<uint8_t> packBodyPacket(std::vector<std::uint8_t> payload) override;
         bool unpackPacket(std::vector<uint8_t> data) override;
 
-    protected:
+        std::vector<std::uint8_t> connectionPacket(std::vector<std::uint8_t> payload);
+        std::vector<std::uint8_t> disconnectionPacket(std::vector<std::uint8_t> payload);
+        std::vector<std::uint8_t> eventPacket(std::vector<std::uint8_t> payload);
+
     private:
         uint8_t _magicNumber;
-        size_t _sequenceNumber;
+        unsigned int _sequenceNumber;
         uint8_t _type;
-        size_t _length;
-        std::vector<std::string> _payload;
+        unsigned int _length;
         short _endOfPacket;
         std::shared_ptr<ISerializer> _serializer;
+        std::map<uint8_t, std::function<std::vector<std::uint8_t>(std::vector<std::uint8_t>)>> _packetHandlers;
+        std::map<uint8_t, unsigned int> _packetLengths;
 };
 
 
