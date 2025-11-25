@@ -19,7 +19,7 @@ Packet::Packet(int seqNumber) {
     this->_sequenceNumber = seqNumber;
     this->_type = 0x00;
     this->_length = 0;
-    this->_endOfPacket = ('\r' << 8) | '\n';
+    this->_endOfPacket = (FIRST_EOP_CHAR << 8) | SECOND_EOP_CHAR;
     this->_serializer = std::make_shared<BigEndianSerialization>();
 
     this->_packetHandlers = {
@@ -32,9 +32,9 @@ Packet::Packet(int seqNumber) {
     };
 
     this->_packetLengths = {
-        {0x01, 11},
-        {0x02, 7},
-        {0x03, 8}
+        {0x01, LENGTH_CONNECTION_PACKET},
+        {0x02, LENGTH_DISCONNECTION_PACKET},
+        {0x03, LENGTH_EVENT_PACKET}
     };
 }
 

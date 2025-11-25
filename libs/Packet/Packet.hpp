@@ -18,7 +18,13 @@
 #include "serializer/ISerializer.hpp"
 
 #define MAGIC_NUMBER 0x93
+#define FIRST_EOP_CHAR '\r'
+#define SECOND_EOP_CHAR '\n'
 
+#define LENGTH_CONNECTION_PACKET 11
+#define LENGTH_DISCONNECTION_PACKET 7
+#define LENGTH_EVENT_PACKET 8
+#define LENGTH_EO_PACKET 2
 
 class Packet : public IPacket {
     public:

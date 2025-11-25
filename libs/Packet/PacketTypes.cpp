@@ -13,7 +13,7 @@ std::vector<std::uint8_t> Packet::connectionPacket(
     std::vector<std::uint8_t> body;
     std::vector<uint8_t> temp;
 
-    for (int i = 0; i < (1 + 8); i++) {
+    for (int i = 0; i < (LENGTH_CONNECTION_PACKET - LENGTH_EO_PACKET); i++) {
         temp = this->_serializer->serializeChar(payload.at(i));
         body.insert(body.end(), temp.begin(), temp.end());
     }
