@@ -9,7 +9,6 @@ find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
 target_link_libraries(${CLIENT_BIN_NAME}
     PUBLIC
         ECS
-        view
         DLLoader
         SFML::Graphics
         SFML::Window
