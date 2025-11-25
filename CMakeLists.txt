@@ -15,12 +15,15 @@ find_package(asio CONFIG REQUIRED)
 
 option(BUILD_TESTS "Build unit tests" OFF)
 
+add_compile_options(-Wall -Wextra -Werror -Wshadow)
+
 enable_testing()
 
 add_subdirectory(common)
 add_subdirectory(libs)
 add_subdirectory(client)
 add_subdirectory(server)
+
 
 if(BUILD_TESTS)
     add_subdirectory(tests)
