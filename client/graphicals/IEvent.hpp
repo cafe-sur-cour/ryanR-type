@@ -10,39 +10,20 @@
 
 #include <utility>
 #include <memory>
+#include "EventTypes.hpp"
 
 namespace gfx {
 
 class IEvent {
     public:
-        typedef enum event_e {
-            UP,
-            DOWN,
-            LEFT,
-            RIGHT,
-            SPACE,
-            ENTER,
-            ESCAPE,
-            CLOSE,
-            NEXTGAME,
-            NEXTGRAPHIC,
-            REFRESH,
-            MOUSECLICK,
-            MOUSERIGHTCLICK,
-            MOUSELEFTCLICK,
-            MENU,
-            NOTHING,
-            TYIPING,
-            NEXTDIFFICULTY
-        } event_t;
+        using event_t = EventType;
         virtual ~IEvent() = default;
         virtual void init() = 0;
-        virtual event_t pollEvents(std::pair<int, int> gridSize) = 0;
+        virtual event_t pollEvents() = 0;
         virtual void cleanup() = 0;
         virtual std::pair<int, int> getMousePos() = 0;
         virtual bool isKeyPressed(event_t key) = 0;
         virtual bool isMouseButtonPressed(int button) = 0;
-        virtual std::string getTypedText() = 0;
 
 };
 
