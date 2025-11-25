@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../../../common/ECS/component/ProjectileTag.hpp"
+#include "../../../../common/ECS/component/tags/ProjectileTag.hpp"
 
 using namespace ecs;
 

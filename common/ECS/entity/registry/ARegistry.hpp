@@ -9,7 +9,7 @@
 #define AREGISTRY_HPP_
 
 #include "IRegistry.hpp"
-#include "../../component/IComponent.hpp"
+#include "../../component/base/IComponent.hpp"
 #include "../componentArray/IComponentArray.hpp"
 #include "../componentArray/AComponentArray.hpp"
 #include <memory>

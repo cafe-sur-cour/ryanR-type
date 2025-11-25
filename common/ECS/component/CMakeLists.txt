@@ -1,12 +1,4 @@
-target_sources(${ECS_LIB_NAME} PUBLIC
-    IComponent.hpp
-    AComponent.hpp
-    AComponent.cpp
-    TransformComponent.hpp
-    VelocityComponent.hpp
-    MovementIntentComponent.hpp
-    PlayerTag.hpp
-    MobTag.hpp
-    ProjectileTag.hpp
-    ObstacleTag.hpp
-)
+add_subdirectory(base)
+add_subdirectory(permanent)
+add_subdirectory(tags)
+add_subdirectory(temporary)
