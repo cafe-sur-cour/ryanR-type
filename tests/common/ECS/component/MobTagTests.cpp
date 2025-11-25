@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../../../common/ECS/component/MobTag.hpp"
+#include "../../../../common/ECS/component/tags/MobTag.hpp"
 
 using namespace ecs;
 

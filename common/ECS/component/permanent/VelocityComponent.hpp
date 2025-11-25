@@ -8,8 +8,8 @@
 #ifndef VELOCITYCOMPONENT_HPP_
 #define VELOCITYCOMPONENT_HPP_
 
-#include "AComponent.hpp"
-#include "../../types/Vector2f.hpp"
+#include "../base/AComponent.hpp"
+#include "../../../types/Vector2f.hpp"
 
 namespace ecs {
 
