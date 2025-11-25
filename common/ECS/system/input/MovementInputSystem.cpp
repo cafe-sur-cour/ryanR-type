@@ -26,6 +26,8 @@ void MovementInputSystem::update(
     std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<ARegistry> registry,
     float deltaTime) {
+    (void)resourceManager;
+    (void)deltaTime;
 
     auto view = registry->view<PlayerTag>();
     math::Vector2f movementDirection = getMovementDirection();
@@ -80,7 +82,7 @@ math::Vector2f MovementInputSystem::getMovementDirection() const {
 void MovementInputSystem::updateMovementIntent(
     std::shared_ptr<ARegistry> registry,
     int entityId,
-    math::Vector2f direction) {
+    const math::Vector2f &direction) {
 
     registry->registerComponent<MovementIntentComponent>();
     auto movementIntent = std::make_shared<MovementIntentComponent>(direction,
