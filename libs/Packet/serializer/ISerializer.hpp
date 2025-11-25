@@ -14,7 +14,7 @@
 
 class ISerializer {
     public:
-        virtual ~ISerializer() = default;
+        virtual ~ISerializer() = 0;
 
         virtual std::vector<std::uint8_t> serializeInt(int value) = 0;
         virtual std::vector<std::uint8_t> serializeLong(int64_t value) = 0;
