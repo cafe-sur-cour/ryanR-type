@@ -11,8 +11,8 @@
 #include <memory>
 
 #include "ISystem.hpp"
-#include "../resourceManager/ResourceManager.hpp"
-#include "../entity/registry/ARegistry.hpp"
+#include "../../resourceManager/ResourceManager.hpp"
+#include "../../entity/registry/ARegistry.hpp"
 
 namespace ecs {
 
