@@ -26,6 +26,17 @@
 #define LENGTH_EVENT_PACKET 8
 #define LENGTH_EO_PACKET 2
 
+#define NO_OP_PACKET 0x00
+#define CONNECTION_CLIENT_PACKET 0x01
+#define CONNECTION_SERVER_PACKET 0x02
+#define DISCONNECTION_PACKET 0x03
+#define EVENT_PACKET 0x04
+#define GAME_STATE_PACKET 0x05
+#define MAP_SEND_PACKET 0x06
+#define END_MAP_PACKET 0x07
+#define END_GAME_PACKET 0x08
+#define CAN_START_PACKET 0x09
+
 class Packet : public IPacket {
     public:
         Packet(int idClient);

@@ -17,7 +17,7 @@
 Packet::Packet(int seqNumber) {
     this->_magicNumber = MAGIC_NUMBER;
     this->_sequenceNumber = seqNumber;
-    this->_type = 0x00;
+    this->_type = NO_OP_PACKET;
     this->_length = 0;
     this->_endOfPacket = (FIRST_EOP_CHAR << 8) | SECOND_EOP_CHAR;
     this->_serializer = std::make_shared<BigEndianSerialization>();
@@ -32,9 +32,9 @@ Packet::Packet(int seqNumber) {
     };
 
     this->_packetLengths = {
-        {0x01, LENGTH_CONNECTION_PACKET},
-        {0x02, LENGTH_DISCONNECTION_PACKET},
-        {0x03, LENGTH_EVENT_PACKET}
+        {CONNECTION_CLIENT_PACKET, LENGTH_CONNECTION_PACKET},
+        {DISCONNECTION_PACKET, LENGTH_DISCONNECTION_PACKET},
+        {EVENT_PACKET, LENGTH_EVENT_PACKET}
     };
 }
 
@@ -102,7 +102,7 @@ std::vector<uint8_t> Packet::packHeaderPacket(unsigned int idClient,
 
 std::vector<uint8_t> Packet::packBodyPacket(std::vector<std::uint8_t> payload) {
     std::vector<uint8_t> body;
-    uint8_t type = 0x00;
+    uint8_t type = NO_OP_PACKET;
 
     if (payload.empty()) {
         return body;
