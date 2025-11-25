@@ -25,7 +25,7 @@ TEST_F(UtilsTest, HelperPrintsUsage) {
 TEST_F(UtilsTest, ParsCliSetsConfigCorrectly) {
     const char* argv[] = {"program", "-p", "8080", "-i", "127001", "-n", "2"};
     int argc = sizeof(argv) / sizeof(argv[0]);
-    auto config = std::make_shared<rserv::ServerConfig>(0);
+    auto config = std::make_shared<rserv::ServerConfig>();
 
     utils.parsCli(argc, const_cast<char**>(argv), config);
 
@@ -37,20 +37,25 @@ TEST_F(UtilsTest, ParsCliSetsConfigCorrectly) {
 TEST_F(UtilsTest, ParsCliInvalidNbClientsExits) {
     const char* argv[] = {"program", "-p", "8080", "-i", "127001", "-n", "5"};
     int argc = sizeof(argv) / sizeof(argv[0]);
-    auto config = std::make_shared<rserv::ServerConfig>(0);
+    auto config = std::make_shared<rserv::ServerConfig>();
 
-    testing::internal::CaptureStderr();
+    testing::internal::CaptureStdout();
     EXPECT_EXIT(utils.parsCli(argc, const_cast<char**>(argv), config), ::testing::ExitedWithCode(84), "");
-    testing::internal::GetCapturedStderr();
+    testing::internal::GetCapturedStdout();
 }
 
 TEST_F(UtilsTest, ParsCliHelpExits) {
     const char* argv[] = {"program", "-h"};
     int argc = sizeof(argv) / sizeof(argv[0]);
-    auto config = std::make_shared<rserv::ServerConfig>(0);
+    auto config = std::make_shared<rserv::ServerConfig>();
 
     testing::internal::CaptureStdout();
     EXPECT_EXIT(utils.parsCli(argc, const_cast<char**>(argv), config), ::testing::ExitedWithCode(0), "");
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_NE(output.find("Usage:"), std::string::npos);
+}
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

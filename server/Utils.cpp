@@ -22,10 +22,6 @@ void Utils::parsCli(int ac, char **av, std::shared_ptr<rserv::ServerConfig> conf
     int nbClients = 1;
     int ip = 0;
 
-    if (ac <= 4)  {
-        this->helper();
-        exit(84);
-    }
     for (int i = 1; i < ac; i++) {
         if (std::string(av[i]) == "-p" && i + 1 < ac) {
             port = std::stoi(av[i + 1]);
@@ -42,6 +38,10 @@ void Utils::parsCli(int ac, char **av, std::shared_ptr<rserv::ServerConfig> conf
             this->helper();
             exit(0);
         }
+    }
+    if (ac <= 4)  {
+        this->helper();
+        exit(84);
     }
     config->setFd(-1);
     if (nbClients < 1 || nbClients > 4) {

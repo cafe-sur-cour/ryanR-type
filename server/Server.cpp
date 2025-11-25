@@ -16,12 +16,11 @@
 rserv::Server::Server() {
     this->_config = nullptr;
     this->_network = std::make_shared<net::UnixNetwork>();
-    
-    // Set up network callbacks
+
     _network->setConnectionCallback([this](int clientId) {
         this->onClientConnected(clientId);
     });
-    
+
     _network->setDisconnectionCallback([this](int clientId) {
         this->onClientDisconnected(clientId);
     });
@@ -34,11 +33,15 @@ rserv::Server::~Server() {
 
 void rserv::Server::init() {
     this->setState(0);
+    if (!this->_config) {
+        std::cerr << "[Server] Error: ServerConfig not set. Cannot initialize server." << std::endl;
+        return;
+    }
     std::cout << "[Server] Initializing server on port " << _config->getPort() << std::endl;
-    
+
     // Initialize network layer
     _network->init(_config->getPort());
-    
+
     std::cout << "[Server] Initialization complete" << std::endl;
 }
 
