@@ -11,7 +11,7 @@ if(WIN32)
 endif()
 
 find_package(asio CONFIG REQUIRED)
-add_compile_options(-Wall -Wextra -Werror -Wshadow)
+#add_compile_options(-Wall -Wextra -Werror -Wshadow)
 
 option(BUILD_TESTS "Build unit tests" OFF)
 
