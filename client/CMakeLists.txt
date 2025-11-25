@@ -10,6 +10,7 @@ target_link_libraries(${CLIENT_BIN_NAME}
     PUBLIC
         ECS
         DLLoader
+        Graphical
         SFML::Graphics
         SFML::Window
         SFML::System
