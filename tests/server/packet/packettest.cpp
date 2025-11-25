@@ -36,9 +36,8 @@ TEST_F(PacketTest, SettersAndGettersWork) {
 
 TEST_F(PacketTest, PackHeaderPacketProducesCorrectHeader) {
     Packet packet(1);
-    packet.setType(0x02);
 
-    std::vector<uint8_t> header = packet.packHeaderPacket(10, 1, 0x02);
+    std::vector<uint8_t> header = packet.packHeaderPacket(10, 1, 0x03);
 
     EXPECT_EQ(header.size(), 16);
     EXPECT_EQ(header[0], 0x93);
@@ -50,7 +49,7 @@ TEST_F(PacketTest, PackHeaderPacketProducesCorrectHeader) {
     EXPECT_EQ(header[6], 0x00);
     EXPECT_EQ(header[7], 0x00);
     EXPECT_EQ(header[8], 0x01);
-    EXPECT_EQ(header[9], 0x02);
+    EXPECT_EQ(header[9], 0x03);
     EXPECT_EQ(header[10], 0x00);
     EXPECT_EQ(header[11], 0x00);
     EXPECT_EQ(header[12], 0x00);
@@ -61,13 +60,12 @@ TEST_F(PacketTest, PackHeaderPacketProducesCorrectHeader) {
 
 TEST_F(PacketTest, PackBodyPacketProducesCorrectBody) {
     Packet packet(1);
-    packet.setType(0x01);
 
-    std::vector<uint8_t> payload = {0x02, 0x04};
+    std::vector<uint8_t> payload = {0x03, 0x04};
     std::vector<uint8_t> body = packet.packBodyPacket(payload);
 
     EXPECT_EQ(body.size(), 7);
-    EXPECT_EQ(body[0], 0x02);
+    EXPECT_EQ(body[0], 0x03);
     EXPECT_EQ(body[1], 0x00);
     EXPECT_EQ(body[2], 0x00);
     EXPECT_EQ(body[3], 0x00);

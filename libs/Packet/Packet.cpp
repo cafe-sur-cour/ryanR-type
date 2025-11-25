@@ -23,11 +23,11 @@ Packet::Packet(int seqNumber) {
     this->_serializer = std::make_shared<BigEndianSerialization>();
 
     this->_packetHandlers = {
-        {0x01, std::bind(&Packet::connectionPacket,
+        {CONNECTION_CLIENT_PACKET, std::bind(&Packet::connectionPacket,
             this, std::placeholders::_1)},
-        {0x02, std::bind(&Packet::disconnectionPacket,
+        {DISCONNECTION_PACKET, std::bind(&Packet::disconnectionPacket,
             this, std::placeholders::_1)},
-        {0x03, std::bind(&Packet::eventPacket,
+        {EVENT_PACKET, std::bind(&Packet::eventPacket,
             this, std::placeholders::_1)}
     };
 
