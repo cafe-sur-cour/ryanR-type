@@ -11,6 +11,7 @@
 #include "IRegistry.hpp"
 #include "../../component/IComponent.hpp"
 #include "../componentArray/IComponentArray.hpp"
+#include "../componentArray/AComponentArray.hpp"
 #include <memory>
 #include <unordered_map>
 
@@ -41,5 +42,7 @@ class ARegistry : public IRegistry {
 };
 
 } // namespace ecs
+
+#include "ARegistry.tpp"
 
 #endif /* !AREGISTRY_HPP_ */
