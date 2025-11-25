@@ -119,6 +119,7 @@ std::vector<uint8_t> Packet::packBodyPacket(std::vector<std::uint8_t> payload) {
 }
 
 bool Packet::unpackPacket(std::vector<uint8_t> data) {
+    (void)data;
     return false;
 }
 

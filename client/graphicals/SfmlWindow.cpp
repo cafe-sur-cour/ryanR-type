@@ -30,11 +30,14 @@ SfmlWindow::~SfmlWindow() {
 }
 
 void SfmlWindow::init() {
+    bool isActive = false;
+
     _window->setFramerateLimit(60);
     _window->clear(sf::Color::Black);
     _window->clear();
     _window->display();
-    _window->setActive(true);
+    isActive = _window->setActive(true);
+    (void)isActive;
 }
 
 void SfmlWindow::display() {
