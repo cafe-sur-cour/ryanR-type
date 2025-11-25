@@ -19,10 +19,25 @@ class WindowsNetwork : public ANetwork {
         WindowsNetwork();
         ~WindowsNetwork() override;
 
-        void init() override;
+        void init(unsigned int port) override;
         void stop() override;
+
+        int acceptConnection() override;
+        void closeConnection(int connectionId) override;
+        std::vector<int> getActiveConnections() const override;
+        int getConnectionCount() const override;
+
+        void sendTo(int connectionId, const IPacket &packet) override;
+        void broadcast(const IPacket &packet) override;
+        bool hasIncomingData() const override;
+        std::shared_ptr<IPacket> receiveFrom(const int &connectionId) override;
+
         void sendData(const IPacket &data, size_t size) override;
         IPacket &receiveData(const IBuffer &buffer, size_t size) const override;
+
+        void setConnectionCallback(std::function<void(int)> onConnect) override;
+        void setDisconnectionCallback(std::function<void(int)> onDisconnect) override;
+
     protected:
     private:
 };
