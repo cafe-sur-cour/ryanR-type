@@ -8,8 +8,8 @@
 #ifndef MOVEMENTINTENTCOMPONENT_HPP_
 #define MOVEMENTINTENTCOMPONENT_HPP_
 
-#include "AComponent.hpp"
-#include "../../types/Vector2f.hpp"
+#include "../base/AComponent.hpp"
+#include "../../../types/Vector2f.hpp"
 
 namespace ecs {
 
