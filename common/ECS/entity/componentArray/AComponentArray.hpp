@@ -19,7 +19,7 @@ template <typename T>
 class AComponentArray : public IComponentArray {
     public:
         AComponentArray();
-        ~AComponentArray();
+        ~AComponentArray() override;
 
         void add(int entityId, std::shared_ptr<T> component);
         std::shared_ptr<T> get(int entityId) const;
@@ -27,7 +27,7 @@ class AComponentArray : public IComponentArray {
         bool has(int entityId) const;
 
         void removeAllComponentsWithState(ComponentState state) override;
-        size_t getMaxEntityId() const;
+        size_t getMaxEntityId() const override;
 
     private:
         std::vector<std::shared_ptr<T>> _components;
