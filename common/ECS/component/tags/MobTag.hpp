@@ -8,7 +8,7 @@
 #ifndef MOBTAG_HPP_
 #define MOBTAG_HPP_
 
-#include "AComponent.hpp"
+#include "../base/AComponent.hpp"
 
 namespace ecs {
 

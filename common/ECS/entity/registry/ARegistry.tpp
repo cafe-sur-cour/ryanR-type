@@ -65,4 +65,16 @@ bool ARegistry::hasComponent(int entityId) const
     return false;
 }
 
+template <typename... Components>
+View<Components...> ARegistry::view()
+{
+    return View<Components...>(std::static_pointer_cast<ARegistry>(shared_from_this()));
+}
+
+template <typename... Components>
+Group<Components...> ARegistry::group()
+{
+    return Group<Components...>(std::static_pointer_cast<ARegistry>(shared_from_this()));
+}
+
 } // namespace ecs

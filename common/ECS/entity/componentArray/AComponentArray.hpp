@@ -9,7 +9,7 @@
 #define AComposantType_HPP_
 
 #include "IComponentArray.hpp"
-#include "../../component/IComponent.hpp"
+#include "../../component/base/IComponent.hpp"
 #include <vector>
 #include <memory>
 
@@ -27,6 +27,7 @@ class AComponentArray : public IComponentArray {
         bool has(int entityId) const;
 
         void removeAllComponentsWithState(ComponentState state) override;
+        size_t getMaxEntityId() const;
 
     private:
         std::vector<std::shared_ptr<T>> _components;
