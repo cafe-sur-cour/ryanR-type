@@ -5,7 +5,7 @@ target_link_libraries(ServerConfigTests r-type_server_lib GTest::gtest GTest::gt
 add_test(NAME ServerConfigTests COMMAND ServerConfigTests)
 
 add_executable(ECSTests common/ECSTests.cpp ../client/initRessourcesManager/initRessourcesManager.cpp)
-target_link_libraries(ECSTests ECS view GTest::gtest GTest::gtest_main)
+target_link_libraries(ECSTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME ECSTests COMMAND ECSTests)
 
 add_executable(Vector2fTests common/types/Vector2fTests.cpp)
@@ -41,11 +41,11 @@ target_link_libraries(MovementIntentComponentTests ECS GTest::gtest GTest::gtest
 add_test(NAME MovementIntentComponentTests COMMAND MovementIntentComponentTests)
 
 add_executable(RegistryTests common/ECS/RegistryTests.cpp)
-target_link_libraries(RegistryTests ECS view GTest::gtest GTest::gtest_main)
+target_link_libraries(RegistryTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME RegistryTests COMMAND RegistryTests)
 
 add_executable(MovementInputSystemTests common/ECS/MovementInputSystemTests.cpp)
-target_link_libraries(MovementInputSystemTests ECS view GTest::gtest GTest::gtest_main)
+target_link_libraries(MovementInputSystemTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME MovementInputSystemTests COMMAND MovementInputSystemTests)
 
 add_executable(BufferTests server/buffer/circularBufferTest.cpp)
