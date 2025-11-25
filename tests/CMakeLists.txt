@@ -16,6 +16,26 @@ add_executable(VelocityComponentTests common/ECS/component/VelocityComponentTest
 target_link_libraries(VelocityComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME VelocityComponentTests COMMAND VelocityComponentTests)
 
+add_executable(TransformComponentTests common/ECS/component/TransformComponentTests.cpp)
+target_link_libraries(TransformComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME TransformComponentTests COMMAND TransformComponentTests)
+
+add_executable(PlayerTagTests common/ECS/component/PlayerTagTests.cpp)
+target_link_libraries(PlayerTagTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME PlayerTagTests COMMAND PlayerTagTests)
+
+add_executable(MobTagTests common/ECS/component/MobTagTests.cpp)
+target_link_libraries(MobTagTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME MobTagTests COMMAND MobTagTests)
+
+add_executable(ProjectileTagTests common/ECS/component/ProjectileTagTests.cpp)
+target_link_libraries(ProjectileTagTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME ProjectileTagTests COMMAND ProjectileTagTests)
+
+add_executable(ObstacleTagTests common/ECS/component/ObstacleTagTests.cpp)
+target_link_libraries(ObstacleTagTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME ObstacleTagTests COMMAND ObstacleTagTests)
+
 add_executable(BufferTests server/buffer/circularBufferTest.cpp)
 target_link_libraries(BufferTests Buffer GTest::gtest GTest::gtest_main)
 add_test(NAME BufferTests COMMAND BufferTests)
