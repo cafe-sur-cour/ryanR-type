@@ -39,5 +39,8 @@ class Packet : public IPacket {
         std::shared_ptr<ISerializer> _serializer;
 };
 
-
+extern "C" {
+    void *createPacketInstance(int id);
+    int getType();
+}
 #endif /* !PACKET_HPP_ */
