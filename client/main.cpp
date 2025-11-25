@@ -27,8 +27,9 @@ int main() {
         } else if (eventResult != gfx::IEvent::NOTHING) {
             std::cout << "press" << static_cast<int>(eventResult) << std::endl;
         }
-
         resourceManager->get<gfx::IWindow>()->clear();
+        resourceManager->get<gfx::IWindow>()->drawRectangle(
+            gfx::color_t{255, 0, 0}, {100, 100}, {200, 150});
         resourceManager->get<gfx::IWindow>()->display();
     }
     return 0;
