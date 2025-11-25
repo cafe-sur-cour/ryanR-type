@@ -12,6 +12,9 @@ namespace math {
 Vector2f::Vector2f(float x, float y) : _x(x), _y(y) {
 }
 
+Vector2f::Vector2f(Vector2f const &other) : _x(other._x), _y(other._y) {
+}
+
 float Vector2f::getX() const {
     return _x;
 }
