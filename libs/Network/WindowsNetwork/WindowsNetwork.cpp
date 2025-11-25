@@ -6,6 +6,7 @@
 */
 
 #include "WindowsNetwork.hpp"
+#include "../../../common/DLLoader/LoaderType.hpp"
 
 namespace net {
 
