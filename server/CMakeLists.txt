@@ -1,7 +1,6 @@
-set(SERVER_BIN_NAME r-type_server)
+set(SERVER_LIB_NAME r-type_server_lib)
 
-add_executable(${SERVER_BIN_NAME}
-    main.cpp
+add_library(${SERVER_LIB_NAME}
     IServer.hpp
     ServerConfig.hpp
     ServerConfig.cpp
@@ -11,11 +10,22 @@ add_executable(${SERVER_BIN_NAME}
 
 find_package(asio CONFIG REQUIRED)
 
-target_link_libraries(${SERVER_BIN_NAME}
+target_link_libraries(${SERVER_LIB_NAME}
     PUBLIC
         ECS
         DLLoader
         asio::asio
+)
+
+set(SERVER_BIN_NAME r-type_server)
+
+add_executable(${SERVER_BIN_NAME}
+    main.cpp
+)
+
+target_link_libraries(${SERVER_BIN_NAME}
+    PRIVATE
+        ${SERVER_LIB_NAME}
 )
 
 add_subdirectory(gsm)
