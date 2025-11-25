@@ -8,6 +8,8 @@
 #ifndef VECTOR2F_HPP_
 #define VECTOR2F_HPP_
 
+namespace math {
+
 class Vector2f {
     public:
         Vector2f(float x = 0.0f, float y = 0.0f);
@@ -31,5 +33,7 @@ class Vector2f {
         float _x;
         float _y;
 };
+
+} // namespace math
 
 #endif /* !VECTOR2F_HPP_ */
