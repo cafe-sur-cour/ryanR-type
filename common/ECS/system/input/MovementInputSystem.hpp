@@ -9,7 +9,7 @@
 #define MOVEMENTINPUTSYSTEM_HPP_
 
 #include "../base/ASystem.hpp"
-#include "../../component/temporary/MovementIntentComponent.hpp"
+#include "../../component/temporary/InputIntentComponent.hpp"
 #include <unordered_map>
 
 namespace ecs {
@@ -38,7 +38,7 @@ class MovementInputSystem : public ASystem {
         math::Vector2f _axisInput;
 
         math::Vector2f getMovementDirection() const;
-        void updateMovementIntent(std::shared_ptr<ARegistry> registry, int entityId, const math::Vector2f &direction);
+        void updateInputIntent(std::shared_ptr<ARegistry> registry, int entityId, const math::Vector2f &direction);
 };
 
 } // namespace ecs

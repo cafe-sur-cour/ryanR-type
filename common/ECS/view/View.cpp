@@ -9,7 +9,9 @@
 #include "../entity/registry/ARegistry.hpp"
 #include "../component/tags/PlayerTag.hpp"
 #include "../component/temporary/MovementIntentComponent.hpp"
+#include "../component/temporary/InputIntentComponent.hpp"
 #include "../component/permanent/TransformComponent.hpp"
+#include "../component/permanent/VelocityComponent.hpp"
 
 namespace ecs {
 
@@ -122,10 +124,12 @@ typename Group<Components...>::Iterator Group<Components...>::end() {
 /* Explicit template instantiations for commonly used component combinations */
 template class View<PlayerTag>;
 template class View<MovementIntentComponent>;
+template class View<InputIntentComponent>;
 template class View<TransformComponent>;
 template class View<PlayerTag, MovementIntentComponent>;
 template class View<PlayerTag, TransformComponent>;
 template class View<MovementIntentComponent, TransformComponent>;
+template class View<VelocityComponent, TransformComponent>;
 template class Group<PlayerTag>;
 template class Group<MovementIntentComponent>;
 template class Group<PlayerTag, MovementIntentComponent>;

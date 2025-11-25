@@ -10,6 +10,7 @@
 #include <memory>
 #include "../../../types/Vector2f.hpp"
 #include "../../component/tags/PlayerTag.hpp"
+#include "../../component/temporary/InputIntentComponent.hpp"
 
 namespace ecs {
 
@@ -32,10 +33,8 @@ void MovementInputSystem::update(
     auto view = registry->view<PlayerTag>();
     math::Vector2f movementDirection = getMovementDirection();
 
-    if (movementDirection.getX() != 0.0f || movementDirection.getY() != 0.0f) {
-        for (auto entityId : view) {
-            updateMovementIntent(registry, entityId, movementDirection);
-        }
+    for (auto entityId : view) {
+        updateInputIntent(registry, entityId, movementDirection);
     }
 }
 
@@ -79,23 +78,20 @@ math::Vector2f MovementInputSystem::getMovementDirection() const {
     return direction;
 }
 
-void MovementInputSystem::updateMovementIntent(
+void MovementInputSystem::updateInputIntent(
     std::shared_ptr<ARegistry> registry,
     int entityId,
     const math::Vector2f &direction) {
 
-    registry->registerComponent<MovementIntentComponent>();
-    auto movementIntent = std::make_shared<MovementIntentComponent>(direction,
-                                                                     true);
+    registry->registerComponent<InputIntentComponent>();
+    auto inputIntent = std::make_shared<InputIntentComponent>(direction);
 
-    if (registry->hasComponent<MovementIntentComponent>(entityId)) {
-        auto existingIntent = registry->getComponent<MovementIntentComponent>(
-            entityId);
+    if (registry->hasComponent<InputIntentComponent>(entityId)) {
+        auto existingIntent = registry->getComponent<InputIntentComponent>(entityId);
         existingIntent->setDirection(direction);
-        existingIntent->setActive(true);
         existingIntent->setState(ComponentState::Temporary);
     } else {
-        registry->addComponent(entityId, movementIntent);
+        registry->addComponent(entityId, inputIntent);
     }
 }
 

@@ -4,7 +4,8 @@
 #include <iostream>
 #include "../../../../common/ECS/component/permanent/TransformComponent.hpp"
 #include "../../../../common/ECS/component/permanent/SpeedComponent.hpp"
-#include "../../../../common/ECS/component/temporary/MovementIntentComponent.hpp"
+#include "../../../../common/ECS/component/permanent/VelocityComponent.hpp"
+#include "../../../../common/ECS/system/movement/InputToVelocitySystem.hpp"
 #include "../../../../common/ECS/entity/registry/ARegistry.hpp"
 #include "../../../../common/ECS/system/systemManager/ASystemManager.hpp"
 #include "../../../../client/graphicals/IWindow.hpp"
@@ -22,8 +23,10 @@ DevState::DevState(
     _registry = std::make_shared<ecs::ARegistry>();
     _systemManager = std::make_shared<ecs::ASystemManager>();
     _movementSystem = std::make_shared<ecs::MovementSystem>();
+    _inputToVelocitySystem = std::make_shared<ecs::InputToVelocitySystem>();
     _inputSystem = std::make_shared<ecs::MovementInputSystem>();
 
+    _systemManager->addSystem(_inputToVelocitySystem);
     _systemManager->addSystem(_movementSystem);
     _systemManager->addSystem(_inputSystem);
 }
@@ -33,12 +36,11 @@ void DevState::enter() {
 
     auto transform = std::make_shared<ecs::TransformComponent>(
         math::Vector2f(400.0f, 300.0f));
-    auto speed = std::make_shared<ecs::SpeedComponent>(200.0f);
-    auto movementIntent = std::make_shared<ecs::MovementIntentComponent>();
+    auto velocity = std::make_shared<ecs::VelocityComponent>(
+        math::Vector2f(200.0f, 0.0f));
 
     _registry->addComponent(entityId, transform);
-    _registry->addComponent(entityId, speed);
-    _registry->addComponent(entityId, movementIntent);
+    _registry->addComponent(entityId, velocity);
 }
 
 void DevState::update(float deltaTime) {
