@@ -102,7 +102,7 @@ jobs:
           chmod +x .\scripts\compile_project.bat
           .\scripts\compile_project.bat
 
-  run_all_tests: # This job should be updated when compilation script is ready
+  run_all_tests:
     name: run all tests
     needs: [check_ubuntu_compilation, check_windows_compilation]
     runs-on: ubuntu-latest
