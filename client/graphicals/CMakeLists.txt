@@ -5,6 +5,7 @@ add_library(${GRAPHICAL_LIB_NAME} STATIC)
 target_sources(${GRAPHICAL_LIB_NAME} PRIVATE
     SfmlWindow.cpp
     SfmlEvent.cpp
+    SfmlKeyMappings.cpp
 )
 
 target_include_directories(${GRAPHICAL_LIB_NAME}
@@ -25,6 +26,8 @@ target_link_libraries(${GRAPHICAL_LIB_NAME}
 target_sources(${CLIENT_BIN_NAME} PRIVATE
     IWindow.hpp
     IEvent.hpp
+    EventTypes.hpp
+    SfmlKeyMappings.hpp
     SfmlWindow.hpp
     SfmlEvent.hpp
 )
