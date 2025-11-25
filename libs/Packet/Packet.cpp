@@ -44,16 +44,21 @@ void Packet::incrementSequenceNumber() {
 }
 
 bool Packet::packPacket(const IBuffer &buffer) {
+    (void)buffer;
     return false;
 }
 
 bool Packet::unpackPacket(const IBuffer &buffer) {
+    (void)buffer;
     return false;
 }
 
 
 extern "C" {
 
+    void *createPacketInstance(int id) {
+        return new Packet(id);
+    }
     int getType() {
         return PACKET_MODULE;
     }

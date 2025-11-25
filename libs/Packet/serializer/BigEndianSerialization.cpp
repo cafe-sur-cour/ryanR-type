@@ -18,10 +18,15 @@ BigEndianSerialization::~BigEndianSerialization() {
 
 std::vector<uint8_t> BigEndianSerialization::serialize(const void* data,
     size_t size) {
+    (void)data;
+    (void)size;
     return std::vector<uint8_t>();
 }
 
 bool BigEndianSerialization::deserialize(const std::vector<uint8_t>& data,
     void* output, size_t expectedSize) {
+    (void)data;
+    (void)output;
+    (void)expectedSize;
     return false;
 }
