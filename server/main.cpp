@@ -6,8 +6,16 @@
 */
 
 #include <iostream>
-#include "Server.hpp"
+#include <memory>
 
-int main() {
-    return 0;
+#include "Server.hpp"
+#include "Utils.hpp"
+#include "ServerConfig.hpp"
+
+
+int main(int ac, char **av) {
+    Utils utils;
+    std::shared_ptr<rserv::ServerConfig> config = std::make_shared<rserv::ServerConfig>();
+
+    utils.parsCli(ac, av, config);
 }
