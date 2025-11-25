@@ -63,3 +63,7 @@ add_test(NAME BufferTests COMMAND BufferTests)
 add_executable(PacketTests server/packet/packettest.cpp)
 target_link_libraries(PacketTests Packet Buffer GTest::gtest GTest::gtest_main)
 add_test(NAME PacketTests COMMAND PacketTests)
+
+add_executable(SerializerTests server/packet/serializer/SerializerTests.cpp)
+target_link_libraries(SerializerTests Packet GTest::gtest GTest::gtest_main)
+add_test(NAME SerializerTests COMMAND SerializerTests)
