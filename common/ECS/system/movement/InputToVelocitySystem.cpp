@@ -5,6 +5,7 @@
 ** VelocitySystem
 */
 
+#include <memory>
 #include "InputToVelocitySystem.hpp"
 #include "../../component/temporary/InputIntentComponent.hpp"
 #include "../../component/permanent/VelocityComponent.hpp"
@@ -15,23 +16,27 @@ namespace ecs {
 InputToVelocitySystem::InputToVelocitySystem() {
 }
 
-void InputToVelocitySystem::update(std::shared_ptr<ResourceManager> resourceManager,
-                             std::shared_ptr<ARegistry> registry,
-                             float deltaTime) {
+void InputToVelocitySystem::update(
+    std::shared_ptr<ResourceManager> resourceManager,
+    std::shared_ptr<ARegistry> registry,
+    float deltaTime) {
+
     (void)resourceManager;
     (void)deltaTime;
 
     auto view = registry->view<InputIntentComponent>();
 
     for (auto entityId : view) {
-        auto inputIntent = registry->getComponent<InputIntentComponent>(entityId);
+        auto inputIntent =
+            registry->getComponent<InputIntentComponent>(entityId);
         math::Vector2f direction = inputIntent->getDirection();
 
         registry->registerComponent<VelocityComponent>();
         math::Vector2f velocity = direction * constants::BASE_SPEED;
 
         if (registry->hasComponent<VelocityComponent>(entityId)) {
-            auto existingVelocity = registry->getComponent<VelocityComponent>(entityId);
+            auto existingVelocity =
+                registry->getComponent<VelocityComponent>(entityId);
             existingVelocity->setVelocity(velocity);
         } else {
             auto velocityComp = std::make_shared<VelocityComponent>(velocity);

@@ -87,7 +87,8 @@ void MovementInputSystem::updateInputIntent(
     auto inputIntent = std::make_shared<InputIntentComponent>(direction);
 
     if (registry->hasComponent<InputIntentComponent>(entityId)) {
-        auto existingIntent = registry->getComponent<InputIntentComponent>(entityId);
+        auto existingIntent =
+            registry->getComponent<InputIntentComponent>(entityId);
         existingIntent->setDirection(direction);
         existingIntent->setState(ComponentState::Temporary);
     } else {
