@@ -10,12 +10,6 @@
 
 namespace ecs {
 
-ARegistry::ARegistry() {
-}
-
-ARegistry::~ARegistry() {
-}
-
 template <typename T>
 void ARegistry::registerComponent()
 {
@@ -69,12 +63,6 @@ bool ARegistry::hasComponent(int entityId) const
         return array->has(entityId);
     }
     return false;
-}
-
-void ARegistry::removeAllComponentsWithState(ComponentState state) {
-    for (const auto& pair : _components) {
-        pair.second->removeAllComponentsWithState(state);
-    }
 }
 
 } // namespace ecs
