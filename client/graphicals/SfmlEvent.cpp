@@ -5,10 +5,13 @@
 ** SfmlEvent
 */
 
-#include "SfmlEvent.hpp"
+#include <utility>
+#include <string>
+#include <memory>
 #include "SfmlWindow.hpp"
-
-SfmlEvent::SfmlEvent(std::shared_ptr<ecs::ResourceManager> resourceManager, std::shared_ptr<gfx::IWindow> window)
+#include "SfmlEvent.hpp"
+SfmlEvent::SfmlEvent(std::shared_ptr<ecs::ResourceManager> resourceManager,
+    std::shared_ptr<gfx::IWindow> window)
     : _resourceManager(resourceManager), _window(window), _typedText("") {
     init();
 }
@@ -28,8 +31,8 @@ gfx::IEvent::event_t SfmlEvent::pollEvents(std::pair<int, int> gridSize) {
     while (auto event = window->pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
             return CLOSE;
-        }
-        else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+        } else if (const auto* keyPressed = event->getIf
+            <sf::Event::KeyPressed>()) {
             switch (keyPressed->code) {
                 case sf::Keyboard::Key::Up:
                     return UP;
@@ -48,15 +51,15 @@ gfx::IEvent::event_t SfmlEvent::pollEvents(std::pair<int, int> gridSize) {
                 default:
                     break;
             }
-        }
-        else if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+        } else if (const auto* mousePressed = event->getIf
+            <sf::Event::MouseButtonPressed>()) {
             if (mousePressed->button == sf::Mouse::Button::Left)
                 return MOUSELEFTCLICK;
             else if (mousePressed->button == sf::Mouse::Button::Right)
                 return MOUSERIGHTCLICK;
             return MOUSECLICK;
-        }
-        else if (const auto* textEntered = event->getIf<sf::Event::TextEntered>()) {
+        } else if (const auto* textEntered = event->getIf
+            <sf::Event::TextEntered>()) {
             if (textEntered->unicode < 128) {
                 _typedText += static_cast<char>(textEntered->unicode);
                 return TYIPING;

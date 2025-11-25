@@ -20,6 +20,7 @@ std::shared_ptr<ecs::ResourceManager> initRessourcesManager() {
 
     std::shared_ptr<SfmlWindow> window = std::make_shared<SfmlWindow>();
     resourceManager->add<gfx::IWindow>(window);
-    resourceManager->add<gfx::IEvent>(std::make_shared<SfmlEvent>(resourceManager, window));
+    resourceManager->add<gfx::IEvent>
+        (std::make_shared<SfmlEvent>(resourceManager, window));
     return resourceManager;
 }

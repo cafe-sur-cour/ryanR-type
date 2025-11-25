@@ -18,14 +18,14 @@ int main() {
 
     // tmp loop to test window and events
     while (resourceManager->get<gfx::IWindow>()->isOpen()) {
-
         // tmp to see events
-        auto eventResult = resourceManager->get<gfx::IEvent>()->pollEvents({0, 0});
+        auto eventResult = resourceManager->get<gfx::IEvent>
+            ()->pollEvents({0, 0});
         if (eventResult == gfx::IEvent::CLOSE) {
             std::cout << "Event: Window closed" << std::endl;
             break;
         } else if (eventResult != gfx::IEvent::NOTHING) {
-            std::cout << "Event: " << static_cast<int>(eventResult) << std::endl;
+            std::cout << "press" << static_cast<int>(eventResult) << std::endl;
         }
 
         resourceManager->get<gfx::IWindow>()->clear();
