@@ -44,10 +44,12 @@ void Packet::incrementSequenceNumber() {
 }
 
 bool Packet::packPacket(const IBuffer &buffer) {
+    (void)buffer;
     return false;
 }
 
 bool Packet::unpackPacket(const IBuffer &buffer) {
+    (void)buffer;
     return false;
 }
 
