@@ -10,3 +10,6 @@ add_subdirectory(component)
 add_subdirectory(entity)
 add_subdirectory(resourceManager)
 add_subdirectory(system)
+add_subdirectory(view)
+
+target_link_libraries(${ECS_LIB_NAME} PUBLIC view)
