@@ -124,6 +124,7 @@ template class View<PlayerTag>;
 template class View<MovementIntentComponent>;
 template class View<PlayerTag, MovementIntentComponent>;
 template class View<PlayerTag, TransformComponent>;
+template class View<MovementIntentComponent, TransformComponent>;
 template class Group<PlayerTag>;
 template class Group<MovementIntentComponent>;
 template class Group<PlayerTag, MovementIntentComponent>;
