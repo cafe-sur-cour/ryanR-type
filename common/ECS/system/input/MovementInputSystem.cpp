@@ -34,7 +34,8 @@ void MovementInputSystem::update(
     }
 }
 
-math::Vector2f MovementInputSystem::getMovementDirection(std::shared_ptr<ResourceManager> resourceManager) const {
+math::Vector2f MovementInputSystem::getMovementDirection(
+    std::shared_ptr<ResourceManager> resourceManager) const {
     math::Vector2f direction(0.0f, 0.0f);
 
     if (!resourceManager->has<gfx::IEvent>()) {
@@ -54,7 +55,8 @@ math::Vector2f MovementInputSystem::getMovementDirection(std::shared_ptr<Resourc
         direction.setY(direction.getY() + 1.0f);
 
     /* Normalize keyboard input */
-    float magnitude = std::sqrt(direction.getX() * direction.getX() + direction.getY() * direction.getY());
+    float magnitude = std::sqrt(direction.getX() *
+                    direction.getX() + direction.getY() * direction.getY());
     if (magnitude > 1.0f) {
         direction.setX(direction.getX() / magnitude);
         direction.setY(direction.getY() / magnitude);
@@ -69,9 +71,12 @@ math::Vector2f MovementInputSystem::getMovementDirection(std::shared_ptr<Resourc
     return direction;
 }
 
-math::Vector2f MovementInputSystem::getAnalogStickInput(std::shared_ptr<gfx::IEvent> eventSystem) const {
-    float rawX = eventSystem->getAxisValue(gfx::EventType::GAMEPAD_LEFT_STICK_RIGHT);
-    float rawY = eventSystem->getAxisValue(gfx::EventType::GAMEPAD_LEFT_STICK_DOWN);
+math::Vector2f MovementInputSystem::getAnalogStickInput(
+    std::shared_ptr<gfx::IEvent> eventSystem) const {
+    float rawX =
+        eventSystem->getAxisValue(gfx::EventType::GAMEPAD_LEFT_STICK_RIGHT);
+    float rawY =
+        eventSystem->getAxisValue(gfx::EventType::GAMEPAD_LEFT_STICK_DOWN);
 
     /* Deadzone */
     const float deadzone = constants::GAMEPAD_DEADZONE * 100.0f;
@@ -80,7 +85,8 @@ math::Vector2f MovementInputSystem::getAnalogStickInput(std::shared_ptr<gfx::IEv
 
     math::Vector2f normalized(rawX / 100.0f, rawY / 100.0f);
 
-    float magnitude = std::sqrt(normalized.getX() * normalized.getX() + normalized.getY() * normalized.getY());
+    float magnitude = std::sqrt(normalized.getX() *
+                    normalized.getX() + normalized.getY() * normalized.getY());
     if (magnitude > 1.0f) {
         normalized.setX(normalized.getX() / magnitude);
         normalized.setY(normalized.getY() / magnitude);
