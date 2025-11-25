@@ -7,83 +7,95 @@
 
 #include "SfmlWindow.hpp"
 #include <stdexcept>
+#include <iostream>
 
 SfmlWindow::SfmlWindow(std::string title, size_t width, size_t height)
-    : _window(sf::RenderWindow(sf::VideoMode(width, height), title)), _fontPath("assets/font.ttf") {
-    if (!_font.loadFromFile(_fontPath))
-        throw std::runtime_error("Failed to load font: " + _fontPath);
+    : _window(std::make_shared<sf::RenderWindow>(sf::VideoMode({static_cast<unsigned int>(width), static_cast<unsigned int>(height)}), title)), _fontPath("assets/font.ttf") {
+    if (!_font.openFromFile(_fontPath)) {
+        std::cout << "Failed to load font: " << _fontPath << std::endl;
+        // throw std::runtime_error("Failed to load font: " + _fontPath);
+    }
+    init();
 }
 
 SfmlWindow::~SfmlWindow() {
-    if (_window.isOpen())
-        _window.close();
+    if (_window->isOpen())
+        _window->close();
+}
+
+void SfmlWindow::init() {
+    _window->setFramerateLimit(60);
+    _window->clear(sf::Color::Black);
+    _window->clear();
+    _window->display();
+    _window->setActive(true);
 }
 
 void SfmlWindow::display() {
-    _window.display();
+    _window->display();
 }
 
 void SfmlWindow::closeWindow() {
-    _window.close();
+    _window->close();
 }
 
 bool SfmlWindow::isOpen() {
-    return _window.isOpen();
+    return _window->isOpen();
 }
 
 void SfmlWindow::clear() {
-    _window.clear();
+    _window->clear();
 }
 
 void SfmlWindow::resizeWindow(size_t x, size_t y) {
-    _window.setSize(sf::Vector2u(x, y));
+    _window->setSize(sf::Vector2u(x, y));
 }
-void SfmlWindow::drawSprite(std::string asset, gfx::color_t color, std::string text, std::pair<size_t, size_t> position) {
+void SfmlWindow::drawSprite(std::string asset, gfx::color_t color, std::pair<size_t, size_t> position) {
     sf::Texture texture;
     if (!texture.loadFromFile(asset))
         throw std::runtime_error("Failed to load texture: " + asset);
-    sf::Sprite sprite;
-    sprite.setTexture(texture);
+    sf::Sprite sprite(texture);
     sprite.setColor(sf::Color(color.r, color.g, color.b));
-    sprite.setPosition(static_cast<float>(position.first), static_cast<float>(position.second));
-    _window.draw(sprite);
+    sprite.setPosition(sf::Vector2f(static_cast<float>(position.first), static_cast<float>(position.second)));
+    _window->draw(sprite);
 }
 
 void SfmlWindow::drawText(std::string text, gfx::color_t color, std::pair<size_t, size_t> position) {
-    sf::Text sfText;
-    sfText.setFont(_font);
-    sfText.setString(text);
-    sfText.setCharacterSize(24);
+    sf::Text sfText(_font, sf::String(text), 24);
     sfText.setFillColor(sf::Color(color.r, color.g, color.b));
-    sfText.setPosition(static_cast<float>(position.first), static_cast<float>(position.second));
-    _window.draw(sfText);
+    sfText.setPosition(sf::Vector2f(static_cast<float>(position.first), static_cast<float>(position.second)));
+    _window->draw(sfText);
 }
 
 void SfmlWindow::drawRectangle(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) {
     sf::RectangleShape rectangle(sf::Vector2f(static_cast<float>(size.first), static_cast<float>(size.second)));
     rectangle.setFillColor(sf::Color(color.r, color.g, color.b));
-    rectangle.setPosition(static_cast<float>(position.first), static_cast<float>(position.second));
-    _window.draw(rectangle);
+    rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first), static_cast<float>(position.second)));
+    _window->draw(rectangle);
 }
 
 bool SfmlWindow::isMouseOver(std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) {
-    sf::Vector2i mousePos = sf::Mouse::getPosition(_window);
-    sf::IntRect rect(static_cast<int>(position.first), static_cast<int>(position.second),
-        static_cast<int>(size.first), static_cast<int>(size.second));
+    sf::Vector2i mousePos = sf::Mouse::getPosition(*_window);
+    sf::IntRect rect(sf::Vector2i(static_cast<int>(position.first), static_cast<int>(position.second)),
+        sf::Vector2i(static_cast<int>(size.first), static_cast<int>(size.second)));
     return rect.contains(mousePos);
 }
 
 std::pair<int, int> SfmlWindow::getWindowSize() {
-    sf::Vector2u size = _window.getSize();
+    sf::Vector2u size = _window->getSize();
     return {static_cast<int>(size.x), static_cast<int>(size.y)};
 }
 
 void SfmlWindow::setFont(const std::string& fontPath) {
     _fontPath = fontPath;
-    if (!_font.loadFromFile(_fontPath))
+    if (!_font.openFromFile(_fontPath))
         throw std::runtime_error("Failed to load font: " + _fontPath);
 }
 
 std::string SfmlWindow::getFont() const {
     return _fontPath;
+}
+
+std::shared_ptr<sf::RenderWindow> SfmlWindow::getSfmlWindow() {
+    return _window;
 }
