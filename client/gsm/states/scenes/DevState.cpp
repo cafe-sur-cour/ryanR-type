@@ -1,4 +1,7 @@
 #include "DevState.hpp"
+#include <memory>
+#include <cmath>
+#include <iostream>
 #include "../../../../common/ECS/component/permanent/TransformComponent.hpp"
 #include "../../../../common/ECS/component/permanent/SpeedComponent.hpp"
 #include "../../../../common/ECS/component/temporary/MovementIntentComponent.hpp"
@@ -6,12 +9,15 @@
 #include "../../../../common/ECS/system/systemManager/ASystemManager.hpp"
 #include "../../../../client/graphicals/IWindow.hpp"
 #include "../../../../client/graphicals/IEvent.hpp"
-#include <cmath>
-#include <iostream>
 
 namespace gsm {
 
-DevState::DevState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ecs::ResourceManager> resourceManager)
+DevState::DevState(
+
+    std::shared_ptr<IGameStateMachine> gsm,
+
+    std::shared_ptr<ecs::ResourceManager> resourceManager)
+
     : AGameState(gsm), _resourceManager(resourceManager) {
     _registry = std::make_shared<ecs::ARegistry>();
     _systemManager = std::make_shared<ecs::ASystemManager>();
@@ -25,7 +31,8 @@ DevState::DevState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ecs::
 void DevState::enter() {
     int entityId = 0;
 
-    auto transform = std::make_shared<ecs::TransformComponent>(math::Vector2f(400.0f, 300.0f));
+    auto transform = std::make_shared<ecs::TransformComponent>(
+        math::Vector2f(400.0f, 300.0f));
     auto speed = std::make_shared<ecs::SpeedComponent>(200.0f);
     auto movementIntent = std::make_shared<ecs::MovementIntentComponent>();
 
@@ -50,10 +57,13 @@ void DevState::render() {
 
     auto view = _registry->view<ecs::TransformComponent>();
     for (auto entityId : view) {
-        auto transform = _registry->getComponent<ecs::TransformComponent>(entityId);
+        auto transform =
+            _registry->getComponent<ecs::TransformComponent>(entityId);
         math::Vector2f pos = transform->getPosition();
         _resourceManager->get<gfx::IWindow>()->drawRectangle(
-            gfx::color_t{0, 255, 0}, {pos.getX() - 25, pos.getY() - 25}, {50, 50});
+            gfx::color_t{0, 255, 0},
+            {pos.getX() - 25, pos.getY() - 25},
+            {50, 50});
     }
 
     _resourceManager->get<gfx::IWindow>()->display();

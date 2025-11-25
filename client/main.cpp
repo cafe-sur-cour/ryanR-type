@@ -19,8 +19,10 @@ int main() {
     std::shared_ptr<ecs::ResourceManager> resourceManager =
         initRessourcesManager();
 
-    std::shared_ptr<gsm::GameStateMachine> gsm = std::make_shared<gsm::GameStateMachine>();
-    std::shared_ptr<gsm::DevState> devState = std::make_shared<gsm::DevState>(gsm, resourceManager);
+    std::shared_ptr<gsm::GameStateMachine> gsm =
+        std::make_shared<gsm::GameStateMachine>();
+    std::shared_ptr<gsm::DevState> devState =
+        std::make_shared<gsm::DevState>(gsm, resourceManager);
 
     gsm->changeState(devState);
 
