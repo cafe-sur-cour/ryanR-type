@@ -10,7 +10,8 @@
 
 #include <SFML/Graphics.hpp>
 #include "./IWindow.hpp"
-#include <unordered_map>
+#include "./TextureManager.hpp"
+#include <memory>
 
 class SfmlWindow : public gfx::IWindow {
     public:
@@ -40,7 +41,7 @@ class SfmlWindow : public gfx::IWindow {
         std::shared_ptr<sf::RenderWindow> _window;
         sf::Font _font;
         std::string _fontPath;
-        std::unordered_map<std::string, std::shared_ptr<sf::Texture>> _textureCache;
+        gfx::TextureManager _textureManager;
 };
 
 #endif /* !SFMLWINDOW_HPP_ */
