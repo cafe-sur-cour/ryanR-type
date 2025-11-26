@@ -16,9 +16,9 @@
 namespace gfx {
 
 struct color_t {
-    int r;
-    int g;
-    int b;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
 };
 
 class IWindow {

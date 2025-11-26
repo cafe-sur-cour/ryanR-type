@@ -27,7 +27,7 @@ DevState::DevState(
 }
 
 void DevState::enter() {
-    int entityId = 0;
+    size_t entityId = 0;
 
     auto transform = std::make_shared<ecs::TransformComponent>(
         math::Vector2f(400.0f, 300.0f));

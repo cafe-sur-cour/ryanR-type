@@ -20,13 +20,13 @@ class INetwork {
 
         virtual ~INetwork() = default;
 
-        virtual void init(unsigned int port) = 0;
+        virtual void init(int port) = 0;
         virtual void stop() = 0;
 
         virtual int acceptConnection() = 0;
         virtual void closeConnection(int connectionId) = 0;
         virtual std::vector<int> getActiveConnections() const = 0;
-        virtual int getConnectionCount() const = 0;
+        virtual size_t getConnectionCount() const = 0;
 
         virtual void sendTo(int connectionId, const IPacket &packet) = 0;
         virtual void broadcast(const IPacket &packet) = 0;

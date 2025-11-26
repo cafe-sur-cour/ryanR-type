@@ -29,7 +29,7 @@ bool Packet::parseConnectionPacket(const std::vector<std::uint8_t> payload) {
         return false;
     }
 
-    for (size_t i = 1; i < 9; i++)
+    for (size_t i = 1; i < (LENGTH_CONNECTION_PACKET - LENGTH_EO_PACKET); i++)
         this->_payload.push_back(payload.at(i));
     return true;
 }
@@ -42,8 +42,6 @@ std::vector<uint8_t> Packet::buildAcceptationPacket(
     temp = this->_serializer->serializeChar(payload.at(0));
     body.insert(body.end(), temp.begin(), temp.end());
     temp = this->_serializer->serializeChar(payload.at(1));
-    body.insert(body.end(), temp.begin(), temp.end());
-    temp = this->_serializer->serializeShort(this->_endOfPacket);
     body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }
@@ -96,8 +94,6 @@ std::vector<uint8_t> Packet::buildEventPacket(
     temp = this->_serializer->serializeChar(payload.at(1));
     body.insert(body.end(), temp.begin(), temp.end());
     temp = this->_serializer->serializeChar(payload.at(2));
-    body.insert(body.end(), temp.begin(), temp.end());
-    temp = this->_serializer->serializeShort(this->_endOfPacket);
     body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }

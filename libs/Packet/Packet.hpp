@@ -88,7 +88,7 @@ class Packet : public IPacket {
 };
 
 extern "C" {
-    void *createPacketInstance(int id);
+    void *createPacketInstance(unsigned int id);
     int getType();
 }
 #endif /* !PACKET_HPP_ */

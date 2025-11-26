@@ -59,7 +59,7 @@ namespace rserv {
             void broadcastPacket(const IPacket &packet) override;
             void sendToClient(int idClient, const IPacket &packet) override;
             std::vector<int> getConnectedClients() const override;
-            int getClientCount() const override;
+            size_t getClientCount() const override;
 
         private:
             void loadNetworkLibrary();

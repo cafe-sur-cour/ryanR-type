@@ -19,13 +19,13 @@ class WindowsNetwork : public ANetwork {
         WindowsNetwork();
         ~WindowsNetwork() override;
 
-        void init(unsigned int port) override;
+        void init(int port) override;
         void stop() override;
 
         int acceptConnection() override;
         void closeConnection(int connectionId) override;
         std::vector<int> getActiveConnections() const override;
-        int getConnectionCount() const override;
+        size_t getConnectionCount() const override;
 
         void sendTo(int connectionId, const IPacket &packet) override;
         void broadcast(const IPacket &packet) override;
