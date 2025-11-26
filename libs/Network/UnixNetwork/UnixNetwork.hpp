@@ -25,13 +25,13 @@ class UnixNetwork : public ANetwork {
         ~UnixNetwork() override;
 
 
-        void init(unsigned int port) override;
+        void init(int port) override;
         void stop() override;
 
         int acceptConnection() override;
         void closeConnection(int connectionId) override;
         std::vector<int> getActiveConnections() const override;
-        int getConnectionCount() const override;
+        size_t getConnectionCount() const override;
 
         void sendTo(int connectionId, const IPacket &packet) override;
         void broadcast(const IPacket &packet) override;
@@ -53,7 +53,7 @@ class UnixNetwork : public ANetwork {
         std::function<void(int)> _onConnectCallback;
         std::function<void(int)> _onDisconnectCallback;
         int _nextClientId;
-        unsigned int _port;
+        int _port;
         bool _isRunning;
 };
 

@@ -25,6 +25,7 @@ class SfmlEvent : public gfx::IEvent {
         std::pair<int, int> getMousePos() override;
         bool isKeyPressed(event_t key) override;
         bool isMouseButtonPressed(int button) override;
+        float getAxisValue(event_t axis) override;
 
     private:
         void initializeMappings();
@@ -33,6 +34,7 @@ class SfmlEvent : public gfx::IEvent {
         event_t processMouseEvent(const sf::Event::MouseButtonPressed& mousePressed);
         event_t processJoystickButtonEvent(const sf::Event::JoystickButtonPressed& joystickPressed);
         event_t processJoystickAxisEvent(const sf::Event::JoystickMoved& joystickMoved);
+        bool isJoystickAxisPressed(event_t key);
 
         // Member variables
         std::shared_ptr<ecs::ResourceManager> _resourceManager;

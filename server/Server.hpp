@@ -54,7 +54,7 @@ namespace rserv {
             void broadcastPacket() override;
             void sendToClient(int idClient ) override;
             std::vector<int> getConnectedClients() const override;
-            int getClientCount() const override;
+            size_t getClientCount() const override;
 
         private:
             void loadNetworkLibrary();
