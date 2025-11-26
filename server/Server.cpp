@@ -149,15 +149,15 @@ void rserv::Server::processIncomingPackets() {
     }
 }
 
-void rserv::Server::broadcastPacket(const IPacket &packet) {
+void rserv::Server::broadcastPacket() {
     if (_network) {
-        _network->broadcast(packet);
+        _network->broadcast(*this->_packet);
     }
 }
 
-void rserv::Server::sendToClient(int idClient, const IPacket &packet) {
+void rserv::Server::sendToClient(int idClient) {
     if (_network) {
-        _network->sendTo(idClient, packet);
+        _network->sendTo(idClient, *this->_packet);
     }
 }
 

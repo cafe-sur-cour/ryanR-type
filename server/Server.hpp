@@ -57,8 +57,8 @@ namespace rserv {
             void processConnections() override;
             void processIncomingPackets() override;
 
-            void broadcastPacket(const IPacket &packet) override;
-            void sendToClient(int idClient, const IPacket &packet) override;
+            void broadcastPacket() override;
+            void sendToClient(int idClient ) override;
             std::vector<int> getConnectedClients() const override;
             int getClientCount() const override;
 
