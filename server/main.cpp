@@ -5,29 +5,31 @@
 ** Main
 */
 
-#include <vector>
-#include <memory>
 #include <iostream>
-#include "../libs/Packet/Packet.hpp"
+#include <memory>
 
-int main() {
-    Packet packet(1);
+#include "initRessourcesManager/initRessourcesManager.hpp"
+#include "../common/ECS/resourceManager/ResourceManager.hpp"
+#include "Server.hpp"
+#include "Utils.hpp"
+#include "../common/Error/IError.hpp"
+#include "ServerConfig.hpp"
 
-    std::vector<uint8_t> header = packet.packHeaderPacket(1234, 1, 0x03);
-    std::cout << "Packed Header: ";
-    for (auto byte : header) {
-        std::cout << std::hex << static_cast<int>(byte) << " ";
+
+int main(int ac, char **av) {
+    Utils utils;
+    std::shared_ptr<rserv::ServerConfig> config =
+        std::make_shared<rserv::ServerConfig>();
+    std::shared_ptr<rserv::IServer> server = std::make_shared<rserv::Server>();
+
+    utils.parsCli(ac, av, config);
+    std::shared_ptr<ecs::ResourceManager> resourceManager =
+        initRessourcesManager();
+    try {
+        server->setConfig(config);
+        server->init();
+    } catch (const err::IError &e) {
+        std::cerr << e.getDetails() << std::endl;
+        return 84;
     }
-    std::cout << std::dec << std::endl;
-
-    std::vector<uint8_t> payload = {
-        0x03,
-        4};
-    std::vector<uint8_t> body = packet.packBodyPacket(payload);
-    std::cout << "Packed Body: ";
-    for (auto byte : body) {
-        std::cout << std::hex << static_cast<int>(byte) << " ";
-    }
-    std::cout << std::dec << std::endl;
-    return 0;
 }
