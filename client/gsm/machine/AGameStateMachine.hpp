@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IGameStateMachine.hpp"
-#include "../states/IGameState.hpp"
+#include "../states/base/IGameState.hpp"
 
 namespace gsm {
 
@@ -21,4 +21,4 @@ protected:
     std::stack<std::shared_ptr<IGameState>> _states;
 };
 
-} // namespace gsm
+}  // namespace gsm

@@ -185,7 +185,7 @@ std::vector<int> rserv::Server::getConnectedClients() const {
     return {};
 }
 
-int rserv::Server::getClientCount() const {
+size_t rserv::Server::getClientCount() const {
     if (_network) {
         return _network->getConnectionCount();
     }

@@ -20,7 +20,7 @@ WindowsNetwork::WindowsNetwork() {
 WindowsNetwork::~WindowsNetwork() {
 }
 
-void WindowsNetwork::init(unsigned int port) {
+void WindowsNetwork::init(int port) {
     (void)port;
 }
 
@@ -38,7 +38,7 @@ void WindowsNetwork::closeConnection(int connectionId) {
 std::vector<int> WindowsNetwork::getActiveConnections() const {
 }
 
-int WindowsNetwork::getConnectionCount() const {
+size_t WindowsNetwork::getConnectionCount() const {
 }
 
 void WindowsNetwork::sendTo(int connectionId, const IPacket &packet) {

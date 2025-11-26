@@ -15,6 +15,7 @@
 #include "../../view/View.hpp"
 #include <memory>
 #include <unordered_map>
+#include <string>
 
 namespace ecs {
 
@@ -27,13 +28,13 @@ class ARegistry : public IRegistry, public std::enable_shared_from_this<ARegistr
         void registerComponent();
 
         template <typename T>
-        void addComponent(int entityId, std::shared_ptr<T> component);
+        void addComponent(size_t entityId, std::shared_ptr<T> component);
         template <typename T>
-        std::shared_ptr<T> getComponent(int entityId) const;
+        std::shared_ptr<T> getComponent(size_t entityId) const;
         template <typename T>
-        void removeComponent(int entityId);
+        void removeComponent(size_t entityId);
         template <typename T>
-        bool hasComponent(int entityId) const;
+        bool hasComponent(size_t entityId) const;
 
         template <typename... Components>
         View<Components...> view();
@@ -47,7 +48,7 @@ class ARegistry : public IRegistry, public std::enable_shared_from_this<ARegistr
 
     protected:
     private:
-        std::unordered_map<const char *, std::shared_ptr<IComponentArray>> _components;
+        std::unordered_map<std::string, std::shared_ptr<IComponentArray>> _components;
 };
 
 } // namespace ecs

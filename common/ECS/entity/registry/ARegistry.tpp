@@ -13,16 +13,17 @@ namespace ecs {
 template <typename T>
 void ARegistry::registerComponent()
 {
-    const char *typeName = typeid(T).name();
+    std::string typeName = typeid(T).name();
     if (_components.find(typeName) == _components.end()) {
         _components[typeName] = std::make_shared<AComponentArray<T>>();
     }
 }
 
 template <typename T>
-void ARegistry::addComponent(int entityId, std::shared_ptr<T> component)
+void ARegistry::addComponent(size_t entityId, std::shared_ptr<T> component)
 {
-    const char *typeName = typeid(T).name();
+    registerComponent<T>();
+    std::string typeName = typeid(T).name();
     auto it = _components.find(typeName);
     if (it != _components.end()) {
         auto array = std::static_pointer_cast<AComponentArray<T>>(it->second);
@@ -31,9 +32,9 @@ void ARegistry::addComponent(int entityId, std::shared_ptr<T> component)
 }
 
 template <typename T>
-std::shared_ptr<T> ARegistry::getComponent(int entityId) const
+std::shared_ptr<T> ARegistry::getComponent(size_t entityId) const
 {
-    const char *typeName = typeid(T).name();
+    std::string typeName = typeid(T).name();
     auto it = _components.find(typeName);
     if (it != _components.end()) {
         auto array = std::static_pointer_cast<AComponentArray<T>>(it->second);
@@ -43,7 +44,7 @@ std::shared_ptr<T> ARegistry::getComponent(int entityId) const
 }
 
 template <typename T>
-void ARegistry::removeComponent(int entityId)
+void ARegistry::removeComponent(size_t entityId)
 {
     const char *typeName = typeid(T).name();
     auto it = _components.find(typeName);
@@ -54,9 +55,9 @@ void ARegistry::removeComponent(int entityId)
 }
 
 template <typename T>
-bool ARegistry::hasComponent(int entityId) const
+bool ARegistry::hasComponent(size_t entityId) const
 {
-    const char *typeName = typeid(T).name();
+    std::string typeName = typeid(T).name();
     auto it = _components.find(typeName);
     if (it != _components.end()) {
         auto array = std::static_pointer_cast<AComponentArray<T>>(it->second);

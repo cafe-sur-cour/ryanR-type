@@ -9,17 +9,14 @@
 #include <cmath>
 #include <memory>
 #include "../../../types/Vector2f.hpp"
+#include "../../../constants.hpp"
 #include "../../component/tags/PlayerTag.hpp"
+#include "../../component/temporary/InputIntentComponent.hpp"
+#include "../../../../client/graphicals/IEvent.hpp"
 
 namespace ecs {
 
 MovementInputSystem::MovementInputSystem() {
-    // TEMPORARY: Will be useless when real input system is implemented
-    _movementKeyStates[MovementKey::Left] = false;
-    _movementKeyStates[MovementKey::Right] = false;
-    _movementKeyStates[MovementKey::Up] = false;
-    _movementKeyStates[MovementKey::Down] = false;
-    _axisInput = math::Vector2f(0.0f, 0.0f);
 }
 
 void MovementInputSystem::update(
@@ -30,72 +27,90 @@ void MovementInputSystem::update(
     (void)deltaTime;
 
     auto view = registry->view<PlayerTag>();
-    math::Vector2f movementDirection = getMovementDirection();
+    math::Vector2f movementDirection = getMovementDirection(resourceManager);
 
-    if (movementDirection.getX() != 0.0f || movementDirection.getY() != 0.0f) {
-        for (auto entityId : view) {
-            updateMovementIntent(registry, entityId, movementDirection);
-        }
+    for (auto entityId : view) {
+        updateInputIntent(registry, entityId, movementDirection);
     }
 }
 
-void MovementInputSystem::simulateKeyPress(MovementKey key, bool pressed) {
-    _movementKeyStates[key] = pressed;
-}
-
-void MovementInputSystem::simulateAxis(float horizontal, float vertical) {
-    _axisInput = math::Vector2f(horizontal, vertical);
-}
-
-math::Vector2f MovementInputSystem::getMovementDirection() const {
+math::Vector2f MovementInputSystem::getMovementDirection(
+    std::shared_ptr<ResourceManager> resourceManager) const {
     math::Vector2f direction(0.0f, 0.0f);
 
-    // TEMPORARY: Simulate input based on key states
-    // will be replaced by real input system
-    if (_movementKeyStates.at(MovementKey::Left))
-        direction.setX(direction.getX() - 1.0f);
-    if (_movementKeyStates.at(MovementKey::Right))
-        direction.setX(direction.getX() + 1.0f);
-    if (_movementKeyStates.at(MovementKey::Up))
-        direction.setY(direction.getY() - 1.0f);
-    if (_movementKeyStates.at(MovementKey::Down))
-        direction.setY(direction.getY() + 1.0f);
-
-    // will be replaced by real input system
-    if (_axisInput.getX() != 0.0f || _axisInput.getY() != 0.0f) {
-        direction = _axisInput;
+    if (!resourceManager->has<gfx::IEvent>()) {
+        return direction;
     }
 
-    /* Normalize direction */
-    if (direction.getX() != 0.0f && direction.getY() != 0.0f) {
-        float length = std::sqrt(direction.getX() * direction.getX() +
-                                  direction.getY() * direction.getY());
-        if (length > 1.0f) {
-            direction.setX(direction.getX() / length);
-            direction.setY(direction.getY() / length);
-        }
+    auto eventSystem = resourceManager->get<gfx::IEvent>();
+
+    /* Keyboard input */
+    if (eventSystem->isKeyPressed(gfx::EventType::LEFT))
+        direction.setX(direction.getX() - 1.0f);
+    if (eventSystem->isKeyPressed(gfx::EventType::RIGHT))
+        direction.setX(direction.getX() + 1.0f);
+    if (eventSystem->isKeyPressed(gfx::EventType::UP))
+        direction.setY(direction.getY() - 1.0f);
+    if (eventSystem->isKeyPressed(gfx::EventType::DOWN))
+        direction.setY(direction.getY() + 1.0f);
+
+    /* Normalize keyboard input */
+    float magnitude = std::sqrt(direction.getX() *
+                    direction.getX() + direction.getY() * direction.getY());
+    if (magnitude > 1.0f) {
+        direction.setX(direction.getX() / magnitude);
+        direction.setY(direction.getY() / magnitude);
+    }
+
+    /* Gamepad input */
+    math::Vector2f analogInput = getAnalogStickInput(eventSystem);
+    if (std::fabs(analogInput.getX()) > constants::EPS ||
+        std::fabs(analogInput.getY()) > constants::EPS) {
+        direction = analogInput;
     }
 
     return direction;
 }
 
-void MovementInputSystem::updateMovementIntent(
+math::Vector2f MovementInputSystem::getAnalogStickInput(
+    std::shared_ptr<gfx::IEvent> eventSystem) const {
+    float rawX =
+        eventSystem->getAxisValue(gfx::EventType::GAMEPAD_LEFT_STICK_RIGHT);
+    float rawY =
+        eventSystem->getAxisValue(gfx::EventType::GAMEPAD_LEFT_STICK_DOWN);
+
+    /* Deadzone */
+    const float deadzone = constants::GAMEPAD_DEADZONE * 100.0f;
+    if (std::abs(rawX) < deadzone) rawX = 0.0f;
+    if (std::abs(rawY) < deadzone) rawY = 0.0f;
+
+    math::Vector2f normalized(rawX / 100.0f, rawY / 100.0f);
+
+    float magnitude = std::sqrt(normalized.getX() *
+                    normalized.getX() + normalized.getY() * normalized.getY());
+    if (magnitude > 1.0f) {
+        normalized.setX(normalized.getX() / magnitude);
+        normalized.setY(normalized.getY() / magnitude);
+    }
+
+    return normalized;
+}
+
+void MovementInputSystem::updateInputIntent(
     std::shared_ptr<ARegistry> registry,
-    int entityId,
+    size_t entityId,
     const math::Vector2f &direction) {
 
-    registry->registerComponent<MovementIntentComponent>();
-    auto movementIntent = std::make_shared<MovementIntentComponent>(direction,
-                                                                     true);
+    registry->registerComponent<InputIntentComponent>();
+    auto inputIntent = std::make_shared<InputIntentComponent>(direction);
 
-    if (registry->hasComponent<MovementIntentComponent>(entityId)) {
-        auto existingIntent = registry->getComponent<MovementIntentComponent>(
-            entityId);
+    if (registry->hasComponent<InputIntentComponent>(entityId)) {
+        auto existingIntent =
+            registry->getComponent<InputIntentComponent>(entityId);
         existingIntent->setDirection(direction);
-        existingIntent->setActive(true);
         existingIntent->setState(ComponentState::Temporary);
     } else {
-        registry->addComponent(entityId, movementIntent);
+        registry->addComponent(entityId, inputIntent);
     }
 }
 

@@ -9,7 +9,9 @@
 #include "../entity/registry/ARegistry.hpp"
 #include "../component/tags/PlayerTag.hpp"
 #include "../component/temporary/MovementIntentComponent.hpp"
+#include "../component/temporary/InputIntentComponent.hpp"
 #include "../component/permanent/TransformComponent.hpp"
+#include "../component/permanent/VelocityComponent.hpp"
 
 namespace ecs {
 
@@ -52,18 +54,18 @@ bool View<Components...>::Iterator::hasAllComponents() const {
 template <typename... Components>
 typename View<Components...>::Iterator View<Components...>::begin() {
     size_t maxEntityId = _registry->getMaxEntityId();
-    size_t startId = 0;
-    while (startId < maxEntityId &&
-           !(_registry->template hasComponent<Components>(startId) && ...)) {
-        ++startId;
+    for (size_t i = 0; i <= maxEntityId; ++i) {
+        if ((_registry->template hasComponent<Components>(i) && ...)) {
+            return Iterator(_registry, i, maxEntityId + 1);
+        }
     }
-    return Iterator(_registry, startId, maxEntityId);
+    return Iterator(_registry, maxEntityId + 1, maxEntityId + 1);
 }
 
 template <typename... Components>
 typename View<Components...>::Iterator View<Components...>::end() {
     size_t maxEntityId = _registry->getMaxEntityId();
-    return Iterator(_registry, maxEntityId, maxEntityId);
+    return Iterator(_registry, maxEntityId + 1, maxEntityId + 1);
 }
 
 template <typename... Components>
@@ -105,26 +107,29 @@ bool Group<Components...>::Iterator::hasAllComponents() const {
 template <typename... Components>
 typename Group<Components...>::Iterator Group<Components...>::begin() {
     size_t maxEntityId = _registry->getMaxEntityId();
-    size_t startId = 0;
-    while (startId < maxEntityId &&
-           !(_registry->template hasComponent<Components>(startId) && ...)) {
-        ++startId;
+    for (size_t i = 0; i <= maxEntityId; ++i) {
+        if ((_registry->template hasComponent<Components>(i) && ...)) {
+            return Iterator(_registry, i, maxEntityId + 1);
+        }
     }
-    return Iterator(_registry, startId, maxEntityId);
+    return Iterator(_registry, maxEntityId + 1, maxEntityId + 1);
 }
 
 template <typename... Components>
 typename Group<Components...>::Iterator Group<Components...>::end() {
     size_t maxEntityId = _registry->getMaxEntityId();
-    return Iterator(_registry, maxEntityId, maxEntityId);
+    return Iterator(_registry, maxEntityId + 1, maxEntityId + 1);
 }
 
 /* Explicit template instantiations for commonly used component combinations */
 template class View<PlayerTag>;
 template class View<MovementIntentComponent>;
+template class View<InputIntentComponent>;
+template class View<TransformComponent>;
 template class View<PlayerTag, MovementIntentComponent>;
 template class View<PlayerTag, TransformComponent>;
 template class View<MovementIntentComponent, TransformComponent>;
+template class View<VelocityComponent, TransformComponent>;
 template class Group<PlayerTag>;
 template class Group<MovementIntentComponent>;
 template class Group<PlayerTag, MovementIntentComponent>;

@@ -57,7 +57,9 @@ void SfmlWindow::clear() {
 }
 
 void SfmlWindow::resizeWindow(size_t x, size_t y) {
-    _window->setSize(sf::Vector2u(x, y));
+    _window->setSize(sf::Vector2u(
+        static_cast<unsigned int>(x),
+        static_cast<unsigned int>(y) ));
 }
 void SfmlWindow::drawSprite(std::string asset, gfx::color_t color,
     std::pair<size_t, size_t> position) {
