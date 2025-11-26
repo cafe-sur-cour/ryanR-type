@@ -131,3 +131,25 @@ void SfmlWindow::drawSprite(const std::string& texturePath,
     sprite.setScale(sf::Vector2f(scaleX, scaleY));
     _window->draw(sprite);
 }
+
+void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y,
+    const void* frameRect, float scaleX, float scaleY) {
+    auto texture = _textureManager.loadTexture(texturePath);
+    if (!texture)
+        return drawRectangle({255, 0, 0}, {static_cast<size_t>(x),
+            static_cast<size_t>(y)}, {50, 50});
+
+    const math::FRect* rect = static_cast<const math::FRect*>(frameRect);
+    if (!rect)
+        return drawSprite(texturePath, x, y, scaleX, scaleY);
+
+    sf::Sprite sprite(*texture);
+    sf::IntRect textureRect(
+        sf::Vector2i(static_cast<int>(rect->getLeft()), static_cast<int>(rect->getTop())),
+        sf::Vector2i(static_cast<int>(rect->getWidth()), static_cast<int>(rect->getHeight()))
+    );
+    sprite.setTextureRect(textureRect);
+    sprite.setPosition(sf::Vector2f(x, y));
+    sprite.setScale(sf::Vector2f(scaleX, scaleY));
+    _window->draw(sprite);
+}
