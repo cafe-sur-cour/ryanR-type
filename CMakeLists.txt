@@ -13,7 +13,12 @@ endif()
 find_package(asio CONFIG REQUIRED)
 option(BUILD_TESTS "Build unit tests" OFF)
 
-add_compile_options(-Wall -Wextra -Werror -Wshadow -Wpedantic -Wconversion -Wsign-conversion -Wfloat-equal -Wcast-align -Wformat=2 -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wnull-dereference -Wdouble-promotion -Wuse-after-free -Wno-null-dereference)
+
+if(UNIX)
+    add_compile_options(-Wall -Wextra -Werror -Wshadow -Wpedantic -Wconversion -Wsign-conversion -Wfloat-equal -Wcast-align -Wformat=2 -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wnull-dereference -Wdouble-promotion -Wuse-after-free -Wno-null-dereference)
+elseif(WIN32)
+    add_compile_options(/W4 /WX /permissive-)
+endif()
 
 enable_testing()
 
