@@ -23,7 +23,8 @@ std::vector<std::uint8_t> PacketManager::buildConnectionPacket(
     return body;
 }
 
-bool PacketManager::parseConnectionPacket(const std::vector<std::uint8_t> payload) {
+bool PacketManager::parseConnectionPacket(
+    const std::vector<std::uint8_t> payload) {
     if (payload.size() != LENGTH_CONNECTION_PACKET ||
         this->_length != payload.size()) {
         std::cerr <<
@@ -80,7 +81,8 @@ std::vector<uint8_t> PacketManager::buildDisconnectionPacket(
     return body;
 }
 
-bool PacketManager::parseDisconnectionPacket(const std::vector<std::uint8_t> payload) {
+bool PacketManager::parseDisconnectionPacket(
+    const std::vector<std::uint8_t> payload) {
     if (payload.size() != LENGTH_DISCONNECTION_PACKET
         || this->_length != payload.size()) {
         std::cerr <<

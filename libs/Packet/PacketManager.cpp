@@ -30,24 +30,32 @@ PacketManager::PacketManager(uint32_t seqNumber) {
     }
 
     this->_packetHandlers = {
-        {CONNECTION_CLIENT_PACKET, std::bind(&PacketManager::buildConnectionPacket,
+        {CONNECTION_CLIENT_PACKET, std::bind(
+            &PacketManager::buildConnectionPacket,
             this, std::placeholders::_1)},
-        {ACCEPTATION_PACKET, std::bind(&PacketManager::buildAcceptationPacket,
+        {ACCEPTATION_PACKET, std::bind(
+            &PacketManager::buildAcceptationPacket,
             this, std::placeholders::_1)},
-        {DISCONNECTION_PACKET, std::bind(&PacketManager::buildDisconnectionPacket,
+        {DISCONNECTION_PACKET, std::bind(
+            &PacketManager::buildDisconnectionPacket,
             this, std::placeholders::_1)},
-        {EVENT_PACKET, std::bind(&PacketManager::buildEventPacket,
+        {EVENT_PACKET, std::bind(
+            &PacketManager::buildEventPacket,
             this, std::placeholders::_1)}
     };
 
     this->_packetReceived = {
-        {CONNECTION_CLIENT_PACKET, std::bind(&PacketManager::parseConnectionPacket,
+        {CONNECTION_CLIENT_PACKET, std::bind(
+            &PacketManager::parseConnectionPacket,
             this, std::placeholders::_1)},
-        {ACCEPTATION_PACKET, std::bind(&PacketManager::parseAcceptationPacket,
+        {ACCEPTATION_PACKET, std::bind(
+            &PacketManager::parseAcceptationPacket,
             this, std::placeholders::_1)},
-        {DISCONNECTION_PACKET, std::bind(&PacketManager::parseDisconnectionPacket,
+        {DISCONNECTION_PACKET, std::bind(
+            &PacketManager::parseDisconnectionPacket,
             this, std::placeholders::_1)},
-        {EVENT_PACKET, std::bind(&PacketManager::parseEventPacket,
+        {EVENT_PACKET, std::bind(
+            &PacketManager::parseEventPacket,
             this, std::placeholders::_1)}
     };
 

@@ -14,7 +14,8 @@ BigEndianSerialization::BigEndianSerialization() {
 BigEndianSerialization::~BigEndianSerialization() {
 }
 
-std::vector<std::uint8_t> BigEndianSerialization::serializeUInt(uint64_t value) {
+std::vector<std::uint8_t> BigEndianSerialization::serializeUInt(
+    uint64_t value) {
     std::vector<std::uint8_t> bytes;
 
     bytes.push_back(static_cast<std::uint8_t>((value >> 24) & 0xFF));

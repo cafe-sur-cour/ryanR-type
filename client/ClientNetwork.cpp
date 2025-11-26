@@ -85,7 +85,8 @@ void ClientNetwork::sendData(const IPacketManager &data, size_t size) {
     this->_network->sendData(data, size);
 }
 
-IPacketManager &ClientNetwork::receiveData(const IBuffer &buffer, size_t size) const {
+IPacketManager &ClientNetwork::receiveData(
+    const IBuffer &buffer, size_t size) const {
     return this->_network->receiveData(buffer, size);
 }
 

@@ -151,7 +151,8 @@ bool UnixNetwork::hasIncomingData() const {
     return !ec && available > 0;
 }
 
-std::shared_ptr<IPacketManager> UnixNetwork::receiveFrom(const int &connectionId) {
+std::shared_ptr<IPacketManager> UnixNetwork::receiveFrom(
+    const int &connectionId) {
     (void)connectionId;
     return nullptr;
 }
@@ -160,7 +161,8 @@ void UnixNetwork::sendData(const IPacketManager &data, size_t size) {
     (void)size;
     broadcast(data);
 }
-IPacketManager &UnixNetwork::receiveData(const IBuffer &buffer, size_t size) const {
+IPacketManager &UnixNetwork::receiveData(
+    const IBuffer &buffer, size_t size) const {
     (void)buffer;  // To avoid unused parameter warning
     (void)size;   // To avoid unused parameter warning
     throw std::runtime_error("[UnixNetwork] receiveData not implemented");
