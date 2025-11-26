@@ -70,3 +70,7 @@ add_test(NAME UtilsFuncTests COMMAND UtilsFuncTests)
 add_executable(SerializerTests server/packet/serializer/SerializerTests.cpp)
 target_link_libraries(SerializerTests Packet GTest::gtest GTest::gtest_main)
 add_test(NAME SerializerTests COMMAND SerializerTests)
+
+add_executable(ErrorTests common/Error/Error-test.cpp)
+target_link_libraries(ErrorTests ERROR GTest::gtest GTest::gtest_main)
+add_test(NAME ErrorTests COMMAND ErrorTests)
