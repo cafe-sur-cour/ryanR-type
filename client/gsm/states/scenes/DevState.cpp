@@ -5,6 +5,9 @@
 #include "../../../../common/ECS/component/tags/PlayerTag.hpp"
 #include "../../../../client/graphicals/IWindow.hpp"
 #include "../../../../client/graphicals/IEvent.hpp"
+#include "../../../../common/ECS/component/permanent/SpriteComponent.hpp"
+#include "../../../../common/ECS/component/permanent/AnimationComponent.hpp"
+#include "../../../../common/ECS/system/rendering/AnimationRenderingSystemy.hpp"
 
 namespace gsm {
 
@@ -20,21 +23,34 @@ DevState::DevState(
     _movementSystem = std::make_shared<ecs::MovementSystem>();
     _inputToVelocitySystem = std::make_shared<ecs::InputToVelocitySystem>();
     _inputSystem = std::make_shared<ecs::MovementInputSystem>();
+    _spriteRenderingSystem = std::make_shared<ecs::SpriteRenderingSystem>();
+    auto animationRenderingSystem =
+        std::make_shared<ecs::AnimationRenderingSystemy>();
 
     _systemManager->addSystem(_inputToVelocitySystem);
     _systemManager->addSystem(_movementSystem);
     _systemManager->addSystem(_inputSystem);
+    _systemManager->addSystem(_spriteRenderingSystem);
+    _systemManager->addSystem(animationRenderingSystem);
 }
 
 void DevState::enter() {
     size_t entityId = 0;
 
     auto transform = std::make_shared<ecs::TransformComponent>(
-        math::Vector2f(400.0f, 300.0f));
-    auto playerTag = std::make_shared<ecs::PlayerTag>();
+        math::Vector2f(100.0f, 100.0f));
 
+    transform->setScale(math::Vector2f(3.0f, 3.0f));
+    auto playerTag = std::make_shared<ecs::PlayerTag>();
+    // auto sprite = std::make_shared<ecs::SpriteComponent>
+    //     ("assets/sprites/sprite.png");
+
+    auto animation = std::make_shared<ecs::AnimationComponent>
+        ("assets/sprites/frog_spritesheet.png", 64.0f, 32.0f, 4);
     _registry->addComponent(entityId, transform);
     _registry->addComponent(entityId, playerTag);
+    // _registry->addComponent(entityId, sprite);
+    _registry->addComponent(entityId, animation);
 }
 
 void DevState::update(float deltaTime) {
@@ -49,20 +65,8 @@ void DevState::update(float deltaTime) {
 }
 
 void DevState::render() {
-    _resourceManager->get<gfx::IWindow>()->clear();
-
-    auto view = _registry->view<ecs::TransformComponent>();
-    for (auto entityId : view) {
-        auto transform =
-            _registry->getComponent<ecs::TransformComponent>(entityId);
-        math::Vector2f pos = transform->getPosition();
-        _resourceManager->get<gfx::IWindow>()->drawRectangle(
-            gfx::color_t{0, 255, 0},
-            {pos.getX() - 25, pos.getY() - 25},
-            {50, 50});
-    }
-
     _resourceManager->get<gfx::IWindow>()->display();
+    _resourceManager->get<gfx::IWindow>()->clear();
 }
 
 void DevState::exit() {

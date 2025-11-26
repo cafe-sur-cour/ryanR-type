@@ -7,7 +7,7 @@
 #include "../../../../common/ECS/system/movement/MovementSystem.hpp"
 #include "../../../../common/ECS/system/movement/InputToVelocitySystem.hpp"
 #include "../../../../common/ECS/system/input/MovementInputSystem.hpp"
-
+#include "../../../../common/ECS/system/rendering/SpriteRenderingSystem.hpp"
 namespace gsm {
 
 class DevState : public AGameState {
@@ -27,6 +27,7 @@ private:
     std::shared_ptr<ecs::MovementSystem> _movementSystem;
     std::shared_ptr<ecs::InputToVelocitySystem> _inputToVelocitySystem;
     std::shared_ptr<ecs::MovementInputSystem> _inputSystem;
+    std::shared_ptr<ecs::SpriteRenderingSystem> _spriteRenderingSystem;
 };
 
 }  // namespace gsm
