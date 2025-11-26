@@ -161,47 +161,21 @@ std::vector<uint8_t> Packet::packBodyPacket(std::vector<uint64_t> payload) {
     return body;
 }
 
-bool Packet::unpackPacket(std::vector<uint8_t> data) {
+bool Packet::unpack(std::vector<uint8_t> data) {
     if (data.empty()) {
-        std::cerr << "[SERVER] Error: unpackPacket(): Empty packet data" << std::endl;
+        std::cerr <<
+            "[SERVER] Error: unpackPacket(): Empty packet data"
+            << std::endl;
         return false;
     }
 
-    if (data.at(0) == this->_magicNumber) {
-        if (data.size() != HEADER_SIZE) {
-            std::cerr << "[SERVER] Error: unpackPacket(): Invalid header data" << std::endl;
-            return false;
-        }
-        this->_idClient = data.at(1);
-        this->_sequenceNumber = (data.at(2) << 24) | (data.at(3) << 16) |
-            (data.at(4) << 8) | data.at(5);
-        this->_type = data.at(6);
-        this->_length = (data.at(7) << 24) | (data.at(8) << 16) |
-            (data.at(9) << 8) | data.at(10);
-        if (data.at(11) != (FIRST_EOP_CHAR) ||
-            data.at(12) != (SECOND_EOP_CHAR)) {
-            std::cerr << "[SERVER] Error: unpackPacket(): Invalid end of packet characters" << std::endl;
-            return false;
-        }
-        return true;
-    } else {
-        if (this->_type == data.at(0)) {
-            for (auto &received : this->_packetReceived) {
-                if (received.first == this->_type) {
-                    return received.second(data);
-                }
-            }
-            std::cerr << "[SERVER] Error: unpackPacket(): Unknown packet type received" << std::endl;
-            return false;
-        }
-        std::cerr << "[SERVER] Error: unpackPacket(): Packet type mismatch" << std::endl;
-        return false;
-    }
+    if (data.at(0) == this->_magicNumber)
+        return this->unpackHeader(data);
+    return this->unpackBody(data);
 }
 
 
-
-void Packet::resetPacket() {
+void Packet::reset() {
     this->_magicNumber = MAGIC_NUMBER;
     this->_idClient = 0;
     this->_sequenceNumber = 0;

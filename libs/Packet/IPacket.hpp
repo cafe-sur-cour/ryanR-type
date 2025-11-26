@@ -30,9 +30,9 @@ class IPacket {
 
         virtual std::vector<uint8_t> packHeaderPacket(uint8_t idClient, unsigned int sequenceNumber, uint8_t type) = 0;
         virtual std::vector<uint8_t> packBodyPacket(std::vector<uint64_t> payload) = 0;
-        virtual bool unpackPacket(std::vector<uint8_t> data) = 0;
+        virtual bool unpack(std::vector<uint8_t> data) = 0;
 
-        virtual void resetPacket() = 0;
+        virtual void reset() = 0;
 };
 
 

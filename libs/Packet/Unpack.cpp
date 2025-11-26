@@ -1,0 +1,53 @@
+/*
+** EPITECH PROJECT, 2025
+** R-Type
+** File description:
+** Unpack
+*/
+
+#include <vector>
+#include <iostream>
+#include "Packet.hpp"
+
+bool Packet::unpackHeader(std::vector<uint8_t> data) {
+    if (data.empty() || data.size() != HEADER_SIZE) {
+        std::cerr <<
+            "[SERVER] Error: unpackPacket(): Invalid header data"
+            << std::endl;
+        return false;
+    }
+
+    this->_idClient = data.at(1);
+    this->_sequenceNumber = (data.at(2) << 24) | (data.at(3) << 16) |
+        (data.at(4) << 8) | data.at(5);
+    this->_type = data.at(6);
+    this->_length = (data.at(7) << 24) | (data.at(8) << 16) |
+        (data.at(9) << 8) | data.at(10);
+
+    if (data.at(11) != (FIRST_EOP_CHAR) ||
+        data.at(12) != (SECOND_EOP_CHAR)) {
+        std::cerr <<
+            "[SERVER] Error: unpackPacket(): Invalid end of packet characters"
+            << std::endl;
+        return false;
+    }
+    return true;
+}
+
+bool Packet::unpackBody(std::vector<uint8_t> data) {
+    if (this->_type == data.at(0)) {
+        for (auto &received : this->_packetReceived) {
+            if (received.first == this->_type) {
+                return received.second(data);
+            }
+        }
+        std::cerr <<
+            "[SERVER] Error: unpackPacket(): Unknown packet type received"
+            << std::endl;
+        return false;
+    }
+    std::cerr <<
+        "[SERVER] Error: unpackPacket(): Packet type mismatch"
+        << std::endl;
+    return false;
+}
