@@ -9,7 +9,6 @@
 #include <memory>
 #include "../../common/ECS/resourceManager/ResourceManager.hpp"
 #include "initRessourcesManager.hpp"
-#include "../graphicals/IWindow.hpp"
 #include "../graphicals/IEvent.hpp"
 #include "../graphicals/SfmlWindow.hpp"
 #include "../graphicals/SfmlEvent.hpp"
