@@ -145,9 +145,91 @@ jobs:
           target_repo_url: ${{ env.MIRROR_URL }}
           ssh_private_key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
 
+  calculate_version:
+    name: calculate semantic version
+    needs: [run_all_tests]
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.semver.outputs.version }}
+      version_type: ${{ steps.semver.outputs.version_type }}
+    steps:
+      - name: CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: GET VERSION TYPE FROM PR LABELS
+        id: get_version_type
+        run: |
+          # Get labels from the latest merged PR
+          PR_NUMBER=$(gh pr list --state merged --limit 1 --json number --jq '.[0].number')
+          if [ -n "$PR_NUMBER" ]; then
+            LABELS=$(gh pr view $PR_NUMBER --json labels --jq '.labels[].name')
+            echo "Labels found: $LABELS"
+            
+            if echo "$LABELS" | grep -q "release:major"; then
+              echo "type=major" >> "$GITHUB_OUTPUT"
+            elif echo "$LABELS" | grep -q "release:minor"; then
+              echo "type=minor" >> "$GITHUB_OUTPUT"
+            elif echo "$LABELS" | grep -q "release:patch"; then
+              echo "type=patch" >> "$GITHUB_OUTPUT"
+            else
+              echo "type=none" >> "$GITHUB_OUTPUT"
+              echo "::notice::No release label found, will keep current version"
+            fi
+          else
+            echo "type=none" >> "$GITHUB_OUTPUT"
+            echo "::notice::No merged PR found, will keep current version"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: CALCULATE SEMANTIC VERSION
+        id: semver
+        run: |
+          # Get the latest tag
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          VERSION=${LATEST_TAG#v}
+          
+          # SSeparate major.minor.patch
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+
+          # Increment according to the type
+          VERSION_TYPE="${{ steps.get_version_type.outputs.type }}"
+
+          if [ "$VERSION_TYPE" = "none" ]; then
+            # No label, keep the current version
+            NEW_VERSION="$LATEST_TAG"
+            echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+            echo "version_type=no-change" >> "$GITHUB_OUTPUT"
+            echo "::notice::No release label, keeping current version $NEW_VERSION"
+          else
+            # Increment the version
+            case "$VERSION_TYPE" in
+              major)
+                MAJOR=$((MAJOR + 1))
+                MINOR=0
+                PATCH=0
+                ;;
+              minor)
+                MINOR=$((MINOR + 1))
+                PATCH=0
+                ;;
+              patch)
+                PATCH=$((PATCH + 1))
+                ;;
+            esac
+            
+            NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+            echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+            echo "version_type=$VERSION_TYPE" >> "$GITHUB_OUTPUT"
+            echo "::notice::New version will be $NEW_VERSION (type: $VERSION_TYPE)"
+          fi
+
   create_unix_release:
     name: create unix release
-    needs: [run_all_tests]
+    needs: [calculate_version]
     if: ${{ github.event_name == 'push' }}
     environment: RTYPE
     runs-on: ubuntu-latest
@@ -157,34 +239,37 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: CREATE SOURCE ARCHIVE
+      - name: CREATE RELEASE ARCHIVE
         run: |
           mkdir -p release-package
           cp -r client server common libs scripts tests CMakeLists.txt CMakePresets.json vcpkg.json release-package/
           cd release-package
-          zip -r ../rtype-unix-source-${{ github.run_number }}.zip .
+          zip -r ../rtype-unix-${{ needs.calculate_version.outputs.version }}.zip .
           cd ..
 
       - name: CREATE UNIX RELEASE
         uses: ncipollo/release-action@v1
         with:
-          tag: unix-latest-${{ github.run_number }}
-          name: Unix Release ${{ github.run_number }}
+          tag: ${{ needs.calculate_version.outputs.version }}-unix
+          allowUpdates: true
+          name: Unix Release ${{ needs.calculate_version.outputs.version }}
           body: |
-            Automated Unix release for run number ${{ github.run_number }}.
+            Automated Unix release ${{ needs.calculate_version.outputs.version }}
+            
+            **Version Type:** `${{ needs.calculate_version.outputs.version_type }}`
 
-            ## Installation
-            1. Download the file `rtype-unix-source-${{ github.run_number }}.zip`
-            2. Unzip the archive: `unzip rtype-unix-source-${{ github.run_number }}.zip`
-            3. Run the compilation script: `chmod +x scripts/compile_project.sh && ./scripts/compile_project.sh`
+            ## 📦 Installation
+            1. Download `rtype-unix-${{ needs.calculate_version.outputs.version }}.zip`
+            2. Unzip: `unzip rtype-unix-${{ needs.calculate_version.outputs.version }}.zip`
+            3. Compile: `chmod +x scripts/compile_project.sh && ./scripts/compile_project.sh`
           draft: false
           prerelease: false
-          artifacts: "rtype-unix-source-${{ github.run_number }}.zip"
+          artifacts: "rtype-unix-${{ needs.calculate_version.outputs.version }}.zip"
           artifactContentType: application/zip
 
   create_windows_release:
     name: create windows release
-    needs: [run_all_tests]
+    needs: [calculate_version]
     if: ${{ github.event_name == 'push' }}
     environment: RTYPE
     runs-on: windows-latest
@@ -205,18 +290,26 @@ jobs:
         run: |
           .\scripts\compile_project.bat
 
+      - name: CREATE RELEASE ARCHIVE
+        run: |
+          Compress-Archive -Path build/windows/bin/Release/* -DestinationPath rtype-windows-${{ needs.calculate_version.outputs.version }}.zip
+
       - name: CREATE WINDOWS RELEASE
         uses: ncipollo/release-action@v1
         with:
-          tag: windows-latest-${{ github.run_number }}
-          name: Windows Release ${{ github.run_number }}
+          tag: ${{ needs.calculate_version.outputs.version }}-windows
+          allowUpdates: true
+          name: Windows Release ${{ needs.calculate_version.outputs.version }}
           body: |
-            Automated Windows release for run number ${{ github.run_number }}.
+            Automated Windows release ${{ needs.calculate_version.outputs.version }}
+            
+            **Version Type:** `${{ needs.calculate_version.outputs.version_type }}`
 
-            ## Installation
-            1. Download the executable files
-            2. Run the client or server executable directly
+            ## 📦 Installation
+            1. Download `rtype-windows-${{ needs.calculate_version.outputs.version }}.zip`
+            2. Unzip the archive
+            3. Run `r-type_client.exe` or `r-type_server.exe`
           draft: false
           prerelease: false
-          artifacts: "*.exe"
-          artifactContentType: application/vnd.microsoft.portable-executable
+          artifacts: "rtype-windows-${{ needs.calculate_version.outputs.version }}.zip"
+          artifactContentType: application/zip
