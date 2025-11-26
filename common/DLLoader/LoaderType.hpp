@@ -18,4 +18,14 @@ enum ModuleType_t{
 
 typedef ModuleType_t (*getTypeFunc_t)();
 
+typedef void *(*createNetworkLib_t)();
+typedef void *(*createBuffer_t)();
+typedef void *(*createPacket_t)();
+
+#define pathLoad "./librairies"
+#define networkLib "libNetwork.so"
+#define bufferLib "libBuffer.so"
+#define packetLib "libPacket.so"
+
+
 #endif /* !LOADERTYPE_HPP_ */
