@@ -8,27 +8,20 @@
 #include <iostream>
 #include <memory>
 
-#include "initRessourcesManager/initRessourcesManager.hpp"
-#include "../common/ECS/resourceManager/ResourceManager.hpp"
-#include "Server.hpp"
+#include "Core.hpp"
 #include "Utils.hpp"
+
 #include "../common/Error/IError.hpp"
-#include "ServerConfig.hpp"
 
 
 int main(int ac, char **av) {
     Utils utils;
-    std::shared_ptr<rserv::ServerConfig> config =
-        std::make_shared<rserv::ServerConfig>();
-    std::shared_ptr<rserv::IServer> server = std::make_shared<rserv::Server>();
+    Core core;
 
-    utils.parsCli(ac, av, config);
-    std::shared_ptr<ecs::ResourceManager> resourceManager =
-        initRessourcesManager();
+    utils.parsCli(ac, av, core.getConfig());
     try {
-        server->setConfig(config);
-        server->init();
-        server->start();
+        core.init();
+        core.loop();
     } catch (const err::IError &e) {
         std::cerr << e.getDetails() << std::endl;
         return 84;
@@ -36,4 +29,5 @@ int main(int ac, char **av) {
         std::cerr << "Unknown error occurred in server." << std::endl;
         return 84;
     }
+    return 0;
 }

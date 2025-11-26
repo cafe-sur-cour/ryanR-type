@@ -8,6 +8,8 @@ add_library(${SERVER_LIB_NAME}
     Server.cpp
     Utils.cpp
     Utils.hpp
+    Core.cpp
+    Core.hpp
 )
 
 find_package(asio CONFIG REQUIRED)
