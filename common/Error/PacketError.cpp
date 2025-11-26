@@ -5,6 +5,7 @@
 ** Packet Error
 */
 
+#include <string>
 #include "PacketError.hpp"
 
 err::PacketError::PacketError(const std::string &message, ErrorCode code) :

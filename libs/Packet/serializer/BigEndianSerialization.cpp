@@ -24,7 +24,8 @@ std::vector<std::uint8_t> BigEndianSerialization::serializeInt(uint64_t value) {
     return bytes;
 }
 
-std::vector<std::uint8_t> BigEndianSerialization::serializeLong(uint64_t value) {
+std::vector<std::uint8_t> BigEndianSerialization::serializeLong(
+    uint64_t value) {
     std::vector<std::uint8_t> bytes;
 
     bytes.push_back(static_cast<std::uint8_t>((value >> 56) & 0xFF));
@@ -47,7 +48,8 @@ std::vector<std::uint8_t> BigEndianSerialization::serializeShort(
     return bytes;
 }
 
-std::vector<std::uint8_t> BigEndianSerialization::serializeChar(uint64_t value) {
+std::vector<std::uint8_t> BigEndianSerialization::serializeChar(
+    uint64_t value) {
     std::vector<std::uint8_t> bytes;
     bytes.push_back(static_cast<std::uint8_t>(value));
     return bytes;
