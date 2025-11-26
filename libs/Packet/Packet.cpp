@@ -87,6 +87,10 @@ std::vector<uint64_t> Packet::getPayload() const {
     return this->_payload;
 }
 
+uint8_t Packet::getIdClient() const {
+    return this->_idClient;
+}
+
 
 
 void Packet::setType(uint8_t type) {

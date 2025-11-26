@@ -48,6 +48,7 @@ class Packet : public IPacket {
         uint32_t getLength() const override;
         uint32_t getSequenceNumber() const override;
         uint8_t getType() const override;
+        uint8_t getIdClient() const override;
         std::vector<uint64_t> getPayload() const override;
 
         void setType(uint8_t type) override;

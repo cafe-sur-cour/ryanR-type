@@ -13,7 +13,6 @@ protected:
     }
 };
 
-
 TEST_F(PacketTest, ConstructorInitializesCorrectly) {
     unsigned int sequence = 42;
     Packet packet(sequence);
@@ -22,6 +21,21 @@ TEST_F(PacketTest, ConstructorInitializesCorrectly) {
     EXPECT_EQ(packet.getSequenceNumber(), 42);
     EXPECT_EQ(packet.getType(), 0x00);
     EXPECT_EQ(packet.getLength(), 0);
+    EXPECT_EQ(packet.getIdClient(), 0);
+    EXPECT_TRUE(packet.getPayload().empty());
+}
+
+TEST_F(PacketTest, ConstructorWithZeroSequence) {
+    Packet packet(0);
+
+    EXPECT_EQ(packet.getSequenceNumber(), 0);
+    EXPECT_EQ(packet.getMagicNumber(), 0x93);
+}
+
+TEST_F(PacketTest, ConstructorWithMaxSequence) {
+    Packet packet(0xFFFFFFFF);
+
+    EXPECT_EQ(packet.getSequenceNumber(), 0xFFFFFFFF);
 }
 
 TEST_F(PacketTest, SettersAndGettersWork) {
@@ -32,90 +46,423 @@ TEST_F(PacketTest, SettersAndGettersWork) {
 
     packet.setLength(128);
     EXPECT_EQ(packet.getLength(), 128);
+
+    packet.setSequenceNumber(99);
+    EXPECT_EQ(packet.getSequenceNumber(), 99);
+
+    packet.setIdClient(42);
+    EXPECT_EQ(packet.getIdClient(), 42);
 }
 
-// TEST_F(PacketTest, PackHeaderPacketProducesCorrectHeader) {
-//     Packet packet(1);
-
-//     std::vector<uint8_t> header = packet.packHeaderPacket(10, 1, 0x03);
-
-//     EXPECT_EQ(header.size(), 16);
-//     EXPECT_EQ(header[0], 0x93);
-//     EXPECT_EQ(header[1], 0x00);
-//     EXPECT_EQ(header[2], 0x00);
-//     EXPECT_EQ(header[3], 0x00);
-//     EXPECT_EQ(header[4], 0x0a);
-//     EXPECT_EQ(header[5], 0x00);
-//     EXPECT_EQ(header[6], 0x00);
-//     EXPECT_EQ(header[7], 0x00);
-//     EXPECT_EQ(header[8], 0x01);
-//     EXPECT_EQ(header[9], 0x03);
-//     EXPECT_EQ(header[10], 0x00);
-//     EXPECT_EQ(header[11], 0x00);
-//     EXPECT_EQ(header[12], 0x00);
-//     EXPECT_EQ(header[13], 0x07);
-//     EXPECT_EQ(header[14], 0x0d);
-//     EXPECT_EQ(header[15], 0x0a);
-// }
-
-// TEST_F(PacketTest, PackBodyPacketProducesCorrectBody) {
-//     Packet packet(1);
-
-//     std::vector<uint8_t> payload = {0x03, 0x04};
-//     std::vector<uint8_t> body = packet.packBodyPacket(payload);
-
-//     EXPECT_EQ(body.size(), 7);
-//     EXPECT_EQ(body[0], 0x03);
-//     EXPECT_EQ(body[1], 0x00);
-//     EXPECT_EQ(body[2], 0x00);
-//     EXPECT_EQ(body[3], 0x00);
-//     EXPECT_EQ(body[4], 0x04);
-//     EXPECT_EQ(body[5], 0x0d);
-//     EXPECT_EQ(body[6], 0x0a);
-// }
-
-TEST_F(PacketTest, PackBodyFailure) {
+TEST_F(PacketTest, SetPayloadWorks) {
     Packet packet(1);
 
-    std::vector<uint8_t> payload = {0xFF, 0x04};
-    std::vector<uint8_t> body = packet.packBodyPacket(payload);
+    std::vector<uint64_t> payload = {1, 2, 3, 4, 5};
+    packet.setPayload(payload);
+
+    std::vector<uint64_t> retrieved = packet.getPayload();
+    ASSERT_EQ(retrieved.size(), 5);
+    EXPECT_EQ(retrieved[0], 1);
+    EXPECT_EQ(retrieved[4], 5);
+}
+
+TEST_F(PacketTest, SetEmptyPayload) {
+    Packet packet(1);
+
+    std::vector<uint64_t> payload = {1, 2, 3};
+    packet.setPayload(payload);
+    EXPECT_EQ(packet.getPayload().size(), 3);
+
+    packet.setPayload(std::vector<uint64_t>());
+    EXPECT_TRUE(packet.getPayload().empty());
+}
+
+TEST_F(PacketTest, PackHeaderPacketProducesCorrectHeader) {
+    Packet packet(1);
+
+    std::vector<uint8_t> header = packet.pack(10, 1, 0x03);
+
+    EXPECT_EQ(header.size(), 13);
+    EXPECT_EQ(header[0], 0x93);
+    EXPECT_EQ(header[1], 0x0a);
+    EXPECT_EQ(header[2], 0x00);
+    EXPECT_EQ(header[3], 0x00);
+    EXPECT_EQ(header[5], 0x01);
+    EXPECT_EQ(header[6], 0x03);
+    EXPECT_EQ(header[7], 0x00);
+    EXPECT_EQ(header[8], 0x00);
+    EXPECT_EQ(header[9], 0x00);
+    EXPECT_EQ(header[10], 0x04);
+    EXPECT_EQ(header[11], 0x0d);
+    EXPECT_EQ(header[12], 0x0a);
+}
+
+TEST_F(PacketTest, PackHeaderWithDifferentClientIds) {
+    Packet packet(1);
+
+    std::vector<uint8_t> header1 = packet.pack(0, 1, 0x01);
+    EXPECT_EQ(header1[1], 0x00);
+
+    std::vector<uint8_t> header2 = packet.pack(255, 1, 0x01);
+    EXPECT_EQ(header2[1], 0xFF);
+}
+
+TEST_F(PacketTest, PackHeaderWithLargeSequenceNumber) {
+    Packet packet(1);
+
+    std::vector<uint8_t> header = packet.pack(10, 0x12345678, 0x01);
+
+    EXPECT_EQ(header[2], 0x12);
+    EXPECT_EQ(header[3], 0x34);
+    EXPECT_EQ(header[4], 0x56);
+    EXPECT_EQ(header[5], 0x78);
+}
+
+TEST_F(PacketTest, PackHeaderForConnectionPacket) {
+    Packet packet(1);
+
+    std::vector<uint8_t> header = packet.pack(5, 10, CONNECTION_CLIENT_PACKET);
+
+    EXPECT_EQ(header.size(), 13);
+    EXPECT_EQ(header[6], CONNECTION_CLIENT_PACKET);
+    EXPECT_EQ(header[10], 11);
+}
+
+TEST_F(PacketTest, PackHeaderForAcceptationPacket) {
+    Packet packet(1);
+
+    std::vector<uint8_t> header = packet.pack(5, 10, ACCEPTATION_PACKET);
+
+    EXPECT_EQ(header[6], ACCEPTATION_PACKET);
+    EXPECT_EQ(header[10], 4);
+}
+
+TEST_F(PacketTest, PackBodyProducesCorrectDisconnectionBody) {
+    Packet packet(1);
+
+    std::vector<uint64_t> payload = {DISCONNECTION_PACKET, 0x04};
+    std::vector<uint8_t> body = packet.pack(payload);
+
+    EXPECT_EQ(body.size(), 4);
+    EXPECT_EQ(body[0], DISCONNECTION_PACKET);
+    EXPECT_EQ(body[1], 0x04);
+    EXPECT_EQ(body[2], 0x0d);
+    EXPECT_EQ(body[3], 0x0a);
+}
+
+TEST_F(PacketTest, PackBodyWithEmptyPayload) {
+    Packet packet(1);
+
+    std::vector<uint64_t> payload = {};
+    std::vector<uint8_t> body = packet.pack(payload);
 
     EXPECT_TRUE(body.empty());
 }
 
-TEST_F(PacketTest, UnpackPacketHeader) {
+TEST_F(PacketTest, PackBodyWithUnknownPacketType) {
     Packet packet(1);
 
-    std::vector<uint8_t> data = {
-        0x93, 0x00, 0x00, 0x00, 0x0a,
-        0x00, 0x00, 0x00, 0x01,
-        0x02,
-        0x00, 0x00, 0x00, 0x07,
-        0x0d, 0x0a
-    };
+    std::vector<uint64_t> payload = {0xFF, 0x04};
+    std::vector<uint8_t> body = packet.pack(payload);
 
-    bool result = packet.unpackPacket(data);
-    EXPECT_TRUE(result);
-    EXPECT_EQ(packet.getSequenceNumber(), 1);
-    EXPECT_EQ(packet.getType(), 0x02);
-    EXPECT_EQ(packet.getLength(), 7);
+    EXPECT_TRUE(body.empty());
 }
 
-TEST_F(PacketTest, UnpackPacketBody) {
+TEST_F(PacketTest, PackBodyForEventPacket) {
     Packet packet(1);
-    packet.setType(0x02);
+
+    std::vector<uint64_t> payload = {EVENT_PACKET, 0x01, 0x02};
+    std::vector<uint8_t> body = packet.pack(payload);
+
+    EXPECT_EQ(body.size(), 5);
+    EXPECT_EQ(body[0], EVENT_PACKET);
+    EXPECT_EQ(body[1], 0x01);
+    EXPECT_EQ(body[2], 0x02);
+    EXPECT_EQ(body[3], 0x0d);
+    EXPECT_EQ(body[4], 0x0a);
+}
+
+TEST_F(PacketTest, PackBodyForAcceptationPacket) {
+    Packet packet(1);
+
+    std::vector<uint64_t> payload = {ACCEPTATION_PACKET, 0x2A};
+    std::vector<uint8_t> body = packet.pack(payload);
+
+    EXPECT_EQ(body.size(), 4);
+    EXPECT_EQ(body[0], ACCEPTATION_PACKET);
+    EXPECT_EQ(body[1], 0x2A);
+}
+
+TEST_F(PacketTest, UnpackValidHeader) {
+    Packet packet(1);
 
     std::vector<uint8_t> data = {
+        0x93, 0x0a,
+        0x00, 0x00, 0x00, 0x01,
         0x02,
-        0x00, 0x00, 0x00, 0x2A,
+        0x00, 0x00, 0x00, 0x04,
         0x0d, 0x0a
     };
 
-    bool result = packet.unpackPacket(data);
+    bool result = packet.unpack(data);
     EXPECT_TRUE(result);
-    std::vector<std::uint8_t> payload = packet.getPayload();
+    EXPECT_EQ(packet.getIdClient(), 10);
+    EXPECT_EQ(packet.getSequenceNumber(), 1);
+    EXPECT_EQ(packet.getType(), 0x02);
+    EXPECT_EQ(packet.getLength(), 4);
+}
+
+TEST_F(PacketTest, UnpackHeaderWithLargeSequenceNumber) {
+    Packet packet(1);
+
+    std::vector<uint8_t> data = {
+        0x93, 0x0a,
+        0x12, 0x34, 0x56, 0x78,
+        0x02,
+        0x00, 0x00, 0x00, 0x04,
+        0x0d, 0x0a
+    };
+
+    bool result = packet.unpack(data);
+    EXPECT_TRUE(result);
+    EXPECT_EQ(packet.getSequenceNumber(), 0x12345678);
+}
+
+TEST_F(PacketTest, UnpackHeaderWithInvalidSize) {
+    Packet packet(1);
+
+    std::vector<uint8_t> data = {0x93, 0x0a, 0x00};
+
+    bool result = packet.unpack(data);
+    EXPECT_FALSE(result);
+}
+
+TEST_F(PacketTest, UnpackHeaderWithInvalidEndOfPacket) {
+    Packet packet(1);
+
+    std::vector<uint8_t> data = {
+        0x93, 0x0a,
+        0x00, 0x00, 0x00, 0x01,
+        0x02,
+        0x00, 0x00, 0x00, 0x04,
+        0xFF, 0xFF
+    };
+
+    bool result = packet.unpack(data);
+    EXPECT_FALSE(result);
+}
+
+TEST_F(PacketTest, UnpackEmptyData) {
+    Packet packet(1);
+
+    std::vector<uint8_t> data = {};
+
+    bool result = packet.unpack(data);
+    EXPECT_FALSE(result);
+}
+
+TEST_F(PacketTest, UnpackAcceptationBody) {
+    Packet packet(1);
+    packet.setType(ACCEPTATION_PACKET);
+    packet.setLength(4);
+
+    std::vector<uint8_t> data = {
+        ACCEPTATION_PACKET,
+        0x2A,
+        0x0d, 0x0a
+    };
+
+    bool result = packet.unpack(data);
+    EXPECT_TRUE(result);
+
+    std::vector<uint64_t> payload = packet.getPayload();
     ASSERT_EQ(payload.size(), 1);
     EXPECT_EQ(payload[0], 42);
+}
+
+TEST_F(PacketTest, UnpackDisconnectionBody) {
+    Packet packet(1);
+    packet.setType(DISCONNECTION_PACKET);
+    packet.setLength(4);
+
+    std::vector<uint8_t> data = {
+        DISCONNECTION_PACKET,
+        0x15,
+        0x0d, 0x0a
+    };
+
+    bool result = packet.unpack(data);
+    EXPECT_TRUE(result);
+
+    std::vector<uint64_t> payload = packet.getPayload();
+    ASSERT_EQ(payload.size(), 1);
+    EXPECT_EQ(payload[0], 21);
+}
+
+TEST_F(PacketTest, UnpackEventBody) {
+    Packet packet(1);
+    packet.setType(EVENT_PACKET);
+    packet.setLength(5);
+
+    std::vector<uint8_t> data = {
+        EVENT_PACKET,
+        0x01,
+        0x02,
+        0x0d, 0x0a
+    };
+
+    bool result = packet.unpack(data);
+    EXPECT_TRUE(result);
+
+    std::vector<uint64_t> payload = packet.getPayload();
+    ASSERT_EQ(payload.size(), 2);
+    EXPECT_EQ(payload[0], 1);
+    EXPECT_EQ(payload[1], 2);
+}
+
+TEST_F(PacketTest, UnpackBodyWithTypeMismatch) {
+    Packet packet(1);
+    packet.setType(ACCEPTATION_PACKET);
+    packet.setLength(4);
+
+    std::vector<uint8_t> data = {
+        DISCONNECTION_PACKET,
+        0x2A,
+        0x0d, 0x0a
+    };
+
+    bool result = packet.unpack(data);
+    EXPECT_FALSE(result);
+}
+
+TEST_F(PacketTest, UnpackBodyWithInvalidLength) {
+    Packet packet(1);
+    packet.setType(ACCEPTATION_PACKET);
+    packet.setLength(10);
+
+    std::vector<uint8_t> data = {
+        ACCEPTATION_PACKET,
+        0x2A,
+        0x0d, 0x0a
+    };
+
+    bool result = packet.unpack(data);
+    EXPECT_FALSE(result);
+}
+
+TEST_F(PacketTest, ResetClearsAllFields) {
+    Packet packet(100);
+
+    packet.setType(0x05);
+    packet.setLength(256);
+    packet.setIdClient(42);
+    packet.setPayload({1, 2, 3, 4});
+
+    packet.reset();
+
+    EXPECT_EQ(packet.getMagicNumber(), 0x93);
+    EXPECT_EQ(packet.getIdClient(), 0);
+    EXPECT_EQ(packet.getSequenceNumber(), 0);
+    EXPECT_EQ(packet.getType(), NO_OP_PACKET);
+    EXPECT_EQ(packet.getLength(), 0);
+    EXPECT_TRUE(packet.getPayload().empty());
+}
+
+TEST_F(PacketTest, PackAndUnpackHeaderRoundTrip) {
+    Packet packet1(1);
+    std::vector<uint8_t> header = packet1.pack(42, 1234, ACCEPTATION_PACKET);
+
+    Packet packet2(0);
+    bool result = packet2.unpack(header);
+
+    EXPECT_TRUE(result);
+    EXPECT_EQ(packet2.getIdClient(), 42);
+    EXPECT_EQ(packet2.getSequenceNumber(), 1234);
+    EXPECT_EQ(packet2.getType(), ACCEPTATION_PACKET);
+    EXPECT_EQ(packet2.getLength(), 4);
+}
+
+TEST_F(PacketTest, PackAndUnpackAcceptationBodyRoundTrip) {
+    Packet packet1(1);
+    std::vector<uint64_t> payload = {ACCEPTATION_PACKET, 99};
+    std::vector<uint8_t> body = packet1.pack(payload);
+
+    Packet packet2(0);
+    packet2.setType(ACCEPTATION_PACKET);
+    packet2.setLength(4);
+    bool result = packet2.unpack(body);
+
+    EXPECT_TRUE(result);
+    std::vector<uint64_t> retrieved = packet2.getPayload();
+    ASSERT_EQ(retrieved.size(), 1);
+    EXPECT_EQ(retrieved[0], 99);
+}
+
+TEST_F(PacketTest, PackAndUnpackEventBodyRoundTrip) {
+    Packet packet1(1);
+    std::vector<uint64_t> payload = {EVENT_PACKET, 7, 8};
+    std::vector<uint8_t> body = packet1.pack(payload);
+
+    Packet packet2(0);
+    packet2.setType(EVENT_PACKET);
+    packet2.setLength(5);
+    bool result = packet2.unpack(body);
+
+    EXPECT_TRUE(result);
+    std::vector<uint64_t> retrieved = packet2.getPayload();
+    ASSERT_EQ(retrieved.size(), 2);
+    EXPECT_EQ(retrieved[0], 7);
+    EXPECT_EQ(retrieved[1], 8);
+}
+
+TEST_F(PacketTest, MultipleUnpackCallsOverwriteData) {
+    Packet packet(1);
+
+    std::vector<uint8_t> header1 = {
+        0x93, 0x01, 0x00, 0x00, 0x00, 0x01,
+        0x02, 0x00, 0x00, 0x00, 0x04, 0x0d, 0x0a
+    };
+    packet.unpack(header1);
+    EXPECT_EQ(packet.getIdClient(), 1);
+
+    std::vector<uint8_t> header2 = {
+        0x93, 0x05, 0x00, 0x00, 0x00, 0x02,
+        0x03, 0x00, 0x00, 0x00, 0x04, 0x0d, 0x0a
+    };
+    packet.unpack(header2);
+    EXPECT_EQ(packet.getIdClient(), 5);
+    EXPECT_EQ(packet.getSequenceNumber(), 2);
+}
+
+TEST_F(PacketTest, PackHeaderWithAllPacketTypes) {
+    Packet packet(1);
+
+    std::vector<uint8_t> types = {
+        CONNECTION_CLIENT_PACKET,
+        ACCEPTATION_PACKET,
+        DISCONNECTION_PACKET,
+        EVENT_PACKET
+    };
+
+    for (auto type : types) {
+        std::vector<uint8_t> header = packet.pack(1, 1, type);
+        EXPECT_EQ(header.size(), 13);
+        EXPECT_EQ(header[6], type);
+    }
+}
+
+TEST_F(PacketTest, ResetAfterPackAndUnpack) {
+    Packet packet(1);
+
+    packet.pack(10, 100, ACCEPTATION_PACKET);
+    std::vector<uint64_t> payload = {ACCEPTATION_PACKET, 50};
+    packet.pack(payload);
+
+    packet.reset();
+
+    EXPECT_EQ(packet.getSequenceNumber(), 0);
+    EXPECT_EQ(packet.getType(), NO_OP_PACKET);
+    EXPECT_TRUE(packet.getPayload().empty());
 }
 
 int main(int argc, char **argv) {
