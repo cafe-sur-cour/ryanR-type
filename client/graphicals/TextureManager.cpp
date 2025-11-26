@@ -7,10 +7,12 @@
 
 #include "TextureManager.hpp"
 #include <iostream>
-
+#include <memory>
+#include <string>
 namespace gfx {
 
-std::shared_ptr<sf::Texture> TextureManager::loadTexture(const std::string& path) {
+std::shared_ptr<sf::Texture> TextureManager::loadTexture
+(const std::string& path) {
     if (_failedTextures.find(path) != _failedTextures.end())
         return nullptr;
     auto it = _textureCache.find(path);
@@ -19,7 +21,8 @@ std::shared_ptr<sf::Texture> TextureManager::loadTexture(const std::string& path
 
     auto texture = std::make_shared<sf::Texture>();
     if (!texture->loadFromFile(path)) {
-        std::cerr << "[TextureManager] Failed to load texture: " << path << std::endl;
+        std::cerr << "[TextureManager] Failed to load texture: " <<
+        path << std::endl;
         _failedTextures.insert(path);
         return nullptr;
     }
@@ -32,4 +35,4 @@ void TextureManager::clearCache() {
     _failedTextures.clear();
 }
 
-} // namespace gfx
+}  // namespace gfx
