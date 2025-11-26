@@ -23,8 +23,10 @@ class IError : public std::exception {
         virtual std::string getDetails() const noexcept = 0;
 
     protected:
+    private:
 };
 
 }
 
 #endif /* !IERROR_HPP_ */
+
