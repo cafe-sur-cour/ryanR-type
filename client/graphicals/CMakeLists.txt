@@ -24,7 +24,6 @@ target_link_libraries(${GRAPHICAL_LIB_NAME}
 )
 
 target_sources(${CLIENT_BIN_NAME} PRIVATE
-    IWindow.hpp
     IEvent.hpp
     EventTypes.hpp
     SfmlKeyMappings.hpp
