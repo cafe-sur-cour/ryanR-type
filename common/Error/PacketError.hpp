@@ -5,10 +5,10 @@
 ** Header
 */
 
-#include "AError.hpp"
-
 #ifndef PACKET_ERROR_HPP
     #define PACKET_ERROR_HPP
+
+#include "AError.hpp"
 
 namespace err {
 
