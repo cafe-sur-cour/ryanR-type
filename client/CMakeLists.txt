@@ -2,6 +2,10 @@ set(CLIENT_BIN_NAME r-type_client)
 
 add_executable(${CLIENT_BIN_NAME}
     main.cpp
+    Utils.cpp
+    Utils.hpp
+    ClientNetwork.cpp
+    ClientNetwork.hpp
 )
 
 find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
@@ -10,6 +14,7 @@ target_link_libraries(${CLIENT_BIN_NAME}
     PUBLIC
         ECS
         DLLoader
+        SIGNAL
         Graphical
         SFML::Graphics
         SFML::Window
