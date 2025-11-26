@@ -12,6 +12,8 @@
 #include "../component/temporary/InputIntentComponent.hpp"
 #include "../component/permanent/TransformComponent.hpp"
 #include "../component/permanent/VelocityComponent.hpp"
+#include "../component/permanent/SpriteComponent.hpp"
+#include "../component/permanent/AnimationComponent.hpp"
 
 namespace ecs {
 
@@ -130,6 +132,8 @@ template class View<PlayerTag, MovementIntentComponent>;
 template class View<PlayerTag, TransformComponent>;
 template class View<MovementIntentComponent, TransformComponent>;
 template class View<VelocityComponent, TransformComponent>;
+template class View<SpriteComponent, TransformComponent>;
+template class View<AnimationComponent, TransformComponent>;
 template class Group<PlayerTag>;
 template class Group<MovementIntentComponent>;
 template class Group<PlayerTag, MovementIntentComponent>;

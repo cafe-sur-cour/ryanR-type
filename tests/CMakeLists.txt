@@ -12,6 +12,14 @@ add_executable(Vector2fTests common/types/Vector2fTests.cpp)
 target_link_libraries(Vector2fTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME Vector2fTests COMMAND Vector2fTests)
 
+add_executable(FRectTests common/types/FRectTests.cpp)
+target_link_libraries(FRectTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME FRectTests COMMAND FRectTests)
+
+add_executable(ChronoTests common/types/ChronoTests.cpp)
+target_link_libraries(ChronoTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME ChronoTests COMMAND ChronoTests)
+
 add_executable(VelocityComponentTests common/ECS/component/VelocityComponentTests.cpp)
 target_link_libraries(VelocityComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME VelocityComponentTests COMMAND VelocityComponentTests)
@@ -43,6 +51,14 @@ add_test(NAME MovementIntentComponentTests COMMAND MovementIntentComponentTests)
 add_executable(SpeedComponentTests common/ECS/component/SpeedComponentTests.cpp)
 target_link_libraries(SpeedComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME SpeedComponentTests COMMAND SpeedComponentTests)
+
+add_executable(SpriteComponentTests common/ECS/component/SpriteComponentTests.cpp)
+target_link_libraries(SpriteComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME SpriteComponentTests COMMAND SpriteComponentTests)
+
+add_executable(AnimationComponentTests common/ECS/component/AnimationComponentTests.cpp)
+target_link_libraries(AnimationComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME AnimationComponentTests COMMAND AnimationComponentTests)
 
 add_executable(RegistryTests common/ECS/RegistryTests.cpp)
 target_link_libraries(RegistryTests ECS GTest::gtest GTest::gtest_main)

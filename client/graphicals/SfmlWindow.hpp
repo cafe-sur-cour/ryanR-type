@@ -10,6 +10,9 @@
 
 #include <SFML/Graphics.hpp>
 #include "./IWindow.hpp"
+#include "./TextureManager.hpp"
+#include "../../common/types/FRect.hpp"
+#include <memory>
 
 class SfmlWindow : public gfx::IWindow {
     public:
@@ -20,7 +23,6 @@ class SfmlWindow : public gfx::IWindow {
         void closeWindow() override;
         bool isOpen() override;
         void clear() override;
-
         void resizeWindow(size_t x, size_t y) override;
 
         void drawSprite(std::string asset, gfx::color_t color, std::pair<size_t, size_t> position) override;
@@ -30,13 +32,18 @@ class SfmlWindow : public gfx::IWindow {
         void setFont(const std::string& fontPath) override;
         std::string getFont() const override;
 
-        std::shared_ptr<sf::RenderWindow> getSfmlWindow();
         bool isMouseOver(std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
         std::pair<int, int> getWindowSize() override;
+
+        void drawSprite(const std::string& texturePath, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f) override;
+        void drawSprite(const std::string& texturePath, float x, float y, const math::FRect frameRect, float scaleX = 1.0f, float scaleY = 1.0f) override;
+        std::shared_ptr<sf::RenderWindow> getSfmlWindow();
+
     private:
         std::shared_ptr<sf::RenderWindow> _window;
         sf::Font _font;
         std::string _fontPath;
+        gfx::TextureManager _textureManager;
 };
 
 #endif /* !SFMLWINDOW_HPP_ */
