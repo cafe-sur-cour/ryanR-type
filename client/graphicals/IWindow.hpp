@@ -10,6 +10,7 @@
 
 #include <string>
 #include <utility>
+#include "../../common/types/FRect.hpp"
 
 namespace gfx {
 
@@ -38,7 +39,7 @@ class IWindow {
         virtual std::pair<int, int> getWindowSize() = 0;
 
         virtual void drawSprite(const std::string& texturePath, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f) = 0;
-        virtual void drawSprite(const std::string& texturePath, float x, float y, const void* frameRect, float scaleX = 1.0f, float scaleY = 1.0f) = 0;
+        virtual void drawSprite(const std::string& texturePath, float x, float y, const math::FRect frameRect, float scaleX = 1.0f, float scaleY = 1.0f) = 0;
 };
 
 } // namespace gfx

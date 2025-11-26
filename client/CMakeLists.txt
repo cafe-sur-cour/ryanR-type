@@ -19,6 +19,11 @@ add_custom_target(generate_embedded_assets DEPENDS ${CMAKE_BINARY_DIR}/EmbeddedA
 add_executable(${CLIENT_BIN_NAME}
     main.cpp
     ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
+    Utils.cpp
+    Utils.hpp
+    ClientNetwork.cpp
+    ClientNetwork.hpp
+    Core.cpp
 )
 
 find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
@@ -27,6 +32,7 @@ target_link_libraries(${CLIENT_BIN_NAME}
     PUBLIC
         ECS
         DLLoader
+        SIGNAL
         Graphical
         SFML::Graphics
         SFML::Window
