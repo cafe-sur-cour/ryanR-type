@@ -158,7 +158,7 @@ void rserv::Server::processIncomingPackets() {
     while (_network->hasIncomingData()) {
         int senderId = -1;
         (void)senderId;
-        // IPacket packet = _network->receiveFrom(senderId);
+        // IPacketManager packet = _network->receiveFrom(senderId);
 
         // if (senderId != -1) {
         //     onPacketReceived(senderId, packet);
@@ -202,7 +202,7 @@ void rserv::Server::onClientDisconnected(int idClient) {
     // Add game-specific cleanup logic here
 }
 
-void rserv::Server::onPacketReceived(int idClient, const IPacket &packet) {
+void rserv::Server::onPacketReceived(int idClient, const IPacketManager &packet) {
     std::cout << "[Server] Received packet from client "
         << idClient << std::endl;
     (void)packet;
@@ -271,8 +271,8 @@ void rserv::Server::loadPacketLibrary() {
         throw err::ServerError("[Server] Loading packet lib failed",
             err::ServerError::LIBRARY_LOAD_FAILED);
     }
-    _packet = std::shared_ptr<IPacket>
-        (reinterpret_cast<IPacket *>(createPacket()));
+    _packet = std::shared_ptr<IPacketManager>
+        (reinterpret_cast<IPacketManager *>(createPacket()));
     if (!_packet) {
         throw err::ServerError("[Server] Loading packet lib failed",
             err::ServerError::LIBRARY_LOAD_FAILED);

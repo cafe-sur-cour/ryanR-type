@@ -109,7 +109,7 @@ size_t UnixNetwork::getConnectionCount() const {
     return _clients.size();
 }
 
-void UnixNetwork::sendTo(int connectionId, const IPacket &packet) {
+void UnixNetwork::sendTo(int connectionId, const IPacketManager &packet) {
     auto it = _clients.find(connectionId);
     if (it == _clients.end()) {
         std::cerr << "[UnixNetwork] Client " << connectionId <<
@@ -135,7 +135,7 @@ void UnixNetwork::sendTo(int connectionId, const IPacket &packet) {
     }
 }
 
-void UnixNetwork::broadcast(const IPacket &packet) {
+void UnixNetwork::broadcast(const IPacketManager &packet) {
     for (const auto& [clientId, endpoint] : _clients) {
         sendTo(clientId, packet);
     }
@@ -151,16 +151,16 @@ bool UnixNetwork::hasIncomingData() const {
     return !ec && available > 0;
 }
 
-std::shared_ptr<IPacket> UnixNetwork::receiveFrom(const int &connectionId) {
+std::shared_ptr<IPacketManager> UnixNetwork::receiveFrom(const int &connectionId) {
     (void)connectionId;
     return nullptr;
 }
 
-void UnixNetwork::sendData(const IPacket &data, size_t size) {
+void UnixNetwork::sendData(const IPacketManager &data, size_t size) {
     (void)size;
     broadcast(data);
 }
-IPacket &UnixNetwork::receiveData(const IBuffer &buffer, size_t size) const {
+IPacketManager &UnixNetwork::receiveData(const IBuffer &buffer, size_t size) const {
     (void)buffer;  // To avoid unused parameter warning
     (void)size;   // To avoid unused parameter warning
     throw std::runtime_error("[UnixNetwork] receiveData not implemented");

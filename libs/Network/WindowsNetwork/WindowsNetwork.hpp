@@ -9,7 +9,7 @@
 #define WINDOWSNETWORK_HPP_
 
 #include "../ANetwork.hpp"
-#include "../../Packet/IPacket.hpp"
+#include "../../Packet/IPacketManager.hpp"
 #include "../../Buffer/IBuffer.hpp"
 
 namespace net {
@@ -27,13 +27,13 @@ class WindowsNetwork : public ANetwork {
         std::vector<int> getActiveConnections() const override;
         size_t getConnectionCount() const override;
 
-        void sendTo(int connectionId, const IPacket &packet) override;
-        void broadcast(const IPacket &packet) override;
+        void sendTo(int connectionId, const IPacketManager &packet) override;
+        void broadcast(const IPacketManager &packet) override;
         bool hasIncomingData() const override;
-        std::shared_ptr<IPacket> receiveFrom(const int &connectionId) override;
+        std::shared_ptr<IPacketManager> receiveFrom(const int &connectionId) override;
 
-        void sendData(const IPacket &data, size_t size) override;
-        IPacket &receiveData(const IBuffer &buffer, size_t size) const override;
+        void sendData(const IPacketManager &data, size_t size) override;
+        IPacketManager &receiveData(const IBuffer &buffer, size_t size) const override;
 
         void setConnectionCallback(std::function<void(int)> onConnect) override;
         void setDisconnectionCallback(std::function<void(int)> onDisconnect) override;

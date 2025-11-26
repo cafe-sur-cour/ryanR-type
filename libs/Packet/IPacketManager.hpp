@@ -2,19 +2,19 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** IPacket
+** IPacketManager
 */
 
-#ifndef IPACKET_HPP_
-#define IPACKET_HPP_
+#ifndef IPacketManager_HPP_
+#define IPacketManager_HPP_
 
 #include <vector>
 #include <cstdint>
 #include "../Buffer/IBuffer.hpp"
 
-class IPacket {
+class IPacketManager {
     public:
-        virtual ~IPacket() = default;
+        virtual ~IPacketManager() = default;
 
         virtual uint8_t getMagicNumber() const = 0;
         virtual uint32_t getLength() const = 0;
@@ -37,4 +37,4 @@ class IPacket {
 };
 
 
-#endif /* !IPACKET_HPP_ */
+#endif /* !IPacketManager_HPP_ */

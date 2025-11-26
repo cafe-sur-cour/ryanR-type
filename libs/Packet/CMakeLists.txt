@@ -1,9 +1,9 @@
 set(PACKET_LIB_NAME Packet)
 
 add_library(${PACKET_LIB_NAME} SHARED
-    IPacket.hpp
-    Packet.hpp
-    Packet.cpp
+    IPacketManager.hpp
+    PacketManager.hpp
+    PacketManager.cpp
     Pack.cpp
     Unpack.cpp
     PacketTypes.cpp
