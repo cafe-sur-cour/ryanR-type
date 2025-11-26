@@ -24,6 +24,7 @@ class IEvent {
         virtual std::pair<int, int> getMousePos() = 0;
         virtual bool isKeyPressed(event_t key) = 0;
         virtual bool isMouseButtonPressed(int button) = 0;
+        virtual float getAxisValue(event_t axis) = 0;
 
 };
 

@@ -7,9 +7,11 @@
 
 #include <gtest/gtest.h>
 #include <memory>
+#include "../../../../common/ECS/system/movement/InputToVelocitySystem.hpp"
 #include "../../../../common/ECS/system/movement/MovementSystem.hpp"
 #include "../../../../common/ECS/entity/registry/ARegistry.hpp"
-#include "../../../../common/ECS/component/temporary/MovementIntentComponent.hpp"
+#include "../../../../common/ECS/component/temporary/InputIntentComponent.hpp"
+#include "../../../../common/ECS/component/permanent/VelocityComponent.hpp"
 #include "../../../../common/ECS/component/permanent/TransformComponent.hpp"
 #include "../../../../common/ECS/component/permanent/SpeedComponent.hpp"
 #include "../../../../common/ECS/resourceManager/ResourceManager.hpp"
@@ -18,118 +20,163 @@ using namespace ecs;
 
 /* MovementSystem Tests */
 
-class MovementSystemTest : public ::testing::Test {
+class MovementSystemsTest : public ::testing::Test {
 protected:
     void SetUp() override {
         registry = std::make_shared<ARegistry>();
         resourceManager = std::make_shared<ResourceManager>();
-        system = std::make_shared<MovementSystem>();
+        inputToVelocitySystem = std::make_shared<InputToVelocitySystem>();
+        movementSystem = std::make_shared<MovementSystem>();
 
         // Register components
-        registry->registerComponent<MovementIntentComponent>();
+        registry->registerComponent<InputIntentComponent>();
+        registry->registerComponent<VelocityComponent>();
         registry->registerComponent<TransformComponent>();
         registry->registerComponent<SpeedComponent>();
     }
 
     std::shared_ptr<ARegistry> registry;
     std::shared_ptr<ResourceManager> resourceManager;
-    std::shared_ptr<MovementSystem> system;
+    std::shared_ptr<InputToVelocitySystem> inputToVelocitySystem;
+    std::shared_ptr<MovementSystem> movementSystem;
 };
 
-TEST_F(MovementSystemTest, NoEntities_NoUpdate) {
-    system->update(resourceManager, registry, 0.016f);
+TEST_F(MovementSystemsTest, NoEntities_NoUpdate) {
+    inputToVelocitySystem->update(resourceManager, registry, 0.016f);
+    movementSystem->update(resourceManager, registry, 0.016f);
     // No crash, no changes
 }
 
-TEST_F(MovementSystemTest, EntityWithIntentAndTransform_UsesBaseSpeed) {
-    // Create entity with intent and transform, no speed component
+TEST_F(MovementSystemsTest, EntityWithIntentAndTransform_UsesBaseSpeed) {
+    // Create entity with input intent and transform
     int entityId = 0;
-    auto intent = std::make_shared<MovementIntentComponent>(math::Vector2f(1.0f, 0.0f), true);
+    auto intent = std::make_shared<InputIntentComponent>(math::Vector2f(1.0f, 0.0f));
     auto transform = std::make_shared<TransformComponent>(math::Vector2f(0.0f, 0.0f));
 
-    registry->addComponent<MovementIntentComponent>(entityId, intent);
+    registry->addComponent<InputIntentComponent>(entityId, intent);
     registry->addComponent<TransformComponent>(entityId, transform);
 
-    float deltaTime = 0.016f;
-    system->update(resourceManager, registry, deltaTime);
+    // Process input to velocity
+    inputToVelocitySystem->update(resourceManager, registry, 0.016f);
 
-    // Position should be updated: 0 + (1,0) * 100 * 0.016 = (1.6, 0)
-    auto updatedTransform = registry->getComponent<TransformComponent>(entityId);
-    EXPECT_EQ(updatedTransform->getPosition().getX(), 1.6f);
-    EXPECT_EQ(updatedTransform->getPosition().getY(), 0.0f);
+    // Check velocity created: (1,0) * 300 = (300, 0)
+    ASSERT_TRUE(registry->hasComponent<VelocityComponent>(entityId));
+    auto velocity = registry->getComponent<VelocityComponent>(entityId);
+    EXPECT_EQ(velocity->getVelocity().getX(), 300.0f);
+    EXPECT_EQ(velocity->getVelocity().getY(), 0.0f);
 
     // Intent should be processed
-    auto updatedIntent = registry->getComponent<MovementIntentComponent>(entityId);
+    auto updatedIntent = registry->getComponent<InputIntentComponent>(entityId);
     EXPECT_EQ(updatedIntent->getState(), ComponentState::Processed);
+
+    // Now apply movement
+    float deltaTime = 0.016f;
+    movementSystem->update(resourceManager, registry, deltaTime);
+
+    // Position should be updated: 0 + (300,0) * 0.016 = (4.8, 0)
+    auto updatedTransform = registry->getComponent<TransformComponent>(entityId);
+    EXPECT_EQ(updatedTransform->getPosition().getX(), 4.8f);
+    EXPECT_EQ(updatedTransform->getPosition().getY(), 0.0f);
 }
 
-TEST_F(MovementSystemTest, EntityWithSpeedComponent_UsesCustomSpeed) {
-    // Create entity with intent, transform, and speed
+TEST_F(MovementSystemsTest, EntityWithIntentAndTransform_MovesVertically) {
+    // Create entity with input intent and transform
     int entityId = 0;
-    auto intent = std::make_shared<MovementIntentComponent>(math::Vector2f(0.0f, 1.0f), true);
+    auto intent = std::make_shared<InputIntentComponent>(math::Vector2f(0.0f, 1.0f));
     auto transform = std::make_shared<TransformComponent>(math::Vector2f(10.0f, 20.0f));
-    auto speed = std::make_shared<SpeedComponent>(50.0f);
 
-    registry->addComponent<MovementIntentComponent>(entityId, intent);
+    registry->addComponent<InputIntentComponent>(entityId, intent);
     registry->addComponent<TransformComponent>(entityId, transform);
-    registry->addComponent<SpeedComponent>(entityId, speed);
 
+    // Process input to velocity
+    inputToVelocitySystem->update(resourceManager, registry, 0.02f);
+
+    // Check velocity: (0,1) * 300 = (0, 300)
+    ASSERT_TRUE(registry->hasComponent<VelocityComponent>(entityId));
+    auto velocity = registry->getComponent<VelocityComponent>(entityId);
+    EXPECT_EQ(velocity->getVelocity().getX(), 0.0f);
+    EXPECT_EQ(velocity->getVelocity().getY(), 300.0f);
+
+    // Now apply movement
     float deltaTime = 0.02f;
-    system->update(resourceManager, registry, deltaTime);
+    movementSystem->update(resourceManager, registry, deltaTime);
 
-    // Position: (10,20) + (0,1) * 50 * 0.02 = (10, 20 + 1) = (10, 21)
+    // Position: (10,20) + (0,300) * 0.02 = (10, 20 + 6) = (10, 26)
     auto updatedTransform = registry->getComponent<TransformComponent>(entityId);
     EXPECT_EQ(updatedTransform->getPosition().getX(), 10.0f);
-    EXPECT_EQ(updatedTransform->getPosition().getY(), 21.0f);
+    EXPECT_EQ(updatedTransform->getPosition().getY(), 26.0f);
 
     // Intent processed
-    auto updatedIntent = registry->getComponent<MovementIntentComponent>(entityId);
+    auto updatedIntent = registry->getComponent<InputIntentComponent>(entityId);
     EXPECT_EQ(updatedIntent->getState(), ComponentState::Processed);
 }
 
-TEST_F(MovementSystemTest, InactiveIntent_NoUpdate) {
-    // Create entity with inactive intent
+TEST_F(MovementSystemsTest, ZeroDirectionIntent_NoMovement) {
+    // Create entity with zero direction intent
     int entityId = 0;
-    auto intent = std::make_shared<MovementIntentComponent>(math::Vector2f(1.0f, 1.0f), false);
+    auto intent = std::make_shared<InputIntentComponent>(math::Vector2f(0.0f, 0.0f));
     auto transform = std::make_shared<TransformComponent>(math::Vector2f(0.0f, 0.0f));
 
-    registry->addComponent<MovementIntentComponent>(entityId, intent);
+    registry->addComponent<InputIntentComponent>(entityId, intent);
     registry->addComponent<TransformComponent>(entityId, transform);
 
-    system->update(resourceManager, registry, 0.016f);
+    // Process input to velocity
+    inputToVelocitySystem->update(resourceManager, registry, 0.016f);
+
+    // Velocity should be zero
+    ASSERT_TRUE(registry->hasComponent<VelocityComponent>(entityId));
+    auto velocity = registry->getComponent<VelocityComponent>(entityId);
+    EXPECT_EQ(velocity->getVelocity().getX(), 0.0f);
+    EXPECT_EQ(velocity->getVelocity().getY(), 0.0f);
+
+    // Apply movement
+    movementSystem->update(resourceManager, registry, 0.016f);
 
     // Position should remain unchanged
     auto updatedTransform = registry->getComponent<TransformComponent>(entityId);
     EXPECT_EQ(updatedTransform->getPosition().getX(), 0.0f);
     EXPECT_EQ(updatedTransform->getPosition().getY(), 0.0f);
 
-    // Intent should remain Temporary (not Processed)
-    auto updatedIntent = registry->getComponent<MovementIntentComponent>(entityId);
-    EXPECT_EQ(updatedIntent->getState(), ComponentState::Temporary);
+    // Intent processed
+    auto updatedIntent = registry->getComponent<InputIntentComponent>(entityId);
+    EXPECT_EQ(updatedIntent->getState(), ComponentState::Processed);
 }
 
-TEST_F(MovementSystemTest, EntityWithoutTransform_NoUpdate) {
+TEST_F(MovementSystemsTest, EntityWithIntentWithoutTransform_CreatesVelocity) {
     // Entity with intent but no transform
     int entityId = 0;
-    auto intent = std::make_shared<MovementIntentComponent>(math::Vector2f(1.0f, 0.0f), true);
+    auto intent = std::make_shared<InputIntentComponent>(math::Vector2f(1.0f, 0.0f));
 
-    registry->addComponent<MovementIntentComponent>(entityId, intent);
+    registry->addComponent<InputIntentComponent>(entityId, intent);
 
-    system->update(resourceManager, registry, 0.016f);
+    // Process input to velocity
+    inputToVelocitySystem->update(resourceManager, registry, 0.016f);
 
-    // No crash, intent not processed
-    auto updatedIntent = registry->getComponent<MovementIntentComponent>(entityId);
-    EXPECT_EQ(updatedIntent->getState(), ComponentState::Temporary);
+    // Velocity should be created
+    ASSERT_TRUE(registry->hasComponent<VelocityComponent>(entityId));
+    auto velocity = registry->getComponent<VelocityComponent>(entityId);
+    EXPECT_EQ(velocity->getVelocity().getX(), 300.0f);
+    EXPECT_EQ(velocity->getVelocity().getY(), 0.0f);
+
+    // Intent processed
+    auto updatedIntent = registry->getComponent<InputIntentComponent>(entityId);
+    EXPECT_EQ(updatedIntent->getState(), ComponentState::Processed);
+
+    // Movement system does nothing since no Transform
+    movementSystem->update(resourceManager, registry, 0.016f);
 }
 
-TEST_F(MovementSystemTest, EntityWithoutIntent_NoUpdate) {
-    // Entity with transform but no intent
+TEST_F(MovementSystemsTest, EntityWithTransformWithoutVelocity_NoUpdate) {
+    // Entity with transform but no velocity
     int entityId = 0;
     auto transform = std::make_shared<TransformComponent>(math::Vector2f(0.0f, 0.0f));
 
     registry->addComponent<TransformComponent>(entityId, transform);
 
-    system->update(resourceManager, registry, 0.016f);
+    // No input to velocity processing
+
+    // Movement system does nothing
+    movementSystem->update(resourceManager, registry, 0.016f);
 
     // Position unchanged
     auto updatedTransform = registry->getComponent<TransformComponent>(entityId);
@@ -137,35 +184,37 @@ TEST_F(MovementSystemTest, EntityWithoutIntent_NoUpdate) {
     EXPECT_EQ(updatedTransform->getPosition().getY(), 0.0f);
 }
 
-TEST_F(MovementSystemTest, MultipleEntities_UpdatesCorrectly) {
-    // Entity 0: with speed
+TEST_F(MovementSystemsTest, MultipleEntities_UpdatesCorrectly) {
+    // Entity 0: with intent and transform
     int entityId0 = 0;
-    auto intent0 = std::make_shared<MovementIntentComponent>(math::Vector2f(1.0f, 0.0f), true);
+    auto intent0 = std::make_shared<InputIntentComponent>(math::Vector2f(1.0f, 0.0f));
     auto transform0 = std::make_shared<TransformComponent>(math::Vector2f(0.0f, 0.0f));
-    auto speed0 = std::make_shared<SpeedComponent>(200.0f);
-    registry->addComponent<MovementIntentComponent>(entityId0, intent0);
+    registry->addComponent<InputIntentComponent>(entityId0, intent0);
     registry->addComponent<TransformComponent>(entityId0, transform0);
-    registry->addComponent<SpeedComponent>(entityId0, speed0);
 
-    // Entity 1: base speed
+    // Entity 1: with intent and transform
     int entityId1 = 1;
-    auto intent1 = std::make_shared<MovementIntentComponent>(math::Vector2f(0.0f, -1.0f), true);
+    auto intent1 = std::make_shared<InputIntentComponent>(math::Vector2f(0.0f, -1.0f));
     auto transform1 = std::make_shared<TransformComponent>(math::Vector2f(100.0f, 100.0f));
-    registry->addComponent<MovementIntentComponent>(entityId1, intent1);
+    registry->addComponent<InputIntentComponent>(entityId1, intent1);
     registry->addComponent<TransformComponent>(entityId1, transform1);
 
-    float deltaTime = 0.01f;
-    system->update(resourceManager, registry, deltaTime);
+    // Process inputs to velocities
+    inputToVelocitySystem->update(resourceManager, registry, 0.01f);
 
-    // Entity 0: (0,0) + (1,0)*200*0.01 = (2, 0)
+    // Apply movement
+    float deltaTime = 0.01f;
+    movementSystem->update(resourceManager, registry, deltaTime);
+
+    // Entity 0: (0,0) + (300,0) * 0.01 = (3, 0)
     auto updatedTransform0 = registry->getComponent<TransformComponent>(entityId0);
-    EXPECT_EQ(updatedTransform0->getPosition().getX(), 2.0f);
+    EXPECT_EQ(updatedTransform0->getPosition().getX(), 3.0f);
     EXPECT_EQ(updatedTransform0->getPosition().getY(), 0.0f);
 
-    // Entity 1: (100,100) + (0,-1)*100*0.01 = (100, 99)
+    // Entity 1: (100,100) + (0,-300) * 0.01 = (100, 97)
     auto updatedTransform1 = registry->getComponent<TransformComponent>(entityId1);
     EXPECT_EQ(updatedTransform1->getPosition().getX(), 100.0f);
-    EXPECT_EQ(updatedTransform1->getPosition().getY(), 99.0f);
+    EXPECT_EQ(updatedTransform1->getPosition().getY(), 97.0f);
 }
 
 int main(int argc, char **argv) {
