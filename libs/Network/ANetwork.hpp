@@ -21,13 +21,13 @@ class ANetwork : public INetwork {
 
         virtual ~ANetwork() override = default;
 
-        virtual void init(unsigned int port) override = 0;
+        virtual void init(int port) override = 0;
         virtual void stop() override = 0;
 
         virtual int acceptConnection() override = 0;
         virtual void closeConnection(int connectionId) override = 0;
         virtual std::vector<int> getActiveConnections() const override = 0;
-        virtual int getConnectionCount() const override = 0;
+        virtual size_t getConnectionCount() const override = 0;
 
         virtual void sendTo(int connectionId, const IPacket &packet) override = 0;
         virtual void broadcast(const IPacket &packet) override = 0;

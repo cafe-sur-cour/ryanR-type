@@ -27,11 +27,17 @@ UnixNetwork::~UnixNetwork() {
     }
 }
 
-void UnixNetwork::init(unsigned int port) {
+void UnixNetwork::init(int port) {
     _port = port;
     _socket = std::make_shared<asio::ip::udp::socket>(*_ioContext);
     _socket->open(asio::ip::udp::v4());
-    _socket->bind(asio::ip::udp::endpoint(asio::ip::udp::v4(), port));
+    if (port < 0 || port > 65535) {
+        throw std::invalid_argument("Port must be between 0 and 65535");
+    }
+
+    _socket->bind(asio::ip::udp::endpoint(asio::ip::udp::v4(),
+        static_cast<asio::ip::port_type>(port)));
+
     _isRunning = true;
 }
 
@@ -99,7 +105,7 @@ std::vector<int> UnixNetwork::getActiveConnections() const {
     return connections;
 }
 
-int UnixNetwork::getConnectionCount() const {
+size_t UnixNetwork::getConnectionCount() const {
     return _clients.size();
 }
 
