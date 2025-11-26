@@ -9,6 +9,7 @@
 #include <cmath>
 #include <memory>
 #include "../../../types/Vector2f.hpp"
+#include "../../../constants.hpp"
 #include "../../component/tags/PlayerTag.hpp"
 
 namespace ecs {
@@ -32,7 +33,8 @@ void MovementInputSystem::update(
     auto view = registry->view<PlayerTag>();
     math::Vector2f movementDirection = getMovementDirection();
 
-    if (movementDirection.getX() != 0.0f || movementDirection.getY() != 0.0f) {
+    if (std::fabs(movementDirection.getX()) > constants::EPS ||
+        std::fabs(movementDirection.getY()) > constants::EPS) {
         for (auto entityId : view) {
             updateMovementIntent(registry, entityId, movementDirection);
         }
@@ -62,12 +64,14 @@ math::Vector2f MovementInputSystem::getMovementDirection() const {
         direction.setY(direction.getY() + 1.0f);
 
     // will be replaced by real input system
-    if (_axisInput.getX() != 0.0f || _axisInput.getY() != 0.0f) {
+    if (std::fabs(_axisInput.getX()) > constants::EPS ||
+        std::fabs(_axisInput.getY()) > constants::EPS) {
         direction = _axisInput;
     }
 
     /* Normalize direction */
-    if (direction.getX() != 0.0f && direction.getY() != 0.0f) {
+    if (std::fabs(direction.getX()) > constants::EPS &&
+        std::fabs(direction.getY()) > constants::EPS) {
         float length = std::sqrt(direction.getX() * direction.getX() +
                                   direction.getY() * direction.getY());
         if (length > 1.0f) {
@@ -81,7 +85,7 @@ math::Vector2f MovementInputSystem::getMovementDirection() const {
 
 void MovementInputSystem::updateMovementIntent(
     std::shared_ptr<ARegistry> registry,
-    int entityId,
+    size_t entityId,
     const math::Vector2f &direction) {
 
     registry->registerComponent<MovementIntentComponent>();

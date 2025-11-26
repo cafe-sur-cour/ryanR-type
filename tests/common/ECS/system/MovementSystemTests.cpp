@@ -43,7 +43,7 @@ TEST_F(MovementSystemTest, NoEntities_NoUpdate) {
 
 TEST_F(MovementSystemTest, EntityWithIntentAndTransform_UsesBaseSpeed) {
     // Create entity with intent and transform, no speed component
-    int entityId = 0;
+    size_t entityId = 0;
     auto intent = std::make_shared<MovementIntentComponent>(math::Vector2f(1.0f, 0.0f), true);
     auto transform = std::make_shared<TransformComponent>(math::Vector2f(0.0f, 0.0f));
 
@@ -65,7 +65,7 @@ TEST_F(MovementSystemTest, EntityWithIntentAndTransform_UsesBaseSpeed) {
 
 TEST_F(MovementSystemTest, EntityWithSpeedComponent_UsesCustomSpeed) {
     // Create entity with intent, transform, and speed
-    int entityId = 0;
+    size_t entityId = 0;
     auto intent = std::make_shared<MovementIntentComponent>(math::Vector2f(0.0f, 1.0f), true);
     auto transform = std::make_shared<TransformComponent>(math::Vector2f(10.0f, 20.0f));
     auto speed = std::make_shared<SpeedComponent>(50.0f);
@@ -89,7 +89,7 @@ TEST_F(MovementSystemTest, EntityWithSpeedComponent_UsesCustomSpeed) {
 
 TEST_F(MovementSystemTest, InactiveIntent_NoUpdate) {
     // Create entity with inactive intent
-    int entityId = 0;
+    size_t entityId = 0;
     auto intent = std::make_shared<MovementIntentComponent>(math::Vector2f(1.0f, 1.0f), false);
     auto transform = std::make_shared<TransformComponent>(math::Vector2f(0.0f, 0.0f));
 
@@ -110,7 +110,7 @@ TEST_F(MovementSystemTest, InactiveIntent_NoUpdate) {
 
 TEST_F(MovementSystemTest, EntityWithoutTransform_NoUpdate) {
     // Entity with intent but no transform
-    int entityId = 0;
+    size_t entityId = 0;
     auto intent = std::make_shared<MovementIntentComponent>(math::Vector2f(1.0f, 0.0f), true);
 
     registry->addComponent<MovementIntentComponent>(entityId, intent);
@@ -124,7 +124,7 @@ TEST_F(MovementSystemTest, EntityWithoutTransform_NoUpdate) {
 
 TEST_F(MovementSystemTest, EntityWithoutIntent_NoUpdate) {
     // Entity with transform but no intent
-    int entityId = 0;
+    size_t entityId = 0;
     auto transform = std::make_shared<TransformComponent>(math::Vector2f(0.0f, 0.0f));
 
     registry->addComponent<TransformComponent>(entityId, transform);
@@ -139,7 +139,7 @@ TEST_F(MovementSystemTest, EntityWithoutIntent_NoUpdate) {
 
 TEST_F(MovementSystemTest, MultipleEntities_UpdatesCorrectly) {
     // Entity 0: with speed
-    int entityId0 = 0;
+    size_t entityId0 = 0;
     auto intent0 = std::make_shared<MovementIntentComponent>(math::Vector2f(1.0f, 0.0f), true);
     auto transform0 = std::make_shared<TransformComponent>(math::Vector2f(0.0f, 0.0f));
     auto speed0 = std::make_shared<SpeedComponent>(200.0f);
@@ -148,7 +148,7 @@ TEST_F(MovementSystemTest, MultipleEntities_UpdatesCorrectly) {
     registry->addComponent<SpeedComponent>(entityId0, speed0);
 
     // Entity 1: base speed
-    int entityId1 = 1;
+    size_t entityId1 = 1;
     auto intent1 = std::make_shared<MovementIntentComponent>(math::Vector2f(0.0f, -1.0f), true);
     auto transform1 = std::make_shared<TransformComponent>(math::Vector2f(100.0f, 100.0f));
     registry->addComponent<MovementIntentComponent>(entityId1, intent1);
