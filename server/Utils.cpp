@@ -5,19 +5,19 @@
 ** Utils
 */
 #include <iostream>
+#include <string>
+#include <memory>
 
 #include "Utils.hpp"
 
-Utils::Utils()
-{
+Utils::Utils() {
 }
 
-Utils::~Utils()
-{
+Utils::~Utils() {
 }
 
-void Utils::parsCli(int ac, char **av, std::shared_ptr<rserv::ServerConfig> config)
-{
+void Utils::parsCli(int ac, char **av,
+    std::shared_ptr<rserv::ServerConfig> config) {
     int port = 0;
     int nbClients = 1;
     int ip = 0;
@@ -51,13 +51,13 @@ void Utils::parsCli(int ac, char **av, std::shared_ptr<rserv::ServerConfig> conf
     config->setNbClients(nbClients);
 }
 
-void Utils::helper()
-{
+void Utils::helper() {
     std::cout << "Usage: ./r-type_server [options]\n"
         << "Options:\n"
         << "\r-p <port>        Specify the port number\n"
         << "\r-i <ip_address>  Specify the IP address to bind to\n"
-        << "\r-n <nb_clients>  Specify the maximum number of clients (Default: 1, Max: 4)\n"
+        << "\r-n <nb_clients>  Specify the maximum number of clients"
+        << " (Default: 1, Max: 4)\n"
         << "\r-h               Display this help message\n"
         << "Example:\n"
         << "  ./r-type_server -p 8080 -i 127.0.0.1 -n 4\n";

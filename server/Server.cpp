@@ -10,20 +10,15 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <vector>
+
 #include "Server.hpp"
 #include "../libs/Network/UnixNetwork/UnixNetwork.hpp"
+#include "../common/Error/ServerErrror.hpp"
 
 rserv::Server::Server() {
     this->_config = nullptr;
-    this->_network = std::make_shared<net::UnixNetwork>();
-
-    _network->setConnectionCallback([this](int clientId) {
-        this->onClientConnected(clientId);
-    });
-
-    _network->setDisconnectionCallback([this](int clientId) {
-        this->onClientDisconnected(clientId);
-    });
+    this->_network = nullptr;
 }
 
 rserv::Server::~Server() {
@@ -34,15 +29,11 @@ rserv::Server::~Server() {
 void rserv::Server::init() {
     this->setState(0);
     if (!this->_config) {
-        std::cerr << "[Server] Error: ServerConfig not set. Cannot initialize server." << std::endl;
-        return;
+        throw err::ServerError("[Server] Server configuration not set",
+            err::ServerError::CONFIG_ERROR);
     }
-    std::cout << "[Server] Initializing server on port " << _config->getPort() << std::endl;
-
-    // Initialize network layer
-    _network->init(_config->getPort());
-
-    std::cout << "[Server] Initialization complete" << std::endl;
+    /* Load the Network lib */
+    this->loadNetworkLibrary();
 }
 
 void rserv::Server::start() {
@@ -50,38 +41,30 @@ void rserv::Server::start() {
         std::cerr << "[Server] Error: Server is already running" << std::endl;
         return;
     }
-    
     if (this->getState() == -1) {
-        std::cerr << "[Server] Error: init() must be called before start()" << std::endl;
-        return;
+        throw err::ServerError("[Server] init() must be called before start()",
+            err::ServerError::INTERNAL_ERROR);
     }
-
     std::cout << "[Server] Starting server..." << std::endl;
     this->setState(1);
-    
-    // Main server loop
+
     while (this->getState() == 1) {
-        // Process new connections
         processConnections();
-        
-        // Process incoming packets
         processIncomingPackets();
-        
-        // Small sleep to prevent busy waiting
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        /* Add ctrl + C handle to stop the server gracefully */
     }
 }
 
 void rserv::Server::stop() {
     if (this->getState() == -1) {
-        std::cerr << "[Server] Error: init() must be called before stop()" << std::endl;
-        return;
+        throw err::ServerError("[Server] init() must be called before stop()",
+            err::ServerError::INTERNAL_ERROR);
     }
     if (this->getState() == 0) {
         std::cerr << "[Server] Error: Server is not running." << std::endl;
         return;
     }
-    
     this->setState(0);
     _network->stop();
     std::cout << "[Server] Server stopped." << std::endl;
@@ -133,7 +116,7 @@ void rserv::Server::setNetwork(std::shared_ptr<net::INetwork> network) {
 
 void rserv::Server::processConnections() {
     if (!_network) return;
-    
+
     int newClientId = _network->acceptConnection();
     while (newClientId != -1) {
         // Connection callback is already handled by network layer
@@ -143,12 +126,12 @@ void rserv::Server::processConnections() {
 
 void rserv::Server::processIncomingPackets() {
     if (!_network) return;
-    
+
     while (_network->hasIncomingData()) {
         int senderId = -1;
         (void)senderId;
         // IPacket packet = _network->receiveFrom(senderId);
-        
+
         // if (senderId != -1) {
         //     onPacketReceived(senderId, packet);
         // }
@@ -192,7 +175,40 @@ void rserv::Server::onClientDisconnected(int idClient) {
 }
 
 void rserv::Server::onPacketReceived(int idClient, const IPacket &packet) {
-    std::cout << "[Server] Received packet from client " << idClient << std::endl;
+    std::cout << "[Server] Received packet from client "
+        << idClient << std::endl;
     (void)packet;
     // Add game-specific packet processing logic here
+}
+
+
+void rserv::Server::loadNetworkLibrary() {
+    if (!_networloader.Open(pathLoad "/" networkLib)) {
+        throw err::ServerError("[Server] Loading network lib failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
+    if (!_networloader.getHandler()) {
+        throw err::ServerError("[Server] Loading network lib failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
+    createNetworkLib_t createNetwork = _networloader.getSymbol
+        ("createNetworkInstance");
+    if (!createNetwork) {
+        throw err::ServerError("[Server] Loading network lib failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
+    _network = std::shared_ptr<net::INetwork>
+        (reinterpret_cast<net::INetwork *>(createNetwork()));
+    if (!_network) {
+        throw err::ServerError("[Server] Loading network lib failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
+}
+
+void rserv::Server::loadBufferLibrary() {
+    // Implementation for loading buffer library
+}
+
+void rserv::Server::loadPacketLibrary() {
+    // Implementation for loading packet library
 }
