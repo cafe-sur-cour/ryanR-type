@@ -5,7 +5,7 @@
 #include "../../../../common/ECS/component/tags/PlayerTag.hpp"
 #include "../../../../client/graphicals/IWindow.hpp"
 #include "../../../../client/graphicals/IEvent.hpp"
-
+#include "../../../../common/ECS/component/permanent/SpriteComponent.hpp"
 namespace gsm {
 
 DevState::DevState(
@@ -20,21 +20,27 @@ DevState::DevState(
     _movementSystem = std::make_shared<ecs::MovementSystem>();
     _inputToVelocitySystem = std::make_shared<ecs::InputToVelocitySystem>();
     _inputSystem = std::make_shared<ecs::MovementInputSystem>();
+    _spriteRenderingSystem = std::make_shared<ecs::SpriteRenderingSystem>();
 
     _systemManager->addSystem(_inputToVelocitySystem);
     _systemManager->addSystem(_movementSystem);
     _systemManager->addSystem(_inputSystem);
+    _systemManager->addSystem(_spriteRenderingSystem);
 }
 
 void DevState::enter() {
     int entityId = 0;
 
     auto transform = std::make_shared<ecs::TransformComponent>(
-        math::Vector2f(400.0f, 300.0f));
+        math::Vector2f(100.0f, 100.0f));
+
+    transform->setScale(math::Vector2f(0.2f, 0.2f));
     auto playerTag = std::make_shared<ecs::PlayerTag>();
+    auto sprite = std::make_shared<ecs::SpriteComponent>("assets/sprites/sprites.png");
 
     _registry->addComponent(entityId, transform);
     _registry->addComponent(entityId, playerTag);
+    _registry->addComponent(entityId, sprite);
 }
 
 void DevState::update(float deltaTime) {
@@ -49,20 +55,8 @@ void DevState::update(float deltaTime) {
 }
 
 void DevState::render() {
-    _resourceManager->get<gfx::IWindow>()->clear();
-
-    auto view = _registry->view<ecs::TransformComponent>();
-    for (auto entityId : view) {
-        auto transform =
-            _registry->getComponent<ecs::TransformComponent>(entityId);
-        math::Vector2f pos = transform->getPosition();
-        _resourceManager->get<gfx::IWindow>()->drawRectangle(
-            gfx::color_t{0, 255, 0},
-            {pos.getX() - 25, pos.getY() - 25},
-            {50, 50});
-    }
-
     _resourceManager->get<gfx::IWindow>()->display();
+    _resourceManager->get<gfx::IWindow>()->clear();
 }
 
 void DevState::exit() {
