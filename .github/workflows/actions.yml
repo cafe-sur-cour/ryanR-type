@@ -292,7 +292,7 @@ jobs:
 
       - name: CREATE RELEASE ARCHIVE
         run: |
-          Compress-Archive -Path build/windows/bin/Release/* -DestinationPath rtype-windows-${{ needs.calculate_version.outputs.version }}.zip
+          Compress-Archive -Path build\windows\bin\Release\* -DestinationPath rtype-windows-${{ needs.calculate_version.outputs.version }}.zip
 
       - name: CREATE WINDOWS RELEASE
         uses: ncipollo/release-action@v1
