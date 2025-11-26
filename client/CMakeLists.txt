@@ -2,8 +2,6 @@ set(CLIENT_BIN_NAME r-type_client)
 
 add_executable(${CLIENT_BIN_NAME}
     main.cpp
-    initRessourcesManager/initRessourcesManager.cpp
-    initRessourcesManager/initRessourcesManager.hpp
 )
 
 find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
@@ -19,9 +17,9 @@ target_link_libraries(${CLIENT_BIN_NAME}
         SFML::Audio
 )
 
+add_subdirectory(initRessourcesManager)
 add_subdirectory(gsm)
 add_subdirectory(graphicals)
-add_subdirectory(initRessourcesManager)
 
 add_custom_command(TARGET ${CLIENT_BIN_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${CLIENT_BIN_NAME}> ${CMAKE_SOURCE_DIR}/
