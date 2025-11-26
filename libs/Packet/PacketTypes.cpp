@@ -22,6 +22,18 @@ std::vector<std::uint8_t> Packet::connectionPacket(
     return body;
 }
 
+bool Packet::parseConnectionPacket(const std::vector<std::uint8_t> payload) {
+    if (payload.size() < 5) {
+        return false;
+    }
+
+    std::vector<std::uint8_t> intBytes(
+        payload.begin() + 1, payload.begin() + 5);
+    std::uint8_t result = this->_serializer->deserializeInt(intBytes);
+    this->_payload.push_back(result);
+    return true;
+}
+
 std::vector<std::uint8_t> Packet::disconnectionPacket(
     std::vector<std::uint8_t> payload) {
     std::vector<std::uint8_t> body;
