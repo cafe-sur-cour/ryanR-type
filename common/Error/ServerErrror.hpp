@@ -5,11 +5,10 @@
 ** ServerErrror
 */
 
-
-#include "AError.hpp"
-
 #ifndef SERVER_ERROR_HPP
     #define SERVER_ERROR_HPP
+
+#include "AError.hpp"
 
 namespace err {
 
