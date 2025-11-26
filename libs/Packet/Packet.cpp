@@ -27,6 +27,8 @@ Packet::Packet(int seqNumber) {
     this->_packetHandlers = {
         {CONNECTION_CLIENT_PACKET, std::bind(&Packet::buildConnectionPacket,
             this, std::placeholders::_1)},
+        {ACCEPTATION_PACKET, std::bind(&Packet::buildAcceptationPacket,
+            this, std::placeholders::_1)},
         {DISCONNECTION_PACKET, std::bind(&Packet::buildDisconnectionPacket,
             this, std::placeholders::_1)},
         {EVENT_PACKET, std::bind(&Packet::buildEventPacket,
@@ -34,7 +36,13 @@ Packet::Packet(int seqNumber) {
     };
 
     this->_packetReceived = {
+        {CONNECTION_CLIENT_PACKET, std::bind(&Packet::parseConnectionPacket,
+            this, std::placeholders::_1)},
         {ACCEPTATION_PACKET, std::bind(&Packet::parseAcceptationPacket,
+            this, std::placeholders::_1)},
+        {DISCONNECTION_PACKET, std::bind(&Packet::parseDisconnectionPacket,
+            this, std::placeholders::_1)},
+        {EVENT_PACKET, std::bind(&Packet::parseEventPacket,
             this, std::placeholders::_1)}
     };
 
