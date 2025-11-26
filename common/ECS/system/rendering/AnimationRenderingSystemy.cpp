@@ -34,7 +34,7 @@ void AnimationRenderingSystemy::update(std::shared_ptr<ResourceManager>
         int frameIndex = static_cast<int>(elapsedTime / animation->getAnimationSpeed()) % animation->getFrameCount();
         animation->setCurrentFrame(frameIndex);
 
-        float frameX = frameIndex * animation->getFrameWidth();
+        float frameX = static_cast<float>(frameIndex) * animation->getFrameWidth();
         float frameY = 0.0f;
         math::FRect frameRect(frameX, frameY, animation->getFrameWidth(), animation->getFrameHeight());
         animation->setFrameRect(frameRect);
