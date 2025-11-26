@@ -11,8 +11,9 @@
 #include <memory>
 #include <string>
 #include "Packet.hpp"
-#include "../../common/DLLoader/LoaderType.hpp"
 #include "serializer/BigEndianSerialization.hpp"
+#include "../../common/DLLoader/LoaderType.hpp"
+#include "../../common/Error/PacketError.hpp"
 
 Packet::Packet(int seqNumber) {
     this->_magicNumber = MAGIC_NUMBER;
@@ -23,6 +24,10 @@ Packet::Packet(int seqNumber) {
     this->_endOfPacket = (FIRST_EOP_CHAR << 8) | SECOND_EOP_CHAR;
     this->_payload = std::vector<std::uint8_t>();
     this->_serializer = std::make_shared<BigEndianSerialization>();
+    if (!this->_serializer) {
+        throw err::PacketError("[Server] Failed to load serializer",
+            err::PacketError::LIBRARY_LOAD_FAILED);
+    }
 
     this->_packetHandlers = {
         {CONNECTION_CLIENT_PACKET, std::bind(&Packet::buildConnectionPacket,

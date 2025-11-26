@@ -8,6 +8,9 @@
 
 #include "AError.hpp"
 
+#ifndef SERVER_ERROR_HPP
+    #define SERVER_ERROR_HPP
+
 namespace err {
 
 class ServerError : public AError {
@@ -30,3 +33,5 @@ class ServerError : public AError {
 };
 
 }
+
+#endif /* !SERVER_ERROR_HPP */

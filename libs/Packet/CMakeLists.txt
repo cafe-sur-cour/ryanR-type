@@ -9,6 +9,10 @@ add_library(${PACKET_LIB_NAME} SHARED
 
 target_include_directories(${PACKET_LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+target_link_libraries(${PACKET_LIB_NAME}
+    PRIVATE ERROR
+)
+
 add_subdirectory(serializer)
 
 

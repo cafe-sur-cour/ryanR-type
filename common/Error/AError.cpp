@@ -11,7 +11,8 @@
 namespace err {
 
 AError::AError(const std::string &message, int code)
-    : m_message(message), m_code(code) {}
+    : m_message(message), m_code(code) {
+}
 
 const char* AError::what() const noexcept {
     return m_message.c_str();
