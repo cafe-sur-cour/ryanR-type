@@ -99,8 +99,11 @@ jobs:
 
       - name: RUN COMPILATION
         run: |
-          chmod +x .\scripts\compile_project.bat
           .\scripts\compile_project.bat
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Compilation failed with exit code $LASTEXITCODE"
+            exit $LASTEXITCODE
+          }
 
   run_all_tests:
     name: run all tests
@@ -290,9 +293,10 @@ jobs:
         run: |
           .\scripts\compile_project.bat
 
-      - name: CREATE RELEASE ARCHIVE
+      - name: CREATE RELEASE ARCHIVES
         run: |
-          Compress-Archive -Path build\windows\bin\Release\* -DestinationPath rtype-windows-${{ needs.calculate_version.outputs.version }}.zip
+          Compress-Archive -Path "build\windows\bin\client\*.exe", "build\windows\bin\client\*.dll" -DestinationPath "rtype-client-windows-${{ needs.calculate_version.outputs.version }}.zip"
+          Compress-Archive -Path "build\windows\bin\server\*.exe", "build\windows\bin\server\*.dll" -DestinationPath "rtype-server-windows-${{ needs.calculate_version.outputs.version }}.zip"
 
       - name: CREATE WINDOWS RELEASE
         uses: ncipollo/release-action@v1
@@ -311,5 +315,5 @@ jobs:
             3. Run `r-type_client.exe` or `r-type_server.exe`
           draft: false
           prerelease: false
-          artifacts: "rtype-windows-${{ needs.calculate_version.outputs.version }}.zip"
+          artifacts: "rtype-client-windows-${{ needs.calculate_version.outputs.version }}.zip, rtype-server-windows-${{ needs.calculate_version.outputs.version }}.zip"
           artifactContentType: application/zip
