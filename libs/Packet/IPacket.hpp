@@ -17,19 +17,19 @@ class IPacket {
         virtual ~IPacket() = default;
 
         virtual uint8_t getMagicNumber() const = 0;
-        virtual size_t getLength() const = 0;
-        virtual size_t getSequenceNumber() const = 0;
+        virtual uint32_t getLength() const = 0;
+        virtual uint32_t getSequenceNumber() const = 0;
         virtual uint8_t getType() const = 0;
-        virtual std::vector<std::uint8_t> getPayload() const = 0;
+        virtual std::vector<uint64_t> getPayload() const = 0;
 
         virtual void setType(uint8_t type) = 0;
-        virtual void setLength(size_t length) = 0;
-        virtual void setSequenceNumber(size_t sequenceNumber) = 0;
-        virtual void setPayload(std::vector<std::uint8_t> payload) = 0;
-        virtual void setIdClient(unsigned int idClient) = 0;
+        virtual void setLength(uint32_t length) = 0;
+        virtual void setSequenceNumber(uint32_t sequenceNumber) = 0;
+        virtual void setPayload(std::vector<uint64_t> payload) = 0;
+        virtual void setIdClient(uint8_t idClient) = 0;
 
-        virtual std::vector<uint8_t> packHeaderPacket(unsigned int idClient, unsigned int sequenceNumber, uint8_t type) = 0;
-        virtual std::vector<uint8_t> packBodyPacket(std::vector<uint8_t> payload) = 0;
+        virtual std::vector<uint8_t> packHeaderPacket(uint8_t idClient, unsigned int sequenceNumber, uint8_t type) = 0;
+        virtual std::vector<uint8_t> packBodyPacket(std::vector<uint64_t> payload) = 0;
         virtual bool unpackPacket(std::vector<uint8_t> data) = 0;
 
         virtual void resetPacket() = 0;
