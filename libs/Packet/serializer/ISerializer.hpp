@@ -22,6 +22,9 @@ class ISerializer {
         virtual std::vector<std::uint8_t> serializeChar(uint8_t value) = 0;
 
         virtual std::uint8_t deserializeInt(std::vector<std::uint8_t>) = 0;
+        virtual int64_t deserializeLong(std::vector<std::uint8_t>) = 0;
+        virtual uint16_t deserializeShort(std::vector<std::uint8_t>) = 0;
+        virtual uint8_t deserializeChar(std::vector<std::uint8_t>) = 0;
     protected:
     private:
 };
