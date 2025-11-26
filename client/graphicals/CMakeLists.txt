@@ -7,11 +7,14 @@ target_sources(${GRAPHICAL_LIB_NAME} PRIVATE
     SfmlEvent.cpp
     SfmlKeyMappings.cpp
     TextureManager.cpp
+    FontManager.cpp
+    assets/AssetManager.cpp
 )
 
 target_include_directories(${GRAPHICAL_LIB_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
     PRIVATE ${CMAKE_SOURCE_DIR}/common/ECS/resourceManager
+    PRIVATE ${CMAKE_BINARY_DIR}
 )
 
 find_package(SFML COMPONENTS Graphics Window System REQUIRED)
@@ -32,4 +35,6 @@ target_sources(${CLIENT_BIN_NAME} PRIVATE
     SfmlEvent.hpp
     IWindow.hpp
     TextureManager.hpp
+    FontManager.hpp
+    assets/AssetManager.hpp
 )

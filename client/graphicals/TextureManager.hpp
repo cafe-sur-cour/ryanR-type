@@ -13,12 +13,13 @@
 #include <unordered_set>
 #include <memory>
 #include <string>
+#include "assets/AssetManager.hpp"
 
 namespace gfx {
 
 class TextureManager {
     public:
-        TextureManager() = default;
+        TextureManager(std::shared_ptr<assets::AssetManager> assetManager);
         ~TextureManager() = default;
 
         std::shared_ptr<sf::Texture> loadTexture(const std::string& path);
@@ -27,10 +28,11 @@ class TextureManager {
         size_t getCacheSize() const { return _textureCache.size(); }
 
     private:
+        std::shared_ptr<assets::AssetManager> _assetManager;
         std::unordered_map<std::string, std::shared_ptr<sf::Texture>> _textureCache;
         std::unordered_set<std::string> _failedTextures;
 };
 
-} // namespace gfx
+}  // namespace gfx
 
 #endif /* !TEXTUREMANAGER_HPP_ */
