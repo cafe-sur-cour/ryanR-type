@@ -5,7 +5,11 @@
 ** ClientNetwork
 */
 
+#include <thread>
+#include <chrono>
+
 #include "ClientNetwork.hpp"
+#include "../common/Signal/Signal.hpp"
 
 ClientNetwork::ClientNetwork() {
     this->_port = 0;
@@ -28,12 +32,35 @@ void ClientNetwork::init() {
     this->loadPacketLibrary();
 }
 
+/* Call this in a separate thread */
 void ClientNetwork::start() {
+    Signal::setupSignalHandlers();
 
+    while (!Signal::stopFlag) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    if (Signal::stopFlag) {
+        std::cout << "[Client] Received signal, stopping client" << std::endl;
+        this->stop();
+    }
 }
 
 void ClientNetwork::stop() {
-
+    if (this->_network != nullptr
+        && this->_networloader.getHandler() != nullptr) {
+        this->_networloader.Close();
+        this->_network.reset();
+    }
+    if (this->_buffer != nullptr
+        && this->_bufferloader.getHandler() != nullptr) {
+        this->_bufferloader.Close();
+        this->_buffer.reset();
+    }
+    if (this->_packet != nullptr
+        && this->_packetloader.getHandler() != nullptr) {
+        this->_packetloader.Close();
+        this->_packet.reset();
+    }
 }
 
 int ClientNetwork::getPort() const {
@@ -53,14 +80,11 @@ void ClientNetwork::setIp(uint32_t ip) {
 }
 
 void ClientNetwork::sendData(const IPacket &data, size_t size) {
-    (void)data;
-    (void)size;
+    this->_network->sendData(data, size);
 }
 
 IPacket &ClientNetwork::receiveData(const IBuffer &buffer, size_t size) const {
-    (void)buffer;
-    (void)size;
-    return *this->_packet; /* Temporary dereferensment*/
+    return this->_network->receiveData(buffer, size);
 }
 
 
