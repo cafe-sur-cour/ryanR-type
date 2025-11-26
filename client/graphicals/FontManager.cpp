@@ -7,10 +7,13 @@
 
 #include "FontManager.hpp"
 #include <iostream>
+#include <memory>
+#include <string>
 
 namespace gfx {
 
-FontManager::FontManager(std::shared_ptr<assets::AssetManager> assetManager) : _assetManager(assetManager) {}
+FontManager::FontManager(std::shared_ptr<assets::AssetManager> assetManager)
+    : _assetManager(assetManager) {}
 
 std::shared_ptr<sf::Font> FontManager::getFont(const std::string& path) {
     auto it = _fontCache.find(path);
@@ -25,13 +28,15 @@ std::shared_ptr<sf::Font> FontManager::getFont(const std::string& path) {
 
     auto asset = _assetManager->getAsset(normalizedPath);
     if (!asset) {
-        std::cerr << "[FontManager] Failed to load asset: " << normalizedPath << std::endl;
+        std::cerr << "[FontManager] Failed to load asset: "
+            << normalizedPath << std::endl;
         return nullptr;
     }
 
     auto font = std::make_shared<sf::Font>();
     if (!font->openFromMemory(asset->data.data(), asset->size)) {
-        std::cerr << "[FontManager] Failed to load font from memory: " << path << std::endl;
+        std::cerr << "[FontManager] Failed to load font from memory: "
+                   << path << std::endl;
         return nullptr;
     }
     _fontCache[path] = font;
