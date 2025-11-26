@@ -20,6 +20,7 @@ class IPacket {
         virtual size_t getLength() const = 0;
         virtual size_t getSequenceNumber() const = 0;
         virtual uint8_t getType() const = 0;
+        virtual std::vector<std::uint8_t> getPayload() const = 0;
 
         virtual void setType(uint8_t type) = 0;
         virtual void setLength(size_t length) = 0;
