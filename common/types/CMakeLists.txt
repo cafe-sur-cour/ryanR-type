@@ -3,4 +3,6 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     Vector2f.cpp
     FRect.hpp
     FRect.cpp
+    Chrono.hpp
+    Chrono.cpp
 )
