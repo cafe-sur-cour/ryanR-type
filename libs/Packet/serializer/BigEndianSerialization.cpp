@@ -53,10 +53,16 @@ std::vector<std::uint8_t> BigEndianSerialization::serializeChar(uint8_t value) {
     return bytes;
 }
 
-bool BigEndianSerialization::deserialize(const std::vector<uint8_t>& data,
-    void* output, size_t expectedSize) {
-        (void)data;
-        (void)output;
-        (void)expectedSize;
-    return false;
+std::uint8_t BigEndianSerialization::deserializeInt(
+    std::vector<std::uint8_t> data) {
+    if (data.size() < 4) {
+        return 0;
+    }
+
+    std::uint32_t value = (static_cast<std::uint32_t>(data[0]) << 24) |
+        (static_cast<std::uint32_t>(data[1]) << 16) |
+        (static_cast<std::uint32_t>(data[2]) << 8)  |
+        (static_cast<std::uint32_t>(data[3]));
+
+    return static_cast<std::uint8_t>(value);
 }
