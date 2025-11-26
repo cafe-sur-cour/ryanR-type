@@ -11,6 +11,7 @@
 #include <memory>
 #include <thread>
 #include "../common/ECS/resourceManager/ResourceManager.hpp"
+#include "ClientNetwork.hpp"
 #include "graphicals/IWindow.hpp"
 #include "gsm/machine/GameStateMachine.hpp"
 
@@ -21,9 +22,12 @@ public:
 
     void run();
 
+    std::shared_ptr<ClientNetwork> getNetwork();
+
 private:
     std::shared_ptr<ecs::ResourceManager> _resourceManager;
     std::shared_ptr<gsm::GameStateMachine> _gsm;
+    std::shared_ptr<ClientNetwork> _clientNetwork;
     std::thread _networkThread;
 
     void initNetwork();

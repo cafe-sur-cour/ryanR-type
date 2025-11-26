@@ -15,15 +15,33 @@
 #include "Server.hpp"
 #include "../libs/Network/UnixNetwork/UnixNetwork.hpp"
 #include "../common/Error/ServerErrror.hpp"
+#include "Signal.hpp"
 
 rserv::Server::Server() {
     this->_config = nullptr;
     this->_network = nullptr;
+    this->_buffer = nullptr;
+    this->_packet = nullptr;
 }
 
 rserv::Server::~Server() {
     if (this->getState() == 1)
         this->stop();
+    if (this->_network != nullptr &&
+        this->_networloader.getHandler() != nullptr) {
+        this->_networloader.Close();
+        this->_network.reset();
+    }
+    if (this->_buffer != nullptr &&
+        this->_bufferloader.getHandler() != nullptr) {
+        this->_bufferloader.Close();
+        this->_buffer.reset();
+    }
+    if (this->_packet != nullptr &&
+        this->_packetloader.getHandler() != nullptr) {
+        this->_packetloader.Close();
+        this->_packet.reset();
+    }
 }
 
 void rserv::Server::init() {
@@ -50,11 +68,19 @@ void rserv::Server::start() {
     std::cout << "[Server] Starting server..." << std::endl;
     this->setState(1);
 
-    while (this->getState() == 1) {
+    Signal::setupSignalHandlers();
+
+    while (this->getState() == 1 && !Signal::stopFlag) {
         processConnections();
         processIncomingPackets();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        /* Add ctrl + C handle to stop the server gracefully */
+        if (std::cin.eof()) {
+            std::cout << "EOF received (Ctrl+D pressed)" << std::endl;
+            break;
+        }
+    }
+    if (Signal::stopFlag) {
+        std::cout << "[Server] Received signal, stopping server" << std::endl;
+        this->stop();
     }
 }
 
@@ -140,15 +166,15 @@ void rserv::Server::processIncomingPackets() {
     }
 }
 
-void rserv::Server::broadcastPacket(const IPacket &packet) {
+void rserv::Server::broadcastPacket() {
     if (_network) {
-        _network->broadcast(packet);
+        _network->broadcast(*this->_packet);
     }
 }
 
-void rserv::Server::sendToClient(int idClient, const IPacket &packet) {
+void rserv::Server::sendToClient(int idClient) {
     if (_network) {
-        _network->sendTo(idClient, packet);
+        _network->sendTo(idClient, *this->_packet);
     }
 }
 
