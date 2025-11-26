@@ -5,10 +5,12 @@ project(r-type)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0A00)
 endif()
 
+find_package(asio CONFIG REQUIRED)
 option(BUILD_TESTS "Build unit tests" OFF)
 
 add_compile_options(-Wall -Wextra -Werror -Wshadow)
