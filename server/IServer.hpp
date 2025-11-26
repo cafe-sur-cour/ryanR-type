@@ -46,8 +46,8 @@ public:
     virtual void processConnections() = 0;
     virtual void processIncomingPackets() = 0;
 
-    virtual void broadcastPacket(const IPacket &packet) = 0;
-    virtual void sendToClient(int idClient, const IPacket &packet) = 0;
+    virtual void broadcastPacket() = 0;
+    virtual void sendToClient(int idClient) = 0;
     virtual std::vector<int> getConnectedClients() const = 0;
     virtual size_t getClientCount() const = 0;
 };
