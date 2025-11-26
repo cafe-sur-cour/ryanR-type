@@ -5,6 +5,7 @@
 ** AnimationRenderingSystemy
 */
 
+#include <memory>
 #include "AnimationRenderingSystemy.hpp"
 #include "../../component/permanent/AnimationComponent.hpp"
 #include "../../component/permanent/TransformComponent.hpp"
@@ -31,12 +32,15 @@ void AnimationRenderingSystemy::update(std::shared_ptr<ResourceManager>
             continue;
 
         float elapsedTime = animation->getChrono().getElapsedSeconds();
-        int frameIndex = static_cast<int>(elapsedTime / animation->getAnimationSpeed()) % animation->getFrameCount();
+        int frameIndex = static_cast<int>(elapsedTime /
+            animation->getAnimationSpeed()) % animation->getFrameCount();
         animation->setCurrentFrame(frameIndex);
 
-        float frameX = static_cast<float>(frameIndex) * animation->getFrameWidth();
+        float frameX = static_cast<float>(frameIndex) *
+            animation->getFrameWidth();
         float frameY = 0.0f;
-        math::FRect frameRect(frameX, frameY, animation->getFrameWidth(), animation->getFrameHeight());
+        math::FRect frameRect(frameX, frameY, animation->getFrameWidth(),
+                            animation->getFrameHeight());
         animation->setFrameRect(frameRect);
 
         if (resourceManager->has<gfx::IWindow>()) {
