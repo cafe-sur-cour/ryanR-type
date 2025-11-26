@@ -8,11 +8,13 @@
 #ifndef SFMLWINDOW_HPP_
 #define SFMLWINDOW_HPP_
 
+#include <memory>
 #include <SFML/Graphics.hpp>
 #include "./IWindow.hpp"
 #include "./TextureManager.hpp"
+#include "./FontManager.hpp"
 #include "../../common/types/FRect.hpp"
-#include <memory>
+#include "assets/AssetManager.hpp"
 
 class SfmlWindow : public gfx::IWindow {
     public:
@@ -26,11 +28,8 @@ class SfmlWindow : public gfx::IWindow {
         void resizeWindow(size_t x, size_t y) override;
 
         void drawSprite(std::string asset, gfx::color_t color, std::pair<size_t, size_t> position) override;
-        void drawText(std::string text, gfx::color_t color, std::pair<size_t, size_t> position) override;
+        void drawText(std::string text, gfx::color_t color, std::pair<size_t, size_t> position, const std::string& fontPath) override;
         void drawRectangle(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
-
-        void setFont(const std::string& fontPath) override;
-        std::string getFont() const override;
 
         bool isMouseOver(std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
         std::pair<int, int> getWindowSize() override;
@@ -41,9 +40,9 @@ class SfmlWindow : public gfx::IWindow {
 
     private:
         std::shared_ptr<sf::RenderWindow> _window;
-        sf::Font _font;
-        std::string _fontPath;
+        std::shared_ptr<assets::AssetManager> _assetManager;
         gfx::TextureManager _textureManager;
+        gfx::FontManager _fontManager;
 };
 
 #endif /* !SFMLWINDOW_HPP_ */
