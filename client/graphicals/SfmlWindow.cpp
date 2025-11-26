@@ -12,20 +12,6 @@
 #include <string>
 #include <memory>
 
-/*
-** EPITECH PROJECT, 2025
-** ryanR-type
-** File description:
-** SfmlWindow
-*/
-
-#include "SfmlWindow.hpp"
-#include <stdexcept>
-#include <iostream>
-#include <utility>
-#include <string>
-#include <memory>
-
 SfmlWindow::SfmlWindow(std::string title, size_t width, size_t height)
     : _window(std::make_shared<sf::RenderWindow>(
     sf::VideoMode({static_cast<unsigned int>(width),

@@ -5,9 +5,11 @@
 ** AssetManager
 */
 
+#include <iostream>
+#include <memory>
+#include <string>
 #include "AssetManager.hpp"
 #include "EmbeddedAssets.hpp"
-#include <iostream>
 
 namespace assets {
 
