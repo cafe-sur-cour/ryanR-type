@@ -6,6 +6,8 @@ add_library(${SERVER_LIB_NAME}
     ServerConfig.cpp
     Server.hpp
     Server.cpp
+    Signal.cpp
+    Signal.hpp
     Utils.cpp
     Utils.hpp
 )
