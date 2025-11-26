@@ -40,7 +40,7 @@
 
 class Packet : public IPacket {
     public:
-        Packet(int idClient);
+        Packet(unsigned int sequenceNumber);
         ~Packet() override;
 
         uint8_t getMagicNumber() const override;
@@ -52,7 +52,7 @@ class Packet : public IPacket {
         void setType(uint8_t type) override;
         void setLength(size_t length) override;
 
-        std::vector<uint8_t> packHeaderPacket(unsigned int idClient, unsigned int sequenceNumber, uint8_t type) override;
+        std::vector<uint8_t> packHeaderPacket(int idClient, unsigned int sequenceNumber, uint8_t type) override;
         std::vector<uint8_t> packBodyPacket(std::vector<std::uint8_t> payload) override;
         bool unpackPacket(std::vector<uint8_t> data) override;
 
@@ -63,10 +63,10 @@ class Packet : public IPacket {
 
     private:
         uint8_t _magicNumber;
-        unsigned int _idClient;
+        int _idClient;
         unsigned int _sequenceNumber;
         uint8_t _type;
-        unsigned int _length;
+        size_t _length;
         short _endOfPacket;
         std::vector<std::uint8_t> _payload;
         std::shared_ptr<ISerializer> _serializer;
@@ -76,7 +76,7 @@ class Packet : public IPacket {
 };
 
 extern "C" {
-    void *createPacketInstance(int id);
+    void *createPacketInstance(unsigned int id);
     int getType();
 }
 #endif /* !PACKET_HPP_ */
