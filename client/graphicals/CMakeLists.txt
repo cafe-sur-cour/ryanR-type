@@ -6,6 +6,7 @@ target_sources(${GRAPHICAL_LIB_NAME} PRIVATE
     SfmlWindow.cpp
     SfmlEvent.cpp
     SfmlKeyMappings.cpp
+    TextureManager.cpp
 )
 
 target_include_directories(${GRAPHICAL_LIB_NAME}
@@ -29,4 +30,6 @@ target_sources(${CLIENT_BIN_NAME} PRIVATE
     SfmlKeyMappings.hpp
     SfmlWindow.hpp
     SfmlEvent.hpp
+    IWindow.hpp
+    TextureManager.hpp
 )
