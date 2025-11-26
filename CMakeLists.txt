@@ -13,7 +13,11 @@ endif()
 find_package(asio CONFIG REQUIRED)
 option(BUILD_TESTS "Build unit tests" OFF)
 
-add_compile_options(-Wall -Wextra -Werror -Wshadow)
+if(UNIX)
+    add_compile_options(-Wall -Wextra -Werror -Wshadow)
+elseif(WIN32)
+    add_compile_options(/W4 /WX /permissive-)
+endif()
 
 enable_testing()
 
