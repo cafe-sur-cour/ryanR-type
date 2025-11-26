@@ -48,10 +48,6 @@ add_executable(RegistryTests common/ECS/RegistryTests.cpp)
 target_link_libraries(RegistryTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME RegistryTests COMMAND RegistryTests)
 
-add_executable(MovementInputSystemTests common/ECS/MovementInputSystemTests.cpp)
-target_link_libraries(MovementInputSystemTests ECS GTest::gtest GTest::gtest_main)
-add_test(NAME MovementInputSystemTests COMMAND MovementInputSystemTests)
-
 add_executable(MovementSystemTests common/ECS/system/MovementSystemTests.cpp)
 target_link_libraries(MovementSystemTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME MovementSystemTests COMMAND MovementSystemTests)

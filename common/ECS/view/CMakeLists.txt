@@ -1,1 +1,1 @@
-target_sources(ECS PRIVATE View.cpp)
+target_sources(${ECS_LIB_NAME} PUBLIC View.cpp)
