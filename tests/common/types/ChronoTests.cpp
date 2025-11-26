@@ -23,20 +23,20 @@ TEST(ChronoTest, StartAndStop) {
     chrono.start();
     EXPECT_TRUE(chrono.isRunning());
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     chrono.stop();
     EXPECT_FALSE(chrono.isRunning());
 
     float elapsed = chrono.getElapsedSeconds();
-    EXPECT_GT(elapsed, 0.0f);
-    EXPECT_LT(elapsed, 1.0f); // Should be around 0.01 seconds
+    EXPECT_GT(elapsed, 0.05f);
+    EXPECT_LT(elapsed, 0.2f); // Should be around 0.1 seconds
 }
 
 TEST(ChronoTest, Reset) {
     math::Chrono chrono;
     chrono.start();
-    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
     chrono.stop();
 
     float elapsedBeforeReset = chrono.getElapsedSeconds();
@@ -51,11 +51,11 @@ TEST(ChronoTest, GetElapsedWhileRunning) {
     math::Chrono chrono;
     chrono.start();
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
     float elapsed = chrono.getElapsedSeconds();
-    EXPECT_GT(elapsed, 0.0f);
-    EXPECT_LT(elapsed, 1.0f);
+    EXPECT_GT(elapsed, 0.02f);
+    EXPECT_LT(elapsed, 0.1f);
 
     chrono.stop();
     float elapsedAfterStop = chrono.getElapsedSeconds();
@@ -66,13 +66,13 @@ TEST(ChronoTest, MultipleStartStop) {
     math::Chrono chrono;
 
     chrono.start();
-    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     chrono.stop();
 
     float firstElapsed = chrono.getElapsedSeconds();
 
     chrono.start();
-    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    std::this_thread::sleep_for(std::chrono::milliseconds(40));
     chrono.stop();
 
     float secondElapsed = chrono.getElapsedSeconds();
@@ -102,12 +102,12 @@ TEST(ChronoTest, StopNotRunning) {
 TEST(ChronoTest, GetElapsedMilliseconds) {
     math::Chrono chrono;
     chrono.start();
-    std::this_thread::sleep_for(std::chrono::milliseconds(15));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
     chrono.stop();
 
     float elapsedMs = chrono.getElapsedMilliseconds();
-    EXPECT_GT(elapsedMs, 10.0f);
-    EXPECT_LT(elapsedMs, 50.0f); // Should be around 15ms
+    EXPECT_GT(elapsedMs, 30.0f);
+    EXPECT_LT(elapsedMs, 80.0f); // Should be around 50ms
 }
 
 int main(int argc, char **argv) {
