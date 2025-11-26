@@ -12,12 +12,17 @@
 #include "../client/graphicals/IWindow.hpp"
 #include "../client/graphicals/IEvent.hpp"
 #include "graphicals/EventTypes.hpp"
+#include "ClientNetwork.hpp"
+#include "Utils.hpp"
 
-int main() {
+int main(int ac, char **av) {
+    Utils utils;
+    std::shared_ptr<ClientNetwork> clientNetwork = std::make_shared<ClientNetwork>();
     std::shared_ptr<ecs::ResourceManager> resourceManager =
         initRessourcesManager();
 
     // tmp loop to test window and events
+    utils.parseCli(ac, av, clientNetwork);
     while (resourceManager->get<gfx::IWindow>()->isOpen()) {
         // tmp to see events
         auto eventResult = resourceManager->get<gfx::IEvent>()->pollEvents();

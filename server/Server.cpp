@@ -20,6 +20,8 @@
 rserv::Server::Server() {
     this->_config = nullptr;
     this->_network = nullptr;
+    this->_buffer = nullptr;
+    this->_packet = nullptr;
 }
 
 rserv::Server::~Server() {
