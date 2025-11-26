@@ -7,6 +7,8 @@
 
 #include "FRect.hpp"
 #include <algorithm>
+#include <cmath>
+#include "../constants.hpp"
 
 namespace math {
 
@@ -112,10 +114,11 @@ FRect &FRect::operator=(FRect const &other) {
     }
     return *this;
 }
-
 bool FRect::operator==(FRect const &other) const {
-    return (left == other.left) && (top == other.top) &&
-           (width == other.width) && (height == other.height);
+    return (std::fabs(left - other.left) <= constants::EPS) &&
+           (std::fabs(top - other.top) <= constants::EPS) &&
+           (std::fabs(width - other.width) <= constants::EPS) &&
+           (std::fabs(height - other.height) <= constants::EPS);
 }
 
 bool FRect::operator!=(FRect const &other) const {
