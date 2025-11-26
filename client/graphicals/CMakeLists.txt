@@ -27,6 +27,8 @@ target_link_libraries(${GRAPHICAL_LIB_NAME}
         SFML::System
 )
 
+add_dependencies(${GRAPHICAL_LIB_NAME} generate_embedded_assets)
+
 target_sources(${CLIENT_BIN_NAME} PRIVATE
     IEvent.hpp
     EventTypes.hpp
