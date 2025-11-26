@@ -4,8 +4,9 @@ add_library(${PACKET_LIB_NAME} SHARED
     IPacket.hpp
     Packet.hpp
     Packet.cpp
-    PacketTypes.cpp
+    Pack.cpp
     Unpack.cpp
+    PacketTypes.cpp
 )
 
 target_include_directories(${PACKET_LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

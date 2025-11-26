@@ -9,6 +9,19 @@
 #include <iostream>
 #include "Packet.hpp"
 
+bool Packet::unpack(std::vector<uint8_t> data) {
+    if (data.empty()) {
+        std::cerr <<
+            "[SERVER] Error: unpackPacket(): Empty packet data"
+            << std::endl;
+        return false;
+    }
+
+    if (data.at(0) == this->_magicNumber)
+        return this->unpackHeader(data);
+    return this->unpackBody(data);
+}
+
 bool Packet::unpackHeader(std::vector<uint8_t> data) {
     if (data.empty() || data.size() != HEADER_SIZE) {
         std::cerr <<
