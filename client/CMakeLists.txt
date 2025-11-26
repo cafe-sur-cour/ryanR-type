@@ -1,7 +1,15 @@
 set(CLIENT_BIN_NAME r-type_client)
 
+set(ASSETS_DIR ${CMAKE_SOURCE_DIR}/assets)
+
+execute_process(
+    COMMAND python3 ${CMAKE_SOURCE_DIR}/scripts/generate_embedded_assets.py ${ASSETS_DIR} ${CMAKE_BINARY_DIR}/EmbeddedAssets
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+
 add_executable(${CLIENT_BIN_NAME}
     main.cpp
+    ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
 )
 
 find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
