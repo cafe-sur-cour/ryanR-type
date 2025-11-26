@@ -28,7 +28,7 @@ void Utils::helper() {
 
 void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork> clientNetwork) {
     int port = 0;
-    int ip = 0;
+    uint32_t ip = 0;
 
     for (int i = 1; i < ac; i++) {
         std::string arg = av[i];
@@ -36,7 +36,7 @@ void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork> clientNet
             port = std::stoi(av[i + 1]);
             i++;
         } else if (arg == "-i" && i + 1 < ac) {
-            ip = std::stoi(av[i + 1]);
+            ip = static_cast<uint32_t>(std::stoi(av[i + 1]));
             i++;
         } else if (arg == "-h") {
             this->helper();

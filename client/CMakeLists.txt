@@ -6,6 +6,8 @@ add_executable(${CLIENT_BIN_NAME}
     Utils.hpp
     ClientNetwork.cpp
     ClientNetwork.hpp
+    Core.cpp
+    Core.hpp
 )
 
 find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
