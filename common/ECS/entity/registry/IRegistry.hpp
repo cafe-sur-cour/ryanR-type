@@ -22,16 +22,16 @@ class IRegistry {
         void registerComponent();
 
         template <typename T>
-        void addComponent(int entityId, std::shared_ptr<T> component);
+        void addComponent(size_t entityId, std::shared_ptr<T> component);
 
         template <typename T>
-        std::shared_ptr<T> getComponent(int entityId);
+        std::shared_ptr<T> getComponent(size_t entityId);
 
         template <typename T>
-        void removeComponent(int entityId);
+        void removeComponent(size_t entityId);
 
         template <typename T>
-        bool hasComponent(int entityId);
+        bool hasComponent(size_t entityId);
 
         template <typename... Components>
         View<Components...> view();

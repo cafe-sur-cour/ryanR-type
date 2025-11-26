@@ -21,10 +21,10 @@ class AComponentArray : public IComponentArray {
         AComponentArray();
         ~AComponentArray() override;
 
-        void add(int entityId, std::shared_ptr<T> component);
-        std::shared_ptr<T> get(int entityId) const;
-        void remove(int entityId);
-        bool has(int entityId) const;
+        void add(size_t entityId, std::shared_ptr<T> component);
+        std::shared_ptr<T> get(size_t entityId) const;
+        void remove(size_t entityId);
+        bool has(size_t entityId) const;
 
         void removeAllComponentsWithState(ComponentState state) override;
         size_t getMaxEntityId() const override;
