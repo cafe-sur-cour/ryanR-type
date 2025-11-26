@@ -2,6 +2,7 @@ set(CLIENT_BIN_NAME r-type_client)
 
 add_executable(${CLIENT_BIN_NAME}
     main.cpp
+    Core.cpp
 )
 
 find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
