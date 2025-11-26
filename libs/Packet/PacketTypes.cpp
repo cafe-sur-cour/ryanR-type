@@ -43,6 +43,8 @@ std::vector<uint8_t> Packet::buildAcceptationPacket(
     body.insert(body.end(), temp.begin(), temp.end());
     temp = this->_serializer->serializeChar(payload.at(1));
     body.insert(body.end(), temp.begin(), temp.end());
+    temp = this->_serializer->serializeShort(this->_endOfPacket);
+    body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }
 
@@ -53,7 +55,7 @@ bool Packet::parseAcceptationPacket(const std::vector<uint8_t> payload) {
     }
 
     std::vector<uint8_t> charBytes(payload.begin() + 1, payload.begin() + 2);
-    uint8_t result = this->_serializer->deserializeChar(charBytes);
+    uint64_t result = this->_serializer->deserializeChar(charBytes);
     this->_payload.push_back(result);
     return true;
 }
@@ -79,7 +81,7 @@ bool Packet::parseDisconnectionPacket(const std::vector<std::uint8_t> payload) {
     }
 
     std::vector<std::uint8_t> charBytes(payload.begin() + 1, payload.begin() + 2);
-    uint8_t result = this->_serializer->deserializeChar(charBytes);
+    uint64_t result = this->_serializer->deserializeChar(charBytes);
     this->_payload.push_back(result);
     return true;
 }
@@ -95,6 +97,8 @@ std::vector<uint8_t> Packet::buildEventPacket(
     body.insert(body.end(), temp.begin(), temp.end());
     temp = this->_serializer->serializeChar(payload.at(2));
     body.insert(body.end(), temp.begin(), temp.end());
+    temp = this->_serializer->serializeShort(this->_endOfPacket);
+    body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }
 
@@ -106,12 +110,12 @@ bool Packet::parseEventPacket(const std::vector<uint8_t> payload) {
 
     std::vector<uint8_t> charBytes1(
         payload.begin() + 1, payload.begin() + 2);
-    uint8_t result1 = this->_serializer->deserializeChar(charBytes1);
+    uint64_t result1 = this->_serializer->deserializeChar(charBytes1);
     this->_payload.push_back(result1);
 
     std::vector<uint8_t> charBytes2(
         payload.begin() + 2, payload.begin() + 3);
-    uint8_t result2 = this->_serializer->deserializeChar(charBytes2);
+    uint64_t result2 = this->_serializer->deserializeChar(charBytes2);
     this->_payload.push_back(result2);
     return true;
 }

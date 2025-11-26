@@ -42,7 +42,7 @@ std::vector<uint8_t> Packet::pack(uint8_t idClient,
 
 std::vector<uint8_t> Packet::pack(std::vector<uint64_t> payload) {
     std::vector<uint8_t> body;
-    uint8_t type = NO_OP_PACKET;
+    uint64_t type = NO_OP_PACKET;
 
     if (payload.empty()) {
         return body;

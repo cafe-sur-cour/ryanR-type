@@ -31,11 +31,15 @@ bool Packet::unpackHeader(std::vector<uint8_t> data) {
     }
 
     this->_idClient = data.at(1);
-    this->_sequenceNumber = (data.at(2) << 24) | (data.at(3) << 16) |
-        (data.at(4) << 8) | data.at(5);
+    this->_sequenceNumber = (static_cast<uint32_t>(data.at(2)) << 24) |
+        (static_cast<uint32_t>(data.at(3)) << 16) |
+        (static_cast<uint32_t>(data.at(4)) << 8) |
+        static_cast<uint32_t>(data.at(5));
     this->_type = data.at(6);
-    this->_length = (data.at(7) << 24) | (data.at(8) << 16) |
-        (data.at(9) << 8) | data.at(10);
+    this->_length = (static_cast<uint32_t>(data.at(7)) << 24) |
+        (static_cast<uint32_t>(data.at(8)) << 16) |
+        (static_cast<uint32_t>(data.at(9)) << 8) |
+        static_cast<uint32_t>(data.at(10));
 
     if (data.at(11) != (FIRST_EOP_CHAR) ||
         data.at(12) != (SECOND_EOP_CHAR)) {
