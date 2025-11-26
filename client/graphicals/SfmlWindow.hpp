@@ -8,11 +8,12 @@
 #ifndef SFMLWINDOW_HPP_
 #define SFMLWINDOW_HPP_
 
+#include <memory>
 #include <SFML/Graphics.hpp>
 #include "./IWindow.hpp"
 #include "./TextureManager.hpp"
 #include "./FontManager.hpp"
-#include <memory>
+#include "../../common/types/FRect.hpp"
 #include "assets/AssetManager.hpp"
 
 class SfmlWindow : public gfx::IWindow {
@@ -34,6 +35,7 @@ class SfmlWindow : public gfx::IWindow {
         std::pair<int, int> getWindowSize() override;
 
         void drawSprite(const std::string& texturePath, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f) override;
+        void drawSprite(const std::string& texturePath, float x, float y, const void* frameRect, float scaleX = 1.0f, float scaleY = 1.0f) override;
         std::shared_ptr<sf::RenderWindow> getSfmlWindow();
 
     private:
