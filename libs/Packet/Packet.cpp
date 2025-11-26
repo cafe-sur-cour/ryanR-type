@@ -52,6 +52,8 @@ Packet::~Packet() {
     }
 }
 
+
+
 uint8_t Packet::getMagicNumber() const {
     return this->_magicNumber;
 }
@@ -72,6 +74,8 @@ std::vector<std::uint8_t> Packet::getPayload() const {
     return this->_payload;
 }
 
+
+
 void Packet::setType(uint8_t type) {
     this->_type = type;
 }
@@ -79,6 +83,20 @@ void Packet::setType(uint8_t type) {
 void Packet::setLength(size_t length) {
     this->_length = length;
 }
+
+void Packet::setSequenceNumber(size_t sequenceNumber) {
+    this->_sequenceNumber = sequenceNumber;
+}
+
+void Packet::setPayload(std::vector<std::uint8_t> payload) {
+    this->_payload = payload;
+}
+
+void Packet::setIdClient(unsigned int idClient) {
+    this->_idClient = idClient;
+}
+
+
 
 std::vector<uint8_t> Packet::packHeaderPacket(unsigned int idClient,
     unsigned int sequenceNumber, uint8_t type) {
@@ -168,6 +186,20 @@ bool Packet::unpackPacket(std::vector<uint8_t> data) {
         return false;
     }
 }
+
+
+
+void Packet::resetPacket() {
+    this->_magicNumber = MAGIC_NUMBER;
+    this->_idClient = 0;
+    this->_sequenceNumber = 0;
+    this->_type = NO_OP_PACKET;
+    this->_length = 0;
+    this->_endOfPacket = (FIRST_EOP_CHAR << 8) | SECOND_EOP_CHAR;
+    this->_payload.clear();
+}
+
+
 
 extern "C" {
     int getType() {

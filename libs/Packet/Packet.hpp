@@ -52,11 +52,15 @@ class Packet : public IPacket {
 
         void setType(uint8_t type) override;
         void setLength(size_t length) override;
+        void setSequenceNumber(size_t sequenceNumber) override;
+        void setPayload(std::vector<std::uint8_t> payload) override;
+        void setIdClient(unsigned int idClient) override;
 
         std::vector<uint8_t> packHeaderPacket(unsigned int idClient, unsigned int sequenceNumber, uint8_t type) override;
         std::vector<uint8_t> packBodyPacket(std::vector<std::uint8_t> payload) override;
         bool unpackPacket(std::vector<uint8_t> data) override;
 
+        void resetPacket() override;
     private:
         uint8_t _magicNumber;
         unsigned int _idClient;
@@ -72,8 +76,8 @@ class Packet : public IPacket {
 
         std::vector<std::uint8_t> sendConnectionPacket(std::vector<std::uint8_t> payload);
         bool parseAcceptationPacket(const std::vector<std::uint8_t> payload);
-        std::vector<std::uint8_t> disconnectionPacket(std::vector<std::uint8_t> payload);
-        std::vector<std::uint8_t> eventPacket(std::vector<std::uint8_t> payload);
+        std::vector<std::uint8_t> sendDisconnectionPacket(std::vector<std::uint8_t> payload);
+        std::vector<std::uint8_t> sendEventPacket(std::vector<std::uint8_t> payload);
 };
 
 

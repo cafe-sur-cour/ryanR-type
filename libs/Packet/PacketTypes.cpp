@@ -36,7 +36,7 @@ bool Packet::parseAcceptationPacket(const std::vector<std::uint8_t> payload) {
     return true;
 }
 
-std::vector<std::uint8_t> Packet::disconnectionPacket(
+std::vector<std::uint8_t> Packet::sendDisconnectionPacket(
     std::vector<std::uint8_t> payload) {
     std::vector<std::uint8_t> body;
     std::vector<uint8_t> temp;
@@ -50,7 +50,7 @@ std::vector<std::uint8_t> Packet::disconnectionPacket(
     return body;
 }
 
-std::vector<std::uint8_t> Packet::eventPacket(
+std::vector<std::uint8_t> Packet::sendEventPacket(
     std::vector<std::uint8_t> payload) {
     std::vector<std::uint8_t> body;
     std::vector<uint8_t> temp;

@@ -24,10 +24,15 @@ class IPacket {
 
         virtual void setType(uint8_t type) = 0;
         virtual void setLength(size_t length) = 0;
+        virtual void setSequenceNumber(size_t sequenceNumber) = 0;
+        virtual void setPayload(std::vector<std::uint8_t> payload) = 0;
+        virtual void setIdClient(unsigned int idClient) = 0;
 
         virtual std::vector<uint8_t> packHeaderPacket(unsigned int idClient, unsigned int sequenceNumber, uint8_t type) = 0;
         virtual std::vector<uint8_t> packBodyPacket(std::vector<uint8_t> payload) = 0;
         virtual bool unpackPacket(std::vector<uint8_t> data) = 0;
+
+        virtual void resetPacket() = 0;
 };
 
 
