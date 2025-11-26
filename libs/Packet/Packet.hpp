@@ -20,12 +20,12 @@
 #define MAGIC_NUMBER 0x93
 #define FIRST_EOP_CHAR '\r'
 #define SECOND_EOP_CHAR '\n'
-#define HEADER_SIZE 16
+#define HEADER_SIZE 13
 
 #define LENGTH_CONNECTION_PACKET 11
-#define LENGTH_ACCEPTATION_PACKET 7
-#define LENGTH_DISCONNECTION_PACKET 7
-#define LENGTH_EVENT_PACKET 8
+#define LENGTH_ACCEPTATION_PACKET 4
+#define LENGTH_DISCONNECTION_PACKET 4
+#define LENGTH_EVENT_PACKET 5
 #define LENGTH_EO_PACKET 2
 
 #define NO_OP_PACKET 0x00
@@ -41,47 +41,47 @@
 
 class Packet : public IPacket {
     public:
-        Packet(int idClient);
+        Packet(uint32_t seqNumber);
         ~Packet() override;
 
         uint8_t getMagicNumber() const override;
-        size_t getLength() const override;
-        size_t getSequenceNumber() const override;
+        uint32_t getLength() const override;
+        uint32_t getSequenceNumber() const override;
         uint8_t getType() const override;
-        std::vector<std::uint8_t> getPayload() const override;
+        std::vector<uint64_t> getPayload() const override;
 
         void setType(uint8_t type) override;
-        void setLength(size_t length) override;
-        void setSequenceNumber(size_t sequenceNumber) override;
-        void setPayload(std::vector<std::uint8_t> payload) override;
-        void setIdClient(unsigned int idClient) override;
+        void setLength(uint32_t length) override;
+        void setSequenceNumber(uint32_t sequenceNumber) override;
+        void setPayload(std::vector<uint64_t> payload) override;
+        void setIdClient(uint8_t idClient) override;
 
-        std::vector<uint8_t> packHeaderPacket(unsigned int idClient, unsigned int sequenceNumber, uint8_t type) override;
-        std::vector<uint8_t> packBodyPacket(std::vector<std::uint8_t> payload) override;
+        std::vector<uint8_t> packHeaderPacket(uint8_t idClient, uint32_t sequenceNumber, uint8_t type) override;
+        std::vector<uint8_t> packBodyPacket(std::vector<uint64_t> payload) override;
         bool unpackPacket(std::vector<uint8_t> data) override;
 
         void resetPacket() override;
     private:
         uint8_t _magicNumber;
-        unsigned int _idClient;
-        unsigned int _sequenceNumber;
+        uint8_t _idClient;
+        uint32_t _sequenceNumber;
         uint8_t _type;
-        unsigned int _length;
-        short _endOfPacket;
-        std::vector<std::uint8_t> _payload;
+        uint32_t _length;
+        uint16_t _endOfPacket;
+        std::vector<uint64_t> _payload;
         std::shared_ptr<ISerializer> _serializer;
-        std::map<uint8_t, std::function<std::vector<std::uint8_t>(std::vector<std::uint8_t>)>> _packetHandlers;
-        std::map<uint8_t, std::function<bool(const std::vector<std::uint8_t>)>> _packetReceived;
-        std::map<uint8_t, unsigned int> _packetLengths;
+        std::map<uint8_t, std::function<std::vector<uint8_t>(std::vector<uint64_t>)>> _packetHandlers;
+        std::map<uint8_t, std::function<bool(const std::vector<uint8_t>)>> _packetReceived;
+        std::map<uint8_t, uint32_t> _packetLengths;
 
-        std::vector<std::uint8_t> buildConnectionPacket(std::vector<std::uint8_t> payload);
-        bool parseConnectionPacket(const std::vector<std::uint8_t> payload);
-        std::vector<std::uint8_t> buildAcceptationPacket(std::vector<std::uint8_t> payload);
-        bool parseAcceptationPacket(const std::vector<std::uint8_t> payload);
-        std::vector<std::uint8_t> buildDisconnectionPacket(std::vector<std::uint8_t> payload);
-        bool parseDisconnectionPacket(const std::vector<std::uint8_t> payload);
-        std::vector<std::uint8_t> buildEventPacket(std::vector<std::uint8_t> payload);
-        bool parseEventPacket(const std::vector<std::uint8_t> payload);
+        std::vector<uint8_t> buildConnectionPacket(std::vector<uint64_t> payload);
+        bool parseConnectionPacket(const std::vector<uint8_t> payload);
+        std::vector<uint8_t> buildAcceptationPacket(std::vector<uint64_t> payload);
+        bool parseAcceptationPacket(const std::vector<uint8_t> payload);
+        std::vector<uint8_t> buildDisconnectionPacket(std::vector<uint64_t> payload);
+        bool parseDisconnectionPacket(const std::vector<uint8_t> payload);
+        std::vector<uint8_t> buildEventPacket(std::vector<uint64_t> payload);
+        bool parseEventPacket(const std::vector<uint8_t> payload);
 };
 
 extern "C" {
