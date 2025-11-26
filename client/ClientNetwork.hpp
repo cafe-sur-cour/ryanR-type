@@ -29,8 +29,8 @@ class ClientNetwork {
         uint32_t getIp() const;
         void setIp(uint32_t ip);
 
-        void sendData(const IPacket &data, size_t size);
-        IPacket &receiveData(const IBuffer &buffer, size_t size) const;
+        void sendData(const IPacketManager &data, size_t size);
+        IPacketManager &receiveData(const IBuffer &buffer, size_t size) const;
 
         void loadNetworkLibrary();
         void loadBufferLibrary();
@@ -43,7 +43,7 @@ class ClientNetwork {
 
         std::shared_ptr<net::INetwork> _network;
         std::shared_ptr<IBuffer> _buffer;
-        std::shared_ptr<IPacket> _packet;
+        std::shared_ptr<IPacketManager> _packet;
 
         int _port;
         uint32_t _ip;

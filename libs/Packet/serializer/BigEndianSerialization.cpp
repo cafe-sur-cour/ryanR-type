@@ -14,7 +14,8 @@ BigEndianSerialization::BigEndianSerialization() {
 BigEndianSerialization::~BigEndianSerialization() {
 }
 
-std::vector<std::uint8_t> BigEndianSerialization::serializeInt(int value) {
+std::vector<std::uint8_t> BigEndianSerialization::serializeUInt(
+    uint64_t value) {
     std::vector<std::uint8_t> bytes;
 
     bytes.push_back(static_cast<std::uint8_t>((value >> 24) & 0xFF));
@@ -24,7 +25,8 @@ std::vector<std::uint8_t> BigEndianSerialization::serializeInt(int value) {
     return bytes;
 }
 
-std::vector<std::uint8_t> BigEndianSerialization::serializeLong(int64_t value) {
+std::vector<std::uint8_t> BigEndianSerialization::serializeULong(
+    uint64_t value) {
     std::vector<std::uint8_t> bytes;
 
     bytes.push_back(static_cast<std::uint8_t>((value >> 56) & 0xFF));
@@ -38,8 +40,8 @@ std::vector<std::uint8_t> BigEndianSerialization::serializeLong(int64_t value) {
     return bytes;
 }
 
-std::vector<std::uint8_t> BigEndianSerialization::serializeShort(
-    uint16_t value) {
+std::vector<std::uint8_t> BigEndianSerialization::serializeUShort(
+    uint64_t value) {
     std::vector<std::uint8_t> bytes;
 
     bytes.push_back(static_cast<std::uint8_t>((value >> 8) & 0xFF));
@@ -47,22 +49,61 @@ std::vector<std::uint8_t> BigEndianSerialization::serializeShort(
     return bytes;
 }
 
-std::vector<std::uint8_t> BigEndianSerialization::serializeChar(uint8_t value) {
+std::vector<std::uint8_t> BigEndianSerialization::serializeUChar(
+    uint64_t value) {
     std::vector<std::uint8_t> bytes;
     bytes.push_back(static_cast<std::uint8_t>(value));
     return bytes;
 }
 
-std::uint8_t BigEndianSerialization::deserializeInt(
-    std::vector<std::uint8_t> data) {
+uint64_t BigEndianSerialization::deserializeUInt(
+    std::vector<uint8_t> data) {
     if (data.size() < 4) {
         return 0;
     }
 
-    std::uint32_t value = (static_cast<std::uint32_t>(data[0]) << 24) |
-        (static_cast<std::uint32_t>(data[1]) << 16) |
-        (static_cast<std::uint32_t>(data[2]) << 8)  |
-        (static_cast<std::uint32_t>(data[3]));
+    uint64_t value = (static_cast<uint64_t>(data[0]) << 24) |
+        (static_cast<uint64_t>(data[1]) << 16) |
+        (static_cast<uint64_t>(data[2]) << 8)  |
+        (static_cast<uint64_t>(data[3]));
 
-    return static_cast<std::uint8_t>(value);
+    return value;
+}
+
+uint64_t BigEndianSerialization::deserializeULong(
+    std::vector<uint8_t> data) {
+    if (data.size() < 8) {
+        return 0;
+    }
+
+    uint64_t value = (static_cast<uint64_t>(data[0]) << 56) |
+        (static_cast<uint64_t>(data[1]) << 48) |
+        (static_cast<uint64_t>(data[2]) << 40) |
+        (static_cast<uint64_t>(data[3]) << 32) |
+        (static_cast<uint64_t>(data[4]) << 24) |
+        (static_cast<uint64_t>(data[5]) << 16) |
+        (static_cast<uint64_t>(data[6]) << 8)  |
+        (static_cast<uint64_t>(data[7]));
+
+    return value;
+}
+
+uint64_t BigEndianSerialization::deserializeUShort(
+    std::vector<std::uint8_t> data) {
+    if (data.size() < 2) {
+        return 0;
+    }
+
+    uint64_t value = (static_cast<uint64_t>(data[0]) << 8) |
+        (static_cast<uint64_t>(data[1]));
+
+    return value;
+}
+
+uint64_t BigEndianSerialization::deserializeUChar(
+    std::vector<std::uint8_t> data) {
+    if (data.empty()) {
+        return 0;
+    }
+    return static_cast<uint64_t>(data[0]);
 }

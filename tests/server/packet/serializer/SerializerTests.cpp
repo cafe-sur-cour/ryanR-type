@@ -18,42 +18,100 @@ protected:
     }
 };
 
-TEST_F(BigEndianSerializationTest, SerializeIntProducesCorrectBytes) {
+TEST_F(BigEndianSerializationTest, SerializeUIntProducesCorrectBytes) {
     BigEndianSerialization serializer;
-    int value = 0x12345678;
+    uint64_t value = 0x12345678;
     std::vector<uint8_t> expected = {0x12, 0x34, 0x56, 0x78};
 
-    std::vector<uint8_t> result = serializer.serializeInt(value);
+    std::vector<uint8_t> result = serializer.serializeUInt(value);
 
     EXPECT_EQ(result, expected);
 }
 
-TEST_F(BigEndianSerializationTest, SerializeLongProducesCorrectBytes) {
+TEST_F(BigEndianSerializationTest, SerializeULongProducesCorrectBytes) {
     BigEndianSerialization serializer;
-    int64_t value = 0x0123456789ABCDEF;
+    uint64_t value = 0x0123456789ABCDEF;
     std::vector<uint8_t> expected = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
 
-    std::vector<uint8_t> result = serializer.serializeLong(value);
+    std::vector<uint8_t> result = serializer.serializeULong(value);
 
     EXPECT_EQ(result, expected);
 }
 
-TEST_F(BigEndianSerializationTest, SerializeShortProducesCorrectBytes) {
+TEST_F(BigEndianSerializationTest, SerializeUShortProducesCorrectBytes) {
     BigEndianSerialization serializer;
-    uint16_t value = 0xABCD;
+    uint64_t value = 0xABCD;
     std::vector<uint8_t> expected = {0xAB, 0xCD};
 
-    std::vector<uint8_t> result = serializer.serializeShort(value);
+    std::vector<uint8_t> result = serializer.serializeUShort(value);
 
     EXPECT_EQ(result, expected);
 }
 
-TEST_F(BigEndianSerializationTest, SerializeCharProducesCorrectBytes) {
+TEST_F(BigEndianSerializationTest, SerializeUCharProducesCorrectBytes) {
     BigEndianSerialization serializer;
-    uint8_t value = 0x7F;
+    uint64_t value = 0x7F;
     std::vector<uint8_t> expected = {0x7F};
 
-    std::vector<uint8_t> result = serializer.serializeChar(value);
+    std::vector<uint8_t> result = serializer.serializeUChar(value);
+
+    EXPECT_EQ(result, expected);
+}
+
+TEST_F(BigEndianSerializationTest, DeserializeUIntProducesCorrectValue) {
+    BigEndianSerialization serializer;
+    std::vector<uint8_t> data = {0x12, 0x34, 0x56, 0x78};
+    uint64_t expected = 0x12345678;
+
+    uint64_t result = serializer.deserializeUInt(data);
+
+    EXPECT_EQ(result, expected);
+}
+
+TEST_F(BigEndianSerializationTest, DeserializeUIntWithInsufficientDataReturnsZero) {
+    BigEndianSerialization serializer;
+    std::vector<uint8_t> data = {0x12, 0x34};
+
+    uint64_t result = serializer.deserializeUInt(data);
+
+    EXPECT_EQ(result, 0);
+}
+
+TEST_F(BigEndianSerializationTest, DeserializeULongProducesCorrectValue) {
+    BigEndianSerialization serializer;
+    std::vector<uint8_t> data = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
+    uint64_t expected = 0x0123456789ABCDEF;
+
+    uint64_t result = serializer.deserializeULong(data);
+
+    EXPECT_EQ(result, expected);
+}
+
+TEST_F(BigEndianSerializationTest, DeserializeULongWithInsufficientDataReturnsZero) {
+    BigEndianSerialization serializer;
+    std::vector<uint8_t> data = {0x01, 0x23, 0x45};
+
+    uint64_t result = serializer.deserializeULong(data);
+
+    EXPECT_EQ(result, 0);
+}
+
+TEST_F(BigEndianSerializationTest, DeserializeUShortProducesCorrectValue) {
+    BigEndianSerialization serializer;
+    std::vector<uint8_t> data = {0xAB, 0xCD};
+    uint64_t expected = 0xABCD;
+
+    uint64_t result = serializer.deserializeUShort(data);
+
+    EXPECT_EQ(result, expected);
+}
+
+TEST_F(BigEndianSerializationTest, DeserializeUCharProducesCorrectValue) {
+    BigEndianSerialization serializer;
+    std::vector<uint8_t> data = {0x7F};
+    uint64_t expected = 0x7F;
+
+    uint64_t result = serializer.deserializeUChar(data);
 
     EXPECT_EQ(result, expected);
 }

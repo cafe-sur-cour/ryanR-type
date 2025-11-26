@@ -17,12 +17,12 @@ class AError : public IError {
     public:
         AError(const std::string &message, int code = 0);
 
-        virtual ~AError() noexcept = default;
+        virtual ~AError() noexcept override = default;
         const char *what() const noexcept override;
-        int getCode() const noexcept;
-        std::string getDetails() const noexcept;
+        int getCode() const noexcept override;
+        std::string getDetails() const noexcept override;
 
-        virtual std::string getType() const noexcept = 0;
+        virtual std::string getType() const noexcept override = 0;
 
     protected:
         std::string m_message;
