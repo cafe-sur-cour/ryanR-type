@@ -10,15 +10,18 @@
 
 std::vector<std::uint8_t> Packet::connectionPacket(
     std::vector<std::uint8_t> payload) {
-    std::vector<std::uint8_t> body;
-    std::vector<uint8_t> temp;
+    std::vector<std::uint8_t> body = {};
+    std::vector<uint8_t> temp = {};
 
-    for (int i = 0; i < (LENGTH_CONNECTION_PACKET - LENGTH_EO_PACKET); i++) {
-        temp = this->_serializer->serializeChar(payload.at(i));
+    for (char i = 0; i < (LENGTH_CONNECTION_PACKET - LENGTH_EO_PACKET); i++) {
+       // temp = this->_serializer->serializeChar(payload.at(i));
         body.insert(body.end(), temp.begin(), temp.end());
     }
-    temp = this->_serializer->serializeShort(this->_endOfPacket);
-    body.insert(body.end(), temp.begin(), temp.end());
+    (void)body;
+    (void)temp;
+    (void)payload;
+    // temp = this->_serializer->serializeShort(this->_endOfPacket);
+    // body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }
 
@@ -43,8 +46,8 @@ std::vector<std::uint8_t> Packet::disconnectionPacket(
     body.insert(body.end(), temp.begin(), temp.end());
     temp = this->_serializer->serializeInt(payload.at(1));
     body.insert(body.end(), temp.begin(), temp.end());
-    temp = this->_serializer->serializeShort(this->_endOfPacket);
-    body.insert(body.end(), temp.begin(), temp.end());
+    // temp = this->_serializer->serializeShort(this->_endOfPacket);
+    // body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }
 
@@ -59,7 +62,7 @@ std::vector<std::uint8_t> Packet::eventPacket(
     body.insert(body.end(), temp.begin(), temp.end());
     temp = this->_serializer->serializeChar(payload.at(2));
     body.insert(body.end(), temp.begin(), temp.end());
-    temp = this->_serializer->serializeShort(this->_endOfPacket);
-    body.insert(body.end(), temp.begin(), temp.end());
+    // temp = this->_serializer->serializeShort(this->_endOfPacket);
+    // body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }

@@ -14,10 +14,10 @@
 #include "../../common/DLLoader/LoaderType.hpp"
 #include "serializer/BigEndianSerialization.hpp"
 
-Packet::Packet(int seqNumber) {
+Packet::Packet(unsigned int sequenceNumber) {
     this->_magicNumber = MAGIC_NUMBER;
     this->_idClient = 0;
-    this->_sequenceNumber = seqNumber;
+    this->_sequenceNumber = sequenceNumber;
     this->_type = NO_OP_PACKET;
     this->_length = 0;
     this->_endOfPacket = (FIRST_EOP_CHAR << 8) | SECOND_EOP_CHAR;
@@ -80,7 +80,7 @@ void Packet::setLength(size_t length) {
     this->_length = length;
 }
 
-std::vector<uint8_t> Packet::packHeaderPacket(unsigned int idClient,
+std::vector<uint8_t> Packet::packHeaderPacket(int idClient,
     unsigned int sequenceNumber, uint8_t type) {
     std::vector<uint8_t> header;
     std::vector<uint8_t> temp;
@@ -92,8 +92,9 @@ std::vector<uint8_t> Packet::packHeaderPacket(unsigned int idClient,
     temp = this->_serializer->serializeInt(idClient);
     header.insert(header.end(), temp.begin(), temp.end());
 
-    temp = this->_serializer->serializeInt(sequenceNumber);
-    header.insert(header.end(), temp.begin(), temp.end());
+    (void)sequenceNumber;
+    //temp = this->_serializer->serializeInt(sequenceNumber);
+    //header.insert(header.end(), temp.begin(), temp.end());
 
     temp = this->_serializer->serializeChar(type);
     header.insert(header.end(), temp.begin(), temp.end());
@@ -104,11 +105,12 @@ std::vector<uint8_t> Packet::packHeaderPacket(unsigned int idClient,
             break;
         }
     }
-    temp = this->_serializer->serializeInt(length);
-    header.insert(header.end(), temp.begin(), temp.end());
+    (void)length;
+    // temp = this->_serializer->serializeInt(length);
+    // header.insert(header.end(), temp.begin(), temp.end());
 
-    temp = this->_serializer->serializeShort(this->_endOfPacket);
-    header.insert(header.end(), temp.begin(), temp.end());
+    // temp = this->_serializer->serializeShort(this->_endOfPacket);
+    // header.insert(header.end(), temp.begin(), temp.end());
     return header;
 }
 
@@ -160,7 +162,7 @@ bool Packet::unpackPacket(std::vector<uint8_t> data) {
 
 extern "C" {
 
-    void *createPacketInstance(int id) {
+    void *createPacketInstance(unsigned int id) {
         return new Packet(id);
     }
     int getType() {
