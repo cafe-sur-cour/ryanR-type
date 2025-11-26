@@ -5,8 +5,11 @@
 ** WindowsNetwork
 */
 
-#include "../../common/DLLoader/LoaderType.hpp"
+#include <vector>
+#include <memory>
+
 #include "WindowsNetwork.hpp"
+#include "../../common/DLLoader/LoaderType.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
 
 namespace net {
@@ -68,7 +71,8 @@ void WindowsNetwork::setConnectionCallback(std::function<void(int)> onConnect) {
     (void)onConnect;
 }
 
-void WindowsNetwork::setDisconnectionCallback(std::function<void(int)> onDisconnect) {
+void WindowsNetwork::setDisconnectionCallback(std::function<void(int)>
+    onDisconnect) {
     (void)onDisconnect;
 }
 

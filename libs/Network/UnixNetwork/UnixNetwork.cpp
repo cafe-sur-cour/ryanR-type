@@ -5,11 +5,15 @@
 ** UnixNetwork
 */
 
-#include "UnixNetwork.hpp"
-#include "../../common/DLLoader/LoaderType.hpp"
 #include <iostream>
 #include <queue>
 #include <stdexcept>
+#include <vector>
+#include <memory>
+#include <string>
+
+#include "UnixNetwork.hpp"
+#include "../../common/DLLoader/LoaderType.hpp"
 
 namespace net {
 
@@ -29,7 +33,6 @@ void UnixNetwork::init(unsigned int port) {
     _socket->open(asio::ip::udp::v4());
     _socket->bind(asio::ip::udp::endpoint(asio::ip::udp::v4(), port));
     _isRunning = true;
-    std::cout << "[UnixNetwork] Initialized UDP socket on port " << port << std::endl;
 }
 
 void UnixNetwork::stop() {
@@ -41,7 +44,6 @@ void UnixNetwork::stop() {
         _incomingPackets.pop();
     }
     _isRunning = false;
-    std::cout << "[UnixNetwork] Network stopped" << std::endl;
 }
 
 int UnixNetwork::acceptConnection() {
@@ -53,11 +55,11 @@ int UnixNetwork::acceptConnection() {
     std::array<char, 1024> buffer;
     std::error_code ec;
 
-    size_t received = _socket->receive_from(asio::buffer(buffer), senderEndpoint, 0, ec);
+    size_t received = _socket->receive_from(asio::buffer(buffer),
+        senderEndpoint, 0, ec);
     if (ec || received == 0) {
         return -1;
     }
-
     for (const auto& [clientId, endpoint] : _clients) {
         if (endpoint == senderEndpoint) {
             //* Add Packet */
@@ -71,14 +73,16 @@ int UnixNetwork::acceptConnection() {
         _onConnectCallback(newClientId);
     }
     std::cout << "[UnixNetwork] New client " << newClientId << " from "
-              << senderEndpoint.address().to_string() << ":" << senderEndpoint.port() << std::endl;
+              << senderEndpoint.address().to_string() << ":" <<
+              senderEndpoint.port() << std::endl;
     return newClientId;
 }
 
 void UnixNetwork::closeConnection(int connectionId) {
     auto it = _clients.find(connectionId);
     if (it != _clients.end()) {
-        std::cout << "[UnixNetwork] Closing connection " << connectionId << std::endl;
+        std::cout << "[UnixNetwork] Closing connection " <<
+            connectionId << std::endl;
         _clients.erase(it);
 
         if (_onDisconnectCallback) {
@@ -102,7 +106,8 @@ int UnixNetwork::getConnectionCount() const {
 void UnixNetwork::sendTo(int connectionId, const IPacket &packet) {
     auto it = _clients.find(connectionId);
     if (it == _clients.end()) {
-        std::cerr << "[UnixNetwork] Client " << connectionId << " not found" << std::endl;
+        std::cerr << "[UnixNetwork] Client " << connectionId <<
+            " not found" << std::endl;
         return;
     }
 
@@ -116,9 +121,11 @@ void UnixNetwork::sendTo(int connectionId, const IPacket &packet) {
         (void)packet;
         std::string data = "Response from server";
         _socket->send_to(asio::buffer(data), it->second);
-        std::cout << "[UnixNetwork] Sent data to client " << connectionId << std::endl;
+        std::cout << "[UnixNetwork] Sent data to client " <<
+            connectionId << std::endl;
     } catch (const std::exception& e) {
-        std::cerr << "[UnixNetwork] Error sending to client " << connectionId << ": " << e.what() << std::endl;
+        std::cerr << "[UnixNetwork] Error sending to client " <<
+            connectionId << ": " << e.what() << std::endl;
     }
 }
 
@@ -148,7 +155,7 @@ void UnixNetwork::sendData(const IPacket &data, size_t size) {
     broadcast(data);
 }
 IPacket &UnixNetwork::receiveData(const IBuffer &buffer, size_t size) const {
-    (void)buffer; // To avoid unused parameter warning
+    (void)buffer;  // To avoid unused parameter warning
     (void)size;   // To avoid unused parameter warning
     throw std::runtime_error("[UnixNetwork] receiveData not implemented");
 }
@@ -157,7 +164,8 @@ void UnixNetwork::setConnectionCallback(std::function<void(int)> onConnect) {
     _onConnectCallback = onConnect;
 }
 
-void UnixNetwork::setDisconnectionCallback(std::function<void(int)> onDisconnect) {
+void UnixNetwork::setDisconnectionCallback(std::function<void(int)>
+    onDisconnect) {
     _onDisconnectCallback = onDisconnect;
 }
 
