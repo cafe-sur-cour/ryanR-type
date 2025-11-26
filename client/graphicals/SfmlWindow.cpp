@@ -120,18 +120,10 @@ std::shared_ptr<sf::RenderWindow> SfmlWindow::getSfmlWindow() {
 }
 
 void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y, float scaleX, float scaleY) {
-    auto it = _textureCache.find(texturePath);
-    std::shared_ptr<sf::Texture> texture;
-    if (it == _textureCache.end()) {
-        texture = std::make_shared<sf::Texture>();
-        if (!texture->loadFromFile(texturePath)) {
-            drawRectangle({255, 0, 0}, {static_cast<size_t>(x), static_cast<size_t>(y)}, {50, 50});
-            return;
-        }
-        _textureCache[texturePath] = texture;
-    } else {
-        texture = it->second;
-    }
+    auto texture = _textureManager.loadTexture(texturePath);
+    if (!texture)
+        return drawRectangle({255, 0, 0}, {static_cast<size_t>(x), static_cast<size_t>(y)}, {50, 50});;
+
     sf::Sprite sprite(*texture);
     sprite.setPosition(sf::Vector2f(x, y));
     sprite.setScale(sf::Vector2f(scaleX, scaleY));
