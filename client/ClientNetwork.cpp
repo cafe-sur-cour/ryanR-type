@@ -7,6 +7,8 @@
 
 #include <thread>
 #include <chrono>
+#include <iostream>
+#include <memory>
 
 #include "ClientNetwork.hpp"
 #include "../common/Signal/Signal.hpp"
