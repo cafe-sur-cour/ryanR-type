@@ -1,13 +1,19 @@
 set(PACKET_LIB_NAME Packet)
 
 add_library(${PACKET_LIB_NAME} SHARED
-    IPacket.hpp
-    Packet.hpp
-    Packet.cpp
+    IPacketManager.hpp
+    PacketManager.hpp
+    PacketManager.cpp
+    Pack.cpp
+    Unpack.cpp
     PacketTypes.cpp
 )
 
 target_include_directories(${PACKET_LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_link_libraries(${PACKET_LIB_NAME}
+    PRIVATE ERROR
+)
 
 add_subdirectory(serializer)
 

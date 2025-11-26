@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "ServerConfig.hpp"
-#include "../libs/Packet/IPacket.hpp"
+#include "../libs/Packet/IPacketManager.hpp"
 #include "../libs/Network/INetwork.hpp"
 
 namespace rserv {
@@ -41,7 +41,7 @@ public:
 
     virtual void onClientConnected(int idClient) = 0;
     virtual void onClientDisconnected(int idClient) = 0;
-    virtual void onPacketReceived(int idClient, const IPacket &packet) = 0;
+    virtual void onPacketReceived(int idClient, const IPacketManager &packet) = 0;
 
     virtual void processConnections() = 0;
     virtual void processIncomingPackets() = 0;

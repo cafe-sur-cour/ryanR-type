@@ -5,6 +5,8 @@
 ** ServerErrror
 */
 
+#ifndef SERVER_ERROR_HPP
+    #define SERVER_ERROR_HPP
 
 #include "AError.hpp"
 
@@ -30,3 +32,5 @@ class ServerError : public AError {
 };
 
 }
+
+#endif /* !SERVER_ERROR_HPP */

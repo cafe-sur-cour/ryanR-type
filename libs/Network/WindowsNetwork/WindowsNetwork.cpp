@@ -45,12 +45,12 @@ size_t WindowsNetwork::getConnectionCount() const {
     return 0;
 }
 
-void WindowsNetwork::sendTo(int connectionId, const IPacket &packet) {
+void WindowsNetwork::sendTo(int connectionId, const IPacketManager &packet) {
     (void)connectionId;
     (void)packet;
 }
 
-void WindowsNetwork::broadcast(const IPacket &packet) {
+void WindowsNetwork::broadcast(const IPacketManager &packet) {
     (void)packet;
 }
 
@@ -58,17 +58,19 @@ bool WindowsNetwork::hasIncomingData() const {
     return false;
 }
 
-std::shared_ptr<IPacket> WindowsNetwork::receiveFrom(const int &connectionId) {
+std::shared_ptr<IPacketManager> WindowsNetwork::receiveFrom(
+    const int &connectionId) {
     (void)connectionId;
     return nullptr;
 }
 
-void WindowsNetwork::sendData(const IPacket &data, size_t size) {
+void WindowsNetwork::sendData(const IPacketManager &data, size_t size) {
     (void)data;
     (void)size;
 }
 
-IPacket &WindowsNetwork::receiveData(const IBuffer &buffer, size_t size) const {
+IPacketManager &WindowsNetwork::receiveData(
+    const IBuffer &buffer, size_t size) const {
     (void)buffer;
     (void)size;
     throw std::runtime_error("Not implemented");
