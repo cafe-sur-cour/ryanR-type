@@ -1,4 +1,4 @@
 target_sources(${CLIENT_BIN_NAME} PRIVATE
-    initRessourcesManager.hpp
-    initRessourcesManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/initRessourcesManager.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/initRessourcesManager.cpp
 )

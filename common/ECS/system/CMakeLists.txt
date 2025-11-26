@@ -1,4 +1,5 @@
 add_subdirectory(base)
 add_subdirectory(input)
 add_subdirectory(movement)
+add_subdirectory(rendering)
 add_subdirectory(systemManager)
