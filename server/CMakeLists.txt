@@ -6,6 +6,8 @@ add_library(${SERVER_LIB_NAME}
     ServerConfig.cpp
     Server.hpp
     Server.cpp
+    Utils.cpp
+    Utils.hpp
 )
 
 find_package(asio CONFIG REQUIRED)
@@ -13,7 +15,9 @@ find_package(asio CONFIG REQUIRED)
 target_link_libraries(${SERVER_LIB_NAME}
     PUBLIC
         ECS
+        ERROR
         DLLoader
+        Network
         Packet
         asio::asio
 )
