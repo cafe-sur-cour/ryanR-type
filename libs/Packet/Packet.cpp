@@ -93,8 +93,8 @@ std::vector<uint8_t> Packet::packHeaderPacket(int idClient,
     header.insert(header.end(), temp.begin(), temp.end());
 
     (void)sequenceNumber;
-    //temp = this->_serializer->serializeInt(sequenceNumber);
-    //header.insert(header.end(), temp.begin(), temp.end());
+    //  temp = this->_serializer->serializeInt(sequenceNumber);
+    //  header.insert(header.end(), temp.begin(), temp.end());
 
     temp = this->_serializer->serializeChar(type);
     header.insert(header.end(), temp.begin(), temp.end());
