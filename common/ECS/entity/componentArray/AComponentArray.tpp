@@ -21,29 +21,29 @@ AComponentArray<T>::~AComponentArray() {
 }
 
 template <typename T>
-void AComponentArray<T>::add(int entityId, std::shared_ptr<T> component) {
-    if (entityId >= static_cast<int>(_components.size()))
+void AComponentArray<T>::add(size_t entityId, std::shared_ptr<T> component) {
+    if (entityId >= static_cast<size_t>(_components.size()))
         _components.resize(entityId + 1);
     _components[entityId] = component;
 }
 
 template <typename T>
-std::shared_ptr<T> AComponentArray<T>::get(int entityId) const {
-    if (entityId < static_cast<int>(_components.size()))
+std::shared_ptr<T> AComponentArray<T>::get(size_t entityId) const {
+    if (entityId < static_cast<size_t>(_components.size()))
         return _components[entityId];
     return nullptr;
 }
 
 template <typename T>
-void AComponentArray<T>::remove(int entityId) {
-    if (entityId < static_cast<int>(_components.size()))
+void AComponentArray<T>::remove(size_t entityId) {
+    if (entityId < static_cast<size_t>(_components.size()))
         _components[entityId] = nullptr;
 }
 
 template <typename T>
-bool AComponentArray<T>::has(int entityId) const
+bool AComponentArray<T>::has(size_t entityId) const
 {
-    if (entityId < static_cast<int>(_components.size()))
+    if (entityId < static_cast<size_t>(_components.size()))
         return _components[entityId] != nullptr;
     return false;
 }

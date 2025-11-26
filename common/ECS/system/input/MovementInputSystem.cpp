@@ -9,10 +9,10 @@
 #include <cmath>
 #include <memory>
 #include "../../../types/Vector2f.hpp"
+#include "../../../constants.hpp"
 #include "../../component/tags/PlayerTag.hpp"
 #include "../../component/temporary/InputIntentComponent.hpp"
 #include "../../../../client/graphicals/IEvent.hpp"
-#include "../../../constants.hpp"
 
 namespace ecs {
 
@@ -64,7 +64,8 @@ math::Vector2f MovementInputSystem::getMovementDirection(
 
     /* Gamepad input */
     math::Vector2f analogInput = getAnalogStickInput(eventSystem);
-    if (analogInput.getX() != 0.0f || analogInput.getY() != 0.0f) {
+    if (std::fabs(analogInput.getX()) > constants::EPS ||
+        std::fabs(analogInput.getY()) > constants::EPS) {
         direction = analogInput;
     }
 
@@ -97,7 +98,7 @@ math::Vector2f MovementInputSystem::getAnalogStickInput(
 
 void MovementInputSystem::updateInputIntent(
     std::shared_ptr<ARegistry> registry,
-    int entityId,
+    size_t entityId,
     const math::Vector2f &direction) {
 
     registry->registerComponent<InputIntentComponent>();

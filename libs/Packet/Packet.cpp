@@ -18,7 +18,7 @@
 Packet::Packet(uint32_t seqNumber) {
     this->_magicNumber = MAGIC_NUMBER;
     this->_idClient = 0;
-    this->_sequenceNumber = seqNumber;
+    this->_sequenceNumber = sequenceNumber;
     this->_type = NO_OP_PACKET;
     this->_length = 0;
     this->_endOfPacket = (FIRST_EOP_CHAR << 8) | SECOND_EOP_CHAR;
@@ -125,7 +125,7 @@ void Packet::reset() {
 
 extern "C" {
 
-    void *createPacketInstance(int id) {
+    void *createPacketInstance(unsigned int id) {
         return new Packet(id);
     }
     int getType() {
