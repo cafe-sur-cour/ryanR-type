@@ -9,7 +9,7 @@
 #include <vector>
 #include "Packet.hpp"
 
-std::vector<std::uint8_t> Packet::sendConnectionPacket(
+std::vector<std::uint8_t> Packet::buildConnectionPacket(
     std::vector<std::uint8_t> payload) {
     std::vector<std::uint8_t> body;
     std::vector<uint8_t> temp;
@@ -34,7 +34,7 @@ bool Packet::parseConnectionPacket(const std::vector<std::uint8_t> payload) {
     return true;
 }
 
-std::vector<std::uint8_t> Packet::sendAcceptationPacket(
+std::vector<std::uint8_t> Packet::buildAcceptationPacket(
     std::vector<std::uint8_t> payload) {
     std::vector<std::uint8_t> body;
     std::vector<uint8_t> temp;
@@ -61,7 +61,7 @@ bool Packet::parseAcceptationPacket(const std::vector<std::uint8_t> payload) {
     return true;
 }
 
-std::vector<std::uint8_t> Packet::sendDisconnectionPacket(
+std::vector<std::uint8_t> Packet::buildDisconnectionPacket(
     std::vector<std::uint8_t> payload) {
     std::vector<std::uint8_t> body;
     std::vector<uint8_t> temp;
@@ -88,7 +88,7 @@ bool Packet::parseDisconnectionPacket(const std::vector<std::uint8_t> payload) {
     return true;
 }
 
-std::vector<std::uint8_t> Packet::sendEventPacket(
+std::vector<std::uint8_t> Packet::buildEventPacket(
     std::vector<std::uint8_t> payload) {
     std::vector<std::uint8_t> body;
     std::vector<uint8_t> temp;
@@ -119,4 +119,5 @@ bool Packet::parseEventPacket(const std::vector<std::uint8_t> payload) {
         payload.begin() + 5, payload.begin() + 6);
     std::uint8_t result2 = this->_serializer->deserializeChar(charBytes);
     this->_payload.push_back(result2);
+    return true;
 }
