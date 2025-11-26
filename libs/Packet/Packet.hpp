@@ -74,13 +74,13 @@ class Packet : public IPacket {
         std::map<uint8_t, std::function<bool(const std::vector<std::uint8_t>)>> _packetReceived;
         std::map<uint8_t, unsigned int> _packetLengths;
 
-        std::vector<std::uint8_t> sendConnectionPacket(std::vector<std::uint8_t> payload);
+        std::vector<std::uint8_t> buildConnectionPacket(std::vector<std::uint8_t> payload);
         bool parseConnectionPacket(const std::vector<std::uint8_t> payload);
-        std::vector<std::uint8_t> sendAcceptationPacket(std::vector<std::uint8_t> payload);
+        std::vector<std::uint8_t> buildAcceptationPacket(std::vector<std::uint8_t> payload);
         bool parseAcceptationPacket(const std::vector<std::uint8_t> payload);
-        std::vector<std::uint8_t> sendDisconnectionPacket(std::vector<std::uint8_t> payload);
+        std::vector<std::uint8_t> buildDisconnectionPacket(std::vector<std::uint8_t> payload);
         bool parseDisconnectionPacket(const std::vector<std::uint8_t> payload);
-        std::vector<std::uint8_t> sendEventPacket(std::vector<std::uint8_t> payload);
+        std::vector<std::uint8_t> buildEventPacket(std::vector<std::uint8_t> payload);
         bool parseEventPacket(const std::vector<std::uint8_t> payload);
 };
 
