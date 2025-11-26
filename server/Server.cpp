@@ -34,6 +34,8 @@ void rserv::Server::init() {
     }
     /* Load the Network lib */
     this->loadNetworkLibrary();
+    this->loadBufferLibrary();
+    this->loadPacketLibrary();
 }
 
 void rserv::Server::start() {
@@ -206,9 +208,47 @@ void rserv::Server::loadNetworkLibrary() {
 }
 
 void rserv::Server::loadBufferLibrary() {
-    // Implementation for loading buffer library
+    if (!_bufferloader.Open(pathLoad "/" bufferLib)) {
+        throw err::ServerError("[Server] Loading buffer lib failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
+    if (!_bufferloader.getHandler()) {
+        throw err::ServerError("[Server] Loading buffer lib failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
+    createBuffer_t createBuffer = _bufferloader.getSymbol
+        ("createBufferInstance");
+    if (!createBuffer) {
+        throw err::ServerError("[Server] Loading buffer lib failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
+    _buffer = std::shared_ptr<IBuffer>
+        (reinterpret_cast<IBuffer *>(createBuffer()));
+    if (!_buffer) {
+        throw err::ServerError("[Server] Loading buffer lib failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
 }
 
 void rserv::Server::loadPacketLibrary() {
-    // Implementation for loading packet library
+    if (!_packetloader.Open(pathLoad "/" packetLib)) {
+        throw err::ServerError("[Server] Loading packet lib failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
+    if (!_packetloader.getHandler()) {
+        throw err::ServerError("[Server] Loading packet lib failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
+    createPacket_t createPacket = _packetloader.getSymbol
+        ("createPacketInstance");
+    if (!createPacket) {
+        throw err::ServerError("[Server] Loading packet lib failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
+    _packet = std::shared_ptr<IPacket>
+        (reinterpret_cast<IPacket *>(createPacket()));
+    if (!_packet) {
+        throw err::ServerError("[Server] Loading packet lib failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
 }
