@@ -76,6 +76,7 @@ void SfmlWindow::drawSprite(std::string asset, gfx::color_t color,
     auto texture = _textureManager.loadTexture(asset);
     if (!texture)
         throw std::runtime_error("Failed to load texture: " + asset);
+
     sf::Sprite sprite(*texture);
     sprite.setColor(sf::Color(color.r, color.g, color.b));
     sprite.setPosition(sf::Vector2f(static_cast<float>(position.first),
@@ -90,6 +91,7 @@ void SfmlWindow::drawText(std::string text, gfx::color_t color,
         std::cout << "Failed to load font: " << fontPath << std::endl;
         return;
     }
+
     sf::Text sfText(*font, sf::String(text), 24);
     sfText.setFillColor(sf::Color(color.r, color.g, color.b));
     sfText.setPosition(sf::Vector2f(static_cast<float>(position.first),
