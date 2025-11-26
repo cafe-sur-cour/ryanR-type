@@ -12,7 +12,7 @@
 bool Packet::unpack(std::vector<uint8_t> data) {
     if (data.empty()) {
         std::cerr <<
-            "[SERVER] Error: unpackPacket(): Empty packet data"
+            "[PACKET] Error: unpackPacket(): Empty packet data"
             << std::endl;
         return false;
     }
@@ -25,7 +25,7 @@ bool Packet::unpack(std::vector<uint8_t> data) {
 bool Packet::unpackHeader(std::vector<uint8_t> data) {
     if (data.empty() || data.size() != HEADER_SIZE) {
         std::cerr <<
-            "[SERVER] Error: unpackPacket(): Invalid header data"
+            "[PACKET] Error: unpackPacket(): Invalid header data"
             << std::endl;
         return false;
     }
@@ -44,7 +44,7 @@ bool Packet::unpackHeader(std::vector<uint8_t> data) {
     if (data.at(11) != (FIRST_EOP_CHAR) ||
         data.at(12) != (SECOND_EOP_CHAR)) {
         std::cerr <<
-            "[SERVER] Error: unpackPacket(): Invalid end of packet characters"
+            "[PACKET] Error: unpackPacket(): Invalid end of packet characters"
             << std::endl;
         return false;
     }
@@ -59,12 +59,12 @@ bool Packet::unpackBody(std::vector<uint8_t> data) {
             }
         }
         std::cerr <<
-            "[SERVER] Error: unpackPacket(): Unknown packet type received"
+            "[PACKET] Error: unpackPacket(): Unknown packet type received"
             << std::endl;
         return false;
     }
     std::cerr <<
-        "[SERVER] Error: unpackPacket(): Packet type mismatch"
+        "[PACKET] Error: unpackPacket(): Packet type mismatch"
         << std::endl;
     return false;
 }

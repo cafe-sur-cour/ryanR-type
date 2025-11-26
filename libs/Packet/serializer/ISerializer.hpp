@@ -16,15 +16,15 @@ class ISerializer {
     public:
         virtual ~ISerializer() = default;
 
-        virtual std::vector<uint8_t> serializeInt(uint64_t value) = 0;
-        virtual std::vector<uint8_t> serializeLong(uint64_t value) = 0;
-        virtual std::vector<uint8_t> serializeShort(uint64_t value) = 0;
-        virtual std::vector<uint8_t> serializeChar(uint64_t value) = 0;
+        virtual std::vector<uint8_t> serializeUInt(uint64_t value) = 0;
+        virtual std::vector<uint8_t> serializeULong(uint64_t value) = 0;
+        virtual std::vector<uint8_t> serializeUShort(uint64_t value) = 0;
+        virtual std::vector<uint8_t> serializeUChar(uint64_t value) = 0;
 
-        virtual uint64_t deserializeInt(std::vector<uint8_t>) = 0;
-        virtual uint64_t deserializeLong(std::vector<uint8_t>) = 0;
-        virtual uint64_t deserializeShort(std::vector<uint8_t>) = 0;
-        virtual uint64_t deserializeChar(std::vector<uint8_t>) = 0;
+        virtual uint64_t deserializeUInt(std::vector<uint8_t>) = 0;
+        virtual uint64_t deserializeULong(std::vector<uint8_t>) = 0;
+        virtual uint64_t deserializeUShort(std::vector<uint8_t>) = 0;
+        virtual uint64_t deserializeUChar(std::vector<uint8_t>) = 0;
     protected:
     private:
 };

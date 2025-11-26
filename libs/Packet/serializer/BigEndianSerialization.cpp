@@ -14,7 +14,7 @@ BigEndianSerialization::BigEndianSerialization() {
 BigEndianSerialization::~BigEndianSerialization() {
 }
 
-std::vector<std::uint8_t> BigEndianSerialization::serializeInt(uint64_t value) {
+std::vector<std::uint8_t> BigEndianSerialization::serializeUInt(uint64_t value) {
     std::vector<std::uint8_t> bytes;
 
     bytes.push_back(static_cast<std::uint8_t>((value >> 24) & 0xFF));
@@ -24,7 +24,7 @@ std::vector<std::uint8_t> BigEndianSerialization::serializeInt(uint64_t value) {
     return bytes;
 }
 
-std::vector<std::uint8_t> BigEndianSerialization::serializeLong(
+std::vector<std::uint8_t> BigEndianSerialization::serializeULong(
     uint64_t value) {
     std::vector<std::uint8_t> bytes;
 
@@ -39,7 +39,7 @@ std::vector<std::uint8_t> BigEndianSerialization::serializeLong(
     return bytes;
 }
 
-std::vector<std::uint8_t> BigEndianSerialization::serializeShort(
+std::vector<std::uint8_t> BigEndianSerialization::serializeUShort(
     uint64_t value) {
     std::vector<std::uint8_t> bytes;
 
@@ -48,14 +48,14 @@ std::vector<std::uint8_t> BigEndianSerialization::serializeShort(
     return bytes;
 }
 
-std::vector<std::uint8_t> BigEndianSerialization::serializeChar(
+std::vector<std::uint8_t> BigEndianSerialization::serializeUChar(
     uint64_t value) {
     std::vector<std::uint8_t> bytes;
     bytes.push_back(static_cast<std::uint8_t>(value));
     return bytes;
 }
 
-uint64_t BigEndianSerialization::deserializeInt(
+uint64_t BigEndianSerialization::deserializeUInt(
     std::vector<uint8_t> data) {
     if (data.size() < 4) {
         return 0;
@@ -69,7 +69,7 @@ uint64_t BigEndianSerialization::deserializeInt(
     return value;
 }
 
-uint64_t BigEndianSerialization::deserializeLong(
+uint64_t BigEndianSerialization::deserializeULong(
     std::vector<uint8_t> data) {
     if (data.size() < 8) {
         return 0;
@@ -87,7 +87,7 @@ uint64_t BigEndianSerialization::deserializeLong(
     return value;
 }
 
-uint64_t BigEndianSerialization::deserializeShort(
+uint64_t BigEndianSerialization::deserializeUShort(
     std::vector<std::uint8_t> data) {
     if (data.size() < 2) {
         return 0;
@@ -99,7 +99,7 @@ uint64_t BigEndianSerialization::deserializeShort(
     return value;
 }
 
-uint64_t BigEndianSerialization::deserializeChar(
+uint64_t BigEndianSerialization::deserializeUChar(
     std::vector<std::uint8_t> data) {
     if (data.empty()) {
         return 0;

@@ -14,16 +14,16 @@ std::vector<uint8_t> Packet::pack(uint8_t idClient,
     std::vector<uint8_t> temp;
     uint32_t length = 0;
 
-    temp = this->_serializer->serializeChar(this->_magicNumber);
+    temp = this->_serializer->serializeUChar(this->_magicNumber);
     header.insert(header.end(), temp.begin(), temp.end());
 
-    temp = this->_serializer->serializeChar(idClient);
+    temp = this->_serializer->serializeUChar(idClient);
     header.insert(header.end(), temp.begin(), temp.end());
 
-    temp = this->_serializer->serializeInt(sequenceNumber);
+    temp = this->_serializer->serializeUInt(sequenceNumber);
     header.insert(header.end(), temp.begin(), temp.end());
 
-    temp = this->_serializer->serializeChar(type);
+    temp = this->_serializer->serializeUChar(type);
     header.insert(header.end(), temp.begin(), temp.end());
 
     for (auto &pair : this->_packetLengths) {
@@ -32,10 +32,10 @@ std::vector<uint8_t> Packet::pack(uint8_t idClient,
             break;
         }
     }
-    temp = this->_serializer->serializeInt(length);
+    temp = this->_serializer->serializeUInt(length);
     header.insert(header.end(), temp.begin(), temp.end());
 
-    temp = this->_serializer->serializeShort(this->_endOfPacket);
+    temp = this->_serializer->serializeUShort(this->_endOfPacket);
     header.insert(header.end(), temp.begin(), temp.end());
     return header;
 }
