@@ -22,6 +22,7 @@
 #define SECOND_EOP_CHAR '\n'
 
 #define LENGTH_CONNECTION_PACKET 11
+#define LENGTH_CONNECTION_SERVER_PACKET 7
 #define LENGTH_DISCONNECTION_PACKET 7
 #define LENGTH_EVENT_PACKET 8
 #define LENGTH_EO_PACKET 2
@@ -46,6 +47,7 @@ class Packet : public IPacket {
         size_t getLength() const override;
         size_t getSequenceNumber() const override;
         uint8_t getType() const override;
+        std::vector<std::uint8_t> getPayload() const override;
 
         void setType(uint8_t type) override;
         void setLength(size_t length) override;
@@ -55,17 +57,21 @@ class Packet : public IPacket {
         bool unpackPacket(std::vector<uint8_t> data) override;
 
         std::vector<std::uint8_t> connectionPacket(std::vector<std::uint8_t> payload);
+        bool parseConnectionPacket(const std::vector<std::uint8_t> payload);
         std::vector<std::uint8_t> disconnectionPacket(std::vector<std::uint8_t> payload);
         std::vector<std::uint8_t> eventPacket(std::vector<std::uint8_t> payload);
 
     private:
         uint8_t _magicNumber;
+        unsigned int _idClient;
         unsigned int _sequenceNumber;
         uint8_t _type;
         unsigned int _length;
         short _endOfPacket;
+        std::vector<std::uint8_t> _payload;
         std::shared_ptr<ISerializer> _serializer;
         std::map<uint8_t, std::function<std::vector<std::uint8_t>(std::vector<std::uint8_t>)>> _packetHandlers;
+        std::map<uint8_t, std::function<bool(const std::vector<std::uint8_t>)>> _packetReceived;
         std::map<uint8_t, unsigned int> _packetLengths;
 };
 
