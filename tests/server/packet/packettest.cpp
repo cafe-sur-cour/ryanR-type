@@ -83,6 +83,41 @@ TEST_F(PacketTest, PackBodyFailure) {
     EXPECT_TRUE(body.empty());
 }
 
+TEST_F(PacketTest, UnpackPacketHeader) {
+    Packet packet(1);
+
+    std::vector<uint8_t> data = {
+        0x93, 0x00, 0x00, 0x00, 0x0a,
+        0x00, 0x00, 0x00, 0x01,
+        0x02,
+        0x00, 0x00, 0x00, 0x07,
+        0x0d, 0x0a
+    };
+
+    bool result = packet.unpackPacket(data);
+    EXPECT_TRUE(result);
+    EXPECT_EQ(packet.getSequenceNumber(), 1);
+    EXPECT_EQ(packet.getType(), 0x02);
+    EXPECT_EQ(packet.getLength(), 7);
+}
+
+TEST_F(PacketTest, UnpackPacketBody) {
+    Packet packet(1);
+    packet.setType(0x02);
+
+    std::vector<uint8_t> data = {
+        0x02,
+        0x00, 0x00, 0x00, 0x2A,
+        0x0d, 0x0a
+    };
+
+    bool result = packet.unpackPacket(data);
+    EXPECT_TRUE(result);
+    std::vector<std::uint8_t> payload = packet.getPayload();
+    ASSERT_EQ(payload.size(), 1);
+    EXPECT_EQ(payload[0], 42);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
