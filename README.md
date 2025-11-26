@@ -2,7 +2,25 @@
 
 ## Installing Ryan R-Type
 
-To install our project, you just need to go to our release page and download the latest version for your operating system.
+### Via Releases
+
+To install our project, you just need to go to our release page and follow the release's instructions to download it.
+
+### Via cloning
+
+If you want to install our project by cloning it, you will need to follow these steps after cloning, and inside the repository:
+
+#### For unix systems
+```bash
+./scripts/install_dependencies.sh
+./scripts/compile_project.sh
+```
+
+#### For windows
+```batch
+.\scripts\install_dependencies.bat
+.\scripts\compile_project.sh
+```
 
 ## Prerequisites to Contribute
 
