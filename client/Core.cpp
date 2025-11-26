@@ -13,42 +13,46 @@
 #include "gsm/states/scenes/DevState.hpp"
 
 Core::Core() {
-    _resourceManager = initRessourcesManager();
+    this->_resourceManager = initRessourcesManager();
 
-    _gsm = std::make_shared<gsm::GameStateMachine>();
+    this->_gsm = std::make_shared<gsm::GameStateMachine>();
     std::shared_ptr<gsm::DevState> devState =
-        std::make_shared<gsm::DevState>(_gsm, _resourceManager);
-    _gsm->changeState(devState);
+        std::make_shared<gsm::DevState>(this->_gsm, this->_resourceManager);
+    this->_gsm->changeState(devState);
 
     initNetwork();
-    _networkThread = std::thread(&Core::networkLoop, this);
+    this->_networkThread = std::thread(&Core::networkLoop, this);
 }
 
 Core::~Core() {
-    if (_networkThread.joinable()) {
-        _networkThread.join();
+    if (this->_networkThread.joinable()) {
+        this->_networkThread.join();
+        this->_clientNetwork->stop();
     }
 }
 
 void Core::run() {
     auto previousTime = std::chrono::high_resolution_clock::now();
 
-    while (_resourceManager->get<gfx::IWindow>()->isOpen()) {
+    while (this->_resourceManager->get<gfx::IWindow>()->isOpen()) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<float> deltaTime = currentTime - previousTime;
         previousTime = currentTime;
 
-        _gsm->update(deltaTime.count());
-        _gsm->render();
+        this->_gsm->update(deltaTime.count());
+        this->_gsm->render();
     }
 }
 
 void Core::initNetwork() {
-    // TODO(anyone): Initialize client network
-    std::cout << "Network initialized (placeholder)" << std::endl;
+    this->_clientNetwork = std::make_shared<ClientNetwork>();
 }
 
 void Core::networkLoop() {
-    // TODO(anyone): Implement network loop
-    std::cout << "Network thread running (placeholder)" << std::endl;
+    this->_clientNetwork->start();
+}
+
+
+std::shared_ptr<ClientNetwork> Core::getNetwork() {
+    return this->_clientNetwork;
 }
