@@ -56,8 +56,8 @@ class Packet : public IPacket {
         void setPayload(std::vector<uint64_t> payload) override;
         void setIdClient(uint8_t idClient) override;
 
-        std::vector<uint8_t> packHeaderPacket(uint8_t idClient, uint32_t sequenceNumber, uint8_t type) override;
-        std::vector<uint8_t> packBodyPacket(std::vector<uint64_t> payload) override;
+        std::vector<uint8_t> pack(uint8_t idClient, uint32_t sequenceNumber, uint8_t type) override;
+        std::vector<uint8_t> pack(std::vector<uint64_t> payload) override;
         bool unpack(std::vector<uint8_t> data) override;
 
         void reset() override;
