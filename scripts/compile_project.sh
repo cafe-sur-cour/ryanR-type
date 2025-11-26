@@ -32,9 +32,15 @@ else
     cmake --preset "release-unix" -DBUILD_TESTS=OFF
 fi
 
+if [ $? -ne 0 ]; then
+    echo "CMake configuration failed."
+    exit 1
+fi
+
 if [ -z "$target" ] || [ "$target" == "all" ]; then
     cmake --build --preset "release-unix"
     exit $?
 fi
 
 cmake --build --preset "release-unix" --target "$target"
+exit $?
