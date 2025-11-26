@@ -13,7 +13,6 @@
 #include "../../component/tags/PlayerTag.hpp"
 #include "../../component/temporary/InputIntentComponent.hpp"
 #include "../../../../client/graphicals/IEvent.hpp"
-#include "../../../constants.hpp"
 
 namespace ecs {
 
