@@ -13,6 +13,16 @@
 #include "ServerConfig.hpp"
 #include "../libs/Network/INetwork.hpp"
 #include "../libs/Buffer/IBuffer.hpp"
+#include "../common/DLLoader/DLLoader.hpp"
+
+typedef void *(*createNetworkLib_t)();
+typedef void *(*createBuffer_t)();
+typedef void *(*createPacket_t)();
+
+#define pathLoad "./librairies"
+#define networkLib "libNetwork.so"
+#define bufferLib "libBuffer.so"
+#define packetLib "libPacket.so"
 
 namespace rserv {
     class Server : public IServer {
@@ -52,9 +62,18 @@ namespace rserv {
             int getClientCount() const override;
 
         private:
+            void loadNetworkLibrary();
+            void loadBufferLibrary();
+            void loadPacketLibrary();
+            DLLoader<createNetworkLib_t> _networloader;
+            DLLoader<createBuffer_t> _bufferloader;
+            DLLoader<createPacket_t> _packetloader;
+
             std::shared_ptr<ServerConfig> _config;
             std::shared_ptr<net::INetwork> _network;
             std::shared_ptr<IBuffer> _buffer;
+            std::shared_ptr<IPacket> _packet;
+
     };
 } // namespace rserv = r-type server
 
