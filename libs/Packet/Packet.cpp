@@ -25,7 +25,7 @@ Packet::Packet(int seqNumber) {
     this->_serializer = std::make_shared<BigEndianSerialization>();
 
     this->_packetHandlers = {
-        {CONNECTION_CLIENT_PACKET, std::bind(&Packet::connectionPacket,
+        {CONNECTION_CLIENT_PACKET, std::bind(&Packet::sendConnectionPacket,
             this, std::placeholders::_1)},
         {DISCONNECTION_PACKET, std::bind(&Packet::disconnectionPacket,
             this, std::placeholders::_1)},
@@ -34,13 +34,13 @@ Packet::Packet(int seqNumber) {
     };
 
     this->_packetReceived = {
-        {CONNECTION_SERVER_PACKET, std::bind(&Packet::parseConnectionPacket,
+        {ACCEPTATION_PACKET, std::bind(&Packet::parseAcceptationPacket,
             this, std::placeholders::_1)}
     };
 
     this->_packetLengths = {
         {CONNECTION_CLIENT_PACKET, LENGTH_CONNECTION_PACKET},
-        {CONNECTION_SERVER_PACKET, LENGTH_CONNECTION_SERVER_PACKET},
+        {ACCEPTATION_PACKET, LENGTH_ACCEPTATION_PACKET},
         {DISCONNECTION_PACKET, LENGTH_DISCONNECTION_PACKET},
         {EVENT_PACKET, LENGTH_EVENT_PACKET}
     };
@@ -132,10 +132,15 @@ std::vector<uint8_t> Packet::packBodyPacket(std::vector<std::uint8_t> payload) {
 
 bool Packet::unpackPacket(std::vector<uint8_t> data) {
     if (data.empty()) {
+        std::cerr << "[SERVER] Error: unpackPacket(): Empty packet data" << std::endl;
         return false;
     }
 
     if (data.at(0) == this->_magicNumber) {
+        if (data.size() != HEADER_SIZE) {
+            std::cerr << "[SERVER] Error: unpackPacket(): Invalid header data" << std::endl;
+            return false;
+        }
         this->_idClient = (data.at(1) << 24) | (data.at(2) << 16) |
             (data.at(3) << 8) | data.at(4);
         this->_sequenceNumber = (data.at(5) << 24) | (data.at(6) << 16) |
@@ -143,17 +148,23 @@ bool Packet::unpackPacket(std::vector<uint8_t> data) {
         this->_type = data.at(9);
         this->_length = (data.at(10) << 24) | (data.at(11) << 16) |
             (data.at(12) << 8) | data.at(13);
+        if (data.at(14) != (FIRST_EOP_CHAR) ||
+            data.at(15) != (SECOND_EOP_CHAR)) {
+            std::cerr << "[SERVER] Error: unpackPacket(): Invalid end of packet characters" << std::endl;
+            return false;
+        }
         return true;
     } else {
         if (this->_type == data.at(0)) {
             for (auto &received : this->_packetReceived) {
                 if (received.first == this->_type) {
-                    received.second(data);
-                    return true;
+                    return received.second(data);
                 }
             }
+            std::cerr << "[SERVER] Error: unpackPacket(): Unknown packet type received" << std::endl;
             return false;
         }
+        std::cerr << "[SERVER] Error: unpackPacket(): Packet type mismatch" << std::endl;
         return false;
     }
 }

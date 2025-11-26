@@ -20,16 +20,17 @@
 #define MAGIC_NUMBER 0x93
 #define FIRST_EOP_CHAR '\r'
 #define SECOND_EOP_CHAR '\n'
+#define HEADER_SIZE 16
 
 #define LENGTH_CONNECTION_PACKET 11
-#define LENGTH_CONNECTION_SERVER_PACKET 7
+#define LENGTH_ACCEPTATION_PACKET 7
 #define LENGTH_DISCONNECTION_PACKET 7
 #define LENGTH_EVENT_PACKET 8
 #define LENGTH_EO_PACKET 2
 
 #define NO_OP_PACKET 0x00
 #define CONNECTION_CLIENT_PACKET 0x01
-#define CONNECTION_SERVER_PACKET 0x02
+#define ACCEPTATION_PACKET 0x02
 #define DISCONNECTION_PACKET 0x03
 #define EVENT_PACKET 0x04
 #define GAME_STATE_PACKET 0x05
@@ -56,11 +57,6 @@ class Packet : public IPacket {
         std::vector<uint8_t> packBodyPacket(std::vector<std::uint8_t> payload) override;
         bool unpackPacket(std::vector<uint8_t> data) override;
 
-        std::vector<std::uint8_t> connectionPacket(std::vector<std::uint8_t> payload);
-        bool parseConnectionPacket(const std::vector<std::uint8_t> payload);
-        std::vector<std::uint8_t> disconnectionPacket(std::vector<std::uint8_t> payload);
-        std::vector<std::uint8_t> eventPacket(std::vector<std::uint8_t> payload);
-
     private:
         uint8_t _magicNumber;
         unsigned int _idClient;
@@ -73,6 +69,11 @@ class Packet : public IPacket {
         std::map<uint8_t, std::function<std::vector<std::uint8_t>(std::vector<std::uint8_t>)>> _packetHandlers;
         std::map<uint8_t, std::function<bool(const std::vector<std::uint8_t>)>> _packetReceived;
         std::map<uint8_t, unsigned int> _packetLengths;
+
+        std::vector<std::uint8_t> sendConnectionPacket(std::vector<std::uint8_t> payload);
+        bool parseAcceptationPacket(const std::vector<std::uint8_t> payload);
+        std::vector<std::uint8_t> disconnectionPacket(std::vector<std::uint8_t> payload);
+        std::vector<std::uint8_t> eventPacket(std::vector<std::uint8_t> payload);
 };
 
 

@@ -5,10 +5,11 @@
 ** Packet Types
 */
 
+#include <iostream>
 #include <vector>
 #include "Packet.hpp"
 
-std::vector<std::uint8_t> Packet::connectionPacket(
+std::vector<std::uint8_t> Packet::sendConnectionPacket(
     std::vector<std::uint8_t> payload) {
     std::vector<std::uint8_t> body;
     std::vector<uint8_t> temp;
@@ -22,8 +23,9 @@ std::vector<std::uint8_t> Packet::connectionPacket(
     return body;
 }
 
-bool Packet::parseConnectionPacket(const std::vector<std::uint8_t> payload) {
-    if (payload.size() < 5) {
+bool Packet::parseAcceptationPacket(const std::vector<std::uint8_t> payload) {
+    if (payload.size() != LENGTH_ACCEPTATION_PACKET) {
+        std::cerr << "[SERVER] Error: parseAcceptationPacket(): Payload have invalid length" << std::endl;
         return false;
     }
 
