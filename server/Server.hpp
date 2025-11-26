@@ -14,6 +14,7 @@
 #include "../libs/Network/INetwork.hpp"
 #include "../libs/Buffer/IBuffer.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
+#include "Signal.hpp"
 
 typedef void *(*createNetworkLib_t)();
 typedef void *(*createBuffer_t)();
