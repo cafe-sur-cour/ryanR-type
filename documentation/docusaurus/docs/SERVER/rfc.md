@@ -241,7 +241,7 @@ Server :
 
    [RFC7322] Flanagan, H. and S. Ginoza, "RFC Style Guide", RFC 7322,
              DOI 10.17487/RFC7322, September 2014,
-             <https://www.rfc-editor.org/info/rfc7322>.
+             [rfc](https://www.rfc-editor.org/info/rfc7322).
 
 **10. Author's Address**
 
