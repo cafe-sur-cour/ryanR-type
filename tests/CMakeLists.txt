@@ -64,6 +64,13 @@ add_executable(PacketTests server/packet/packettest.cpp)
 target_link_libraries(PacketTests Packet Buffer GTest::gtest GTest::gtest_main)
 add_test(NAME PacketTests COMMAND PacketTests)
 
+add_executable(UtilsFuncTests server/utils/utils-func-test.cpp)
+target_link_libraries(UtilsFuncTests r-type_server_lib GTest::gtest GTest::gtest_main)
+add_test(NAME UtilsFuncTests COMMAND UtilsFuncTests)
 add_executable(SerializerTests server/packet/serializer/SerializerTests.cpp)
 target_link_libraries(SerializerTests Packet GTest::gtest GTest::gtest_main)
 add_test(NAME SerializerTests COMMAND SerializerTests)
+
+add_executable(ErrorTests common/Error/Error-test.cpp)
+target_link_libraries(ErrorTests ERROR GTest::gtest GTest::gtest_main)
+add_test(NAME ErrorTests COMMAND ErrorTests)

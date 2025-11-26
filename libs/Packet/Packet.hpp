@@ -75,5 +75,8 @@ class Packet : public IPacket {
         std::map<uint8_t, unsigned int> _packetLengths;
 };
 
-
+extern "C" {
+    void *createPacketInstance(int id);
+    int getType();
+}
 #endif /* !PACKET_HPP_ */

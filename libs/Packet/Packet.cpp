@@ -159,6 +159,10 @@ bool Packet::unpackPacket(std::vector<uint8_t> data) {
 }
 
 extern "C" {
+
+    void *createPacketInstance(int id) {
+        return new Packet(id);
+    }
     int getType() {
         return PACKET_MODULE;
     }
