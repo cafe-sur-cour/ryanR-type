@@ -39,6 +39,7 @@ class DLLoader : public ILoader {
         };
         void *Open(const char *path, int flag = RTLD_LAZY) override {
 #ifdef _WIN32
+            (void)flag;
             _handler = LoadLibraryA(path);
             if (!_handler) {
                 _lastError = "Failed to load library: " + std::string(path);

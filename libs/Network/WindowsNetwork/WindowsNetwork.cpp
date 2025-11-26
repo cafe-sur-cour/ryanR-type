@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <memory>
+#include <stdexcept>
 
 #include "WindowsNetwork.hpp"
 #include "../../common/DLLoader/LoaderType.hpp"
@@ -29,6 +30,7 @@ void WindowsNetwork::stop() {
 
 
 int WindowsNetwork::acceptConnection() {
+    return -1;
 }
 
 void WindowsNetwork::closeConnection(int connectionId) {
@@ -36,9 +38,11 @@ void WindowsNetwork::closeConnection(int connectionId) {
 }
 
 std::vector<int> WindowsNetwork::getActiveConnections() const {
+    return std::vector<int>();
 }
 
 size_t WindowsNetwork::getConnectionCount() const {
+    return 0;
 }
 
 void WindowsNetwork::sendTo(int connectionId, const IPacket &packet) {
@@ -51,10 +55,12 @@ void WindowsNetwork::broadcast(const IPacket &packet) {
 }
 
 bool WindowsNetwork::hasIncomingData() const {
+    return false;
 }
 
 std::shared_ptr<IPacket> WindowsNetwork::receiveFrom(const int &connectionId) {
     (void)connectionId;
+    return nullptr;
 }
 
 void WindowsNetwork::sendData(const IPacket &data, size_t size) {
@@ -65,6 +71,7 @@ void WindowsNetwork::sendData(const IPacket &data, size_t size) {
 IPacket &WindowsNetwork::receiveData(const IBuffer &buffer, size_t size) const {
     (void)buffer;
     (void)size;
+    throw std::runtime_error("Not implemented");
 }
 
 void WindowsNetwork::setConnectionCallback(std::function<void(int)> onConnect) {

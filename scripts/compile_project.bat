@@ -42,13 +42,25 @@ if errorlevel 1 (
 REM Build the project
 if "%target%"=="" (
     cmake --build --preset "release-windows" --config Release
-    exit /b %errorlevel%
+    if errorlevel 1 (
+        echo Build failed.
+        exit /b 1
+    )
+    exit /b 0
 )
 
 if /i "%target%"=="all" (
     cmake --build --preset "release-windows" --config Release
-    exit /b %errorlevel%
+    if errorlevel 1 (
+        echo Build failed.
+        exit /b 1
+    )
+    exit /b 0
 )
 
 cmake --build --preset "release-windows" --target %target% --config Release
-exit /b %errorlevel%
+if errorlevel 1 (
+    echo Build failed.
+    exit /b 1
+)
+exit /b 0
