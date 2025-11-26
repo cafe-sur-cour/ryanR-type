@@ -14,7 +14,7 @@ std::vector<std::uint8_t> Packet::buildConnectionPacket(
     std::vector<std::uint8_t> body;
     std::vector<uint8_t> temp;
 
-    for (uint8_t i = 0; i < (LENGTH_CONNECTION_PACKET - LENGTH_EO_PACKET); i++) {
+    for (uint8_t i = 0; i < (LENGTH_CONNECTION_PACKET - LENGTH_EOP); i++) {
         temp = this->_serializer->serializeChar(payload.at(i));
         body.insert(body.end(), temp.begin(), temp.end());
     }
@@ -24,12 +24,15 @@ std::vector<std::uint8_t> Packet::buildConnectionPacket(
 }
 
 bool Packet::parseConnectionPacket(const std::vector<std::uint8_t> payload) {
-    if (payload.size() != LENGTH_CONNECTION_PACKET) {
-        std::cerr << "[SERVER] Error: parseConnectionPacket(): Payload have invalid length" << std::endl;
+    if (payload.size() != LENGTH_CONNECTION_PACKET ||
+        this->_length != payload.size()) {
+        std::cerr <<
+            "[SERVER] Error: Payload have invalid length"
+            << std::endl;
         return false;
     }
 
-    for (size_t i = 1; i < (LENGTH_CONNECTION_PACKET - LENGTH_EO_PACKET); i++)
+    for (size_t i = 1; i < (LENGTH_CONNECTION_PACKET - LENGTH_EOP); i++)
         this->_payload.push_back(payload.at(i));
     return true;
 }
@@ -49,8 +52,11 @@ std::vector<uint8_t> Packet::buildAcceptationPacket(
 }
 
 bool Packet::parseAcceptationPacket(const std::vector<uint8_t> payload) {
-    if (payload.size() != LENGTH_ACCEPTATION_PACKET) {
-        std::cerr << "[SERVER] Error: parseAcceptationPacket(): Payload have invalid length" << std::endl;
+    if (payload.size() != LENGTH_ACCEPTATION_PACKET
+        || this->_length != payload.size()) {
+        std::cerr <<
+            "[SERVER] Error: Payload have invalid length"
+            << std::endl;
         return false;
     }
 
@@ -75,12 +81,16 @@ std::vector<uint8_t> Packet::buildDisconnectionPacket(
 }
 
 bool Packet::parseDisconnectionPacket(const std::vector<std::uint8_t> payload) {
-    if (payload.size() != LENGTH_DISCONNECTION_PACKET) {
-        std::cerr << "[SERVER] Error: parseDisconnectionPacket(): Payload have invalid length" << std::endl;
+    if (payload.size() != LENGTH_DISCONNECTION_PACKET
+        || this->_length != payload.size()) {
+        std::cerr <<
+            "[SERVER] Error: Payload have invalid length"
+            << std::endl;
         return false;
     }
 
-    std::vector<std::uint8_t> charBytes(payload.begin() + 1, payload.begin() + 2);
+    std::vector<std::uint8_t> charBytes(
+        payload.begin() + 1, payload.begin() + 2);
     uint64_t result = this->_serializer->deserializeChar(charBytes);
     this->_payload.push_back(result);
     return true;
@@ -103,8 +113,11 @@ std::vector<uint8_t> Packet::buildEventPacket(
 }
 
 bool Packet::parseEventPacket(const std::vector<uint8_t> payload) {
-    if (payload.size() != LENGTH_EVENT_PACKET) {
-        std::cerr << "[SERVER] Error: parseEventPacket(): Payload have invalid length" << std::endl;
+    if (payload.size() != LENGTH_EVENT_PACKET
+        || this->_length != payload.size()) {
+        std::cerr <<
+            "[SERVER] Error: Payload have invalid length"
+            << std::endl;
         return false;
     }
 
