@@ -21,7 +21,8 @@
 
 int main(int ac, char **av) {
     Utils utils;
-    std::shared_ptr<ClientNetwork> clientNetwork = std::make_shared<ClientNetwork>();
+    std::shared_ptr<ClientNetwork> clientNetwork =
+        std::make_shared<ClientNetwork>();
     std::shared_ptr<ecs::ResourceManager> resourceManager =
         initRessourcesManager();
 

@@ -6,6 +6,8 @@
 */
 
 #include <iostream>
+#include <memory>
+#include <string>
 
 #include "Utils.hpp"
 
@@ -26,7 +28,8 @@ void Utils::helper() {
         << "\r./r-type_client -p 8080 -i 127.0.0.1\n";
 }
 
-void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork> clientNetwork) {
+void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork>
+    clientNetwork) {
     int port = 0;
     uint32_t ip = 0;
 
