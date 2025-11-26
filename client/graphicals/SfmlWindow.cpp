@@ -147,9 +147,10 @@ void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y,
 
     sf::Sprite sprite(*texture);
     sf::IntRect textureRect(
-        sf::Vector2i(static_cast<int>(rect->getLeft()), static_cast<int>(rect->getTop())),
-        sf::Vector2i(static_cast<int>(rect->getWidth()), static_cast<int>(rect->getHeight()))
-    );
+        sf::Vector2i(static_cast<int>(rect->getLeft()),
+            static_cast<int>(rect->getTop())),
+        sf::Vector2i(static_cast<int>(rect->getWidth()),
+            static_cast<int>(rect->getHeight())));
     sprite.setTextureRect(textureRect);
     sprite.setPosition(sf::Vector2f(x, y));
     sprite.setScale(sf::Vector2f(scaleX, scaleY));

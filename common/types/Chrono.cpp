@@ -36,14 +36,18 @@ void Chrono::reset() {
 }
 
 float Chrono::getElapsedSeconds() const {
-    auto endPoint = _isRunning ? std::chrono::high_resolution_clock::now() : _stopTime;
-    auto duration = std::chrono::duration_cast<std::chrono::duration<float>>(endPoint - _startTime);
+    auto endPoint = _isRunning ?
+        std::chrono::high_resolution_clock::now() : _stopTime;
+    auto duration = std::chrono::duration_cast<
+        std::chrono::duration<float>>(endPoint - _startTime);
     return duration.count();
 }
 
 float Chrono::getElapsedMilliseconds() const {
-    auto endPoint = _isRunning ? std::chrono::high_resolution_clock::now() : _stopTime;
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endPoint - _startTime);
+    auto endPoint = _isRunning ?
+        std::chrono::high_resolution_clock::now() : _stopTime;
+    auto duration = std::chrono::duration_cast<
+        std::chrono::milliseconds>(endPoint - _startTime);
     return static_cast<float>(duration.count());
 }
 
