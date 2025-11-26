@@ -202,7 +202,8 @@ void rserv::Server::onClientDisconnected(int idClient) {
     // Add game-specific cleanup logic here
 }
 
-void rserv::Server::onPacketReceived(int idClient, const IPacketManager &packet) {
+void rserv::Server::onPacketReceived(
+    int idClient, const IPacketManager &packet) {
     std::cout << "[Server] Received packet from client "
         << idClient << std::endl;
     (void)packet;
