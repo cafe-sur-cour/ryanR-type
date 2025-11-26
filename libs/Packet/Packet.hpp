@@ -58,9 +58,9 @@ class Packet : public IPacket {
 
         std::vector<uint8_t> packHeaderPacket(uint8_t idClient, uint32_t sequenceNumber, uint8_t type) override;
         std::vector<uint8_t> packBodyPacket(std::vector<uint64_t> payload) override;
-        bool unpackPacket(std::vector<uint8_t> data) override;
+        bool unpack(std::vector<uint8_t> data) override;
 
-        void resetPacket() override;
+        void reset() override;
     private:
         uint8_t _magicNumber;
         uint8_t _idClient;
@@ -73,6 +73,9 @@ class Packet : public IPacket {
         std::map<uint8_t, std::function<std::vector<uint8_t>(std::vector<uint64_t>)>> _packetHandlers;
         std::map<uint8_t, std::function<bool(const std::vector<uint8_t>)>> _packetReceived;
         std::map<uint8_t, uint32_t> _packetLengths;
+
+        bool unpackHeader(const std::vector<uint8_t> data);
+        bool unpackBody(const std::vector<uint8_t> data);
 
         std::vector<uint8_t> buildConnectionPacket(std::vector<uint64_t> payload);
         bool parseConnectionPacket(const std::vector<uint8_t> payload);
