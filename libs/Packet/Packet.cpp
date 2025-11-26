@@ -210,6 +210,10 @@ void Packet::resetPacket() {
 
 
 extern "C" {
+
+    void *createPacketInstance(int id) {
+        return new Packet(id);
+    }
     int getType() {
         return PACKET_MODULE;
     }

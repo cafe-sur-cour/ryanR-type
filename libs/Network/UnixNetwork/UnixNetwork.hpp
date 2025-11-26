@@ -2,22 +2,28 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** WindowsNetwork
+** UnixNetwork
 */
 
-#ifndef WINDOWSNETWORK_HPP_
-#define WINDOWSNETWORK_HPP_
+#ifndef UnixNetwork_HPP_
+#define UnixNetwork_HPP_
 
+#include <asio.hpp>
+#include <unordered_map>
+#include <memory>
+#include <queue>
+#include <functional>
 #include "../ANetwork.hpp"
-#include "../../Packet/IPacket.hpp"
 #include "../../Buffer/IBuffer.hpp"
+#include "../../Packet/IPacket.hpp"
 
 namespace net {
 
-class WindowsNetwork : public ANetwork {
+class UnixNetwork : public ANetwork {
     public:
-        WindowsNetwork();
-        ~WindowsNetwork() override;
+        UnixNetwork();
+        ~UnixNetwork() override;
+
 
         void init(unsigned int port) override;
         void stop() override;
@@ -40,6 +46,15 @@ class WindowsNetwork : public ANetwork {
 
     protected:
     private:
+        std::shared_ptr<asio::io_context> _ioContext;
+        std::shared_ptr<asio::ip::udp::socket> _socket;
+        std::unordered_map<int, asio::ip::udp::endpoint> _clients;
+        std::queue<std::pair<int, std::shared_ptr<IPacket>>> _incomingPackets;
+        std::function<void(int)> _onConnectCallback;
+        std::function<void(int)> _onDisconnectCallback;
+        int _nextClientId;
+        unsigned int _port;
+        bool _isRunning;
 };
 
 } // namespace net
@@ -49,4 +64,4 @@ extern "C" {
     int getType();
 }
 
-#endif /* !WINDOWSNETWORK_HPP_ */
+#endif /* !UnixNetwork_HPP_ */

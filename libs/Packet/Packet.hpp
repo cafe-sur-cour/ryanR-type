@@ -84,5 +84,8 @@ class Packet : public IPacket {
         bool parseEventPacket(const std::vector<std::uint8_t> payload);
 };
 
-
+extern "C" {
+    void *createPacketInstance(int id);
+    int getType();
+}
 #endif /* !PACKET_HPP_ */

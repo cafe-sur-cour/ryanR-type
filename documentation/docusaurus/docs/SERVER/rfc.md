@@ -133,7 +133,7 @@ Server :
 
 **4.2 Server Details**
 
-4.2.1 CONNECTIONS   (0x01) – Sent from Server to Client
+4.2.1 CONNECTIONS_ACC   (0x02) – Sent from Server to Client
 
    - Player ID (4 bytes)
 
