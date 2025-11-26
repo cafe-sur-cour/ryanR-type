@@ -18,7 +18,7 @@ class BigEndianSerialization : public ISerializer {
         std::vector<std::uint8_t> serializeLong(int64_t value) override;
         std::vector<std::uint8_t> serializeShort(uint16_t value) override;
         std::vector<std::uint8_t> serializeChar(uint8_t value) override;
-        bool deserialize(const std::vector<uint8_t>& data, void* output, size_t expectedSize) override;
+        std::uint8_t deserializeInt(std::vector<std::uint8_t>) override;
     protected:
     private:
 };
