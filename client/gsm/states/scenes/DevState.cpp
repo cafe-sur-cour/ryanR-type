@@ -36,7 +36,8 @@ void DevState::enter() {
 
     transform->setScale(math::Vector2f(0.2f, 0.2f));
     auto playerTag = std::make_shared<ecs::PlayerTag>();
-    auto sprite = std::make_shared<ecs::SpriteComponent>("assets/sprites/sprite.png");
+    auto sprite = std::make_shared<ecs::SpriteComponent>
+        ("assets/sprites/sprite.png");
 
     _registry->addComponent(entityId, transform);
     _registry->addComponent(entityId, playerTag);

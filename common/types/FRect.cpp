@@ -94,7 +94,8 @@ bool FRect::intersects(FRect const &other, FRect &intersection) const {
     float interBottom = std::min(r1MaxY, r2MaxY);
 
     if ((interLeft < interRight) && (interTop < interBottom)) {
-        intersection = FRect(interLeft, interTop, interRight - interLeft, interBottom - interTop);
+        intersection = FRect(interLeft, interTop, interRight - interLeft,
+            interBottom - interTop);
         return true;
     } else {
         intersection = FRect(0, 0, 0, 0);
@@ -121,4 +122,4 @@ bool FRect::operator!=(FRect const &other) const {
     return !(*this == other);
 }
 
-} // namespace math
+}  // namespace math

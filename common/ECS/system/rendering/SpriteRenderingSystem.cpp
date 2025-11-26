@@ -5,6 +5,7 @@
 ** SpriteRenderingSystem
 */
 
+#include <memory>
 #include "SpriteRenderingSystem.hpp"
 #include "../../component/permanent/SpriteComponent.hpp"
 #include "../../component/permanent/TransformComponent.hpp"
@@ -12,16 +13,14 @@
 #include "../../resourceManager/ResourceManager.hpp"
 #include "../../../../client/graphicals/IWindow.hpp"
 
-#include <iostream>
 
 namespace ecs {
 
 SpriteRenderingSystem::SpriteRenderingSystem() {
 }
 
-void SpriteRenderingSystem::update(std::shared_ptr<ResourceManager> resourceManager,
-    std::shared_ptr<ARegistry> registry,
-    float deltaTime) {
+void SpriteRenderingSystem::update(std::shared_ptr<ResourceManager>
+    resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) {
     (void)deltaTime;
 
     View<SpriteComponent, TransformComponent> view(registry);
@@ -42,4 +41,4 @@ void SpriteRenderingSystem::update(std::shared_ptr<ResourceManager> resourceMana
     }
 }
 
-} // namespace ecs
+}  // namespace ecs
