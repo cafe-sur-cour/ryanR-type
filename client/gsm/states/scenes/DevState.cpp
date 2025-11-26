@@ -6,6 +6,9 @@
 #include "../../../../client/graphicals/IWindow.hpp"
 #include "../../../../client/graphicals/IEvent.hpp"
 #include "../../../../common/ECS/component/permanent/SpriteComponent.hpp"
+#include "../../../../common/ECS/component/permanent/AnimationComponent.hpp"
+#include "../../../../common/ECS/system/rendering/AnimationRenderingSystemy.hpp"
+
 namespace gsm {
 
 DevState::DevState(
@@ -21,11 +24,14 @@ DevState::DevState(
     _inputToVelocitySystem = std::make_shared<ecs::InputToVelocitySystem>();
     _inputSystem = std::make_shared<ecs::MovementInputSystem>();
     _spriteRenderingSystem = std::make_shared<ecs::SpriteRenderingSystem>();
+    auto animationRenderingSystem =
+        std::make_shared<ecs::AnimationRenderingSystemy>();
 
     _systemManager->addSystem(_inputToVelocitySystem);
     _systemManager->addSystem(_movementSystem);
     _systemManager->addSystem(_inputSystem);
     _systemManager->addSystem(_spriteRenderingSystem);
+    _systemManager->addSystem(animationRenderingSystem);
 }
 
 void DevState::enter() {
@@ -34,14 +40,17 @@ void DevState::enter() {
     auto transform = std::make_shared<ecs::TransformComponent>(
         math::Vector2f(100.0f, 100.0f));
 
-    transform->setScale(math::Vector2f(0.2f, 0.2f));
+    transform->setScale(math::Vector2f(3.0f, 3.0f));
     auto playerTag = std::make_shared<ecs::PlayerTag>();
-    auto sprite = std::make_shared<ecs::SpriteComponent>
-        ("assets/sprites/sprite.png");
+    // auto sprite = std::make_shared<ecs::SpriteComponent>
+    //     ("assets/sprites/sprite.png");
 
+    auto animation = std::make_shared<ecs::AnimationComponent>
+        ("assets/sprites/frog_spritesheet.png", 64.0f, 32.0f, 4);
     _registry->addComponent(entityId, transform);
     _registry->addComponent(entityId, playerTag);
-    _registry->addComponent(entityId, sprite);
+    // _registry->addComponent(entityId, sprite);
+    _registry->addComponent(entityId, animation);
 }
 
 void DevState::update(float deltaTime) {
