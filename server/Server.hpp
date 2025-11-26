@@ -46,7 +46,7 @@ namespace rserv {
 
             void onClientConnected(int idClient) override;
             void onClientDisconnected(int idClient) override;
-            void onPacketReceived(int idClient, const IPacket &packet) override;
+            void onPacketReceived(int idClient, const IPacketManager &packet) override;
 
             void processConnections() override;
             void processIncomingPackets() override;
@@ -67,7 +67,7 @@ namespace rserv {
             std::shared_ptr<ServerConfig> _config;
             std::shared_ptr<net::INetwork> _network;
             std::shared_ptr<IBuffer> _buffer;
-            std::shared_ptr<IPacket> _packet;
+            std::shared_ptr<IPacketManager> _packet;
 
     };
 } // namespace rserv = r-type server

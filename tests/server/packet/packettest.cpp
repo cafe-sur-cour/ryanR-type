@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../../../libs/Packet/Packet.hpp"
+#include "../../../libs/Packet/PacketManager.hpp"
 #include <vector>
 #include <cstring>
 
@@ -15,7 +15,7 @@ protected:
 
 TEST_F(PacketTest, ConstructorInitializesCorrectly) {
     unsigned int sequence = 42;
-    Packet packet(sequence);
+    PacketManager packet(sequence);
 
     EXPECT_EQ(packet.getMagicNumber(), 0x93);
     EXPECT_EQ(packet.getSequenceNumber(), 42);
@@ -26,20 +26,20 @@ TEST_F(PacketTest, ConstructorInitializesCorrectly) {
 }
 
 TEST_F(PacketTest, ConstructorWithZeroSequence) {
-    Packet packet(0);
+    PacketManager packet(0);
 
     EXPECT_EQ(packet.getSequenceNumber(), 0);
     EXPECT_EQ(packet.getMagicNumber(), 0x93);
 }
 
 TEST_F(PacketTest, ConstructorWithMaxSequence) {
-    Packet packet(0xFFFFFFFF);
+    PacketManager packet(0xFFFFFFFF);
 
     EXPECT_EQ(packet.getSequenceNumber(), 0xFFFFFFFF);
 }
 
 TEST_F(PacketTest, SettersAndGettersWork) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     packet.setType(0x05);
     EXPECT_EQ(packet.getType(), 0x05);
@@ -55,7 +55,7 @@ TEST_F(PacketTest, SettersAndGettersWork) {
 }
 
 TEST_F(PacketTest, SetPayloadWorks) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint64_t> payload = {1, 2, 3, 4, 5};
     packet.setPayload(payload);
@@ -67,7 +67,7 @@ TEST_F(PacketTest, SetPayloadWorks) {
 }
 
 TEST_F(PacketTest, SetEmptyPayload) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint64_t> payload = {1, 2, 3};
     packet.setPayload(payload);
@@ -78,7 +78,7 @@ TEST_F(PacketTest, SetEmptyPayload) {
 }
 
 TEST_F(PacketTest, PackHeaderPacketProducesCorrectHeader) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint8_t> header = packet.pack(10, 1, 0x03);
 
@@ -98,7 +98,7 @@ TEST_F(PacketTest, PackHeaderPacketProducesCorrectHeader) {
 }
 
 TEST_F(PacketTest, PackHeaderWithDifferentClientIds) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint8_t> header1 = packet.pack(0, 1, 0x01);
     EXPECT_EQ(header1[1], 0x00);
@@ -108,7 +108,7 @@ TEST_F(PacketTest, PackHeaderWithDifferentClientIds) {
 }
 
 TEST_F(PacketTest, PackHeaderWithLargeSequenceNumber) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint8_t> header = packet.pack(10, 0x12345678, 0x01);
 
@@ -119,7 +119,7 @@ TEST_F(PacketTest, PackHeaderWithLargeSequenceNumber) {
 }
 
 TEST_F(PacketTest, PackHeaderForConnectionPacket) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint8_t> header = packet.pack(5, 10, CONNECTION_CLIENT_PACKET);
 
@@ -129,7 +129,7 @@ TEST_F(PacketTest, PackHeaderForConnectionPacket) {
 }
 
 TEST_F(PacketTest, PackHeaderForAcceptationPacket) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint8_t> header = packet.pack(5, 10, ACCEPTATION_PACKET);
 
@@ -138,7 +138,7 @@ TEST_F(PacketTest, PackHeaderForAcceptationPacket) {
 }
 
 TEST_F(PacketTest, PackBodyProducesCorrectDisconnectionBody) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint64_t> payload = {DISCONNECTION_PACKET, 0x04};
     std::vector<uint8_t> body = packet.pack(payload);
@@ -151,7 +151,7 @@ TEST_F(PacketTest, PackBodyProducesCorrectDisconnectionBody) {
 }
 
 TEST_F(PacketTest, PackBodyWithEmptyPayload) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint64_t> payload = {};
     std::vector<uint8_t> body = packet.pack(payload);
@@ -160,7 +160,7 @@ TEST_F(PacketTest, PackBodyWithEmptyPayload) {
 }
 
 TEST_F(PacketTest, PackBodyWithUnknownPacketType) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint64_t> payload = {0xFF, 0x04};
     std::vector<uint8_t> body = packet.pack(payload);
@@ -169,7 +169,7 @@ TEST_F(PacketTest, PackBodyWithUnknownPacketType) {
 }
 
 TEST_F(PacketTest, PackBodyForEventPacket) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint64_t> payload = {EVENT_PACKET, 0x01, 0x02};
     std::vector<uint8_t> body = packet.pack(payload);
@@ -183,7 +183,7 @@ TEST_F(PacketTest, PackBodyForEventPacket) {
 }
 
 TEST_F(PacketTest, PackBodyForAcceptationPacket) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint64_t> payload = {ACCEPTATION_PACKET, 0x2A};
     std::vector<uint8_t> body = packet.pack(payload);
@@ -194,7 +194,7 @@ TEST_F(PacketTest, PackBodyForAcceptationPacket) {
 }
 
 TEST_F(PacketTest, UnpackValidHeader) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint8_t> data = {
         0x93, 0x0a,
@@ -213,7 +213,7 @@ TEST_F(PacketTest, UnpackValidHeader) {
 }
 
 TEST_F(PacketTest, UnpackHeaderWithLargeSequenceNumber) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint8_t> data = {
         0x93, 0x0a,
@@ -229,7 +229,7 @@ TEST_F(PacketTest, UnpackHeaderWithLargeSequenceNumber) {
 }
 
 TEST_F(PacketTest, UnpackHeaderWithInvalidSize) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint8_t> data = {0x93, 0x0a, 0x00};
 
@@ -238,7 +238,7 @@ TEST_F(PacketTest, UnpackHeaderWithInvalidSize) {
 }
 
 TEST_F(PacketTest, UnpackHeaderWithInvalidEndOfPacket) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint8_t> data = {
         0x93, 0x0a,
@@ -253,7 +253,7 @@ TEST_F(PacketTest, UnpackHeaderWithInvalidEndOfPacket) {
 }
 
 TEST_F(PacketTest, UnpackEmptyData) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint8_t> data = {};
 
@@ -262,7 +262,7 @@ TEST_F(PacketTest, UnpackEmptyData) {
 }
 
 TEST_F(PacketTest, UnpackAcceptationBody) {
-    Packet packet(1);
+    PacketManager packet(1);
     packet.setType(ACCEPTATION_PACKET);
     packet.setLength(4);
 
@@ -281,7 +281,7 @@ TEST_F(PacketTest, UnpackAcceptationBody) {
 }
 
 TEST_F(PacketTest, UnpackDisconnectionBody) {
-    Packet packet(1);
+    PacketManager packet(1);
     packet.setType(DISCONNECTION_PACKET);
     packet.setLength(4);
 
@@ -300,7 +300,7 @@ TEST_F(PacketTest, UnpackDisconnectionBody) {
 }
 
 TEST_F(PacketTest, UnpackEventBody) {
-    Packet packet(1);
+    PacketManager packet(1);
     packet.setType(EVENT_PACKET);
     packet.setLength(5);
 
@@ -321,7 +321,7 @@ TEST_F(PacketTest, UnpackEventBody) {
 }
 
 TEST_F(PacketTest, UnpackBodyWithTypeMismatch) {
-    Packet packet(1);
+    PacketManager packet(1);
     packet.setType(ACCEPTATION_PACKET);
     packet.setLength(4);
 
@@ -336,7 +336,7 @@ TEST_F(PacketTest, UnpackBodyWithTypeMismatch) {
 }
 
 TEST_F(PacketTest, UnpackBodyWithInvalidLength) {
-    Packet packet(1);
+    PacketManager packet(1);
     packet.setType(ACCEPTATION_PACKET);
     packet.setLength(10);
 
@@ -351,7 +351,7 @@ TEST_F(PacketTest, UnpackBodyWithInvalidLength) {
 }
 
 TEST_F(PacketTest, ResetClearsAllFields) {
-    Packet packet(100);
+    PacketManager packet(100);
 
     packet.setType(0x05);
     packet.setLength(256);
@@ -369,10 +369,10 @@ TEST_F(PacketTest, ResetClearsAllFields) {
 }
 
 TEST_F(PacketTest, PackAndUnpackHeaderRoundTrip) {
-    Packet packet1(1);
+    PacketManager packet1(1);
     std::vector<uint8_t> header = packet1.pack(42, 1234, ACCEPTATION_PACKET);
 
-    Packet packet2(0);
+    PacketManager packet2(0);
     bool result = packet2.unpack(header);
 
     EXPECT_TRUE(result);
@@ -383,11 +383,11 @@ TEST_F(PacketTest, PackAndUnpackHeaderRoundTrip) {
 }
 
 TEST_F(PacketTest, PackAndUnpackAcceptationBodyRoundTrip) {
-    Packet packet1(1);
+    PacketManager packet1(1);
     std::vector<uint64_t> payload = {ACCEPTATION_PACKET, 99};
     std::vector<uint8_t> body = packet1.pack(payload);
 
-    Packet packet2(0);
+    PacketManager packet2(0);
     packet2.setType(ACCEPTATION_PACKET);
     packet2.setLength(4);
     bool result = packet2.unpack(body);
@@ -399,11 +399,11 @@ TEST_F(PacketTest, PackAndUnpackAcceptationBodyRoundTrip) {
 }
 
 TEST_F(PacketTest, PackAndUnpackEventBodyRoundTrip) {
-    Packet packet1(1);
+    PacketManager packet1(1);
     std::vector<uint64_t> payload = {EVENT_PACKET, 7, 8};
     std::vector<uint8_t> body = packet1.pack(payload);
 
-    Packet packet2(0);
+    PacketManager packet2(0);
     packet2.setType(EVENT_PACKET);
     packet2.setLength(5);
     bool result = packet2.unpack(body);
@@ -416,7 +416,7 @@ TEST_F(PacketTest, PackAndUnpackEventBodyRoundTrip) {
 }
 
 TEST_F(PacketTest, MultipleUnpackCallsOverwriteData) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint8_t> header1 = {
         0x93, 0x01, 0x00, 0x00, 0x00, 0x01,
@@ -435,7 +435,7 @@ TEST_F(PacketTest, MultipleUnpackCallsOverwriteData) {
 }
 
 TEST_F(PacketTest, PackHeaderWithAllPacketTypes) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     std::vector<uint8_t> types = {
         CONNECTION_CLIENT_PACKET,
@@ -452,7 +452,7 @@ TEST_F(PacketTest, PackHeaderWithAllPacketTypes) {
 }
 
 TEST_F(PacketTest, ResetAfterPackAndUnpack) {
-    Packet packet(1);
+    PacketManager packet(1);
 
     packet.pack(10, 100, ACCEPTATION_PACKET);
     std::vector<uint64_t> payload = {ACCEPTATION_PACKET, 50};

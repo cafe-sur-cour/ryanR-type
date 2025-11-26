@@ -5,15 +5,15 @@
 ** Packet
 */
 
-#ifndef PACKET_HPP_
-#define PACKET_HPP_
+#ifndef PACKET_MANAGER_HPP_
+#define PACKET_MANAGER_HPP_
 
 #include <memory>
 #include <map>
 #include <vector>
 #include <functional>
 
-#include "IPacket.hpp"
+#include "IPacketManager.hpp"
 #include "../Buffer/IBuffer.hpp"
 #include "serializer/ISerializer.hpp"
 
@@ -39,10 +39,10 @@
 #define END_GAME_PACKET 0x08
 #define CAN_START_PACKET 0x09
 
-class Packet : public IPacket {
+class PacketManager : public IPacketManager {
     public:
-        Packet(uint32_t seqNumber);
-        ~Packet() override;
+        PacketManager(uint32_t seqNumber);
+        ~PacketManager() override;
 
         uint8_t getMagicNumber() const override;
         uint32_t getLength() const override;
@@ -92,4 +92,4 @@ extern "C" {
     void *createPacketInstance(unsigned int id);
     int getType();
 }
-#endif /* !PACKET_HPP_ */
+#endif /* !PACKET_MANAGER_HPP_ */
