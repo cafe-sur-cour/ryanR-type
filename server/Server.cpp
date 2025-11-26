@@ -15,6 +15,7 @@
 #include "Server.hpp"
 #include "../libs/Network/UnixNetwork/UnixNetwork.hpp"
 #include "../common/Error/ServerErrror.hpp"
+#include "Signal.hpp"
 
 rserv::Server::Server() {
     this->_config = nullptr;
@@ -50,11 +51,19 @@ void rserv::Server::start() {
     std::cout << "[Server] Starting server..." << std::endl;
     this->setState(1);
 
-    while (this->getState() == 1) {
+    Signal::setupSignalHandlers();
+
+    while (this->getState() == 1 && !Signal::stopFlag) {
         processConnections();
         processIncomingPackets();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        /* Add ctrl + C handle to stop the server gracefully */
+        if (std::cin.eof()) {
+            std::cout << "EOF received (Ctrl+D pressed)" << std::endl;
+            break;
+        }
+    }
+    if (Signal::stopFlag) {
+        std::cout << "[Server] Received signal, stopping server" << std::endl;
+        this->stop();
     }
 }
 

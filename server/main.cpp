@@ -28,8 +28,12 @@ int main(int ac, char **av) {
     try {
         server->setConfig(config);
         server->init();
+        server->start();
     } catch (const err::IError &e) {
         std::cerr << e.getDetails() << std::endl;
+        return 84;
+    } catch (...) {
+        std::cerr << "Unknown error occurred in server." << std::endl;
         return 84;
     }
 }
