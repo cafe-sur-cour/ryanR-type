@@ -14,16 +14,10 @@
 #include "../libs/Network/INetwork.hpp"
 #include "../libs/Buffer/IBuffer.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
+#include "../common/DLLoader/LoaderType.hpp"
 #include "Signal.hpp"
 
-typedef void *(*createNetworkLib_t)();
-typedef void *(*createBuffer_t)();
-typedef void *(*createPacket_t)();
 
-#define pathLoad "./librairies"
-#define networkLib "libNetwork.so"
-#define bufferLib "libBuffer.so"
-#define packetLib "libPacket.so"
 
 namespace rserv {
     class Server : public IServer {

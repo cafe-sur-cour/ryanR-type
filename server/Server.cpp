@@ -25,6 +25,21 @@ rserv::Server::Server() {
 rserv::Server::~Server() {
     if (this->getState() == 1)
         this->stop();
+    if (this->_network != nullptr &&
+        this->_networloader.getHandler() != nullptr) {
+        this->_networloader.Close();
+        this->_network.reset();
+    }
+    if (this->_buffer != nullptr &&
+        this->_bufferloader.getHandler() != nullptr) {
+        this->_bufferloader.Close();
+        this->_buffer.reset();
+    }
+    if (this->_packet != nullptr &&
+        this->_packetloader.getHandler() != nullptr) {
+        this->_packetloader.Close();
+        this->_packet.reset();
+    }
 }
 
 void rserv::Server::init() {
