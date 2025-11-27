@@ -16,11 +16,12 @@ namespace ecs {
 
 class AnimationComponent : public AComponent {
     public:
-        AnimationComponent(const std::string& texturePath, float frameWidth, float frameHeight, int frameCount, float speed = 0.1f)
+        AnimationComponent(const std::string& texturePath, float frameWidth, float frameHeight, int frameCount,
+            float startWidth, float startHeight, float speed = 0.1f)
             : _texturePath(texturePath),
               _frameRect(0.0f, 0.0f, frameWidth, frameHeight),
               _frameCount(frameCount), _currentFrame(0), _animationSpeed(speed),
-              _chrono() {
+              _chrono(), _startHeight(startHeight), _startWidth(startWidth) {
             _chrono.start();
         }
 
@@ -38,6 +39,11 @@ class AnimationComponent : public AComponent {
         const math::Chrono& getChrono() const { return _chrono; }
         bool isValid() const { return _frameCount > 0 && _frameRect.getWidth() > 0 && _frameRect.getHeight() > 0; }
         const std::string& getTexturePath() const { return _texturePath; }
+        float getStartWidth() const { return _startWidth; }
+        void setStartWidth(float startWidth) { _startWidth = startWidth; }
+        float getStartHeight() const { return _startHeight; }
+        void setStartHeight(float startHeight) { _startHeight = startHeight; }
+
     private:
         std::string _texturePath;
         math::FRect _frameRect;
@@ -45,6 +51,8 @@ class AnimationComponent : public AComponent {
         int _currentFrame;
         float _animationSpeed;
         math::Chrono _chrono;
+        float _startHeight;
+        float _startWidth;
 };
 
 } // namespace ecs
