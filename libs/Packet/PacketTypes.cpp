@@ -18,7 +18,9 @@ std::vector<std::uint8_t> PacketManager::buildConnectionPacket(
         temp = this->_serializer->serializeUChar(payload.at(i));
         body.insert(body.end(), temp.begin(), temp.end());
     }
-    temp = this->_serializer->serializeUShort(this->_endOfPacket);
+    temp = this->_serializer->serializeUChar(this->_firstEndOfPacket);
+    body.insert(body.end(), temp.begin(), temp.end());
+    temp = this->_serializer->serializeUChar(this->_secondEndOfPacket);
     body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }
@@ -47,7 +49,9 @@ std::vector<uint8_t> PacketManager::buildAcceptationPacket(
     body.insert(body.end(), temp.begin(), temp.end());
     temp = this->_serializer->serializeUChar(payload.at(1));
     body.insert(body.end(), temp.begin(), temp.end());
-    temp = this->_serializer->serializeUShort(this->_endOfPacket);
+    temp = this->_serializer->serializeUChar(this->_firstEndOfPacket);
+    body.insert(body.end(), temp.begin(), temp.end());
+    temp = this->_serializer->serializeUChar(this->_secondEndOfPacket);
     body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }
@@ -76,7 +80,9 @@ std::vector<uint8_t> PacketManager::buildDisconnectionPacket(
     body.insert(body.end(), temp.begin(), temp.end());
     temp = this->_serializer->serializeUChar(payload.at(1));
     body.insert(body.end(), temp.begin(), temp.end());
-    temp = this->_serializer->serializeUShort(this->_endOfPacket);
+    temp = this->_serializer->serializeUChar(this->_firstEndOfPacket);
+    body.insert(body.end(), temp.begin(), temp.end());
+    temp = this->_serializer->serializeUChar(this->_secondEndOfPacket);
     body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }
@@ -109,7 +115,9 @@ std::vector<uint8_t> PacketManager::buildEventPacket(
     body.insert(body.end(), temp.begin(), temp.end());
     temp = this->_serializer->serializeUChar(payload.at(2));
     body.insert(body.end(), temp.begin(), temp.end());
-    temp = this->_serializer->serializeUShort(this->_endOfPacket);
+    temp = this->_serializer->serializeUChar(this->_firstEndOfPacket);
+    body.insert(body.end(), temp.begin(), temp.end());
+    temp = this->_serializer->serializeUChar(this->_secondEndOfPacket);
     body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }

@@ -35,7 +35,10 @@ std::vector<uint8_t> PacketManager::pack(uint8_t idClient,
     temp = this->_serializer->serializeUInt(length);
     header.insert(header.end(), temp.begin(), temp.end());
 
-    temp = this->_serializer->serializeUShort(this->_endOfPacket);
+    temp = this->_serializer->serializeUChar(this->_firstEndOfPacket);
+    header.insert(header.end(), temp.begin(), temp.end());
+
+    temp = this->_serializer->serializeUChar(this->_secondEndOfPacket);
     header.insert(header.end(), temp.begin(), temp.end());
     return header;
 }
