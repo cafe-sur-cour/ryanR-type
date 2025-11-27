@@ -163,9 +163,9 @@ void DevState::render() {
 
         gfx::color_t color;
         if (collider->getType() == ecs::CollisionType::Bounce) {
-            color = {255, 0, 0}; // Red for bouncing entities
+            color = {255, 0, 0};  // Red for bouncing entities
         } else {
-            color = {0, 255, 0}; // Green for solid entities
+            color = {0, 255, 0};  // Green for solid entities
         }
 
         _resourceManager->get<gfx::IWindow>()->drawRectangle(
