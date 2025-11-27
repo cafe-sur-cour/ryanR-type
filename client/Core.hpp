@@ -12,7 +12,7 @@
 #include <thread>
 #include "../common/ECS/resourceManager/ResourceManager.hpp"
 #include "ClientNetwork.hpp"
-#include "graphicals/IWindow.hpp"
+#include "../libs/Multimedia/IWindow.hpp"
 #include "gsm/machine/GameStateMachine.hpp"
 
 class Core {
