@@ -10,6 +10,7 @@
 
 #include "ISerializer.hpp"
 
+namespace pm {
 class LittleEndianSerialization : public ISerializer {
     public:
         LittleEndianSerialization();
@@ -27,5 +28,6 @@ class LittleEndianSerialization : public ISerializer {
     protected:
     private:
 };
+} // namespace pm
 
 #endif /* !LITTLEENDIANSERIALIZATION_HPP_ */

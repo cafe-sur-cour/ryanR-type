@@ -41,7 +41,7 @@ public:
 
     virtual void onClientConnected(int idClient) = 0;
     virtual void onClientDisconnected(int idClient) = 0;
-    virtual void onPacketReceived(int idClient, const IPacketManager &packet) = 0;
+    virtual void onPacketReceived(int idClient, const pm::IPacketManager &packet) = 0;
 
     virtual void processConnections() = 0;
     virtual void processIncomingPackets() = 0;

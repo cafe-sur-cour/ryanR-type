@@ -81,8 +81,8 @@ void rserv::Server::loadPacketLibrary() {
             "[Server] Cannot get createPacketInstance symbol",
             err::ServerError::LIBRARY_LOAD_FAILED);
     }
-    _packet = std::shared_ptr<IPacketManager>
-        (reinterpret_cast<IPacketManager *>(createPacket()));
+    _packet = std::shared_ptr<pm::IPacketManager>
+        (reinterpret_cast<pm::IPacketManager *>(createPacket()));
     if (!_packet) {
         throw err::ServerError(
             "[Server] Creating packet instance failed",

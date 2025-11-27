@@ -15,7 +15,7 @@
 #include "../../common/DLLoader/LoaderType.hpp"
 #include "../../common/Error/PacketError.hpp"
 
-PacketManager::PacketManager(uint32_t seqNumber) {
+pm::PacketManager::PacketManager(uint32_t seqNumber) {
     this->_magicNumber = MAGIC_NUMBER;
     this->_idClient = 0;
     this->_sequenceNumber = seqNumber;
@@ -32,31 +32,31 @@ PacketManager::PacketManager(uint32_t seqNumber) {
 
     this->_packetHandlers = {
         {CONNECTION_CLIENT_PACKET, std::bind(
-            &PacketManager::buildConnectionPacket,
+            &pm::PacketManager::buildConnectionPacket,
             this, std::placeholders::_1)},
         {ACCEPTATION_PACKET, std::bind(
-            &PacketManager::buildAcceptationPacket,
+            &pm::PacketManager::buildAcceptationPacket,
             this, std::placeholders::_1)},
         {DISCONNECTION_PACKET, std::bind(
-            &PacketManager::buildDisconnectionPacket,
+            &pm::PacketManager::buildDisconnectionPacket,
             this, std::placeholders::_1)},
         {EVENT_PACKET, std::bind(
-            &PacketManager::buildEventPacket,
+            &pm::PacketManager::buildEventPacket,
             this, std::placeholders::_1)}
     };
 
     this->_packetReceived = {
         {CONNECTION_CLIENT_PACKET, std::bind(
-            &PacketManager::parseConnectionPacket,
+            &pm::PacketManager::parseConnectionPacket,
             this, std::placeholders::_1)},
         {ACCEPTATION_PACKET, std::bind(
-            &PacketManager::parseAcceptationPacket,
+            &pm::PacketManager::parseAcceptationPacket,
             this, std::placeholders::_1)},
         {DISCONNECTION_PACKET, std::bind(
-            &PacketManager::parseDisconnectionPacket,
+            &pm::PacketManager::parseDisconnectionPacket,
             this, std::placeholders::_1)},
         {EVENT_PACKET, std::bind(
-            &PacketManager::parseEventPacket,
+            &pm::PacketManager::parseEventPacket,
             this, std::placeholders::_1)}
     };
 
@@ -68,7 +68,7 @@ PacketManager::PacketManager(uint32_t seqNumber) {
     };
 }
 
-PacketManager::~PacketManager() {
+pm::PacketManager::~PacketManager() {
     if (this->_serializer) {
         this->_serializer.reset();
     }
@@ -76,55 +76,55 @@ PacketManager::~PacketManager() {
 
 
 
-uint8_t PacketManager::getMagicNumber() const {
+uint8_t pm::PacketManager::getMagicNumber() const {
     return this->_magicNumber;
 }
 
-uint32_t PacketManager::getLength() const {
+uint32_t pm::PacketManager::getLength() const {
     return this->_length;
 }
 
-uint32_t PacketManager::getSequenceNumber() const {
+uint32_t pm::PacketManager::getSequenceNumber() const {
     return this->_sequenceNumber;
 }
 
-uint8_t PacketManager::getType() const {
+uint8_t pm::PacketManager::getType() const {
     return this->_type;
 }
 
-std::vector<uint64_t> PacketManager::getPayload() const {
+std::vector<uint64_t> pm::PacketManager::getPayload() const {
     return this->_payload;
 }
 
-uint8_t PacketManager::getIdClient() const {
+uint8_t pm::PacketManager::getIdClient() const {
     return this->_idClient;
 }
 
 
 
-void PacketManager::setType(uint8_t type) {
+void pm::PacketManager::setType(uint8_t type) {
     this->_type = type;
 }
 
-void PacketManager::setLength(uint32_t length) {
+void pm::PacketManager::setLength(uint32_t length) {
     this->_length = length;
 }
 
-void PacketManager::setSequenceNumber(uint32_t sequenceNumber) {
+void pm::PacketManager::setSequenceNumber(uint32_t sequenceNumber) {
     this->_sequenceNumber = sequenceNumber;
 }
 
-void PacketManager::setPayload(std::vector<uint64_t> payload) {
+void pm::PacketManager::setPayload(std::vector<uint64_t> payload) {
     this->_payload = payload;
 }
 
-void PacketManager::setIdClient(uint8_t idClient) {
+void pm::PacketManager::setIdClient(uint8_t idClient) {
     this->_idClient = idClient;
 }
 
 
 
-void PacketManager::reset() {
+void pm::PacketManager::reset() {
     this->_magicNumber = MAGIC_NUMBER;
     this->_idClient = 0;
     this->_sequenceNumber = 0;
@@ -140,7 +140,7 @@ void PacketManager::reset() {
 extern "C" {
 
     void *createPacketInstance(unsigned int id) {
-        return new PacketManager(id);
+        return new pm::PacketManager(id);
     }
     int getType() {
         return PACKET_MODULE;

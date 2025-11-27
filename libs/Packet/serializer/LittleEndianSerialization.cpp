@@ -8,13 +8,13 @@
 #include <vector>
 #include "LittleEndianSerialization.hpp"
 
-LittleEndianSerialization::LittleEndianSerialization() {
+pm::LittleEndianSerialization::LittleEndianSerialization() {
 }
 
-LittleEndianSerialization::~LittleEndianSerialization() {
+pm::LittleEndianSerialization::~LittleEndianSerialization() {
 }
 
-std::vector<std::uint8_t> LittleEndianSerialization::serializeUInt(
+std::vector<std::uint8_t> pm::LittleEndianSerialization::serializeUInt(
     uint64_t value) {
     std::vector<std::uint8_t> bytes;
 
@@ -25,7 +25,7 @@ std::vector<std::uint8_t> LittleEndianSerialization::serializeUInt(
     return bytes;
 }
 
-std::vector<std::uint8_t> LittleEndianSerialization::serializeULong(
+std::vector<std::uint8_t> pm::LittleEndianSerialization::serializeULong(
     uint64_t value) {
     std::vector<std::uint8_t> bytes;
 
@@ -40,7 +40,7 @@ std::vector<std::uint8_t> LittleEndianSerialization::serializeULong(
     return bytes;
 }
 
-std::vector<std::uint8_t> LittleEndianSerialization::serializeUShort(
+std::vector<std::uint8_t> pm::LittleEndianSerialization::serializeUShort(
     uint64_t value) {
     std::vector<std::uint8_t> bytes;
 
@@ -49,14 +49,14 @@ std::vector<std::uint8_t> LittleEndianSerialization::serializeUShort(
     return bytes;
 }
 
-std::vector<std::uint8_t> LittleEndianSerialization::serializeUChar(
+std::vector<std::uint8_t> pm::LittleEndianSerialization::serializeUChar(
     uint64_t value) {
     std::vector<std::uint8_t> bytes;
     bytes.push_back(static_cast<std::uint8_t>(value));
     return bytes;
 }
 
-uint64_t LittleEndianSerialization::deserializeUInt(
+uint64_t pm::LittleEndianSerialization::deserializeUInt(
     std::vector<uint8_t> data) {
     if (data.size() < 4) {
         return 0;
@@ -70,7 +70,7 @@ uint64_t LittleEndianSerialization::deserializeUInt(
     return value;
 }
 
-uint64_t LittleEndianSerialization::deserializeULong(
+uint64_t pm::LittleEndianSerialization::deserializeULong(
     std::vector<uint8_t> data) {
     if (data.size() < 8) {
         return 0;
@@ -88,7 +88,7 @@ uint64_t LittleEndianSerialization::deserializeULong(
     return value;
 }
 
-uint64_t LittleEndianSerialization::deserializeUShort(
+uint64_t pm::LittleEndianSerialization::deserializeUShort(
     std::vector<std::uint8_t> data) {
     if (data.size() < 2) {
         return 0;
@@ -100,7 +100,7 @@ uint64_t LittleEndianSerialization::deserializeUShort(
     return value;
 }
 
-uint64_t LittleEndianSerialization::deserializeUChar(
+uint64_t pm::LittleEndianSerialization::deserializeUChar(
     std::vector<std::uint8_t> data) {
     if (data.empty()) {
         return 0;

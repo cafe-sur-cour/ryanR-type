@@ -81,11 +81,11 @@ void ClientNetwork::setIp(uint32_t ip) {
     _ip = ip;
 }
 
-void ClientNetwork::sendData(const IPacketManager &data, size_t size) {
+void ClientNetwork::sendData(const pm::IPacketManager &data, size_t size) {
     this->_network->sendData(data, size);
 }
 
-IPacketManager &ClientNetwork::receiveData(
+pm::IPacketManager &ClientNetwork::receiveData(
     const IBuffer &buffer, size_t size) const {
     return this->_network->receiveData(buffer, size);
 }
@@ -141,8 +141,8 @@ void ClientNetwork::loadPacketLibrary() {
     if (!createPacket) {
         throw std::runtime_error("[ClientNetwork] Loading packet lib failed");
     }
-    _packet = std::shared_ptr<IPacketManager>
-        (reinterpret_cast<IPacketManager *>(createPacket()));
+    _packet = std::shared_ptr<pm::IPacketManager>
+        (reinterpret_cast<pm::IPacketManager *>(createPacket()));
     if (!_packet) {
         throw std::runtime_error("[ClientNetwork] Loading packet lib failed");
     }
