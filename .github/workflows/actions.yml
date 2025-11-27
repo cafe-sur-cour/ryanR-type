@@ -230,11 +230,10 @@ jobs:
             echo "::notice::New version will be $NEW_VERSION (type: $VERSION_TYPE)"
           fi
 
-  create_unix_release:
-    name: create unix release
+  build_unix_package:
+    name: build unix package
     needs: [calculate_version]
     if: ${{ github.event_name == 'push' }}
-    environment: RTYPE
     runs-on: ubuntu-latest
     steps:
       - name: CHECKOUT
@@ -242,39 +241,25 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: CREATE RELEASE ARCHIVE
+      - name: CREATE UNIX SOURCE ARCHIVE
         run: |
           mkdir -p release-package
           cp -r client server common libs scripts tests CMakeLists.txt CMakePresets.json vcpkg.json release-package/
           cd release-package
-          zip -r ../rtype-unix-${{ needs.calculate_version.outputs.version }}.zip .
+          tar -czf ../r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz .
           cd ..
 
-      - name: CREATE UNIX RELEASE
-        uses: ncipollo/release-action@v1
+      - name: UPLOAD UNIX ARTIFACT
+        uses: actions/upload-artifact@v3
         with:
-          tag: ${{ needs.calculate_version.outputs.version }}
-          allowUpdates: true
-          name: Unix Release ${{ needs.calculate_version.outputs.version }}
-          body: |
-            Automated Unix release ${{ needs.calculate_version.outputs.version }}
-            
-            **Version Type:** `${{ needs.calculate_version.outputs.version_type }}`
+          name: unix-package
+          path: r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz
+          retention-days: 1
 
-            ## 📦 Installation
-            1. Download `rtype-unix-${{ needs.calculate_version.outputs.version }}.zip`
-            2. Unzip: `unzip rtype-unix-${{ needs.calculate_version.outputs.version }}.zip`
-            3. Compile: `chmod +x scripts/compile_project.sh && ./scripts/compile_project.sh`
-          draft: false
-          prerelease: false
-          artifacts: "rtype-unix-${{ needs.calculate_version.outputs.version }}.zip"
-          artifactContentType: application/zip
-
-  create_windows_release:
-    name: create windows release
+  build_windows_package:
+    name: build windows package
     needs: [calculate_version]
     if: ${{ github.event_name == 'push' }}
-    environment: RTYPE
     runs-on: windows-latest
     steps:
       - name: CHECKOUT
@@ -293,27 +278,82 @@ jobs:
         run: |
           .\scripts\compile_project.bat
 
-      - name: CREATE RELEASE ARCHIVES
+      - name: CREATE WINDOWS BINARIES ARCHIVE
         run: |
-          Compress-Archive -Path "build\windows\bin\client\*.exe", "build\windows\bin\client\*.dll" -DestinationPath "rtype-client-windows-${{ needs.calculate_version.outputs.version }}.zip"
-          Compress-Archive -Path "build\windows\bin\server\*.exe", "build\windows\bin\server\*.dll" -DestinationPath "rtype-server-windows-${{ needs.calculate_version.outputs.version }}.zip"
+          New-Item -ItemType Directory -Force -Path "r-type-client-windows"
+          Copy-Item -Path "build\windows\bin\client\*.exe" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "build\windows\bin\client\*.dll" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
+          Compress-Archive -Path "r-type-client-windows" -DestinationPath "r-type-client-windows-${{ needs.calculate_version.outputs.version }}.zip"
+          New-Item -ItemType Directory -Force -Path "r-type-server-windows"
+          Copy-Item -Path "build\windows\bin\server\*.exe" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "build\windows\bin\server\*.dll" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
+          Compress-Archive -Path "r-type-server-windows" -DestinationPath "r-type-server-windows-${{ needs.calculate_version.outputs.version }}.zip"
 
-      - name: CREATE WINDOWS RELEASE
+      - name: UPLOAD WINDOWS CLIENT ARTIFACT
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-client-package
+          path: r-type-client-windows-${{ needs.calculate_version.outputs.version }}.zip
+          retention-days: 1
+
+      - name: UPLOAD WINDOWS SERVER ARTIFACT
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-server-package
+          path: r-type-server-windows-${{ needs.calculate_version.outputs.version }}.zip
+          retention-days: 1
+
+  create_release:
+    name: create unified release
+    needs: [calculate_version, build_unix_package, build_windows_package]
+    if: ${{ github.event_name == 'push' }}
+    environment: RTYPE
+    runs-on: ubuntu-latest
+    steps:
+      - name: CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: DOWNLOAD UNIX ARTIFACT
+        uses: actions/download-artifact@v3
+        with:
+          name: unix-package
+          path: ./artifacts
+
+      - name: DOWNLOAD WINDOWS CLIENT ARTIFACT
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-client-package
+          path: ./artifacts
+
+      - name: DOWNLOAD WINDOWS SERVER ARTIFACT
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-server-package
+          path: ./artifacts
+
+      - name: CREATE UNIFIED RELEASE
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ needs.calculate_version.outputs.version }}
           allowUpdates: true
-          name: Windows Release ${{ needs.calculate_version.outputs.version }}
+          name: Release ${{ needs.calculate_version.outputs.version }}
           body: |
-            Automated Windows release ${{ needs.calculate_version.outputs.version }}
+            Automated release ${{ needs.calculate_version.outputs.version }}
             
             **Version Type:** `${{ needs.calculate_version.outputs.version_type }}`
 
-            ## 📦 Installation
-            1. Download `rtype-windows-${{ needs.calculate_version.outputs.version }}.zip`
-            2. Unzip the archive
+            ## 📦 Windows Installation
+            1. Download `r-type-client-windows-${{ needs.calculate_version.outputs.version }}.zip` and `r-type-server-windows-${{ needs.calculate_version.outputs.version }}.zip`
+            2. Unzip the archives
             3. Run `r-type_client.exe` or `r-type_server.exe`
+
+            ## 📦 Unix Installation
+            1. Download `r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz`
+            2. Extract: `tar -xzf r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz`
+            3. Compile: `chmod +x scripts/compile_project.sh && ./scripts/compile_project.sh`
           draft: false
           prerelease: false
-          artifacts: "rtype-client-windows-${{ needs.calculate_version.outputs.version }}.zip, rtype-server-windows-${{ needs.calculate_version.outputs.version }}.zip"
-          artifactContentType: application/zip
+          artifacts: "artifacts/*"
+          artifactContentType: application/octet-stream
