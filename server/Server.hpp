@@ -8,6 +8,16 @@
 #ifndef SERVER_HPP_
     #define SERVER_HPP_
 
+#ifdef _WIN32
+    #ifndef _WIN32_WINNT
+        #define _WIN32_WINNT 0x0601
+    #endif
+
+    #ifndef WIN32_LEAN_AND_MEAN
+        #define WIN32_LEAN_AND_MEAN
+    #endif
+#endif
+
 #include <memory>
 #include "IServer.hpp"
 #include "ServerConfig.hpp"

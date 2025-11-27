@@ -29,6 +29,13 @@ target_link_libraries(${MULTIMEDIA_LIB_NAME}
     PUBLIC SFML::Graphics SFML::Window SFML::System SFML::Audio
 )
 
+# On Windows, disable optimization for the large generated file to prevent compiler crash
+if(MSVC)
+    set_source_files_properties(${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
+        PROPERTIES COMPILE_FLAGS "/Od /bigobj"
+    )
+endif()
+
 add_custom_command(TARGET ${MULTIMEDIA_LIB_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${MULTIMEDIA_LIB_NAME}> ${CMAKE_SOURCE_DIR}/libraries/
 )
