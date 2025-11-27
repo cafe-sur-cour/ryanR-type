@@ -22,7 +22,9 @@ void Signal::signalHandler(int signum) {
 
 void Signal::setupSignalHandlers() {
     signal(SIGINT, signalHandler);
+#ifndef _WIN32
     signal(SIGQUIT, signalHandler);
     signal(SIGTSTP, signalHandler);
+#endif
     signal(SIGTERM, signalHandler);
 }
