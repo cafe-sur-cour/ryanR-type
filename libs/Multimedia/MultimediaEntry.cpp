@@ -14,18 +14,19 @@
 #include "../../common/DLLoader/LoaderType.hpp"
 
 extern "C" {
-    void* createWindow(const char* title, size_t width, size_t height) {
-        return new SfmlWindow(std::string(title), width, height);
+    void* createWindow() {
+        return new SfmlWindow("R-Type", 1920, 1080);
     }
 
-    void* createEvent(void* resourceManager, gfx::IWindow* window) {
+    void* createEvent(void* resourceManager, void* window) {
         auto resManager = static_cast<ecs::ResourceManager*>(resourceManager);
+        auto rawWindow = static_cast<gfx::IWindow*>(window);
         auto sharedResManager = std::shared_ptr<ecs::ResourceManager>(
             resManager,
             [](ecs::ResourceManager*){}
         );
         auto sharedWindow = std::shared_ptr<gfx::IWindow>(
-            window,
+            rawWindow,
             [](gfx::IWindow*){}
         );
         return new SfmlEvent(sharedResManager, sharedWindow);
