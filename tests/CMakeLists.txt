@@ -1,7 +1,7 @@
 find_package(GTest REQUIRED)
 
 add_executable(ServerConfigTests server/ServerConfigTests.cpp)
-target_link_libraries(ServerConfigTests ServerCore GTest::gtest GTest::gtest_main)
+target_link_libraries(ServerConfigTests r-type_server_lib GTest::gtest GTest::gtest_main)
 add_test(NAME ServerConfigTests COMMAND ServerConfigTests)
 
 add_executable(ECSTests common/ECSTests.cpp)
@@ -97,7 +97,7 @@ target_link_libraries(PacketTests Packet Buffer GTest::gtest GTest::gtest_main)
 add_test(NAME PacketTests COMMAND PacketTests)
 
 add_executable(UtilsFuncTests server/utils/utils-func-test.cpp)
-target_link_libraries(UtilsFuncTests ServerCore GTest::gtest GTest::gtest_main)
+target_link_libraries(UtilsFuncTests r-type_server_lib GTest::gtest GTest::gtest_main)
 add_test(NAME UtilsFuncTests COMMAND UtilsFuncTests)
 add_executable(SerializerTests server/packet/serializer/SerializerTests.cpp)
 target_link_libraries(SerializerTests Packet GTest::gtest GTest::gtest_main)

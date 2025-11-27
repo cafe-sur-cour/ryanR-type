@@ -1,4 +1,4 @@
-target_sources(${SERVER_BIN_NAME} PUBLIC
+target_sources(${SERVER_LIB_NAME} PUBLIC
     IGameState.hpp
     AGameState.hpp
     AGameState.cpp
