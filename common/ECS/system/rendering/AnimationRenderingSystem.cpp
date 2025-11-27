@@ -11,7 +11,7 @@
 #include "../../component/permanent/AnimationComponent.hpp"
 #include "../../component/permanent/TransformComponent.hpp"
 #include "../../view/View.hpp"
-#include "../../../../client/graphicals/IWindow.hpp"
+#include "../../../../libs/Multimedia/IWindow.hpp"
 
 namespace ecs {
 
