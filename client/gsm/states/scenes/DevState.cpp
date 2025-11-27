@@ -12,6 +12,10 @@
 #include "../../../../common/ECS/component/permanent/VelocityComponent.hpp"
 #include "../../../../common/ECS/component/permanent/ColliderComponent.hpp"
 #include "../../../../common/ECS/system/rendering/AnimationRenderingSystem.hpp"
+#include "../../../../common/ECS/component/permanent/HitboxRenderComponent.hpp"
+#include "../../../../common/ECS/component/permanent/RectangleRenderComponent.hpp"
+#include "../../../../common/ECS/system/rendering/HitboxRenderingSystem.hpp"
+#include "../../../../common/ECS/system/rendering/RectangleRenderingSystem.hpp"
 #include "../../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
 #include "../../../../common/ECS/component/tags/ObstacleTag.hpp"
 
@@ -33,12 +37,18 @@ DevState::DevState(
     _prefabManager = std::make_shared<EntityPrefabManager>();
     auto animationRenderingSystem =
         std::make_shared<ecs::AnimationRenderingSystem>();
+    auto hitboxRenderingSystem =
+        std::make_shared<ecs::HitboxRenderingSystem>();
+    auto rectangleRenderingSystem =
+        std::make_shared<ecs::RectangleRenderingSystem>();
 
     _systemManager->addSystem(_inputToVelocitySystem);
     _systemManager->addSystem(_movementSystem);
     _systemManager->addSystem(_inputSystem);
     _systemManager->addSystem(_spriteRenderingSystem);
     _systemManager->addSystem(animationRenderingSystem);
+    _systemManager->addSystem(hitboxRenderingSystem);
+    _systemManager->addSystem(rectangleRenderingSystem);
 }
 
 void DevState::enter() {
@@ -55,7 +65,10 @@ void DevState::enter() {
     _prefabManager->registerPrefab("player", playerPrefab);
     size_t playerId = _prefabManager->createEntityFromPrefab
         ("player", _registry);
-    (void)playerId;
+
+    auto playerHitboxRender = std::make_shared<ecs::HitboxRenderComponent>(
+        gfx::color_t{0, 0, 255}, 2.0f);
+    _registry->addComponent(playerId, playerHitboxRender);
 
     // Create a static wall entity
     size_t wallId = _registry->createEntity();
@@ -72,6 +85,14 @@ void DevState::enter() {
     _registry->addComponent(wallId, wallTransform);
     _registry->addComponent(wallId, wallCollider);
     _registry->addComponent(wallId, std::make_shared<ecs::ObstacleTag>());
+
+    auto wallHitboxRender = std::make_shared<ecs::HitboxRenderComponent>(
+        gfx::color_t{0, 255, 0}, 2.0f);
+    _registry->addComponent(wallId, wallHitboxRender);
+
+    auto wallRectangleRender = std::make_shared<ecs::RectangleRenderComponent>(
+        gfx::color_t{0, 255, 0}, 100.0f, 100.0f);
+    _registry->addComponent(wallId, wallRectangleRender);
 
     // Create a bouncing projectile
     size_t projectileId = _registry->createEntity();
@@ -92,6 +113,15 @@ void DevState::enter() {
     _registry->addComponent(projectileId, projectileVelocity);
     _registry->addComponent(projectileId, projectileCollider);
 
+    auto projectileHitboxRender = std::make_shared<ecs::HitboxRenderComponent>(
+        gfx::color_t{255, 0, 0}, 2.0f);
+    _registry->addComponent(projectileId, projectileHitboxRender);
+
+    auto projectileRectangleRender =
+        std::make_shared<ecs::RectangleRenderComponent>(
+        gfx::color_t{255, 0, 0}, 20.0f, 20.0f);
+    _registry->addComponent(projectileId, projectileRectangleRender);
+
     size_t projectileId2 = _registry->createEntity();
     auto projectileTransform2 = std::make_shared<ecs::TransformComponent>(
         math::Vector2f(110.0f, 200.0f),
@@ -109,6 +139,15 @@ void DevState::enter() {
     _registry->addComponent(projectileId2, projectileTransform2);
     _registry->addComponent(projectileId2, projectileVelocity2);
     _registry->addComponent(projectileId2, projectileCollider2);
+
+    auto projectileHitboxRender2 = std::make_shared<ecs::HitboxRenderComponent>(
+        gfx::color_t{255, 0, 0}, 2.0f);
+    _registry->addComponent(projectileId2, projectileHitboxRender2);
+
+    auto projectileRectangleRender2 =
+        std::make_shared<ecs::RectangleRenderComponent>(
+        gfx::color_t{255, 0, 0}, 20.0f, 20.0f);
+    _registry->addComponent(projectileId2, projectileRectangleRender2);
 }
 
 void DevState::update(float deltaTime) {
@@ -123,59 +162,6 @@ void DevState::update(float deltaTime) {
 }
 
 void DevState::render() {
-    // Draw the player's hitbox
-    auto view = _registry->view<
-        ecs::PlayerTag, ecs::TransformComponent, ecs::ColliderComponent>();
-    for (auto entityId : view) {
-        auto transform =
-            _registry->getComponent<ecs::TransformComponent>(entityId);
-        auto colliders =
-            _registry->getComponents<ecs::ColliderComponent>(entityId);
-        if (!transform || colliders.empty()) continue;
-
-        auto collider = colliders[0];
-        math::FRect hitbox = collider->getHitbox(transform->getPosition());
-
-        gfx::color_t red = {0, 0, 255};
-        _resourceManager->get<gfx::IWindow>()->drawRectangleOutline(
-            red,
-            {static_cast<size_t>(hitbox.getLeft()),
-                static_cast<size_t>(hitbox.getTop())},
-            {static_cast<size_t>(hitbox.getWidth()),
-                static_cast<size_t>(hitbox.getHeight())});
-        break;
-    }
-
-    // Draw static walls (entities with Transform and Collider but no PlayerTag)
-    auto wallView =
-        _registry->view<ecs::TransformComponent, ecs::ColliderComponent>();
-    for (auto entityId : wallView) {
-        if (_registry->hasComponent<ecs::PlayerTag>(entityId)) continue;
-
-        auto transform =
-            _registry->getComponent<ecs::TransformComponent>(entityId);
-        auto colliders =
-            _registry->getComponents<ecs::ColliderComponent>(entityId);
-        if (!transform || colliders.empty()) continue;
-
-        auto collider = colliders[0];
-        math::FRect hitbox = collider->getHitbox(transform->getPosition());
-
-        gfx::color_t color;
-        if (collider->getType() == ecs::CollisionType::Bounce) {
-            color = {255, 0, 0};  // Red for bouncing entities
-        } else {
-            color = {0, 255, 0};  // Green for solid entities
-        }
-
-        _resourceManager->get<gfx::IWindow>()->drawRectangleOutline(
-            color,
-            {static_cast<size_t>(hitbox.getLeft()),
-                static_cast<size_t>(hitbox.getTop())},
-            {static_cast<size_t>(hitbox.getWidth()),
-                static_cast<size_t>(hitbox.getHeight())});
-    }
-
     _resourceManager->get<gfx::IWindow>()->display();
     _resourceManager->get<gfx::IWindow>()->clear();
 }
