@@ -14,6 +14,8 @@
 #include "../../common/Signal/Signal.hpp"
 
 Core::Core() {
+    Signal::setupSignalHandlers();
+
     this->_resourceManager = initRessourcesManager();
 
     this->_gsm = std::make_shared<gsm::GameStateMachine>();
@@ -35,7 +37,8 @@ Core::~Core() {
 void Core::run() {
     auto previousTime = std::chrono::high_resolution_clock::now();
 
-    while (this->_resourceManager->get<gfx::IWindow>()->isOpen()) {
+    while (this->_resourceManager->get<gfx::IWindow>()->isOpen()
+        && !Signal::stopFlag) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<float> deltaTime = currentTime - previousTime;
         previousTime = currentTime;
