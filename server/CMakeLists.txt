@@ -1,6 +1,6 @@
-set(SERVER_LIB_NAME r-type_server_lib)
+set(SERVER_CORE_LIB ServerCore)
 
-add_library(${SERVER_LIB_NAME} OBJECT
+add_library(${SERVER_CORE_LIB} STATIC
     IServer.hpp
     ServerConfig.hpp
     ServerConfig.cpp
@@ -14,7 +14,7 @@ add_library(${SERVER_LIB_NAME} OBJECT
 
 find_package(asio CONFIG REQUIRED)
 
-target_link_libraries(${SERVER_LIB_NAME}
+target_link_libraries(${SERVER_CORE_LIB}
     PUBLIC
         ECS
         ERROR
@@ -25,7 +25,7 @@ target_link_libraries(${SERVER_LIB_NAME}
         asio::asio
 )
 
-target_include_directories(${SERVER_LIB_NAME}
+target_include_directories(${SERVER_CORE_LIB}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
@@ -40,7 +40,9 @@ add_executable(${SERVER_BIN_NAME}
 
 target_link_libraries(${SERVER_BIN_NAME}
     PRIVATE
-        ${SERVER_LIB_NAME}
+        ${SERVER_CORE_LIB}
+        ServerGSM
+        ServerInit
 )
 
 add_custom_command(TARGET ${SERVER_BIN_NAME} POST_BUILD
