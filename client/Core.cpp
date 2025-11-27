@@ -11,6 +11,7 @@
 #include <memory>
 #include "initRessourcesManager/initRessourcesManager.hpp"
 #include "gsm/states/scenes/DevState.hpp"
+#include "../../common/Signal/Signal.hpp"
 
 Core::Core() {
     this->_resourceManager = initRessourcesManager();
@@ -42,6 +43,8 @@ void Core::run() {
         this->_gsm->update(deltaTime.count());
         this->_gsm->render();
     }
+
+    Signal::stopFlag = 1;
 }
 
 void Core::initNetwork() {
