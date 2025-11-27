@@ -14,7 +14,7 @@
 #include "TextureManager.hpp"
 #include "FontManager.hpp"
 #include "../../common/types/FRect.hpp"
-#include "AssetManager.hpp"
+#include "AssetManager/AssetManager.hpp"
 
 class SfmlWindow : public gfx::IWindow {
     public:

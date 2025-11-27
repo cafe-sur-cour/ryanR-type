@@ -13,7 +13,7 @@
 #include <unordered_set>
 #include <memory>
 #include <string>
-#include "AssetManager.hpp"
+#include "AssetManager/AssetManager.hpp"
 
 namespace gfx {
 
