@@ -20,6 +20,7 @@ namespace constants {
     constexpr float EPS = 1e-6f;
     constexpr float PLAYER_BASE_SPEED = 300.0f;
     constexpr float GAMEPAD_DEADZONE = 0.15f;
+    constexpr int SMOOTH_MOVEMENT_ITERATIONS = 4;
 }
 
 #endif /* !CONSTANTS_HPP_ */
