@@ -49,10 +49,10 @@ void DevState::enter() {
         32.0f,   // frameHeight
         0.0f,    // startWidth
         96.0f,    // startHeight
-        4        // frameCount
-    );
+        4);        // frameCount
     _prefabManager->registerPrefab("player", playerPrefab);
-    size_t playerId = _prefabManager->createEntityFromPrefab("player", _registry);
+    size_t playerId = _prefabManager->createEntityFromPrefab
+        ("player", _registry);
     (void)playerId;
 }
 

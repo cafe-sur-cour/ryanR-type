@@ -6,6 +6,7 @@
 */
 
 #include "APrefab.hpp"
+#include <memory>
 
 size_t APrefab::instantiate(const std::shared_ptr<ecs::ARegistry> &registry) {
     return registry->createEntity();
