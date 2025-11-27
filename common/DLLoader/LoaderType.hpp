@@ -18,13 +18,11 @@ enum ModuleType_t{
 
 typedef ModuleType_t (*getTypeFunc_t)();
 
-typedef void *(*createWindow_t)();
-typedef void *(*createEvent_t)(void*, void*);
 typedef void *(*createNetworkLib_t)();
 typedef void *(*createBuffer_t)();
 typedef void *(*createPacket_t)();
 
-#define pathLoad "./librairies"
+#define pathLoad "./libraries"
 
 #ifdef _WIN32
     #define multimediaLib "libMultimedia.dll"
