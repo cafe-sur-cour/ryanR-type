@@ -13,8 +13,11 @@
 #include "../component/temporary/InputIntentComponent.hpp"
 #include "../component/permanent/TransformComponent.hpp"
 #include "../component/permanent/VelocityComponent.hpp"
-#include "../component/permanent/SpriteComponent.hpp"
-#include "../component/permanent/AnimationComponent.hpp"
+#include "../component/rendering/SpriteComponent.hpp"
+#include "../component/rendering/AnimationComponent.hpp"
+#include "../component/permanent/ColliderComponent.hpp"
+#include "../component/rendering/HitboxRenderComponent.hpp"
+#include "../component/rendering/RectangleRenderComponent.hpp"
 
 namespace ecs {
 
@@ -136,6 +139,12 @@ template class View<MovementIntentComponent, TransformComponent>;
 template class View<VelocityComponent, TransformComponent>;
 template class View<SpriteComponent, TransformComponent>;
 template class View<AnimationComponent, TransformComponent>;
+template class View<TransformComponent, ColliderComponent>;
+template class View<PlayerTag, TransformComponent, ColliderComponent>;
+template class View<HitboxRenderComponent, TransformComponent>;
+template class View<RectangleRenderComponent, TransformComponent>;
+template class View<
+HitboxRenderComponent, TransformComponent, ColliderComponent>;
 template class Group<PlayerTag>;
 template class Group<MovementIntentComponent>;
 template class Group<PlayerTag, MovementIntentComponent>;

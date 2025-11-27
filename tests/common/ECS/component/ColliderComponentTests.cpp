@@ -14,30 +14,59 @@ using namespace ecs;
 
 TEST(ColliderComponentTest, DefaultConstructor) {
     ColliderComponent comp;
-    math::FRect expectedHitbox(0.0f, 0.0f, 0.0f, 0.0f);
-    EXPECT_FLOAT_EQ(comp.getHitbox().getLeft(), expectedHitbox.getLeft());
-    EXPECT_FLOAT_EQ(comp.getHitbox().getTop(), expectedHitbox.getTop());
-    EXPECT_FLOAT_EQ(comp.getHitbox().getWidth(), expectedHitbox.getWidth());
-    EXPECT_FLOAT_EQ(comp.getHitbox().getHeight(), expectedHitbox.getHeight());
+    math::Vector2f entityPos(0.0f, 0.0f);
+    math::FRect hitbox = comp.getHitbox(entityPos);
+    EXPECT_FLOAT_EQ(hitbox.getLeft(), 0.0f);
+    EXPECT_FLOAT_EQ(hitbox.getTop(), 0.0f);
+    EXPECT_FLOAT_EQ(hitbox.getWidth(), 0.0f);
+    EXPECT_FLOAT_EQ(hitbox.getHeight(), 0.0f);
+    EXPECT_EQ(comp.getType(), CollisionType::Solid);
 }
 
 TEST(ColliderComponentTest, ParameterizedConstructor) {
-    math::FRect hitbox(1.0f, 2.0f, 10.0f, 20.0f);
-    ColliderComponent comp(hitbox);
-    EXPECT_FLOAT_EQ(comp.getHitbox().getLeft(), 1.0f);
-    EXPECT_FLOAT_EQ(comp.getHitbox().getTop(), 2.0f);
-    EXPECT_FLOAT_EQ(comp.getHitbox().getWidth(), 10.0f);
-    EXPECT_FLOAT_EQ(comp.getHitbox().getHeight(), 20.0f);
+    math::Vector2f offset(1.0f, 2.0f);
+    math::Vector2f size(10.0f, 20.0f);
+    ColliderComponent comp(offset, size, CollisionType::Bounce);
+    math::Vector2f entityPos(0.0f, 0.0f);
+    math::FRect hitbox = comp.getHitbox(entityPos);
+    EXPECT_FLOAT_EQ(hitbox.getLeft(), 1.0f);
+    EXPECT_FLOAT_EQ(hitbox.getTop(), 2.0f);
+    EXPECT_FLOAT_EQ(hitbox.getWidth(), 10.0f);
+    EXPECT_FLOAT_EQ(hitbox.getHeight(), 20.0f);
+    EXPECT_EQ(comp.getType(), CollisionType::Bounce);
 }
 
-TEST(ColliderComponentTest, HitboxGettersAndSetters) {
+TEST(ColliderComponentTest, OffsetAndSizeGettersAndSetters) {
     ColliderComponent comp;
-    math::FRect newHitbox(5.0f, 5.0f, 15.0f, 25.0f);
-    comp.setHitbox(newHitbox);
-    EXPECT_FLOAT_EQ(comp.getHitbox().getLeft(), 5.0f);
-    EXPECT_FLOAT_EQ(comp.getHitbox().getTop(), 5.0f);
-    EXPECT_FLOAT_EQ(comp.getHitbox().getWidth(), 15.0f);
-    EXPECT_FLOAT_EQ(comp.getHitbox().getHeight(), 25.0f);
+    math::Vector2f newOffset(5.0f, 5.0f);
+    math::Vector2f newSize(15.0f, 25.0f);
+    comp.setOffset(newOffset);
+    comp.setSize(newSize);
+    math::Vector2f entityPos(0.0f, 0.0f);
+    math::FRect hitbox = comp.getHitbox(entityPos);
+    EXPECT_FLOAT_EQ(hitbox.getLeft(), 5.0f);
+    EXPECT_FLOAT_EQ(hitbox.getTop(), 5.0f);
+    EXPECT_FLOAT_EQ(hitbox.getWidth(), 15.0f);
+    EXPECT_FLOAT_EQ(hitbox.getHeight(), 25.0f);
+}
+
+TEST(ColliderComponentTest, TypeGettersAndSetters) {
+    ColliderComponent comp;
+    EXPECT_EQ(comp.getType(), CollisionType::Solid);  // Default
+    comp.setType(CollisionType::Trigger);
+    EXPECT_EQ(comp.getType(), CollisionType::Trigger);
+}
+
+TEST(ColliderComponentTest, RelativePosition) {
+    math::Vector2f offset(10.0f, 20.0f);
+    math::Vector2f size(30.0f, 40.0f);
+    ColliderComponent comp(offset, size);
+    math::Vector2f entityPos(100.0f, 200.0f);
+    math::FRect hitbox = comp.getHitbox(entityPos);
+    EXPECT_FLOAT_EQ(hitbox.getLeft(), 110.0f);  // 100 + 10
+    EXPECT_FLOAT_EQ(hitbox.getTop(), 220.0f);   // 200 + 20
+    EXPECT_FLOAT_EQ(hitbox.getWidth(), 30.0f);
+    EXPECT_FLOAT_EQ(hitbox.getHeight(), 40.0f);
 }
 
 TEST(ColliderComponentTest, InheritsFromAComponent) {

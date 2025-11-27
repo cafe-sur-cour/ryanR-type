@@ -44,6 +44,18 @@ std::shared_ptr<T> ARegistry::getComponent(size_t entityId) const
 }
 
 template <typename T>
+std::vector<std::shared_ptr<T>> ARegistry::getComponents(size_t entityId) const
+{
+    std::string typeName = typeid(T).name();
+    auto it = _components.find(typeName);
+    if (it != _components.end()) {
+        auto array = std::static_pointer_cast<AComponentArray<T>>(it->second);
+        return array->getAll(entityId);
+    }
+    return {};
+}
+
+template <typename T>
 void ARegistry::removeComponent(size_t entityId)
 {
     const char *typeName = typeid(T).name();
