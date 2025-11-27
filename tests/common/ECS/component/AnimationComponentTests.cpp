@@ -18,9 +18,11 @@ TEST(AnimationComponentTest, ConstructorWithParameters) {
     float frameWidth = 64.0f;
     float frameHeight = 64.0f;
     int frameCount = 4;
+    float startWidth = 0.0f;
+    float startHeight = 0.0f;
     float speed = 0.2f;
 
-    AnimationComponent comp(texturePath, frameWidth, frameHeight, frameCount, speed);
+    AnimationComponent comp(texturePath, frameWidth, frameHeight, frameCount, startWidth, startHeight, speed);
 
     EXPECT_EQ(comp.getTexturePath(), texturePath);
     EXPECT_FLOAT_EQ(comp.getFrameWidth(), frameWidth);
@@ -30,10 +32,12 @@ TEST(AnimationComponentTest, ConstructorWithParameters) {
     EXPECT_EQ(comp.getCurrentFrame(), 0);
     EXPECT_TRUE(comp.isValid());
     EXPECT_TRUE(comp.getChrono().isRunning()); // Should start automatically
+    EXPECT_FLOAT_EQ(comp.getStartWidth(), startWidth);
+    EXPECT_FLOAT_EQ(comp.getStartHeight(), startHeight);
 }
 
 TEST(AnimationComponentTest, DefaultFrameRect) {
-    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3);
+    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f);
 
     const math::FRect& rect = comp.getFrameRect();
     EXPECT_FLOAT_EQ(rect.getLeft(), 0.0f);
@@ -43,7 +47,7 @@ TEST(AnimationComponentTest, DefaultFrameRect) {
 }
 
 TEST(AnimationComponentTest, SetFrameRect) {
-    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3);
+    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f);
     math::FRect newRect(64.0f, 32.0f, 32.0f, 32.0f);
 
     comp.setFrameRect(newRect);
@@ -56,7 +60,7 @@ TEST(AnimationComponentTest, SetFrameRect) {
 }
 
 TEST(AnimationComponentTest, CurrentFrameGetterAndSetter) {
-    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3);
+    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f);
 
     EXPECT_EQ(comp.getCurrentFrame(), 0);
 
@@ -68,7 +72,7 @@ TEST(AnimationComponentTest, CurrentFrameGetterAndSetter) {
 }
 
 TEST(AnimationComponentTest, AnimationSpeedGetterAndSetter) {
-    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 0.1f);
+    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f);
 
     EXPECT_FLOAT_EQ(comp.getAnimationSpeed(), 0.1f);
 
@@ -77,7 +81,7 @@ TEST(AnimationComponentTest, AnimationSpeedGetterAndSetter) {
 }
 
 TEST(AnimationComponentTest, ChronoAccess) {
-    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3);
+    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f);
 
     // Chrono should be running from constructor
     EXPECT_TRUE(comp.getChrono().isRunning());
@@ -89,54 +93,45 @@ TEST(AnimationComponentTest, ChronoAccess) {
 
 TEST(AnimationComponentTest, IsValid) {
     // Valid component
-    AnimationComponent validComp("texture.png", 32.0f, 32.0f, 3);
+    AnimationComponent validComp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f);
     EXPECT_TRUE(validComp.isValid());
 
     // Invalid: zero frame count
-    AnimationComponent invalidCount("texture.png", 32.0f, 32.0f, 0);
+    AnimationComponent invalidCount("texture.png", 32.0f, 32.0f, 0, 0.0f, 0.0f);
     EXPECT_FALSE(invalidCount.isValid());
 
     // Invalid: zero width
-    AnimationComponent invalidWidth("texture.png", 0.0f, 32.0f, 3);
+    AnimationComponent invalidWidth("texture.png", 0.0f, 32.0f, 3, 0.0f, 0.0f);
     EXPECT_FALSE(invalidWidth.isValid());
 
     // Invalid: zero height
-    AnimationComponent invalidHeight("texture.png", 32.0f, 0.0f, 3);
+    AnimationComponent invalidHeight("texture.png", 32.0f, 0.0f, 3, 0.0f, 0.0f);
     EXPECT_FALSE(invalidHeight.isValid());
 }
 
 TEST(AnimationComponentTest, TexturePathGetter) {
     std::string path = "assets/animations/walk.png";
-    AnimationComponent comp(path, 32.0f, 32.0f, 4);
+    AnimationComponent comp(path, 32.0f, 32.0f, 4, 0.0f, 0.0f);
 
     EXPECT_EQ(comp.getTexturePath(), path);
 }
 
 TEST(AnimationComponentTest, InheritsFromAComponent) {
-    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3);
+    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f);
     EXPECT_EQ(comp.getState(), ComponentState::Permanent);
 }
 
-TEST(AnimationComponentTest, FrameCalculation) {
-    AnimationComponent comp("texture.png", 64.0f, 64.0f, 4);
+TEST(AnimationComponentTest, StartWidthAndHeightGetterAndSetter) {
+    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 10.0f, 20.0f);
 
-    // Initially frame 0
-    comp.setCurrentFrame(0);
-    math::FRect expectedRect0(0.0f, 0.0f, 64.0f, 64.0f);
-    comp.setFrameRect(expectedRect0);
-    EXPECT_FLOAT_EQ(comp.getFrameRect().getLeft(), 0.0f);
+    EXPECT_FLOAT_EQ(comp.getStartWidth(), 10.0f);
+    EXPECT_FLOAT_EQ(comp.getStartHeight(), 20.0f);
 
-    // Frame 1
-    comp.setCurrentFrame(1);
-    math::FRect expectedRect1(64.0f, 0.0f, 64.0f, 64.0f);
-    comp.setFrameRect(expectedRect1);
-    EXPECT_FLOAT_EQ(comp.getFrameRect().getLeft(), 64.0f);
+    comp.setStartWidth(15.0f);
+    comp.setStartHeight(25.0f);
 
-    // Frame 2
-    comp.setCurrentFrame(2);
-    math::FRect expectedRect2(128.0f, 0.0f, 64.0f, 64.0f);
-    comp.setFrameRect(expectedRect2);
-    EXPECT_FLOAT_EQ(comp.getFrameRect().getLeft(), 128.0f);
+    EXPECT_FLOAT_EQ(comp.getStartWidth(), 15.0f);
+    EXPECT_FLOAT_EQ(comp.getStartHeight(), 25.0f);
 }
 
 int main(int argc, char **argv) {

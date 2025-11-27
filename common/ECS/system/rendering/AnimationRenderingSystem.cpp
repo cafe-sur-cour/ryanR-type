@@ -2,11 +2,12 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** AnimationRenderingSystemy
+** AnimationRenderingSystem
 */
 
 #include <memory>
-#include "AnimationRenderingSystemy.hpp"
+#include <iostream>
+#include "AnimationRenderingSystem.hpp"
 #include "../../component/permanent/AnimationComponent.hpp"
 #include "../../component/permanent/TransformComponent.hpp"
 #include "../../view/View.hpp"
@@ -14,10 +15,10 @@
 
 namespace ecs {
 
-AnimationRenderingSystemy::AnimationRenderingSystemy() {
+AnimationRenderingSystem::AnimationRenderingSystem() {
 }
 
-void AnimationRenderingSystemy::update(std::shared_ptr<ResourceManager>
+void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
     resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) {
 
     (void)deltaTime;
@@ -30,15 +31,14 @@ void AnimationRenderingSystemy::update(std::shared_ptr<ResourceManager>
 
         if (!animation || !transform || !animation->isValid())
             continue;
-
         float elapsedTime = animation->getChrono().getElapsedSeconds();
         int frameIndex = static_cast<int>(elapsedTime /
             animation->getAnimationSpeed()) % animation->getFrameCount();
         animation->setCurrentFrame(frameIndex);
 
-        float frameX = static_cast<float>(frameIndex) *
-            animation->getFrameWidth();
-        float frameY = 0.0f;
+        float frameX = animation->getStartWidth() +
+            static_cast<float>(frameIndex) * animation->getFrameWidth();
+        float frameY = animation->getStartHeight();
         math::FRect frameRect(frameX, frameY, animation->getFrameWidth(),
                             animation->getFrameHeight());
         animation->setFrameRect(frameRect);
