@@ -44,6 +44,10 @@ add_executable(ObstacleTagTests common/ECS/component/ObstacleTagTests.cpp)
 target_link_libraries(ObstacleTagTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME ObstacleTagTests COMMAND ObstacleTagTests)
 
+add_executable(ControllableTagTests common/ECS/component/ControllableTagTests.cpp)
+target_link_libraries(ControllableTagTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME ControllableTagTests COMMAND ControllableTagTests)
+
 add_executable(MovementIntentComponentTests common/ECS/component/MovementIntentComponentTests.cpp)
 target_link_libraries(MovementIntentComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME MovementIntentComponentTests COMMAND MovementIntentComponentTests)
@@ -59,6 +63,10 @@ add_test(NAME SpriteComponentTests COMMAND SpriteComponentTests)
 add_executable(AnimationComponentTests common/ECS/component/AnimationComponentTests.cpp)
 target_link_libraries(AnimationComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME AnimationComponentTests COMMAND AnimationComponentTests)
+
+add_executable(ColliderComponentTests common/ECS/component/ColliderComponentTests.cpp)
+target_link_libraries(ColliderComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME ColliderComponentTests COMMAND ColliderComponentTests)
 
 add_executable(RegistryTests common/ECS/RegistryTests.cpp)
 target_link_libraries(RegistryTests ECS GTest::gtest GTest::gtest_main)
