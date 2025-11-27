@@ -1,7 +1,6 @@
-set(SERVER_BIN_NAME r-type_server)
+set(SERVER_LIB_NAME r-type_server_lib)
 
-add_executable(${SERVER_BIN_NAME}
-    main.cpp
+add_library(${SERVER_LIB_NAME}
     IServer.hpp
     ServerConfig.hpp
     ServerConfig.cpp
@@ -13,17 +12,10 @@ add_executable(${SERVER_BIN_NAME}
     Core.hpp
 )
 
-add_subdirectory(gsm)
-add_subdirectory(initRessourcesManager)
-
 find_package(asio CONFIG REQUIRED)
 
-target_include_directories(${SERVER_BIN_NAME}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_link_libraries(${SERVER_BIN_NAME}
-    PRIVATE
+target_link_libraries(${SERVER_LIB_NAME}
+    PUBLIC
         ECS
         ERROR
         SIGNAL
@@ -31,6 +23,20 @@ target_link_libraries(${SERVER_BIN_NAME}
         Network
         Packet
         asio::asio
+)
+
+add_subdirectory(gsm)
+add_subdirectory(initRessourcesManager)
+
+set(SERVER_BIN_NAME r-type_server)
+
+add_executable(${SERVER_BIN_NAME}
+    main.cpp
+)
+
+target_link_libraries(${SERVER_BIN_NAME}
+    PRIVATE
+        ${SERVER_LIB_NAME}
 )
 
 add_custom_command(TARGET ${SERVER_BIN_NAME} POST_BUILD
