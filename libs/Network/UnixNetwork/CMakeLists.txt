@@ -1,4 +1,3 @@
-target_sources(${NETWORK_LIB_NAME} PUBLIC
-    UnixNetwork.hpp
+add_library(${NETWORK_LIB_NAME} SHARED
     UnixNetwork.cpp
 )
