@@ -1,21 +1,5 @@
 set(CLIENT_BIN_NAME r-type_client)
 
-set(ASSETS_DIR ${CMAKE_SOURCE_DIR}/assets)
-
-add_executable(generate_assets ../scripts/generate_embedded_assets.cpp)
-target_include_directories(generate_assets PRIVATE ${CMAKE_SOURCE_DIR}/client/graphicals/assets)
-
-add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp ${CMAKE_BINARY_DIR}/EmbeddedAssets.hpp
-    COMMAND generate_assets ${ASSETS_DIR} ${CMAKE_BINARY_DIR}/EmbeddedAssets
-    DEPENDS generate_assets
-)
-
-set_source_files_properties(${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp PROPERTIES GENERATED TRUE)
-set_source_files_properties(${CMAKE_BINARY_DIR}/EmbeddedAssets.hpp PROPERTIES GENERATED TRUE)
-
-add_custom_target(generate_embedded_assets DEPENDS ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp ${CMAKE_BINARY_DIR}/EmbeddedAssets.hpp)
-
 add_executable(${CLIENT_BIN_NAME}
     main.cpp
     ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
@@ -25,6 +9,8 @@ add_executable(${CLIENT_BIN_NAME}
     ClientNetwork.hpp
     Core.cpp
 )
+
+add_dependencies(${CLIENT_BIN_NAME} generate_embedded_assets)
 
 find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
 
