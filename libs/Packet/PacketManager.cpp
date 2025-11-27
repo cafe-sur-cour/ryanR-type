@@ -21,7 +21,8 @@ PacketManager::PacketManager(uint32_t seqNumber) {
     this->_sequenceNumber = seqNumber;
     this->_type = NO_OP_PACKET;
     this->_length = 0;
-    this->_endOfPacket = (FIRST_EOP_CHAR << 8) | SECOND_EOP_CHAR;
+    this->_firstEndOfPacket = FIRST_EOP_CHAR;
+    this->_secondEndOfPacket = SECOND_EOP_CHAR;
     this->_payload = std::vector<uint64_t>();
     this->_serializer = std::make_shared<BigEndianSerialization>();
     if (!this->_serializer) {
@@ -129,7 +130,8 @@ void PacketManager::reset() {
     this->_sequenceNumber = 0;
     this->_type = NO_OP_PACKET;
     this->_length = 0;
-    this->_endOfPacket = (FIRST_EOP_CHAR << 8) | SECOND_EOP_CHAR;
+    this->_firstEndOfPacket = FIRST_EOP_CHAR;
+    this->_secondEndOfPacket = SECOND_EOP_CHAR;
     this->_payload.clear();
 }
 

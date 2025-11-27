@@ -68,7 +68,8 @@ class PacketManager : public IPacketManager {
         uint32_t _sequenceNumber;
         uint8_t _type;
         uint32_t _length;
-        uint16_t _endOfPacket;
+        uint8_t _firstEndOfPacket;
+        uint8_t _secondEndOfPacket;
         std::vector<uint64_t> _payload;
         std::shared_ptr<ISerializer> _serializer;
         std::map<uint8_t, std::function<std::vector<uint8_t>(std::vector<uint64_t>)>> _packetHandlers;
