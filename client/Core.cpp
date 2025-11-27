@@ -18,22 +18,20 @@ Core::Core() {
     std::string multimediaPath = std::string(pathLoad) + "/" + multimediaLib;
 
     if (!this->_windowLoader->Open(multimediaPath.c_str())) {
-        const char* error = this->_windowLoader->Error();
+        std::string error = this->_windowLoader->Error();
         std::string errorMsg = "Failed to load libMultimedia for window: ";
         errorMsg += multimediaPath;
-        if (error) {
-            errorMsg += " - Error: ";
-            errorMsg += error;
+        if (!error.empty()) {
+            errorMsg += " - Error: " + error;
         }
         throw std::runtime_error(errorMsg);
     }
     if (!this->_eventLoader->Open(multimediaPath.c_str())) {
-        const char* error = this->_eventLoader->Error();
+        std::string error = this->_eventLoader->Error();
         std::string errorMsg = "Failed to load libMultimedia for events: ";
         errorMsg += multimediaPath;
-        if (error) {
-            errorMsg += " - Error: ";
-            errorMsg += error;
+        if (!error.empty()) {
+            errorMsg += " - Error: " + error;
         }
         throw std::runtime_error(errorMsg);
     }
