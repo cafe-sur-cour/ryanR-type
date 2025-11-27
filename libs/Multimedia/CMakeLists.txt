@@ -8,9 +8,12 @@ add_library(${MULTIMEDIA_LIB_NAME} SHARED
     SfmlKeyMappings.cpp
     TextureManager.cpp
     FontManager.cpp
-    AssetManager.cpp
     MultimediaEntry.cpp
+    ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
+    ${CMAKE_SOURCE_DIR}/common/types/FRect.cpp
 )
+
+add_subdirectory(AssetManager)
 
 if(TARGET generate_embedded_assets)
     add_dependencies(${MULTIMEDIA_LIB_NAME} generate_embedded_assets)

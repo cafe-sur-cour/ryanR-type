@@ -27,7 +27,7 @@ if(BUILD_CLIENT)
     set(ASSETS_DIR ${CMAKE_SOURCE_DIR}/assets)
 
     add_executable(generate_assets scripts/generate_embedded_assets.cpp)
-    target_include_directories(generate_assets PRIVATE ${CMAKE_SOURCE_DIR}/client/graphicals/assets)
+    target_include_directories(generate_assets PRIVATE ${CMAKE_SOURCE_DIR}/libs/Multimedia/AssetManager)
 
     add_custom_command(
         OUTPUT ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp ${CMAKE_BINARY_DIR}/EmbeddedAssets.hpp
