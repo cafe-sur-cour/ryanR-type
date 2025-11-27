@@ -12,7 +12,7 @@
 #include "../../../common/ECS/component/permanent/TransformComponent.hpp"
 #include "../../../common/ECS/component/permanent/VelocityComponent.hpp"
 #include "../../../common/ECS/component/permanent/SpeedComponent.hpp"
-#include "../../../common/ECS/component/permanent/AnimationComponent.hpp"
+#include "../../../common/ECS/component/rendering/AnimationComponent.hpp"
 #include "../../../common/ECS/component/tags/PlayerTag.hpp"
 
 using namespace ecs;
