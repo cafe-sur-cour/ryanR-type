@@ -37,6 +37,7 @@ class Core
         std::thread _networkThread;
 
         void initNetwork();
+        void initLibraries();
         void networkLoop();
 };
 

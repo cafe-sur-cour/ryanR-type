@@ -20,33 +20,7 @@
 Core::Core() {
     Signal::setupSignalHandlers();
 
-    std::string multimediaPath = std::string(pathLoad) + "/" + multimediaLib;
-
-    _windowLoader = std::make_shared<DLLoader<gfx::createWindow_t>>(
-        DLLoader<gfx::createWindow_t>()
-    );
-    _eventLoader = std::make_shared<DLLoader<gfx::createEvent_t>>(
-        DLLoader<gfx::createEvent_t>()
-    );
-
-    if (!this->_windowLoader->Open(multimediaPath.c_str())) {
-        std::string error = this->_windowLoader->Error();
-        std::string errorMsg = "Failed to load libMultimedia for window: ";
-        errorMsg += multimediaPath;
-        if (!error.empty()) {
-            errorMsg += " - Error: " + error;
-        }
-        throw std::runtime_error(errorMsg);
-    }
-    if (!this->_eventLoader->Open(multimediaPath.c_str())) {
-        std::string error = this->_eventLoader->Error();
-        std::string errorMsg = "Failed to load libMultimedia for events: ";
-        errorMsg += multimediaPath;
-        if (!error.empty()) {
-            errorMsg += " - Error: " + error;
-        }
-        throw std::runtime_error(errorMsg);
-    }
+    initLibraries();
 
     this->_resourceManager = initRessourcesManager(
         this->_windowLoader,
@@ -89,6 +63,36 @@ void Core::run() {
 
 void Core::initNetwork() {
     this->_clientNetwork = std::make_shared<ClientNetwork>();
+}
+
+void Core::initLibraries() {
+    std::string multimediaPath = std::string(pathLoad) + "/" + multimediaLib;
+
+    _windowLoader = std::make_shared<DLLoader<gfx::createWindow_t>>(
+        DLLoader<gfx::createWindow_t>()
+    );
+    _eventLoader = std::make_shared<DLLoader<gfx::createEvent_t>>(
+        DLLoader<gfx::createEvent_t>()
+    );
+
+    if (!this->_windowLoader->Open(multimediaPath.c_str())) {
+        std::string error = this->_windowLoader->Error();
+        std::string errorMsg = "Failed to load libMultimedia for window: ";
+        errorMsg += multimediaPath;
+        if (!error.empty()) {
+            errorMsg += " - Error: " + error;
+        }
+        throw std::runtime_error(errorMsg);
+    }
+    if (!this->_eventLoader->Open(multimediaPath.c_str())) {
+        std::string error = this->_eventLoader->Error();
+        std::string errorMsg = "Failed to load libMultimedia for events: ";
+        errorMsg += multimediaPath;
+        if (!error.empty()) {
+            errorMsg += " - Error: " + error;
+        }
+        throw std::runtime_error(errorMsg);
+    }
 }
 
 void Core::networkLoop() {
