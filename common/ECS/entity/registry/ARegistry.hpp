@@ -45,9 +45,10 @@ class ARegistry : public IRegistry, public std::enable_shared_from_this<ARegistr
         size_t getMaxEntityId() const;
 
         void removeAllComponentsWithState(ComponentState state) override;
-
+        size_t createEntity() override;
     protected:
     private:
+        size_t _nextEntityId;
         std::unordered_map<std::string, std::shared_ptr<IComponentArray>> _components;
 };
 

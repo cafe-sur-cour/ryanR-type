@@ -9,7 +9,7 @@
 
 namespace ecs {
 
-ARegistry::ARegistry() {
+ARegistry::ARegistry() : _nextEntityId(1) {
 }
 
 ARegistry::~ARegistry() {
@@ -30,6 +30,9 @@ size_t ARegistry::getMaxEntityId() const {
         }
     }
     return maxId;
+}
+size_t ARegistry::createEntity() {
+    return _nextEntityId++;
 }
 
 }  // namespace ecs
