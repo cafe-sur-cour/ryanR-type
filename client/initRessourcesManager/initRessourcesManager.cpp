@@ -26,11 +26,10 @@ std::shared_ptr<ecs::ResourceManager> initRessourcesManager(
         "createWindow"
     );
     if (!createWindowFunc) {
-        const char* error = windowLoader->Error();
+        std::string error = windowLoader->Error();
         std::string errorMsg = "Failed to load createWindow from libMultimedia";
-        if (error) {
-            errorMsg += " - Error: ";
-            errorMsg += error;
+        if (!error.empty()) {
+            errorMsg += " - Error: " + error;
         }
         throw std::runtime_error(errorMsg);
     }
@@ -38,11 +37,10 @@ std::shared_ptr<ecs::ResourceManager> initRessourcesManager(
 
     gfx::createEvent_t createEventFunc = eventLoader->getSymbol("createEvent");
     if (!createEventFunc) {
-        const char* error = eventLoader->Error();
+        std::string error = eventLoader->Error();
         std::string errorMsg = "Failed to load createEvent from libMultimedia";
-        if (error) {
-            errorMsg += " - Error: ";
-            errorMsg += error;
+        if (!error.empty()) {
+            errorMsg += " - Error: " + error;
         }
         throw std::runtime_error(errorMsg);
     }
