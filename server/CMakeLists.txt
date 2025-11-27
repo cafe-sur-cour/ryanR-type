@@ -1,6 +1,6 @@
 set(SERVER_LIB_NAME r-type_server_lib)
 
-add_library(${SERVER_LIB_NAME} STATIC
+add_library(${SERVER_LIB_NAME} OBJECT
     IServer.hpp
     ServerConfig.hpp
     ServerConfig.cpp
@@ -15,7 +15,7 @@ add_library(${SERVER_LIB_NAME} STATIC
 find_package(asio CONFIG REQUIRED)
 
 target_link_libraries(${SERVER_LIB_NAME}
-    PRIVATE
+    PUBLIC
         ECS
         ERROR
         SIGNAL
@@ -41,13 +41,6 @@ add_executable(${SERVER_BIN_NAME}
 target_link_libraries(${SERVER_BIN_NAME}
     PRIVATE
         ${SERVER_LIB_NAME}
-        ECS
-        ERROR
-        SIGNAL
-        DLLoader
-        Network
-        Packet
-        asio::asio
 )
 
 add_custom_command(TARGET ${SERVER_BIN_NAME} POST_BUILD
