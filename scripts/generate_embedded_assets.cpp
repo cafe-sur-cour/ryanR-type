@@ -6,7 +6,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cstdio>
-#include "../../../client/graphicals/assets/AssetManager.hpp"
+#include "../../../libs/Multimedia/AssetManager/AssetManager.hpp"
 
 namespace fs = std::filesystem;
 
@@ -57,8 +57,8 @@ int main(int argc, char* argv[]) {
         }
         f << "#ifndef EMBEDDED_ASSETS_HPP_\n";
         f << "#define EMBEDDED_ASSETS_HPP_\n\n";
-        f << "#include \"../../../client/graphicals/assets/"
-             "AssetManager.hpp\"\n";
+        f << "#include \"../../libs/Multimedia/"
+             "AssetManager/AssetManager.hpp\"\n";
         f << "#include <unordered_map>\n";
         f << "#include <string>\n";
         f << "#include <vector>\n\n";

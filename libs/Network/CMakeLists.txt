@@ -21,5 +21,5 @@ elseif(UNIX)
 endif()
 
 add_custom_command(TARGET ${NETWORK_LIB_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${NETWORK_LIB_NAME}> ${CMAKE_SOURCE_DIR}/librairies/
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${NETWORK_LIB_NAME}> ${CMAKE_SOURCE_DIR}/libraries/
 )

@@ -42,5 +42,18 @@ if [ -z "$target" ] || [ "$target" == "all" ]; then
     exit $?
 fi
 
+if [ "$target" == "server" ] || [ "$target" == "r-type_server" ]; then
+    echo "Building server only (BUILD_CLIENT=OFF)..."
+    if [ "$build_tests" = true ]; then
+        cmake --preset "release-unix" -DBUILD_TESTS=ON -DBUILD_CLIENT=OFF
+    else
+        cmake --preset "release-unix" -DBUILD_TESTS=OFF -DBUILD_CLIENT=OFF
+    fi
+    if [ $? -ne 0 ]; then
+        echo "CMake reconfiguration failed."
+        exit 1
+    fi
+fi
+
 cmake --build --preset "release-unix" --target "$target"
 exit $?
