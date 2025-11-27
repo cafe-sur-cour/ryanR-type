@@ -17,7 +17,7 @@ namespace ecs {
 enum class CollisionType {
     None,
     Solid,
-    Push,
+    Bounce,
     Trigger
 };
 

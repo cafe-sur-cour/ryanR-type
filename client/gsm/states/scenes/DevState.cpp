@@ -13,6 +13,7 @@
 #include "../../../../common/ECS/component/permanent/ColliderComponent.hpp"
 #include "../../../../common/ECS/system/rendering/AnimationRenderingSystem.hpp"
 #include "../../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
+#include "../../../../common/ECS/component/tags/ObstacleTag.hpp"
 
 namespace gsm {
 
@@ -42,7 +43,7 @@ DevState::DevState(
 
 void DevState::enter() {
     auto playerPrefab = std::make_shared<PlayerPrefab>(
-        100.0f,  // x
+        500.0f,  // x
         100.0f,  // y
         3.0f,    // scale
         "assets/sprites/frog_spritesheet.png",  // animation path
@@ -70,6 +71,44 @@ void DevState::enter() {
 
     _registry->addComponent(wallId, wallTransform);
     _registry->addComponent(wallId, wallCollider);
+    _registry->addComponent(wallId, std::make_shared<ecs::ObstacleTag>());
+
+    // Create a bouncing projectile
+    size_t projectileId = _registry->createEntity();
+    auto projectileTransform = std::make_shared<ecs::TransformComponent>(
+        math::Vector2f(100.0f, 250.0f),
+        0.0f,
+        math::Vector2f(1.0f, 1.0f));
+
+    auto projectileVelocity = std::make_shared<ecs::VelocityComponent>(
+        math::Vector2f(200.0f, 0.0f));
+
+    auto projectileCollider = std::make_shared<ecs::ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f),
+        math::Vector2f(20.0f, 20.0f),
+        ecs::CollisionType::Bounce);
+
+    _registry->addComponent(projectileId, projectileTransform);
+    _registry->addComponent(projectileId, projectileVelocity);
+    _registry->addComponent(projectileId, projectileCollider);
+
+    size_t projectileId2 = _registry->createEntity();
+    auto projectileTransform2 = std::make_shared<ecs::TransformComponent>(
+        math::Vector2f(110.0f, 200.0f),
+        0.0f,
+        math::Vector2f(1.0f, 1.0f));
+
+    auto projectileVelocity2 = std::make_shared<ecs::VelocityComponent>(
+        math::Vector2f(150.0f / 2.0f, 75.0f / 2.0f));
+
+    auto projectileCollider2 = std::make_shared<ecs::ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f),
+        math::Vector2f(20.0f, 20.0f),
+        ecs::CollisionType::Bounce);
+
+    _registry->addComponent(projectileId2, projectileTransform2);
+    _registry->addComponent(projectileId2, projectileVelocity2);
+    _registry->addComponent(projectileId2, projectileCollider2);
 }
 
 void DevState::update(float deltaTime) {
@@ -122,9 +161,15 @@ void DevState::render() {
         auto collider = colliders[0];
         math::FRect hitbox = collider->getHitbox(transform->getPosition());
 
-        gfx::color_t green = {0, 255, 0};
+        gfx::color_t color;
+        if (collider->getType() == ecs::CollisionType::Bounce) {
+            color = {255, 0, 0}; // Red for bouncing entities
+        } else {
+            color = {0, 255, 0}; // Green for solid entities
+        }
+
         _resourceManager->get<gfx::IWindow>()->drawRectangle(
-            green,
+            color,
             {static_cast<size_t>(hitbox.getLeft()),
                 static_cast<size_t>(hitbox.getTop())},
             {static_cast<size_t>(hitbox.getWidth()),
