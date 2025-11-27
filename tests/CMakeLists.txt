@@ -60,6 +60,10 @@ add_executable(AnimationComponentTests common/ECS/component/AnimationComponentTe
 target_link_libraries(AnimationComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME AnimationComponentTests COMMAND AnimationComponentTests)
 
+add_executable(ColliderComponentTests common/ECS/component/ColliderComponentTests.cpp)
+target_link_libraries(ColliderComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME ColliderComponentTests COMMAND ColliderComponentTests)
+
 add_executable(RegistryTests common/ECS/RegistryTests.cpp)
 target_link_libraries(RegistryTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME RegistryTests COMMAND RegistryTests)
