@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 #include "../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "GraphicalInputProvider.hpp"
 #include "../../common/DLLoader/DLLoader.hpp"
 #include "../../common/DLLoader/LoaderType.hpp"
 #include "../../libs/Multimedia/IEvent.hpp"
@@ -53,6 +54,9 @@ std::shared_ptr<ecs::ResourceManager> initRessourcesManager(
 
     resourceManager->add<gfx::IWindow>(window);
     resourceManager->add<gfx::IEvent>(event);
+
+    auto inputProvider = std::make_shared<ecs::GraphicalInputProvider>(event);
+    resourceManager->add<ecs::IInputProvider>(inputProvider);
 
     return resourceManager;
 }
