@@ -9,6 +9,7 @@
 #define AComponentArray_TPP_
 
 #include "AComponentArray.hpp"
+#include <algorithm>
 
 namespace ecs {
 
@@ -24,36 +25,47 @@ template <typename T>
 void AComponentArray<T>::add(size_t entityId, std::shared_ptr<T> component) {
     if (entityId >= static_cast<size_t>(_components.size()))
         _components.resize(entityId + 1);
-    _components[entityId] = component;
+    _components[entityId].push_back(component);
 }
 
 template <typename T>
 std::shared_ptr<T> AComponentArray<T>::get(size_t entityId) const {
+    if (entityId < static_cast<size_t>(_components.size()) && !_components[entityId].empty())
+        return _components[entityId][0];
+    return nullptr;
+}
+
+template <typename T>
+std::vector<std::shared_ptr<T>> AComponentArray<T>::getAll(size_t entityId) const {
     if (entityId < static_cast<size_t>(_components.size()))
         return _components[entityId];
-    return nullptr;
+    return {};
 }
 
 template <typename T>
 void AComponentArray<T>::remove(size_t entityId) {
     if (entityId < static_cast<size_t>(_components.size()))
-        _components[entityId] = nullptr;
+        _components[entityId].clear();
 }
 
 template <typename T>
 bool AComponentArray<T>::has(size_t entityId) const
 {
     if (entityId < static_cast<size_t>(_components.size()))
-        return _components[entityId] != nullptr;
+        return !_components[entityId].empty();
     return false;
 }
 
 template <typename T>
 void AComponentArray<T>::removeAllComponentsWithState(ComponentState state) {
-    for (auto& comp : _components) {
-        if (comp && comp->getState() == state) {
-            comp = nullptr;
-        }
+    for (auto& entityComponents : _components) {
+        entityComponents.erase(
+            std::remove_if(entityComponents.begin(), entityComponents.end(),
+                [state](const std::shared_ptr<T>& comp) {
+                    return comp && comp->getState() == state;
+                }),
+            entityComponents.end()
+        );
     }
 }
 
@@ -62,6 +74,6 @@ size_t AComponentArray<T>::getMaxEntityId() const {
     return _components.size();
 }
 
-} // namespace ecs
+}  // namespace ecs
 
 #endif /* !AComponentArray_TPP_ */

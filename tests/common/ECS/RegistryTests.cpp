@@ -163,6 +163,54 @@ TEST(ARegistryTest, Group_BasicFunctionality) {
     EXPECT_EQ(foundEntityId, 0);
 }
 
+TEST(ARegistryTest, GetComponents_SingleComponent) {
+    auto registry = std::make_shared<ARegistry>();
+    registry->registerComponent<TransformComponent>();
+
+    auto transform = std::make_shared<TransformComponent>();
+    registry->addComponent(0, transform);
+
+    auto components = registry->getComponents<TransformComponent>(0);
+    EXPECT_EQ(components.size(), 1);
+    EXPECT_EQ(components[0], transform);
+}
+
+TEST(ARegistryTest, GetComponents_MultipleComponentsSameType) {
+    auto registry = std::make_shared<ARegistry>();
+    registry->registerComponent<TransformComponent>();
+
+    auto transform1 = std::make_shared<TransformComponent>(math::Vector2f(10.0f, 20.0f));
+    auto transform2 = std::make_shared<TransformComponent>(math::Vector2f(30.0f, 40.0f));
+    registry->addComponent(0, transform1);
+    registry->addComponent(0, transform2);
+
+    auto components = registry->getComponents<TransformComponent>(0);
+    EXPECT_EQ(components.size(), 2);
+    EXPECT_EQ(components[0], transform1);
+    EXPECT_EQ(components[1], transform2);
+}
+
+TEST(ARegistryTest, GetComponents_NoComponents) {
+    auto registry = std::make_shared<ARegistry>();
+    registry->registerComponent<TransformComponent>();
+
+    auto components = registry->getComponents<TransformComponent>(0);
+    EXPECT_EQ(components.size(), 0);
+}
+
+TEST(ARegistryTest, GetComponent_ReturnsFirstWhenMultiple) {
+    auto registry = std::make_shared<ARegistry>();
+    registry->registerComponent<TransformComponent>();
+
+    auto transform1 = std::make_shared<TransformComponent>(math::Vector2f(10.0f, 20.0f));
+    auto transform2 = std::make_shared<TransformComponent>(math::Vector2f(30.0f, 40.0f));
+    registry->addComponent(0, transform1);
+    registry->addComponent(0, transform2);
+
+    auto firstComponent = registry->getComponent<TransformComponent>(0);
+    EXPECT_EQ(firstComponent, transform1);  // Should return the first one
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

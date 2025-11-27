@@ -23,6 +23,7 @@ class AComponentArray : public IComponentArray {
 
         void add(size_t entityId, std::shared_ptr<T> component);
         std::shared_ptr<T> get(size_t entityId) const;
+        std::vector<std::shared_ptr<T>> getAll(size_t entityId) const;
         void remove(size_t entityId);
         bool has(size_t entityId) const;
 
@@ -30,7 +31,7 @@ class AComponentArray : public IComponentArray {
         size_t getMaxEntityId() const override;
 
     private:
-        std::vector<std::shared_ptr<T>> _components;
+        std::vector<std::vector<std::shared_ptr<T>>> _components;
 };
 
 } // namespace ecs
