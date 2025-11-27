@@ -41,9 +41,23 @@ jobs:
       - name: CHECKOUT
         uses: actions/checkout@v4
 
+      - name: SETUP PYTHON
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          cache: 'pip'
+
+      - name: CACHE CPPLINT
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-cpplint-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-cpplint-
+            ${{ runner.os }}-pip-
+
       - name: INSTALL CPP LINTER
         run: |
-          apt update && apt install -y python3-pip
           pip install cpplint
           chmod +x ./scripts/cpp_style_checker.sh
 
@@ -68,14 +82,43 @@ jobs:
     steps:
       - name: CHECKOUT
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
-      - name: INSTALL DEPENDENCIES
+      - name: CACHE SYSTEM PACKAGES
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
+          version: 1.0
+
+      - name: CACHE VCPKG
+        uses: actions/cache@v4
+        with:
+          path: |
+            vcpkg
+            ~/.cache/vcpkg
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
+
+      - name: INSTALL VCPKG
         run: |
-          sudo apt install -y cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          ./bootstrap-vcpkg.sh
-          echo "VCPKG_ROOT=$(pwd)" >> $GITHUB_ENV
+          if [ ! -d "vcpkg" ]; then
+            git clone https://github.com/Microsoft/vcpkg.git
+            cd vcpkg
+            ./bootstrap-vcpkg.sh
+          fi
+          echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
+
+      - name: CACHE CMAKE BUILD
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/unix
+            ~/.cache/cmake
+          key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-
 
       - name: RUN COMPILATION
         run: |
@@ -89,13 +132,37 @@ jobs:
     steps:
       - name: CHECKOUT
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
-      - name: INSTALL DEPENDENCIES
+      - name: CACHE VCPKG
+        uses: actions/cache@v4
+        with:
+          path: |
+            vcpkg
+            ~\AppData\Local\vcpkg
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
+
+      - name: INSTALL VCPKG
         run: |
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          .\bootstrap-vcpkg.bat
-          echo "VCPKG_ROOT=$PWD" >> $env:GITHUB_ENV
+          if (-not (Test-Path "vcpkg")) {
+            git clone https://github.com/Microsoft/vcpkg.git
+            cd vcpkg
+            .\bootstrap-vcpkg.bat
+          }
+          echo "VCPKG_ROOT=$PWD\vcpkg" >> $env:GITHUB_ENV
+
+      - name: CACHE CMAKE BUILD
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/windows
+            ~\AppData\Local\cmake
+          key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-
 
       - name: RUN COMPILATION
         run: |
@@ -112,14 +179,44 @@ jobs:
     steps:
       - name: CHECKOUT
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
-      - name: INSTALL DEPENDENCIES
+      - name: CACHE SYSTEM PACKAGES
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
+          version: 1.0
+
+      - name: CACHE VCPKG
+        uses: actions/cache@v4
+        with:
+          path: |
+            vcpkg
+            ~/.cache/vcpkg
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
+
+      - name: INSTALL VCPKG
         run: |
-          sudo apt install -y cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          ./bootstrap-vcpkg.sh
-          echo "VCPKG_ROOT=$(pwd)" >> $GITHUB_ENV
+          if [ ! -d "vcpkg" ]; then
+            git clone https://github.com/Microsoft/vcpkg.git
+            cd vcpkg
+            ./bootstrap-vcpkg.sh
+          fi
+          echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
+
+      - name: CACHE CMAKE BUILD WITH TESTS
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/unix
+            ~/.cache/cmake
+          key: ${{ runner.os }}-cmake-tests-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-tests-
+            ${{ runner.os }}-cmake-
 
       - name: RUN COMPILATION
         run: |
@@ -250,7 +347,7 @@ jobs:
           cd ..
 
       - name: UPLOAD UNIX ARTIFACT
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: unix-package
           path: r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz
@@ -267,12 +364,36 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: INSTALL DEPENDENCIES
+      - name: CACHE VCPKG
+        uses: actions/cache@v4
+        with:
+          path: |
+            vcpkg
+            ~\AppData\Local\vcpkg
+          key: ${{ runner.os }}-vcpkg-release-${{ hashFiles('**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-release-
+            ${{ runner.os }}-vcpkg-
+
+      - name: INSTALL VCPKG
         run: |
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          .\bootstrap-vcpkg.bat
-          echo "VCPKG_ROOT=$PWD" >> $env:GITHUB_ENV
+          if (-not (Test-Path "vcpkg")) {
+            git clone https://github.com/Microsoft/vcpkg.git
+            cd vcpkg
+            .\bootstrap-vcpkg.bat
+          }
+          echo "VCPKG_ROOT=$PWD\vcpkg" >> $env:GITHUB_ENV
+
+      - name: CACHE CMAKE BUILD
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/windows
+            ~\AppData\Local\cmake
+          key: ${{ runner.os }}-cmake-release-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-release-
+            ${{ runner.os }}-cmake-
 
       - name: BUILD PROJECT
         run: |
@@ -290,14 +411,14 @@ jobs:
           Compress-Archive -Path "r-type-server-windows" -DestinationPath "r-type-server-windows-${{ needs.calculate_version.outputs.version }}.zip"
 
       - name: UPLOAD WINDOWS CLIENT ARTIFACT
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-client-package
           path: r-type-client-windows-${{ needs.calculate_version.outputs.version }}.zip
           retention-days: 1
 
       - name: UPLOAD WINDOWS SERVER ARTIFACT
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-server-package
           path: r-type-server-windows-${{ needs.calculate_version.outputs.version }}.zip
@@ -316,19 +437,19 @@ jobs:
           fetch-depth: 0
 
       - name: DOWNLOAD UNIX ARTIFACT
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: unix-package
           path: ./artifacts
 
       - name: DOWNLOAD WINDOWS CLIENT ARTIFACT
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-client-package
           path: ./artifacts
 
       - name: DOWNLOAD WINDOWS SERVER ARTIFACT
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-server-package
           path: ./artifacts
