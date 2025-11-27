@@ -10,7 +10,7 @@
 #include <memory>
 #include "../../../types/Vector2f.hpp"
 #include "../../../constants.hpp"
-#include "../../component/tags/PlayerTag.hpp"
+#include "../../component/tags/ControllableTag.hpp"
 #include "../../component/temporary/InputIntentComponent.hpp"
 #include "../../../../client/graphicals/IEvent.hpp"
 
@@ -26,7 +26,7 @@ void MovementInputSystem::update(
     (void)resourceManager;
     (void)deltaTime;
 
-    auto view = registry->view<PlayerTag>();
+    auto view = registry->view<ControllableTag>();
     math::Vector2f movementDirection = getMovementDirection(resourceManager);
 
     for (auto entityId : view) {

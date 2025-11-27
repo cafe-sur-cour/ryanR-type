@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include "../../../../common/ECS/component/tags/PlayerTag.hpp"
+#include "../../../../common/ECS/component/tags/ControllableTag.hpp"
 #include "../../../../client/graphicals/IWindow.hpp"
 #include "../../../../client/graphicals/IEvent.hpp"
 #include "../../../../common/ECS/component/permanent/SpriteComponent.hpp"

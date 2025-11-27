@@ -14,6 +14,7 @@
 #include "../../ECS/component/permanent/SpeedComponent.hpp"
 #include "../../ECS/component/permanent/SpriteComponent.hpp"
 #include "../../ECS/component/permanent/AnimationComponent.hpp"
+#include "../../ECS/component/tags/ControllableTag.hpp"
 #include "../../ECS/component/tags/PlayerTag.hpp"
 #include "../../types/Vector2f.hpp"
 #include <memory>
@@ -48,6 +49,7 @@ class PlayerPrefab : public APrefab {
             registry->addComponent(entity,
                 std::make_shared<ecs::AnimationComponent>(_animationPath, _frameWidth, _frameHeight, _frameCount, _startWidth, _startHeight));
             registry->addComponent(entity, std::make_shared<ecs::PlayerTag>());
+            registry->addComponent(entity, std::make_shared<ecs::ControllableTag>());
             return entity;
         }
 
