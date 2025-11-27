@@ -18,33 +18,9 @@
 #include "../../common/DLLoader/DLLoader.hpp"
 
 Core::Core() {
-    std::string multimediaPath = std::string(pathLoad) + "/" + multimediaLib;
+    Signal::setupSignalHandlers();
 
-    _windowLoader = std::make_shared<DLLoader<gfx::createWindow_t>>(
-        DLLoader<gfx::createWindow_t>()
-    );
-    _eventLoader = std::make_shared<DLLoader<gfx::createEvent_t>>(
-        DLLoader<gfx::createEvent_t>()
-    );
-
-    if (!this->_windowLoader->Open(multimediaPath.c_str())) {
-        std::string error = this->_windowLoader->Error();
-        std::string errorMsg = "Failed to load libMultimedia for window: ";
-        errorMsg += multimediaPath;
-        if (!error.empty()) {
-            errorMsg += " - Error: " + error;
-        }
-        throw std::runtime_error(errorMsg);
-    }
-    if (!this->_eventLoader->Open(multimediaPath.c_str())) {
-        std::string error = this->_eventLoader->Error();
-        std::string errorMsg = "Failed to load libMultimedia for events: ";
-        errorMsg += multimediaPath;
-        if (!error.empty()) {
-            errorMsg += " - Error: " + error;
-        }
-        throw std::runtime_error(errorMsg);
-    }
+    initLibraries();
 
     this->_resourceManager = initRessourcesManager(
         this->_windowLoader,
@@ -72,7 +48,8 @@ Core::~Core() {
 void Core::run() {
     auto previousTime = std::chrono::high_resolution_clock::now();
 
-    while (this->_resourceManager->get<gfx::IWindow>()->isOpen()) {
+    while (this->_resourceManager->get<gfx::IWindow>()->isOpen()
+        && !Signal::stopFlag) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<float> deltaTime = currentTime - previousTime;
         previousTime = currentTime;
@@ -86,6 +63,36 @@ void Core::run() {
 
 void Core::initNetwork() {
     this->_clientNetwork = std::make_shared<ClientNetwork>();
+}
+
+void Core::initLibraries() {
+    std::string multimediaPath = std::string(pathLoad) + "/" + multimediaLib;
+
+    _windowLoader = std::make_shared<DLLoader<gfx::createWindow_t>>(
+        DLLoader<gfx::createWindow_t>()
+    );
+    _eventLoader = std::make_shared<DLLoader<gfx::createEvent_t>>(
+        DLLoader<gfx::createEvent_t>()
+    );
+
+    if (!this->_windowLoader->Open(multimediaPath.c_str())) {
+        std::string error = this->_windowLoader->Error();
+        std::string errorMsg = "Failed to load libMultimedia for window: ";
+        errorMsg += multimediaPath;
+        if (!error.empty()) {
+            errorMsg += " - Error: " + error;
+        }
+        throw std::runtime_error(errorMsg);
+    }
+    if (!this->_eventLoader->Open(multimediaPath.c_str())) {
+        std::string error = this->_eventLoader->Error();
+        std::string errorMsg = "Failed to load libMultimedia for events: ";
+        errorMsg += multimediaPath;
+        if (!error.empty()) {
+            errorMsg += " - Error: " + error;
+        }
+        throw std::runtime_error(errorMsg);
+    }
 }
 
 void Core::networkLoop() {

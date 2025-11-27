@@ -12,10 +12,11 @@
 #include "../../ECS/component/permanent/TransformComponent.hpp"
 #include "../../ECS/component/permanent/VelocityComponent.hpp"
 #include "../../ECS/component/permanent/SpeedComponent.hpp"
-#include "../../ECS/component/permanent/SpriteComponent.hpp"
-#include "../../ECS/component/permanent/AnimationComponent.hpp"
+#include "../../ECS/component/rendering/SpriteComponent.hpp"
+#include "../../ECS/component/rendering/AnimationComponent.hpp"
 #include "../../ECS/component/tags/ControllableTag.hpp"
 #include "../../ECS/component/tags/PlayerTag.hpp"
+#include "../../ECS/component/permanent/ColliderComponent.hpp"
 #include "../../types/Vector2f.hpp"
 #include <memory>
 #include <string>
@@ -50,6 +51,12 @@ class PlayerPrefab : public APrefab {
                 std::make_shared<ecs::AnimationComponent>(_animationPath, _frameWidth, _frameHeight, _frameCount, _startWidth, _startHeight));
             registry->addComponent(entity, std::make_shared<ecs::PlayerTag>());
             registry->addComponent(entity, std::make_shared<ecs::ControllableTag>());
+            auto collider = std::make_shared<ecs::ColliderComponent>(
+                math::Vector2f(0.0f, 0.0f),
+                math::Vector2f(100.0f, 100.0f),
+                ecs::CollisionType::Solid
+            );
+            registry->addComponent(entity, collider);
             return entity;
         }
 

@@ -6,13 +6,18 @@
 #include "../../../../common/ECS/component/tags/ControllableTag.hpp"
 #include "../../../../libs/Multimedia/IWindow.hpp"
 #include "../../../../libs/Multimedia/IEvent.hpp"
-#include "../../../../common/ECS/component/permanent/SpriteComponent.hpp"
-#include "../../../../common/ECS/component/permanent/AnimationComponent.hpp"
+#include "../../../../common/ECS/component/rendering/SpriteComponent.hpp"
+#include "../../../../common/ECS/component/rendering/AnimationComponent.hpp"
 #include "../../../../common/ECS/component/permanent/TransformComponent.hpp"
 #include "../../../../common/ECS/component/permanent/VelocityComponent.hpp"
-#include "../../../../common/ECS/component/permanent/SpeedComponent.hpp"
+#include "../../../../common/ECS/component/permanent/ColliderComponent.hpp"
 #include "../../../../common/ECS/system/rendering/AnimationRenderingSystem.hpp"
+#include "../../../../common/ECS/component/rendering/HitboxRenderComponent.hpp"
+#include "../../../../common/ECS/component/rendering/RectangleRenderComponent.hpp"
+#include "../../../../common/ECS/system/rendering/HitboxRenderingSystem.hpp"
+#include "../../../../common/ECS/system/rendering/RectangleRenderingSystem.hpp"
 #include "../../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
+#include "../../../../common/ECS/component/tags/ObstacleTag.hpp"
 
 namespace gsm {
 
@@ -32,17 +37,23 @@ DevState::DevState(
     _prefabManager = std::make_shared<EntityPrefabManager>();
     auto animationRenderingSystem =
         std::make_shared<ecs::AnimationRenderingSystem>();
+    auto hitboxRenderingSystem =
+        std::make_shared<ecs::HitboxRenderingSystem>();
+    auto rectangleRenderingSystem =
+        std::make_shared<ecs::RectangleRenderingSystem>();
 
     _systemManager->addSystem(_inputToVelocitySystem);
     _systemManager->addSystem(_movementSystem);
     _systemManager->addSystem(_inputSystem);
     _systemManager->addSystem(_spriteRenderingSystem);
     _systemManager->addSystem(animationRenderingSystem);
+    _systemManager->addSystem(hitboxRenderingSystem);
+    _systemManager->addSystem(rectangleRenderingSystem);
 }
 
 void DevState::enter() {
     auto playerPrefab = std::make_shared<PlayerPrefab>(
-        100.0f,  // x
+        500.0f,  // x
         100.0f,  // y
         3.0f,    // scale
         "assets/sprites/frog_spritesheet.png",  // animation path
@@ -54,7 +65,89 @@ void DevState::enter() {
     _prefabManager->registerPrefab("player", playerPrefab);
     size_t playerId = _prefabManager->createEntityFromPrefab
         ("player", _registry);
-    (void)playerId;
+
+    auto playerHitboxRender = std::make_shared<ecs::HitboxRenderComponent>(
+        gfx::color_t{0, 0, 255}, 2.0f);
+    _registry->addComponent(playerId, playerHitboxRender);
+
+    // Create a static wall entity
+    size_t wallId = _registry->createEntity();
+    auto wallTransform = std::make_shared<ecs::TransformComponent>(
+        math::Vector2f(300.0f, 200.0f),
+        0.0f,
+        math::Vector2f(1.0f, 1.0f));
+
+    auto wallCollider = std::make_shared<ecs::ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f),
+        math::Vector2f(100.0f, 100.0f),
+        ecs::CollisionType::Solid);
+
+    _registry->addComponent(wallId, wallTransform);
+    _registry->addComponent(wallId, wallCollider);
+    _registry->addComponent(wallId, std::make_shared<ecs::ObstacleTag>());
+
+    auto wallHitboxRender = std::make_shared<ecs::HitboxRenderComponent>(
+        gfx::color_t{0, 255, 0}, 2.0f);
+    _registry->addComponent(wallId, wallHitboxRender);
+
+    auto wallRectangleRender = std::make_shared<ecs::RectangleRenderComponent>(
+        gfx::color_t{0, 255, 0}, 100.0f, 100.0f);
+    _registry->addComponent(wallId, wallRectangleRender);
+
+    // Create a bouncing projectile
+    size_t projectileId = _registry->createEntity();
+    auto projectileTransform = std::make_shared<ecs::TransformComponent>(
+        math::Vector2f(100.0f, 250.0f),
+        0.0f,
+        math::Vector2f(1.0f, 1.0f));
+
+    auto projectileVelocity = std::make_shared<ecs::VelocityComponent>(
+        math::Vector2f(200.0f, 0.0f));
+
+    auto projectileCollider = std::make_shared<ecs::ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f),
+        math::Vector2f(20.0f, 20.0f),
+        ecs::CollisionType::Bounce);
+
+    _registry->addComponent(projectileId, projectileTransform);
+    _registry->addComponent(projectileId, projectileVelocity);
+    _registry->addComponent(projectileId, projectileCollider);
+
+    auto projectileHitboxRender = std::make_shared<ecs::HitboxRenderComponent>(
+        gfx::color_t{255, 0, 0}, 2.0f);
+    _registry->addComponent(projectileId, projectileHitboxRender);
+
+    auto projectileRectangleRender =
+        std::make_shared<ecs::RectangleRenderComponent>(
+        gfx::color_t{255, 0, 0}, 20.0f, 20.0f);
+    _registry->addComponent(projectileId, projectileRectangleRender);
+
+    size_t projectileId2 = _registry->createEntity();
+    auto projectileTransform2 = std::make_shared<ecs::TransformComponent>(
+        math::Vector2f(110.0f, 200.0f),
+        0.0f,
+        math::Vector2f(1.0f, 1.0f));
+
+    auto projectileVelocity2 = std::make_shared<ecs::VelocityComponent>(
+        math::Vector2f(150.0f / 2.0f, 75.0f / 2.0f));
+
+    auto projectileCollider2 = std::make_shared<ecs::ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f),
+        math::Vector2f(20.0f, 20.0f),
+        ecs::CollisionType::Bounce);
+
+    _registry->addComponent(projectileId2, projectileTransform2);
+    _registry->addComponent(projectileId2, projectileVelocity2);
+    _registry->addComponent(projectileId2, projectileCollider2);
+
+    auto projectileHitboxRender2 = std::make_shared<ecs::HitboxRenderComponent>(
+        gfx::color_t{255, 0, 0}, 2.0f);
+    _registry->addComponent(projectileId2, projectileHitboxRender2);
+
+    auto projectileRectangleRender2 =
+        std::make_shared<ecs::RectangleRenderComponent>(
+        gfx::color_t{255, 0, 0}, 20.0f, 20.0f);
+    _registry->addComponent(projectileId2, projectileRectangleRender2);
 }
 
 void DevState::update(float deltaTime) {

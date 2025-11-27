@@ -7,7 +7,7 @@
 
 #include <memory>
 #include "SpriteRenderingSystem.hpp"
-#include "../../component/permanent/SpriteComponent.hpp"
+#include "../../component/rendering/SpriteComponent.hpp"
 #include "../../component/permanent/TransformComponent.hpp"
 #include "../../view/View.hpp"
 #include "../../resourceManager/ResourceManager.hpp"

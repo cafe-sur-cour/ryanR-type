@@ -33,7 +33,8 @@ class IWindow {
 
         virtual void drawSprite(std::string asset, color_t color, std::pair<size_t, size_t> position) = 0;
         virtual void drawText(std::string text, color_t color, std::pair<size_t, size_t> position, const std::string& fontPath) = 0;
-        virtual void drawRectangle(color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
+        virtual void drawRectangleOutline(color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
+        virtual void drawFilledRectangle(color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
 
         virtual bool isMouseOver(std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
         virtual std::pair<int, int> getWindowSize() = 0;
