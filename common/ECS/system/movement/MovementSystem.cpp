@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <cmath>
+#include <algorithm>
 #include "MovementSystem.hpp"
 #include "../../component/permanent/VelocityComponent.hpp"
 #include "../../component/permanent/TransformComponent.hpp"
