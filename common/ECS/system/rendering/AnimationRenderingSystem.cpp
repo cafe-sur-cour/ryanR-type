@@ -6,12 +6,12 @@
 */
 
 #include <memory>
+#include <iostream>
 #include "AnimationRenderingSystem.hpp"
 #include "../../component/permanent/AnimationComponent.hpp"
 #include "../../component/permanent/TransformComponent.hpp"
 #include "../../view/View.hpp"
 #include "../../../../client/graphicals/IWindow.hpp"
-#include <iostream>
 
 namespace ecs {
 
@@ -36,8 +36,8 @@ void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
             animation->getAnimationSpeed()) % animation->getFrameCount();
         animation->setCurrentFrame(frameIndex);
 
-        float frameX = animation->getStartWidth() + static_cast<float>(frameIndex) *
-            animation->getFrameWidth();
+        float frameX = animation->getStartWidth() +
+            static_cast<float>(frameIndex) * animation->getFrameWidth();
         float frameY = animation->getStartHeight();
         math::FRect frameRect(frameX, frameY, animation->getFrameWidth(),
                             animation->getFrameHeight());
