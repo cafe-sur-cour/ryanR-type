@@ -253,7 +253,7 @@ jobs:
       - name: CREATE UNIX RELEASE
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ needs.calculate_version.outputs.version }}-unix
+          tag: ${{ needs.calculate_version.outputs.version }}
           allowUpdates: true
           name: Unix Release ${{ needs.calculate_version.outputs.version }}
           body: |
@@ -301,7 +301,7 @@ jobs:
       - name: CREATE WINDOWS RELEASE
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ needs.calculate_version.outputs.version }}-windows
+          tag: ${{ needs.calculate_version.outputs.version }}
           allowUpdates: true
           name: Windows Release ${{ needs.calculate_version.outputs.version }}
           body: |
