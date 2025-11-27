@@ -9,4 +9,11 @@ fi
 echo "Cleaning build directory..."
 rm -rf build/unix/bin
 
+echo "Removing shared libraries..."
+rm -f libraries/*.so libraries/*.dll
+
+echo "Removing executables..."
+rm -f r-type_server
+rm -f r-type_client
+
 echo "Clean completed."
