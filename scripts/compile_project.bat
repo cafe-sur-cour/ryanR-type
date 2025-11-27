@@ -58,6 +58,19 @@ if /i "%target%"=="all" (
     exit /b 0
 )
 
+if /i "%target%"=="server" goto build_server_only
+if /i "%target%"=="r-type_server" goto build_server_only
+goto build_target
+
+:build_server_only
+echo Building server only (BUILD_CLIENT=OFF)...
+cmake --preset "release-windows" -DBUILD_TESTS=%build_tests% -DBUILD_CLIENT=OFF
+if errorlevel 1 (
+    echo CMake reconfiguration failed.
+    exit /b 1
+)
+
+:build_target
 cmake --build --preset "release-windows" --target %target% --config Release
 if errorlevel 1 (
     echo Build failed.

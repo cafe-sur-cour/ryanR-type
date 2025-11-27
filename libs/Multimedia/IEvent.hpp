@@ -28,6 +28,8 @@ class IEvent {
 
 };
 
+typedef IEvent *(*createEvent_t)(void*, void*);
+
 } // namespace gfx
 
 #endif /* !IEVENT_HPP_ */

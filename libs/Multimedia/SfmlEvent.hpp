@@ -10,9 +10,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <map>
-#include "./IEvent.hpp"
-#include "./IWindow.hpp"
-#include "./SfmlKeyMappings.hpp"
+#include "IEvent.hpp"
+#include "IWindow.hpp"
+#include "SfmlKeyMappings.hpp"
 #include "../../common/ECS/resourceManager/ResourceManager.hpp"
 
 class SfmlEvent : public gfx::IEvent {

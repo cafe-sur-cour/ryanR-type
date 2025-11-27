@@ -4,8 +4,8 @@
 #include <iostream>
 #include "../../../../common/ECS/component/tags/PlayerTag.hpp"
 #include "../../../../common/ECS/component/tags/ControllableTag.hpp"
-#include "../../../../client/graphicals/IWindow.hpp"
-#include "../../../../client/graphicals/IEvent.hpp"
+#include "../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../libs/Multimedia/IEvent.hpp"
 #include "../../../../common/ECS/component/permanent/SpriteComponent.hpp"
 #include "../../../../common/ECS/component/permanent/AnimationComponent.hpp"
 #include "../../../../common/ECS/component/permanent/TransformComponent.hpp"
