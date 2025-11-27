@@ -1,10 +1,4 @@
-set(SERVER_INIT_LIB ServerInit)
-
-add_library(${SERVER_INIT_LIB} STATIC
+target_sources(${SERVER_BIN_NAME} PRIVATE
     initRessourcesManager.hpp
     initRessourcesManager.cpp
-)
-
-target_include_directories(${SERVER_INIT_LIB}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 )
