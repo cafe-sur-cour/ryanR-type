@@ -12,10 +12,11 @@ target_compile_definitions(${NETWORK_LIB_NAME}
     PRIVATE NETWORK_EXPORTS
 )
 
-# Enable symbol exports for DLL
-set_target_properties(${NETWORK_LIB_NAME} PROPERTIES
-    WINDOWS_EXPORT_ALL_SYMBOLS ON
-)
+if(WIN32)
+    set_target_properties(${NETWORK_LIB_NAME} PROPERTIES
+        WINDOWS_EXPORT_ALL_SYMBOLS ON
+    )
+endif()
 
 target_compile_definitions(${NETWORK_LIB_NAME}
     PUBLIC ASIO_STANDALONE

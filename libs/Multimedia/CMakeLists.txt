@@ -13,6 +13,12 @@ add_library(${MULTIMEDIA_LIB_NAME} SHARED
     ${CMAKE_SOURCE_DIR}/common/types/FRect.cpp
 )
 
+if(WIN32)
+    set_target_properties(${MULTIMEDIA_LIB_NAME} PROPERTIES
+        WINDOWS_EXPORT_ALL_SYMBOLS ON
+    )
+endif()
+
 add_subdirectory(AssetManager)
 
 if(TARGET generate_embedded_assets)

@@ -9,6 +9,12 @@ add_library(${PACKET_LIB_NAME} SHARED
     PacketTypes.cpp
 )
 
+if(WIN32)
+    set_target_properties(${PACKET_LIB_NAME} PROPERTIES
+        WINDOWS_EXPORT_ALL_SYMBOLS ON
+    )
+endif()
+
 target_include_directories(${PACKET_LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(${PACKET_LIB_NAME}
