@@ -29,7 +29,8 @@ class SfmlWindow : public gfx::IWindow {
 
         void drawSprite(std::string asset, gfx::color_t color, std::pair<size_t, size_t> position) override;
         void drawText(std::string text, gfx::color_t color, std::pair<size_t, size_t> position, const std::string& fontPath) override;
-        void drawRectangle(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
+        void drawRectangleOutline(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
+        void drawFilledRectangle(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
 
         bool isMouseOver(std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
         std::pair<int, int> getWindowSize() override;

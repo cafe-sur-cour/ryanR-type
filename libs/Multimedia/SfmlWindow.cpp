@@ -87,7 +87,19 @@ void SfmlWindow::drawText(std::string text, gfx::color_t color,
     _window->draw(sfText);
 }
 
-void SfmlWindow::drawRectangle(gfx::color_t color,
+void SfmlWindow::drawRectangleOutline(gfx::color_t color,
+    std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) {
+    sf::RectangleShape rectangle(sf::Vector2f(static_cast<float>(size.first),
+    static_cast<float>(size.second)));
+    rectangle.setFillColor(sf::Color::Transparent);
+    rectangle.setOutlineColor(sf::Color(color.r, color.g, color.b));
+    rectangle.setOutlineThickness(1.0f);
+    rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first),
+    static_cast<float>(position.second)));
+    _window->draw(rectangle);
+}
+
+void SfmlWindow::drawFilledRectangle(gfx::color_t color,
     std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) {
     sf::RectangleShape rectangle(sf::Vector2f(static_cast<float>(size.first),
     static_cast<float>(size.second)));
@@ -120,7 +132,7 @@ void SfmlWindow::drawSprite(const std::string& texturePath,
     float x, float y, float scaleX, float scaleY) {
     auto texture = _textureManager.loadTexture(texturePath);
     if (!texture)
-        return drawRectangle({255, 0, 0}, {static_cast<size_t>(x),
+        return drawFilledRectangle({255, 0, 0}, {static_cast<size_t>(x),
             static_cast<size_t>(y)}, {50, 50});
 
     sf::Sprite sprite(*texture);
@@ -133,7 +145,7 @@ void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y,
     const math::FRect frameRect, float scaleX, float scaleY) {
     auto texture = _textureManager.loadTexture(texturePath);
     if (!texture)
-        return drawRectangle({255, 0, 0}, {static_cast<size_t>(x),
+        return drawFilledRectangle({255, 0, 0}, {static_cast<size_t>(x),
             static_cast<size_t>(y)}, {50, 50});
 
 
