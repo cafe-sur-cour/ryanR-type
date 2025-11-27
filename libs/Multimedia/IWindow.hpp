@@ -42,6 +42,8 @@ class IWindow {
         virtual void drawSprite(const std::string& texturePath, float x, float y, const math::FRect frameRect, float scaleX = 1.0f, float scaleY = 1.0f) = 0;
 };
 
+typedef IWindow *(*createWindow_t)();
+
 } // namespace gfx
 
 #endif /* !IWINDOW_HPP_ */

@@ -12,7 +12,7 @@
 #include "../../../constants.hpp"
 #include "../../component/tags/ControllableTag.hpp"
 #include "../../component/temporary/InputIntentComponent.hpp"
-#include "../../../../client/graphicals/IEvent.hpp"
+#include "../../../../libs/Multimedia/IEvent.hpp"
 
 namespace ecs {
 

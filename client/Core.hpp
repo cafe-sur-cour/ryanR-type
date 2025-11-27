@@ -12,26 +12,32 @@
 #include <thread>
 #include "../common/ECS/resourceManager/ResourceManager.hpp"
 #include "ClientNetwork.hpp"
-#include "graphicals/IWindow.hpp"
+#include "../libs/Multimedia/IWindow.hpp"
+#include "../libs/Multimedia/IEvent.hpp"
 #include "gsm/machine/GameStateMachine.hpp"
+#include "../common/DLLoader/DLLoader.hpp"
 
-class Core {
-public:
-    Core();
-    ~Core();
+class Core
+{
+    public:
+        Core();
+        ~Core();
 
-    void run();
+        void run();
 
-    std::shared_ptr<ClientNetwork> getNetwork();
+        std::shared_ptr<ClientNetwork> getNetwork();
 
-private:
-    std::shared_ptr<ecs::ResourceManager> _resourceManager;
-    std::shared_ptr<gsm::GameStateMachine> _gsm;
-    std::shared_ptr<ClientNetwork> _clientNetwork;
-    std::thread _networkThread;
+    private:
+        std::shared_ptr<DLLoader<gfx::createWindow_t>> _windowLoader;
+        std::shared_ptr<DLLoader<gfx::createEvent_t>> _eventLoader;
 
-    void initNetwork();
-    void networkLoop();
+        std::shared_ptr<ecs::ResourceManager> _resourceManager;
+        std::shared_ptr<gsm::GameStateMachine> _gsm;
+        std::shared_ptr<ClientNetwork> _clientNetwork;
+        std::thread _networkThread;
+
+        void initNetwork();
+        void networkLoop();
 };
 
 #endif /* !CORE_HPP_ */
