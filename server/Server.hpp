@@ -17,8 +17,6 @@
 #include "../common/DLLoader/LoaderType.hpp"
 #include "Signal.hpp"
 
-
-
 namespace rserv {
     class Server : public IServer {
         public:

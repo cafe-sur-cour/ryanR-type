@@ -19,6 +19,11 @@ int main(int ac, char **av) {
     Core core;
 
     utils.parsCli(ac, av, core.getConfig());
+    std::cout << "[Server] Starting server..." << std::endl;
+    std::cout << "------------------------" << std::endl;
+    std::cout << "Port: " << core.getConfig()->getPort() << std::endl;
+    std::cout << "Max Clients: " << core.getConfig()->getNbClients();
+    std::cout << std::endl << "------------------------" << std::endl;
     try {
         core.init();
         core.loop();
