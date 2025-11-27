@@ -11,10 +11,8 @@
 #include "../../../../common/ECS/system/movement/MovementSystem.hpp"
 #include "../../../../common/ECS/entity/registry/ARegistry.hpp"
 #include "../../../../common/ECS/component/temporary/InputIntentComponent.hpp"
-#include "../../../../common/ECS/component/permanent/VelocityComponent.hpp"
-#include "../../../../common/ECS/component/permanent/TransformComponent.hpp"
-#include "../../../../common/ECS/component/permanent/SpeedComponent.hpp"
-#include "../../../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../../../common/ECS/component/permanent/ColliderComponent.hpp"
+#include "../../../../common/ECS/component/tags/ObstacleTag.hpp"
 
 using namespace ecs;
 
@@ -33,6 +31,8 @@ protected:
         registry->registerComponent<VelocityComponent>();
         registry->registerComponent<TransformComponent>();
         registry->registerComponent<SpeedComponent>();
+        registry->registerComponent<ColliderComponent>();
+        registry->registerComponent<ObstacleTag>();
     }
 
     std::shared_ptr<ARegistry> registry;
@@ -215,6 +215,230 @@ TEST_F(MovementSystemsTest, MultipleEntities_UpdatesCorrectly) {
     auto updatedTransform1 = registry->getComponent<TransformComponent>(entityId1);
     EXPECT_EQ(updatedTransform1->getPosition().getX(), 100.0f);
     EXPECT_EQ(updatedTransform1->getPosition().getY(), 97.0f);
+}
+
+// Collision Tests
+
+TEST_F(MovementSystemsTest, SolidCollision_BlocksMovement) {
+    // Create moving entity with solid collider
+    size_t movingEntityId = 0;
+    auto movingTransform = std::make_shared<TransformComponent>(
+        math::Vector2f(0.0f, 0.0f));
+    auto movingVelocity = std::make_shared<VelocityComponent>(
+        math::Vector2f(50.0f, 0.0f)); // Move right
+    auto movingCollider = std::make_shared<ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, 10.0f),
+        CollisionType::Solid);
+
+    registry->addComponent<TransformComponent>(movingEntityId, movingTransform);
+    registry->addComponent<VelocityComponent>(movingEntityId, movingVelocity);
+    registry->addComponent<ColliderComponent>(movingEntityId, movingCollider);
+
+    // Create static obstacle
+    size_t obstacleEntityId = 1;
+    auto obstacleTransform = std::make_shared<TransformComponent>(
+        math::Vector2f(20.0f, 0.0f)); // Directly in path
+    auto obstacleCollider = std::make_shared<ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, 10.0f),
+        CollisionType::Solid);
+
+    registry->addComponent<TransformComponent>(obstacleEntityId, obstacleTransform);
+    registry->addComponent<ColliderComponent>(obstacleEntityId, obstacleCollider);
+
+    // Apply movement
+    float deltaTime = 0.5f; // Smaller delta time for collision detection
+    movementSystem->update(resourceManager, registry, deltaTime);
+
+    // Entity should be blocked and slide smoothly to closest valid position
+    auto updatedTransform = registry->getComponent<TransformComponent>(movingEntityId);
+    EXPECT_LT(updatedTransform->getPosition().getX(), 20.0f); // Should not reach obstacle
+    EXPECT_EQ(updatedTransform->getPosition().getY(), 0.0f); // Y unchanged
+}
+
+TEST_F(MovementSystemsTest, SolidCollision_AllowsSliding) {
+    // Create moving entity with solid collider
+    size_t movingEntityId = 0;
+    auto movingTransform = std::make_shared<TransformComponent>(
+        math::Vector2f(0.0f, 0.0f));
+    auto movingVelocity = std::make_shared<VelocityComponent>(
+        math::Vector2f(50.0f, 50.0f)); // Move diagonally
+    auto movingCollider = std::make_shared<ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, 10.0f),
+        CollisionType::Solid);
+
+    registry->addComponent<TransformComponent>(movingEntityId, movingTransform);
+    registry->addComponent<VelocityComponent>(movingEntityId, movingVelocity);
+    registry->addComponent<ColliderComponent>(movingEntityId, movingCollider);
+
+    // Create wall blocking horizontal movement
+    size_t wallEntityId = 1;
+    auto wallTransform = std::make_shared<TransformComponent>(
+        math::Vector2f(20.0f, 0.0f));
+    auto wallCollider = std::make_shared<ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, 100.0f),
+        CollisionType::Solid);
+
+    registry->addComponent<TransformComponent>(wallEntityId, wallTransform);
+    registry->addComponent<ColliderComponent>(wallEntityId, wallCollider);
+
+    // Apply movement
+    float deltaTime = 0.5f;
+    movementSystem->update(resourceManager, registry, deltaTime);
+
+    // Entity should slide vertically but be blocked horizontally
+    auto updatedTransform = registry->getComponent<TransformComponent>(movingEntityId);
+    EXPECT_LT(updatedTransform->getPosition().getX(), 20.0f); // Blocked horizontally
+    EXPECT_GT(updatedTransform->getPosition().getY(), 0.0f); // Can move vertically
+}
+
+TEST_F(MovementSystemsTest, BounceCollision_ReversesVelocityOnObstacle) {
+    // Create bouncing entity
+    size_t bouncingEntityId = 0;
+    auto bouncingTransform = std::make_shared<TransformComponent>(
+        math::Vector2f(0.0f, 0.0f));
+    auto bouncingVelocity = std::make_shared<VelocityComponent>(
+        math::Vector2f(50.0f, 0.0f)); // Move right
+    auto bouncingCollider = std::make_shared<ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, 10.0f),
+        CollisionType::Bounce);
+
+    registry->addComponent<TransformComponent>(bouncingEntityId, bouncingTransform);
+    registry->addComponent<VelocityComponent>(bouncingEntityId, bouncingVelocity);
+    registry->addComponent<ColliderComponent>(bouncingEntityId, bouncingCollider);
+
+    // Create obstacle with ObstacleTag
+    size_t obstacleEntityId = 1;
+    auto obstacleTransform = std::make_shared<TransformComponent>(
+        math::Vector2f(20.0f, 0.0f));
+    auto obstacleCollider = std::make_shared<ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, 10.0f),
+        CollisionType::Solid);
+    auto obstacleTag = std::make_shared<ObstacleTag>();
+
+    registry->addComponent<TransformComponent>(obstacleEntityId, obstacleTransform);
+    registry->addComponent<ColliderComponent>(obstacleEntityId, obstacleCollider);
+    registry->addComponent<ObstacleTag>(obstacleEntityId, obstacleTag);
+
+    // Apply movement - should bounce
+    float deltaTime = 0.5f;
+    movementSystem->update(resourceManager, registry, deltaTime);
+
+    // Position should not change (bounce back to start)
+    auto updatedTransform = registry->getComponent<TransformComponent>(bouncingEntityId);
+    EXPECT_EQ(updatedTransform->getPosition().getX(), 0.0f);
+    EXPECT_EQ(updatedTransform->getPosition().getY(), 0.0f);
+
+    // Velocity should be reversed
+    auto updatedVelocity = registry->getComponent<VelocityComponent>(bouncingEntityId);
+    EXPECT_EQ(updatedVelocity->getVelocity().getX(), -50.0f); // Reversed X
+    EXPECT_EQ(updatedVelocity->getVelocity().getY(), 0.0f);   // Y unchanged
+}
+
+TEST_F(MovementSystemsTest, BounceCollision_VerticalBounce) {
+    // Create bouncing entity moving vertically
+    size_t bouncingEntityId = 0;
+    auto bouncingTransform = std::make_shared<TransformComponent>(
+        math::Vector2f(0.0f, 0.0f));
+    auto bouncingVelocity = std::make_shared<VelocityComponent>(
+        math::Vector2f(0.0f, 50.0f)); // Move down
+    auto bouncingCollider = std::make_shared<ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, 10.0f),
+        CollisionType::Bounce);
+
+    registry->addComponent<TransformComponent>(bouncingEntityId, bouncingTransform);
+    registry->addComponent<VelocityComponent>(bouncingEntityId, bouncingVelocity);
+    registry->addComponent<ColliderComponent>(bouncingEntityId, bouncingCollider);
+
+    // Create horizontal obstacle
+    size_t obstacleEntityId = 1;
+    auto obstacleTransform = std::make_shared<TransformComponent>(
+        math::Vector2f(0.0f, 20.0f));
+    auto obstacleCollider = std::make_shared<ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f), math::Vector2f(100.0f, 10.0f),
+        CollisionType::Solid);
+    auto obstacleTag = std::make_shared<ObstacleTag>();
+
+    registry->addComponent<TransformComponent>(obstacleEntityId, obstacleTransform);
+    registry->addComponent<ColliderComponent>(obstacleEntityId, obstacleCollider);
+    registry->addComponent<ObstacleTag>(obstacleEntityId, obstacleTag);
+
+    // Apply movement - should bounce vertically
+    float deltaTime = 0.5f;
+    movementSystem->update(resourceManager, registry, deltaTime);
+
+    // Position should not change
+    auto updatedTransform = registry->getComponent<TransformComponent>(bouncingEntityId);
+    EXPECT_EQ(updatedTransform->getPosition().getX(), 0.0f);
+    EXPECT_EQ(updatedTransform->getPosition().getY(), 0.0f);
+
+    // Velocity should be reversed vertically
+    auto updatedVelocity = registry->getComponent<VelocityComponent>(bouncingEntityId);
+    EXPECT_EQ(updatedVelocity->getVelocity().getX(), 0.0f);   // X unchanged
+    EXPECT_EQ(updatedVelocity->getVelocity().getY(), -50.0f); // Reversed Y
+}
+
+TEST_F(MovementSystemsTest, BounceCollision_DiagonalBounce) {
+    // Create bouncing entity moving diagonally
+    size_t bouncingEntityId = 0;
+    auto bouncingTransform = std::make_shared<TransformComponent>(
+        math::Vector2f(0.0f, 0.0f));
+    auto bouncingVelocity = std::make_shared<VelocityComponent>(
+        math::Vector2f(50.0f, 50.0f)); // Move diagonally
+    auto bouncingCollider = std::make_shared<ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, 10.0f),
+        CollisionType::Bounce);
+
+    registry->addComponent<TransformComponent>(bouncingEntityId, bouncingTransform);
+    registry->addComponent<VelocityComponent>(bouncingEntityId, bouncingVelocity);
+    registry->addComponent<ColliderComponent>(bouncingEntityId, bouncingCollider);
+
+    // Create obstacle blocking horizontally
+    size_t obstacleEntityId = 1;
+    auto obstacleTransform = std::make_shared<TransformComponent>(
+        math::Vector2f(20.0f, 0.0f));
+    auto obstacleCollider = std::make_shared<ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, 100.0f),
+        CollisionType::Solid);
+    auto obstacleTag = std::make_shared<ObstacleTag>();
+
+    registry->addComponent<TransformComponent>(obstacleEntityId, obstacleTransform);
+    registry->addComponent<ColliderComponent>(obstacleEntityId, obstacleCollider);
+    registry->addComponent<ObstacleTag>(obstacleEntityId, obstacleTag);
+
+    // Apply movement - should bounce horizontally (since overlap is greater horizontally)
+    float deltaTime = 0.5f;
+    movementSystem->update(resourceManager, registry, deltaTime);
+
+    // Position should not change
+    auto updatedTransform = registry->getComponent<TransformComponent>(bouncingEntityId);
+    EXPECT_EQ(updatedTransform->getPosition().getX(), 0.0f);
+    EXPECT_EQ(updatedTransform->getPosition().getY(), 0.0f);
+
+    // Velocity should be reversed horizontally
+    auto updatedVelocity = registry->getComponent<VelocityComponent>(bouncingEntityId);
+    EXPECT_EQ(updatedVelocity->getVelocity().getX(), -50.0f); // Reversed X
+    EXPECT_EQ(updatedVelocity->getVelocity().getY(), 50.0f);  // Y unchanged
+}
+
+TEST_F(MovementSystemsTest, NoCollision_WhenNoColliders) {
+    // Create entity with velocity but no collider
+    size_t entityId = 0;
+    auto transform = std::make_shared<TransformComponent>(
+        math::Vector2f(0.0f, 0.0f));
+    auto velocity = std::make_shared<VelocityComponent>(
+        math::Vector2f(50.0f, 50.0f));
+
+    registry->addComponent<TransformComponent>(entityId, transform);
+    registry->addComponent<VelocityComponent>(entityId, velocity);
+
+    // Apply movement
+    float deltaTime = 1.0f;
+    movementSystem->update(resourceManager, registry, deltaTime);
+
+    // Should move freely
+    auto updatedTransform = registry->getComponent<TransformComponent>(entityId);
+    EXPECT_EQ(updatedTransform->getPosition().getX(), 50.0f);
+    EXPECT_EQ(updatedTransform->getPosition().getY(), 50.0f);
 }
 
 int main(int argc, char **argv) {
