@@ -13,11 +13,11 @@
 #include "../component/temporary/InputIntentComponent.hpp"
 #include "../component/permanent/TransformComponent.hpp"
 #include "../component/permanent/VelocityComponent.hpp"
-#include "../component/permanent/SpriteComponent.hpp"
-#include "../component/permanent/AnimationComponent.hpp"
+#include "../component/rendering/SpriteComponent.hpp"
+#include "../component/rendering/AnimationComponent.hpp"
 #include "../component/permanent/ColliderComponent.hpp"
-#include "../component/permanent/HitboxRenderComponent.hpp"
-#include "../component/permanent/RectangleRenderComponent.hpp"
+#include "../component/rendering/HitboxRenderComponent.hpp"
+#include "../component/rendering/RectangleRenderComponent.hpp"
 
 namespace ecs {
 

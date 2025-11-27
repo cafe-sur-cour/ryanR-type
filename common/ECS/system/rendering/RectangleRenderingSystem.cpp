@@ -7,7 +7,7 @@
 
 #include <memory>
 #include "RectangleRenderingSystem.hpp"
-#include "../../component/permanent/RectangleRenderComponent.hpp"
+#include "../../component/rendering/RectangleRenderComponent.hpp"
 #include "../../component/permanent/TransformComponent.hpp"
 #include "../../view/View.hpp"
 #include "../../resourceManager/ResourceManager.hpp"

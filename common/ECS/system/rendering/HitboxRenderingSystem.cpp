@@ -7,7 +7,7 @@
 
 #include <memory>
 #include "HitboxRenderingSystem.hpp"
-#include "../../component/permanent/HitboxRenderComponent.hpp"
+#include "../../component/rendering/HitboxRenderComponent.hpp"
 #include "../../component/permanent/TransformComponent.hpp"
 #include "../../component/permanent/ColliderComponent.hpp"
 #include "../../view/View.hpp"

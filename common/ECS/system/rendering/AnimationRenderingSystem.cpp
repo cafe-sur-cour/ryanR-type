@@ -8,7 +8,7 @@
 #include <memory>
 #include <iostream>
 #include "AnimationRenderingSystem.hpp"
-#include "../../component/permanent/AnimationComponent.hpp"
+#include "../../component/rendering/AnimationComponent.hpp"
 #include "../../component/permanent/TransformComponent.hpp"
 #include "../../view/View.hpp"
 #include "../../../../libs/Multimedia/IWindow.hpp"
