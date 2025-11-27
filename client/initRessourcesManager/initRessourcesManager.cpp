@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <memory>
+#include <string>
 #include "../../common/ECS/resourceManager/ResourceManager.hpp"
 #include "../../common/DLLoader/DLLoader.hpp"
 #include "../../common/DLLoader/LoaderType.hpp"
@@ -32,11 +33,11 @@ std::shared_ptr<ecs::ResourceManager> initRessourcesManager() {
         throw std::runtime_error(errorMsg);
     }
 
-    createWindow_t createWindowFunc = 
+    createWindow_t createWindowFunc =
         multimediaLoaderWindow.getSymbol("createWindow");
     if (!createWindowFunc) {
         const char* error = multimediaLoaderWindow.Error();
-        std::string errorMsg = "Failed to load createWindow function from Multimedia library";
+        std::string errorMsg = "Failed to load createWindow from libMultimedia";
         if (error) {
             errorMsg += " - Error: ";
             errorMsg += error;
@@ -49,11 +50,11 @@ std::shared_ptr<ecs::ResourceManager> initRessourcesManager() {
     DLLoader<createEvent_t> multimediaLoaderEvent;
     multimediaLoaderEvent.Open(multimediaPath.c_str());
 
-    createEvent_t createEventFunc = 
+    createEvent_t createEventFunc =
         multimediaLoaderEvent.getSymbol("createEvent");
     if (!createEventFunc) {
         const char* error = multimediaLoaderWindow.Error();
-        std::string errorMsg = "Failed to load createEvent function from Multimedia library";
+        std::string errorMsg = "Failed to load createEvent from libMultimedia";
         if (error) {
             errorMsg += " - Error: ";
             errorMsg += error;
