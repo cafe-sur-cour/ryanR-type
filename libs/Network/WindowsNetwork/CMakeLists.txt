@@ -1,14 +1,14 @@
-target_compile_definitions(${NETWORK_LIB_NAME}
-    PUBLIC _WIN32_WINNT=0x0A00
-    PUBLIC WIN32_LEAN_AND_MEAN
-)
-
 add_library(${NETWORK_LIB_NAME} SHARED
     WindowsNetwork.cpp
 )
 
 target_include_directories(${NETWORK_LIB_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_compile_definitions(${NETWORK_LIB_NAME}
+    PUBLIC _WIN32_WINNT=0x0A00
+    PUBLIC WIN32_LEAN_AND_MEAN
 )
 
 target_compile_definitions(${NETWORK_LIB_NAME}
