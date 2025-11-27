@@ -7,6 +7,7 @@
 
 #include "View.hpp"
 #include "../entity/registry/ARegistry.hpp"
+#include "../component/tags/ControllableTag.hpp"
 #include "../component/tags/PlayerTag.hpp"
 #include "../component/temporary/MovementIntentComponent.hpp"
 #include "../component/temporary/InputIntentComponent.hpp"
@@ -125,6 +126,7 @@ typename Group<Components...>::Iterator Group<Components...>::end() {
 
 /* Explicit template instantiations for commonly used component combinations */
 template class View<PlayerTag>;
+template class View<ControllableTag>;
 template class View<MovementIntentComponent>;
 template class View<InputIntentComponent>;
 template class View<TransformComponent>;

@@ -2,21 +2,21 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** AnimationRenderingSystemy
+** AnimationRenderingSystem
 */
 
-#ifndef ANIMATIONRENDERINGSYSTEMY_HPP_
-#define ANIMATIONRENDERINGSYSTEMY_HPP_
+#ifndef ANIMATIONRENDERINGSYSTEM_HPP_
+#define ANIMATIONRENDERINGSYSTEM_HPP_
 
 
 #include "../base/ASystem.hpp"
 #include <memory>
 namespace ecs {
 
-class AnimationRenderingSystemy : public ASystem {
+class AnimationRenderingSystem : public ASystem {
     public:
-        AnimationRenderingSystemy();
-        ~AnimationRenderingSystemy() override = default;
+        AnimationRenderingSystem();
+        ~AnimationRenderingSystem() override = default;
 
     protected:
         void update(std::shared_ptr<ResourceManager> resourceManager,
@@ -25,4 +25,4 @@ class AnimationRenderingSystemy : public ASystem {
 
 }  // namespace ecs
 
-#endif /* !ANIMATIONRENDERINGSYSTEMY_HPP_ */
+#endif /* !ANIMATIONRENDERINGSYSTEM_HPP_ */
