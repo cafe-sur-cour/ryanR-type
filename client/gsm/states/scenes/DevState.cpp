@@ -7,7 +7,11 @@
 #include "../../../../client/graphicals/IEvent.hpp"
 #include "../../../../common/ECS/component/permanent/SpriteComponent.hpp"
 #include "../../../../common/ECS/component/permanent/AnimationComponent.hpp"
-#include "../../../../common/ECS/system/rendering/AnimationRenderingSystemy.hpp"
+#include "../../../../common/ECS/component/permanent/TransformComponent.hpp"
+#include "../../../../common/ECS/component/permanent/VelocityComponent.hpp"
+#include "../../../../common/ECS/component/permanent/SpeedComponent.hpp"
+#include "../../../../common/ECS/system/rendering/AnimationRenderingSystem.hpp"
+#include "../../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
 
 namespace gsm {
 
@@ -24,8 +28,9 @@ DevState::DevState(
     _inputToVelocitySystem = std::make_shared<ecs::InputToVelocitySystem>();
     _inputSystem = std::make_shared<ecs::MovementInputSystem>();
     _spriteRenderingSystem = std::make_shared<ecs::SpriteRenderingSystem>();
+    _prefabManager = std::make_shared<EntityPrefabManager>();
     auto animationRenderingSystem =
-        std::make_shared<ecs::AnimationRenderingSystemy>();
+        std::make_shared<ecs::AnimationRenderingSystem>();
 
     _systemManager->addSystem(_inputToVelocitySystem);
     _systemManager->addSystem(_movementSystem);
@@ -35,22 +40,20 @@ DevState::DevState(
 }
 
 void DevState::enter() {
-    size_t entityId = 0;
-
-    auto transform = std::make_shared<ecs::TransformComponent>(
-        math::Vector2f(100.0f, 100.0f));
-
-    transform->setScale(math::Vector2f(3.0f, 3.0f));
-    auto playerTag = std::make_shared<ecs::PlayerTag>();
-    // auto sprite = std::make_shared<ecs::SpriteComponent>
-    //     ("assets/sprites/sprite.png");
-
-    auto animation = std::make_shared<ecs::AnimationComponent>
-        ("assets/sprites/frog_spritesheet.png", 64.0f, 32.0f, 4);
-    _registry->addComponent(entityId, transform);
-    _registry->addComponent(entityId, playerTag);
-    // _registry->addComponent(entityId, sprite);
-    _registry->addComponent(entityId, animation);
+    auto playerPrefab = std::make_shared<PlayerPrefab>(
+        100.0f,  // x
+        100.0f,  // y
+        3.0f,    // scale
+        "assets/sprites/frog_spritesheet.png",  // animation path
+        64.0f,   // frameWidth
+        32.0f,   // frameHeight
+        0.0f,    // startWidth
+        96.0f,    // startHeight
+        4        // frameCount
+    );
+    _prefabManager->registerPrefab("player", playerPrefab);
+    size_t playerId = _prefabManager->createEntityFromPrefab("player", _registry);
+    (void)playerId;
 }
 
 void DevState::update(float deltaTime) {
