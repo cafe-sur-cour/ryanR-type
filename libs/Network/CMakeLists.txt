@@ -9,6 +9,17 @@ target_include_directories(${NETWORK_LIB_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+target_compile_definitions(${NETWORK_LIB_NAME}
+    PUBLIC ASIO_STANDALONE
+)
+
+if(WIN32)
+    target_compile_definitions(${NETWORK_LIB_NAME}
+        PUBLIC _WIN32_WINNT=0x0601
+        PUBLIC WIN32_LEAN_AND_MEAN
+    )
+endif()
+
 # Link asio for networking functionality
 target_link_libraries(${NETWORK_LIB_NAME}
     PUBLIC asio::asio

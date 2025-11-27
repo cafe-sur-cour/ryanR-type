@@ -6,7 +6,15 @@
 */
 
 #ifndef WINDOWSNETWORK_HPP_
-#define WINDOWSNETWORK_HPP_
+    #define WINDOWSNETWORK_HPP_
+
+#ifndef ASIO_STANDALONE
+    #define ASIO_STANDALONE
+#endif
+
+#ifndef _WIN32_WINNT
+    #define _WIN32_WINNT 0x0601
+#endif
 
 #include "../ANetwork.hpp"
 #include "../../Packet/IPacketManager.hpp"
