@@ -13,27 +13,35 @@
 #include "initRessourcesManager/initRessourcesManager.hpp"
 #include "gsm/states/scenes/DevState.hpp"
 #include "../../common/Signal/Signal.hpp"
+#include "../../libs/Multimedia/IWindow.hpp"
+#include "../../libs/Multimedia/IEvent.hpp"
+#include "../../common/DLLoader/DLLoader.hpp"
 
 Core::Core() {
     std::string multimediaPath = std::string(pathLoad) + "/" + multimediaLib;
 
+    _windowLoader = std::make_shared<DLLoader<gfx::createWindow_t>>(
+        DLLoader<gfx::createWindow_t>()
+    );
+    _eventLoader = std::make_shared<DLLoader<gfx::createEvent_t>>(
+        DLLoader<gfx::createEvent_t>()
+    );
+
     if (!this->_windowLoader->Open(multimediaPath.c_str())) {
-        const char* error = this->_windowLoader->Error();
+        std::string error = this->_windowLoader->Error();
         std::string errorMsg = "Failed to load libMultimedia for window: ";
         errorMsg += multimediaPath;
-        if (error) {
-            errorMsg += " - Error: ";
-            errorMsg += error;
+        if (!error.empty()) {
+            errorMsg += " - Error: " + error;
         }
         throw std::runtime_error(errorMsg);
     }
     if (!this->_eventLoader->Open(multimediaPath.c_str())) {
-        const char* error = this->_eventLoader->Error();
+        std::string error = this->_eventLoader->Error();
         std::string errorMsg = "Failed to load libMultimedia for events: ";
         errorMsg += multimediaPath;
-        if (error) {
-            errorMsg += " - Error: ";
-            errorMsg += error;
+        if (!error.empty()) {
+            errorMsg += " - Error: " + error;
         }
         throw std::runtime_error(errorMsg);
     }
