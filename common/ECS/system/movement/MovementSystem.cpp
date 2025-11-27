@@ -181,23 +181,20 @@ math::Vector2f MovementSystem::handleBounceCollision(
     size_t entityId,
     math::Vector2f startPos,
     math::Vector2f desiredPos,
-    std::shared_ptr<ecs::VelocityComponent> velocityComp) {
-
+    std::shared_ptr<ecs::VelocityComponent> velocityComp
+) {
     auto bounceColliders = registry->getComponents<ColliderComponent>(entityId);
     if (bounceColliders.empty()) {
         return desiredPos;
     }
 
-    auto allEntitiesView =
-        registry->view<TransformComponent, ColliderComponent>();
+    auto allEntitiesView = registry->view<TransformComponent, ColliderComponent>();
 
     for (auto otherEntityId : allEntitiesView) {
         if (otherEntityId == entityId) continue;
 
-        auto otherTransform =
-            registry->getComponent<TransformComponent>(otherEntityId);
-        auto otherColliders =
-            registry->getComponents<ColliderComponent>(otherEntityId);
+        auto otherTransform = registry->getComponent<TransformComponent>(otherEntityId);
+        auto otherColliders = registry->getComponents<ColliderComponent>(otherEntityId);
 
         if (!registry->hasComponent<ObstacleTag>(otherEntityId)) continue;
 
@@ -213,34 +210,25 @@ math::Vector2f MovementSystem::handleBounceCollision(
                     otherCollider->getHitbox(otherTransform->getPosition());
 
                 if (bounceHitbox.intersects(otherHitbox)) {
-                    math::Vector2f currentVelocity =
-                        velocityComp->getVelocity();
+                    math::Vector2f currentVelocity = velocityComp->getVelocity();
                     math::Vector2f newVelocity = currentVelocity;
 
-                    math::FRect startHitbox =
-                        bounceCollider->getHitbox(startPos);
+                    math::FRect startHitbox = bounceCollider->getHitbox(startPos);
 
-                    float bounceRight =
-                        bounceHitbox.getLeft() + bounceHitbox.getWidth();
-                    float bounceBottom =
-                        bounceHitbox.getTop() + bounceHitbox.getHeight();
-                    float otherRight =
-                        otherHitbox.getLeft() + otherHitbox.getWidth();
-                    float otherBottom =
-                        otherHitbox.getTop() + otherHitbox.getHeight();
+                    float bounceRight = bounceHitbox.getLeft() + bounceHitbox.getWidth();
+                    float bounceBottom = bounceHitbox.getTop() + bounceHitbox.getHeight();
+                    float otherRight = otherHitbox.getLeft() + otherHitbox.getWidth();
+                    float otherBottom = otherHitbox.getTop() + otherHitbox.getHeight();
 
                     float overlapX = std::min(bounceRight, otherRight) -
-                                   std::max(bounceHitbox.getLeft(),
-                                        otherHitbox.getLeft());
+                        std::max(bounceHitbox.getLeft(), otherHitbox.getLeft());
                     float overlapY = std::min(bounceBottom, otherBottom) -
-                                   std::max(bounceHitbox.getTop(),
-                                        otherHitbox.getTop());
+                        std::max(bounceHitbox.getTop(), otherHitbox.getTop());
 
-                    if (overlapX < overlapY) {
+                    if (overlapX < overlapY)
                         newVelocity.setX(-newVelocity.getX());
-                    } else {
+                    else
                         newVelocity.setY(-newVelocity.getY());
-                    }
 
                     velocityComp->setVelocity(newVelocity);
                     return startPos;
