@@ -44,6 +44,10 @@ add_executable(ObstacleTagTests common/ECS/component/ObstacleTagTests.cpp)
 target_link_libraries(ObstacleTagTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME ObstacleTagTests COMMAND ObstacleTagTests)
 
+add_executable(ControllableTagTests common/ECS/component/ControllableTagTests.cpp)
+target_link_libraries(ControllableTagTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME ControllableTagTests COMMAND ControllableTagTests)
+
 add_executable(MovementIntentComponentTests common/ECS/component/MovementIntentComponentTests.cpp)
 target_link_libraries(MovementIntentComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME MovementIntentComponentTests COMMAND MovementIntentComponentTests)
