@@ -25,8 +25,10 @@ PacketManager::PacketManager(uint32_t seqNumber) {
     this->_payload = std::vector<uint64_t>();
     this->_serializer = std::make_shared<BigEndianSerialization>();
     if (!this->_serializer) {
-        throw err::PacketError("[Server] Failed to load serializer",
-            err::PacketError::SERIALIZER_ATTRIBUTION_FAILED);
+        throw err::PacketError(
+            "[Server] Failed to load serializer",
+            err::PacketError::SERIALIZER_ATTRIBUTION_FAILED
+        );
     }
 
     this->_packetHandlers = {
