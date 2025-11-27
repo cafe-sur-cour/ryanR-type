@@ -13,6 +13,7 @@
 #include "../../component/permanent/TransformComponent.hpp"
 #include "../../component/permanent/ColliderComponent.hpp"
 #include "../../../types/FRect.hpp"
+#include "../../../constants.hpp"
 
 namespace ecs {
 
@@ -120,7 +121,7 @@ math::Vector2f MovementSystem::calculateSmoothMovement(
     float maxDist = distance;
     float bestDist = 0.0f;
 
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < constants::SMOOTH_MOVEMENT_ITERATIONS; ++i) {
         float testDist = (minDist + maxDist) / 2.0f;
         math::Vector2f testPos = startPos + direction * testDist;
 
