@@ -22,7 +22,9 @@ std::shared_ptr<ecs::ResourceManager> initRessourcesManager(
     std::shared_ptr<ecs::ResourceManager> resourceManager =
         std::make_shared<ecs::ResourceManager>();
 
-    gfx::createWindow_t createWindowFunc = windowLoader->getSymbol("createWindow");
+    gfx::createWindow_t createWindowFunc = windowLoader->getSymbol(
+        "createWindow"
+    );
     if (!createWindowFunc) {
         const char* error = windowLoader->Error();
         std::string errorMsg = "Failed to load createWindow from libMultimedia";

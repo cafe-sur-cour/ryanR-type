@@ -38,7 +38,10 @@ Core::Core() {
         throw std::runtime_error(errorMsg);
     }
 
-    this->_resourceManager = initRessourcesManager(this->_windowLoader, this->_eventLoader);
+    this->_resourceManager = initRessourcesManager(
+        this->_windowLoader,
+        this->_eventLoader
+    );
 
     this->_gsm = std::make_shared<gsm::GameStateMachine>();
     std::shared_ptr<gsm::DevState> devState =
