@@ -22,6 +22,7 @@ rserv::Server::Server() {
     this->_network = nullptr;
     this->_buffer = nullptr;
     this->_packet = nullptr;
+    this->_config = std::make_shared<rserv::ServerConfig>();
 }
 
 rserv::Server::~Server() {
@@ -50,7 +51,7 @@ void rserv::Server::init() {
         throw err::ServerError("[Server] Server configuration not set",
             err::ServerError::CONFIG_ERROR);
     }
-    /* Load the Network lib */
+
     this->loadNetworkLibrary();
     this->loadBufferLibrary();
     this->loadPacketLibrary();
@@ -208,74 +209,4 @@ void rserv::Server::onPacketReceived(
         << idClient << std::endl;
     (void)packet;
     // Add game-specific packet processing logic here
-}
-
-
-void rserv::Server::loadNetworkLibrary() {
-    if (!_networloader.Open(pathLoad "/" networkLib)) {
-        throw err::ServerError("[Server] Loading network lib failed",
-            err::ServerError::LIBRARY_LOAD_FAILED);
-    }
-    if (!_networloader.getHandler()) {
-        throw err::ServerError("[Server] Loading network lib failed",
-            err::ServerError::LIBRARY_LOAD_FAILED);
-    }
-    createNetworkLib_t createNetwork = _networloader.getSymbol
-        ("createNetworkInstance");
-    if (!createNetwork) {
-        throw err::ServerError("[Server] Loading network lib failed",
-            err::ServerError::LIBRARY_LOAD_FAILED);
-    }
-    _network = std::shared_ptr<net::INetwork>
-        (reinterpret_cast<net::INetwork *>(createNetwork()));
-    if (!_network) {
-        throw err::ServerError("[Server] Loading network lib failed",
-            err::ServerError::LIBRARY_LOAD_FAILED);
-    }
-}
-
-void rserv::Server::loadBufferLibrary() {
-    if (!_bufferloader.Open(pathLoad "/" bufferLib)) {
-        throw err::ServerError("[Server] Loading buffer lib failed",
-            err::ServerError::LIBRARY_LOAD_FAILED);
-    }
-    if (!_bufferloader.getHandler()) {
-        throw err::ServerError("[Server] Loading buffer lib failed",
-            err::ServerError::LIBRARY_LOAD_FAILED);
-    }
-    createBuffer_t createBuffer = _bufferloader.getSymbol
-        ("createBufferInstance");
-    if (!createBuffer) {
-        throw err::ServerError("[Server] Loading buffer lib failed",
-            err::ServerError::LIBRARY_LOAD_FAILED);
-    }
-    _buffer = std::shared_ptr<IBuffer>
-        (reinterpret_cast<IBuffer *>(createBuffer()));
-    if (!_buffer) {
-        throw err::ServerError("[Server] Loading buffer lib failed",
-            err::ServerError::LIBRARY_LOAD_FAILED);
-    }
-}
-
-void rserv::Server::loadPacketLibrary() {
-    if (!_packetloader.Open(pathLoad "/" packetLib)) {
-        throw err::ServerError("[Server] Loading packet lib failed",
-            err::ServerError::LIBRARY_LOAD_FAILED);
-    }
-    if (!_packetloader.getHandler()) {
-        throw err::ServerError("[Server] Loading packet lib failed",
-            err::ServerError::LIBRARY_LOAD_FAILED);
-    }
-    createPacket_t createPacket = _packetloader.getSymbol
-        ("createPacketInstance");
-    if (!createPacket) {
-        throw err::ServerError("[Server] Loading packet lib failed",
-            err::ServerError::LIBRARY_LOAD_FAILED);
-    }
-    _packet = std::shared_ptr<IPacketManager>
-        (reinterpret_cast<IPacketManager *>(createPacket()));
-    if (!_packet) {
-        throw err::ServerError("[Server] Loading packet lib failed",
-            err::ServerError::LIBRARY_LOAD_FAILED);
-    }
 }
