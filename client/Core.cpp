@@ -13,9 +13,19 @@
 #include "initRessourcesManager/initRessourcesManager.hpp"
 #include "gsm/states/scenes/DevState.hpp"
 #include "../../common/Signal/Signal.hpp"
+#include "../../libs/Multimedia/IWindow.hpp"
+#include "../../libs/Multimedia/IEvent.hpp"
+#include "../../common/DLLoader/DLLoader.hpp"
 
 Core::Core() {
     std::string multimediaPath = std::string(pathLoad) + "/" + multimediaLib;
+
+    _windowLoader = std::make_shared<DLLoader<gfx::createWindow_t>>(
+        DLLoader<gfx::createWindow_t>()
+    );
+    _eventLoader = std::make_shared<DLLoader<gfx::createEvent_t>>(
+        DLLoader<gfx::createEvent_t>()
+    );
 
     if (!this->_windowLoader->Open(multimediaPath.c_str())) {
         std::string error = this->_windowLoader->Error();
