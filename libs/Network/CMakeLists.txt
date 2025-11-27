@@ -15,7 +15,7 @@ target_compile_definitions(${NETWORK_LIB_NAME}
 
 if(WIN32)
     target_compile_definitions(${NETWORK_LIB_NAME}
-        PUBLIC _WIN32_WINNT=0x0601
+        PUBLIC _WIN32_WINNT=0x0A00
         PUBLIC WIN32_LEAN_AND_MEAN
     )
 endif()
