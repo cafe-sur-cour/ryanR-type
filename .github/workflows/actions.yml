@@ -106,6 +106,7 @@ jobs:
             git clone https://github.com/Microsoft/vcpkg.git
             cd vcpkg
             ./bootstrap-vcpkg.sh
+            cd ..
           fi
           echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
 
@@ -138,9 +139,12 @@ jobs:
         run: |
           if (-not (Test-Path "vcpkg")) {
             git clone https://github.com/Microsoft/vcpkg.git
-            cd vcpkg
+          }
+          cd vcpkg
+          if ((-not (Test-Path "vcpkg.exe")) -or (-not (Test-Path "scripts\buildsystems\vcpkg.cmake"))) {
             .\bootstrap-vcpkg.bat
           }
+          cd ..
           echo "VCPKG_ROOT=$PWD\vcpkg" >> $env:GITHUB_ENV
 
       - name: RUN COMPILATION
@@ -181,9 +185,12 @@ jobs:
         run: |
           if [ ! -d "vcpkg" ]; then
             git clone https://github.com/Microsoft/vcpkg.git
-            cd vcpkg
+          fi
+          cd vcpkg
+          if [ ! -f "vcpkg" ] || [ ! -f "scripts/buildsystems/vcpkg.cmake" ]; then
             ./bootstrap-vcpkg.sh
           fi
+          cd ..
           echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
 
       - name: RUN COMPILATION
@@ -347,9 +354,12 @@ jobs:
         run: |
           if (-not (Test-Path "vcpkg")) {
             git clone https://github.com/Microsoft/vcpkg.git
-            cd vcpkg
+          }
+          cd vcpkg
+          if ((-not (Test-Path "vcpkg.exe")) -or (-not (Test-Path "scripts\buildsystems\vcpkg.cmake"))) {
             .\bootstrap-vcpkg.bat
           }
+          cd ..
           echo "VCPKG_ROOT=$PWD\vcpkg" >> $env:GITHUB_ENV
 
       - name: BUILD PROJECT
@@ -430,6 +440,10 @@ jobs:
             ## 📦 Unix Installation
             1. Download `r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz`
             2. Extract: `tar -xzf r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz`
+
+            if you do not have vcpkg setup already:
+            - Install dependdencies: `chmod +x scripts/install_dependencies.sh && ./scripts/install_dependencies.sh`
+
             3. Compile: `chmod +x scripts/compile_project.sh && ./scripts/compile_project.sh`
           draft: false
           prerelease: false
