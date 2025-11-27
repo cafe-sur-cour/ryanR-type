@@ -2,7 +2,6 @@ set(CLIENT_BIN_NAME r-type_client)
 
 add_executable(${CLIENT_BIN_NAME}
     main.cpp
-    ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
     Utils.cpp
     Utils.hpp
     ClientNetwork.cpp
@@ -12,24 +11,16 @@ add_executable(${CLIENT_BIN_NAME}
 
 add_dependencies(${CLIENT_BIN_NAME} generate_embedded_assets)
 
-find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
-
 target_link_libraries(${CLIENT_BIN_NAME}
     PUBLIC
         ECS
         DLLoader
         SIGNAL
         PREFAB
-        Graphical
-        SFML::Graphics
-        SFML::Window
-        SFML::System
-        SFML::Audio
 )
 
 add_subdirectory(initRessourcesManager)
 add_subdirectory(gsm)
-add_subdirectory(graphicals)
 
 add_custom_command(TARGET ${CLIENT_BIN_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${CLIENT_BIN_NAME}> ${CMAKE_SOURCE_DIR}/
