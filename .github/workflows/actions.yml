@@ -110,16 +110,6 @@ jobs:
           fi
           echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
 
-      - name: CACHE CMAKE BUILD
-        uses: actions/cache@v4
-        with:
-          path: |
-            build/unix
-            ~/.cache/cmake
-          key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}
-          restore-keys: |
-            ${{ runner.os }}-cmake-
-
       - name: RUN COMPILATION
         run: |
           chmod +x ./scripts/compile_project.sh
@@ -153,16 +143,6 @@ jobs:
             .\bootstrap-vcpkg.bat
           }
           echo "VCPKG_ROOT=$PWD\vcpkg" >> $env:GITHUB_ENV
-
-      - name: CACHE CMAKE BUILD
-        uses: actions/cache@v4
-        with:
-          path: |
-            build/windows
-            ~\AppData\Local\cmake
-          key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}
-          restore-keys: |
-            ${{ runner.os }}-cmake-
 
       - name: RUN COMPILATION
         run: |
@@ -206,17 +186,6 @@ jobs:
             ./bootstrap-vcpkg.sh
           fi
           echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
-
-      - name: CACHE CMAKE BUILD WITH TESTS
-        uses: actions/cache@v4
-        with:
-          path: |
-            build/unix
-            ~/.cache/cmake
-          key: ${{ runner.os }}-cmake-tests-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}
-          restore-keys: |
-            ${{ runner.os }}-cmake-tests-
-            ${{ runner.os }}-cmake-
 
       - name: RUN COMPILATION
         run: |
@@ -383,17 +352,6 @@ jobs:
             .\bootstrap-vcpkg.bat
           }
           echo "VCPKG_ROOT=$PWD\vcpkg" >> $env:GITHUB_ENV
-
-      - name: CACHE CMAKE BUILD
-        uses: actions/cache@v4
-        with:
-          path: |
-            build/windows
-            ~\AppData\Local\cmake
-          key: ${{ runner.os }}-cmake-release-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}
-          restore-keys: |
-            ${{ runner.os }}-cmake-release-
-            ${{ runner.os }}-cmake-
 
       - name: BUILD PROJECT
         run: |
