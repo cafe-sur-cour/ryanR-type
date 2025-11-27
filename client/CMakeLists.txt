@@ -33,6 +33,7 @@ target_link_libraries(${CLIENT_BIN_NAME}
         ECS
         DLLoader
         SIGNAL
+        PREFAB
         Graphical
         SFML::Graphics
         SFML::Window
