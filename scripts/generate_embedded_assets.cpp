@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
         f << "#ifndef EMBEDDED_ASSETS_HPP_\n";
         f << "#define EMBEDDED_ASSETS_HPP_\n\n";
         f << "#include \"../../libs/Multimedia/"
-             "AssetManager.hpp\"\n";
+             "AssetManager/AssetManager.hpp\"\n";
         f << "#include <unordered_map>\n";
         f << "#include <string>\n";
         f << "#include <vector>\n\n";
