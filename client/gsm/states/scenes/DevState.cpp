@@ -137,7 +137,7 @@ void DevState::render() {
         math::FRect hitbox = collider->getHitbox(transform->getPosition());
 
         gfx::color_t red = {0, 0, 255};
-        _resourceManager->get<gfx::IWindow>()->drawRectangle(
+        _resourceManager->get<gfx::IWindow>()->drawRectangleOutline(
             red,
             {static_cast<size_t>(hitbox.getLeft()),
                 static_cast<size_t>(hitbox.getTop())},
@@ -168,7 +168,7 @@ void DevState::render() {
             color = {0, 255, 0};  // Green for solid entities
         }
 
-        _resourceManager->get<gfx::IWindow>()->drawRectangle(
+        _resourceManager->get<gfx::IWindow>()->drawRectangleOutline(
             color,
             {static_cast<size_t>(hitbox.getLeft()),
                 static_cast<size_t>(hitbox.getTop())},
