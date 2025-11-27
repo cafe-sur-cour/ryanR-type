@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include "../../../../common/ECS/component/tags/PlayerTag.hpp"
+#include "../../../../common/ECS/component/tags/ControllableTag.hpp"
 #include "../../../../client/graphicals/IWindow.hpp"
 #include "../../../../client/graphicals/IEvent.hpp"
 #include "../../../../common/ECS/component/permanent/SpriteComponent.hpp"
@@ -42,6 +43,7 @@ void DevState::enter() {
 
     transform->setScale(math::Vector2f(3.0f, 3.0f));
     auto playerTag = std::make_shared<ecs::PlayerTag>();
+    auto controllableTag = std::make_shared<ecs::ControllableTag>();
     // auto sprite = std::make_shared<ecs::SpriteComponent>
     //     ("assets/sprites/sprite.png");
 
@@ -49,6 +51,7 @@ void DevState::enter() {
         ("assets/sprites/frog_spritesheet.png", 64.0f, 32.0f, 4);
     _registry->addComponent(entityId, transform);
     _registry->addComponent(entityId, playerTag);
+    _registry->addComponent(entityId, controllableTag);
     // _registry->addComponent(entityId, sprite);
     _registry->addComponent(entityId, animation);
 }
