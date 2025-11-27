@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 
     std::string asset_dir = argv[1];
     std::string output_file = argv[2];
-    
+
     fs::path output_path(output_file);
     fs::path embedded_dir = output_path.parent_path() / "embeddedAssets";
     fs::create_directories(embedded_dir);
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
         f << "#include <string>\n";
         f << "#include <vector>\n\n";
         f << "namespace assets {\n\n";
-        
+
         // Declare extern variables for each asset
         for (const auto& [path, data] : assets) {
             std::string symbol = sanitizeSymbolName(path);
@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
             f << "extern const size_t asset_" << symbol << "_size;\n";
         }
         f << "\n";
-        
+
         f << "extern std::unordered_map<std::string, AssetData> "
              "embeddedAssets;\n\n";
         f << "} // namespace assets\n\n";
@@ -102,7 +102,9 @@ int main(int argc, char* argv[]) {
     int file_index = 0;
     for (const auto& [path, data] : assets) {
         std::string symbol = sanitizeSymbolName(path);
-        std::string cpp_filename = (embedded_dir / ("EmbeddedAsset_" + std::to_string(file_index) + ".cpp")).string();
+        std::string cpp_filename = (
+            embedded_dir / ("EmbeddedAsset_" + std::to_string(file_index) + ".cpp")
+        ).string();
 
         std::ofstream f(cpp_filename);
         if (!f) {
@@ -155,7 +157,7 @@ int main(int argc, char* argv[]) {
         for (const auto& [path, data] : assets) {
             std::string symbol = sanitizeSymbolName(path);
             f << "    {\"" << path << "\", {\n";
-            f << "        std::vector<unsigned char>(asset_" << symbol 
+            f << "        std::vector<unsigned char>(asset_" << symbol
               << ", asset_" << symbol << " + asset_" << symbol << "_size),\n";
             f << "        asset_" << symbol << "_size\n";
             f << "    }},\n";
