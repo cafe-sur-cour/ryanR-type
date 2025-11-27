@@ -9,6 +9,12 @@ target_include_directories(${NETWORK_LIB_NAME}
 target_compile_definitions(${NETWORK_LIB_NAME}
     PUBLIC _WIN32_WINNT=0x0A00
     PUBLIC WIN32_LEAN_AND_MEAN
+    PRIVATE NETWORK_EXPORTS
+)
+
+# Enable symbol exports for DLL
+set_target_properties(${NETWORK_LIB_NAME} PROPERTIES
+    WINDOWS_EXPORT_ALL_SYMBOLS ON
 )
 
 target_compile_definitions(${NETWORK_LIB_NAME}

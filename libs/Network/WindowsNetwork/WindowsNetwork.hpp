@@ -8,6 +8,16 @@
 #ifndef WINDOWSNETWORK_HPP_
     #define WINDOWSNETWORK_HPP_
 
+#ifdef _WIN32
+    #ifdef NETWORK_EXPORTS
+        #define NETWORK_API __declspec(dllexport)
+    #else
+        #define NETWORK_API __declspec(dllimport)
+    #endif
+#else
+    #define NETWORK_API
+#endif
+
 #ifndef ASIO_STANDALONE
     #define ASIO_STANDALONE
 #endif
@@ -53,8 +63,8 @@ class WindowsNetwork : public ANetwork {
 } // namespace net
 
 extern "C" {
-    void *createNetworkInstance();
-    int getType();
+    NETWORK_API void *createNetworkInstance();
+    NETWORK_API int getType();
 }
 
 #endif /* !WINDOWSNETWORK_HPP_ */
