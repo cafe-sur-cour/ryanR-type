@@ -9,7 +9,7 @@
 #include <iostream>
 #include "PacketManager.hpp"
 
-bool PacketManager::unpack(std::vector<uint8_t> data) {
+bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
     if (data.empty()) {
         std::cerr <<
             "[PACKET] Error: unpackPacket(): Empty packet data"
@@ -22,7 +22,7 @@ bool PacketManager::unpack(std::vector<uint8_t> data) {
     return this->unpackBody(data);
 }
 
-bool PacketManager::unpackHeader(std::vector<uint8_t> data) {
+bool pm::PacketManager::unpackHeader(std::vector<uint8_t> data) {
     if (data.empty() || data.size() != HEADER_SIZE) {
         std::cerr <<
             "[PACKET] Error: unpackPacket(): Invalid header data"
@@ -49,7 +49,7 @@ bool PacketManager::unpackHeader(std::vector<uint8_t> data) {
     return true;
 }
 
-bool PacketManager::unpackBody(std::vector<uint8_t> data) {
+bool pm::PacketManager::unpackBody(std::vector<uint8_t> data) {
     if (this->_type == data.at(0)) {
         for (auto &received : this->_packetReceived) {
             if (received.first == this->_type) {

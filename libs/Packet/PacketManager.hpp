@@ -39,6 +39,7 @@
 #define END_GAME_PACKET 0x08
 #define CAN_START_PACKET 0x09
 
+namespace pm {
 class PacketManager : public IPacketManager {
     public:
         PacketManager(uint32_t seqNumber);
@@ -88,9 +89,11 @@ class PacketManager : public IPacketManager {
         std::vector<uint8_t> buildEventPacket(std::vector<uint64_t> payload);
         bool parseEventPacket(const std::vector<uint8_t> payload);
 };
+} // namespace pm
 
 extern "C" {
     void *createPacketInstance(unsigned int id);
     int getType();
 }
+
 #endif /* !PACKET_MANAGER_HPP_ */

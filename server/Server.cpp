@@ -204,7 +204,7 @@ void rserv::Server::onClientDisconnected(int idClient) {
 }
 
 void rserv::Server::onPacketReceived(
-    int idClient, const IPacketManager &packet) {
+    int idClient, const pm::IPacketManager &packet) {
     std::cout << "[Server] Received packet from client "
         << idClient << std::endl;
     (void)packet;
