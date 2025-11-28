@@ -26,6 +26,20 @@ The POC includes:
 - `main.cpp`: Example code showcasing various JSON operations
 - `README.md`: Instructions for building and running the POC
 
+### CMake Integration
+
+The following CMake code integrates nlohmann/json using FetchContent:
+
+```cmake
+include(FetchContent)
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.11.2
+)
+FetchContent_MakeAvailable(nlohmann_json)
+```
+
 ## Usage Example
 
 ```cpp
