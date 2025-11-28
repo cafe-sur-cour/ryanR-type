@@ -41,9 +41,22 @@ jobs:
       - name: CHECKOUT
         uses: actions/checkout@v4
 
+      - name: SETUP PYTHON
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: CACHE CPPLINT
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-cpplint-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-cpplint-
+            ${{ runner.os }}-pip-
+
       - name: INSTALL CPP LINTER
         run: |
-          apt update && apt install -y python3-pip
           pip install cpplint
           chmod +x ./scripts/cpp_style_checker.sh
 
@@ -68,14 +81,34 @@ jobs:
     steps:
       - name: CHECKOUT
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
-      - name: INSTALL DEPENDENCIES
+      - name: CACHE SYSTEM PACKAGES
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
+          version: 1.0
+
+      - name: CACHE VCPKG
+        uses: actions/cache@v4
+        with:
+          path: |
+            vcpkg
+            ~/.cache/vcpkg
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
+
+      - name: INSTALL VCPKG
         run: |
-          sudo apt install -y cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          ./bootstrap-vcpkg.sh
-          echo "VCPKG_ROOT=$(pwd)" >> $GITHUB_ENV
+          if [ ! -d "vcpkg" ]; then
+            git clone https://github.com/Microsoft/vcpkg.git
+            cd vcpkg
+            ./bootstrap-vcpkg.sh
+            cd ..
+          fi
+          echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
 
       - name: RUN COMPILATION
         run: |
@@ -89,13 +122,30 @@ jobs:
     steps:
       - name: CHECKOUT
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
-      - name: INSTALL DEPENDENCIES
+      - name: CACHE VCPKG
+        uses: actions/cache@v4
+        with:
+          path: |
+            vcpkg
+            ~\AppData\Local\vcpkg
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
+
+      - name: INSTALL VCPKG
         run: |
-          git clone https://github.com/Microsoft/vcpkg.git
+          if (-not (Test-Path "vcpkg")) {
+            git clone https://github.com/Microsoft/vcpkg.git
+          }
           cd vcpkg
-          .\bootstrap-vcpkg.bat
-          echo "VCPKG_ROOT=$PWD" >> $env:GITHUB_ENV
+          if ((-not (Test-Path "vcpkg.exe")) -or (-not (Test-Path "scripts\buildsystems\vcpkg.cmake"))) {
+            .\bootstrap-vcpkg.bat
+          }
+          cd ..
+          echo "VCPKG_ROOT=$PWD\vcpkg" >> $env:GITHUB_ENV
 
       - name: RUN COMPILATION
         run: |
@@ -112,14 +162,36 @@ jobs:
     steps:
       - name: CHECKOUT
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
-      - name: INSTALL DEPENDENCIES
+      - name: CACHE SYSTEM PACKAGES
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
+          version: 1.0
+
+      - name: CACHE VCPKG
+        uses: actions/cache@v4
+        with:
+          path: |
+            vcpkg
+            ~/.cache/vcpkg
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
+
+      - name: INSTALL VCPKG
         run: |
-          sudo apt install -y cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
-          git clone https://github.com/Microsoft/vcpkg.git
+          if [ ! -d "vcpkg" ]; then
+            git clone https://github.com/Microsoft/vcpkg.git
+          fi
           cd vcpkg
-          ./bootstrap-vcpkg.sh
-          echo "VCPKG_ROOT=$(pwd)" >> $GITHUB_ENV
+          if [ ! -f "vcpkg" ] || [ ! -f "scripts/buildsystems/vcpkg.cmake" ]; then
+            ./bootstrap-vcpkg.sh
+          fi
+          cd ..
+          echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
 
       - name: RUN COMPILATION
         run: |
@@ -230,9 +302,98 @@ jobs:
             echo "::notice::New version will be $NEW_VERSION (type: $VERSION_TYPE)"
           fi
 
-  create_unix_release:
-    name: create unix release
+  build_unix_package:
+    name: build unix package
     needs: [calculate_version]
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: CREATE UNIX SOURCE ARCHIVE
+        run: |
+          mkdir -p release-package
+          cp -r client server common libs scripts tests CMakeLists.txt CMakePresets.json vcpkg.json release-package/
+          cd release-package
+          tar -czf ../r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz .
+          cd ..
+
+      - name: UPLOAD UNIX ARTIFACT
+        uses: actions/upload-artifact@v4
+        with:
+          name: unix-package
+          path: r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz
+          retention-days: 1
+
+  build_windows_package:
+    name: build windows package
+    needs: [calculate_version]
+    if: ${{ github.event_name == 'push' }}
+    runs-on: windows-latest
+    steps:
+      - name: CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: CACHE VCPKG
+        uses: actions/cache@v4
+        with:
+          path: |
+            vcpkg
+            ~\AppData\Local\vcpkg
+          key: ${{ runner.os }}-vcpkg-release-${{ hashFiles('**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-release-
+            ${{ runner.os }}-vcpkg-
+
+      - name: INSTALL VCPKG
+        run: |
+          if (-not (Test-Path "vcpkg")) {
+            git clone https://github.com/Microsoft/vcpkg.git
+          }
+          cd vcpkg
+          if ((-not (Test-Path "vcpkg.exe")) -or (-not (Test-Path "scripts\buildsystems\vcpkg.cmake"))) {
+            .\bootstrap-vcpkg.bat
+          }
+          cd ..
+          echo "VCPKG_ROOT=$PWD\vcpkg" >> $env:GITHUB_ENV
+
+      - name: BUILD PROJECT
+        run: |
+          .\scripts\compile_project.bat
+
+      - name: CREATE WINDOWS BINARIES ARCHIVE
+        run: |
+          New-Item -ItemType Directory -Force -Path "r-type-client-windows"
+          Copy-Item -Path "build\windows\bin\client\*.exe" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "build\windows\bin\client\*.dll" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
+          Compress-Archive -Path "r-type-client-windows" -DestinationPath "r-type-client-windows-${{ needs.calculate_version.outputs.version }}.zip"
+          New-Item -ItemType Directory -Force -Path "r-type-server-windows"
+          Copy-Item -Path "build\windows\bin\server\*.exe" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "build\windows\bin\server\*.dll" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
+          Compress-Archive -Path "r-type-server-windows" -DestinationPath "r-type-server-windows-${{ needs.calculate_version.outputs.version }}.zip"
+
+      - name: UPLOAD WINDOWS CLIENT ARTIFACT
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-client-package
+          path: r-type-client-windows-${{ needs.calculate_version.outputs.version }}.zip
+          retention-days: 1
+
+      - name: UPLOAD WINDOWS SERVER ARTIFACT
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-server-package
+          path: r-type-server-windows-${{ needs.calculate_version.outputs.version }}.zip
+          retention-days: 1
+
+  create_release:
+    name: create unified release
+    needs: [calculate_version, build_unix_package, build_windows_package]
     if: ${{ github.event_name == 'push' }}
     environment: RTYPE
     runs-on: ubuntu-latest
@@ -242,78 +403,49 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: CREATE RELEASE ARCHIVE
-        run: |
-          mkdir -p release-package
-          cp -r client server common libs scripts tests CMakeLists.txt CMakePresets.json vcpkg.json release-package/
-          cd release-package
-          zip -r ../rtype-unix-${{ needs.calculate_version.outputs.version }}.zip .
-          cd ..
+      - name: DOWNLOAD UNIX ARTIFACT
+        uses: actions/download-artifact@v4
+        with:
+          name: unix-package
+          path: ./artifacts
 
-      - name: CREATE UNIX RELEASE
+      - name: DOWNLOAD WINDOWS CLIENT ARTIFACT
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-client-package
+          path: ./artifacts
+
+      - name: DOWNLOAD WINDOWS SERVER ARTIFACT
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-server-package
+          path: ./artifacts
+
+      - name: CREATE UNIFIED RELEASE
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ needs.calculate_version.outputs.version }}-unix
+          tag: ${{ needs.calculate_version.outputs.version }}
           allowUpdates: true
-          name: Unix Release ${{ needs.calculate_version.outputs.version }}
+          name: Release ${{ needs.calculate_version.outputs.version }}
           body: |
-            Automated Unix release ${{ needs.calculate_version.outputs.version }}
+            Automated release ${{ needs.calculate_version.outputs.version }}
             
             **Version Type:** `${{ needs.calculate_version.outputs.version_type }}`
 
-            ## 📦 Installation
-            1. Download `rtype-unix-${{ needs.calculate_version.outputs.version }}.zip`
-            2. Unzip: `unzip rtype-unix-${{ needs.calculate_version.outputs.version }}.zip`
+            ## 📦 Windows Installation
+            1. Download `r-type-client-windows-${{ needs.calculate_version.outputs.version }}.zip` and `r-type-server-windows-${{ needs.calculate_version.outputs.version }}.zip`
+            2. Unzip the archives
+            3. Run `r-type_client.exe` or `r-type_server.exe`
+
+            ## 📦 Unix Installation
+            1. Download `r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz`
+            2. Extract: `tar -xzf r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz`
+
+            if you do not have vcpkg setup already:
+            - Install dependdencies: `chmod +x scripts/install_dependencies.sh && ./scripts/install_dependencies.sh`
+
             3. Compile: `chmod +x scripts/compile_project.sh && ./scripts/compile_project.sh`
           draft: false
           prerelease: false
-          artifacts: "rtype-unix-${{ needs.calculate_version.outputs.version }}.zip"
-          artifactContentType: application/zip
-
-  create_windows_release:
-    name: create windows release
-    needs: [calculate_version]
-    if: ${{ github.event_name == 'push' }}
-    environment: RTYPE
-    runs-on: windows-latest
-    steps:
-      - name: CHECKOUT
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: INSTALL DEPENDENCIES
-        run: |
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          .\bootstrap-vcpkg.bat
-          echo "VCPKG_ROOT=$PWD" >> $env:GITHUB_ENV
-
-      - name: BUILD PROJECT
-        run: |
-          .\scripts\compile_project.bat
-
-      - name: CREATE RELEASE ARCHIVES
-        run: |
-          Compress-Archive -Path "build\windows\bin\client\*.exe", "build\windows\bin\client\*.dll" -DestinationPath "rtype-client-windows-${{ needs.calculate_version.outputs.version }}.zip"
-          Compress-Archive -Path "build\windows\bin\server\*.exe", "build\windows\bin\server\*.dll" -DestinationPath "rtype-server-windows-${{ needs.calculate_version.outputs.version }}.zip"
-
-      - name: CREATE WINDOWS RELEASE
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ needs.calculate_version.outputs.version }}-windows
-          allowUpdates: true
-          name: Windows Release ${{ needs.calculate_version.outputs.version }}
-          body: |
-            Automated Windows release ${{ needs.calculate_version.outputs.version }}
-            
-            **Version Type:** `${{ needs.calculate_version.outputs.version_type }}`
-
-            ## 📦 Installation
-            1. Download `rtype-windows-${{ needs.calculate_version.outputs.version }}.zip`
-            2. Unzip the archive
-            3. Run `r-type_client.exe` or `r-type_server.exe`
-          draft: false
-          prerelease: false
-          artifacts: "rtype-client-windows-${{ needs.calculate_version.outputs.version }}.zip, rtype-server-windows-${{ needs.calculate_version.outputs.version }}.zip"
-          artifactContentType: application/zip
+          artifacts: "artifacts/*"
+          artifactContentType: application/octet-stream

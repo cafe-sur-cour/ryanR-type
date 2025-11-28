@@ -8,6 +8,16 @@
 #ifndef SIGNAL_HPP_
 #define SIGNAL_HPP_
 
+#ifdef _WIN32
+    #ifndef _WIN32_WINNT
+        #define _WIN32_WINNT 0x0A00
+    #endif
+
+    #ifndef WIN32_LEAN_AND_MEAN
+        #define WIN32_LEAN_AND_MEAN
+    #endif
+#endif
+
 #include <csignal>
 
 class Signal {

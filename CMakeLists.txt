@@ -7,11 +7,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0A00)
+    add_definitions(-DWIN32_LEAN_AND_MEAN)
+    add_definitions(-DASIO_STANDALONE)
 endif()
 
 find_package(asio CONFIG REQUIRED)
 option(BUILD_TESTS "Build unit tests" OFF)
 option(BUILD_CLIENT "Build client and multimedia library" ON)
+option(BUILD_SERVER "Build server" ON)
 
 if(APPLE)
     add_compile_options(-Wall -Wextra -Werror -Wshadow -Wpedantic -Wconversion -Wsign-conversion -Wfloat-equal -Wcast-align -Wformat=2 -Wnull-dereference -Wdouble-promotion)
@@ -48,8 +51,9 @@ if(BUILD_CLIENT)
     add_subdirectory(client)
 endif()
 
-add_subdirectory(server)
-
+if(BUILD_SERVER)
+    add_subdirectory(server)
+endif()
 
 if(BUILD_TESTS)
     add_subdirectory(tests)
