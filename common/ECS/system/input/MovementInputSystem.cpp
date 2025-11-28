@@ -12,7 +12,7 @@
 #include "../../../constants.hpp"
 #include "../../component/tags/ControllableTag.hpp"
 #include "../../component/temporary/InputIntentComponent.hpp"
-#include "../../../../libs/Multimedia/IEvent.hpp"
+#include "../../resourceManager/IInputProvider.hpp"
 
 namespace ecs {
 
@@ -38,20 +38,20 @@ math::Vector2f MovementInputSystem::getMovementDirection(
     std::shared_ptr<ResourceManager> resourceManager) const {
     math::Vector2f direction(0.0f, 0.0f);
 
-    if (!resourceManager->has<gfx::IEvent>()) {
+    if (!resourceManager->has<IInputProvider>()) {
         return direction;
     }
 
-    auto eventSystem = resourceManager->get<gfx::IEvent>();
+    auto inputProvider = resourceManager->get<IInputProvider>();
 
     /* Keyboard input */
-    if (eventSystem->isKeyPressed(gfx::EventType::LEFT))
+    if (inputProvider->isKeyPressed(gfx::EventType::LEFT))
         direction.setX(direction.getX() - 1.0f);
-    if (eventSystem->isKeyPressed(gfx::EventType::RIGHT))
+    if (inputProvider->isKeyPressed(gfx::EventType::RIGHT))
         direction.setX(direction.getX() + 1.0f);
-    if (eventSystem->isKeyPressed(gfx::EventType::UP))
+    if (inputProvider->isKeyPressed(gfx::EventType::UP))
         direction.setY(direction.getY() - 1.0f);
-    if (eventSystem->isKeyPressed(gfx::EventType::DOWN))
+    if (inputProvider->isKeyPressed(gfx::EventType::DOWN))
         direction.setY(direction.getY() + 1.0f);
 
     /* Normalize keyboard input */
@@ -63,7 +63,7 @@ math::Vector2f MovementInputSystem::getMovementDirection(
     }
 
     /* Gamepad input */
-    math::Vector2f analogInput = getAnalogStickInput(eventSystem);
+    math::Vector2f analogInput = getAnalogStickInput(inputProvider);
     if (std::fabs(analogInput.getX()) > constants::EPS ||
         std::fabs(analogInput.getY()) > constants::EPS) {
         direction = analogInput;
@@ -73,11 +73,11 @@ math::Vector2f MovementInputSystem::getMovementDirection(
 }
 
 math::Vector2f MovementInputSystem::getAnalogStickInput(
-    std::shared_ptr<gfx::IEvent> eventSystem) const {
+    std::shared_ptr<IInputProvider> inputProvider) const {
     float rawX =
-        eventSystem->getAxisValue(gfx::EventType::GAMEPAD_LEFT_STICK_RIGHT);
+        inputProvider->getAxisValue(gfx::EventType::GAMEPAD_LEFT_STICK_RIGHT);
     float rawY =
-        eventSystem->getAxisValue(gfx::EventType::GAMEPAD_LEFT_STICK_DOWN);
+        inputProvider->getAxisValue(gfx::EventType::GAMEPAD_LEFT_STICK_DOWN);
 
     /* Deadzone */
     const float deadzone = constants::GAMEPAD_DEADZONE * 100.0f;
