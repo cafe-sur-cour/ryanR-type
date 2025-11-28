@@ -10,6 +10,7 @@
 
 #include "../base/ASystem.hpp"
 #include "../../component/temporary/InputIntentComponent.hpp"
+#include "../../resourceManager/IInputProvider.hpp"
 #include <memory>
 
 namespace gfx {
@@ -28,7 +29,7 @@ class MovementInputSystem : public ASystem {
     private:
         math::Vector2f getMovementDirection(std::shared_ptr<ResourceManager> resourceManager) const;
         void updateInputIntent(std::shared_ptr<ARegistry> registry, size_t entityId, const math::Vector2f &direction);
-        math::Vector2f getAnalogStickInput(std::shared_ptr<gfx::IEvent> eventSystem) const;
+        math::Vector2f getAnalogStickInput(std::shared_ptr<IInputProvider> inputProvider) const;
 };
 
 } // namespace ecs
