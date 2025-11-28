@@ -33,6 +33,11 @@ Evaluation of SFML, SDL2, and Raylib for 2D rendering in our C++ game project.
 
 See [Graphics Documentation](./graphics/pocs-graphics.md)
 
+### JSON Handling
+Proof of Concept for using nlohmann/json library for JSON parsing and serialization in C++.
+
+See [JSON Documentation](./json/poc-nlohmann-json.md)
+
 - AI and pathfinding
 - Physics and collisions
 - Audio and effects
