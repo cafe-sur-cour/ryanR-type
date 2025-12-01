@@ -11,6 +11,7 @@
 #include "../../base/AGameState.hpp"
 #include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
 #include "../../../../MouseInputHandler.hpp"
+#include "../../../../ui/Button.hpp"
 
 namespace gsm {
 
@@ -24,8 +25,12 @@ public:
     void exit() override;
 
 private:
+    void renderUI();
+
+private:
     std::shared_ptr<ecs::ResourceManager> _resourceManager;
     std::unique_ptr<MouseInputHandler> _mouseHandler;
+    std::shared_ptr<ui::Button> _testButton;
 };
 
 }  // namespace gsm
