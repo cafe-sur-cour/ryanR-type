@@ -24,7 +24,8 @@ Core::Core() {
 
     this->_resourceManager = initRessourcesManager(
         this->_windowLoader,
-        this->_eventLoader
+        this->_eventLoader,
+        this->_audioLoader
     );
 
     this->_gsm = std::make_shared<gsm::GameStateMachine>();
@@ -43,6 +44,7 @@ Core::~Core() {
     }
     this->_windowLoader->Close();
     this->_eventLoader->Close();
+    this->_audioLoader->Close();
 }
 
 void Core::run() {
@@ -75,6 +77,9 @@ void Core::initLibraries() {
     _eventLoader = std::make_shared<DLLoader<gfx::createEvent_t>>(
         DLLoader<gfx::createEvent_t>()
     );
+    _audioLoader = std::make_shared<DLLoader<gfx::createAudio_t>>(
+        DLLoader<gfx::createAudio_t>()
+    );
 
     if (!this->_windowLoader->Open(multimediaPath.c_str())) {
         std::string error = this->_windowLoader->Error();
@@ -88,6 +93,15 @@ void Core::initLibraries() {
     if (!this->_eventLoader->Open(multimediaPath.c_str())) {
         std::string error = this->_eventLoader->Error();
         std::string errorMsg = "Failed to load libMultimedia for events: ";
+        errorMsg += multimediaPath;
+        if (!error.empty()) {
+            errorMsg += " - Error: " + error;
+        }
+        throw std::runtime_error(errorMsg);
+    }
+    if (!this->_audioLoader->Open(multimediaPath.c_str())) {
+        std::string error = this->_audioLoader->Error();
+        std::string errorMsg = "Failed to load libMultimedia for audio: ";
         errorMsg += multimediaPath;
         if (!error.empty()) {
             errorMsg += " - Error: " + error;
