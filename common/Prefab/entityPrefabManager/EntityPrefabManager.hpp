@@ -12,7 +12,7 @@
 #include <string>
 #include <map>
 #include <memory>
-#include "../../ECS/entity/IEntity.hpp"
+#include "../../ECS/entity/Entity.hpp"
 #include "../IPrefab.hpp"
 
 class EntityPrefabManager
@@ -23,7 +23,7 @@ class EntityPrefabManager
 
         void registerPrefab(const std::string &name, const std::shared_ptr<IPrefab> &prefab);
         std::shared_ptr<IPrefab> getPrefab(const std::string &name) const;
-        size_t createEntityFromPrefab(const std::string &prefabName, const std::shared_ptr<ecs::ARegistry> &registry);
+        ecs::Entity createEntityFromPrefab(const std::string &prefabName, const std::shared_ptr<ecs::ARegistry> &registry);
         bool hasPrefab(const std::string &name) const;
         void deletePrefab(const std::string &name);
         void clearPrefabs();

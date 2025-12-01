@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 #include "../../common/components/base/AComponent.hpp"
-#include "../../common/ECS/entity/AEntity.hpp"
+#include "../../common/ECS/entity/Entity.hpp"
 #include "../../common/ECS/entity/registry/ARegistry.hpp"
 
 using namespace ecs;
@@ -23,14 +23,6 @@ TEST(AComponentTest, SetState) {
     AComponent comp;
     comp.setState(ComponentState::Temporary);
     EXPECT_EQ(comp.getState(), ComponentState::Temporary);
-}
-
-/* AEntity Tests */
-
-TEST(AEntityTest, OperatorSizeT) {
-    AEntity e;
-    size_t id = e;
-    EXPECT_GE(id, 0);
 }
 
 /* ARegistry Tests */
@@ -53,7 +45,7 @@ TEST(ARegistryTest, AddGetComponent) {
     ARegistry registry;
     registry.registerComponent<TestComponent>();
 
-    size_t entityId = 1;
+    ecs::Entity entityId = 1;
     auto comp = std::make_shared<TestComponent>(42);
     registry.addComponent<TestComponent>(entityId, comp);
 
@@ -66,7 +58,7 @@ TEST(ARegistryTest, HasComponent) {
     ARegistry registry;
     registry.registerComponent<TestComponent>();
 
-    size_t entityId = 1;
+    ecs::Entity entityId = 1;
     EXPECT_FALSE(registry.hasComponent<TestComponent>(entityId));
 
     auto comp = std::make_shared<TestComponent>(42);
@@ -78,7 +70,7 @@ TEST(ARegistryTest, RemoveComponent) {
     ARegistry registry;
     registry.registerComponent<TestComponent>();
 
-    size_t entityId = 1;
+    ecs::Entity entityId = 1;
     auto comp = std::make_shared<TestComponent>(42);
     registry.addComponent<TestComponent>(entityId, comp);
     EXPECT_TRUE(registry.hasComponent<TestComponent>(entityId));
@@ -91,7 +83,7 @@ TEST(ARegistryTest, RemoveAllComponentsWithState) {
     ARegistry registry;
     registry.registerComponent<TestComponent>();
 
-    size_t entityId = 1;
+    ecs::Entity entityId = 1;
     auto comp = std::make_shared<TestComponent>(42);
     comp->setState(ComponentState::Temporary);
     registry.addComponent<TestComponent>(entityId, comp);

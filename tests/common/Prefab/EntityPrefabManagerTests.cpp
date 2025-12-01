@@ -62,7 +62,7 @@ TEST(EntityPrefabManagerTest, CreateEntityFromPrefab) {
     std::string name = "createTest";
 
     manager.registerPrefab(name, prefab);
-    size_t entityId = manager.createEntityFromPrefab(name, registry);
+    ecs::Entity entityId = manager.createEntityFromPrefab(name, registry);
 
     EXPECT_NE(entityId, 0);
 }
@@ -72,7 +72,7 @@ TEST(EntityPrefabManagerTest, CreateEntityFromNonExistentPrefab) {
     auto registry = std::make_shared<ARegistry>();
     std::string name = "nonExistent";
 
-    size_t entityId = manager.createEntityFromPrefab(name, registry);
+    ecs::Entity entityId = manager.createEntityFromPrefab(name, registry);
 
     EXPECT_EQ(entityId, 0); // As per implementation
 }
@@ -83,7 +83,7 @@ TEST(EntityPrefabManagerTest, CreateEntityWithNullRegistry) {
     std::string name = "nullRegistry";
 
     manager.registerPrefab(name, prefab);
-    size_t entityId = manager.createEntityFromPrefab(name, nullptr);
+    ecs::Entity entityId = manager.createEntityFromPrefab(name, nullptr);
 
     EXPECT_EQ(entityId, 0);
 }

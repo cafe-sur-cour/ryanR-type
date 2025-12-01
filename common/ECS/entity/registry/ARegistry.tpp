@@ -20,7 +20,7 @@ void ARegistry::registerComponent()
 }
 
 template <typename T>
-void ARegistry::addComponent(size_t entityId, std::shared_ptr<T> component)
+void ARegistry::addComponent(Entity entityId, std::shared_ptr<T> component)
 {
     registerComponent<T>();
     std::string typeName = typeid(T).name();
@@ -32,7 +32,7 @@ void ARegistry::addComponent(size_t entityId, std::shared_ptr<T> component)
 }
 
 template <typename T>
-std::shared_ptr<T> ARegistry::getComponent(size_t entityId) const
+std::shared_ptr<T> ARegistry::getComponent(Entity entityId) const
 {
     std::string typeName = typeid(T).name();
     auto it = _components.find(typeName);
@@ -44,7 +44,7 @@ std::shared_ptr<T> ARegistry::getComponent(size_t entityId) const
 }
 
 template <typename T>
-std::vector<std::shared_ptr<T>> ARegistry::getComponents(size_t entityId) const
+std::vector<std::shared_ptr<T>> ARegistry::getComponents(Entity entityId) const
 {
     std::string typeName = typeid(T).name();
     auto it = _components.find(typeName);
@@ -56,7 +56,7 @@ std::vector<std::shared_ptr<T>> ARegistry::getComponents(size_t entityId) const
 }
 
 template <typename T>
-void ARegistry::removeComponent(size_t entityId)
+void ARegistry::removeComponent(Entity entityId)
 {
     const char *typeName = typeid(T).name();
     auto it = _components.find(typeName);
@@ -67,7 +67,7 @@ void ARegistry::removeComponent(size_t entityId)
 }
 
 template <typename T>
-bool ARegistry::hasComponent(size_t entityId) const
+bool ARegistry::hasComponent(Entity entityId) const
 {
     std::string typeName = typeid(T).name();
     auto it = _components.find(typeName);

@@ -18,7 +18,7 @@ TEST(APrefabTest, InstantiateCreatesEntity) {
     auto registry = std::make_shared<ARegistry>();
     APrefab prefab;
 
-    size_t entityId = prefab.instantiate(registry);
+    ecs::Entity entityId = prefab.instantiate(registry);
 
     EXPECT_NE(entityId, 0); // Assuming 0 is invalid
     // Since ARegistry starts from 1 or something, but check if entity exists

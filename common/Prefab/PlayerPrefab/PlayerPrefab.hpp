@@ -40,8 +40,8 @@ class PlayerPrefab : public APrefab {
 
         ~PlayerPrefab() = default;
 
-        size_t instantiate(const std::shared_ptr<ecs::ARegistry> &registry) override {
-            size_t entity = registry->createEntity();
+        ecs::Entity instantiate(const std::shared_ptr<ecs::ARegistry> &registry) override {
+            ecs::Entity entity = registry->createEntity();
             auto transform = std::make_shared<ecs::TransformComponent>(math::Vector2f(_x, _y));
             transform->setScale(math::Vector2f(_scale, _scale));
             registry->addComponent(entity, transform);
