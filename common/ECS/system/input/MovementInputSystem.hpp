@@ -11,6 +11,7 @@
 #include "../base/ASystem.hpp"
 #include "../../component/temporary/InputIntentComponent.hpp"
 #include "../../resourceManager/IInputProvider.hpp"
+#include "../../resourceManager/InputAction.hpp"
 #include <memory>
 
 namespace gfx {

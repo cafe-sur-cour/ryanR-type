@@ -13,6 +13,7 @@
 #include "../../component/tags/ControllableTag.hpp"
 #include "../../component/temporary/InputIntentComponent.hpp"
 #include "../../resourceManager/IInputProvider.hpp"
+#include "../../resourceManager/InputAction.hpp"
 
 namespace ecs {
 
@@ -44,17 +45,10 @@ math::Vector2f MovementInputSystem::getMovementDirection(
 
     auto inputProvider = resourceManager->get<IInputProvider>();
 
-    /* Keyboard input */
-    if (inputProvider->isKeyPressed(gfx::EventType::LEFT))
-        direction.setX(direction.getX() - 1.0f);
-    if (inputProvider->isKeyPressed(gfx::EventType::RIGHT))
-        direction.setX(direction.getX() + 1.0f);
-    if (inputProvider->isKeyPressed(gfx::EventType::UP))
-        direction.setY(direction.getY() - 1.0f);
-    if (inputProvider->isKeyPressed(gfx::EventType::DOWN))
-        direction.setY(direction.getY() + 1.0f);
+    direction.setX(inputProvider->getActionAxis(InputAction::MOVE_X));
+    direction.setY(inputProvider->getActionAxis(InputAction::MOVE_Y));
 
-    /* Normalize keyboard input */
+    /* Normalize keyboard/dpad input */
     float magnitude = std::sqrt(direction.getX() *
                     direction.getX() + direction.getY() * direction.getY());
     if (magnitude > 1.0f) {
