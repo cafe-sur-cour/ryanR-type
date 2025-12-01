@@ -231,6 +231,46 @@ flowchart TD
     SI --> PI
 ```
 
+## Game State Flow
+
+This diagram illustrates the complete game state flow between client and server, showing how both sides synchronize during a typical game session.
+
+```
+          CLIENT                                  SERVER
+   ----------------------                   ----------------------
+   [ Boot ]                                   [ Idle ]
+        |                                           |
+        v                                           |
+   [ Main Menu ]                                    |
+        | (Connect)                                 |
+        v ---------------------------------------> [ Lobby ]
+   [ Lobby ] <----------- Lobby state updates ------^
+        |
+   (Start Game)
+        |---------------- START_GAME ------------->
+        v                                           v
+   [ Loading ]                                 [ Game Init ]
+        |                                           |
+        v                                           v
+   [ Gameplay ] <-------- snapshots ----------- [ Gameplay ]
+        |----------- inputs ------------------------>|
+        |
+   (Player dies or wave ends)
+        v                                           v
+   [ Game Over ] <--------- game_end ------------- [ Game Over ]
+        |
+        v
+   [ Menu ]
+```
+
+### State Synchronization
+
+- **Boot/Idle**: Initial states where client starts and server waits for connections
+- **Lobby**: Matchmaking phase where players connect and prepare to start
+- **Loading**: Brief state for loading game assets and initializing game systems
+- **Gameplay**: Main game loop with continuous synchronization via snapshots and inputs
+- **Game Over**: End game state with results and transition back to menu
+
 ## Library Dependencies
 
 ```mermaid
