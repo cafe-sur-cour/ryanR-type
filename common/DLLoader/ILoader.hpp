@@ -11,7 +11,7 @@
 
 class ILoader {
     public:
-        ~ILoader() = default;
+        virtual ~ILoader() = default;
 
         virtual void *Open(const char *path, int flag) = 0;
         virtual void *Symbol(const char *symbolName) = 0;

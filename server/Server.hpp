@@ -27,8 +27,6 @@
 #include "../common/DLLoader/LoaderType.hpp"
 #include "Signal.hpp"
 
-
-
 namespace rserv {
     class Server : public IServer {
         public:
@@ -56,7 +54,7 @@ namespace rserv {
 
             void onClientConnected(int idClient) override;
             void onClientDisconnected(int idClient) override;
-            void onPacketReceived(int idClient, const IPacketManager &packet) override;
+            void onPacketReceived(int idClient, const pm::IPacketManager &packet) override;
 
             void processConnections() override;
             void processIncomingPackets() override;
@@ -77,7 +75,7 @@ namespace rserv {
             std::shared_ptr<ServerConfig> _config;
             std::shared_ptr<net::INetwork> _network;
             std::shared_ptr<IBuffer> _buffer;
-            std::shared_ptr<IPacketManager> _packet;
+            std::shared_ptr<pm::IPacketManager> _packet;
 
     };
 } // namespace rserv = r-type server

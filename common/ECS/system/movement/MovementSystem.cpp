@@ -231,6 +231,7 @@ math::Vector2f MovementSystem::handleBounceCollision(
                         newVelocity.setY(-newVelocity.getY());
 
                     velocityComp->setVelocity(newVelocity);
+                    (void)startHitbox;  // To avoid unused variable warning
                     return startPos;
                 }
             }

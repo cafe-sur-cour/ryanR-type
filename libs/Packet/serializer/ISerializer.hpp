@@ -11,7 +11,7 @@
 #ifndef ISERIALIZER_HPP_
 #define ISERIALIZER_HPP_
 
-
+namespace pm {
 class ISerializer {
     public:
         virtual ~ISerializer() = default;
@@ -28,5 +28,6 @@ class ISerializer {
     protected:
     private:
 };
+} // namespace pm
 
 #endif /* !ISERIALIZER_HPP_ */
