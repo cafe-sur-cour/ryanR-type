@@ -20,10 +20,10 @@ class INetwork {
 
         virtual ~INetwork() = default;
 
-        virtual void init(int port) = 0;
+        virtual void init(uint32_t port,const std::string host) = 0;
         virtual void stop() = 0;
 
-        virtual int acceptConnection() = 0;
+        virtual uint8_t acceptConnection() = 0;
         virtual void closeConnection(int connectionId) = 0;
         virtual std::vector<int> getActiveConnections() const = 0;
         virtual size_t getConnectionCount() const = 0;

@@ -37,10 +37,10 @@ class WindowsNetwork : public ANetwork {
         WindowsNetwork();
         ~WindowsNetwork() override;
 
-        void init(int port) override;
+        void init(uint32_t port,const std::string host) override;
         void stop() override;
 
-        int acceptConnection() override;
+        uint8_t acceptConnection() override;
         void closeConnection(int connectionId) override;
         std::vector<int> getActiveConnections() const override;
         size_t getConnectionCount() const override;

@@ -28,12 +28,12 @@ ServerNetwork::~ServerNetwork() {
     }
 }
 
-void ServerNetwork::init(int port) {
+void ServerNetwork::init(uint32_t port, const std::string host) {
     _port = port;
     _socket = std::make_shared<asio::ip::udp::socket>(*_ioContext);
     _socket->open(asio::ip::udp::v4());
-    if (port < 0 || port > 65535) {
-        throw std::invalid_argument("Port must be between 0 and 65535");
+    if (port < 1024 || port > 65535) {
+        throw std::invalid_argument("Port must be between 1024 and 65535");
     }
 
     _socket->bind(asio::ip::udp::endpoint(asio::ip::udp::v4(),
@@ -53,9 +53,9 @@ void ServerNetwork::stop() {
     _isRunning = false;
 }
 
-int ServerNetwork::acceptConnection() {
+uint8_t ServerNetwork::acceptConnection() {
     if (!_socket || !_socket->is_open()) {
-        return -1;
+        return 1;
     }
 
     asio::ip::udp::endpoint senderEndpoint;
@@ -65,7 +65,7 @@ int ServerNetwork::acceptConnection() {
     size_t received = _socket->receive_from(asio::buffer(buffer),
         senderEndpoint, 0, ec);
     if (ec || received == 0) {
-        return -1;
+        return 1;
     }
     for (const auto& [clientId, endpoint] : _clients) {
         if (endpoint == senderEndpoint) {

@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 #include <stdexcept>
+#include <string>
 
 #include "ClientNetwork.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
@@ -20,16 +21,16 @@ WindowsNetwork::WindowsNetwork() {
 WindowsNetwork::~WindowsNetwork() {
 }
 
-void WindowsNetwork::init(int port) {
+void WindowsNetwork::init(uint32_t port, const std::string host) {
     (void)port;
+    (void)host;
 }
 
 void WindowsNetwork::stop() {
 }
 
-
-int WindowsNetwork::acceptConnection() {
-    return -1;
+uint8_t WindowsNetwork::acceptConnection() {
+    return 1;
 }
 
 void WindowsNetwork::closeConnection(int connectionId) {

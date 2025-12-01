@@ -23,11 +23,11 @@ class ClientNetwork {
         void start();
         void stop();
 
-        int getPort() const;
+        uint32_t getPort() const;
         void setPort(int port);
 
-        uint32_t getIp() const;
-        void setIp(uint32_t ip);
+        std::string getIp() const;
+        void setIp(const std::string &ip);
 
         void loadNetworkLibrary();
         void loadBufferLibrary();
@@ -42,8 +42,8 @@ class ClientNetwork {
         std::shared_ptr<IBuffer> _buffer;
         std::shared_ptr<pm::IPacketManager> _packet;
 
-        int _port;
-        uint32_t _ip;
+        uint32_t _port;
+        std::string  _ip;
 };
 
 #endif /* !CLIENTNETWORK_HPP_ */

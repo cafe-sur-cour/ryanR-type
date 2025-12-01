@@ -17,13 +17,21 @@
 
 namespace net {
 
+enum class ConnectionState {
+    DISCONNECTED,
+    CONNECTING,
+    CONNECTED,
+    RECONNECTING,
+    ERROR
+};
+
 class ANetwork : public INetwork {
     public:
 
         virtual ~ANetwork() override = default;
-        virtual void init(int port) override = 0;
+        virtual void init(uint32_t port,const std::string host) override = 0;
         virtual void stop() override = 0;
-        virtual int acceptConnection() override = 0;
+        virtual uint8_t acceptConnection() override = 0;
         virtual void sendTo(int connectionId, const pm::IPacketManager &packet) override = 0;
         virtual void broadcast(const pm::IPacketManager &packet) override = 0;
         virtual bool hasIncomingData() const override = 0;

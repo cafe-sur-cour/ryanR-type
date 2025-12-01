@@ -24,10 +24,10 @@ class UnixServerNetwork : public ANetwork {
         UnixServerNetwork();
         ~UnixServerNetwork() override;
 
-        void init(int port) override;
+        void init(uint32_t port,const std::string host) override;
         void stop() override;
 
-        int acceptConnection() override;
+        uint8_t acceptConnection() override;
 
         void sendTo(int connectionId, const pm::IPacketManager &packet) override;
         void broadcast(const pm::IPacketManager &packet) override;
@@ -36,8 +36,8 @@ class UnixServerNetwork : public ANetwork {
 
     private:
         std::queue<std::pair<int, std::shared_ptr<pm::IPacketManager>>> _incomingPackets;
-        int _nextClientId;
-        int _port;
+        uint8_t _nextClientId;
+        uint32_t _port;
 };
 
 } // namespace net

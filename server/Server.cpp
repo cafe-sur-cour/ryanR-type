@@ -149,6 +149,8 @@ void rserv::Server::processConnections() {
     int newClientId = _network->acceptConnection();
     while (newClientId != -1) {
         // Connection callback is already handled by network layer
+        std::cout << "[Server] New client connected with ID: "
+            << newClientId << std::endl;
         newClientId = _network->acceptConnection();
     }
 }

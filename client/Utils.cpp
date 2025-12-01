@@ -34,7 +34,7 @@ void Utils::helper() {
 void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork>
     clientNetwork) {
     int port = constants::DEFAULT_SERVER_PORT;
-    uint32_t ip = constants::DEFAULT_SERVER_IP;
+    std::string ip = constants::DEFAULT_SERVER_IP;
 
     for (int i = 1; i < ac; i++) {
         std::string arg = av[i];
@@ -42,7 +42,7 @@ void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork>
             port = std::stoi(av[i + 1]);
             i++;
         } else if (arg == "-i" && i + 1 < ac) {
-            ip = static_cast<uint32_t>(std::stoi(av[i + 1]));
+            ip = av[i + 1];
             i++;
         } else if (arg == "-h") {
             this->helper();

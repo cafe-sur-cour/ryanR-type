@@ -46,6 +46,7 @@ Core::~Core() {
 }
 
 void Core::run() {
+    this->_clientNetwork->init();
     auto previousTime = std::chrono::high_resolution_clock::now();
 
     while (this->_resourceManager->get<gfx::IWindow>()->isOpen()

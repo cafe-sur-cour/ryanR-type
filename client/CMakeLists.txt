@@ -14,6 +14,7 @@ add_dependencies(${CLIENT_BIN_NAME} generate_embedded_assets)
 target_link_libraries(${CLIENT_BIN_NAME}
     PUBLIC
         ECS
+        ERROR
         DLLoader
         SIGNAL
         PREFAB
