@@ -1,7 +1,7 @@
 set(NETWORK_LIB_NAME Network)
 
 if(WIN32)
-    add_subdirectory(WindowsNetwork)
+    add_subdirectory(Windows)
 elseif(UNIX)
-    add_subdirectory(UnixNetwork)
+    add_subdirectory(Unix)
 endif()

@@ -9,7 +9,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include "WindowsNetwork.hpp"
+#include "ClientNetwork.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
 
 namespace net {
