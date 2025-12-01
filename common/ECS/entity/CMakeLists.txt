@@ -1,7 +1,5 @@
 target_sources(${ECS_LIB_NAME} PUBLIC
-    IEntity.hpp
-    AEntity.hpp
-    AEntity.cpp
+    Entity.hpp
 )
 
 add_subdirectory(componentArray)

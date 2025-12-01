@@ -92,7 +92,7 @@ math::Vector2f MovementInputSystem::getAnalogStickInput(
 
 void MovementInputSystem::updateInputIntent(
     std::shared_ptr<ARegistry> registry,
-    size_t entityId,
+    Entity entityId,
     const math::Vector2f &direction) {
 
     registry->registerComponent<InputIntentComponent>();

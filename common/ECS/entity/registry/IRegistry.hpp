@@ -11,6 +11,7 @@
 #include <memory>
 #include "../../../components/base/IComponent.hpp"
 #include "../../view/View.hpp"
+#include "../Entity.hpp"
 
 namespace ecs {
 
@@ -22,17 +23,16 @@ class IRegistry {
         void registerComponent();
 
         template <typename T>
-        void addComponent(size_t entityId, std::shared_ptr<T> component);
+        void addComponent(Entity entityId, std::shared_ptr<T> component);
 
         template <typename T>
-        std::shared_ptr<T> getComponent(size_t entityId);
+        std::shared_ptr<T> getComponent(Entity entityId);
 
         template <typename T>
-        void removeComponent(size_t entityId);
+        void removeComponent(Entity entityId);
 
         template <typename T>
-        bool hasComponent(size_t entityId);
-
+        bool hasComponent(Entity entityId);
         template <typename... Components>
         View<Components...> view();
 

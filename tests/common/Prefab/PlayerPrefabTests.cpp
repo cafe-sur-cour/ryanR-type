@@ -31,7 +31,7 @@ TEST(PlayerPrefabTest, InstantiateCreatesEntityWithComponents) {
 
     PlayerPrefab prefab(100.0f, 200.0f, 1.5f, "assets/player.png", 64.0f, 64.0f, 0.0f, 0.0f, 4);
 
-    size_t entityId = prefab.instantiate(registry);
+    ecs::Entity entityId = prefab.instantiate(registry);
 
     EXPECT_NE(entityId, 0);
 

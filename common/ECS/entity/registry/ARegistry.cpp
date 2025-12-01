@@ -21,17 +21,18 @@ void ARegistry::removeAllComponentsWithState(ComponentState state) {
     }
 }
 
-size_t ARegistry::getMaxEntityId() const {
-    size_t maxId = 0;
+Entity ARegistry::getMaxEntityId() const {
+    Entity maxId = 0;
     for (const auto& pair : _components) {
-        size_t componentMaxId = pair.second->getMaxEntityId();
+        Entity componentMaxId = pair.second->getMaxEntityId();
         if (componentMaxId > maxId) {
             maxId = componentMaxId;
         }
     }
     return maxId;
 }
-size_t ARegistry::createEntity() {
+
+Entity ARegistry::createEntity() {
     return _nextEntityId++;
 }
 

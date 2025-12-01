@@ -119,17 +119,17 @@ TEST(ARegistryTest, View_MultipleComponents) {
     registry->registerComponent<PlayerTag>();
     registry->registerComponent<TransformComponent>();
 
-    // Entity 0: PlayerTag only
+    // ecs::Entity 0: PlayerTag only
     auto playerTag = std::make_shared<PlayerTag>();
     registry->addComponent(0, playerTag);
 
-    // Entity 1: PlayerTag + TransformComponent
+    // ecs::Entity 1: PlayerTag + TransformComponent
     auto playerTag2 = std::make_shared<PlayerTag>();
     auto transform = std::make_shared<TransformComponent>();
     registry->addComponent(1, playerTag2);
     registry->addComponent(1, transform);
 
-    // Entity 2: TransformComponent only
+    // ecs::Entity 2: TransformComponent only
     auto transform2 = std::make_shared<TransformComponent>();
     registry->addComponent(2, transform2);
 

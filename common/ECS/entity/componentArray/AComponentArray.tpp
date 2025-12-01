@@ -22,34 +22,34 @@ AComponentArray<T>::~AComponentArray() {
 }
 
 template <typename T>
-void AComponentArray<T>::add(size_t entityId, std::shared_ptr<T> component) {
+void AComponentArray<T>::add(Entity entityId, std::shared_ptr<T> component) {
     if (entityId >= static_cast<size_t>(_components.size()))
         _components.resize(entityId + 1);
     _components[entityId].push_back(component);
 }
 
 template <typename T>
-std::shared_ptr<T> AComponentArray<T>::get(size_t entityId) const {
+std::shared_ptr<T> AComponentArray<T>::get(Entity entityId) const {
     if (entityId < static_cast<size_t>(_components.size()) && !_components[entityId].empty())
         return _components[entityId][0];
     return nullptr;
 }
 
 template <typename T>
-std::vector<std::shared_ptr<T>> AComponentArray<T>::getAll(size_t entityId) const {
+std::vector<std::shared_ptr<T>> AComponentArray<T>::getAll(Entity entityId) const {
     if (entityId < static_cast<size_t>(_components.size()))
         return _components[entityId];
     return {};
 }
 
 template <typename T>
-void AComponentArray<T>::remove(size_t entityId) {
+void AComponentArray<T>::remove(Entity entityId) {
     if (entityId < static_cast<size_t>(_components.size()))
         _components[entityId].clear();
 }
 
 template <typename T>
-bool AComponentArray<T>::has(size_t entityId) const
+bool AComponentArray<T>::has(Entity entityId) const
 {
     if (entityId < static_cast<size_t>(_components.size()))
         return !_components[entityId].empty();
@@ -70,7 +70,7 @@ void AComponentArray<T>::removeAllComponentsWithState(ComponentState state) {
 }
 
 template <typename T>
-size_t AComponentArray<T>::getMaxEntityId() const {
+Entity AComponentArray<T>::getMaxEntityId() const {
     return _components.size();
 }
 

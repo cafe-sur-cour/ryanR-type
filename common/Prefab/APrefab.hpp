@@ -15,7 +15,7 @@ class APrefab : public IPrefab {
     public:
         APrefab() = default;
         virtual ~APrefab() = default;
-        size_t instantiate(const std::shared_ptr<ecs::ARegistry> &registry) override;
+        ecs::Entity instantiate(const std::shared_ptr<ecs::ARegistry> &registry) override;
 };
 
 #endif /* !APREFAB_HPP_ */
