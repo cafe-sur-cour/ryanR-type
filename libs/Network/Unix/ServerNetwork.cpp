@@ -28,17 +28,42 @@ UnixServerNetwork::~UnixServerNetwork() {
     }
 }
 
-void UnixServerNetwork::init(int port) {
+void UnixServerNetwork::init(uint16_t port, const std::string host) {
     _port = port;
     _socket = std::make_shared<asio::ip::udp::socket>(*_ioContext);
-    _socket->open(asio::ip::udp::v4());
-    if (port < 0 || port > 65535) {
-        throw std::invalid_argument("Port must be between 0 and 65535");
+
+    std::error_code ec;
+    _socket->open(asio::ip::udp::v4(), ec);
+    if (ec) {
+        throw std::runtime_error(std::string(
+            "[UnixServerNetwork] Failed to open socket: ") + ec.message());
     }
 
-    _socket->bind(asio::ip::udp::endpoint(asio::ip::udp::v4(),
-        static_cast<asio::ip::port_type>(port)));
+    asio::ip::address bindAddress;
+    if (host.empty()) {
+        bindAddress = asio::ip::address_v4::any();
+    } else {
+        try {
+            bindAddress = asio::ip::make_address(host);
+        } catch (const std::exception &) {
+            asio::ip::udp::resolver resolver(*_ioContext);
+            auto results = resolver.resolve(host, std::to_string(_port), ec);
+            if (ec || results.empty()) {
+                throw std::runtime_error(
+                    std::string("[UnixServerNetwork] Failed to resolve host '")
+                    + host + "': " + (ec ? ec.message() : "no results"));
+            }
+            bindAddress = results.begin()->endpoint().address();
+        }
+    }
 
+    _socket->bind(asio::ip::udp::endpoint(bindAddress, _port), ec);
+    if (ec) {
+        throw std::runtime_error(
+            std::string("[UnixServerNetwork] Failed to bind socket: ") + ec.message());
+    }
+    std::cout << "[UnixServerNetwork] Server started on " <<
+        bindAddress.to_string() << ":" << _port << std::endl;
     _isRunning = true;
 }
 
@@ -53,28 +78,28 @@ void UnixServerNetwork::stop() {
     _isRunning = false;
 }
 
-int UnixServerNetwork::acceptConnection() {
+uint8_t UnixServerNetwork::acceptConnection() {
     if (!_socket || !_socket->is_open()) {
-        return -1;
+        return 0;
     }
 
     asio::ip::udp::endpoint senderEndpoint;
-    std::array<char, 1024> buffer;
+    std::array<char, 1024> buffer;  // Temporary buffer for receiving data
     std::error_code ec;
 
     size_t received = _socket->receive_from(asio::buffer(buffer),
         senderEndpoint, 0, ec);
     if (ec || received == 0) {
-        return -1;
+        return 0;
     }
+
     for (const auto& [clientId, endpoint] : _clients) {
         if (endpoint == senderEndpoint) {
-            //* Add Packet */
             return clientId;
         }
     }
 
-    int newClientId = _nextClientId++;
+    uint8_t newClientId = _nextClientId++;
     _clients[newClientId] = senderEndpoint;
     if (_onConnectCallback) {
         _onConnectCallback(newClientId);
@@ -85,50 +110,21 @@ int UnixServerNetwork::acceptConnection() {
     return newClientId;
 }
 
-void UnixServerNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
-    auto it = _clients.find(connectionId);
-    if (it == _clients.end()) {
-        std::cerr << "[UnixServerNetwork] Client " << connectionId <<
-            " not found" << std::endl;
-        return;
-    }
-
-    if (!_socket || !_socket->is_open()) {
-        std::cerr << "[UnixServerNetwork] Socket not available" << std::endl;
-        return;
-    }
-
-    try {
-        /* Packet serialization */
-        (void)packet;
-        std::string data = "Response from server";
-        _socket->send_to(asio::buffer(data), it->second);
-        std::cout << "[UnixServerNetwork] Sent data to client " <<
-            connectionId << std::endl;
-    } catch (const std::exception& e) {
-        std::cerr << "[UnixServerNetwork] Error sending to client " <<
-            connectionId << ": " << e.what() << std::endl;
-    }
+void UnixServerNetwork::sendTo(uint8_t connectionId, const pm::IPacketManager &packet) {
+    (void)packet;
+    (void)connectionId;
 }
 
 void UnixServerNetwork::broadcast(const pm::IPacketManager &packet) {
-    for (const auto& [clientId, endpoint] : _clients) {
-        sendTo(clientId, packet);
-    }
+    (void)packet;
 }
 
 bool UnixServerNetwork::hasIncomingData() const {
-    if (!_socket || !_socket->is_open()) {
-        return false;
-    }
-
-    std::error_code ec;
-    size_t available = _socket->available(ec);
-    return !ec && available > 0;
+    return false;
 }
 
 std::shared_ptr<pm::IPacketManager> UnixServerNetwork::receiveFrom(
-    const int &connectionId) {
+    const uint8_t &connectionId) {
     (void)connectionId;
     return nullptr;
 }

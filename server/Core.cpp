@@ -23,7 +23,6 @@ Core::~Core() {
     }
     if (this->_server != nullptr) {
         this->_server->stop();
-        this->_server->~Server();
         this->_server.reset();
     }
     if (this->_utils != nullptr) {

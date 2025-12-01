@@ -9,8 +9,8 @@
 #include <vector>
 #include "ANetwork.hpp"
 
-std::vector<int> net::ANetwork::getActiveConnections() const {
-    std::vector<int> connections;
+std::vector<uint8_t> net::ANetwork::getActiveConnections() const {
+    std::vector<uint8_t> connections;
     for (const auto& [clientId, endpoint] : _clients) {
         connections.push_back(clientId);
     }
@@ -21,7 +21,7 @@ size_t net::ANetwork::getConnectionCount() const {
     return _clients.size();
 }
 
-void net::ANetwork::closeConnection(int connectionId) {
+void net::ANetwork::closeConnection(uint8_t connectionId) {
     auto it = _clients.find(connectionId);
     if (it != _clients.end()) {
         std::cout << "[Network] Closing connection " <<
@@ -34,7 +34,8 @@ void net::ANetwork::closeConnection(int connectionId) {
     }
 }
 
-void net::ANetwork::setConnectionCallback(std::function<void(int)> onConnect) {
+void net::ANetwork::setConnectionCallback(
+    std::function<void(int)> onConnect) {
     _onConnectCallback = onConnect;
 }
 

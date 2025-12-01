@@ -39,8 +39,8 @@ namespace rserv {
 
             void setConfig(std::shared_ptr<ServerConfig> config) override;
             std::shared_ptr<ServerConfig> getConfig() const override;
-            unsigned int getPort() const override;
-            void setPort(unsigned int port) override;
+            uint16_t getPort() const override;
+            void setPort(uint16_t port) override;
 
             int getState() const override;
             void setState(int state) override;
@@ -52,16 +52,16 @@ namespace rserv {
             std::shared_ptr<net::INetwork> getNetwork() const override;
             void setNetwork(std::shared_ptr<net::INetwork> network) override;
 
-            void onClientConnected(int idClient) override;
-            void onClientDisconnected(int idClient) override;
-            void onPacketReceived(int idClient, const pm::IPacketManager &packet) override;
+            void onClientConnected(uint8_t idClient) override;
+            void onClientDisconnected(uint8_t idClient) override;
+            void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet) override;
 
             void processConnections() override;
             void processIncomingPackets() override;
 
             void broadcastPacket() override;
-            void sendToClient(int idClient ) override;
-            std::vector<int> getConnectedClients() const override;
+            void sendToClient(uint8_t idClient ) override;
+            std::vector<uint8_t> getConnectedClients() const override;
             size_t getClientCount() const override;
 
         private:
