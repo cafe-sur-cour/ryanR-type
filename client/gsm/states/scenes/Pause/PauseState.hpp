@@ -5,7 +5,8 @@
 ** PauseState
 */
 
-#pragma once
+#ifndef PAUSESTATE_HPP_
+#define PAUSESTATE_HPP_
 
 #include "../../base/AGameState.hpp"
 #include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
@@ -26,3 +27,5 @@ private:
 };
 
 }  // namespace gsm
+
+#endif  // PAUSESTATE_HPP_

@@ -5,7 +5,8 @@
 ** BootState
 */
 
-#pragma once
+#ifndef BOOTSTATE_HPP_
+#define BOOTSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
 #include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
@@ -26,3 +27,5 @@ private:
 };
 
 }  // namespace gsm
+
+#endif  // BOOTSTATE_HPP_

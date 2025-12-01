@@ -5,7 +5,8 @@
 ** LoadingState
 */
 
-#pragma once
+#ifndef LOADINGSTATE_HPP_
+#define LOADINGSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
 #include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
@@ -26,3 +27,5 @@ private:
 };
 
 }  // namespace gsm
+
+#endif  // LOADINGSTATE_HPP_

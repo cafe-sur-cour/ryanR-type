@@ -5,7 +5,8 @@
 ** ResultsState
 */
 
-#pragma once
+#ifndef RESULTSSTATE_HPP_
+#define RESULTSSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
 #include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
@@ -26,3 +27,5 @@ private:
 };
 
 }  // namespace gsm
+
+#endif  // RESULTSSTATE_HPP_
