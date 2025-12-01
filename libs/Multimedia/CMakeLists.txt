@@ -3,16 +3,29 @@ set(MULTIMEDIA_LIB_NAME Multimedia)
 find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
 
 add_library(${MULTIMEDIA_LIB_NAME} SHARED
+    IAudio.hpp
+    IEvent.hpp
+    IWindow.hpp
     SfmlWindow.cpp
+    SfmlWindow.hpp
     SfmlEvent.cpp
+    SfmlEvent.hpp
+    SfmlAudio.cpp
+    SfmlAudio.hpp
     SfmlKeyMappings.cpp
+    SfmlKeyMappings.hpp
     TextureManager.cpp
+    TextureManager.hpp
     FontManager.cpp
-    MultimediaEntry.cpp
+    FontManager.hpp
+    SfmlEntry.cpp
+    EventTypes.hpp
     ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_0.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_1.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_2.cpp
+    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_3.cpp
+    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_4.cpp
     ${CMAKE_SOURCE_DIR}/common/types/FRect.cpp
 )
 
@@ -21,6 +34,8 @@ set_source_files_properties(
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_0.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_1.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_2.cpp
+    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_3.cpp
+    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_4.cpp
     PROPERTIES GENERATED TRUE
 )
 
@@ -42,6 +57,8 @@ if(MSVC)
         ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_0.cpp
         ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_1.cpp
         ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_2.cpp
+        ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_3.cpp
+        ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_4.cpp
         PROPERTIES COMPILE_FLAGS "/Od /bigobj"
     )
 endif()
