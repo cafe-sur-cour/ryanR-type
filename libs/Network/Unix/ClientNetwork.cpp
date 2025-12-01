@@ -26,8 +26,9 @@ UnixClientNetwork::~UnixClientNetwork() {
     }
 }
 
-void UnixClientNetwork::init(int port) {
+void UnixClientNetwork::init(uint16_t port, const std::string host) {
     (void)port;
+    (void)host;
     _socket = std::make_shared<asio::ip::udp::socket>(*_ioContext);
     _socket->open(asio::ip::udp::v4());
     _isRunning = true;
@@ -41,7 +42,7 @@ void UnixClientNetwork::stop() {
     _isRunning = false;
 }
 
-void UnixClientNetwork::connect(const std::string& host, int port) {
+void UnixClientNetwork::connect(const std::string& host, uint16_t port) {
     if (!_socket || !_socket->is_open()) {
         throw std::runtime_error("[UnixClientNetwork] Socket not initialized.");
     }
@@ -85,12 +86,12 @@ bool UnixClientNetwork::isConnected() const {
     return _connected;
 }
 
-int UnixClientNetwork::acceptConnection() {
+uint8_t UnixClientNetwork::acceptConnection() {
     // Not applicable for client
-    return -1;
+    return 0;
 }
 
-void UnixClientNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
+void UnixClientNetwork::sendTo(uint8_t connectionId, const pm::IPacketManager &packet) {
     (void)connectionId;
 
     if (!_connected) {
@@ -130,7 +131,7 @@ bool UnixClientNetwork::hasIncomingData() const {
 }
 
 std::shared_ptr<pm::IPacketManager> UnixClientNetwork::receiveFrom(
-    const int &connectionId) {
+    const uint8_t &connectionId) {
     (void)connectionId;
 
     if (!_connected) {
