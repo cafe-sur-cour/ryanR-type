@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** UnixNetwork
+** ServerNetwork
 */
 
 #include <iostream>
@@ -12,22 +12,23 @@
 #include <memory>
 #include <string>
 
-#include "UnixNetwork.hpp"
+#include "ServerNetwork.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
 
 namespace net {
 
-UnixNetwork::UnixNetwork() : _nextClientId(1), _port(0), _isRunning(false) {
+ServerNetwork::ServerNetwork() : _nextClientId(1), _port(0) {
     _ioContext = std::make_shared<asio::io_context>();
+    _isRunning = false;
 }
 
-UnixNetwork::~UnixNetwork() {
+ServerNetwork::~ServerNetwork() {
     if (_isRunning) {
         stop();
     }
 }
 
-void UnixNetwork::init(int port) {
+void ServerNetwork::init(int port) {
     _port = port;
     _socket = std::make_shared<asio::ip::udp::socket>(*_ioContext);
     _socket->open(asio::ip::udp::v4());
@@ -41,7 +42,7 @@ void UnixNetwork::init(int port) {
     _isRunning = true;
 }
 
-void UnixNetwork::stop() {
+void ServerNetwork::stop() {
     if (_socket && _socket->is_open()) {
         _socket->close();
     }
@@ -52,7 +53,7 @@ void UnixNetwork::stop() {
     _isRunning = false;
 }
 
-int UnixNetwork::acceptConnection() {
+int ServerNetwork::acceptConnection() {
     if (!_socket || !_socket->is_open()) {
         return -1;
     }
@@ -78,47 +79,22 @@ int UnixNetwork::acceptConnection() {
     if (_onConnectCallback) {
         _onConnectCallback(newClientId);
     }
-    std::cout << "[UnixNetwork] New client " << newClientId << " from "
+    std::cout << "[ServerNetwork] New client " << newClientId << " from "
               << senderEndpoint.address().to_string() << ":" <<
               senderEndpoint.port() << std::endl;
     return newClientId;
 }
 
-void UnixNetwork::closeConnection(int connectionId) {
-    auto it = _clients.find(connectionId);
-    if (it != _clients.end()) {
-        std::cout << "[UnixNetwork] Closing connection " <<
-            connectionId << std::endl;
-        _clients.erase(it);
-
-        if (_onDisconnectCallback) {
-            _onDisconnectCallback(connectionId);
-        }
-    }
-}
-
-std::vector<int> UnixNetwork::getActiveConnections() const {
-    std::vector<int> connections;
-    for (const auto& [clientId, endpoint] : _clients) {
-        connections.push_back(clientId);
-    }
-    return connections;
-}
-
-size_t UnixNetwork::getConnectionCount() const {
-    return _clients.size();
-}
-
-void UnixNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
+void ServerNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
     auto it = _clients.find(connectionId);
     if (it == _clients.end()) {
-        std::cerr << "[UnixNetwork] Client " << connectionId <<
+        std::cerr << "[ServerNetwork] Client " << connectionId <<
             " not found" << std::endl;
         return;
     }
 
     if (!_socket || !_socket->is_open()) {
-        std::cerr << "[UnixNetwork] Socket not available" << std::endl;
+        std::cerr << "[ServerNetwork] Socket not available" << std::endl;
         return;
     }
 
@@ -127,21 +103,21 @@ void UnixNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
         (void)packet;
         std::string data = "Response from server";
         _socket->send_to(asio::buffer(data), it->second);
-        std::cout << "[UnixNetwork] Sent data to client " <<
+        std::cout << "[ServerNetwork] Sent data to client " <<
             connectionId << std::endl;
     } catch (const std::exception& e) {
-        std::cerr << "[UnixNetwork] Error sending to client " <<
+        std::cerr << "[ServerNetwork] Error sending to client " <<
             connectionId << ": " << e.what() << std::endl;
     }
 }
 
-void UnixNetwork::broadcast(const pm::IPacketManager &packet) {
+void ServerNetwork::broadcast(const pm::IPacketManager &packet) {
     for (const auto& [clientId, endpoint] : _clients) {
         sendTo(clientId, packet);
     }
 }
 
-bool UnixNetwork::hasIncomingData() const {
+bool ServerNetwork::hasIncomingData() const {
     if (!_socket || !_socket->is_open()) {
         return false;
     }
@@ -151,39 +127,20 @@ bool UnixNetwork::hasIncomingData() const {
     return !ec && available > 0;
 }
 
-std::shared_ptr<pm::IPacketManager> UnixNetwork::receiveFrom(
+std::shared_ptr<pm::IPacketManager> ServerNetwork::receiveFrom(
     const int &connectionId) {
     (void)connectionId;
     return nullptr;
-}
-
-void UnixNetwork::sendData(const pm::IPacketManager &data, size_t size) {
-    (void)size;
-    broadcast(data);
-}
-pm::IPacketManager &UnixNetwork::receiveData(
-    const IBuffer &buffer, size_t size) const {
-    (void)buffer;  // To avoid unused parameter warning
-    (void)size;   // To avoid unused parameter warning
-    throw std::runtime_error("[UnixNetwork] receiveData not implemented");
-}
-
-void UnixNetwork::setConnectionCallback(std::function<void(int)> onConnect) {
-    _onConnectCallback = onConnect;
-}
-
-void UnixNetwork::setDisconnectionCallback(std::function<void(int)>
-    onDisconnect) {
-    _onDisconnectCallback = onDisconnect;
 }
 
 }  // namespace net
 
 extern "C" {
     void *createNetworkInstance() {
-        return new net::UnixNetwork();
+        return new net::ServerNetwork();
     }
     int getType() {
-        return NETWORK_MODULE;
+        return NETWORK_SERVER_MODULE;
     }
 }
+
