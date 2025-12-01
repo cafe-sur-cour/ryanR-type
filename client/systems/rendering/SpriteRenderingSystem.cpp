@@ -20,7 +20,7 @@ SpriteRenderingSystem::SpriteRenderingSystem() {
 }
 
 void SpriteRenderingSystem::update(std::shared_ptr<ResourceManager>
-    resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) {
+    resourceManager, std::shared_ptr<Registry> registry, float deltaTime) {
     (void)deltaTime;
 
     View<SpriteComponent, TransformComponent> view(registry);

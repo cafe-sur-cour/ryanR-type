@@ -9,7 +9,7 @@
 #include <memory>
 #include "../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../common/Prefab/APrefab.hpp"
-#include "../../../common/ECS/entity/registry/ARegistry.hpp"
+#include "../../../common/ECS/entity/registry/Registry.hpp"
 
 using namespace ecs;
 
@@ -57,7 +57,7 @@ TEST(EntityPrefabManagerTest, GetNonExistentPrefab) {
 
 TEST(EntityPrefabManagerTest, CreateEntityFromPrefab) {
     EntityPrefabManager manager;
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     auto prefab = std::make_shared<APrefab>();
     std::string name = "createTest";
 
@@ -69,7 +69,7 @@ TEST(EntityPrefabManagerTest, CreateEntityFromPrefab) {
 
 TEST(EntityPrefabManagerTest, CreateEntityFromNonExistentPrefab) {
     EntityPrefabManager manager;
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     std::string name = "nonExistent";
 
     ecs::Entity entityId = manager.createEntityFromPrefab(name, registry);

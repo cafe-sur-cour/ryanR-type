@@ -2,7 +2,7 @@
 
 #include "../base/AGameState.hpp"
 #include "../../../../common/ECS/resourceManager/ResourceManager.hpp"
-#include "../../../../common/ECS/entity/registry/ARegistry.hpp"
+#include "../../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../../common/systems/systemManager/ASystemManager.hpp"
 #include "../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../common/systems/movement/InputToVelocitySystem.hpp"
@@ -23,7 +23,7 @@ public:
 
 private:
     std::shared_ptr<ecs::ResourceManager> _resourceManager;
-    std::shared_ptr<ecs::ARegistry> _registry;
+    std::shared_ptr<ecs::Registry> _registry;
     std::shared_ptr<ecs::ASystemManager> _systemManager;
     std::shared_ptr<ecs::MovementSystem> _movementSystem;
     std::shared_ptr<ecs::InputToVelocitySystem> _inputToVelocitySystem;

@@ -2,26 +2,26 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** ARegistry
+** Registry
 */
 
-#include "ARegistry.hpp"
+#include "Registry.hpp"
 
 namespace ecs {
 
-ARegistry::ARegistry() : _nextEntityId(1) {
+Registry::Registry() : _nextEntityId(1) {
 }
 
-ARegistry::~ARegistry() {
+Registry::~Registry() {
 }
 
-void ARegistry::removeAllComponentsWithState(ComponentState state) {
+void Registry::removeAllComponentsWithState(ComponentState state) {
     for (const auto& pair : _components) {
         pair.second->removeAllComponentsWithState(state);
     }
 }
 
-Entity ARegistry::getMaxEntityId() const {
+Entity Registry::getMaxEntityId() const {
     Entity maxId = 0;
     for (const auto& pair : _components) {
         Entity componentMaxId = pair.second->getMaxEntityId();
@@ -32,7 +32,7 @@ Entity ARegistry::getMaxEntityId() const {
     return maxId;
 }
 
-Entity ARegistry::createEntity() {
+Entity Registry::createEntity() {
     return _nextEntityId++;
 }
 

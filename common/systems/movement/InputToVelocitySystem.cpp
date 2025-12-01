@@ -18,7 +18,7 @@ InputToVelocitySystem::InputToVelocitySystem() {
 
 void InputToVelocitySystem::update(
     std::shared_ptr<ResourceManager> resourceManager,
-    std::shared_ptr<ARegistry> registry,
+    std::shared_ptr<Registry> registry,
     float deltaTime) {
 
     (void)resourceManager;

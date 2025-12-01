@@ -2,16 +2,16 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** ARegistry
+** Registry
 */
 
 
-#include "ARegistry.hpp"
+#include "Registry.hpp"
 
 namespace ecs {
 
 template <typename T>
-void ARegistry::registerComponent()
+void Registry::registerComponent()
 {
     std::string typeName = typeid(T).name();
     if (_components.find(typeName) == _components.end()) {
@@ -20,7 +20,7 @@ void ARegistry::registerComponent()
 }
 
 template <typename T>
-void ARegistry::addComponent(Entity entityId, std::shared_ptr<T> component)
+void Registry::addComponent(Entity entityId, std::shared_ptr<T> component)
 {
     registerComponent<T>();
     std::string typeName = typeid(T).name();
@@ -32,7 +32,7 @@ void ARegistry::addComponent(Entity entityId, std::shared_ptr<T> component)
 }
 
 template <typename T>
-std::shared_ptr<T> ARegistry::getComponent(Entity entityId) const
+std::shared_ptr<T> Registry::getComponent(Entity entityId) const
 {
     std::string typeName = typeid(T).name();
     auto it = _components.find(typeName);
@@ -44,7 +44,7 @@ std::shared_ptr<T> ARegistry::getComponent(Entity entityId) const
 }
 
 template <typename T>
-std::vector<std::shared_ptr<T>> ARegistry::getComponents(Entity entityId) const
+std::vector<std::shared_ptr<T>> Registry::getComponents(Entity entityId) const
 {
     std::string typeName = typeid(T).name();
     auto it = _components.find(typeName);
@@ -56,7 +56,7 @@ std::vector<std::shared_ptr<T>> ARegistry::getComponents(Entity entityId) const
 }
 
 template <typename T>
-void ARegistry::removeComponent(Entity entityId)
+void Registry::removeComponent(Entity entityId)
 {
     const char *typeName = typeid(T).name();
     auto it = _components.find(typeName);
@@ -67,7 +67,7 @@ void ARegistry::removeComponent(Entity entityId)
 }
 
 template <typename T>
-bool ARegistry::hasComponent(Entity entityId) const
+bool Registry::hasComponent(Entity entityId) const
 {
     std::string typeName = typeid(T).name();
     auto it = _components.find(typeName);
@@ -79,15 +79,15 @@ bool ARegistry::hasComponent(Entity entityId) const
 }
 
 template <typename... Components>
-View<Components...> ARegistry::view()
+View<Components...> Registry::view()
 {
-    return View<Components...>(std::static_pointer_cast<ARegistry>(shared_from_this()));
+    return View<Components...>(std::static_pointer_cast<Registry>(shared_from_this()));
 }
 
 template <typename... Components>
-Group<Components...> ARegistry::group()
+Group<Components...> Registry::group()
 {
-    return Group<Components...>(std::static_pointer_cast<ARegistry>(shared_from_this()));
+    return Group<Components...>(std::static_pointer_cast<Registry>(shared_from_this()));
 }
 
 } // namespace ecs

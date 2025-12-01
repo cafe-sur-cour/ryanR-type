@@ -21,7 +21,7 @@ MovementSystem::MovementSystem() {
 }
 
 void MovementSystem::update(std::shared_ptr<ResourceManager> resourceManager,
-                             std::shared_ptr<ARegistry> registry,
+                             std::shared_ptr<Registry> registry,
                              float deltaTime) {
     (void)resourceManager;
 
@@ -57,7 +57,7 @@ void MovementSystem::update(std::shared_ptr<ResourceManager> resourceManager,
 }
 
 bool MovementSystem::checkCollision(
-    std::shared_ptr<ARegistry> registry,
+    std::shared_ptr<Registry> registry,
     size_t entityId,
     math::Vector2f newPos) {
 
@@ -97,7 +97,7 @@ bool MovementSystem::checkCollision(
 }
 
 math::Vector2f MovementSystem::calculateSmoothMovement(
-    std::shared_ptr<ARegistry> registry,
+    std::shared_ptr<Registry> registry,
     size_t entityId,
     math::Vector2f startPos,
     math::Vector2f desiredPos) {
@@ -137,7 +137,7 @@ math::Vector2f MovementSystem::calculateSmoothMovement(
 }
 
 math::Vector2f MovementSystem::calculateSlidingMovement(
-    std::shared_ptr<ARegistry> registry,
+    std::shared_ptr<Registry> registry,
     size_t entityId,
     math::Vector2f basePos,
     math::Vector2f desiredPos) {
@@ -165,7 +165,7 @@ math::Vector2f MovementSystem::calculateSlidingMovement(
 }
 
 math::Vector2f MovementSystem::calculateSmoothSlidingPosition(
-    std::shared_ptr<ARegistry> registry,
+    std::shared_ptr<Registry> registry,
     size_t entityId,
     math::Vector2f startPos,
     math::Vector2f desiredPos) {
@@ -177,7 +177,7 @@ math::Vector2f MovementSystem::calculateSmoothSlidingPosition(
 }
 
 math::Vector2f MovementSystem::handleBounceCollision(
-    std::shared_ptr<ARegistry> registry,
+    std::shared_ptr<Registry> registry,
     size_t entityId,
     math::Vector2f startPos,
     math::Vector2f desiredPos,

@@ -9,13 +9,13 @@
 #define APREFAB_HPP_
 
 #include "IPrefab.hpp"
-#include "../ECS/entity/registry/ARegistry.hpp"
+#include "../ECS/entity/registry/Registry.hpp"
 
 class APrefab : public IPrefab {
     public:
         APrefab() = default;
         virtual ~APrefab() = default;
-        ecs::Entity instantiate(const std::shared_ptr<ecs::ARegistry> &registry) override;
+        ecs::Entity instantiate(const std::shared_ptr<ecs::Registry> &registry) override;
 };
 
 #endif /* !APREFAB_HPP_ */

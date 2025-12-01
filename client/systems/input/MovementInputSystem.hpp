@@ -25,11 +25,11 @@ class MovementInputSystem : public ASystem {
         MovementInputSystem();
         ~MovementInputSystem() = default;
 
-        void update(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) override;
+        void update(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<Registry> registry, float deltaTime) override;
 
     private:
         math::Vector2f getMovementDirection(std::shared_ptr<ResourceManager> resourceManager) const;
-        void updateInputIntent(std::shared_ptr<ARegistry> registry, Entity entityId, const math::Vector2f &direction);
+        void updateInputIntent(std::shared_ptr<Registry> registry, Entity entityId, const math::Vector2f &direction);
         math::Vector2f getAnalogStickInput(std::shared_ptr<IInputProvider> inputProvider) const;
 };
 

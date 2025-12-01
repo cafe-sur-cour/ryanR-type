@@ -9,7 +9,7 @@
 #include <memory>
 #include "../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../common/systems/movement/MovementSystem.hpp"
-#include "../../../../common/ECS/entity/registry/ARegistry.hpp"
+#include "../../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../../common/components/temporary/InputIntentComponent.hpp"
 #include "../../../../common/components/permanent/ColliderComponent.hpp"
 #include "../../../../common/components/tags/ObstacleTag.hpp"
@@ -21,7 +21,7 @@ using namespace ecs;
 class MovementSystemsTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        registry = std::make_shared<ARegistry>();
+        registry = std::make_shared<Registry>();
         resourceManager = std::make_shared<ResourceManager>();
         inputToVelocitySystem = std::make_shared<InputToVelocitySystem>();
         movementSystem = std::make_shared<MovementSystem>();
@@ -35,7 +35,7 @@ protected:
         registry->registerComponent<ObstacleTag>();
     }
 
-    std::shared_ptr<ARegistry> registry;
+    std::shared_ptr<Registry> registry;
     std::shared_ptr<ResourceManager> resourceManager;
     std::shared_ptr<InputToVelocitySystem> inputToVelocitySystem;
     std::shared_ptr<MovementSystem> movementSystem;

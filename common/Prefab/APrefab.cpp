@@ -8,6 +8,6 @@
 #include "APrefab.hpp"
 #include <memory>
 
-ecs::Entity APrefab::instantiate(const std::shared_ptr<ecs::ARegistry> &registry) {
+ecs::Entity APrefab::instantiate(const std::shared_ptr<ecs::Registry> &registry) {
     return registry->createEntity();
 }

@@ -19,7 +19,7 @@ AnimationRenderingSystem::AnimationRenderingSystem() {
 }
 
 void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
-    resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) {
+    resourceManager, std::shared_ptr<Registry> registry, float deltaTime) {
 
     (void)deltaTime;
 

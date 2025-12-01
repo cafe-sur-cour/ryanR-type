@@ -12,7 +12,7 @@
 
 #include "ISystem.hpp"
 #include "../../ECS/resourceManager/ResourceManager.hpp"
-#include "../../ECS/entity/registry/ARegistry.hpp"
+#include "../../ECS/entity/registry/Registry.hpp"
 
 namespace ecs {
 
@@ -20,10 +20,10 @@ class ASystem : public ISystem {
     public:
         ASystem();
         ~ASystem() = default;
-        void updateSystem(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) override;
+        void updateSystem(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<Registry> registry, float deltaTime) override;
 
     protected:
-        virtual void update(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) = 0;
+        virtual void update(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<Registry> registry, float deltaTime) = 0;
 
     private:
 };

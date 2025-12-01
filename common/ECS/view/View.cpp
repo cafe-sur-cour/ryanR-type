@@ -6,7 +6,7 @@
 */
 
 #include "View.hpp"
-#include "../entity/registry/ARegistry.hpp"
+#include "../entity/registry/Registry.hpp"
 #include "../../components/tags/ControllableTag.hpp"
 #include "../../components/tags/PlayerTag.hpp"
 #include "../../components/temporary/MovementIntentComponent.hpp"
@@ -22,13 +22,13 @@
 namespace ecs {
 
 template <typename... Components>
-View<Components...>::View(std::shared_ptr<ARegistry> registry)
+View<Components...>::View(std::shared_ptr<Registry> registry)
 : _registry(registry) {
     (_registry->template registerComponent<Components>(), ...);
 }
 
 template <typename... Components>
-View<Components...>::Iterator::Iterator(std::shared_ptr<ARegistry> registry,
+View<Components...>::Iterator::Iterator(std::shared_ptr<Registry> registry,
                                         size_t entityId, size_t maxEntityId)
 : _registry(registry), _entityId(entityId), _maxEntityId(maxEntityId) {
 }
@@ -75,13 +75,13 @@ typename View<Components...>::Iterator View<Components...>::end() {
 }
 
 template <typename... Components>
-Group<Components...>::Group(std::shared_ptr<ARegistry> registry)
+Group<Components...>::Group(std::shared_ptr<Registry> registry)
 : _registry(registry) {
     (_registry->template registerComponent<Components>(), ...);
 }
 
 template <typename... Components>
-Group<Components...>::Iterator::Iterator(std::shared_ptr<ARegistry> registry,
+Group<Components...>::Iterator::Iterator(std::shared_ptr<Registry> registry,
                                          size_t entityId, size_t maxEntityId)
 : _registry(registry), _entityId(entityId), _maxEntityId(maxEntityId) {
 }
