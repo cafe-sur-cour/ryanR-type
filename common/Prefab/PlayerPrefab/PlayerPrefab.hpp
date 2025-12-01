@@ -9,14 +9,14 @@
 #define PLAYERPREFAB_HPP_
 
 #include "../APrefab.hpp"
-#include "../../ECS/component/permanent/TransformComponent.hpp"
-#include "../../ECS/component/permanent/VelocityComponent.hpp"
-#include "../../ECS/component/permanent/SpeedComponent.hpp"
-#include "../../ECS/component/rendering/SpriteComponent.hpp"
-#include "../../ECS/component/rendering/AnimationComponent.hpp"
-#include "../../ECS/component/tags/ControllableTag.hpp"
-#include "../../ECS/component/tags/PlayerTag.hpp"
-#include "../../ECS/component/permanent/ColliderComponent.hpp"
+#include "../../components/permanent/TransformComponent.hpp"
+#include "../../components/permanent/VelocityComponent.hpp"
+#include "../../components/permanent/SpeedComponent.hpp"
+#include "../../../client/components/rendering/SpriteComponent.hpp"
+#include "../../../client/components/rendering/AnimationComponent.hpp"
+#include "../../components/tags/ControllableTag.hpp"
+#include "../../components/tags/PlayerTag.hpp"
+#include "../../components/permanent/ColliderComponent.hpp"
 #include "../../types/Vector2f.hpp"
 #include <memory>
 #include <string>

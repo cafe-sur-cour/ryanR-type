@@ -8,7 +8,7 @@
 #ifndef ICOMPONENTARRAY_HPP_
 #define ICOMPONENTARRAY_HPP_
 
-#include "../../component/base/IComponent.hpp"
+#include "../../../components/base/IComponent.hpp"
 
 namespace ecs {
 

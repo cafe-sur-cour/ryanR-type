@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../../../common/ECS/component/tags/ControllableTag.hpp"
+#include "../../../../common/components/tags/ControllableTag.hpp"
 
 using namespace ecs;
 

@@ -9,7 +9,7 @@
 #define IREGISTRY_HPP_
 
 #include <memory>
-#include "../../component/base/IComponent.hpp"
+#include "../../../components/base/IComponent.hpp"
 #include "../../view/View.hpp"
 
 namespace ecs {

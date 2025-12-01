@@ -3,6 +3,8 @@ set(ERROR_LIB ERROR)
 
 add_subdirectory(DLLoader)
 add_subdirectory(ECS)
+add_subdirectory(components)
+add_subdirectory(systems)
 add_subdirectory(types)
 add_subdirectory(Error)
 add_subdirectory(Signal)
