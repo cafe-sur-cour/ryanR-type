@@ -10,6 +10,7 @@
 
 #include "../../base/AGameState.hpp"
 #include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../../../MouseInputHandler.hpp"
 
 namespace gsm {
 
@@ -24,6 +25,7 @@ public:
 
 private:
     std::shared_ptr<ecs::ResourceManager> _resourceManager;
+    std::unique_ptr<MouseInputHandler> _mouseHandler;
 };
 
 }  // namespace gsm
