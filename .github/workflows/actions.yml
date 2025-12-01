@@ -369,12 +369,13 @@ jobs:
       - name: CREATE WINDOWS BINARIES ARCHIVE
         run: |
           New-Item -ItemType Directory -Force -Path "r-type-client-windows"
-          Copy-Item -Path "build\windows\bin\client\*.exe" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
-          Copy-Item -Path "build\windows\bin\client\*.dll" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "r-type_client.exe" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "build\windows\bin\client\Release\*.dll" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
           Compress-Archive -Path "r-type-client-windows" -DestinationPath "r-type-client-windows-${{ needs.calculate_version.outputs.version }}.zip"
+
           New-Item -ItemType Directory -Force -Path "r-type-server-windows"
-          Copy-Item -Path "build\windows\bin\server\*.exe" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
-          Copy-Item -Path "build\windows\bin\server\*.dll" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "r-type_server.exe" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "build\windows\bin\server\Release\*.dll" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
           Compress-Archive -Path "r-type-server-windows" -DestinationPath "r-type-server-windows-${{ needs.calculate_version.outputs.version }}.zip"
 
       - name: UPLOAD WINDOWS CLIENT ARTIFACT
