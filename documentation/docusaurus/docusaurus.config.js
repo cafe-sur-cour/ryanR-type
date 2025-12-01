@@ -10,7 +10,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'My Site',
+  title: 'R-Type Documentation',
   tagline: 'Dinosaurs are cool',
   favicon: 'img/favicon.ico',
 
@@ -39,6 +39,13 @@ const config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
+
+  markdown: {
+    mermaid: true,
+  },
+
+  // ✅ ADD THIS (enables Mermaid theme)
+  themes: ['@docusaurus/theme-mermaid'],
 
   presets: [
     [
@@ -108,5 +115,6 @@ const config = {
       },
     }),
 };
+
 
 export default config;
