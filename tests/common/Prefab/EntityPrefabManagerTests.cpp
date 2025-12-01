@@ -9,7 +9,7 @@
 #include <memory>
 #include "../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../common/Prefab/APrefab.hpp"
-#include "../../../common/ECS/entity/registry/ARegistry.hpp"
+#include "../../../common/ECS/entity/registry/Registry.hpp"
 
 using namespace ecs;
 
@@ -57,22 +57,22 @@ TEST(EntityPrefabManagerTest, GetNonExistentPrefab) {
 
 TEST(EntityPrefabManagerTest, CreateEntityFromPrefab) {
     EntityPrefabManager manager;
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     auto prefab = std::make_shared<APrefab>();
     std::string name = "createTest";
 
     manager.registerPrefab(name, prefab);
-    size_t entityId = manager.createEntityFromPrefab(name, registry);
+    ecs::Entity entityId = manager.createEntityFromPrefab(name, registry);
 
     EXPECT_NE(entityId, 0);
 }
 
 TEST(EntityPrefabManagerTest, CreateEntityFromNonExistentPrefab) {
     EntityPrefabManager manager;
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     std::string name = "nonExistent";
 
-    size_t entityId = manager.createEntityFromPrefab(name, registry);
+    ecs::Entity entityId = manager.createEntityFromPrefab(name, registry);
 
     EXPECT_EQ(entityId, 0); // As per implementation
 }
@@ -83,7 +83,7 @@ TEST(EntityPrefabManagerTest, CreateEntityWithNullRegistry) {
     std::string name = "nullRegistry";
 
     manager.registerPrefab(name, prefab);
-    size_t entityId = manager.createEntityFromPrefab(name, nullptr);
+    ecs::Entity entityId = manager.createEntityFromPrefab(name, nullptr);
 
     EXPECT_EQ(entityId, 0);
 }

@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../../../common/ECS/component/permanent/TransformComponent.hpp"
+#include "../../../../common/components/permanent/TransformComponent.hpp"
 
 using namespace ecs;
 

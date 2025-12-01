@@ -8,7 +8,8 @@
 #ifndef ICOMPONENTARRAY_HPP_
 #define ICOMPONENTARRAY_HPP_
 
-#include "../../component/base/IComponent.hpp"
+#include "../../../components/base/IComponent.hpp"
+#include "../Entity.hpp"
 
 namespace ecs {
 
@@ -16,7 +17,7 @@ class IComponentArray {
     public:
         virtual ~IComponentArray() = default;
         virtual void removeAllComponentsWithState(ComponentState state) = 0;
-        virtual size_t getMaxEntityId() const = 0;
+        virtual Entity getMaxEntityId() const = 0;
 };
 
 } // namespace ecs

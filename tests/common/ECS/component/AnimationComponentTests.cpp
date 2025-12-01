@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 #include <thread>
-#include "../../../../common/ECS/component/rendering/AnimationComponent.hpp"
+#include "../../../../client/components/rendering/AnimationComponent.hpp"
 
 using namespace ecs;
 

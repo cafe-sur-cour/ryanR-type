@@ -2,22 +2,23 @@
 #include <memory>
 #include <cmath>
 #include <iostream>
-#include "../../../../common/ECS/component/tags/PlayerTag.hpp"
-#include "../../../../common/ECS/component/tags/ControllableTag.hpp"
+#include "../../../../common/ECS/entity/Entity.hpp"
+#include "../../../../common/components/tags/PlayerTag.hpp"
+#include "../../../../common/components/tags/ControllableTag.hpp"
 #include "../../../../libs/Multimedia/IWindow.hpp"
 #include "../../../../libs/Multimedia/IEvent.hpp"
-#include "../../../../common/ECS/component/rendering/SpriteComponent.hpp"
-#include "../../../../common/ECS/component/rendering/AnimationComponent.hpp"
-#include "../../../../common/ECS/component/permanent/TransformComponent.hpp"
-#include "../../../../common/ECS/component/permanent/VelocityComponent.hpp"
-#include "../../../../common/ECS/component/permanent/ColliderComponent.hpp"
-#include "../../../../common/ECS/system/rendering/AnimationRenderingSystem.hpp"
-#include "../../../../common/ECS/component/rendering/HitboxRenderComponent.hpp"
-#include "../../../../common/ECS/component/rendering/RectangleRenderComponent.hpp"
-#include "../../../../common/ECS/system/rendering/HitboxRenderingSystem.hpp"
-#include "../../../../common/ECS/system/rendering/RectangleRenderingSystem.hpp"
+#include "../../../components/rendering/SpriteComponent.hpp"
+#include "../../../components/rendering/AnimationComponent.hpp"
+#include "../../../../common/components/permanent/TransformComponent.hpp"
+#include "../../../../common/components/permanent/VelocityComponent.hpp"
+#include "../../../../common/components/permanent/ColliderComponent.hpp"
+#include "../../../systems/rendering/AnimationRenderingSystem.hpp"
+#include "../../../components/rendering/HitboxRenderComponent.hpp"
+#include "../../../components/rendering/RectangleRenderComponent.hpp"
+#include "../../../systems/rendering/HitboxRenderingSystem.hpp"
+#include "../../../systems/rendering/RectangleRenderingSystem.hpp"
 #include "../../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
-#include "../../../../common/ECS/component/tags/ObstacleTag.hpp"
+#include "../../../../common/components/tags/ObstacleTag.hpp"
 
 namespace gsm {
 
@@ -28,7 +29,7 @@ DevState::DevState(
     std::shared_ptr<ecs::ResourceManager> resourceManager)
 
     : AGameState(gsm), _resourceManager(resourceManager) {
-    _registry = std::make_shared<ecs::ARegistry>();
+    _registry = std::make_shared<ecs::Registry>();
     _systemManager = std::make_shared<ecs::ASystemManager>();
     _movementSystem = std::make_shared<ecs::MovementSystem>();
     _inputToVelocitySystem = std::make_shared<ecs::InputToVelocitySystem>();
@@ -63,7 +64,7 @@ void DevState::enter() {
         96.0f,    // startHeight
         4);        // frameCount
     _prefabManager->registerPrefab("player", playerPrefab);
-    size_t playerId = _prefabManager->createEntityFromPrefab
+    ecs::Entity playerId = _prefabManager->createEntityFromPrefab
         ("player", _registry);
 
     auto playerHitboxRender = std::make_shared<ecs::HitboxRenderComponent>(
@@ -71,7 +72,7 @@ void DevState::enter() {
     _registry->addComponent(playerId, playerHitboxRender);
 
     // Create a static wall entity
-    size_t wallId = _registry->createEntity();
+    ecs::Entity wallId = _registry->createEntity();
     auto wallTransform = std::make_shared<ecs::TransformComponent>(
         math::Vector2f(300.0f, 200.0f),
         0.0f,
@@ -95,7 +96,7 @@ void DevState::enter() {
     _registry->addComponent(wallId, wallRectangleRender);
 
     // Create a bouncing projectile
-    size_t projectileId = _registry->createEntity();
+    ecs::Entity projectileId = _registry->createEntity();
     auto projectileTransform = std::make_shared<ecs::TransformComponent>(
         math::Vector2f(100.0f, 250.0f),
         0.0f,
@@ -122,7 +123,7 @@ void DevState::enter() {
         gfx::color_t{255, 0, 0}, 20.0f, 20.0f);
     _registry->addComponent(projectileId, projectileRectangleRender);
 
-    size_t projectileId2 = _registry->createEntity();
+    ecs::Entity projectileId2 = _registry->createEntity();
     auto projectileTransform2 = std::make_shared<ecs::TransformComponent>(
         math::Vector2f(110.0f, 200.0f),
         0.0f,

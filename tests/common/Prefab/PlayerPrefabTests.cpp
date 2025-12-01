@@ -8,19 +8,19 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include "../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
-#include "../../../common/ECS/entity/registry/ARegistry.hpp"
-#include "../../../common/ECS/component/permanent/TransformComponent.hpp"
-#include "../../../common/ECS/component/permanent/VelocityComponent.hpp"
-#include "../../../common/ECS/component/permanent/SpeedComponent.hpp"
-#include "../../../common/ECS/component/rendering/AnimationComponent.hpp"
-#include "../../../common/ECS/component/tags/PlayerTag.hpp"
+#include "../../../common/ECS/entity/registry/Registry.hpp"
+#include "../../../common/components/permanent/TransformComponent.hpp"
+#include "../../../common/components/permanent/VelocityComponent.hpp"
+#include "../../../common/components/permanent/SpeedComponent.hpp"
+#include "../../../client/components/rendering/AnimationComponent.hpp"
+#include "../../../common/components/tags/PlayerTag.hpp"
 
 using namespace ecs;
 
 /* PlayerPrefab Tests */
 
 TEST(PlayerPrefabTest, InstantiateCreatesEntityWithComponents) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
 
     // Register components
     registry->registerComponent<TransformComponent>();
@@ -31,7 +31,7 @@ TEST(PlayerPrefabTest, InstantiateCreatesEntityWithComponents) {
 
     PlayerPrefab prefab(100.0f, 200.0f, 1.5f, "assets/player.png", 64.0f, 64.0f, 0.0f, 0.0f, 4);
 
-    size_t entityId = prefab.instantiate(registry);
+    ecs::Entity entityId = prefab.instantiate(registry);
 
     EXPECT_NE(entityId, 0);
 

@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../../../common/ECS/component/rendering/SpriteComponent.hpp"
+#include "../../../../client/components/rendering/SpriteComponent.hpp"
 
 using namespace ecs;
 

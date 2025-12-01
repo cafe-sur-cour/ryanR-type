@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../../../common/ECS/component/temporary/MovementIntentComponent.hpp"
+#include "../../../../common/components/temporary/MovementIntentComponent.hpp"
 
 using namespace ecs;
 
