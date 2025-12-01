@@ -81,15 +81,6 @@ void ClientNetwork::setIp(uint32_t ip) {
     _ip = ip;
 }
 
-void ClientNetwork::sendData(const pm::IPacketManager &data, size_t size) {
-    this->_network->sendData(data, size);
-}
-
-pm::IPacketManager &ClientNetwork::receiveData(
-    const IBuffer &buffer, size_t size) const {
-    return this->_network->receiveData(buffer, size);
-}
-
 
 void ClientNetwork::loadNetworkLibrary() {
     if (!_networloader.Open(pathLoad "/" networkClientLib sharedLibExt)) {
