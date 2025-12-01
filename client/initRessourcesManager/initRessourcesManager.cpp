@@ -14,6 +14,7 @@
 #include "../../common/DLLoader/LoaderType.hpp"
 #include "../../libs/Multimedia/IEvent.hpp"
 #include "../../libs/Multimedia/IWindow.hpp"
+#include "../../common/ECS/resourceManager/InputMappingManager.hpp"
 #include "initRessourcesManager.hpp"
 
 std::shared_ptr<ecs::ResourceManager> initRessourcesManager(
@@ -55,7 +56,11 @@ std::shared_ptr<ecs::ResourceManager> initRessourcesManager(
     resourceManager->add<gfx::IWindow>(window);
     resourceManager->add<gfx::IEvent>(event);
 
-    auto inputProvider = std::make_shared<ecs::GraphicalInputProvider>(event);
+    auto mappingManager = std::make_shared<ecs::InputMappingManager>();
+    mappingManager->loadDefault();
+    auto inputProvider = std::make_shared<ecs::GraphicalInputProvider>(
+        event,
+        mappingManager->getMapping());
     resourceManager->add<ecs::IInputProvider>(inputProvider);
 
     return resourceManager;

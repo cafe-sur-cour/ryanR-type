@@ -14,10 +14,10 @@ class ServerInputProvider : public IInputProvider {
         ServerInputProvider();
         ~ServerInputProvider() override = default;
 
-        bool isKeyPressed(event_t key) override;
         float getAxisValue(event_t axis) override;
-        std::pair<int, int> getMousePos() override;
-        bool isMouseButtonPressed(int button) override;
+
+        bool isActionPressed(InputAction action) override;
+        float getActionAxis(InputAction action) override;
 };
 
 } // namespace ecs
