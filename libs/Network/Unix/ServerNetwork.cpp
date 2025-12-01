@@ -152,7 +152,7 @@ extern "C" {
         return new net::UnixServerNetwork();
     }
     int getType() {
-        return NETWORK_MODULE;
+        return NETWORK_SERVER_MODULE;
     }
 }
 

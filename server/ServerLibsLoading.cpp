@@ -10,7 +10,7 @@
 #include "../common/Error/ServerErrror.hpp"
 
 void rserv::Server::loadNetworkLibrary() {
-    if (!_networloader.Open(pathLoad "/" networkLib sharedLibExt)) {
+    if (!_networloader.Open(pathLoad "/" networkServerLib sharedLibExt)) {
         throw err::ServerError(
             "[Server] Cannot open network library",
             err::ServerError::LIBRARY_LOAD_FAILED);

@@ -10,9 +10,10 @@
 
 enum ModuleType_t{
     MULTIMEDIA_MODULE = 0,
-    NETWORK_MODULE = 1,
-    PACKET_MODULE = 2,
-    BUFFER_MODULE = 3,
+    NETWORK_SERVER_MODULE = 1,
+    NETWORK_CLIENT_MODULE = 2,
+    PACKET_MODULE = 3,
+    BUFFER_MODULE = 4,
     UNKNOWN_MODULE
 };
 
@@ -24,7 +25,8 @@ typedef void *(*createPacket_t)();
 
 #define pathLoad "./libraries"
 #define multimediaLib "libMultimedia"
-#define networkLib "libNetwork"
+#define networkServerLib "libNetworkServer"
+#define networkClientLib "libNetworkClient"
 #define bufferLib "libBuffer"
 #define packetLib "libPacket"
 
