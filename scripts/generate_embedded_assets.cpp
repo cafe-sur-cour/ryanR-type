@@ -92,7 +92,7 @@ int main(int argc, char* argv[]) {
         }
         f << "\n";
 
-        f << "/* The & here is mandatory to avoid having multiple copies of the data -> Double free */\n";
+        f << "/* & mandatory to avoid multiple data copies -> Double free */\n";
         f << "std::unordered_map<std::string, AssetData>& getEmbeddedAssets();\n";
         f << "extern std::unordered_map<std::string, AssetData>& embeddedAssets;\n\n";
         f << "} // namespace assets\n\n";
@@ -154,22 +154,23 @@ int main(int argc, char* argv[]) {
         }
         f << "#include \"EmbeddedAssets.hpp\"\n";
         f << "namespace assets {\n\n";
-        f << "/* The & here is mandatory to avoid having multiple copies of the data -> Double free */\n";
+        f << "/* & mandatory to avoid multiple data copies -> Double free */\n";
         f << "std::unordered_map<std::string, AssetData>& getEmbeddedAssets() {\n";
         f << "    static std::unordered_map<std::string, AssetData> instance = {\n";
         for (const auto& [path, data] : assets) {
             std::string symbol = sanitizeSymbolName(path);
             f << "        {\"" << path << "\", {\n";
-            f << "            std::vector<unsigned char>(asset_" << symbol
+            f << "        std::vector<unsigned char>(asset_" << symbol
               << ",\n";
-            f << "                                       asset_" << symbol << " + asset_" << symbol << "_size),\n";
-            f << "            asset_" << symbol << "_size\n";
+            f << "                asset_" << symbol << " + asset_" << symbol << "_size),\n";
+            f << "        asset_" << symbol << "_size\n";
             f << "        }},\n";
         }
         f << "    };\n";
         f << "    return instance;\n";
         f << "}\n\n";
-        f << "std::unordered_map<std::string, AssetData>& embeddedAssets = getEmbeddedAssets();\n\n";
+        f << "std::unordered_map<std::string, AssetData>& embeddedAssets\n";
+        f << "    = getEmbeddedAssets();\n\n";
         f << "} // namespace assets\n";
     }
 
