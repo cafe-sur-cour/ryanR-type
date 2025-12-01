@@ -23,6 +23,7 @@ ClientNetwork::ClientNetwork() {
 }
 
 ClientNetwork::~ClientNetwork() {
+    this->stop();
 }
 
 void ClientNetwork::init() {
@@ -32,6 +33,7 @@ void ClientNetwork::init() {
     this->loadNetworkLibrary();
     this->loadBufferLibrary();
     this->loadPacketLibrary();
+    this->_network->init(this->_port);
 }
 
 /* Call this in a separate thread */
@@ -50,18 +52,18 @@ void ClientNetwork::start() {
 void ClientNetwork::stop() {
     if (this->_network != nullptr
         && this->_networloader.getHandler() != nullptr) {
-        this->_networloader.Close();
         this->_network.reset();
+        this->_networloader.Close();
     }
     if (this->_buffer != nullptr
         && this->_bufferloader.getHandler() != nullptr) {
-        this->_bufferloader.Close();
-        this->_buffer.reset();
+            this->_buffer.reset();
+            this->_bufferloader.Close();
     }
     if (this->_packet != nullptr
         && this->_packetloader.getHandler() != nullptr) {
-        this->_packetloader.Close();
         this->_packet.reset();
+        this->_packetloader.Close();
     }
 }
 
