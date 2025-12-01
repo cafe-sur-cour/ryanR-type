@@ -72,4 +72,6 @@ class Group {
 
 }  // namespace ecs
 
+#include "View.tpp"
+
 #endif /* !VIEW_HPP_ */

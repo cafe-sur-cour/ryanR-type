@@ -5,19 +5,7 @@
 ** View implementation
 */
 
-#include "View.hpp"
 #include "../entity/registry/Registry.hpp"
-#include "../../components/tags/ControllableTag.hpp"
-#include "../../components/tags/PlayerTag.hpp"
-#include "../../components/temporary/MovementIntentComponent.hpp"
-#include "../../components/temporary/InputIntentComponent.hpp"
-#include "../../components/permanent/TransformComponent.hpp"
-#include "../../components/permanent/VelocityComponent.hpp"
-#include "../../../client/components/rendering/SpriteComponent.hpp"
-#include "../../../client/components/rendering/AnimationComponent.hpp"
-#include "../../components/permanent/ColliderComponent.hpp"
-#include "../../../client/components/rendering/HitboxRenderComponent.hpp"
-#include "../../../client/components/rendering/RectangleRenderComponent.hpp"
 
 namespace ecs {
 
@@ -126,27 +114,5 @@ typename Group<Components...>::Iterator Group<Components...>::end() {
     size_t maxEntityId = _registry->getMaxEntityId();
     return Iterator(_registry, maxEntityId + 1, maxEntityId + 1);
 }
-
-/* Explicit template instantiations for commonly used component combinations */
-template class View<PlayerTag>;
-template class View<ControllableTag>;
-template class View<MovementIntentComponent>;
-template class View<InputIntentComponent>;
-template class View<TransformComponent>;
-template class View<PlayerTag, MovementIntentComponent>;
-template class View<PlayerTag, TransformComponent>;
-template class View<MovementIntentComponent, TransformComponent>;
-template class View<VelocityComponent, TransformComponent>;
-template class View<SpriteComponent, TransformComponent>;
-template class View<AnimationComponent, TransformComponent>;
-template class View<TransformComponent, ColliderComponent>;
-template class View<PlayerTag, TransformComponent, ColliderComponent>;
-template class View<HitboxRenderComponent, TransformComponent>;
-template class View<RectangleRenderComponent, TransformComponent>;
-template class View<
-HitboxRenderComponent, TransformComponent, ColliderComponent>;
-template class Group<PlayerTag>;
-template class Group<MovementIntentComponent>;
-template class Group<PlayerTag, MovementIntentComponent>;
 
 }  // namespace ecs

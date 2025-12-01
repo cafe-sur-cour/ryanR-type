@@ -11,12 +11,14 @@
 #include "../../../components/base/IComponent.hpp"
 #include "../componentArray/IComponentArray.hpp"
 #include "../componentArray/AComponentArray.hpp"
-#include "../../view/View.hpp"
 #include <memory>
 #include <unordered_map>
 #include <string>
 
 namespace ecs {
+
+template <typename... Components> class View;
+template <typename... Components> class Group;
 
 class Registry : public std::enable_shared_from_this<Registry> {
     public:
