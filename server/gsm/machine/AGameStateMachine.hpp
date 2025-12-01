@@ -1,7 +1,7 @@
 #pragma once
 
-#include "IGameStateMachine.hpp"
-#include "../states/IGameState.hpp"
+#include "../../../common/gsm/IGameStateMachine.hpp"
+#include "../../../common/gsm/IGameState.hpp"
 
 namespace gsm {
 
