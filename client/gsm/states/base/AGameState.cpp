@@ -13,9 +13,6 @@ void AGameState::update(float deltaTime) {
     (void)deltaTime;
 }
 
-void AGameState::render() {
-}
-
 void AGameState::exit() {
 }
 

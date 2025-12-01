@@ -1,9 +1,17 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** IGameState
+*/
+
 #pragma once
 
 #include <memory>
-#include "../../machine/IGameStateMachine.hpp"
 
 namespace gsm {
+
+class IGameStateMachine;
 
 class IGameState {
 public:
@@ -11,7 +19,6 @@ public:
 
     virtual void enter() = 0;
     virtual void update(float deltaTime) = 0;
-    virtual void render() = 0;
     virtual void exit() = 0;
 };
 
