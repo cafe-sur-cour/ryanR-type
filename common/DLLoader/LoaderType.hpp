@@ -22,7 +22,7 @@ typedef void *(*createNetworkLib_t)();
 typedef void *(*createBuffer_t)();
 typedef void *(*createPacket_t)();
 
-#define pathLoad "./librairies"
+#define pathLoad "./libraries"
 
 #ifdef _WIN32
     #define sharedLibExt ".dll"

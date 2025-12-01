@@ -11,7 +11,7 @@
 #include <memory>
 #include <string>
 #include "initRessourcesManager/initRessourcesManager.hpp"
-#include "gsm/states/scenes/DevState.hpp"
+#include "gsm/states/scenes/Dev/DevState.hpp"
 #include "../../common/Signal/Signal.hpp"
 #include "../../libs/Multimedia/IWindow.hpp"
 #include "../../libs/Multimedia/IEvent.hpp"
@@ -54,8 +54,9 @@ void Core::run() {
         std::chrono::duration<float> deltaTime = currentTime - previousTime;
         previousTime = currentTime;
 
+        this->_resourceManager->get<gfx::IWindow>()->clear();
         this->_gsm->update(deltaTime.count());
-        this->_gsm->render();
+        this->_resourceManager->get<gfx::IWindow>()->display();
     }
 
     Signal::stopFlag = 1;
