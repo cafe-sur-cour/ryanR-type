@@ -1,11 +1,10 @@
 add_library(${NETWORK_SERVER_LIB_NAME} SHARED
     ServerNetwork.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../ANetwork.cpp
+    ../ANetwork.cpp
 )
 
 target_include_directories(${NETWORK_SERVER_LIB_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../..
 )
 
 target_compile_definitions(${NETWORK_SERVER_LIB_NAME}
@@ -38,12 +37,11 @@ add_custom_command(TARGET ${NETWORK_SERVER_LIB_NAME} POST_BUILD
 
 add_library(${NETWORK_CLIENT_LIB_NAME} SHARED
     ClientNetwork.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../ANetwork.cpp
+    ../ANetwork.cpp
 )
 
 target_include_directories(${NETWORK_CLIENT_LIB_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../..
 )
 
 target_compile_definitions(${NETWORK_CLIENT_LIB_NAME}
