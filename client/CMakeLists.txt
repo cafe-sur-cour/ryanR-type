@@ -7,6 +7,8 @@ add_executable(${CLIENT_BIN_NAME}
     ClientNetwork.cpp
     ClientNetwork.hpp
     Core.cpp
+    MouseInputHandler.cpp
+    MouseInputHandler.hpp
 )
 
 add_dependencies(${CLIENT_BIN_NAME} generate_embedded_assets)

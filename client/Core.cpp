@@ -11,7 +11,7 @@
 #include <memory>
 #include <string>
 #include "initRessourcesManager/initRessourcesManager.hpp"
-#include "gsm/states/scenes/Dev/DevState.hpp"
+#include "gsm/states/scenes/MainMenu/MainMenuState.hpp"
 #include "../../common/Signal/Signal.hpp"
 #include "../../libs/Multimedia/IWindow.hpp"
 #include "../../libs/Multimedia/IEvent.hpp"
@@ -28,9 +28,9 @@ Core::Core() {
     );
 
     this->_gsm = std::make_shared<gsm::GameStateMachine>();
-    std::shared_ptr<gsm::DevState> devState =
-        std::make_shared<gsm::DevState>(this->_gsm, this->_resourceManager);
-    this->_gsm->changeState(devState);
+    std::shared_ptr<gsm::MainMenuState> mainMenuState =
+        std::make_shared<gsm::MainMenuState>(this->_gsm, this->_resourceManager);
+    this->_gsm->changeState(mainMenuState);
 
     initNetwork();
     this->_networkThread = std::thread(&Core::networkLoop, this);
