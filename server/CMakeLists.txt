@@ -21,7 +21,8 @@ target_link_libraries(${SERVER_LIB_NAME}
         ERROR
         SIGNAL
         DLLoader
-        Network
+        NetworkServer
+        NetworkClient
         Packet
         asio::asio
 )
