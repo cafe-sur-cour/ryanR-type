@@ -22,26 +22,20 @@ typedef void *(*createNetworkLib_t)();
 typedef void *(*createBuffer_t)();
 typedef void *(*createPacket_t)();
 
-#define pathLoad "./librairies"
+#define pathLoad "./libraries"
+#define multimediaLib "libMultimedia"
+#define networkLib "libNetwork"
+#define bufferLib "libBuffer"
+#define packetLib "libPacket"
+
 
 #ifdef _WIN32
     #define sharedLibExt ".dll"
-    #define multimediaLib "libMultimedia.dll"
-    #define networkLib "libNetwork.dll"
-    #define bufferLib "libBuffer.dll"
-    #define packetLib "libPacket.dll"
 #elif __APPLE__
     #define sharedLibExt ".dylib"
-    #define multimediaLib "libMultimedia.dylib"
-    #define networkLib "libNetwork.dylib"
-    #define bufferLib "libBuffer.dylib"
-    #define packetLib "libPacket.dylib"
 #else
     #define sharedLibExt ".so"
-    #define multimediaLib "libMultimedia.so"
-    #define networkLib "libNetwork.so"
-    #define bufferLib "libBuffer.so"
-    #define packetLib "libPacket.so"
+
 #endif
 
 #endif /* !LOADERTYPE_HPP_ */
