@@ -26,8 +26,10 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
     this->_payload = std::vector<uint64_t>();
     this->_serializer = std::make_shared<BigEndianSerialization>();
     if (!this->_serializer) {
-        throw err::PacketError("[Server] Failed to load serializer",
-            err::PacketError::SERIALIZER_ATTRIBUTION_FAILED);
+        throw err::PacketError(
+            "[Server] Failed to load serializer",
+            err::PacketError::SERIALIZER_ATTRIBUTION_FAILED
+        );
     }
 
     this->_packetHandlers = {
@@ -61,10 +63,22 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
     };
 
     this->_packetLengths = {
-        {CONNECTION_CLIENT_PACKET, LENGTH_CONNECTION_PACKET},
-        {ACCEPTATION_PACKET, LENGTH_ACCEPTATION_PACKET},
-        {DISCONNECTION_PACKET, LENGTH_DISCONNECTION_PACKET},
-        {EVENT_PACKET, LENGTH_EVENT_PACKET}
+        {
+            static_cast<uint8_t>(CONNECTION_CLIENT_PACKET),
+            LENGTH_CONNECTION_PACKET
+        },
+        {
+            static_cast<uint8_t>(ACCEPTATION_PACKET),
+            LENGTH_ACCEPTATION_PACKET
+        },
+        {
+            static_cast<uint8_t>(DISCONNECTION_PACKET),
+            LENGTH_DISCONNECTION_PACKET
+        },
+        {
+            static_cast<uint8_t>(EVENT_PACKET),
+            LENGTH_EVENT_PACKET
+        }
     };
 }
 

@@ -42,6 +42,8 @@ class IRegistry {
         size_t getMaxEntityId() const;
 
         virtual void removeAllComponentsWithState(ComponentState state) = 0;
+
+        virtual size_t createEntity() = 0;
 };
 
 } // namespace ecs

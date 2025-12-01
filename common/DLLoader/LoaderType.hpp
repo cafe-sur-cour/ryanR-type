@@ -9,7 +9,7 @@
 #define LOADERTYPE_HPP_
 
 enum ModuleType_t{
-    DISPLAY_MODULE = 0,
+    MULTIMEDIA_MODULE = 0,
     NETWORK_MODULE = 1,
     PACKET_MODULE = 2,
     BUFFER_MODULE = 3,
@@ -24,18 +24,21 @@ typedef void *(*createPacket_t)();
 
 #define pathLoad "./librairies"
 
-#ifdef __windows__
+#ifdef _WIN32
     #define sharedLibExt ".dll"
+    #define multimediaLib "libMultimedia.dll"
     #define networkLib "libNetwork.dll"
     #define bufferLib "libBuffer.dll"
     #define packetLib "libPacket.dll"
 #elif __APPLE__
     #define sharedLibExt ".dylib"
+    #define multimediaLib "libMultimedia.dylib"
     #define networkLib "libNetwork.dylib"
     #define bufferLib "libBuffer.dylib"
     #define packetLib "libPacket.dylib"
 #else
     #define sharedLibExt ".so"
+    #define multimediaLib "libMultimedia.so"
     #define networkLib "libNetwork.so"
     #define bufferLib "libBuffer.so"
     #define packetLib "libPacket.so"

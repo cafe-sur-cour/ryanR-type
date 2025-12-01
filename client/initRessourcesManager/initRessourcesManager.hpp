@@ -10,7 +10,13 @@
 
 #include "../../common/ECS/resourceManager/ResourceManager.hpp"
 #include <memory>
+#include "../../common/DLLoader/DLLoader.hpp"
+#include "../../libs/Multimedia/IWindow.hpp"
+#include "../../libs/Multimedia/IEvent.hpp"
 
-std::shared_ptr<ecs::ResourceManager> initRessourcesManager();
+std::shared_ptr<ecs::ResourceManager> initRessourcesManager(
+    std::shared_ptr<DLLoader<gfx::createWindow_t>>,
+    std::shared_ptr<DLLoader<gfx::createEvent_t>>
+);
 
 #endif /* !INITRESSOURCESMANAGER_HPP_ */
