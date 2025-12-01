@@ -33,13 +33,13 @@ class UnixNetwork : public ANetwork {
         std::vector<int> getActiveConnections() const override;
         size_t getConnectionCount() const override;
 
-        void sendTo(int connectionId, const IPacketManager &packet) override;
-        void broadcast(const IPacketManager &packet) override;
+        void sendTo(int connectionId, const pm::IPacketManager &packet) override;
+        void broadcast(const pm::IPacketManager &packet) override;
         bool hasIncomingData() const override;
-        std::shared_ptr<IPacketManager> receiveFrom(const int &connectionId) override;
+        std::shared_ptr<pm::IPacketManager> receiveFrom(const int &connectionId) override;
 
-        void sendData(const IPacketManager &data, size_t size) override;
-        IPacketManager &receiveData(const IBuffer &buffer, size_t size) const override;
+        void sendData(const pm::IPacketManager &data, size_t size) override;
+        pm::IPacketManager &receiveData(const IBuffer &buffer, size_t size) const override;
 
         void setConnectionCallback(std::function<void(int)> onConnect) override;
         void setDisconnectionCallback(std::function<void(int)> onDisconnect) override;
@@ -49,7 +49,7 @@ class UnixNetwork : public ANetwork {
         std::shared_ptr<asio::io_context> _ioContext;
         std::shared_ptr<asio::ip::udp::socket> _socket;
         std::unordered_map<int, asio::ip::udp::endpoint> _clients;
-        std::queue<std::pair<int, std::shared_ptr<IPacketManager>>> _incomingPackets;
+        std::queue<std::pair<int, std::shared_ptr<pm::IPacketManager>>> _incomingPackets;
         std::function<void(int)> _onConnectCallback;
         std::function<void(int)> _onDisconnectCallback;
         int _nextClientId;

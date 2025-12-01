@@ -28,13 +28,13 @@ class INetwork {
         virtual std::vector<int> getActiveConnections() const = 0;
         virtual size_t getConnectionCount() const = 0;
 
-        virtual void sendTo(int connectionId, const IPacketManager &packet) = 0;
-        virtual void broadcast(const IPacketManager &packet) = 0;
+        virtual void sendTo(int connectionId, const pm::IPacketManager &packet) = 0;
+        virtual void broadcast(const pm::IPacketManager &packet) = 0;
         virtual bool hasIncomingData() const = 0;
-        virtual std::shared_ptr<IPacketManager> receiveFrom(const int &connectionId) = 0;
+        virtual std::shared_ptr<pm::IPacketManager> receiveFrom(const int &connectionId) = 0;
 
-        virtual void sendData(const IPacketManager &data, size_t size) = 0;
-        virtual IPacketManager &receiveData(const IBuffer &buffer, size_t size) const = 0;
+        virtual void sendData(const pm::IPacketManager &data, size_t size) = 0;
+        virtual pm::IPacketManager &receiveData(const IBuffer &buffer, size_t size) const = 0;
 
         virtual void setConnectionCallback(std::function<void(int)> onConnect) = 0;
         virtual void setDisconnectionCallback(std::function<void(int)> onDisconnect) = 0;

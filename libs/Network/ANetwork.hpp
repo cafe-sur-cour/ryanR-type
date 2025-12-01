@@ -29,13 +29,13 @@ class ANetwork : public INetwork {
         virtual std::vector<int> getActiveConnections() const override = 0;
         virtual size_t getConnectionCount() const override = 0;
 
-        virtual void sendTo(int connectionId, const IPacketManager &packet) override = 0;
-        virtual void broadcast(const IPacketManager &packet) override = 0;
+        virtual void sendTo(int connectionId, const pm::IPacketManager &packet) override = 0;
+        virtual void broadcast(const pm::IPacketManager &packet) override = 0;
         virtual bool hasIncomingData() const override = 0;
-        virtual std::shared_ptr<IPacketManager> receiveFrom(const int &connectionId) override = 0;
+        virtual std::shared_ptr<pm::IPacketManager> receiveFrom(const int &connectionId) override = 0;
 
-        virtual void sendData(const IPacketManager &data, size_t size) override = 0;
-        virtual IPacketManager &receiveData(const IBuffer &buffer, size_t size) const override = 0;
+        virtual void sendData(const pm::IPacketManager &data, size_t size) override = 0;
+        virtual pm::IPacketManager &receiveData(const IBuffer &buffer, size_t size) const override = 0;
 
         virtual void setConnectionCallback(std::function<void(int)> onConnect) override = 0;
         virtual void setDisconnectionCallback(std::function<void(int)> onDisconnect) override = 0;
