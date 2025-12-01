@@ -99,8 +99,7 @@ void SfmlAudio::playSound(const std::string& soundPath, float volume) {
     static int soundCounter = 0;
     std::string soundKey = soundPath + "_" + std::to_string(soundCounter++);
 
-    auto sound = std::make_shared<sf::Sound>();
-    sound->setBuffer(*_soundBuffers[soundPath]);
+    auto sound = std::make_shared<sf::Sound>(*_soundBuffers[soundPath]);
     sound->setVolume(std::max(0.0f, std::min(100.0f, volume)) * (_soundVolume / 100.0f));
     sound->play();
 
