@@ -9,7 +9,7 @@
 #include <vector>
 #include "PacketManager.hpp"
 
-std::vector<std::uint8_t> PacketManager::buildConnectionPacket(
+std::vector<std::uint8_t> pm::PacketManager::buildConnectionPacket(
     std::vector<std::uint64_t> payload) {
     std::vector<std::uint8_t> body;
     std::vector<uint8_t> temp;
@@ -18,12 +18,14 @@ std::vector<std::uint8_t> PacketManager::buildConnectionPacket(
         temp = this->_serializer->serializeUChar(payload.at(i));
         body.insert(body.end(), temp.begin(), temp.end());
     }
-    temp = this->_serializer->serializeUShort(this->_endOfPacket);
+    temp = this->_serializer->serializeUChar(this->_firstEndOfPacket);
+    body.insert(body.end(), temp.begin(), temp.end());
+    temp = this->_serializer->serializeUChar(this->_secondEndOfPacket);
     body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }
 
-bool PacketManager::parseConnectionPacket(
+bool pm::PacketManager::parseConnectionPacket(
     const std::vector<std::uint8_t> payload) {
     if (payload.size() != LENGTH_CONNECTION_PACKET ||
         this->_length != payload.size()) {
@@ -38,7 +40,7 @@ bool PacketManager::parseConnectionPacket(
     return true;
 }
 
-std::vector<uint8_t> PacketManager::buildAcceptationPacket(
+std::vector<uint8_t> pm::PacketManager::buildAcceptationPacket(
     std::vector<uint64_t> payload) {
     std::vector<uint8_t> body;
     std::vector<uint8_t> temp;
@@ -47,12 +49,14 @@ std::vector<uint8_t> PacketManager::buildAcceptationPacket(
     body.insert(body.end(), temp.begin(), temp.end());
     temp = this->_serializer->serializeUChar(payload.at(1));
     body.insert(body.end(), temp.begin(), temp.end());
-    temp = this->_serializer->serializeUShort(this->_endOfPacket);
+    temp = this->_serializer->serializeUChar(this->_firstEndOfPacket);
+    body.insert(body.end(), temp.begin(), temp.end());
+    temp = this->_serializer->serializeUChar(this->_secondEndOfPacket);
     body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }
 
-bool PacketManager::parseAcceptationPacket(const std::vector<uint8_t> payload) {
+bool pm::PacketManager::parseAcceptationPacket(const std::vector<uint8_t> payload) {
     if (payload.size() != LENGTH_ACCEPTATION_PACKET
         || this->_length != payload.size()) {
         std::cerr <<
@@ -67,7 +71,7 @@ bool PacketManager::parseAcceptationPacket(const std::vector<uint8_t> payload) {
     return true;
 }
 
-std::vector<uint8_t> PacketManager::buildDisconnectionPacket(
+std::vector<uint8_t> pm::PacketManager::buildDisconnectionPacket(
     std::vector<uint64_t> payload) {
     std::vector<uint8_t> body;
     std::vector<uint8_t> temp;
@@ -76,12 +80,14 @@ std::vector<uint8_t> PacketManager::buildDisconnectionPacket(
     body.insert(body.end(), temp.begin(), temp.end());
     temp = this->_serializer->serializeUChar(payload.at(1));
     body.insert(body.end(), temp.begin(), temp.end());
-    temp = this->_serializer->serializeUShort(this->_endOfPacket);
+    temp = this->_serializer->serializeUChar(this->_firstEndOfPacket);
+    body.insert(body.end(), temp.begin(), temp.end());
+    temp = this->_serializer->serializeUChar(this->_secondEndOfPacket);
     body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }
 
-bool PacketManager::parseDisconnectionPacket(
+bool pm::PacketManager::parseDisconnectionPacket(
     const std::vector<std::uint8_t> payload) {
     if (payload.size() != LENGTH_DISCONNECTION_PACKET
         || this->_length != payload.size()) {
@@ -98,7 +104,7 @@ bool PacketManager::parseDisconnectionPacket(
     return true;
 }
 
-std::vector<uint8_t> PacketManager::buildEventPacket(
+std::vector<uint8_t> pm::PacketManager::buildEventPacket(
     std::vector<uint64_t> payload) {
     std::vector<uint8_t> body;
     std::vector<uint8_t> temp;
@@ -109,12 +115,14 @@ std::vector<uint8_t> PacketManager::buildEventPacket(
     body.insert(body.end(), temp.begin(), temp.end());
     temp = this->_serializer->serializeUChar(payload.at(2));
     body.insert(body.end(), temp.begin(), temp.end());
-    temp = this->_serializer->serializeUShort(this->_endOfPacket);
+    temp = this->_serializer->serializeUChar(this->_firstEndOfPacket);
+    body.insert(body.end(), temp.begin(), temp.end());
+    temp = this->_serializer->serializeUChar(this->_secondEndOfPacket);
     body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }
 
-bool PacketManager::parseEventPacket(const std::vector<uint8_t> payload) {
+bool pm::PacketManager::parseEventPacket(const std::vector<uint8_t> payload) {
     if (payload.size() != LENGTH_EVENT_PACKET
         || this->_length != payload.size()) {
         std::cerr <<

@@ -2,19 +2,19 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** BigEndianSerialization
+** LittleEndianSerialization
 */
 
-#ifndef BIGENDIANSERIALIZATION_HPP_
-#define BIGENDIANSERIALIZATION_HPP_
+#ifndef LITTLEENDIANSERIALIZATION_HPP_
+#define LITTLEENDIANSERIALIZATION_HPP_
 
 #include "ISerializer.hpp"
 
 namespace pm {
-class BigEndianSerialization : public ISerializer {
+class LittleEndianSerialization : public ISerializer {
     public:
-        BigEndianSerialization();
-        ~BigEndianSerialization() override;
+        LittleEndianSerialization();
+        ~LittleEndianSerialization() override;
 
         std::vector<uint8_t> serializeUInt(uint64_t value) override;
         std::vector<uint8_t> serializeULong(uint64_t value) override;
@@ -30,4 +30,4 @@ class BigEndianSerialization : public ISerializer {
 };
 } // namespace pm
 
-#endif /* !BIGENDIANSERIALIZATION_HPP_ */
+#endif /* !LITTLEENDIANSERIALIZATION_HPP_ */

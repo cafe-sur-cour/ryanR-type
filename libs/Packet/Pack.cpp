@@ -8,7 +8,7 @@
 #include <vector>
 #include "PacketManager.hpp"
 
-std::vector<uint8_t> PacketManager::pack(uint8_t idClient,
+std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient,
     uint32_t sequenceNumber, uint8_t type) {
     std::vector<uint8_t> header;
     std::vector<uint8_t> temp;
@@ -35,12 +35,15 @@ std::vector<uint8_t> PacketManager::pack(uint8_t idClient,
     temp = this->_serializer->serializeUInt(length);
     header.insert(header.end(), temp.begin(), temp.end());
 
-    temp = this->_serializer->serializeUShort(this->_endOfPacket);
+    temp = this->_serializer->serializeUChar(this->_firstEndOfPacket);
+    header.insert(header.end(), temp.begin(), temp.end());
+
+    temp = this->_serializer->serializeUChar(this->_secondEndOfPacket);
     header.insert(header.end(), temp.begin(), temp.end());
     return header;
 }
 
-std::vector<uint8_t> PacketManager::pack(std::vector<uint64_t> payload) {
+std::vector<uint8_t> pm::PacketManager::pack(std::vector<uint64_t> payload) {
     std::vector<uint8_t> body;
     uint64_t type = NO_OP_PACKET;
 

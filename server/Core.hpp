@@ -21,14 +21,13 @@ class Core {
         void init();
         void loop();
 
-        std::shared_ptr<rserv::ServerConfig> getConfig() const;
         std::shared_ptr<rserv::Server> getServer() const;
+        std::shared_ptr<rserv::ServerConfig> getConfig() const;
         std::shared_ptr<ecs::ResourceManager> getResourceManager() const;
 
     protected:
     private:
         std::shared_ptr<Utils> _utils;
-        std::shared_ptr<rserv::ServerConfig> _config;
         std::shared_ptr<rserv::Server> _server;
 
         /* Add esc related elem here */
