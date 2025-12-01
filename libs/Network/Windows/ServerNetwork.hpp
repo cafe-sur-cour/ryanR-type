@@ -24,10 +24,10 @@ class ServerNetwork :  public ANetwork {
         ServerNetwork();
         ~ServerNetwork() override;
 
-        void init(int port) override;
+        void init(uint32_t port,const std::string host) override;
         void stop() override;
 
-        int acceptConnection() override;
+        uint8_t acceptConnection() override;
 
         void sendTo(int connectionId, const pm::IPacketManager &packet) override;
         void broadcast(const pm::IPacketManager &packet) override;

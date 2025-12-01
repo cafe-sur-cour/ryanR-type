@@ -7,15 +7,17 @@
 
 #include <thread>
 #include <chrono>
+#include <string>
 #include <iostream>
 #include <memory>
 
 #include "ClientNetwork.hpp"
+#include "../common/Error/ClientNetworkError.hpp"
 #include "../common/Signal/Signal.hpp"
 
 ClientNetwork::ClientNetwork() {
     this->_port = 0;
-    this->_ip = 0;
+    this->_ip = "";
 
     this->_network = nullptr;
     this->_buffer = nullptr;
@@ -27,13 +29,18 @@ ClientNetwork::~ClientNetwork() {
 }
 
 void ClientNetwork::init() {
-    if (this->_port == 0 || this->_ip == 0) {
-        throw std::runtime_error("[ClientNetwork] Port or IP not set");
+    if (this->_port == 0 || this->_ip == "") {
+        throw err::ClientNetworkError(
+            "[ClientNetwork] Port and IP must be set before init()",
+            err::ClientNetworkError::CONFIG_ERROR);
     }
     this->loadNetworkLibrary();
     this->loadBufferLibrary();
     this->loadPacketLibrary();
-    this->_network->init(this->_port);
+    this->_network->init(
+        this->_port,
+        this->_ip
+    );
 }
 
 /* Call this in a separate thread */
@@ -67,76 +74,88 @@ void ClientNetwork::stop() {
     }
 }
 
-int ClientNetwork::getPort() const {
+uint32_t ClientNetwork::getPort() const {
     return _port;
 }
 
 void ClientNetwork::setPort(int port) {
-    _port = port;
+    _port = static_cast<uint32_t>(port);
 }
 
-uint32_t ClientNetwork::getIp() const {
+std::string ClientNetwork::getIp() const {
     return _ip;
 }
 
-void ClientNetwork::setIp(uint32_t ip) {
+void ClientNetwork::setIp(const std::string &ip) {
     _ip = ip;
 }
 
 
 void ClientNetwork::loadNetworkLibrary() {
     if (!_networloader.Open(pathLoad "/" networkClientLib sharedLibExt)) {
-        throw std::runtime_error("[ClientNetwork] Loading network lib failed");
+        throw err::ClientNetworkError("[ClientNetwork] Loading network lib failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
     if (!_networloader.getHandler()) {
-        throw std::runtime_error("[ClientNetwork] Loading network lib failed");
+        throw err::ClientNetworkError("[ClientNetwork] Loading network lib failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
     createNetworkLib_t createNetwork = _networloader.getSymbol
         ("createNetworkInstance");
     if (!createNetwork) {
-        throw std::runtime_error("[ClientNetwork] Loading network lib failed");
+        throw err::ClientNetworkError("[ClientNetwork] Loading network lib failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
     _network = std::shared_ptr<net::INetwork>
         (reinterpret_cast<net::INetwork *>(createNetwork()));
     if (!_network) {
-        throw std::runtime_error("[ClientNetwork] Loading network lib failed");
+        throw err::ClientNetworkError("[ClientNetwork] Loading network lib failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
 }
 
 void ClientNetwork::loadBufferLibrary() {
     if (!_bufferloader.Open(pathLoad "/" bufferLib sharedLibExt)) {
-        throw std::runtime_error("[ClientNetwork] Loading buffer lib failed");
+        throw err::ClientNetworkError("[ClientNetwork] Loading buffer lib failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
     if (!_bufferloader.getHandler()) {
-        throw std::runtime_error("[ClientNetwork] Loading buffer lib failed");
+        throw err::ClientNetworkError("[ClientNetwork] Loading buffer lib failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
     createBuffer_t createBuffer = _bufferloader.getSymbol
         ("createBufferInstance");
     if (!createBuffer) {
-        throw std::runtime_error("[ClientNetwork] Loading buffer lib failed");
+        throw err::ClientNetworkError("[ClientNetwork] Loading buffer lib failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
     _buffer = std::shared_ptr<IBuffer>
         (reinterpret_cast<IBuffer *>(createBuffer()));
     if (!_buffer) {
-        throw std::runtime_error("[ClientNetwork] Loading buffer lib failed");
+        throw err::ClientNetworkError("[ClientNetwork] Loading buffer lib failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
 }
 
 void ClientNetwork::loadPacketLibrary() {
     if (!_packetloader.Open(pathLoad "/" packetLib sharedLibExt)) {
-        throw std::runtime_error("[ClientNetwork] Loading packet lib failed");
+        throw err::ClientNetworkError("[ClientNetwork] Loading packet lib failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
     if (!_packetloader.getHandler()) {
-        throw std::runtime_error("[ClientNetwork] Loading packet lib failed");
+        throw err::ClientNetworkError("[ClientNetwork] Loading packet lib failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
     createPacket_t createPacket = _packetloader.getSymbol
         ("createPacketInstance");
     if (!createPacket) {
-        throw std::runtime_error("[ClientNetwork] Loading packet lib failed");
+        throw err::ClientNetworkError("[ClientNetwork] Loading packet lib failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
     _packet = std::shared_ptr<pm::IPacketManager>
         (reinterpret_cast<pm::IPacketManager *>(createPacket()));
     if (!_packet) {
-        throw std::runtime_error("[ClientNetwork] Loading packet lib failed");
+        throw err::ClientNetworkError("[ClientNetwork] Loading packet lib failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
 }

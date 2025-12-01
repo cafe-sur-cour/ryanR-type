@@ -28,11 +28,12 @@ UnixServerNetwork::~UnixServerNetwork() {
     }
 }
 
-void UnixServerNetwork::init(int port) {
+void UnixServerNetwork::init(uint32_t port, const std::string host) {
     _port = port;
+    (void)host;  // Host parameter is unused for UDP server
     _socket = std::make_shared<asio::ip::udp::socket>(*_ioContext);
     _socket->open(asio::ip::udp::v4());
-    if (port < 0 || port > 65535) {
+    if (port < 1024 || port > 65535) {
         throw std::invalid_argument("Port must be between 0 and 65535");
     }
 
@@ -53,9 +54,9 @@ void UnixServerNetwork::stop() {
     _isRunning = false;
 }
 
-int UnixServerNetwork::acceptConnection() {
+uint8_t UnixServerNetwork::acceptConnection() {
     if (!_socket || !_socket->is_open()) {
-        return -1;
+        return 1;
     }
 
     asio::ip::udp::endpoint senderEndpoint;
@@ -65,12 +66,13 @@ int UnixServerNetwork::acceptConnection() {
     size_t received = _socket->receive_from(asio::buffer(buffer),
         senderEndpoint, 0, ec);
     if (ec || received == 0) {
-        return -1;
+        return 1;
     }
     for (const auto& [clientId, endpoint] : _clients) {
         if (endpoint == senderEndpoint) {
             //* Add Packet */
-            return clientId;
+            // return clientId;
+            return 1;
         }
     }
 
@@ -82,7 +84,8 @@ int UnixServerNetwork::acceptConnection() {
     std::cout << "[UnixServerNetwork] New client " << newClientId << " from "
               << senderEndpoint.address().to_string() << ":" <<
               senderEndpoint.port() << std::endl;
-    return newClientId;
+    // return newClientId;
+    return 0;
 }
 
 void UnixServerNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {

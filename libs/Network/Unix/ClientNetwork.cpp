@@ -26,9 +26,49 @@ UnixClientNetwork::~UnixClientNetwork() {
     }
 }
 
-void UnixClientNetwork::init(int port) {
-    (void)port;
-    //  connect to exisiting server
+void UnixClientNetwork::init(uint32_t port, const std::string host) {
+    if (!_socket) {
+        _socket = std::make_shared<asio::ip::udp::socket>(*_ioContext);
+    }
+
+    if (!_socket->is_open()) {
+        _socket->open(asio::ip::udp::v4());
+    }
+    std::cout << "Socket is open" << std::endl;
+    try {
+        asio::ip::udp::resolver resolver(*_ioContext);
+        asio::ip::udp::resolver::results_type endpoints =
+            resolver.resolve(asio::ip::udp::v4(), host, std::to_string(port));
+
+        _serverEndpoint = *endpoints.begin();
+        std::string connectMsg = "CLIENT_CONNECT";
+        _socket->send_to(asio::buffer(connectMsg), _serverEndpoint);
+        std::array<char, 1024> buffer;
+        asio::ip::udp::endpoint senderEndpoint;
+
+        _socket->async_receive_from(asio::buffer(buffer), senderEndpoint,
+            [this](std::error_code ec, std::size_t length) {
+                if (!ec && length > 0) {
+                    _connected = true;
+                    std::cout << "[UnixClientNetwork] Server confirmed connection"
+                        << std::endl;
+                } else {
+                    _connected = false;
+                }
+            });
+
+        _ioContext->run_for(std::chrono::seconds(5));
+
+        if (!_connected) {
+            throw std::runtime_error("Server did not respond to connection request");
+        }
+        std::cout << "[UnixClientNetwork] Connected to server " << host
+                  << ":" << port << std::endl;
+    } catch (const std::exception& e) {
+        _connected = false;
+        throw std::runtime_error(std::string
+            ("[UnixClientNetwork] Connection failed: ") + e.what());
+    }
 }
 
 void UnixClientNetwork::stop() {
@@ -37,31 +77,6 @@ void UnixClientNetwork::stop() {
     }
     _connected = false;
     _isRunning = false;
-}
-
-void UnixClientNetwork::connect(const std::string &host, int port) {
-    if (!_socket || !_socket->is_open()) {
-        throw std::runtime_error("[UnixClientNetwork] Socket not initialized.");
-    }
-
-    try {
-        asio::ip::udp::resolver resolver(*_ioContext);
-        asio::ip::udp::resolver::results_type endpoints =
-            resolver.resolve(asio::ip::udp::v4(), host, std::to_string(port));
-
-        _serverEndpoint = *endpoints.begin();
-        _connected = true;
-
-        std::cout << "[UnixClientNetwork] Connected to server " << host
-                  << ":" << port << std::endl;
-
-        std::string connectMsg = "CLIENT_CONNECT";
-        _socket->send_to(asio::buffer(connectMsg), _serverEndpoint);
-    } catch (const std::exception& e) {
-        _connected = false;
-        throw std::runtime_error(std::string
-            ("[UnixClientNetwork] Connection failed: ") + e.what());
-    }
 }
 
 void UnixClientNetwork::disconnect() {
@@ -83,9 +98,9 @@ bool UnixClientNetwork::isConnected() const {
     return _connected;
 }
 
-int UnixClientNetwork::acceptConnection() {
+uint8_t UnixClientNetwork::acceptConnection() {
     // Not applicable for client
-    return -1;
+    return 1;
 }
 
 void UnixClientNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
