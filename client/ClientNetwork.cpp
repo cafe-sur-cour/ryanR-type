@@ -92,7 +92,7 @@ pm::IPacketManager &ClientNetwork::receiveData(
 
 
 void ClientNetwork::loadNetworkLibrary() {
-    if (!_networloader.Open(pathLoad "/" networkLib)) {
+    if (!_networloader.Open(pathLoad "/" networkLib sharedLibExt)) {
         throw std::runtime_error("[ClientNetwork] Loading network lib failed");
     }
     if (!_networloader.getHandler()) {
@@ -111,7 +111,7 @@ void ClientNetwork::loadNetworkLibrary() {
 }
 
 void ClientNetwork::loadBufferLibrary() {
-    if (!_bufferloader.Open(pathLoad "/" bufferLib)) {
+    if (!_bufferloader.Open(pathLoad "/" bufferLib sharedLibExt)) {
         throw std::runtime_error("[ClientNetwork] Loading buffer lib failed");
     }
     if (!_bufferloader.getHandler()) {
@@ -130,7 +130,7 @@ void ClientNetwork::loadBufferLibrary() {
 }
 
 void ClientNetwork::loadPacketLibrary() {
-    if (!_packetloader.Open(pathLoad "/" packetLib)) {
+    if (!_packetloader.Open(pathLoad "/" packetLib sharedLibExt)) {
         throw std::runtime_error("[ClientNetwork] Loading packet lib failed");
     }
     if (!_packetloader.getHandler()) {
