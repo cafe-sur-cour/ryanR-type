@@ -133,18 +133,6 @@ std::shared_ptr<pm::IPacketManager> UnixServerNetwork::receiveFrom(
     return nullptr;
 }
 
-void UnixServerNetwork::sendData(const pm::IPacketManager &data, size_t size) {
-    (void)size;
-    broadcast(data);
-}
-
-pm::IPacketManager &UnixServerNetwork::receiveData(
-    const IBuffer &buffer, size_t size) const {
-    (void)buffer;  // To avoid unused parameter warning
-    (void)size;   // To avoid unused parameter warning
-    throw std::runtime_error("[UnixServerNetwork] receiveData not implemented");
-}
-
 }  // namespace net
 
 extern "C" {

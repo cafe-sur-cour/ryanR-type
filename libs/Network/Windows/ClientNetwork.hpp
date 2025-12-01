@@ -50,9 +50,6 @@ class WindowsNetwork : public ANetwork {
         bool hasIncomingData() const override;
         std::shared_ptr<pm::IPacketManager> receiveFrom(const int &connectionId) override;
 
-        void sendData(const pm::IPacketManager &data, size_t size) override;
-        pm::IPacketManager &receiveData(const IBuffer &buffer, size_t size) const override;
-
         void setConnectionCallback(std::function<void(int)> onConnect) override;
         void setDisconnectionCallback(std::function<void(int)> onDisconnect) override;
 
