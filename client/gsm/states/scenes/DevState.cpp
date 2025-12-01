@@ -2,22 +2,22 @@
 #include <memory>
 #include <cmath>
 #include <iostream>
-#include "../../../../common/ECS/component/tags/PlayerTag.hpp"
-#include "../../../../common/ECS/component/tags/ControllableTag.hpp"
+#include "../../../../common/components/tags/PlayerTag.hpp"
+#include "../../../../common/components/tags/ControllableTag.hpp"
 #include "../../../../libs/Multimedia/IWindow.hpp"
 #include "../../../../libs/Multimedia/IEvent.hpp"
-#include "../../../../common/ECS/component/rendering/SpriteComponent.hpp"
-#include "../../../../common/ECS/component/rendering/AnimationComponent.hpp"
-#include "../../../../common/ECS/component/permanent/TransformComponent.hpp"
-#include "../../../../common/ECS/component/permanent/VelocityComponent.hpp"
-#include "../../../../common/ECS/component/permanent/ColliderComponent.hpp"
-#include "../../../../common/ECS/system/rendering/AnimationRenderingSystem.hpp"
-#include "../../../../common/ECS/component/rendering/HitboxRenderComponent.hpp"
-#include "../../../../common/ECS/component/rendering/RectangleRenderComponent.hpp"
-#include "../../../../common/ECS/system/rendering/HitboxRenderingSystem.hpp"
-#include "../../../../common/ECS/system/rendering/RectangleRenderingSystem.hpp"
+#include "../../../components/rendering/SpriteComponent.hpp"
+#include "../../../components/rendering/AnimationComponent.hpp"
+#include "../../../../common/components/permanent/TransformComponent.hpp"
+#include "../../../../common/components/permanent/VelocityComponent.hpp"
+#include "../../../../common/components/permanent/ColliderComponent.hpp"
+#include "../../../systems/rendering/AnimationRenderingSystem.hpp"
+#include "../../../components/rendering/HitboxRenderComponent.hpp"
+#include "../../../components/rendering/RectangleRenderComponent.hpp"
+#include "../../../systems/rendering/HitboxRenderingSystem.hpp"
+#include "../../../systems/rendering/RectangleRenderingSystem.hpp"
 #include "../../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
-#include "../../../../common/ECS/component/tags/ObstacleTag.hpp"
+#include "../../../../common/components/tags/ObstacleTag.hpp"
 
 namespace gsm {
 

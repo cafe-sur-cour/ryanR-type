@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../common/ECS/component/base/AComponent.hpp"
+#include "../../common/components/base/AComponent.hpp"
 #include "../../common/ECS/entity/AEntity.hpp"
 #include "../../common/ECS/entity/registry/ARegistry.hpp"
 

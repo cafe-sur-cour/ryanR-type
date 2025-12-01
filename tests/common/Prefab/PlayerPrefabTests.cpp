@@ -9,11 +9,11 @@
 #include <memory>
 #include "../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
 #include "../../../common/ECS/entity/registry/ARegistry.hpp"
-#include "../../../common/ECS/component/permanent/TransformComponent.hpp"
-#include "../../../common/ECS/component/permanent/VelocityComponent.hpp"
-#include "../../../common/ECS/component/permanent/SpeedComponent.hpp"
-#include "../../../common/ECS/component/rendering/AnimationComponent.hpp"
-#include "../../../common/ECS/component/tags/PlayerTag.hpp"
+#include "../../../common/components/permanent/TransformComponent.hpp"
+#include "../../../common/components/permanent/VelocityComponent.hpp"
+#include "../../../common/components/permanent/SpeedComponent.hpp"
+#include "../../../client/components/rendering/AnimationComponent.hpp"
+#include "../../../common/components/tags/PlayerTag.hpp"
 
 using namespace ecs;
 

@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../../../common/ECS/component/tags/ObstacleTag.hpp"
+#include "../../../../common/components/tags/ObstacleTag.hpp"
 
 using namespace ecs;
 

@@ -7,17 +7,17 @@
 
 #include "View.hpp"
 #include "../entity/registry/ARegistry.hpp"
-#include "../component/tags/ControllableTag.hpp"
-#include "../component/tags/PlayerTag.hpp"
-#include "../component/temporary/MovementIntentComponent.hpp"
-#include "../component/temporary/InputIntentComponent.hpp"
-#include "../component/permanent/TransformComponent.hpp"
-#include "../component/permanent/VelocityComponent.hpp"
-#include "../component/rendering/SpriteComponent.hpp"
-#include "../component/rendering/AnimationComponent.hpp"
-#include "../component/permanent/ColliderComponent.hpp"
-#include "../component/rendering/HitboxRenderComponent.hpp"
-#include "../component/rendering/RectangleRenderComponent.hpp"
+#include "../../components/tags/ControllableTag.hpp"
+#include "../../components/tags/PlayerTag.hpp"
+#include "../../components/temporary/MovementIntentComponent.hpp"
+#include "../../components/temporary/InputIntentComponent.hpp"
+#include "../../components/permanent/TransformComponent.hpp"
+#include "../../components/permanent/VelocityComponent.hpp"
+#include "../../../client/components/rendering/SpriteComponent.hpp"
+#include "../../../client/components/rendering/AnimationComponent.hpp"
+#include "../../components/permanent/ColliderComponent.hpp"
+#include "../../../client/components/rendering/HitboxRenderComponent.hpp"
+#include "../../../client/components/rendering/RectangleRenderComponent.hpp"
 
 namespace ecs {
 

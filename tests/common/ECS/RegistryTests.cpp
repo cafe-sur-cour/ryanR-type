@@ -7,9 +7,9 @@
 
 #include <gtest/gtest.h>
 #include "../../../common/ECS/entity/registry/ARegistry.hpp"
-#include "../../../common/ECS/component/tags/PlayerTag.hpp"
-#include "../../../common/ECS/component/temporary/MovementIntentComponent.hpp"
-#include "../../../common/ECS/component/permanent/TransformComponent.hpp"
+#include "../../../common/components/tags/PlayerTag.hpp"
+#include "../../../common/components/temporary/MovementIntentComponent.hpp"
+#include "../../../common/components/permanent/TransformComponent.hpp"
 
 using namespace ecs;
 

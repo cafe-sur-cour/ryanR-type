@@ -7,12 +7,12 @@
 
 #include <gtest/gtest.h>
 #include <memory>
-#include "../../../../common/ECS/system/movement/InputToVelocitySystem.hpp"
-#include "../../../../common/ECS/system/movement/MovementSystem.hpp"
+#include "../../../../common/systems/movement/InputToVelocitySystem.hpp"
+#include "../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../common/ECS/entity/registry/ARegistry.hpp"
-#include "../../../../common/ECS/component/temporary/InputIntentComponent.hpp"
-#include "../../../../common/ECS/component/permanent/ColliderComponent.hpp"
-#include "../../../../common/ECS/component/tags/ObstacleTag.hpp"
+#include "../../../../common/components/temporary/InputIntentComponent.hpp"
+#include "../../../../common/components/permanent/ColliderComponent.hpp"
+#include "../../../../common/components/tags/ObstacleTag.hpp"
 
 using namespace ecs;
 
