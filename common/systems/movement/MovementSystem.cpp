@@ -213,8 +213,6 @@ math::Vector2f MovementSystem::handleBounceCollision(
                     math::Vector2f currentVelocity = velocityComp->getVelocity();
                     math::Vector2f newVelocity = currentVelocity;
 
-                    math::FRect startHitbox = bounceCollider->getHitbox(startPos);
-
                     float bounceRight = bounceHitbox.getLeft() + bounceHitbox.getWidth();
                     float bounceBottom = bounceHitbox.getTop() + bounceHitbox.getHeight();
                     float otherRight = otherHitbox.getLeft() + otherHitbox.getWidth();
@@ -231,7 +229,6 @@ math::Vector2f MovementSystem::handleBounceCollision(
                         newVelocity.setY(-newVelocity.getY());
 
                     velocityComp->setVelocity(newVelocity);
-                    (void)startHitbox;  // To avoid unused variable warning
                     return startPos;
                 }
             }
