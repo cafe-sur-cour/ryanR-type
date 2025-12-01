@@ -17,6 +17,7 @@ int main(int ac, char **av) {
     Utils utils;
 
     utils.parseCli(ac, av, core.getNetwork());
+    core.getNetwork()->init();
     core.run();
     return 0;
 }

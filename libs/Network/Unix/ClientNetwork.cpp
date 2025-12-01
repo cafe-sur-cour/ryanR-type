@@ -28,9 +28,7 @@ UnixClientNetwork::~UnixClientNetwork() {
 
 void UnixClientNetwork::init(int port) {
     (void)port;
-    _socket = std::make_shared<asio::ip::udp::socket>(*_ioContext);
-    _socket->open(asio::ip::udp::v4());
-    _isRunning = true;
+    //  connect to exisiting server
 }
 
 void UnixClientNetwork::stop() {
@@ -41,7 +39,7 @@ void UnixClientNetwork::stop() {
     _isRunning = false;
 }
 
-void UnixClientNetwork::connect(const std::string& host, int port) {
+void UnixClientNetwork::connect(const std::string &host, int port) {
     if (!_socket || !_socket->is_open()) {
         throw std::runtime_error("[UnixClientNetwork] Socket not initialized.");
     }
