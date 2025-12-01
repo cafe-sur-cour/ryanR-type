@@ -7,22 +7,24 @@
 
 #include "../../common/ECS/resourceManager/IInputProvider.hpp"
 #include "../../libs/Multimedia/IEvent.hpp"
+#include "../../common/ECS/resourceManager/InputMapping.hpp"
 #include <memory>
 
 namespace ecs {
 
 class GraphicalInputProvider : public IInputProvider {
     public:
-        GraphicalInputProvider(std::shared_ptr<gfx::IEvent> eventSystem);
+        GraphicalInputProvider(std::shared_ptr<gfx::IEvent> eventSystem, const InputMapping& mapping);
         ~GraphicalInputProvider() override = default;
 
-        bool isKeyPressed(event_t key) override;
         float getAxisValue(event_t axis) override;
-        std::pair<int, int> getMousePos() override;
-        bool isMouseButtonPressed(int button) override;
+
+        bool isActionPressed(InputAction action) override;
+        float getActionAxis(InputAction action) override;
 
     private:
         std::shared_ptr<gfx::IEvent> _eventSystem;
+        InputMapping _mapping;
 };
 
 } // namespace ecs

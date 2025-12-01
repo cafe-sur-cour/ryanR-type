@@ -13,27 +13,22 @@ namespace ecs {
 ServerInputProvider::ServerInputProvider() {
 }
 
-bool ServerInputProvider::isKeyPressed(event_t key) {
-    (void)key;
-    // TODO(anyone): Implement server-side input handling (network inputs)
-    return false;
-}
-
 float ServerInputProvider::getAxisValue(event_t axis) {
     (void)axis;
     // TODO(anyone): Implement server-side input handling (network inputs)
     return 0.0f;
 }
 
-std::pair<int, int> ServerInputProvider::getMousePos() {
-    // TODO(anyone): Implement server-side input handling (network inputs)
-    return {0, 0};
-}
-
-bool ServerInputProvider::isMouseButtonPressed(int button) {
-    (void)button;
+bool ServerInputProvider::isActionPressed(InputAction action) {
+    (void)action;
     // TODO(anyone): Implement server-side input handling (network inputs)
     return false;
+}
+
+float ServerInputProvider::getActionAxis(InputAction action) {
+    (void)action;
+    // TODO(anyone): Implement server-side input handling (network inputs)
+    return 0.0f;
 }
 
 }  // namespace ecs

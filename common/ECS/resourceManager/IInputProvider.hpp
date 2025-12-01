@@ -10,6 +10,7 @@
 
 #include <utility>
 #include "../../libs/Multimedia/EventTypes.hpp"
+#include "InputAction.hpp"
 
 namespace ecs {
 
@@ -17,12 +18,12 @@ class IInputProvider {
     public:
         using event_t = gfx::EventType;
         virtual ~IInputProvider() = default;
-        virtual bool isKeyPressed(event_t key) = 0;
+
         virtual float getAxisValue(event_t axis) = 0;
-        virtual std::pair<int, int> getMousePos() = 0;
-        virtual bool isMouseButtonPressed(int button) = 0;
+        virtual bool isActionPressed(InputAction action) = 0;
+        virtual float getActionAxis(InputAction action) = 0;
 };
 
-} // namespace ecs
+}  // namespace ecs
 
 #endif /* !IINPUTPROVIDER_HPP_ */
