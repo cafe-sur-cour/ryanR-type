@@ -90,6 +90,6 @@ extern "C" {
         return new net::WindowsNetwork();
     }
     int getType() {
-        return NETWORK_MODULE;
+        return NETWORK_CLIENT_MODULE;
     }
 }

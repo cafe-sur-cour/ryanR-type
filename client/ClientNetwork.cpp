@@ -92,7 +92,7 @@ pm::IPacketManager &ClientNetwork::receiveData(
 
 
 void ClientNetwork::loadNetworkLibrary() {
-    if (!_networloader.Open(pathLoad "/" networkLib sharedLibExt)) {
+    if (!_networloader.Open(pathLoad "/" networkClientLib sharedLibExt)) {
         throw std::runtime_error("[ClientNetwork] Loading network lib failed");
     }
     if (!_networloader.getHandler()) {

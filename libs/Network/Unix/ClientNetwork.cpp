@@ -183,6 +183,6 @@ extern "C" {
         return new net::UnixClientNetwork();
     }
     int getType() {
-        return NETWORK_MODULE;
+        return NETWORK_CLIENT_MODULE;
     }
 }
