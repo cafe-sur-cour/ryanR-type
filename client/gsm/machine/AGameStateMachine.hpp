@@ -1,7 +1,7 @@
 #pragma once
 
-#include "IGameStateMachine.hpp"
-#include "../states/base/IGameState.hpp"
+#include "../../../common/gsm/IGameStateMachine.hpp"
+#include "../../../common/gsm/IGameState.hpp"
 
 namespace gsm {
 
@@ -15,7 +15,6 @@ public:
     void popState() override;
 
     void update(float deltaTime) override;
-    void render() override;
 
 protected:
     std::stack<std::shared_ptr<IGameState>> _states;

@@ -1,4 +1,10 @@
-target_sources(${CLIENT_BIN_NAME} PRIVATE
-    DevState.hpp
-    DevState.cpp
-)
+add_subdirectory(Dev)
+add_subdirectory(Boot)
+add_subdirectory(MainMenu)
+add_subdirectory(Settings)
+add_subdirectory(LobbyBrowser)
+add_subdirectory(Lobby)
+add_subdirectory(Loading)
+add_subdirectory(InGame)
+add_subdirectory(Pause)
+add_subdirectory(Results)
