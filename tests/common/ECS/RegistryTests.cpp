@@ -6,22 +6,22 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../../common/ECS/entity/registry/ARegistry.hpp"
+#include "../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../common/components/tags/PlayerTag.hpp"
 #include "../../../common/components/temporary/MovementIntentComponent.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 
 using namespace ecs;
 
-/* ARegistry Tests */
+/* Registry Tests */
 
 TEST(ARegistryTest, GetMaxEntityId_EmptyRegistry) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     EXPECT_EQ(registry->getMaxEntityId(), 0);
 }
 
 TEST(ARegistryTest, GetMaxEntityId_WithComponents) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
 
     // Add components at different entity IDs
     registry->registerComponent<PlayerTag>();
@@ -39,7 +39,7 @@ TEST(ARegistryTest, GetMaxEntityId_WithComponents) {
 }
 
 TEST(ARegistryTest, GetMaxEntityId_MultipleComponentTypes) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
 
     registry->registerComponent<PlayerTag>();
     registry->registerComponent<MovementIntentComponent>();
@@ -58,7 +58,7 @@ TEST(ARegistryTest, GetMaxEntityId_MultipleComponentTypes) {
 }
 
 TEST(ARegistryTest, View_EmptyRegistry) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     auto view = registry->view<PlayerTag>();
 
     // Should iterate over no entities
@@ -71,7 +71,7 @@ TEST(ARegistryTest, View_EmptyRegistry) {
 }
 
 TEST(ARegistryTest, View_SingleEntity) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     registry->registerComponent<PlayerTag>();
 
     auto playerTag = std::make_shared<PlayerTag>();
@@ -90,7 +90,7 @@ TEST(ARegistryTest, View_SingleEntity) {
 }
 
 TEST(ARegistryTest, View_MultipleEntities) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     registry->registerComponent<PlayerTag>();
 
     auto playerTag1 = std::make_shared<PlayerTag>();
@@ -115,7 +115,7 @@ TEST(ARegistryTest, View_MultipleEntities) {
 }
 
 TEST(ARegistryTest, View_MultipleComponents) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     registry->registerComponent<PlayerTag>();
     registry->registerComponent<TransformComponent>();
 
@@ -145,7 +145,7 @@ TEST(ARegistryTest, View_MultipleComponents) {
 }
 
 TEST(ARegistryTest, Group_BasicFunctionality) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     registry->registerComponent<PlayerTag>();
 
     auto playerTag = std::make_shared<PlayerTag>();
@@ -164,7 +164,7 @@ TEST(ARegistryTest, Group_BasicFunctionality) {
 }
 
 TEST(ARegistryTest, GetComponents_SingleComponent) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     registry->registerComponent<TransformComponent>();
 
     auto transform = std::make_shared<TransformComponent>();
@@ -176,7 +176,7 @@ TEST(ARegistryTest, GetComponents_SingleComponent) {
 }
 
 TEST(ARegistryTest, GetComponents_MultipleComponentsSameType) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     registry->registerComponent<TransformComponent>();
 
     auto transform1 = std::make_shared<TransformComponent>(math::Vector2f(10.0f, 20.0f));
@@ -191,7 +191,7 @@ TEST(ARegistryTest, GetComponents_MultipleComponentsSameType) {
 }
 
 TEST(ARegistryTest, GetComponents_NoComponents) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     registry->registerComponent<TransformComponent>();
 
     auto components = registry->getComponents<TransformComponent>(0);
@@ -199,7 +199,7 @@ TEST(ARegistryTest, GetComponents_NoComponents) {
 }
 
 TEST(ARegistryTest, GetComponent_ReturnsFirstWhenMultiple) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
     registry->registerComponent<TransformComponent>();
 
     auto transform1 = std::make_shared<TransformComponent>(math::Vector2f(10.0f, 20.0f));

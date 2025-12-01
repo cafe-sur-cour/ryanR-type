@@ -2,13 +2,12 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** ARegistry
+** Registry
 */
 
-#ifndef AREGISTRY_HPP_
-#define AREGISTRY_HPP_
+#ifndef REGISTRY_HPP_
+#define REGISTRY_HPP_
 
-#include "IRegistry.hpp"
 #include "../../../components/base/IComponent.hpp"
 #include "../componentArray/IComponentArray.hpp"
 #include "../componentArray/AComponentArray.hpp"
@@ -19,10 +18,10 @@
 
 namespace ecs {
 
-class ARegistry : public IRegistry, public std::enable_shared_from_this<ARegistry> {
+class Registry : public std::enable_shared_from_this<Registry> {
     public:
-        ARegistry();
-        virtual ~ARegistry();
+        Registry();
+        ~Registry();
 
         template <typename T>
         void registerComponent();
@@ -44,8 +43,8 @@ class ARegistry : public IRegistry, public std::enable_shared_from_this<ARegistr
 
         Entity getMaxEntityId() const;
 
-        void removeAllComponentsWithState(ComponentState state) override;
-        Entity createEntity() override;
+        void removeAllComponentsWithState(ComponentState state);
+        Entity createEntity();
     protected:
     private:
         Entity _nextEntityId;
@@ -54,6 +53,6 @@ class ARegistry : public IRegistry, public std::enable_shared_from_this<ARegistr
 
 } // namespace ecs
 
-#include "ARegistry.tpp"
+#include "Registry.tpp"
 
-#endif /* !AREGISTRY_HPP_ */
+#endif /* !REGISTRY_HPP_ */

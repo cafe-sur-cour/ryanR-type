@@ -9,7 +9,7 @@
 #define ISystem_HPP_
 
 #include "../../ECS/resourceManager/ResourceManager.hpp"
-#include "../../ECS/entity/registry/ARegistry.hpp"
+#include "../../ECS/entity/registry/Registry.hpp"
 #include <memory>
 
 namespace ecs {
@@ -17,7 +17,7 @@ namespace ecs {
 class ISystem {
     public:
         virtual ~ISystem() = default;
-        virtual void updateSystem(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) = 0;
+        virtual void updateSystem(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<Registry> registry, float deltaTime) = 0;
 };
 
 } // namespace ecs

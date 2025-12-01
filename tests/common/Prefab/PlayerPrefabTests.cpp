@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include "../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
-#include "../../../common/ECS/entity/registry/ARegistry.hpp"
+#include "../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/components/permanent/VelocityComponent.hpp"
 #include "../../../common/components/permanent/SpeedComponent.hpp"
@@ -20,7 +20,7 @@ using namespace ecs;
 /* PlayerPrefab Tests */
 
 TEST(PlayerPrefabTest, InstantiateCreatesEntityWithComponents) {
-    auto registry = std::make_shared<ARegistry>();
+    auto registry = std::make_shared<Registry>();
 
     // Register components
     registry->registerComponent<TransformComponent>();

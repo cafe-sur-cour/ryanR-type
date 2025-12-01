@@ -8,13 +8,13 @@
 #ifndef IPREFAB_HPP_
 #define IPREFAB_HPP_
 #include <memory>
-#include "../ECS/entity/registry/ARegistry.hpp"
+#include "../ECS/entity/registry/Registry.hpp"
 #include "../ECS/entity/Entity.hpp"
 
 class IPrefab {
     public:
         virtual ~IPrefab() = default;
-        virtual ecs::Entity instantiate(const std::shared_ptr<ecs::ARegistry> &registry) = 0;
+        virtual ecs::Entity instantiate(const std::shared_ptr<ecs::Registry> &registry) = 0;
 };
 
 #endif /* !IPREFAB_HPP_ */

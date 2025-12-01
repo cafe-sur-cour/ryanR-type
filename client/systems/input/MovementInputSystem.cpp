@@ -22,7 +22,7 @@ MovementInputSystem::MovementInputSystem() {
 
 void MovementInputSystem::update(
     std::shared_ptr<ResourceManager> resourceManager,
-    std::shared_ptr<ARegistry> registry,
+    std::shared_ptr<Registry> registry,
     float deltaTime) {
     (void)resourceManager;
     (void)deltaTime;
@@ -91,7 +91,7 @@ math::Vector2f MovementInputSystem::getAnalogStickInput(
 }
 
 void MovementInputSystem::updateInputIntent(
-    std::shared_ptr<ARegistry> registry,
+    std::shared_ptr<Registry> registry,
     Entity entityId,
     const math::Vector2f &direction) {
 

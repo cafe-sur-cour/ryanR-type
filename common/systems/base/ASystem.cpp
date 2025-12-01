@@ -13,7 +13,7 @@ ASystem::ASystem() {
 }
 
 void ASystem::updateSystem(std::shared_ptr<ResourceManager> resourceManager,
-    std::shared_ptr<ARegistry> registry, float deltaTime) {
+    std::shared_ptr<Registry> registry, float deltaTime) {
     if (resourceManager && registry) {
         update(resourceManager, registry, deltaTime);
     }

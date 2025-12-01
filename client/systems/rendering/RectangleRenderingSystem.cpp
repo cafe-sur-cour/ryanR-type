@@ -20,7 +20,7 @@ RectangleRenderingSystem::RectangleRenderingSystem() {
 }
 
 void RectangleRenderingSystem::update(std::shared_ptr<ResourceManager>
-    resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) {
+    resourceManager, std::shared_ptr<Registry> registry, float deltaTime) {
     (void)deltaTime;
 
     View<RectangleRenderComponent, TransformComponent> view(registry);

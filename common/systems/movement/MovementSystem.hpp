@@ -27,36 +27,36 @@ class MovementSystem : public ASystem {
 
         void update(
             std::shared_ptr<ResourceManager> resourceManager,
-            std::shared_ptr<ARegistry> registry,
+            std::shared_ptr<Registry> registry,
             float deltaTime
         ) override;
 
     private:
         bool checkCollision(
-            std::shared_ptr<ARegistry> registry,
+            std::shared_ptr<Registry> registry,
             size_t entityId,
             math::Vector2f newPos
         );
         math::Vector2f calculateSmoothMovement(
-            std::shared_ptr<ARegistry> registry,
+            std::shared_ptr<Registry> registry,
             size_t entityId,
             math::Vector2f startPos,
             math::Vector2f desiredPos
         );
         math::Vector2f calculateSlidingMovement(
-            std::shared_ptr<ARegistry> registry,
+            std::shared_ptr<Registry> registry,
             size_t entityId,
             math::Vector2f basePos,
             math::Vector2f desiredPos
         );
         math::Vector2f calculateSmoothSlidingPosition(
-            std::shared_ptr<ARegistry> registry,
+            std::shared_ptr<Registry> registry,
             size_t entityId,
             math::Vector2f startPos,
             math::Vector2f desiredPos
         );
         math::Vector2f handleBounceCollision(
-            std::shared_ptr<ARegistry> registry,
+            std::shared_ptr<Registry> registry,
             size_t entityId,
             math::Vector2f startPos,
             math::Vector2f desiredPos,

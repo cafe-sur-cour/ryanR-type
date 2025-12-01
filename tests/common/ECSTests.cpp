@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include "../../common/components/base/AComponent.hpp"
 #include "../../common/ECS/entity/Entity.hpp"
-#include "../../common/ECS/entity/registry/ARegistry.hpp"
+#include "../../common/ECS/entity/registry/Registry.hpp"
 
 using namespace ecs;
 
@@ -25,7 +25,7 @@ TEST(AComponentTest, SetState) {
     EXPECT_EQ(comp.getState(), ComponentState::Temporary);
 }
 
-/* ARegistry Tests */
+/* Registry Tests */
 
 class TestComponent : public AComponent {
 public:
@@ -36,13 +36,13 @@ private:
 };
 
 TEST(ARegistryTest, RegisterComponent) {
-    ARegistry registry;
+    Registry registry;
     registry.registerComponent<TestComponent>();
     // Should not crash
 }
 
 TEST(ARegistryTest, AddGetComponent) {
-    ARegistry registry;
+    Registry registry;
     registry.registerComponent<TestComponent>();
 
     ecs::Entity entityId = 1;
@@ -55,7 +55,7 @@ TEST(ARegistryTest, AddGetComponent) {
 }
 
 TEST(ARegistryTest, HasComponent) {
-    ARegistry registry;
+    Registry registry;
     registry.registerComponent<TestComponent>();
 
     ecs::Entity entityId = 1;
@@ -67,7 +67,7 @@ TEST(ARegistryTest, HasComponent) {
 }
 
 TEST(ARegistryTest, RemoveComponent) {
-    ARegistry registry;
+    Registry registry;
     registry.registerComponent<TestComponent>();
 
     ecs::Entity entityId = 1;
@@ -80,7 +80,7 @@ TEST(ARegistryTest, RemoveComponent) {
 }
 
 TEST(ARegistryTest, RemoveAllComponentsWithState) {
-    ARegistry registry;
+    Registry registry;
     registry.registerComponent<TestComponent>();
 
     ecs::Entity entityId = 1;

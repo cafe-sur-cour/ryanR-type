@@ -20,7 +20,7 @@ class AnimationRenderingSystem : public ASystem {
 
     protected:
         void update(std::shared_ptr<ResourceManager> resourceManager,
-        std::shared_ptr<ARegistry> registry, float deltaTime) override;
+        std::shared_ptr<Registry> registry, float deltaTime) override;
 };
 
 }  // namespace ecs

@@ -17,7 +17,7 @@ class InputToVelocitySystem : public ASystem {
         InputToVelocitySystem();
         ~InputToVelocitySystem() = default;
 
-        void update(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<ARegistry> registry, float deltaTime) override;
+        void update(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<Registry> registry, float deltaTime) override;
 };
 
 } // namespace ecs
