@@ -17,6 +17,8 @@ target_link_libraries(${CLIENT_BIN_NAME}
         DLLoader
         SIGNAL
         PREFAB
+        PARSER
+        nlohmann_json::nlohmann_json
 )
 
 add_subdirectory(initRessourcesManager)
