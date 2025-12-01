@@ -1,5 +1,6 @@
 add_library(${NETWORK_LIB_NAME} SHARED
-    WindowsNetwork.cpp
+    ClientNetwork.cpp
+    ServerNetwork.cpp
 )
 
 target_include_directories(${NETWORK_LIB_NAME}
