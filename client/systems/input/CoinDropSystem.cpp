@@ -6,6 +6,7 @@
 */
 
 #include "CoinDropSystem.hpp"
+#include <memory>
 #include "../../../common/ECS/resourceManager/IInputProvider.hpp"
 #include "../../../common/ECS/resourceManager/InputAction.hpp"
 #include "../../../common/components/tags/PlayerTag.hpp"
@@ -43,14 +44,14 @@ void CoinDropSystem::update(
             }
 
             Entity coinId = registry->createEntity();
-            
+
             auto coinTransform = std::make_shared<TransformComponent>(
                 playerTransform->getPosition(),
                 0.0f,
                 math::Vector2f(1.0f, 1.0f)
             );
             registry->addComponent(coinId, coinTransform);
-            
+
             auto coinTag = std::make_shared<CoinTag>();
             registry->addComponent(coinId, coinTag);
 
