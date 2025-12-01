@@ -44,6 +44,7 @@ class SfmlAudio : public IAudio
         float _musicVolume;
         float _soundVolume;
         assets::AssetManager _assetManager;
+        std::shared_ptr<assets::AssetData> _musicAssetData;
 
         void loadSoundBuffer(const std::string& soundPath);
         void cleanupFinishedSounds();
