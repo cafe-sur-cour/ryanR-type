@@ -1,0 +1,27 @@
+set(PARSER_LIB PARSER)
+
+add_subdirectory(ComposantParser)
+add_subdirectory(EntityParser)
+
+set(PARSER_SOURCES
+    Parser.cpp
+)
+
+set(PARSER_HEADERS
+    Parser.hpp
+    ParserParam.hpp
+    ComponentParserCreators.cpp
+)
+
+add_library(${PARSER_LIB} STATIC ${PARSER_SOURCES} ${PARSER_HEADERS})
+
+target_include_directories(${PARSER_LIB} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
+
+target_link_libraries(${PARSER_LIB} PUBLIC
+    PREFAB
+    COMPOSANT_PARSER
+    ENTITY_PARSER
+    nlohmann_json::nlohmann_json
+)

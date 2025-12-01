@@ -13,6 +13,7 @@ add_library(${MULTIMEDIA_LIB_NAME} SHARED
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_0.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_1.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_2.cpp
+    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_3.cpp
     ${CMAKE_SOURCE_DIR}/common/types/FRect.cpp
 )
 
@@ -21,6 +22,7 @@ set_source_files_properties(
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_0.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_1.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_2.cpp
+    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_3.cpp
     PROPERTIES GENERATED TRUE
 )
 
@@ -42,6 +44,7 @@ if(MSVC)
         ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_0.cpp
         ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_1.cpp
         ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_2.cpp
+        ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_3.cpp
         PROPERTIES COMPILE_FLAGS "/Od /bigobj"
     )
 endif()
