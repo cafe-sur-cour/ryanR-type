@@ -2,23 +2,23 @@
 #include <memory>
 #include <cmath>
 #include <iostream>
-#include "../../../../common/ECS/entity/Entity.hpp"
-#include "../../../../common/components/tags/PlayerTag.hpp"
-#include "../../../../common/components/tags/ControllableTag.hpp"
-#include "../../../../libs/Multimedia/IWindow.hpp"
-#include "../../../../libs/Multimedia/IEvent.hpp"
-#include "../../../components/rendering/SpriteComponent.hpp"
-#include "../../../components/rendering/AnimationComponent.hpp"
-#include "../../../../common/components/permanent/TransformComponent.hpp"
-#include "../../../../common/components/permanent/VelocityComponent.hpp"
-#include "../../../../common/components/permanent/ColliderComponent.hpp"
-#include "../../../systems/rendering/AnimationRenderingSystem.hpp"
-#include "../../../components/rendering/HitboxRenderComponent.hpp"
-#include "../../../components/rendering/RectangleRenderComponent.hpp"
-#include "../../../systems/rendering/HitboxRenderingSystem.hpp"
-#include "../../../systems/rendering/RectangleRenderingSystem.hpp"
-#include "../../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
-#include "../../../../common/components/tags/ObstacleTag.hpp"
+#include "../../../../../common/ECS/entity/Entity.hpp"
+#include "../../../../../common/components/tags/PlayerTag.hpp"
+#include "../../../../../common/components/tags/ControllableTag.hpp"
+#include "../../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../../libs/Multimedia/IEvent.hpp"
+#include "../../../../components/rendering/SpriteComponent.hpp"
+#include "../../../../components/rendering/AnimationComponent.hpp"
+#include "../../../../../common/components/permanent/TransformComponent.hpp"
+#include "../../../../../common/components/permanent/VelocityComponent.hpp"
+#include "../../../../../common/components/permanent/ColliderComponent.hpp"
+#include "../../../../systems/rendering/AnimationRenderingSystem.hpp"
+#include "../../../../components/rendering/HitboxRenderComponent.hpp"
+#include "../../../../components/rendering/RectangleRenderComponent.hpp"
+#include "../../../../systems/rendering/HitboxRenderingSystem.hpp"
+#include "../../../../systems/rendering/RectangleRenderingSystem.hpp"
+#include "../../../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
+#include "../../../../../common/components/tags/ObstacleTag.hpp"
 
 namespace gsm {
 
@@ -160,11 +160,6 @@ void DevState::update(float deltaTime) {
 
     _systemManager->updateAllSystems(_resourceManager, _registry, deltaTime);
     _registry->removeAllComponentsWithState(ecs::ComponentState::Processed);
-}
-
-void DevState::render() {
-    _resourceManager->get<gfx::IWindow>()->display();
-    _resourceManager->get<gfx::IWindow>()->clear();
 }
 
 void DevState::exit() {

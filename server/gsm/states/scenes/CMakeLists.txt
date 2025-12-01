@@ -1,0 +1,6 @@
+add_subdirectory(Boot)
+add_subdirectory(Lobby)
+add_subdirectory(Loading)
+add_subdirectory(InGame)
+add_subdirectory(GameEnd)
+add_subdirectory(Shutdown)

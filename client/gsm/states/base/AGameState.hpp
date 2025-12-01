@@ -11,7 +11,6 @@ public:
 
     void enter() override;
     void update(float deltaTime) override;
-    void render() override;
     void exit() override;
 
 protected:

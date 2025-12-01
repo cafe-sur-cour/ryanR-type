@@ -16,7 +16,6 @@ public:
     virtual void popState() = 0;
 
     virtual void update(float deltaTime) = 0;
-    virtual void render() = 0;
 };
 
 } // namespace gsm

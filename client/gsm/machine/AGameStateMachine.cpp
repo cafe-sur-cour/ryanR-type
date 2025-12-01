@@ -1,4 +1,6 @@
 #include "AGameStateMachine.hpp"
+#include <stack>
+#include <vector>
 #include "../states/base/IGameState.hpp"
 
 namespace gsm {
@@ -33,14 +35,20 @@ void AGameStateMachine::popState() {
 }
 
 void AGameStateMachine::update(float deltaTime) {
-    if (!_states.empty()) {
-        _states.top()->update(deltaTime);
+    if (_states.empty()) {
+        return;
     }
-}
 
-void AGameStateMachine::render() {
-    if (!_states.empty()) {
-        _states.top()->render();
+    std::vector<std::shared_ptr<IGameState>> statesToUpdate;
+    std::stack<std::shared_ptr<IGameState>> tempStack = _states;
+
+    while (!tempStack.empty()) {
+        statesToUpdate.push_back(tempStack.top());
+        tempStack.pop();
+    }
+
+    for (auto it = statesToUpdate.rbegin(); it != statesToUpdate.rend(); ++it) {
+        (*it)->update(deltaTime);
     }
 }
 
