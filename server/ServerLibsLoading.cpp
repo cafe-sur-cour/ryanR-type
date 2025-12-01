@@ -10,7 +10,7 @@
 #include "../common/Error/ServerErrror.hpp"
 
 void rserv::Server::loadNetworkLibrary() {
-    if (!_networloader.Open(pathLoad "/" networkLib)) {
+    if (!_networloader.Open(pathLoad "/" networkServerLib sharedLibExt)) {
         throw err::ServerError(
             "[Server] Cannot open network library",
             err::ServerError::LIBRARY_LOAD_FAILED);
@@ -37,7 +37,7 @@ void rserv::Server::loadNetworkLibrary() {
 }
 
 void rserv::Server::loadBufferLibrary() {
-    if (!_bufferloader.Open(pathLoad "/" bufferLib)) {
+    if (!_bufferloader.Open(pathLoad "/" bufferLib sharedLibExt)) {
         throw err::ServerError(
             "[Server] Cannot open buffer library",
             err::ServerError::LIBRARY_LOAD_FAILED);
@@ -64,7 +64,7 @@ void rserv::Server::loadBufferLibrary() {
 }
 
 void rserv::Server::loadPacketLibrary() {
-    if (!_packetloader.Open(pathLoad "/" packetLib)) {
+    if (!_packetloader.Open(pathLoad "/" packetLib sharedLibExt)) {
         throw err::ServerError(
             "[Server] Cannot open packet library",
             err::ServerError::LIBRARY_LOAD_FAILED);

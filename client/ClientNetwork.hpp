@@ -29,9 +29,6 @@ class ClientNetwork {
         uint32_t getIp() const;
         void setIp(uint32_t ip);
 
-        void sendData(const pm::IPacketManager &data, size_t size);
-        pm::IPacketManager &receiveData(const IBuffer &buffer, size_t size) const;
-
         void loadNetworkLibrary();
         void loadBufferLibrary();
         void loadPacketLibrary();
