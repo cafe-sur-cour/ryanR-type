@@ -33,33 +33,49 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
     }
 
     this->_packetHandlers = {
-        {CONNECTION_CLIENT_PACKET, std::bind(
-            &pm::PacketManager::buildConnectionPacket,
-            this, std::placeholders::_1)},
-        {ACCEPTATION_PACKET, std::bind(
-            &pm::PacketManager::buildAcceptationPacket,
-            this, std::placeholders::_1)},
-        {DISCONNECTION_PACKET, std::bind(
-            &pm::PacketManager::buildDisconnectionPacket,
-            this, std::placeholders::_1)},
-        {EVENT_PACKET, std::bind(
+        {
+            static_cast<uint8_t>(CONNECTION_CLIENT_PACKET), std::bind(
+                &pm::PacketManager::buildConnectionPacket,
+                this, std::placeholders::_1)
+        },
+        {
+            static_cast<uint8_t>(ACCEPTATION_PACKET), std::bind(
+                &pm::PacketManager::buildAcceptationPacket,
+                this, std::placeholders::_1)
+        },
+        {
+            static_cast<uint8_t>(DISCONNECTION_PACKET), std::bind(
+                &pm::PacketManager::buildDisconnectionPacket,
+                this, std::placeholders::_1)
+        },
+        {
+            static_cast<uint8_t>(EVENT_PACKET), std::bind(
             &pm::PacketManager::buildEventPacket,
-            this, std::placeholders::_1)}
+            this, std::placeholders::_1)
+        }
     };
 
     this->_packetReceived = {
-        {CONNECTION_CLIENT_PACKET, std::bind(
-            &pm::PacketManager::parseConnectionPacket,
-            this, std::placeholders::_1)},
-        {ACCEPTATION_PACKET, std::bind(
-            &pm::PacketManager::parseAcceptationPacket,
-            this, std::placeholders::_1)},
-        {DISCONNECTION_PACKET, std::bind(
-            &pm::PacketManager::parseDisconnectionPacket,
-            this, std::placeholders::_1)},
-        {EVENT_PACKET, std::bind(
-            &pm::PacketManager::parseEventPacket,
-            this, std::placeholders::_1)}
+        {
+            static_cast<uint8_t>(CONNECTION_CLIENT_PACKET), std::bind(
+                &pm::PacketManager::parseConnectionPacket,
+                this, std::placeholders::_1)
+        },
+        {
+            static_cast<uint8_t>(ACCEPTATION_PACKET), std::bind(
+                &pm::PacketManager::parseAcceptationPacket,
+                this, std::placeholders::_1),
+        },
+        {
+            static_cast<uint8_t>(DISCONNECTION_PACKET), std::bind(
+                &pm::PacketManager::parseDisconnectionPacket,
+                this, std::placeholders::_1)
+        },
+        {
+            static_cast<uint8_t>(EVENT_PACKET), std::bind(
+                &pm::PacketManager::parseEventPacket,
+                this, std::placeholders::_1)
+        }
     };
 
     this->_packetLengths = {
