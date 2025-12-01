@@ -37,8 +37,10 @@ std::shared_ptr<sf::Texture> TextureManager::loadTexture
         return nullptr;
     }
 
+    std::vector<unsigned char> textureData = asset->data;
+
     auto texture = std::make_shared<sf::Texture>();
-    if (!texture->loadFromMemory(asset->data.data(), asset->size)) {
+    if (!texture->loadFromMemory(textureData.data(), textureData.size())) {
         std::cerr << "[TextureManager] Failed to load texture from memory: " <<
         path << std::endl;
         _failedTextures.insert(path);
