@@ -21,6 +21,13 @@ namespace constants {
     constexpr float PLAYER_BASE_SPEED = 300.0f;
     constexpr float GAMEPAD_DEADZONE = 0.15f;
     constexpr int SMOOTH_MOVEMENT_ITERATIONS = 4;
+
+    /* Mouse Buttons */
+    enum MouseButton {
+        LEFT = 0,
+        RIGHT = 1,
+        MIDDLE = 2,
+    };
 }
 
 #endif /* !CONSTANTS_HPP_ */
