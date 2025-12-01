@@ -32,7 +32,11 @@ class DLLoader : public ILoader {
 #endif
 
     public:
-        ~DLLoader() = default;
+        ~DLLoader() override {
+            if (_handler != nullptr) {
+                Close();
+            }
+        }
 
         void *getHandler() const override {
             return _handler;

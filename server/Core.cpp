@@ -12,7 +12,6 @@
 
 Core::Core() {
     this->_utils = std::make_shared<Utils>();
-    this->_config = std::make_shared<rserv::ServerConfig>();
     this->_server = std::make_shared<rserv::Server>();
 
     this->_resourceManager = std::make_shared<ecs::ResourceManager>();
@@ -27,9 +26,6 @@ Core::~Core() {
         this->_server->~Server();
         this->_server.reset();
     }
-    if (this->_config != nullptr) {
-        this->_config.reset();
-    }
     if (this->_utils != nullptr) {
         this->_utils.reset();
     }
@@ -37,8 +33,6 @@ Core::~Core() {
 
 void Core::init() {
     this->_resourceManager = initRessourcesManager();
-
-    this->_server->setConfig(_config);
     this->_server->init();
 }
 
@@ -47,7 +41,7 @@ void Core::loop() {
 }
 
 std::shared_ptr<rserv::ServerConfig> Core::getConfig() const {
-    return this->_config;
+    return this->_server->getConfig();
 }
 
 std::shared_ptr<rserv::Server> Core::getServer() const {

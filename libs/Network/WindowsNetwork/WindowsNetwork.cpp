@@ -44,12 +44,12 @@ size_t WindowsNetwork::getConnectionCount() const {
     return 0;
 }
 
-void WindowsNetwork::sendTo(int connectionId, const IPacketManager &packet) {
+void WindowsNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
     (void)connectionId;
     (void)packet;
 }
 
-void WindowsNetwork::broadcast(const IPacketManager &packet) {
+void WindowsNetwork::broadcast(const pm::IPacketManager &packet) {
     (void)packet;
 }
 
@@ -57,18 +57,18 @@ bool WindowsNetwork::hasIncomingData() const {
     return false;
 }
 
-std::shared_ptr<IPacketManager> WindowsNetwork::receiveFrom(
+std::shared_ptr<pm::IPacketManager> WindowsNetwork::receiveFrom(
     const int &connectionId) {
     (void)connectionId;
     return nullptr;
 }
 
-void WindowsNetwork::sendData(const IPacketManager &data, size_t size) {
+void WindowsNetwork::sendData(const pm::IPacketManager &data, size_t size) {
     (void)data;
     (void)size;
 }
 
-IPacketManager &WindowsNetwork::receiveData(
+pm::IPacketManager &WindowsNetwork::receiveData(
     const IBuffer &buffer, size_t size) const {
     (void)buffer;
     (void)size;

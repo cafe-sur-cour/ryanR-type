@@ -12,6 +12,7 @@
 #include <cstdint>
 #include "../Buffer/IBuffer.hpp"
 
+namespace pm {
 class IPacketManager {
     public:
         virtual ~IPacketManager() = default;
@@ -35,6 +36,6 @@ class IPacketManager {
 
         virtual void reset() = 0;
 };
-
+} // namespace pm
 
 #endif /* !IPacketManager_HPP_ */
