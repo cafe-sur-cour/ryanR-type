@@ -30,6 +30,7 @@ private:
     std::shared_ptr<ecs::MovementInputSystem> _inputSystem;
     std::shared_ptr<ecs::SpriteRenderingSystem> _spriteRenderingSystem;
     std::shared_ptr<EntityPrefabManager> _prefabManager;
+    bool _wasSpacePressed = false;
 };
 
 }  // namespace gsm

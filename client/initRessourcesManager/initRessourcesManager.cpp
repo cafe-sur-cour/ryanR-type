@@ -14,12 +14,14 @@
 #include "../../common/DLLoader/LoaderType.hpp"
 #include "../../libs/Multimedia/IEvent.hpp"
 #include "../../libs/Multimedia/IWindow.hpp"
+#include "../../libs/Multimedia/IAudio.hpp"
 #include "../../common/ECS/resourceManager/InputMappingManager.hpp"
 #include "initRessourcesManager.hpp"
 
 std::shared_ptr<ecs::ResourceManager> initRessourcesManager(
     std::shared_ptr<DLLoader<gfx::createWindow_t>> windowLoader,
-    std::shared_ptr<DLLoader<gfx::createEvent_t>> eventLoader
+    std::shared_ptr<DLLoader<gfx::createEvent_t>> eventLoader,
+    std::shared_ptr<DLLoader<gfx::createAudio_t>> audioLoader
 ) {
     std::shared_ptr<ecs::ResourceManager> resourceManager =
         std::make_shared<ecs::ResourceManager>();
@@ -50,11 +52,23 @@ std::shared_ptr<ecs::ResourceManager> initRessourcesManager(
         createEventFunc(resourceManager.get(), window.get())
     );
 
+    gfx::createAudio_t createAudioFunc = audioLoader->getSymbol("createAudio");
+    if (!createAudioFunc) {
+        std::string error = audioLoader->Error();
+        std::string errorMsg = "Failed to load createAudio from libMultimedia";
+        if (!error.empty()) {
+            errorMsg += " - Error: " + error;
+        }
+        throw std::runtime_error(errorMsg);
+    }
+    std::shared_ptr<gfx::IAudio> audio(createAudioFunc());
+
     window->init();
     event->init();
 
     resourceManager->add<gfx::IWindow>(window);
     resourceManager->add<gfx::IEvent>(event);
+    resourceManager->add<gfx::IAudio>(audio);
 
     auto mappingManager = std::make_shared<ecs::InputMappingManager>();
     mappingManager->loadDefault();

@@ -7,6 +7,7 @@
 #include "../../../../../common/components/tags/ControllableTag.hpp"
 #include "../../../../../libs/Multimedia/IWindow.hpp"
 #include "../../../../../libs/Multimedia/IEvent.hpp"
+#include "../../../../../libs/Multimedia/IAudio.hpp"
 #include "../../../../components/rendering/SpriteComponent.hpp"
 #include "../../../../components/rendering/AnimationComponent.hpp"
 #include "../../../../../common/components/permanent/TransformComponent.hpp"
@@ -53,6 +54,12 @@ DevState::DevState(
 }
 
 void DevState::enter() {
+    auto audio = _resourceManager->get<gfx::IAudio>();
+    if (audio) {
+        audio->playMusic("musics/hava-nagila.ogg", true);
+        audio->setMusicVolume(50.0f);
+    }
+
     auto playerPrefab = std::make_shared<PlayerPrefab>(
         500.0f,  // x
         100.0f,  // y
@@ -152,11 +159,21 @@ void DevState::enter() {
 }
 
 void DevState::update(float deltaTime) {
-    auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
+    auto event = _resourceManager->get<gfx::IEvent>();
+    auto eventResult = event->pollEvents();
     if (eventResult == gfx::EventType::CLOSE) {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
         return;
     }
+
+    bool isSpacePressed = event->isKeyPressed(gfx::EventType::SPACE);
+    if (isSpacePressed && !_wasSpacePressed) {
+        auto audio = _resourceManager->get<gfx::IAudio>();
+        if (audio) {
+            audio->playSound("sounds/coin-sound.wav", 50.0f);
+        }
+    }
+    _wasSpacePressed = isSpacePressed;
 
     _systemManager->updateAllSystems(_resourceManager, _registry, deltaTime);
     _registry->removeAllComponentsWithState(ecs::ComponentState::Processed);
