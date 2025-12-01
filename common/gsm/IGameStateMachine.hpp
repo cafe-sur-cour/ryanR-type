@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** IGameStateMachine
+*/
+
 #pragma once
 
 #include <memory>
@@ -16,7 +23,6 @@ public:
     virtual void popState() = 0;
 
     virtual void update(float deltaTime) = 0;
-    virtual void render() = 0;
 };
 
 } // namespace gsm

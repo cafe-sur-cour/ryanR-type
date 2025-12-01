@@ -1,14 +1,15 @@
-#pragma once
+#ifndef DEVSTATE_HPP_
+#define DEVSTATE_HPP_
 
-#include "../base/AGameState.hpp"
-#include "../../../../common/ECS/resourceManager/ResourceManager.hpp"
-#include "../../../../common/ECS/entity/registry/Registry.hpp"
-#include "../../../../common/systems/systemManager/ASystemManager.hpp"
-#include "../../../../common/systems/movement/MovementSystem.hpp"
-#include "../../../../common/systems/movement/InputToVelocitySystem.hpp"
-#include "../../../systems/input/MovementInputSystem.hpp"
-#include "../../../systems/rendering/SpriteRenderingSystem.hpp"
-#include "../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
+#include "../../base/AGameState.hpp"
+#include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../../../../common/ECS/entity/registry/Registry.hpp"
+#include "../../../../../common/systems/systemManager/ASystemManager.hpp"
+#include "../../../../../common/systems/movement/MovementSystem.hpp"
+#include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
+#include "../../../../systems/input/MovementInputSystem.hpp"
+#include "../../../../systems/rendering/SpriteRenderingSystem.hpp"
+#include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 namespace gsm {
 
 class DevState : public AGameState {
@@ -18,7 +19,6 @@ public:
 
     void enter() override;
     void update(float deltaTime) override;
-    void render() override;
     void exit() override;
 
 private:
@@ -33,3 +33,5 @@ private:
 };
 
 }  // namespace gsm
+
+#endif  // DEVSTATE_HPP_

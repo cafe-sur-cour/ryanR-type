@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IGameState.hpp"
+#include "../../../../common/gsm/IGameState.hpp"
 
 namespace gsm {
 
@@ -11,7 +11,6 @@ public:
 
     void enter() override;
     void update(float deltaTime) override;
-    void render() override;
     void exit() override;
 
 protected:
