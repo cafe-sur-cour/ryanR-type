@@ -5,7 +5,8 @@
 ** MainMenuState
 */
 
-#pragma once
+#ifndef MAINMENUSTATE_HPP_
+#define MAINMENUSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
 #include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
@@ -26,3 +27,5 @@ private:
 };
 
 }  // namespace gsm
+
+#endif  // MAINMENUSTATE_HPP_

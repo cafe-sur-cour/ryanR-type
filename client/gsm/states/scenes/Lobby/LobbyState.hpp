@@ -5,7 +5,8 @@
 ** LobbyState
 */
 
-#pragma once
+#ifndef LOBBYSTATE_HPP_
+#define LOBBYSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
 #include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
@@ -26,3 +27,5 @@ private:
 };
 
 }  // namespace gsm
+
+#endif  // LOBBYSTATE_HPP_

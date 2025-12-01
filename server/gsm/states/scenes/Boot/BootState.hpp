@@ -5,7 +5,8 @@
 ** BootState
 */
 
-#pragma once
+#ifndef SERVER_BOOTSTATE_HPP_
+#define SERVER_BOOTSTATE_HPP_
 
 #include "../../AGameState.hpp"
 
@@ -22,3 +23,5 @@ public:
 };
 
 }  // namespace gsm
+
+#endif  // SERVER_BOOTSTATE_HPP_

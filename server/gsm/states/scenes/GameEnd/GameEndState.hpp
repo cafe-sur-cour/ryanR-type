@@ -5,7 +5,8 @@
 ** GameEndState
 */
 
-#pragma once
+#ifndef SERVER_GAMEENDSTATE_HPP_
+#define SERVER_GAMEENDSTATE_HPP_
 
 #include "../../AGameState.hpp"
 
@@ -22,3 +23,5 @@ public:
 };
 
 }  // namespace gsm
+
+#endif  // SERVER_GAMEENDSTATE_HPP_

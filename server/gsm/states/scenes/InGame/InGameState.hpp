@@ -5,7 +5,8 @@
 ** InGameState
 */
 
-#pragma once
+#ifndef SERVER_INGAMESTATE_HPP_
+#define SERVER_INGAMESTATE_HPP_
 
 #include "../../AGameState.hpp"
 
@@ -22,3 +23,5 @@ public:
 };
 
 }  // namespace gsm
+
+#endif  // SERVER_INGAMESTATE_HPP_

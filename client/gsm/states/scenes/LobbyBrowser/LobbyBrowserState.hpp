@@ -5,7 +5,8 @@
 ** LobbyBrowserState
 */
 
-#pragma once
+#ifndef LOBBYBROWSERSTATE_HPP_
+#define LOBBYBROWSERSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
 #include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
@@ -26,3 +27,5 @@ private:
 };
 
 }  // namespace gsm
+
+#endif  // LOBBYBROWSERSTATE_HPP_

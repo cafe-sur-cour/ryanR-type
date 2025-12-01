@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DEVSTATE_HPP_
+#define DEVSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
 #include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
@@ -32,3 +33,5 @@ private:
 };
 
 }  // namespace gsm
+
+#endif  // DEVSTATE_HPP_

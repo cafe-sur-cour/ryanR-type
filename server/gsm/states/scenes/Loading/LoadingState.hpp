@@ -5,7 +5,8 @@
 ** LoadingState
 */
 
-#pragma once
+#ifndef SERVER_LOADINGSTATE_HPP_
+#define SERVER_LOADINGSTATE_HPP_
 
 #include "../../AGameState.hpp"
 
@@ -22,3 +23,5 @@ public:
 };
 
 }  // namespace gsm
+
+#endif  // SERVER_LOADINGSTATE_HPP_

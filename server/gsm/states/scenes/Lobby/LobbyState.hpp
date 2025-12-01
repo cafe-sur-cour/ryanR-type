@@ -5,7 +5,8 @@
 ** LobbyState
 */
 
-#pragma once
+#ifndef SERVER_LOBBYSTATE_HPP_
+#define SERVER_LOBBYSTATE_HPP_
 
 #include "../../AGameState.hpp"
 
@@ -22,3 +23,5 @@ public:
 };
 
 }  // namespace gsm
+
+#endif  // SERVER_LOBBYSTATE_HPP_
