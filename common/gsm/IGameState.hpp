@@ -1,9 +1,17 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** IGameState
+*/
+
 #pragma once
 
 #include <memory>
-#include "../../machine/IGameStateMachine.hpp"
 
 namespace gsm {
+
+class IGameStateMachine;
 
 class IGameState {
 public:

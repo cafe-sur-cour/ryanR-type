@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IGameState.hpp"
+#include "../../../../common/gsm/IGameState.hpp"
 
 namespace gsm {
 

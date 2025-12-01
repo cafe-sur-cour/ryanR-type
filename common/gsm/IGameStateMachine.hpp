@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** IGameStateMachine
+*/
+
 #pragma once
 
 #include <memory>
