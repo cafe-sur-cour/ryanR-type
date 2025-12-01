@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../../../common/ECS/component/permanent/ColliderComponent.hpp"
+#include "../../../../common/components/permanent/ColliderComponent.hpp"
 
 using namespace ecs;
 

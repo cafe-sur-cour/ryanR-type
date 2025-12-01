@@ -45,8 +45,8 @@ void EntityPrefabManager::clearPrefabs() {
     _prefabs.clear();
 }
 
-size_t EntityPrefabManager::createEntityFromPrefab(const std::string
-    &prefabName, const std::shared_ptr<ecs::ARegistry> &registry) {
+ecs::Entity EntityPrefabManager::createEntityFromPrefab(const std::string
+    &prefabName, const std::shared_ptr<ecs::Registry> &registry) {
     std::shared_ptr<IPrefab> prefab = getPrefab(prefabName);
 
     if (prefab && registry)

@@ -1,1 +1,1 @@
-target_sources(${ECS_LIB_NAME} PUBLIC View.cpp)
+# View is now header-only with View.tpp
