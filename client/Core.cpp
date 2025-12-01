@@ -66,7 +66,7 @@ void Core::initNetwork() {
 }
 
 void Core::initLibraries() {
-    std::string multimediaPath = std::string(pathLoad) + "/" + multimediaLib;
+    std::string multimediaPath = std::string(pathLoad) + "/" + multimediaLib sharedLibExt;
 
     _windowLoader = std::make_shared<DLLoader<gfx::createWindow_t>>(
         DLLoader<gfx::createWindow_t>()
