@@ -32,6 +32,8 @@ class ARegistry : public IRegistry, public std::enable_shared_from_this<ARegistr
         template <typename T>
         std::shared_ptr<T> getComponent(size_t entityId) const;
         template <typename T>
+        std::vector<std::shared_ptr<T>> getComponents(size_t entityId) const;
+        template <typename T>
         void removeComponent(size_t entityId);
         template <typename T>
         bool hasComponent(size_t entityId) const;
@@ -45,9 +47,10 @@ class ARegistry : public IRegistry, public std::enable_shared_from_this<ARegistr
         size_t getMaxEntityId() const;
 
         void removeAllComponentsWithState(ComponentState state) override;
-
+        size_t createEntity() override;
     protected:
     private:
+        size_t _nextEntityId;
         std::unordered_map<std::string, std::shared_ptr<IComponentArray>> _components;
 };
 

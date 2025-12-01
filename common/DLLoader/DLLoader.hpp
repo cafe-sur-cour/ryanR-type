@@ -32,11 +32,16 @@ class DLLoader : public ILoader {
 #endif
 
     public:
-        ~DLLoader() = default;
+        ~DLLoader() override {
+            if (_handler != nullptr) {
+                Close();
+            }
+        }
 
         void *getHandler() const override {
             return _handler;
         };
+
         void *Open(const char *path, int flag = RTLD_LAZY) override {
 #ifdef _WIN32
             (void)flag;
@@ -49,6 +54,7 @@ class DLLoader : public ILoader {
 #endif
             return _handler;
         };
+
         void *Symbol(const char *symbolName) override {
 #ifdef _WIN32
             void *symbol = (void*)GetProcAddress(_handler, symbolName);
@@ -68,6 +74,7 @@ class DLLoader : public ILoader {
             return symbol;
 #endif
         };
+
         T getSymbol(const char *symbolName) {
 #ifdef _WIN32
             return reinterpret_cast<T>(GetProcAddress(_handler, symbolName));
@@ -75,6 +82,7 @@ class DLLoader : public ILoader {
             return reinterpret_cast<T>(dlsym(_handler, symbolName));
 #endif
         };
+
         int Close() override{
             if (_handler == nullptr)
                 return -1;
@@ -84,6 +92,7 @@ class DLLoader : public ILoader {
             return dlclose(_handler);
 #endif
         };
+
         const char *Error() override {
 #ifdef _WIN32
             return _lastError.c_str();

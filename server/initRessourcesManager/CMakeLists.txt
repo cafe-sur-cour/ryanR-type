@@ -1,4 +1,6 @@
-target_sources(${SERVER_BIN_NAME} PRIVATE
+target_sources(${SERVER_LIB_NAME} PRIVATE
     initRessourcesManager.hpp
     initRessourcesManager.cpp
+    ServerInputProvider.hpp
+    ServerInputProvider.cpp
 )

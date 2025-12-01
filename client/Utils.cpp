@@ -10,6 +10,7 @@
 #include <string>
 
 #include "Utils.hpp"
+#include "../common/constants.hpp"
 
 Utils::Utils() {
 }
@@ -20,18 +21,20 @@ Utils::~Utils() {
 void Utils::helper() {
     std::cout << "Usage: ./r-type_client [options]\n"
         << "Options:\n"
-        << "\r-p <port>        Specify the port of the server\n"
-        << "\r-i <ip_address>  Specify the IP address of the server\n"
+        << "\r-p <port>        Specify the port of the server (default: 4242)\n"
+        << "\r-i <ip_address>  "
+        << "Specify the IP address of the server (default: 127.0.0.1)\n"
         << "\r-n <name>        Optional specify the name of the client\n"
         << "\r-h               Display this help message\n"
         << "Example:\n"
-        << "\r./r-type_client -p 8080 -i 127.0.0.1\n";
+        << "\r./r-type_client -p 8080 -i 127.0.0.1\n"
+        << "\r./r-type_client  # Uses default values\n";
 }
 
 void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork>
     clientNetwork) {
-    int port = 0;
-    uint32_t ip = 0;
+    int port = constants::DEFAULT_SERVER_PORT;
+    uint32_t ip = constants::DEFAULT_SERVER_IP;
 
     for (int i = 1; i < ac; i++) {
         std::string arg = av[i];
@@ -50,14 +53,6 @@ void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork>
             exit(1);
         }
     }
-    if (ac < 4) {
-        this->helper();
-        exit(84);
-    }
-    if (port != 0) {
-        clientNetwork->setPort(port);
-    }
-    if (ip != 0) {
-        clientNetwork->setIp(ip);
-    }
+    clientNetwork->setPort(port);
+    clientNetwork->setIp(ip);
 }
