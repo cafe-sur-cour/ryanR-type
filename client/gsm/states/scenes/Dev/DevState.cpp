@@ -13,6 +13,7 @@
 #include "../../../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../../../common/components/permanent/VelocityComponent.hpp"
 #include "../../../../../common/components/permanent/ColliderComponent.hpp"
+#include "../../../../../common/components/temporary/SoundIntentComponent.hpp"
 #include "../../../../systems/rendering/AnimationRenderingSystem.hpp"
 #include "../../../../components/rendering/HitboxRenderComponent.hpp"
 #include "../../../../components/rendering/RectangleRenderComponent.hpp"
@@ -36,6 +37,7 @@ DevState::DevState(
     _inputToVelocitySystem = std::make_shared<ecs::InputToVelocitySystem>();
     _inputSystem = std::make_shared<ecs::MovementInputSystem>();
     _spriteRenderingSystem = std::make_shared<ecs::SpriteRenderingSystem>();
+    _soundSystem = std::make_shared<ecs::SoundSystem>();
     _prefabManager = std::make_shared<EntityPrefabManager>();
     auto animationRenderingSystem =
         std::make_shared<ecs::AnimationRenderingSystem>();
@@ -47,6 +49,7 @@ DevState::DevState(
     _systemManager->addSystem(_inputToVelocitySystem);
     _systemManager->addSystem(_movementSystem);
     _systemManager->addSystem(_inputSystem);
+    _systemManager->addSystem(_soundSystem);
     _systemManager->addSystem(_spriteRenderingSystem);
     _systemManager->addSystem(animationRenderingSystem);
     _systemManager->addSystem(hitboxRenderingSystem);
@@ -159,21 +162,11 @@ void DevState::enter() {
 }
 
 void DevState::update(float deltaTime) {
-    auto event = _resourceManager->get<gfx::IEvent>();
-    auto eventResult = event->pollEvents();
+    auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
     if (eventResult == gfx::EventType::CLOSE) {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
         return;
     }
-
-    bool isSpacePressed = event->isKeyPressed(gfx::EventType::SPACE);
-    if (isSpacePressed && !_wasSpacePressed) {
-        auto audio = _resourceManager->get<gfx::IAudio>();
-        if (audio) {
-            audio->playSound("sounds/coin-sound.wav", 50.0f);
-        }
-    }
-    _wasSpacePressed = isSpacePressed;
 
     _systemManager->updateAllSystems(_resourceManager, _registry, deltaTime);
     _registry->removeAllComponentsWithState(ecs::ComponentState::Processed);

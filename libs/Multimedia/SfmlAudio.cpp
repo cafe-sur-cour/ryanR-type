@@ -24,7 +24,9 @@ void SfmlAudio::playMusic(const std::string& musicPath, bool loop) {
         return;
     }
 
-    if (!_music.openFromMemory(assetData->data.data(), assetData->size)) {
+    _musicAssetData = assetData;
+
+    if (!_music.openFromMemory(_musicAssetData->data.data(), _musicAssetData->size)) {
         std::cerr << "Failed to open music from memory: " << musicPath << std::endl;
         return;
     }

@@ -9,6 +9,7 @@
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../systems/input/MovementInputSystem.hpp"
 #include "../../../../systems/rendering/SpriteRenderingSystem.hpp"
+#include "../../../../systems/audio/SoundSystem.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 namespace gsm {
 
@@ -29,8 +30,9 @@ private:
     std::shared_ptr<ecs::InputToVelocitySystem> _inputToVelocitySystem;
     std::shared_ptr<ecs::MovementInputSystem> _inputSystem;
     std::shared_ptr<ecs::SpriteRenderingSystem> _spriteRenderingSystem;
+    std::shared_ptr<ecs::SoundSystem> _soundSystem;
     std::shared_ptr<EntityPrefabManager> _prefabManager;
-    bool _wasSpacePressed = false;
+    ecs::Entity _playerId;
 };
 
 }  // namespace gsm
