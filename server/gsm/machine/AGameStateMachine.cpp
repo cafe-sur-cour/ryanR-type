@@ -1,5 +1,5 @@
 #include "AGameStateMachine.hpp"
-#include "../states/IGameState.hpp"
+#include "../../../common/gsm/IGameState.hpp"
 
 namespace gsm {
 
