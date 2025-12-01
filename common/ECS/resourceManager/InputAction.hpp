@@ -21,7 +21,6 @@ enum class InputAction {
     MENU_RIGHT,
     MENU_SELECT,
     MENU_BACK,
-    DROP_COIN,
 };
 
 }  // namespace ecs
