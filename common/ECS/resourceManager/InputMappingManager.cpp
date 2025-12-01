@@ -70,9 +70,6 @@ void InputMappingManager::loadDefault() {
     /* MENU_BACK */
     _mapping.mappings[InputAction::MENU_BACK][gfx::EventType::ESCAPE] = 1.0f;
     _mapping.mappings[InputAction::MENU_BACK][gfx::EventType::GAMEPAD_B] = 1.0f;
-
-    /* DROP_COIN */
-    _mapping.mappings[InputAction::DROP_COIN][gfx::EventType::C] = 1.0f;
 }
 
 void InputMappingManager::setMapping(const InputMapping& mapping) {

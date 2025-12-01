@@ -21,7 +21,6 @@
 #include "../../../../systems/rendering/RectangleRenderingSystem.hpp"
 #include "../../../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
 #include "../../../../../common/components/tags/ObstacleTag.hpp"
-#include "../../../../systems/input/CoinDropSystem.hpp"
 
 namespace gsm {
 
@@ -37,7 +36,6 @@ DevState::DevState(
     _movementSystem = std::make_shared<ecs::MovementSystem>();
     _inputToVelocitySystem = std::make_shared<ecs::InputToVelocitySystem>();
     _inputSystem = std::make_shared<ecs::MovementInputSystem>();
-    _coinDropSystem = std::make_shared<ecs::CoinDropSystem>();
     _spriteRenderingSystem = std::make_shared<ecs::SpriteRenderingSystem>();
     _soundSystem = std::make_shared<ecs::SoundSystem>();
     _prefabManager = std::make_shared<EntityPrefabManager>();
@@ -51,7 +49,6 @@ DevState::DevState(
     _systemManager->addSystem(_inputToVelocitySystem);
     _systemManager->addSystem(_movementSystem);
     _systemManager->addSystem(_inputSystem);
-    _systemManager->addSystem(_coinDropSystem);
     _systemManager->addSystem(_soundSystem);
     _systemManager->addSystem(_spriteRenderingSystem);
     _systemManager->addSystem(animationRenderingSystem);
