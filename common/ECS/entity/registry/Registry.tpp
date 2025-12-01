@@ -7,6 +7,7 @@
 
 
 #include "Registry.hpp"
+#include "../../view/View.hpp"
 
 namespace ecs {
 
@@ -90,4 +91,4 @@ Group<Components...> Registry::group()
     return Group<Components...>(std::static_pointer_cast<Registry>(shared_from_this()));
 }
 
-} // namespace ecs
+}  // namespace ecs
