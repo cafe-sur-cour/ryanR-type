@@ -10,6 +10,8 @@
 #include "../../../../systems/input/MovementInputSystem.hpp"
 #include "../../../../systems/rendering/SpriteRenderingSystem.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
+#include "../../../../../common/Parser/Parser.hpp"
+
 namespace gsm {
 
 class DevState : public AGameState {
@@ -30,6 +32,7 @@ private:
     std::shared_ptr<ecs::MovementInputSystem> _inputSystem;
     std::shared_ptr<ecs::SpriteRenderingSystem> _spriteRenderingSystem;
     std::shared_ptr<EntityPrefabManager> _prefabManager;
+    std::shared_ptr<Parser> _parser;
 };
 
 }  // namespace gsm
