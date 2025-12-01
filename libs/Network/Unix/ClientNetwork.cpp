@@ -164,18 +164,6 @@ std::shared_ptr<pm::IPacketManager> UnixClientNetwork::receiveFrom(
     }
 }
 
-void UnixClientNetwork::sendData(const pm::IPacketManager &data, size_t size) {
-    (void)size;
-    sendTo(0, data);
-}
-
-pm::IPacketManager &UnixClientNetwork::receiveData(
-    const IBuffer &buffer, size_t size) const {
-    (void)buffer;
-    (void)size;
-    throw std::runtime_error("[UnixClientNetwork] receiveData not implemented");
-}
-
 }  // namespace net
 
 extern "C" {

@@ -37,9 +37,6 @@ class UnixClientNetwork : public ANetwork {
         bool hasIncomingData() const override;
         std::shared_ptr<pm::IPacketManager> receiveFrom(const int &connectionId) override;
 
-        void sendData(const pm::IPacketManager &data, size_t size) override;
-        pm::IPacketManager &receiveData(const IBuffer &buffer, size_t size) const override;
-
     private:
         asio::ip::udp::endpoint _serverEndpoint;
         bool _connected;

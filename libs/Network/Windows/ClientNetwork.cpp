@@ -63,18 +63,6 @@ std::shared_ptr<pm::IPacketManager> WindowsNetwork::receiveFrom(
     return nullptr;
 }
 
-void WindowsNetwork::sendData(const pm::IPacketManager &data, size_t size) {
-    (void)data;
-    (void)size;
-}
-
-pm::IPacketManager &WindowsNetwork::receiveData(
-    const IBuffer &buffer, size_t size) const {
-    (void)buffer;
-    (void)size;
-    throw std::runtime_error("Not implemented");
-}
-
 void WindowsNetwork::setConnectionCallback(std::function<void(int)> onConnect) {
     (void)onConnect;
 }
