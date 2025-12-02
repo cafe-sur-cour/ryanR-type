@@ -25,8 +25,8 @@
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../Error/ParserError.hpp"
 
-ComposantParser::ComposantParser(const std::map<std::string,
-    std::pair<std::type_index, std::vector<Field>>>& componentDefinitions,
+ComposantParser::ComposantParser(std::shared_ptr<const std::map<std::string,
+    std::pair<std::type_index, std::vector<Field>>>> componentDefinitions,
     const std::map<std::type_index, ComponentCreator>& componentCreators,
     const ShouldParseComponentCallback& shouldParseCallback) :
     _componentDefinitions(componentDefinitions), _componentCreators(componentCreators),
@@ -39,11 +39,11 @@ ComposantParser::~ComposantParser() {
 std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::parseComponent(
     const std::string& componentName, const nlohmann::json& componentData) {
 
-    if (_componentDefinitions.find(componentName) == _componentDefinitions.end())
+    if (_componentDefinitions->find(componentName) == _componentDefinitions->end())
         throw err::ParserError("Unknown component: " + componentName,
             err::ParserError::UNKNOWN);
 
-    auto [typeIndex, fieldsDef] = _componentDefinitions.at(componentName);
+    auto [typeIndex, fieldsDef] = _componentDefinitions->at(componentName);
 
     std::map<std::string, std::shared_ptr<FieldValue>> fields;
 
