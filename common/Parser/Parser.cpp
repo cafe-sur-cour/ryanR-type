@@ -13,6 +13,7 @@
 #include "Parser.hpp"
 #include "../Prefab/ParsedEntityPrefab.hpp"
 #include "../Error/ParserError.hpp"
+#include "../constants.hpp"
 
 Parser::Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type) :
     _prefabManager(prefab), _parsingType(type) {
@@ -48,7 +49,6 @@ void Parser::parseAllEntities(std::string directoryPath) {
 }
 
 void Parser::parseEntity(std::string entityPath) {
-    std::cout << "Parsing entity from: " << entityPath << std::endl;
     auto prefab = _entityParser->parseEntity(entityPath);
     std::string name = std::static_pointer_cast<ParsedEntityPrefab>(prefab)->getName();
     _prefabManager->registerPrefab(name, prefab);
@@ -68,15 +68,15 @@ bool Parser::isServerParsing() const {
 
 bool Parser::shouldParseComponent(std::map<std::string,
     std::shared_ptr<FieldValue>> fields) const {
-    auto target = std::get<std::string>(*fields.at("target"));
+    auto target = std::get<std::string>(*fields.at(constants::TARGET_FIELD));
 
     if (target.empty())
         return false;
-    if (target == "both")
+    if (target == constants::BOTH_VALUE)
         return true;
-    if (target == "client" && isClientParsing())
+    if (target == constants::CLIENT_VALUE && isClientParsing())
         return true;
-    if (target == "server" && isServerParsing())
+    if (target == constants::SERVER_VALUE && isServerParsing())
         return true;
     return false;
 }

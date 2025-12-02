@@ -14,6 +14,7 @@
 #include <utility>
 #include <vector>
 #include "../ParserParam.hpp"
+#include "../../constants.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/SpeedComponent.hpp"
@@ -67,12 +68,12 @@ std::shared_ptr<FieldValue> ComposantParser::parseFieldValue
     switch (type) {
         case FieldType::VECTOR2F: {
             if (!jsonValue.is_object() ||
-                !jsonValue.contains("x") ||
-                !jsonValue.contains("y")) {
+                !jsonValue.contains(constants::X_FIELD) ||
+                !jsonValue.contains(constants::Y_FIELD)) {
                 throw err::ParserError("Invalid Vector2f format",
                     err::ParserError::INVALID_FORMAT);
             }
-            math::Vector2f vec(jsonValue["x"], jsonValue["y"]);
+            math::Vector2f vec(jsonValue[constants::X_FIELD], jsonValue[constants::Y_FIELD]);
             return std::make_shared<FieldValue>(vec);
         }
         case FieldType::FLOAT: {
