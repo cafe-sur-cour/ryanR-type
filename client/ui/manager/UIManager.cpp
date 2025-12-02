@@ -16,7 +16,9 @@ UIManager::UIManager()
     : _navigationManager(std::make_shared<UINavigationManager>()),
     _lastMousePos(0.0f, 0.0f),
     _mouseMovementDetected(false) {
-    _lastMousePos = math::Vector2f(-1000.0f, -1000.0f);
+    _lastMousePos = math::Vector2f(
+        constants::INVALID_MOUSE_POSITION,
+        constants::INVALID_MOUSE_POSITION);
 }
 
 void UIManager::addElement(std::shared_ptr<UIElement> element) {
@@ -78,7 +80,7 @@ void UIManager::render() {
 }
 
 void UIManager::handleMouseInput(const math::Vector2f& mousePos, bool mousePressed) {
-    if (_lastMousePos.getX() > -999.0f && hasMouseMoved(mousePos)) {
+    if (_lastMousePos.getX() > constants::INVALID_MOUSE_POSITION && hasMouseMoved(mousePos)) {
         _navigationManager->onMouseMovement();
         _mouseMovementDetected = true;
     }
@@ -136,7 +138,7 @@ bool UIManager::handleNavigationInputs(
     }
 
     if (navigationTriggered)
-        _navigationCooldown = NAVIGATION_COOLDOWN_TIME;
+        _navigationCooldown = constants::NAVIGATION_COOLDOWN_TIME;
 
     return navigationTriggered;
 }

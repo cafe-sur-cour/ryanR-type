@@ -15,6 +15,7 @@
 #include "../../../common/InputMapping/InputAction.hpp"
 #include "../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../common/types/Vector2f.hpp"
+#include "../../../client/constants.hpp"
 
 namespace ui {
 
@@ -52,7 +53,6 @@ class UIManager {
         bool _mouseMovementDetected;
 
         float _navigationCooldown = 0.0f;
-        static constexpr float NAVIGATION_COOLDOWN_TIME = 0.2f;
 
         bool hasMouseMoved(const math::Vector2f& mousePos);
 
