@@ -30,30 +30,30 @@ class UIElement : public std::enable_shared_from_this<UIElement> {
 
         void setPosition(const math::Vector2f& position);
         void setSize(const math::Vector2f& size);
-        math::Vector2f getPosition() const { return _position; }
-        math::Vector2f getSize() const { return _size; }
+        math::Vector2f getPosition() const;
+        math::Vector2f getSize() const;
 
         math::Vector2f getAbsolutePosition() const;
         math::Vector2f getAbsoluteSize() const;
 
-        void setVisible(bool visible) { _visible = visible; }
-        bool isVisible() const { return _visible; }
+        void setVisible(bool visible);
+        bool isVisible() const;
 
-        void setState(UIState state) { _state = state; }
-        UIState getState() const { return _state; }
+        void setState(UIState state);
+        UIState getState() const;
 
-        void setParent(std::weak_ptr<UIElement> parent) { _parent = parent; }
-        std::shared_ptr<UIElement> getParent() const { return _parent.lock(); }
+        void setParent(std::weak_ptr<UIElement> parent);
+        std::shared_ptr<UIElement> getParent() const;
         void addChild(std::shared_ptr<UIElement> child);
         void removeChild(std::shared_ptr<UIElement> child);
-        const std::vector<std::shared_ptr<UIElement>>& getChildren() const { return _children; }
+        const std::vector<std::shared_ptr<UIElement>>& getChildren() const;
 
         virtual void handleInput(const math::Vector2f& mousePos, bool mousePressed);
         virtual bool containsPoint(const math::Vector2f& point) const;
 
-        void setOnClick(std::function<void()> callback) { _onClick = callback; }
-        void setOnHover(std::function<void()> callback) { _onHover = callback; }
-        void setOnRelease(std::function<void()> callback) { _onRelease = callback; }
+        void setOnClick(std::function<void()> callback);
+        void setOnHover(std::function<void()> callback);
+        void setOnRelease(std::function<void()> callback);
 
         virtual void render();
 

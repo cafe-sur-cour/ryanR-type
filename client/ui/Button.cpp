@@ -6,6 +6,7 @@
 */
 
 #include "Button.hpp"
+#include <string>
 #include "../../libs/Multimedia/IWindow.hpp"
 
 namespace ui {
@@ -67,6 +68,38 @@ gfx::color_t Button::getCurrentColor() const {
         default:
             return _normalColor;
     }
+}
+
+void Button::setText(const std::string& text) {
+    _text = text;
+}
+
+const std::string& Button::getText() const {
+    return _text;
+}
+
+void Button::setTextColor(const gfx::color_t& color) {
+    _textColor = color;
+}
+
+void Button::setFontPath(const std::string& fontPath) {
+    _fontPath = fontPath;
+}
+
+void Button::setNormalColor(const gfx::color_t& color) {
+    _normalColor = color;
+}
+
+void Button::setHoveredColor(const gfx::color_t& color) {
+    _hoveredColor = color;
+}
+
+void Button::setPressedColor(const gfx::color_t& color) {
+    _pressedColor = color;
+}
+
+void Button::setDisabledColor(const gfx::color_t& color) {
+    _disabledColor = color;
 }
 
 }  // namespace ui
