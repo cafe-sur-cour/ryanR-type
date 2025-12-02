@@ -24,6 +24,8 @@ target_link_libraries(${CLIENT_BIN_NAME}
 
 target_compile_definitions(${CLIENT_BIN_NAME}
     PUBLIC ASIO_STANDALONE
+        PARSER
+        nlohmann_json::nlohmann_json
         UI
 )
 
