@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** AFocusableElement - Abstract base class for focusable UI elements
+** AFocusableElement
 */
 
 #include "AFocusableElement.hpp"
