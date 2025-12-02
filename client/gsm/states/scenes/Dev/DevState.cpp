@@ -19,8 +19,8 @@
 #include "../../../../components/rendering/RectangleRenderComponent.hpp"
 #include "../../../../systems/rendering/HitboxRenderingSystem.hpp"
 #include "../../../../systems/rendering/RectangleRenderingSystem.hpp"
-#include "../../../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
 #include "../../../../../common/components/tags/ObstacleTag.hpp"
+#include "../../../../../common/constants.hpp"
 
 namespace gsm {
 
@@ -55,7 +55,7 @@ DevState::DevState(
     _systemManager->addSystem(hitboxRenderingSystem);
     _systemManager->addSystem(rectangleRenderingSystem);
     _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT);
-    _parser->parseAllEntities("assets/entity/player/");
+    _parser->parseAllEntities(constants::CONFIG_PATH);
 }
 
 void DevState::enter() {
