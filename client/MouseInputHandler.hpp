@@ -10,7 +10,7 @@
 
 #include <memory>
 #include <optional>
-#include "../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../common/resourceManager/ResourceManager.hpp"
 #include "../../common/types/Vector2f.hpp"
 #include "constants.hpp"
 
@@ -21,7 +21,7 @@ struct MouseClickInfo {
 
 class MouseInputHandler {
     public:
-        MouseInputHandler(std::shared_ptr<ecs::ResourceManager> resourceManager);
+        MouseInputHandler(std::shared_ptr<ResourceManager> resourceManager);
         ~MouseInputHandler() = default;
 
         std::optional<MouseClickInfo> pollMouseClick();
@@ -30,7 +30,7 @@ class MouseInputHandler {
         bool isMouseButtonPressed(int button) const;
 
     private:
-        std::weak_ptr<ecs::ResourceManager> _resourceManager;
+        std::weak_ptr<ResourceManager> _resourceManager;
 };
 
 #endif /* !MOUSEINPUTHANDLER_HPP_ */

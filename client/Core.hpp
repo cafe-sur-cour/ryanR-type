@@ -9,8 +9,8 @@
 #define CORE_HPP_
 
 #include <memory>
-
-#include "../common/ECS/resourceManager/ResourceManager.hpp"
+#include <thread>
+#include "../common/resourceManager/ResourceManager.hpp"
 #include "ClientNetwork.hpp"
 #include "../libs/Multimedia/IWindow.hpp"
 #include "../libs/Multimedia/IEvent.hpp"
@@ -36,7 +36,7 @@ class Core
         std::shared_ptr<DLLoader<gfx::createEvent_t>> _eventLoader;
         std::shared_ptr<DLLoader<gfx::createAudio_t>> _audioLoader;
 
-        std::shared_ptr<ecs::ResourceManager> _resourceManager;
+        std::shared_ptr<ResourceManager> _resourceManager;
         std::shared_ptr<gsm::GameStateMachine> _gsm;
         std::shared_ptr<ClientNetwork> _clientNetwork;
         std::thread _networkThread;

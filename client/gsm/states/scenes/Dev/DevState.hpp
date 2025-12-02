@@ -2,7 +2,7 @@
 #define DEVSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
-#include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../../../common/systems/systemManager/ASystemManager.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
@@ -11,11 +11,13 @@
 #include "../../../../systems/rendering/SpriteRenderingSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
+#include "../../../../../common/Parser/Parser.hpp"
+
 namespace gsm {
 
 class DevState : public AGameState {
 public:
-    DevState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ecs::ResourceManager> resourceManager);
+    DevState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
     ~DevState() override = default;
 
     void enter() override;
@@ -23,7 +25,7 @@ public:
     void exit() override;
 
 private:
-    std::shared_ptr<ecs::ResourceManager> _resourceManager;
+    std::shared_ptr<ResourceManager> _resourceManager;
     std::shared_ptr<ecs::Registry> _registry;
     std::shared_ptr<ecs::ASystemManager> _systemManager;
     std::shared_ptr<ecs::MovementSystem> _movementSystem;
@@ -32,7 +34,7 @@ private:
     std::shared_ptr<ecs::SpriteRenderingSystem> _spriteRenderingSystem;
     std::shared_ptr<ecs::SoundSystem> _soundSystem;
     std::shared_ptr<EntityPrefabManager> _prefabManager;
-    ecs::Entity _playerId;
+    std::shared_ptr<Parser> _parser;
 };
 
 }  // namespace gsm
