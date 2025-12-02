@@ -37,14 +37,24 @@ enum class FieldType {
     FLOAT,
     STRING,
     INT,
+    OBJECT,
 };
 
 struct Field {
     std::string name;
     FieldType type;
+    bool optional = false;
 };
 
-using FieldValue = std::variant<math::Vector2f, float, std::string, int>;
+struct FieldValue;
+
+using FieldValueMap = std::map<std::string, std::shared_ptr<FieldValue>>;
+using FieldValueVariant = std::variant<math::Vector2f, float, std::string, int, FieldValueMap>;
+
+struct FieldValue : FieldValueVariant {
+    using FieldValueVariant::FieldValueVariant;
+    using FieldValueVariant::operator=;
+};
 
 #include <typeindex>
 #include "../ECS/entity/registry/Registry.hpp"
