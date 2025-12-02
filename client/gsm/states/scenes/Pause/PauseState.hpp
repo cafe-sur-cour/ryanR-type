@@ -15,7 +15,7 @@ namespace gsm {
 
 class PauseState : public AGameState {
 public:
-    PauseState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager>r);
+    PauseState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
     ~PauseState() override = default;
 
     void enter() override;

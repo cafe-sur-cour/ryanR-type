@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** initRessourcesManager
+** initResourcesManager
 */
 
 #include <iostream>
@@ -16,9 +16,9 @@
 #include "../../libs/Multimedia/IWindow.hpp"
 #include "../../libs/Multimedia/IAudio.hpp"
 #include "../../common/ImputMapping/InputMappingManager.hpp"
-#include "initRessourcesManager.hpp"
+#include "initResourcesManager.hpp"
 
-std::shared_ptr<ResourceManager> initRessourcesManager(
+std::shared_ptr<ResourceManager> initResourcesManager(
     std::shared_ptr<DLLoader<gfx::createWindow_t>> windowLoader,
     std::shared_ptr<DLLoader<gfx::createEvent_t>> eventLoader,
     std::shared_ptr<DLLoader<gfx::createAudio_t>> audioLoader

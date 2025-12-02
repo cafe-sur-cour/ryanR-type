@@ -15,7 +15,7 @@ namespace gsm {
 
 class LobbyState : public AGameState {
 public:
-    LobbyState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager>anager);
+    LobbyState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
     ~LobbyState() override = default;
 
     void enter() override;
