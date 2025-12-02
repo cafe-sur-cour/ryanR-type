@@ -26,7 +26,6 @@ add_library(${MULTIMEDIA_LIB_NAME} SHARED
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_2.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_3.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_4.cpp
-    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_5.cpp
     ${CMAKE_SOURCE_DIR}/common/types/FRect.cpp
 )
 
@@ -37,7 +36,6 @@ set_source_files_properties(
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_2.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_3.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_4.cpp
-    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_5.cpp
     PROPERTIES GENERATED TRUE
 )
 
