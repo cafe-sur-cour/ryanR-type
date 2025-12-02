@@ -11,7 +11,7 @@
 #include <optional>
 #include "../../../../../libs/Multimedia/IWindow.hpp"
 #include "../../../../../libs/Multimedia/IEvent.hpp"
-#include "../../../../MouseInputHandler.hpp"
+#include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../../common/InputMapping/IInputProvider.hpp"

@@ -10,7 +10,7 @@
 
 #include "../../base/AGameState.hpp"
 #include "../../../../../common/resourceManager/ResourceManager.hpp"
-#include "../../../../MouseInputHandler.hpp"
+#include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../ui/elements/focusable/Button.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
 
