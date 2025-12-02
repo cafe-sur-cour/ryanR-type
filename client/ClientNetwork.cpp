@@ -21,6 +21,7 @@ ClientNetwork::ClientNetwork() {
     this->_ip = "";
     this->_name = ""; //  init with a default name
     this->_idClient = 0;
+    this->_eventQueue = std::queue<NetworkEvent>();
 
     this->_network = nullptr;
     this->_buffer = nullptr;
@@ -47,20 +48,6 @@ void ClientNetwork::init() {
     );
 }
 
-/* Call this in a separate thread */
-void ClientNetwork::start() {
-    Signal::setupSignalHandlers();
-
-    while (!Signal::stopFlag) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-    if (Signal::stopFlag) {
-        this->disconnectionPacket();
-        std::cout << "[Client] Received signal, stopping client" << std::endl;
-        this->stop();
-    }
-}
-
 void ClientNetwork::stop() {
     if (this->_network != nullptr
         && this->_networloader.getHandler() != nullptr) {
@@ -78,6 +65,33 @@ void ClientNetwork::stop() {
         this->_packetloader.Close();
     }
 }
+
+/* Call this in a separate thread */
+void ClientNetwork::start() {
+    Signal::setupSignalHandlers();
+
+    while (!Signal::stopFlag) {
+        // std::unique_lock<std::mutex> lock(_queueMutex);
+        // _queueCond.wait(lock, [this]() { return !_eventQueue.empty() || Signal::stopFlag; });
+        // if (Signal::stopFlag) break;
+        // while (!_eventQueue.empty()) {
+        //     NetworkEvent event = _eventQueue.front();
+        //     _eventQueue.pop();
+        //     lock.unlock();
+
+        //     this->eventPacket(event.eventType, event.depth, event.direction);
+
+        //     lock.lock();
+        // }
+        this->_network->receiveFrom(this->_idClient);
+    }
+    if (Signal::stopFlag) {
+        this->disconnectionPacket();
+        std::cout << "[Client] Received signal, stopping client" << std::endl;
+        this->stop();
+    }
+}
+
 
 uint32_t ClientNetwork::getPort() const {
     return _port;
@@ -125,6 +139,22 @@ net::ConnectionState ClientNetwork::getConnectionState() const {
             err::ClientNetworkError::INTERNAL_ERROR);
     }
     return this->_network->getConnectionState();
+}
+
+void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
+    std::lock_guard<std::mutex> lock(this->_queueMutex);
+    this->_eventQueue.push(event);
+    this->_queueCond.notify_one();
+}
+
+bool ClientNetwork::getEventFromQueue(NetworkEvent &event) {
+    std::unique_lock<std::mutex> lock(this->_queueMutex);
+    if (this->_eventQueue.empty()) {
+        return false;
+    }
+    event = this->_eventQueue.front();
+    this->_eventQueue.pop();
+    return true;
 }
 
 

@@ -6,6 +6,10 @@
 */
 
 #include <memory>
+#include <thread>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
 
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
@@ -14,6 +18,12 @@
 
 #ifndef CLIENTNETWORK_HPP_
 #define CLIENTNETWORK_HPP_
+
+struct NetworkEvent {
+    constants::EventType eventType;
+    double depth;
+    double direction;
+};
 
 class ClientNetwork {
     public:
@@ -49,6 +59,8 @@ class ClientNetwork {
         void disconnectionPacket();
         void connectionPacket();
 
+        void addToEventQueue(const NetworkEvent &event);
+        bool getEventFromQueue(NetworkEvent &event);
     protected:
     private:
         DLLoader<createNetworkLib_t> _networloader;
@@ -64,6 +76,10 @@ class ClientNetwork {
         std::string  _ip;
         std::string _name;
         uint8_t _idClient;
+
+        std::queue<NetworkEvent> _eventQueue;
+        std::mutex _queueMutex;
+        std::condition_variable _queueCond;
 };
 
 #endif /* !CLIENTNETWORK_HPP_ */
