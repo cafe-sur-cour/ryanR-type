@@ -103,7 +103,6 @@ void MovementInputSystem::updateInputIntent(
         auto existingIntent =
             registry->getComponent<InputIntentComponent>(entityId);
         existingIntent->setDirection(direction);
-        existingIntent->setState(ComponentState::Temporary);
     } else {
         registry->addComponent(entityId, inputIntent);
     }

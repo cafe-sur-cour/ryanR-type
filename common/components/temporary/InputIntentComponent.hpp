@@ -17,7 +17,6 @@ class InputIntentComponent : public AComponent {
     public:
         InputIntentComponent(const math::Vector2f &direction = math::Vector2f(0.0f, 0.0f))
             : _direction(direction) {
-            _state = Temporary;
         };
         ~InputIntentComponent() = default;
 

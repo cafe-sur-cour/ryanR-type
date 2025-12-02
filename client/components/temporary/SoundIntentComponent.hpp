@@ -17,7 +17,6 @@ class SoundIntentComponent : public AComponent {
     public:
         SoundIntentComponent(const std::string &soundPath = "", float volume = 100.0f)
             : _soundPath(soundPath), _volume(volume) {
-            _state = Temporary;
         };
         ~SoundIntentComponent() = default;
 

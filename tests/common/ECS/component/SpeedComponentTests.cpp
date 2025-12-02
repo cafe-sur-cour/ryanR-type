@@ -28,11 +28,6 @@ TEST(SpeedComponentTest, GettersAndSetters) {
     EXPECT_EQ(comp.getSpeed(), 200.0f);
 }
 
-TEST(SpeedComponentTest, InheritsFromAComponent) {
-    SpeedComponent comp;
-    EXPECT_EQ(comp.getState(), ComponentState::Permanent);
-}
-
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
