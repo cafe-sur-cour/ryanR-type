@@ -17,6 +17,11 @@ target_link_libraries(${CLIENT_BIN_NAME}
         DLLoader
         SIGNAL
         PREFAB
+        asio::asio
+)
+
+target_compile_definitions(${CLIENT_BIN_NAME}
+    PUBLIC ASIO_STANDALONE
 )
 
 add_subdirectory(initRessourcesManager)
