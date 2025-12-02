@@ -31,7 +31,6 @@ DevState::DevState(
     std::shared_ptr<ecs::ResourceManager> resourceManager)
 
     : AGameState(gsm), _resourceManager(resourceManager) {
-    _playerId = 0;
     _registry = std::make_shared<ecs::Registry>();
     _systemManager = std::make_shared<ecs::ASystemManager>();
     _movementSystem = std::make_shared<ecs::MovementSystem>();

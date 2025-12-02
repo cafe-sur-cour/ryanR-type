@@ -19,14 +19,14 @@ target_link_libraries(${CLIENT_BIN_NAME}
         DLLoader
         SIGNAL
         PREFAB
+        PARSER
+        UI
         asio::asio
+        nlohmann_json::nlohmann_json
 )
 
 target_compile_definitions(${CLIENT_BIN_NAME}
     PUBLIC ASIO_STANDALONE
-        PARSER
-        nlohmann_json::nlohmann_json
-        UI
 )
 
 add_subdirectory(initRessourcesManager)
