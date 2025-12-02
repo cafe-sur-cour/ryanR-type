@@ -8,23 +8,23 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include "../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../common/resourceManager/ResourceManager.hpp"
 #include "GraphicalInputProvider.hpp"
 #include "../../common/DLLoader/DLLoader.hpp"
 #include "../../common/DLLoader/LoaderType.hpp"
 #include "../../libs/Multimedia/IEvent.hpp"
 #include "../../libs/Multimedia/IWindow.hpp"
 #include "../../libs/Multimedia/IAudio.hpp"
-#include "../../common/ECS/resourceManager/InputMappingManager.hpp"
+#include "../../common/ImputMapping/InputMappingManager.hpp"
 #include "initRessourcesManager.hpp"
 
-std::shared_ptr<ecs::ResourceManager> initRessourcesManager(
+std::shared_ptr<ResourceManager> initRessourcesManager(
     std::shared_ptr<DLLoader<gfx::createWindow_t>> windowLoader,
     std::shared_ptr<DLLoader<gfx::createEvent_t>> eventLoader,
     std::shared_ptr<DLLoader<gfx::createAudio_t>> audioLoader
 ) {
-    std::shared_ptr<ecs::ResourceManager> resourceManager =
-        std::make_shared<ecs::ResourceManager>();
+    std::shared_ptr<ResourceManager> resourceManager =
+        std::make_shared<ResourceManager>();
 
     gfx::createWindow_t createWindowFunc = windowLoader->getSymbol(
         "createWindow"

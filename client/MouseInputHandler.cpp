@@ -9,7 +9,7 @@
 #include "../../libs/Multimedia/IWindow.hpp"
 #include "../../libs/Multimedia/IEvent.hpp"
 
-MouseInputHandler::MouseInputHandler(std::shared_ptr<ecs::ResourceManager> resourceManager)
+MouseInputHandler::MouseInputHandler(std::shared_ptr<ResourceManager> resourceManager)
     : _resourceManager(resourceManager) {
 }
 

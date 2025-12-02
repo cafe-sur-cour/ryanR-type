@@ -20,7 +20,7 @@ namespace gsm {
 
 MainMenuState::MainMenuState(
     std::shared_ptr<IGameStateMachine> gsm,
-    std::shared_ptr<ecs::ResourceManager> resourceManager)
+    std::shared_ptr<ResourceManager> resourceManager)
     : AGameState(gsm), _resourceManager(resourceManager) {
     _mouseHandler = std::make_unique<MouseInputHandler>(resourceManager);
 

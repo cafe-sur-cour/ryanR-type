@@ -9,13 +9,13 @@
 #define RESULTSSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
-#include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../../../../common/resourceManager/ResourceManager.hpp"
 
 namespace gsm {
 
 class ResultsState : public AGameState {
 public:
-    ResultsState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ecs::ResourceManager> resourceManager);
+    ResultsState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager>anager);
     ~ResultsState() override = default;
 
     void enter() override;
@@ -23,7 +23,7 @@ public:
     void exit() override;
 
 private:
-    std::shared_ptr<ecs::ResourceManager> _resourceManager;
+    std::shared_ptr<ResourceManager> _resourceManager;
 };
 
 }  // namespace gsm

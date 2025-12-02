@@ -9,7 +9,7 @@
 #include "SoundSystem.hpp"
 #include "../../components/temporary/SoundIntentComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
-#include "../../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IAudio.hpp"
 
 

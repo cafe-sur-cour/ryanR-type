@@ -8,7 +8,7 @@
 #ifndef ISystem_HPP_
 #define ISystem_HPP_
 
-#include "../../ECS/resourceManager/ResourceManager.hpp"
+#include "../../resourceManager/ResourceManager.hpp"
 #include "../../ECS/entity/registry/Registry.hpp"
 #include <memory>
 
