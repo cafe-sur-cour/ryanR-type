@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** UINavigationManager - Manages UI navigation for keyboard and gamepad
+** UINavigationManager
 */
 
 #include "UINavigationManager.hpp"

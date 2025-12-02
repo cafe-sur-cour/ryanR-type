@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** IFocusable - Interface for UI elements that can receive focus
+** IFocusable
 */
 
 #ifndef IFOCUSABLE_HPP_

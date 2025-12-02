@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** UIManager - Manages UI elements and navigation
+** UIManager
 */
 
 #ifndef UIMANAGER_HPP_

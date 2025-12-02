@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** Button - Focusable button UI element
+** Button
 */
 
 #ifndef BUTTON_HPP_
