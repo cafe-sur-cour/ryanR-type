@@ -13,7 +13,9 @@
 namespace ui {
 
 UIManager::UIManager()
-    : _lastMousePos(0.0f, 0.0f), _mouseMovementDetected(false) {
+    : _navigationManager(std::make_shared<UINavigationManager>()),
+    _lastMousePos(0.0f, 0.0f),
+    _mouseMovementDetected(false) {
     _lastMousePos = math::Vector2f(-1000.0f, -1000.0f);
 }
 
@@ -25,7 +27,7 @@ void UIManager::addElement(std::shared_ptr<UIElement> element) {
     if (it == _elements.end()) {
         _elements.push_back(element);
         if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
-            _navigationManager.addFocusableElement(focusable);
+            _navigationManager->addFocusableElement(focusable);
         }
 
         refreshNavigationElements();
@@ -42,14 +44,14 @@ void UIManager::removeElement(std::shared_ptr<UIElement> element) {
         _elements.erase(it);
 
         if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
-            _navigationManager.removeFocusableElement(focusable);
+            _navigationManager->removeFocusableElement(focusable);
         }
     }
 }
 
 void UIManager::clearElements() {
     _elements.clear();
-    _navigationManager.clearFocusableElements();
+    _navigationManager->clearFocusableElements();
 }
 
 void UIManager::update(float deltaTime) {
@@ -77,7 +79,7 @@ void UIManager::render() {
 
 void UIManager::handleMouseInput(const math::Vector2f& mousePos, bool mousePressed) {
     if (_lastMousePos.getX() > -999.0f && hasMouseMoved(mousePos)) {
-        _navigationManager.onMouseMovement();
+        _navigationManager->onMouseMovement();
         _mouseMovementDetected = true;
     }
     _lastMousePos = mousePos;
@@ -90,7 +92,7 @@ void UIManager::handleMouseInput(const math::Vector2f& mousePos, bool mousePress
 }
 
 bool UIManager::handleNavigationInput(ecs::InputAction action) {
-    return _navigationManager.handleNavigationInput(action);
+    return _navigationManager->handleNavigationInput(action);
 }
 
 bool UIManager::handleNavigationInputs(
@@ -139,28 +141,28 @@ bool UIManager::handleNavigationInputs(
     return navigationTriggered;
 }
 
-UINavigationManager& UIManager::getNavigationManager() {
+std::shared_ptr<UINavigationManager> UIManager::getNavigationManager() {
     return _navigationManager;
 }
 
 void UIManager::setNavigationEnabled(bool enabled) {
-    _navigationManager.setNavigationEnabled(enabled);
+    _navigationManager->setNavigationEnabled(enabled);
 }
 
 bool UIManager::isNavigationEnabled() const {
-    return _navigationManager.isNavigationEnabled();
+    return _navigationManager->isNavigationEnabled();
 }
 
 bool UIManager::focusFirstElement() {
-    return _navigationManager.focusFirstElement();
+    return _navigationManager->focusFirstElement();
 }
 
 void UIManager::clearFocus() {
-    _navigationManager.clearFocus();
+    _navigationManager->clearFocus();
 }
 
 std::shared_ptr<IFocusable> UIManager::getFocusedElement() const {
-    return _navigationManager.getFocusedElement();
+    return _navigationManager->getFocusedElement();
 }
 
 bool UIManager::hasMouseMoved(const math::Vector2f& mousePos) {
@@ -173,12 +175,12 @@ bool UIManager::hasMouseMoved(const math::Vector2f& mousePos) {
 }
 
 void UIManager::refreshNavigationElements() {
-    _navigationManager.clearFocusableElements();
+    _navigationManager->clearFocusableElements();
 
     for (auto& element : _elements) {
         if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
             if (focusable->canBeFocused()) {
-                _navigationManager.addFocusableElement(focusable);
+                _navigationManager->addFocusableElement(focusable);
             }
         }
     }
