@@ -1,8 +1,8 @@
 #include "AGameStateMachine.hpp"
 #include <stack>
 #include <vector>
-#include "../../../common/gsm/IGameState.hpp"
 #include <iostream>
+#include "../../../common/gsm/IGameState.hpp"
 
 namespace gsm {
 
