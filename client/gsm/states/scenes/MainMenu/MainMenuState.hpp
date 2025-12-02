@@ -10,8 +10,10 @@
 
 #include "../../base/AGameState.hpp"
 #include "../../../../../common/resourceManager/ResourceManager.hpp"
-#include "../../../../MouseInputHandler.hpp"
-#include "../../../../ui/Button.hpp"
+#include "../../../../input/MouseInputHandler.hpp"
+#include "../../../../ui/elements/focusable/Button.hpp"
+#include "../../../../ui/manager/UIManager.hpp"
+
 
 namespace gsm {
 
@@ -30,7 +32,9 @@ private:
 private:
     std::shared_ptr<ResourceManager> _resourceManager;
     std::unique_ptr<MouseInputHandler> _mouseHandler;
-    std::shared_ptr<ui::Button> _testButton;
+    std::shared_ptr<ui::Button> _playButton;
+    std::shared_ptr<ui::Button> _quitButton;
+    std::unique_ptr<ui::UIManager> _uiManager;
 };
 
 }  // namespace gsm
