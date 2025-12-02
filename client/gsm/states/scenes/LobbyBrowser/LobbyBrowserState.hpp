@@ -15,7 +15,7 @@ namespace gsm {
 
 class LobbyBrowserState : public AGameState {
 public:
-    LobbyBrowserState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager>urceManager);
+    LobbyBrowserState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
     ~LobbyBrowserState() override = default;
 
     void enter() override;
