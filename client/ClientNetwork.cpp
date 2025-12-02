@@ -145,6 +145,8 @@ void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
     std::lock_guard<std::mutex> lock(this->_queueMutex);
     this->_eventQueue.push(event);
     this->_queueCond.notify_one();
+    std::cout << "[ClientNetwork] Event added to queue. Queue size: "
+          << this->_eventQueue.size() << std::endl;
 }
 
 bool ClientNetwork::getEventFromQueue(NetworkEvent &event) {

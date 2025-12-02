@@ -22,7 +22,7 @@ Core::Core() {
 
     initLibraries();
     initNetwork();
-    this->_resourceManager = initRessourcesManager(
+    this->_resourceManager = initResourcesManager(
         this->_windowLoader,
         this->_eventLoader,
         this->_audioLoader,
