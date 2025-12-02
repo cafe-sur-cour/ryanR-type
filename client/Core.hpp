@@ -10,12 +10,21 @@
 
 #include <memory>
 #include <thread>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
 #include "../common/ECS/resourceManager/ResourceManager.hpp"
 #include "ClientNetwork.hpp"
 #include "../libs/Multimedia/IWindow.hpp"
 #include "../libs/Multimedia/IEvent.hpp"
 #include "gsm/machine/GameStateMachine.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
+
+struct NetworkEvent {
+    constants::EventType eventType;
+    double depth;
+    double direction;
+};
 
 class Core
 {
@@ -40,6 +49,10 @@ class Core
         void initNetwork();
         void initLibraries();
         void networkLoop();
+
+        std::queue<NetworkEvent> _eventQueue;
+        std::mutex _queueMutex;
+        std::condition_variable _queueCond;
 };
 
 #endif /* !CORE_HPP_ */

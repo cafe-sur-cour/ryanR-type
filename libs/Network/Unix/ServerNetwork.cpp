@@ -88,7 +88,7 @@ uint8_t UnixServerNetwork::acceptConnection() {
     return 0;
 }
 
-void UnixServerNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
+void UnixServerNetwork::sendTo(int connectionId, std::vector<uint8_t> packet) {
     auto it = _clients.find(connectionId);
     if (it == _clients.end()) {
         std::cerr << "[UnixServerNetwork] Client " << connectionId <<
@@ -114,7 +114,7 @@ void UnixServerNetwork::sendTo(int connectionId, const pm::IPacketManager &packe
     }
 }
 
-void UnixServerNetwork::broadcast(const pm::IPacketManager &packet) {
+void UnixServerNetwork::broadcast(std::vector<uint8_t> packet) {
     for (const auto& [clientId, endpoint] : _clients) {
         sendTo(clientId, packet);
     }

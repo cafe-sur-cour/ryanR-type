@@ -15,6 +15,15 @@
 
 namespace net {
 
+enum class ConnectionState {
+    DISCONNECTED,
+    CONNECTING,
+    CONNECTED,
+    RECONNECTING,
+    ERROR
+};
+
+
 class INetwork {
     public:
 
@@ -28,14 +37,16 @@ class INetwork {
         virtual std::vector<int> getActiveConnections() const = 0;
         virtual size_t getConnectionCount() const = 0;
 
-        virtual void sendTo(int connectionId, const pm::IPacketManager &packet) = 0;
-        virtual void broadcast(const pm::IPacketManager &packet) = 0;
+        virtual void sendTo(int connectionId, std::vector<uint8_t> data) = 0;
+        virtual void broadcast(std::vector<uint8_t> data) = 0;
         virtual bool hasIncomingData() const = 0;
         virtual std::shared_ptr<pm::IPacketManager> receiveFrom(const int &connectionId) = 0;
 
         virtual void setConnectionCallback(std::function<void(int)> onConnect) = 0;
         virtual void setDisconnectionCallback(std::function<void(int)> onDisconnect) = 0;
 
+        virtual ConnectionState getConnectionState() const = 0;
+        virtual void setConnectionState(ConnectionState state) = 0;
     protected:
     private:
 };

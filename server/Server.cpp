@@ -170,15 +170,16 @@ void rserv::Server::processIncomingPackets() {
 }
 
 void rserv::Server::broadcastPacket() {
-    if (_network) {
-        _network->broadcast(*this->_packet);
-    }
+    // if (_network) {
+    //     _network->broadcast(*this->_packet);
+    // }
 }
 
 void rserv::Server::sendToClient(int idClient) {
-    if (_network) {
-        _network->sendTo(idClient, *this->_packet);
-    }
+    (void)idClient;
+    // if (_network) {
+    //     _network->sendTo(idClient, *this->_packet);
+    // }
 }
 
 std::vector<int> rserv::Server::getConnectedClients() const {

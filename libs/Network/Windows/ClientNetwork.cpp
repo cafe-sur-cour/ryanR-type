@@ -45,12 +45,12 @@ size_t WindowsNetwork::getConnectionCount() const {
     return 0;
 }
 
-void WindowsNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
+void WindowsNetwork::sendTo(int connectionId, std::vector<uint8_t> data) {
     (void)connectionId;
     (void)packet;
 }
 
-void WindowsNetwork::broadcast(const pm::IPacketManager &packet) {
+void WindowsNetwork::broadcast(std::vector<uint8_t> data) {
     (void)packet;
 }
 

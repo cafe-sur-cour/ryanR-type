@@ -41,29 +41,8 @@ void UnixClientNetwork::init(uint32_t port, const std::string host) {
             resolver.resolve(asio::ip::udp::v4(), host, std::to_string(port));
 
         _serverEndpoint = *endpoints.begin();
-        std::string connectMsg = "CLIENT_CONNECT";
-        _socket->send_to(asio::buffer(connectMsg), _serverEndpoint);
-        std::array<char, 1024> buffer;
-        asio::ip::udp::endpoint senderEndpoint;
-
-        _socket->async_receive_from(asio::buffer(buffer), senderEndpoint,
-            [this](std::error_code ec, std::size_t length) {
-                if (!ec && length > 0) {
-                    _connected = true;
-                    std::cout << "[UnixClientNetwork] Server confirmed connection"
-                        << std::endl;
-                } else {
-                    _connected = false;
-                }
-            });
-
-        _ioContext->run_for(std::chrono::seconds(5));
-
-        if (!_connected) {
-            throw std::runtime_error("Server did not respond to connection request");
-        }
-        std::cout << "[UnixClientNetwork] Connected to server " << host
-                  << ":" << port << std::endl;
+        this->setConnectionState(ConnectionState::CONNECTING);
+        // this->_socket->non_blocking(true);
     } catch (const std::exception& e) {
         _connected = false;
         throw std::runtime_error(std::string
@@ -80,18 +59,6 @@ void UnixClientNetwork::stop() {
 }
 
 void UnixClientNetwork::disconnect() {
-    if (_connected && _socket && _socket->is_open()) {
-        try {
-            std::string disconnectMsg = "CLIENT_DISCONNECT";
-            _socket->send_to(asio::buffer(disconnectMsg), _serverEndpoint);
-            std::cout << "[UnixClientNetwork] Disconnected from server"
-                << std::endl;
-        } catch (const std::exception& e) {
-            std::cerr << "[UnixClientNetwork] Error during disconnect: "
-            << e.what() << std::endl;
-        }
-    }
-    _connected = false;
 }
 
 bool UnixClientNetwork::isConnected() const {
@@ -103,31 +70,14 @@ uint8_t UnixClientNetwork::acceptConnection() {
     return 1;
 }
 
-void UnixClientNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
-    (void)connectionId;
-
-    if (!_connected) {
-        std::cerr << "[UnixClientNetwork] Not connected to server" << std::endl;
-        return;
-    }
-    if (!_socket || !_socket->is_open()) {
-        std::cerr << "[UnixClientNetwork] Socket not available" << std::endl;
-        return;
-    }
-
-    try {
-        /* Packet serialization */
-        (void)packet;
-        std::string data = "Client message";
-        _socket->send_to(asio::buffer(data), _serverEndpoint);
-        std::cout << "[UnixClientNetwork] Sent data to server" << std::endl;
-    } catch (const std::exception& e) {
-        std::cerr << "[UnixClientNetwork] Error sending data: "
-            << e.what() << std::endl;
-    }
+void UnixClientNetwork::sendTo(int connectionId, std::vector<uint8_t> packet) {
+   (void)connectionId;  // In client, connectionId is not used
+   std::cout << "Sending to " << _serverEndpoint.address().to_string() << ":"
+             << _serverEndpoint.port() << " Data size: " << packet.size() << std::endl;
+    _socket->send_to(asio::buffer(packet), _serverEndpoint);
 }
 
-void UnixClientNetwork::broadcast(const pm::IPacketManager &packet) {
+void UnixClientNetwork::broadcast(std::vector<uint8_t> packet) {
     // For client, broadcast is the same as sending to the server
     sendTo(0, packet);
 }
@@ -145,36 +95,9 @@ bool UnixClientNetwork::hasIncomingData() const {
 std::shared_ptr<pm::IPacketManager> UnixClientNetwork::receiveFrom(
     const int &connectionId) {
     (void)connectionId;
-
-    if (!_connected) {
-        return nullptr;
-    }
-
-    if (!hasIncomingData()) {
-        return nullptr;
-    }
-
-    try {
-        std::array<char, 1024> buffer;
-        asio::ip::udp::endpoint senderEndpoint;
-        std::error_code ec;
-
-        size_t received = _socket->receive_from(asio::buffer(buffer),
-            senderEndpoint, 0, ec);
-        if (ec || received == 0) {
-            return nullptr;
-        }
-
-        std::cout << "[UnixClientNetwork] Received " << received
-                  << " bytes from server" << std::endl;
-
-        return nullptr;
-    } catch (const std::exception& e) {
-        std::cerr << "[UnixClientNetwork] Error receiving data: "
-                  << e.what() << std::endl;
-        return nullptr;
-    }
+    return nullptr;
 }
+
 
 }  // namespace net
 

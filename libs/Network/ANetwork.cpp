@@ -9,6 +9,8 @@
 #include <vector>
 #include "ANetwork.hpp"
 
+namespace net {
+
 std::vector<int> net::ANetwork::getActiveConnections() const {
     std::vector<int> connections;
     for (const auto& [clientId, endpoint] : _clients) {
@@ -41,4 +43,14 @@ void net::ANetwork::setConnectionCallback(std::function<void(int)> onConnect) {
 void net::ANetwork::setDisconnectionCallback(std::function<void(int)>
     onDisconnect) {
     _onDisconnectCallback = onDisconnect;
+}
+
+void net::ANetwork::setConnectionState(ConnectionState state) {
+    this->_connectionState = state;
+}
+
+ConnectionState net::ANetwork::getConnectionState() const {
+    return this->_connectionState;
+}
+
 }
