@@ -9,7 +9,7 @@
 #define MAINMENUSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
-#include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../../MouseInputHandler.hpp"
 #include "../../../../ui/Button.hpp"
 
@@ -17,7 +17,7 @@ namespace gsm {
 
 class MainMenuState : public AGameState {
 public:
-    MainMenuState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ecs::ResourceManager> resourceManager);
+    MainMenuState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
     ~MainMenuState() override = default;
 
     void enter() override;
@@ -28,7 +28,7 @@ private:
     void renderUI();
 
 private:
-    std::shared_ptr<ecs::ResourceManager> _resourceManager;
+    std::shared_ptr<ResourceManager> _resourceManager;
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::shared_ptr<ui::Button> _testButton;
 };
