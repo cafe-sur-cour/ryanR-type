@@ -83,19 +83,16 @@ void UIElement::handleInput(const math::Vector2f& mousePos, bool mousePressed) {
             }
         } else {
             if (_state == UIState::Pressed) {
-                // After releasing, go back to hover
                 setState(UIState::Hovered);
                 if (_onRelease)
                     _onRelease();
             } else {
-                // Set hover state
                 setState(UIState::Hovered);
                 if (!wasHovered && _onHover)
                     _onHover();
             }
         }
     } else {
-        // Set to normal when not hovering
         setState(UIState::Normal);
     }
 
