@@ -12,7 +12,7 @@
 #include <memory>
 
 #include "ISystemManager.hpp"
-#include "../../ECS/resourceManager/ResourceManager.hpp"
+#include "../../resourceManager/ResourceManager.hpp"
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../base/ISystem.hpp"
 

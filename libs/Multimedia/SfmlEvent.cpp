@@ -15,7 +15,7 @@
 
 using event_t = gfx::IEvent::event_t;
 
-SfmlEvent::SfmlEvent(std::shared_ptr<ecs::ResourceManager> resourceManager,
+SfmlEvent::SfmlEvent(std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<gfx::IWindow> window)
     : _resourceManager(resourceManager), _window(window) {
     init();

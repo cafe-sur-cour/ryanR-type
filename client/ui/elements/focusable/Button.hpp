@@ -16,7 +16,7 @@ namespace ui {
 
 class Button : public AFocusableElement {
     public:
-        explicit Button(std::shared_ptr<ecs::ResourceManager> resourceManager);
+        explicit Button(std::shared_ptr<ResourceManager> resourceManager);
         virtual ~Button() = default;
 
         void setText(const std::string& text);

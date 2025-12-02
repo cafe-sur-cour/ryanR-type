@@ -11,7 +11,7 @@
 
 namespace ui {
 
-Button::Button(std::shared_ptr<ecs::ResourceManager> resourceManager)
+Button::Button(std::shared_ptr<ResourceManager> resourceManager)
     : AFocusableElement(resourceManager) {
 }
 

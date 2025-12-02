@@ -15,7 +15,7 @@
 
 namespace ui {
 
-UIElement::UIElement(std::shared_ptr<ecs::ResourceManager> resourceManager)
+UIElement::UIElement(std::shared_ptr<ResourceManager> resourceManager)
     : _resourceManager(resourceManager) {
 }
 
