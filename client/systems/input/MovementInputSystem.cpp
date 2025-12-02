@@ -12,8 +12,8 @@
 #include "../../../common/constants.hpp"
 #include "../../../common/components/tags/ControllableTag.hpp"
 #include "../../../common/components/temporary/InputIntentComponent.hpp"
-#include "../../../common/ImputMapping/IInputProvider.hpp"
-#include "../../../common/ImputMapping/InputAction.hpp"
+#include "../../../common/InputMapping/IInputProvider.hpp"
+#include "../../../common/InputMapping/InputAction.hpp"
 
 namespace ecs {
 

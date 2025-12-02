@@ -12,8 +12,8 @@
 #include <vector>
 #include "../elements/base/UIElement.hpp"
 #include "../navigation/UINavigationManager.hpp"
-#include "../../../common/ImputMapping/InputAction.hpp"
-#include "../../../common/ImputMapping/IInputProvider.hpp"
+#include "../../../common/InputMapping/InputAction.hpp"
+#include "../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../common/types/Vector2f.hpp"
 
 namespace ui {

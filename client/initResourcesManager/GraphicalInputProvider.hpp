@@ -5,9 +5,9 @@
 ** GraphicalInputProvider
 */
 
-#include "../../common/ImputMapping/IInputProvider.hpp"
+#include "../../common/InputMapping/IInputProvider.hpp"
 #include "../../libs/Multimedia/IEvent.hpp"
-#include "../../common/ImputMapping/InputMapping.hpp"
+#include "../../common/InputMapping/InputMapping.hpp"
 #include <memory>
 
 namespace ecs {
