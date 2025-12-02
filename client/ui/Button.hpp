@@ -16,7 +16,7 @@ namespace ui {
 
 class Button : public UIElement {
     public:
-        Button(std::shared_ptr<ecs::ResourceManager> resourceManager);
+        Button(std::shared_ptr<ResourceManager> resourceManager);
         virtual ~Button() = default;
 
         void setText(const std::string& text);

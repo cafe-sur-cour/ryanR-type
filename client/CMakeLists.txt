@@ -29,7 +29,7 @@ target_compile_definitions(${CLIENT_BIN_NAME}
     PUBLIC ASIO_STANDALONE
 )
 
-add_subdirectory(initRessourcesManager)
+add_subdirectory(initResourcesManager)
 add_subdirectory(gsm)
 add_subdirectory(components)
 add_subdirectory(systems)

@@ -8,13 +8,13 @@
 #include <memory>
 
 #include "Core.hpp"
-#include "initRessourcesManager/initRessourcesManager.hpp"
+#include "initResourcesManager/initResourcesManager.hpp"
 
 Core::Core() {
     this->_utils = std::make_shared<Utils>();
     this->_server = std::make_shared<rserv::Server>();
 
-    this->_resourceManager = std::make_shared<ecs::ResourceManager>();
+    this->_resourceManager = std::make_shared<ResourceManager>();
 }
 
 Core::~Core() {
@@ -31,7 +31,7 @@ Core::~Core() {
 }
 
 void Core::init() {
-    this->_resourceManager = initRessourcesManager();
+    this->_resourceManager = initResourcesManager();
     this->_server->init();
 }
 
@@ -47,6 +47,6 @@ std::shared_ptr<rserv::Server> Core::getServer() const {
     return this->_server;
 }
 
-std::shared_ptr<ecs::ResourceManager> Core::getResourceManager() const {
+std::shared_ptr<ResourceManager> Core::getResourceManager() const {
     return this->_resourceManager;
 }

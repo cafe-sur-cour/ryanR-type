@@ -5,7 +5,7 @@
 ** ServerInputProvider
 */
 
-#include "../../common/ECS/resourceManager/IInputProvider.hpp"
+#include "../../common/ImputMapping/IInputProvider.hpp"
 
 namespace ecs {
 

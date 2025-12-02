@@ -425,7 +425,7 @@ ryanR-type/
 │   ├── ClientNetwork.hpp/cpp # Network communication
 │   ├── Utils.hpp/cpp         # Client utilities
 │   ├── gsm/                  # Game state machine
-│   └── initRessourcesManager/# Resource initialization
+│   └── initResourcesManager/# Resource initialization
 ├── server/                    # 🖥️ Server application
 │   ├── main.cpp              # Server entry point
 │   ├── Core.hpp/cpp          # Server core logic
@@ -433,7 +433,7 @@ ryanR-type/
 │   ├── ServerConfig.hpp/cpp  # Configuration management
 │   ├── Utils.hpp/cpp         # Server utilities
 │   ├── gsm/                  # Server state machine
-│   └── initRessourcesManager/# Server resource init
+│   └── initResourcesManager/# Server resource init
 ├── common/                    # 🔧 Shared components
 │   ├── ECS/                  # Entity-Component-System
 │   │   ├── component/        # Component definitions
