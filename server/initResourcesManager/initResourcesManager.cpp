@@ -2,19 +2,19 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** initRessourcesManager
+** initResourcesManager
 */
 
 #include <memory>
 #include <iostream>
-#include "../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../common/resourceManager/ResourceManager.hpp"
 #include "ServerInputProvider.hpp"
 #include "../ServerConfig.hpp"
-#include "initRessourcesManager.hpp"
+#include "initResourcesManager.hpp"
 
-std::shared_ptr<ecs::ResourceManager> initRessourcesManager() {
-    std::shared_ptr<ecs::ResourceManager> resourceManager =
-        std::make_shared<ecs::ResourceManager>();
+std::shared_ptr<ResourceManager> initResourcesManager() {
+    std::shared_ptr<ResourceManager> resourceManager =
+        std::make_shared<ResourceManager>();
 
     // Initialize and load resources here
     // exemple resourceManager->
