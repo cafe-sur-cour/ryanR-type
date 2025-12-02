@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <vector>
+#include <asio.hpp>
 
 #include "ServerConfig.hpp"
 #include "../libs/Packet/IPacketManager.hpp"
@@ -43,7 +44,7 @@ public:
     virtual void onClientDisconnected(uint8_t idClient) = 0;
     virtual void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet) = 0;
 
-    virtual void processConnections() = 0;
+    virtual bool processConnections(asio::ip::udp::endpoint id) = 0;
     virtual void processIncomingPackets() = 0;
 
     virtual void broadcastPacket() = 0;

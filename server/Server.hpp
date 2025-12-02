@@ -56,7 +56,7 @@ namespace rserv {
             void onClientDisconnected(uint8_t idClient) override;
             void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet) override;
 
-            void processConnections() override;
+            bool processConnections(asio::ip::udp::endpoint id) override;
             void processIncomingPackets() override;
 
             void broadcastPacket() override;

@@ -11,6 +11,7 @@
 #include <thread>
 #include <chrono>
 #include <vector>
+#include <utility>
 
 #include "Server.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
@@ -47,7 +48,7 @@ rserv::Server::~Server() {
 
 void rserv::Server::init() {
     if (!this->_config) {
-        throw err::ServerError("[Server] Server configuration not set",
+        throw err::ServerError("[SERVER] Server configuration not set",
             err::ServerError::CONFIG_ERROR);
     }
 
@@ -60,28 +61,27 @@ void rserv::Server::init() {
 
 void rserv::Server::start() {
     if (this->getState() == 1) {
-        std::cerr << "[Server] Info: Server is already running" << std::endl;
+        std::cerr << "[SERVER] Info: Server is already running" << std::endl;
         return;
     }
     if (this->getState() == -1) {
         throw err::ServerError(
-            "[Server] Error: init() must be called before start()",
+            "[SERVER] Error: init() must be called before start()",
             err::ServerError::INTERNAL_ERROR);
     }
-    std::cout << "[Server] Starting server..." << std::endl;
+    std::cout << "[SERVER] Starting server..." << std::endl;
     this->setState(1);
 
     Signal::setupSignalHandlers();
     while (this->getState() == 1 && !Signal::stopFlag) {
-        processConnections();
-        // processIncomingPackets();
+        processIncomingPackets();
         if (std::cin.eof()) {
             std::cout << "EOF received (Ctrl+D pressed)" << std::endl;
             break;
         }
     }
     if (Signal::stopFlag) {
-        std::cout << "[Server] Received signal, stopping server" << std::endl;
+        std::cout << "[SERVER] Received signal, stopping server" << std::endl;
         this->stop();
     }
 }
@@ -89,16 +89,16 @@ void rserv::Server::start() {
 void rserv::Server::stop() {
     if (this->getState() == -1) {
         throw err::ServerError(
-            "[Server] Error: init() must be called before stop()",
+            "[SERVER] Error: init() must be called before stop()",
             err::ServerError::INTERNAL_ERROR);
     }
     if (this->getState() == 0) {
-        std::cerr << "[Server] Info: Server is not running." << std::endl;
+        std::cerr << "[SERVER] Info: Server is not running." << std::endl;
         return;
     }
     _network->stop();
     this->setState(0);
-    std::cout << "[Server] Server stopped." << std::endl;
+    std::cout << "[SERVER] Server stopped." << std::endl;
 }
 
 rserv::Server::operator int() const noexcept {
@@ -145,14 +145,41 @@ void rserv::Server::setNetwork(std::shared_ptr<net::INetwork> network) {
     _network = network;
 }
 
-void rserv::Server::processConnections() {
-    if (!_network) return;
+void rserv::Server::processIncomingPackets() {
+    if (!_network) {
+        std::cerr << "[SERVER] Warning: Network not initialized" << std::endl;
+        return;
+    }
 
-    uint8_t newClientId = _network->acceptConnection(this->_buffer);
-    (void)newClientId;
+    std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> received = _network->receiveAny();
+    if (received.second.empty()) {
+        return;
+    }
+
+    if (received.second.at(0) == 0x93) {
+        this->_packet->unpack(received.second);
+        return;
+    }
+
+    this->_packet->unpack(received.second);
+    if (this->_packet->getType() == 0x01) {
+        this->processConnections(received.first);
+    } else {
+        // Other packet types will be handled here
+    }
+
+    this->_packet.reset();
 }
 
-void rserv::Server::processIncomingPackets() {
+bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
+    if (!_network) {
+        std::cerr << "[SERVER] Warning: Network not initialized" << std::endl;
+        return false;
+    }
+
+    uint8_t clientId = _network->acceptConnection(id, this->_packet);
+    (void)clientId;
+    return true;
 }
 
 void rserv::Server::broadcastPacket() {
@@ -162,9 +189,7 @@ void rserv::Server::broadcastPacket() {
 }
 
 void rserv::Server::sendToClient(uint8_t idClient) {
-    if (_network) {
-        _network->sendTo(idClient, *this->_packet);
-    }
+    (void)idClient;
 }
 
 std::vector<uint8_t> rserv::Server::getConnectedClients() const {
@@ -182,19 +207,19 @@ size_t rserv::Server::getClientCount() const {
 }
 
 void rserv::Server::onClientConnected(uint8_t idClient) {
-    std::cout << "[Server] Client " << static_cast<int>(idClient) << " connected" << std::endl;
+    std::cout << "[SERVER] Client " << static_cast<int>(idClient) << " connected" << std::endl;
     // Add game-specific logic here
 }
 
 void rserv::Server::onClientDisconnected(uint8_t idClient) {
-    std::cout << "[Server] Client " << static_cast<int>(idClient)
+    std::cout << "[SERVER] Client " << static_cast<int>(idClient)
         << " disconnected" << std::endl;
     // Add game-specific cleanup logic here
 }
 
 void rserv::Server::onPacketReceived(
     uint8_t idClient, const pm::IPacketManager &packet) {
-    std::cout << "[Server] Received packet from client "
+    std::cout << "[SERVER] Received packet from client "
         << static_cast<int>(idClient) << std::endl;
     (void)packet;
     // Add game-specific packet processing logic here
