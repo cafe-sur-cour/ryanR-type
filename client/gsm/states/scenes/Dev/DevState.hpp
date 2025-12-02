@@ -11,6 +11,8 @@
 #include "../../../../systems/rendering/SpriteRenderingSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
+#include "../../../../../common/Parser/Parser.hpp"
+
 namespace gsm {
 
 class DevState : public AGameState {
@@ -32,7 +34,7 @@ private:
     std::shared_ptr<ecs::SpriteRenderingSystem> _spriteRenderingSystem;
     std::shared_ptr<ecs::SoundSystem> _soundSystem;
     std::shared_ptr<EntityPrefabManager> _prefabManager;
-    ecs::Entity _playerId;
+    std::shared_ptr<Parser> _parser;
 };
 
 }  // namespace gsm
