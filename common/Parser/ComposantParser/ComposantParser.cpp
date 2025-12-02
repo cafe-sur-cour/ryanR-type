@@ -49,6 +49,9 @@ std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::pa
 
     for (const auto& field : fieldsDef) {
         if (componentData.find(field.name) == componentData.end()) {
+            if (field.optional) {
+                continue;
+            }
             throw err::ParserError("Missing field: " + field.name +
                 " in component " + componentName, err::ParserError::MISSING_FIELD);
         }
@@ -94,6 +97,22 @@ std::shared_ptr<FieldValue> ComposantParser::parseFieldValue
                 throw err::ParserError("Invalid int format",
                     err::ParserError::TYPE_MISMATCH);
             return std::make_shared<FieldValue>(jsonValue.get<int>());
+        }
+        case FieldType::OBJECT: {
+            if (!jsonValue.is_object())
+                throw err::ParserError("Invalid object format",
+                    err::ParserError::TYPE_MISMATCH);
+            std::map<std::string, std::shared_ptr<FieldValue>> objMap;
+            for (auto& [key, value] : jsonValue.items()) {
+                if (value.is_number_integer()) {
+                    objMap[key] = std::make_shared<FieldValue>(value.get<int>());
+                } else if (value.is_number_float()) {
+                    objMap[key] = std::make_shared<FieldValue>(value.get<float>());
+                } else if (value.is_string()) {
+                    objMap[key] = std::make_shared<FieldValue>(value.get<std::string>());
+                }
+            }
+            return std::make_shared<FieldValue>(objMap);
         }
         default:
             throw err::ParserError("Unknown field type", err::ParserError::UNKNOWN);
