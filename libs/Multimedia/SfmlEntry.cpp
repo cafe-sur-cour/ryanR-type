@@ -10,7 +10,7 @@
 #include "SfmlWindow.hpp"
 #include "SfmlEvent.hpp"
 #include "SfmlAudio.hpp"
-#include "../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../common/resourceManager/ResourceManager.hpp"
 #include "../../common/DLLoader/LoaderType.hpp"
 #include "../../client/constants.hpp"
 
@@ -20,11 +20,11 @@ extern "C" {
     }
 
     void* createEvent(void* resourceManager, void* window) {
-        auto resManager = static_cast<ecs::ResourceManager*>(resourceManager);
+        auto resManager = static_cast<ResourceManager*>(resourceManager);
         auto rawWindow = static_cast<gfx::IWindow*>(window);
-        auto sharedResManager = std::shared_ptr<ecs::ResourceManager>(
+        auto sharedResManager = std::shared_ptr<ResourceManager>(
             resManager,
-            [](ecs::ResourceManager*){}
+            [](ResourceManager*){}
         );
         auto sharedWindow = std::shared_ptr<gfx::IWindow>(
             rawWindow,

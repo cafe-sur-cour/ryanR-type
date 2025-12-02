@@ -7,7 +7,6 @@
 
 #include "ResourceManager.hpp"
 
-namespace ecs {
 
 template<typename T>
 void ResourceManager::add(std::shared_ptr<T> resource) {
@@ -23,5 +22,3 @@ template<typename T>
 bool ResourceManager::has() {
     return resources.find(typeid(T).hash_code()) != resources.end();
 }
-
-} // namespace ecs

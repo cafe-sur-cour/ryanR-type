@@ -10,7 +10,7 @@
 #include "../../components/rendering/RectangleRenderComponent.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
-#include "../../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IWindow.hpp"
 
 

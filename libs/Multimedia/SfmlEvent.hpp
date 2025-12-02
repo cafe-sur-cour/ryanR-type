@@ -13,11 +13,11 @@
 #include "IEvent.hpp"
 #include "IWindow.hpp"
 #include "SfmlKeyMappings.hpp"
-#include "../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../common/resourceManager/ResourceManager.hpp"
 
 class SfmlEvent : public gfx::IEvent {
     public:
-        SfmlEvent(std::shared_ptr<ecs::ResourceManager> resourceManager, std::shared_ptr<gfx::IWindow> window);
+        SfmlEvent(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<gfx::IWindow> window);
         ~SfmlEvent() override;
         void init() override;
         event_t pollEvents() override;
@@ -38,7 +38,7 @@ class SfmlEvent : public gfx::IEvent {
         bool isJoystickAxisPressed(event_t key);
 
         // Member variables
-        std::shared_ptr<ecs::ResourceManager> _resourceManager;
+        std::shared_ptr<ResourceManager> _resourceManager;
         std::shared_ptr<gfx::IWindow> _window;
         std::map<event_t, sf::Keyboard::Key> _keyMap;
         std::map<sf::Keyboard::Key, event_t> _reverseKeyMap;

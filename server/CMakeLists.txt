@@ -29,7 +29,7 @@ target_link_libraries(${SERVER_LIB_NAME}
 )
 
 add_subdirectory(gsm)
-add_subdirectory(initRessourcesManager)
+add_subdirectory(initResourcesManager)
 
 set(SERVER_BIN_NAME r-type_server)
 

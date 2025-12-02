@@ -8,7 +8,7 @@
 #include "Server.hpp"
 #include "Utils.hpp"
 #include "ServerConfig.hpp"
-#include "../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../common/resourceManager/ResourceManager.hpp"
 
 #ifndef CORE_HPP_
 #define CORE_HPP_
@@ -23,7 +23,7 @@ class Core {
 
         std::shared_ptr<rserv::Server> getServer() const;
         std::shared_ptr<rserv::ServerConfig> getConfig() const;
-        std::shared_ptr<ecs::ResourceManager> getResourceManager() const;
+        std::shared_ptr<ResourceManager> getResourceManager() const;
 
     protected:
     private:
@@ -31,7 +31,7 @@ class Core {
         std::shared_ptr<rserv::Server> _server;
 
         /* Add esc related elem here */
-        std::shared_ptr<ecs::ResourceManager> _resourceManager;
+        std::shared_ptr<ResourceManager> _resourceManager;
 };
 
 #endif /* !CORE_HPP_ */
