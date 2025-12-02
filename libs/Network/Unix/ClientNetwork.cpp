@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <string>
 #include <memory>
+#include <vector>
 
 #include "ClientNetwork.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
@@ -86,14 +87,15 @@ bool UnixClientNetwork::isConnected() const {
     return _connected;
 }
 
-uint8_t UnixClientNetwork::acceptConnection(std::shared_ptr<IBuffer> buffer) {
-    // Not applicable for client
-    (void)buffer;
+uint8_t UnixClientNetwork::acceptConnection(
+    asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
+    (void)id;
+    (void)packetManager;
     return 0;
 }
 
-void UnixClientNetwork::sendTo(uint8_t connectionId, const pm::IPacketManager &packet) {
-    (void)connectionId;
+void UnixClientNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
+    (void)id;
 
     if (!_connected) {
         std::cerr << "[UnixClientNetwork] Not connected to server" << std::endl;
@@ -118,7 +120,7 @@ void UnixClientNetwork::sendTo(uint8_t connectionId, const pm::IPacketManager &p
 
 void UnixClientNetwork::broadcast(const pm::IPacketManager &packet) {
     // For client, broadcast is the same as sending to the server
-    sendTo(0, packet);
+    (void)packet;
 }
 
 bool UnixClientNetwork::hasIncomingData() const {
