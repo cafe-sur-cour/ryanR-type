@@ -12,10 +12,11 @@
 #include "SfmlAudio.hpp"
 #include "../../common/ECS/resourceManager/ResourceManager.hpp"
 #include "../../common/DLLoader/LoaderType.hpp"
+#include "../../client/constants.hpp"
 
 extern "C" {
     void* createWindow() {
-        return new SfmlWindow("R-Type", 1920, 1080);
+        return new SfmlWindow("R-Type", constants::WINDOW_WIDTH, constants::WINDOW_HEIGHT);
     }
 
     void* createEvent(void* resourceManager, void* window) {

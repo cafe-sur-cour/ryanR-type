@@ -1,6 +1,7 @@
 #include "AGameStateMachine.hpp"
 #include <stack>
 #include <vector>
+#include <iostream>
 #include "../../../common/gsm/IGameState.hpp"
 
 namespace gsm {
@@ -34,6 +35,10 @@ void AGameStateMachine::popState() {
     }
 }
 
+void AGameStateMachine::requestStateChange(std::shared_ptr<IGameState> newState) {
+    _pendingState = newState;
+}
+
 void AGameStateMachine::update(float deltaTime) {
     if (_states.empty()) {
         return;
@@ -49,6 +54,11 @@ void AGameStateMachine::update(float deltaTime) {
 
     for (auto it = statesToUpdate.rbegin(); it != statesToUpdate.rend(); ++it) {
         (*it)->update(deltaTime);
+    }
+
+    if (_pendingState) {
+        changeState(_pendingState);
+        _pendingState.reset();
     }
 }
 
