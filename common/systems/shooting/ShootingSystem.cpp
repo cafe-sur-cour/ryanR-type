@@ -5,6 +5,7 @@
 ** ShootingSystem
 */
 
+#define _USE_MATH_DEFINES
 #include <memory>
 #include <cmath>
 #include "ShootingSystem.hpp"
