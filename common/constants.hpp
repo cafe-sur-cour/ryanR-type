@@ -40,7 +40,9 @@ namespace constants {
     const std::string PLAYERTAG = "PlayerTag";
     const std::string COLLIDERCOMPONENT = "ColliderComponent";
     const std::string SHOOTERTAG = "ShooterTag";
+    const std::string PROJECTILETAG = "ProjectileTag";
     const std::string SHOOTINGSTATSCOMPONENT = "ShootingStatsComponent";
+    const std::string RECTANGLERENDERCOMPONENT = "RectangleRenderComponent";
 
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
@@ -60,6 +62,13 @@ namespace constants {
     const std::string SHOTCOUNT_FIELD = "shotCount";
     const std::string ANGLEOFFSET_FIELD = "angleOffset";
     const std::string SPREADANGLE_FIELD = "spreadAngle";
+    const std::string SHOOTINGSTATSREF_FIELD = "shootingStatsRef";
+    const std::string WIDTH_FIELD = "width";
+    const std::string HEIGHT_FIELD = "height";
+    const std::string COLOR_FIELD = "color";
+    const std::string R_FIELD = "r";
+    const std::string G_FIELD = "g";
+    const std::string B_FIELD = "b";
 
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";
