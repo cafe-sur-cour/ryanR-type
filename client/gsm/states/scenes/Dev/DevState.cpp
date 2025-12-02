@@ -169,7 +169,6 @@ void DevState::update(float deltaTime) {
     }
 
     _systemManager->updateAllSystems(_resourceManager, _registry, deltaTime);
-    _registry->removeAllComponentsWithState(ecs::ComponentState::Processed);
 }
 
 void DevState::exit() {

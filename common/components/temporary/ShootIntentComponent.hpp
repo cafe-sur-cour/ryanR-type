@@ -15,10 +15,8 @@ namespace ecs {
 
 class ShootIntentComponent : public AComponent {
     public:
-        ShootIntentComponent(
-            const math::Vector2f &position = math::Vector2f(0.0f, 0.0f)
-        ) : _position(position) {
-            _state = Temporary;
+        ShootIntentComponent(const math::Vector2f &position = math::Vector2f(0.0f, 0.0f))
+            : _position(position) {
         };
         ~ShootIntentComponent() = default;
 
