@@ -19,6 +19,15 @@
             "startHeight": 96.0
         },
         "PlayerTag": { "target": "both" },
-        "ControllableTag": { "target": "both" }
+        "ControllableTag": { "target": "both" },
+        "ShooterTag": { "target": "both" },
+        "ShootingStatsComponent": {
+            "target": "both",
+            "fireRate": 1.0,
+            "projectileSpeed": 400.0,
+            "shotCount": 1,
+            "angleOffset": 0.0,
+            "spreadAngle": 0.0
+        }
     }
 }

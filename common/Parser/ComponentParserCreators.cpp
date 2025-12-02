@@ -12,6 +12,8 @@
 #include <utility>
 #include "Parser.hpp"
 #include "../constants.hpp"
+#include "../components/tags/ShooterTag.hpp"
+#include "../components/permanent/ShootingStatsComponent.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -48,10 +50,23 @@ void Parser::instanciateComponentDefinitions() {
         {constants::PLAYERTAG, {std::type_index(typeid(ecs::PlayerTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
+        {constants::SHOOTERTAG, {std::type_index(typeid(ecs::ShooterTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
         {constants::COLLIDERCOMPONENT, {std::type_index(typeid(ecs::ColliderComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::SIZE_FIELD, FieldType::VECTOR2F}
-        }}}
+        }}},
+        {constants::SHOOTINGSTATSCOMPONENT,
+            {std::type_index(typeid(ecs::ShootingStatsComponent)), {
+                {constants::TARGET_FIELD, FieldType::STRING},
+                {constants::FIRERATE_FIELD, FieldType::FLOAT},
+                {constants::PROJECTILESPEED_FIELD, FieldType::FLOAT},
+                {constants::SHOTCOUNT_FIELD, FieldType::INT},
+                {constants::ANGLEOFFSET_FIELD, FieldType::FLOAT},
+                {constants::SPREADANGLE_FIELD, FieldType::FLOAT}
+            }
+        }},
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
         std::pair<std::type_index, std::vector<Field>>>>(componentDefinitions);
@@ -104,10 +119,28 @@ void Parser::instanciateComponentCreators() {
         return std::make_shared<ecs::PlayerTag>();
     });
 
+    registerComponent<ecs::ShooterTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::ShooterTag>();
+    });
+
     registerComponent<ecs::ColliderComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto size = std::get<math::Vector2f>(*fields.at(constants::SIZE_FIELD));
         return std::make_shared<ecs::ColliderComponent>(math::Vector2f(0.0f, 0.0f), size);
+    });
+
+    registerComponent<ecs::ShootingStatsComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto fireRate = std::get<float>(*fields.at(constants::FIRERATE_FIELD));
+        auto projectileSpeed = std::get<float>(*fields.at(constants::PROJECTILESPEED_FIELD));
+        auto shotCount = std::get<int>(*fields.at(constants::SHOTCOUNT_FIELD));
+        auto angleOffset = std::get<float>(*fields.at(constants::ANGLEOFFSET_FIELD));
+        auto spreadAngle = std::get<float>(*fields.at(constants::SPREADANGLE_FIELD));
+        ecs::MultiShotPattern pattern(shotCount, spreadAngle, angleOffset);
+        return std::make_shared<ecs::ShootingStatsComponent>(
+            fireRate, nullptr, projectileSpeed, pattern
+        );
     });
 }
 
