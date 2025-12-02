@@ -13,7 +13,6 @@
 #include "../../../common/components/tags/PlayerTag.hpp"
 #include "../../../common/ECS/resourceManager/IInputProvider.hpp"
 #include "../../../common/components/temporary/ShootIntentComponent.hpp"
-#include "../../../common/components/permanent/TransformComponent.hpp"
 
 namespace ecs {
 
@@ -37,11 +36,8 @@ void ShootInputSystem::update(
     auto playerView = registry->view<ControllableTag, ShooterTag, PlayerTag>();
 
     for (auto playerId : playerView) {
-        auto playerTransform = registry->getComponent<TransformComponent>(playerId);
+        auto shootIntentComponent = std::make_shared<ShootIntentComponent>();
 
-        auto shootIntentComponent = std::make_shared<ShootIntentComponent>(
-            playerTransform->getPosition()
-        );
         if (!registry->hasComponent<ShootIntentComponent>(playerId))
             registry->addComponent<ShootIntentComponent>(playerId, shootIntentComponent);
     }
