@@ -72,10 +72,6 @@ add_executable(EntityPrefabManagerTests common/Prefab/EntityPrefabManagerTests.c
 target_link_libraries(EntityPrefabManagerTests PREFAB ECS GTest::gtest GTest::gtest_main)
 add_test(NAME EntityPrefabManagerTests COMMAND EntityPrefabManagerTests)
 
-add_executable(PlayerPrefabTests common/Prefab/PlayerPrefabTests.cpp)
-target_link_libraries(PlayerPrefabTests PREFAB ECS GTest::gtest GTest::gtest_main)
-add_test(NAME PlayerPrefabTests COMMAND PlayerPrefabTests)
-
 add_executable(ColliderComponentTests common/ECS/component/ColliderComponentTests.cpp)
 target_link_libraries(ColliderComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME ColliderComponentTests COMMAND ColliderComponentTests)
@@ -106,3 +102,7 @@ add_test(NAME SerializerTests COMMAND SerializerTests)
 add_executable(ErrorTests common/Error/Error-test.cpp)
 target_link_libraries(ErrorTests ERROR GTest::gtest GTest::gtest_main)
 add_test(NAME ErrorTests COMMAND ErrorTests)
+
+add_executable(ParserTests common/Parser/ParserTests.cpp)
+target_link_libraries(ParserTests PARSER PREFAB ECS ERROR GTest::gtest GTest::gtest_main)
+add_test(NAME ParserTests COMMAND ParserTests)

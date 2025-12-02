@@ -13,4 +13,6 @@ target_sources(${ERROR_LIB} PUBLIC
     ServerErrror.hpp
     PacketError.cpp
     PacketError.hpp
+    ParserError.cpp
+    ParserError.hpp
 )
