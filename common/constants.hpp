@@ -26,8 +26,10 @@ namespace constants {
     constexpr float GAMEPAD_DEADZONE = 0.15f;
     constexpr int SMOOTH_MOVEMENT_ITERATIONS = 4;
 
-    const std::string CONFIG_PATH = "configs/";
+    /* Paths */
+    const std::string CONFIG_PATH = "configs/entities/";
 
+    /* Parsing constants */
     const std::string SERVER_VALUE = "server";
     const std::string CLIENT_VALUE = "client";
     const std::string BOTH_VALUE = "both";
