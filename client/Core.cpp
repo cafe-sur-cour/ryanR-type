@@ -10,7 +10,7 @@
 #include <chrono>
 #include <memory>
 #include <string>
-#include "initRessourcesManager/initRessourcesManager.hpp"
+#include "initResourcesManager/initResourcesManager.hpp"
 #include "gsm/states/scenes/MainMenu/MainMenuState.hpp"
 #include "../../common/Signal/Signal.hpp"
 #include "../../libs/Multimedia/IWindow.hpp"

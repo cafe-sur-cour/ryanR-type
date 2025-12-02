@@ -1,6 +1,6 @@
 target_sources(${CLIENT_BIN_NAME} PRIVATE
-    initRessourcesManager.hpp
-    initRessourcesManager.cpp
+    initResourcesManager.hpp
+    initResourcesManager.cpp
     GraphicalInputProvider.hpp
     GraphicalInputProvider.cpp
 )

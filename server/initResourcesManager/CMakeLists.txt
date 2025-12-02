@@ -1,6 +1,6 @@
 target_sources(${SERVER_LIB_NAME} PRIVATE
-    initRessourcesManager.hpp
-    initRessourcesManager.cpp
+    initResourcesManager.hpp
+    initResourcesManager.cpp
     ServerInputProvider.hpp
     ServerInputProvider.cpp
 )

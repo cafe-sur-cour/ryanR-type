@@ -25,10 +25,11 @@ target_link_libraries(${SERVER_LIB_NAME}
         NetworkClient
         Packet
         asio::asio
+        nlohmann_json::nlohmann_json
 )
 
 add_subdirectory(gsm)
-add_subdirectory(initRessourcesManager)
+add_subdirectory(initResourcesManager)
 
 set(SERVER_BIN_NAME r-type_server)
 

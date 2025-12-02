@@ -14,9 +14,10 @@
 #include "../../../common/constants.hpp"
 #include "../../../common/components/tags/ControllableTag.hpp"
 #include "../../../common/components/temporary/InputIntentComponent.hpp"
-#include "../../../common/ECS/resourceManager/IInputProvider.hpp"
-#include "../../../common/ECS/resourceManager/InputAction.hpp"
+#include "../../../common/ImputMapping/IInputProvider.hpp"
+#include "../../../common/ImputMapping/InputAction.hpp"
 #include "../../ClientNetwork.hpp"
+
 
 namespace ecs {
 
