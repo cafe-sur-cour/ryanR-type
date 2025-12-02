@@ -10,18 +10,24 @@
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index, std::vector<Field>>> componentDefinitions = {
         {"TransformComponent", {std::type_index(typeid(ecs::TransformComponent)), {
+            {"target", FieldType::STRING},
             {"position", FieldType::VECTOR2F},
             {"scale", FieldType::VECTOR2F},
             {"rotation", FieldType::FLOAT}
         }}},
-        {"VelocityComponent", {std::type_index(typeid(ecs::VelocityComponent)), {}}},
+        {"VelocityComponent", {std::type_index(typeid(ecs::VelocityComponent)), {
+            {"target", FieldType::STRING}
+        }}},
         {"SpeedComponent", {std::type_index(typeid(ecs::SpeedComponent)), {
+            {"target", FieldType::STRING},
             {"speed", FieldType::FLOAT}
         }}},
         {"SpriteComponent", {std::type_index(typeid(ecs::SpriteComponent)), {
+            {"target", FieldType::STRING},
             {"filePath", FieldType::STRING}
         }}},
         {"AnimationComponent", {std::type_index(typeid(ecs::AnimationComponent)), {
+            {"target", FieldType::STRING},
             {"animationPath", FieldType::STRING},
             {"frameWidth", FieldType::FLOAT},
             {"frameHeight", FieldType::FLOAT},
@@ -29,9 +35,14 @@ void Parser::instanciateComponentDefinitions() {
             {"startWidth", FieldType::FLOAT},
             {"startHeight", FieldType::FLOAT}
         }}},
-        {"ControllableTag", {std::type_index(typeid(ecs::ControllableTag)), {}}},
-        {"PlayerTag", {std::type_index(typeid(ecs::PlayerTag)), {}}},
+        {"ControllableTag", {std::type_index(typeid(ecs::ControllableTag)), {
+            {"target", FieldType::STRING}
+        }}},
+        {"PlayerTag", {std::type_index(typeid(ecs::PlayerTag)), {
+            {"target", FieldType::STRING}
+        }}},
         {"ColliderComponent", {std::type_index(typeid(ecs::ColliderComponent)), {
+            {"target", FieldType::STRING},
             {"size", FieldType::VECTOR2F}
         }}}
     };
