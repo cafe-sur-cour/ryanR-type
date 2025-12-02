@@ -15,10 +15,13 @@
 #include "../../components/base/IComponent.hpp"
 #include "../ParserParam.hpp"
 #include <nlohmann/json.hpp>
+#include <functional>
 
 class ComposantParser {
     public:
-        ComposantParser(const std::map<std::string, std::pair<std::type_index, std::vector<Field>>>& componentDefinitions, const std::map<std::type_index, ComponentCreator>& componentCreators);
+        using ShouldParseComponentCallback = std::function<bool(const std::map<std::string, std::shared_ptr<FieldValue>>&)>;
+        
+        ComposantParser(const std::map<std::string, std::pair<std::type_index, std::vector<Field>>>& componentDefinitions, const std::map<std::type_index, ComponentCreator>& componentCreators, const ShouldParseComponentCallback& shouldParseCallback = nullptr);
         ~ComposantParser();
 
         std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> parseComponent(const std::string& componentName, const nlohmann::json& componentData);
@@ -28,6 +31,7 @@ class ComposantParser {
         std::shared_ptr<FieldValue> parseFieldValue(const nlohmann::json& jsonValue, FieldType type);
         const std::map<std::string, std::pair<std::type_index, std::vector<Field>>>& _componentDefinitions;
         const std::map<std::type_index, ComponentCreator>& _componentCreators;
+        ShouldParseComponentCallback _shouldParseCallback;
 };
 
 #endif /* !COMPOSANTPARSER_HPP_ */
