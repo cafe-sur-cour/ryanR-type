@@ -16,10 +16,39 @@
 #include "../../../common/components/temporary/InputIntentComponent.hpp"
 #include "../../../common/ECS/resourceManager/IInputProvider.hpp"
 #include "../../../common/ECS/resourceManager/InputAction.hpp"
+#include "../../ClientNetwork.hpp"
 
 namespace ecs {
 
 MovementInputSystem::MovementInputSystem() {
+}
+
+std::pair<int, double> MovementInputSystem::formatDirection(const math::Vector2f &direction) const {
+
+    float absX = std::abs(direction.getX());
+    float absY = std::abs(direction.getY());
+
+    int eventType;
+    double depth;
+
+    if (absY >= absX) {
+        if (direction.getY() < 0) {
+            eventType = static_cast<int>(constants::EventType::UP);
+        } else {
+            eventType = static_cast<int>(constants::EventType::DOWN);
+        }
+        depth = absY;
+    }
+    else {
+        if (direction.getX() > 0) {
+            eventType = static_cast<int>(constants::EventType::RIGHT);
+        } else {
+            eventType = static_cast<int>(constants::EventType::LEFT);
+        }
+        depth = absX;
+    }
+    depth = std::clamp(depth, 0.000, 1.0);
+    return {eventType, depth};
 }
 
 void MovementInputSystem::update(
@@ -32,8 +61,17 @@ void MovementInputSystem::update(
     auto view = registry->view<ControllableTag>();
     math::Vector2f movementDirection = getMovementDirection(resourceManager);
 
-    // if resourceManager->has<network
-        // resourceManager->get<networ>->addToqueue
+    if (resourceManager->has<ClientNetwork>() &&
+        !(std::fabs(movementDirection.getX()) <= constants::EPS &&
+        std::fabs(movementDirection.getY()) <= constants::EPS)) {
+        std::pair<int, double> formatted =
+            formatDirection(movementDirection);
+        resourceManager->get<ClientNetwork>()->addToEventQueue({
+            static_cast<constants::EventType>(formatted.first),
+            formatted.second,
+            0.0
+        });
+    }
     for (auto entityId : view) {
         updateInputIntent(registry, entityId, movementDirection);
     }

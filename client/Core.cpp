@@ -21,11 +21,12 @@ Core::Core() {
     Signal::setupSignalHandlers();
 
     initLibraries();
-
+    initNetwork();
     this->_resourceManager = initRessourcesManager(
         this->_windowLoader,
         this->_eventLoader,
-        this->_audioLoader
+        this->_audioLoader,
+        this->_clientNetwork
     );
 
     this->_gsm = std::make_shared<gsm::GameStateMachine>();
@@ -33,8 +34,6 @@ Core::Core() {
         std::make_shared<gsm::MainMenuState>(this->_gsm, this->_resourceManager);
     this->_gsm->changeState(mainMenuState);
 
-    initNetwork();
-    // Remove network thread start from constructor
 }
 
 Core::~Core() {
@@ -124,7 +123,7 @@ void Core::networkLoop() {
         std::cout << "[Core] Sending connection packet to server" << std::endl;
         this->_clientNetwork->connectionPacket();
         // sleep for five
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        // std::this_thread::sleep_for(std::chrono::seconds(5));
         // if i still don't have id then failed
         std::cout << " Stopped sleeping" << std::endl;
     }
