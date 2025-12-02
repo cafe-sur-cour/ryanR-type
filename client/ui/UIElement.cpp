@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 #include "../../libs/Multimedia/IWindow.hpp"
+#include "../../common/constants.hpp"
 
 namespace ui {
 
@@ -77,17 +78,18 @@ void UIElement::handleInput(const math::Vector2f& mousePos, bool mousePressed) {
         if (mousePressed) {
             if (_state != UIState::Pressed) {
                 _state = UIState::Pressed;
-                if (_onClick) _onClick();
+                if (_onClick)
+                    _onClick();
             }
         } else {
             if (_state == UIState::Pressed) {
                 _state = UIState::Hovered;
-                if (_onRelease) _onRelease();
+                if (_onRelease)
+                    _onRelease();
             } else {
                 _state = UIState::Hovered;
-                if (!wasHovered && _onHover) {
+                if (!wasHovered && _onHover)
                     _onHover();
-                }
             }
         }
     } else {
@@ -124,8 +126,6 @@ void UIElement::render() {
 }
 
 void UIElement::update(float deltaTime) {
-    (void)deltaTime;
-
     for (auto& child : _children) {
         child->update(deltaTime);
     }
@@ -174,7 +174,7 @@ void UIElement::setOnRelease(std::function<void()> callback) {
 std::pair<int, int> UIElement::getWindowSize() const {
     auto resourceManager = _resourceManager.lock();
     if (!resourceManager) {
-        return {800, 600};  /* Fallback size, should never happen */
+        return {constants::WINDOW_WIDTH, constants::WINDOW_HEIGHT};
     }
     return resourceManager->get<gfx::IWindow>()->getWindowSize();
 }
