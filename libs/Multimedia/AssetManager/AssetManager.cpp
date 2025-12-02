@@ -18,8 +18,9 @@ AssetManager::AssetManager() {
 }
 
 std::shared_ptr<AssetData> AssetManager::getAsset(const std::string& path) {
-    auto it = embeddedAssets.find(path);
-    if (it == embeddedAssets.end()) {
+    auto& assets = getEmbeddedAssets();
+    auto it = assets.find(path);
+    if (it == assets.end()) {
         std::cerr << "[AssetManager] Asset not found: " << path << std::endl;
         return nullptr;
     }

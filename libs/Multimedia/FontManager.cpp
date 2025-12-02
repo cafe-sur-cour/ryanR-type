@@ -8,6 +8,7 @@
 #include "FontManager.hpp"
 #include <iostream>
 #include <memory>
+#include <vector>
 #include <string>
 
 namespace gfx {
@@ -33,8 +34,10 @@ std::shared_ptr<sf::Font> FontManager::getFont(const std::string& path) {
         return nullptr;
     }
 
+    std::vector<unsigned char> fontData = asset->data;
+
     auto font = std::make_shared<sf::Font>();
-    if (!font->openFromMemory(asset->data.data(), asset->size)) {
+    if (!font->openFromMemory(fontData.data(), fontData.size())) {
         std::cerr << "[FontManager] Failed to load font from memory: "
                    << path << std::endl;
         return nullptr;
