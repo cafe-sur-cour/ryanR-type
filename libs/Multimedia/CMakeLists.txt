@@ -59,6 +59,7 @@ if(MSVC)
         ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_2.cpp
         ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_3.cpp
         ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_4.cpp
+        ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_5.cpp
         PROPERTIES COMPILE_FLAGS "/Od /bigobj"
     )
 endif()
