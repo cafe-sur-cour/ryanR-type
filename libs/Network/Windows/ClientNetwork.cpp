@@ -8,6 +8,8 @@
 #include <vector>
 #include <memory>
 #include <stdexcept>
+#include <utility>
+#include <string>
 
 #include "ClientNetwork.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
@@ -29,7 +31,8 @@ void WindowsNetwork::stop() {
 }
 
 
-uint8_t WindowsNetwork::acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
+uint8_t WindowsNetwork::acceptConnection(
+    asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
     (void)id;
     (void)packetManager;
     return 0;

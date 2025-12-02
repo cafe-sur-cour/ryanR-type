@@ -1,5 +1,6 @@
 add_library(${NETWORK_SERVER_LIB_NAME} SHARED
     ServerNetwork.cpp
+    ClientNetwork.cpp
     ../ANetwork.cpp
 )
 
