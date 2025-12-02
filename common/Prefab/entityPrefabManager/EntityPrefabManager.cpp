@@ -7,6 +7,7 @@
 
 #include "EntityPrefabManager.hpp"
 #include <iostream>
+#include "../../Error/ParserError.hpp"
 #include <memory>
 #include <string>
 
@@ -51,7 +52,5 @@ ecs::Entity EntityPrefabManager::createEntityFromPrefab(const std::string
 
     if (prefab && registry)
         return prefab->instantiate(registry);
-    std::cout << "Error: Prefab '" << prefabName <<
-        "' not found or registry is null." << std::endl;
-    return 0;
+    throw err::ParserError(std::string("Prefab '") + prefabName + "' not found or registry is null.", err::ParserError::UNKNOWN);
 }

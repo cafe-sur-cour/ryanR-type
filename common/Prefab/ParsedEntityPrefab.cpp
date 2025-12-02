@@ -7,6 +7,7 @@
 
 #include "ParsedEntityPrefab.hpp"
 #include "../Parser/ParserParam.hpp"
+#include "../Error/ParserError.hpp"
 #include <iostream>
 
 ParsedEntityPrefab::ParsedEntityPrefab(const std::string& name, const std::map<std::type_index, ComponentAdder>& adders) 
@@ -41,7 +42,7 @@ ecs::Entity ParsedEntityPrefab::instantiate(const std::shared_ptr<ecs::Registry>
         if (it != _componentAdders.end()) {
             it->second(registry, entity, component);
         } else {
-            std::cerr << "Unknown component type: " << typeIndex.name() << std::endl;
+            throw err::ParserError(std::string("Unknown component type: ") + typeIndex.name(), err::ParserError::UNKNOWN);
         }
     }
     return entity;

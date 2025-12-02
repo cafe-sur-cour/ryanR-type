@@ -22,5 +22,7 @@ target_include_directories(${PREFAB_LIB} PUBLIC
 target_link_libraries(${PREFAB_LIB} PUBLIC
     ECS
     ENTITY_PREFAB_MANAGER
+    ERROR
     nlohmann_json::nlohmann_json
 )
+

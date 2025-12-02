@@ -17,5 +17,6 @@ target_include_directories(${ENTITY_PARSER_LIB} PUBLIC
 target_link_libraries(${ENTITY_PARSER_LIB} PUBLIC
     COMPOSANT_PARSER
     PREFAB
+    ERROR
     nlohmann_json::nlohmann_json
 )

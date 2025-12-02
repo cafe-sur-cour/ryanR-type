@@ -16,6 +16,7 @@
 #include "../../components/tags/ControllableTag.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include <stdexcept>
+#include "../../Error/ParserError.hpp"
 #include <typeindex>
 #include <map>
 
@@ -28,7 +29,7 @@ ComposantParser::~ComposantParser() {
 std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::parseComponent(const std::string& componentName, const nlohmann::json& componentData) {
 
     if (_componentDefinitions.find(componentName) == _componentDefinitions.end()) {
-        throw std::runtime_error("Unknown component: " + componentName);
+        throw err::ParserError("Unknown component: " + componentName, err::ParserError::UNKNOWN);
     }
 
     auto [typeIndex, fieldsDef] = _componentDefinitions.at(componentName);
@@ -37,7 +38,7 @@ std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::pa
 
     for (const auto& field : fieldsDef) {
         if (componentData.find(field.name) == componentData.end()) {
-            throw std::runtime_error("Missing field: " + field.name + " in component " + componentName);
+            throw err::ParserError("Missing field: " + field.name + " in component " + componentName, err::ParserError::MISSING_FIELD);
         }
         fields[field.name] = parseFieldValue(componentData[field.name], field.type);
     }
@@ -54,30 +55,30 @@ std::shared_ptr<FieldValue> ComposantParser::parseFieldValue(const nlohmann::jso
     switch (type) {
         case FieldType::VECTOR2F: {
             if (!jsonValue.is_object() || !jsonValue.contains("x") || !jsonValue.contains("y")) {
-                throw std::runtime_error("Invalid Vector2f format");
+                throw err::ParserError("Invalid Vector2f format", err::ParserError::INVALID_FORMAT);
             }
             math::Vector2f vec(jsonValue["x"], jsonValue["y"]);
             return std::make_shared<FieldValue>(vec);
         }
         case FieldType::FLOAT: {
             if (!jsonValue.is_number()) {
-                throw std::runtime_error("Invalid float format");
+                throw err::ParserError("Invalid float format", err::ParserError::TYPE_MISMATCH);
             }
             return std::make_shared<FieldValue>(jsonValue.get<float>());
         }
         case FieldType::STRING: {
             if (!jsonValue.is_string()) {
-                throw std::runtime_error("Invalid string format");
+                throw err::ParserError("Invalid string format", err::ParserError::TYPE_MISMATCH);
             }
             return std::make_shared<FieldValue>(jsonValue.get<std::string>());
         }
         case FieldType::INT: {
             if (!jsonValue.is_number_integer()) {
-                throw std::runtime_error("Invalid int format");
+                throw err::ParserError("Invalid int format", err::ParserError::TYPE_MISMATCH);
             }
             return std::make_shared<FieldValue>(jsonValue.get<int>());
         }
         default:
-            throw std::runtime_error("Unknown field type");
+            throw err::ParserError("Unknown field type", err::ParserError::UNKNOWN);
     }
 }
