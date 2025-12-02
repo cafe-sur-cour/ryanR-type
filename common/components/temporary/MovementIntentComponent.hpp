@@ -17,7 +17,6 @@ class MovementIntentComponent : public AComponent {
     public:
         MovementIntentComponent(const math::Vector2f &direction = math::Vector2f(0.0f, 0.0f), bool active = false)
             : _direction(direction), _active(active) {
-            _state = Temporary;
         };
         ~MovementIntentComponent() = default;
 

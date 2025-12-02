@@ -67,7 +67,6 @@ TEST_F(MovementSystemsTest, EntityWithIntentAndTransform_UsesBaseSpeed) {
 
     // Intent should be processed
     auto updatedIntent = registry->getComponent<InputIntentComponent>(entityId);
-    EXPECT_EQ(updatedIntent->getState(), ComponentState::Processed);
 
     // Now apply movement
     float deltaTime = 0.016f;
@@ -108,7 +107,6 @@ TEST_F(MovementSystemsTest, EntityWithIntentAndTransform_MovesVertically) {
 
     // Intent processed
     auto updatedIntent = registry->getComponent<InputIntentComponent>(entityId);
-    EXPECT_EQ(updatedIntent->getState(), ComponentState::Processed);
 }
 
 TEST_F(MovementSystemsTest, ZeroDirectionIntent_NoMovement) {
@@ -136,10 +134,6 @@ TEST_F(MovementSystemsTest, ZeroDirectionIntent_NoMovement) {
     auto updatedTransform = registry->getComponent<TransformComponent>(entityId);
     EXPECT_EQ(updatedTransform->getPosition().getX(), 0.0f);
     EXPECT_EQ(updatedTransform->getPosition().getY(), 0.0f);
-
-    // Intent processed
-    auto updatedIntent = registry->getComponent<InputIntentComponent>(entityId);
-    EXPECT_EQ(updatedIntent->getState(), ComponentState::Processed);
 }
 
 TEST_F(MovementSystemsTest, EntityWithIntentWithoutTransform_CreatesVelocity) {
@@ -160,7 +154,6 @@ TEST_F(MovementSystemsTest, EntityWithIntentWithoutTransform_CreatesVelocity) {
 
     // Intent processed
     auto updatedIntent = registry->getComponent<InputIntentComponent>(entityId);
-    EXPECT_EQ(updatedIntent->getState(), ComponentState::Processed);
 
     // Movement system does nothing since no Transform
     movementSystem->update(resourceManager, registry, 0.016f);

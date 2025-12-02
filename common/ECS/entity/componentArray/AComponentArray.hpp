@@ -27,7 +27,6 @@ class AComponentArray : public IComponentArray {
         void remove(Entity entityId);
         bool has(Entity entityId) const;
 
-        void removeAllComponentsWithState(ComponentState state) override;
         Entity getMaxEntityId() const override;
 
     private:
