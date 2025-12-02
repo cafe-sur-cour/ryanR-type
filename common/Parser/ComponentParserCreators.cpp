@@ -53,7 +53,8 @@ void Parser::instanciateComponentDefinitions() {
             {constants::SIZE_FIELD, FieldType::VECTOR2F}
         }}}
     };
-    _componentDefinitions = std::make_shared<std::map<std::string, std::pair<std::type_index, std::vector<Field>>>>(componentDefinitions);
+    _componentDefinitions = std::make_shared<std::map<std::string,
+        std::pair<std::type_index, std::vector<Field>>>>(componentDefinitions);
 }
 
 void Parser::instanciateComponentCreators() {
