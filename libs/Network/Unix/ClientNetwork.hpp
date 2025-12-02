@@ -30,12 +30,13 @@ class UnixClientNetwork : public ANetwork {
         void disconnect();
         bool isConnected() const;
 
-        uint8_t acceptConnection(std::shared_ptr<IBuffer> buffer) override;
+        uint8_t acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) override;
 
-        void sendTo(uint8_t connectionId, const pm::IPacketManager &packet) override;
+        void sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override;
         void broadcast(const pm::IPacketManager &packet) override;
         bool hasIncomingData() const override;
         std::shared_ptr<pm::IPacketManager> receiveFrom(const uint8_t &connectionId) override;
+        std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override { return {}; }
 
     private:
         asio::ip::udp::endpoint _serverEndpoint;

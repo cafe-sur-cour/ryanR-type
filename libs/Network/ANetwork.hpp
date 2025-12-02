@@ -23,11 +23,12 @@ class ANetwork : public INetwork {
         virtual ~ANetwork() override = default;
         virtual void init(uint16_t port, const std::string host) override = 0;
         virtual void stop() override = 0;
-        virtual uint8_t acceptConnection(std::shared_ptr<IBuffer> buffer) override = 0;
-        virtual void sendTo(uint8_t connectionId, const pm::IPacketManager &packet) override = 0;
+        virtual uint8_t acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) override = 0;
+        virtual void sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override = 0;
         virtual void broadcast(const pm::IPacketManager &packet) override = 0;
         virtual bool hasIncomingData() const override = 0;
         virtual std::shared_ptr<pm::IPacketManager> receiveFrom(const uint8_t &connectionId) override = 0;
+        virtual std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override = 0;
 
         void setConnectionCallback(std::function<void(int)> onConnect) override;
         void setDisconnectionCallback(std::function<void(int)> onDisconnect) override;
