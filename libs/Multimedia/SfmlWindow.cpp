@@ -80,7 +80,7 @@ void SfmlWindow::drawText(std::string text, gfx::color_t color,
         return;
     }
 
-    sf::Text sfText(sf::String(text), *font, 24);
+    sf::Text sfText(*font, sf::String(text), 24);
     sfText.setFillColor(sf::Color(color.r, color.g, color.b));
     sfText.setPosition(sf::Vector2f(static_cast<float>(position.first),
         static_cast<float>(position.second)));
