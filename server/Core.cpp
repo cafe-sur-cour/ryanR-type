@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "Core.hpp"
-#include "initRessourcesManager/initRessourcesManager.hpp"
+#include "initResourcesManager/initResourcesManager.hpp"
 
 Core::Core() {
     this->_utils = std::make_shared<Utils>();
@@ -32,7 +32,7 @@ Core::~Core() {
 }
 
 void Core::init() {
-    this->_resourceManager = initRessourcesManager();
+    this->_resourceManager = initResourcesManager();
     this->_server->init();
 }
 

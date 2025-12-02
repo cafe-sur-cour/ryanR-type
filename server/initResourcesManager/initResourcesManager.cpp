@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** initRessourcesManager
+** initResourcesManager
 */
 
 #include <memory>
@@ -10,9 +10,9 @@
 #include "../../common/resourceManager/ResourceManager.hpp"
 #include "ServerInputProvider.hpp"
 #include "../ServerConfig.hpp"
-#include "initRessourcesManager.hpp"
+#include "initResourcesManager.hpp"
 
-std::shared_ptr<ResourceManager> initRessourcesManager() {
+std::shared_ptr<ResourceManager> initResourcesManager() {
     std::shared_ptr<ResourceManager> resourceManager =
         std::make_shared<ResourceManager>();
 

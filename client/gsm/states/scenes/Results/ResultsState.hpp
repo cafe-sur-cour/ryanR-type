@@ -15,7 +15,7 @@ namespace gsm {
 
 class ResultsState : public AGameState {
 public:
-    ResultsState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager>anager);
+    ResultsState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
     ~ResultsState() override = default;
 
     void enter() override;
