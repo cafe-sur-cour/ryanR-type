@@ -14,9 +14,14 @@
 #include "../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "ParserParam.hpp"
 
+typedef enum {
+    CLIENT,
+    SERVER
+} ParsingType;
+
 class Parser {
     public:
-        Parser(std::shared_ptr<EntityPrefabManager> prefab);
+        Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type);
         ~Parser();
 
         std::shared_ptr<EntityPrefabManager> getPrefabManager() const;
@@ -29,6 +34,10 @@ class Parser {
         void instanciateComponentCreators();
         void instanciateComponentAdders();
         const std::map<std::type_index, ComponentAdder>& getComponentAdders() const;
+        ParsingType getParsingType() const;
+        bool isClientParsing() const;
+        bool isServerParsing() const;
+        bool shouldParseComponent(std::map<std::string, std::shared_ptr<FieldValue>> fields) const;
 
     private:
         std::shared_ptr<EntityParser> _entityParser;
@@ -37,6 +46,7 @@ class Parser {
         std::map<std::string, std::pair<std::type_index, std::vector<Field>>> _componentDefinitions;
         std::map<std::type_index, ComponentCreator> _componentCreators;
         std::map<std::type_index, ComponentAdder> _componentAdders;
+        ParsingType _parsingType;
 };
 
 #endif /* !PARSER_HPP_ */

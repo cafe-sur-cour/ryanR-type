@@ -10,11 +10,14 @@
 #include <iostream>
 #include "../Prefab/ParsedEntityPrefab.hpp"
 
-Parser::Parser(std::shared_ptr<EntityPrefabManager> prefab) : _prefabManager(prefab) {
+Parser::Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type) : _prefabManager(prefab), _parsingType(type) {
     instanciateComponentDefinitions();
     instanciateComponentCreators();
     instanciateComponentAdders();
-    _entityParser = std::make_shared<EntityParser>(_componentDefinitions, _componentCreators, _componentAdders);
+    auto shouldParseCallback = [this](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> bool {
+        return this->shouldParseComponent(fields);
+    };
+    _entityParser = std::make_shared<EntityParser>(_componentDefinitions, _componentCreators, _componentAdders, shouldParseCallback);
 }
 
 const std::map<std::type_index, ComponentAdder>& Parser::getComponentAdders() const {
@@ -45,4 +48,30 @@ void Parser::parseEntity(std::string entityPath) {
     std::string name = std::static_pointer_cast<ParsedEntityPrefab>(prefab)->getName();
     std::cout << "Registering prefab: " << name << std::endl;
     _prefabManager->registerPrefab(name, prefab);
+}
+
+ParsingType Parser::getParsingType() const {
+    return _parsingType;
+}
+
+bool Parser::isClientParsing() const {
+    return _parsingType == ParsingType::CLIENT;
+}
+
+bool Parser::isServerParsing() const {
+    return _parsingType == ParsingType::SERVER;
+}
+
+bool Parser::shouldParseComponent(std::map<std::string, std::shared_ptr<FieldValue>> fields) const {
+    auto target = std::get<std::string>(*fields.at("target"));
+
+    if (target.empty())
+        return false;
+    if (target == "both")
+        return true;
+    if (target == "client" && isClientParsing())
+        return true;
+    if (target == "server" && isServerParsing())
+        return true;
+    return false;
 }
