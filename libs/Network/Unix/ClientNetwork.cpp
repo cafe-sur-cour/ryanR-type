@@ -86,8 +86,9 @@ bool UnixClientNetwork::isConnected() const {
     return _connected;
 }
 
-uint8_t UnixClientNetwork::acceptConnection() {
+uint8_t UnixClientNetwork::acceptConnection(std::shared_ptr<IBuffer> buffer) {
     // Not applicable for client
+    (void)buffer;
     return 0;
 }
 

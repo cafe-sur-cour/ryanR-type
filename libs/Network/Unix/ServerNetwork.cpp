@@ -78,36 +78,15 @@ void UnixServerNetwork::stop() {
     _isRunning = false;
 }
 
-uint8_t UnixServerNetwork::acceptConnection() {
+uint8_t UnixServerNetwork::acceptConnection(std::shared_ptr<IBuffer> buffer) {
+    (void)buffer;
+    (void)_nextClientId;
     if (!_socket || !_socket->is_open()) {
+        std::cerr << "[UnixServerNetwork] Socket is not open" << std::endl;
         return 0;
     }
 
-    asio::ip::udp::endpoint senderEndpoint;
-    std::array<char, 1024> buffer;  // Temporary buffer for receiving data
-    std::error_code ec;
-
-    size_t received = _socket->receive_from(asio::buffer(buffer),
-        senderEndpoint, 0, ec);
-    if (ec || received == 0) {
-        return 0;
-    }
-
-    for (const auto& [clientId, endpoint] : _clients) {
-        if (endpoint == senderEndpoint) {
-            return clientId;
-        }
-    }
-
-    uint8_t newClientId = _nextClientId++;
-    _clients[newClientId] = senderEndpoint;
-    if (_onConnectCallback) {
-        _onConnectCallback(newClientId);
-    }
-    std::cout << "[UnixServerNetwork] New client " << newClientId << " from "
-              << senderEndpoint.address().to_string() << ":" <<
-              senderEndpoint.port() << std::endl;
-    return newClientId;
+    return 0;
 }
 
 void UnixServerNetwork::sendTo(uint8_t connectionId, const pm::IPacketManager &packet) {

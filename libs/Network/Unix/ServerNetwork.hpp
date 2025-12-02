@@ -27,7 +27,7 @@ class UnixServerNetwork : public ANetwork {
         void init(uint16_t port, const std::string host) override;
         void stop() override;
 
-        uint8_t acceptConnection() override;
+        uint8_t acceptConnection(std::shared_ptr<IBuffer> buffer) override;
 
         void sendTo(uint8_t connectionId, const pm::IPacketManager &packet) override;
         void broadcast(const pm::IPacketManager &packet) override;
