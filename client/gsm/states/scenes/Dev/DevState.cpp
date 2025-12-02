@@ -21,6 +21,10 @@
 #include "../../../../systems/rendering/RectangleRenderingSystem.hpp"
 #include "../../../../../common/Prefab/PlayerPrefab/PlayerPrefab.hpp"
 #include "../../../../../common/components/tags/ObstacleTag.hpp"
+#include "../../../../../common/components/tags/ShooterTag.hpp"
+#include "../../../../systems/input/ShootInputSystem.hpp"
+#include "../../../../../../common/systems/shooting/ShootingSystem.hpp"
+#include "../../../../../../common/components/permanent/ShootingStatsComponent.hpp"
 
 namespace gsm {
 
@@ -45,6 +49,8 @@ DevState::DevState(
         std::make_shared<ecs::HitboxRenderingSystem>();
     auto rectangleRenderingSystem =
         std::make_shared<ecs::RectangleRenderingSystem>();
+    auto shootInputSystem = std::make_shared<ecs::ShootInputSystem>();
+    auto shootingSystem = std::make_shared<ecs::ShootingSystem>();
 
     _systemManager->addSystem(_inputToVelocitySystem);
     _systemManager->addSystem(_movementSystem);
@@ -54,6 +60,8 @@ DevState::DevState(
     _systemManager->addSystem(animationRenderingSystem);
     _systemManager->addSystem(hitboxRenderingSystem);
     _systemManager->addSystem(rectangleRenderingSystem);
+    _systemManager->addSystem(shootInputSystem);
+    _systemManager->addSystem(shootingSystem);
 }
 
 void DevState::enter() {
@@ -80,6 +88,17 @@ void DevState::enter() {
     auto playerHitboxRender = std::make_shared<ecs::HitboxRenderComponent>(
         gfx::color_t{0, 0, 255}, 2.0f);
     _registry->addComponent(playerId, playerHitboxRender);
+
+    auto shooterTag = std::make_shared<ecs::ShooterTag>();
+    _registry->addComponent(playerId, shooterTag);
+
+    auto shootingStats = std::make_shared<ecs::ShootingStatsComponent>(
+        1.0f,
+        nullptr,
+        400.0f,
+        ecs::MultiShotPattern(1, 0.0f, 0.0f)
+    );
+    _registry->addComponent(playerId, shootingStats);
 
     // Create a static wall entity
     ecs::Entity wallId = _registry->createEntity();
