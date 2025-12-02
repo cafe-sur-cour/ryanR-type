@@ -6,6 +6,8 @@
 */
 
 #include "ParserError.hpp"
+#include <string>
+
 namespace err {
 
 ParserError::ParserError(const std::string &message, ErrorCode code)

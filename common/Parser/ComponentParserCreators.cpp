@@ -5,10 +5,16 @@
 ** ComponentCreators
 */
 
+#include <memory>
+#include <string>
+#include <map>
+#include <vector>
+#include <utility>
 #include "Parser.hpp"
 
 void Parser::instanciateComponentDefinitions() {
-    std::map<std::string, std::pair<std::type_index, std::vector<Field>>> componentDefinitions = {
+    std::map<std::string, std::pair<std::type_index,
+    std::vector<Field>>> componentDefinitions = {
         {"TransformComponent", {std::type_index(typeid(ecs::TransformComponent)), {
             {"target", FieldType::STRING},
             {"position", FieldType::VECTOR2F},
@@ -50,28 +56,33 @@ void Parser::instanciateComponentDefinitions() {
 }
 
 void Parser::instanciateComponentCreators() {
-    registerComponent<ecs::TransformComponent>([](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+    registerComponent<ecs::TransformComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto pos = std::get<math::Vector2f>(*fields.at("position"));
         auto scale = std::get<math::Vector2f>(*fields.at("scale"));
         auto rot = std::get<float>(*fields.at("rotation"));
         return std::make_shared<ecs::TransformComponent>(pos, rot, scale);
     });
 
-    registerComponent<ecs::VelocityComponent>([]([[maybe_unused]] const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+    registerComponent<ecs::VelocityComponent>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::VelocityComponent>();
     });
 
-    registerComponent<ecs::SpeedComponent>([](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+    registerComponent<ecs::SpeedComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto speed = std::get<float>(*fields.at("speed"));
         return std::make_shared<ecs::SpeedComponent>(speed);
     });
 
-    registerComponent<ecs::SpriteComponent>([](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+    registerComponent<ecs::SpriteComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto path = std::get<std::string>(*fields.at("filePath"));
         return std::make_shared<ecs::SpriteComponent>(path);
     });
 
-    registerComponent<ecs::AnimationComponent>([](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+    registerComponent<ecs::AnimationComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto animPath = std::get<std::string>(*fields.at("animationPath"));
         auto fw = std::get<float>(*fields.at("frameWidth"));
         auto fh = std::get<float>(*fields.at("frameHeight"));
@@ -81,31 +92,35 @@ void Parser::instanciateComponentCreators() {
         return std::make_shared<ecs::AnimationComponent>(animPath, fw, fh, fc, sw, sh);
     });
 
-    registerComponent<ecs::ControllableTag>([]([[maybe_unused]] const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+    registerComponent<ecs::ControllableTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::ControllableTag>();
     });
 
-    registerComponent<ecs::PlayerTag>([]([[maybe_unused]] const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+    registerComponent<ecs::PlayerTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::PlayerTag>();
     });
 
-    registerComponent<ecs::ColliderComponent>([](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+    registerComponent<ecs::ColliderComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto size = std::get<math::Vector2f>(*fields.at("size"));
         return std::make_shared<ecs::ColliderComponent>(math::Vector2f(0.0f, 0.0f), size);
     });
 }
 
 template<typename T>
-void Parser::componentAdders(const std::shared_ptr<ecs::Registry>& registry, ecs::Entity entity, std::shared_ptr<ecs::IComponent> component) {
+void Parser::componentAdders(const std::shared_ptr<ecs::Registry>& registry,
+    ecs::Entity entity, std::shared_ptr<ecs::IComponent> component) {
     registry->addComponent(entity, std::static_pointer_cast<T>(component));
 }
 
 template<typename T>
-void Parser::registerComponent(const ComponentCreator& creator)
-{
+void Parser::registerComponent(const ComponentCreator& creator) {
     std::type_index idx(typeid(T));
     _componentCreators[idx] = creator;
-    _componentAdders[idx] = [](const std::shared_ptr<ecs::Registry>& registry, ecs::Entity entity, std::shared_ptr<ecs::IComponent> component) {
+    _componentAdders[idx] = [](const std::shared_ptr<ecs::Registry>& registry,
+        ecs::Entity entity, std::shared_ptr<ecs::IComponent> component) {
         registry->addComponent(entity, std::static_pointer_cast<T>(component));
     };
 }

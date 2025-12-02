@@ -5,19 +5,25 @@
 ** Parser
 */
 
-#include "Parser.hpp"
-#include <filesystem>
+#include <filesystem>  // NOLINT(build/c++17)
 #include <iostream>
+#include <string>
+#include <map>
+#include <memory>
+#include "Parser.hpp"
 #include "../Prefab/ParsedEntityPrefab.hpp"
 #include "../Error/ParserError.hpp"
 
-Parser::Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type) : _prefabManager(prefab), _parsingType(type) {
+Parser::Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type) :
+    _prefabManager(prefab), _parsingType(type) {
     instanciateComponentDefinitions();
     instanciateComponentCreators();
-    auto shouldParseCallback = [this](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> bool {
+    auto shouldParseCallback =
+        [this](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> bool {
         return this->shouldParseComponent(fields);
     };
-    _entityParser = std::make_shared<EntityParser>(_componentDefinitions, _componentCreators, _componentAdders, shouldParseCallback);
+    _entityParser = std::make_shared<EntityParser>(_componentDefinitions, _componentCreators,
+        _componentAdders, shouldParseCallback);
 }
 
 const std::map<std::type_index, ComponentAdder>& Parser::getComponentAdders() const {
@@ -36,7 +42,6 @@ void Parser::setPrefabManager(std::shared_ptr<EntityPrefabManager> prefabManager
 }
 
 void Parser::parseAllEntities(std::string directoryPath) {
-
     for (const auto & entry : std::filesystem::directory_iterator(directoryPath)) {
         parseEntity(entry.path().string());
     }
@@ -50,7 +55,8 @@ void Parser::parseEntity(std::string entityPath) {
         std::cout << "Registering prefab: " << name << std::endl;
         _prefabManager->registerPrefab(name, prefab);
     } catch (const err::ParserError& e) {
-        throw err::ParserError(std::string("Failed to parse entity '") + entityPath + "': " + e.what());
+        throw err::ParserError(std::string("Failed to parse entity '") +
+        entityPath + "': " + e.what());
     }
 }
 
@@ -66,7 +72,8 @@ bool Parser::isServerParsing() const {
     return _parsingType == ParsingType::SERVER;
 }
 
-bool Parser::shouldParseComponent(std::map<std::string, std::shared_ptr<FieldValue>> fields) const {
+bool Parser::shouldParseComponent(std::map<std::string,
+    std::shared_ptr<FieldValue>> fields) const {
     auto target = std::get<std::string>(*fields.at("target"));
 
     if (target.empty())

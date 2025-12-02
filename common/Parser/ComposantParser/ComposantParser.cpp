@@ -6,6 +6,13 @@
 */
 
 #include "ComposantParser.hpp"
+#include <map>
+#include <stdexcept>
+#include <typeindex>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 #include "../ParserParam.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
@@ -15,22 +22,25 @@
 #include "../../components/tags/PlayerTag.hpp"
 #include "../../components/tags/ControllableTag.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
-#include <stdexcept>
 #include "../../Error/ParserError.hpp"
-#include <typeindex>
-#include <map>
 
-ComposantParser::ComposantParser(const std::map<std::string, std::pair<std::type_index, std::vector<Field>>>& componentDefinitions, const std::map<std::type_index, ComponentCreator>& componentCreators, const ShouldParseComponentCallback& shouldParseCallback) : _componentDefinitions(componentDefinitions), _componentCreators(componentCreators), _shouldParseCallback(shouldParseCallback) {
+ComposantParser::ComposantParser(const std::map<std::string,
+    std::pair<std::type_index, std::vector<Field>>>& componentDefinitions,
+    const std::map<std::type_index, ComponentCreator>& componentCreators,
+    const ShouldParseComponentCallback& shouldParseCallback) :
+    _componentDefinitions(componentDefinitions), _componentCreators(componentCreators),
+    _shouldParseCallback(shouldParseCallback) {
 }
 
 ComposantParser::~ComposantParser() {
 }
 
-std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::parseComponent(const std::string& componentName, const nlohmann::json& componentData) {
+std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::parseComponent(
+    const std::string& componentName, const nlohmann::json& componentData) {
 
-    if (_componentDefinitions.find(componentName) == _componentDefinitions.end()) {
-        throw err::ParserError("Unknown component: " + componentName, err::ParserError::UNKNOWN);
-    }
+    if (_componentDefinitions.find(componentName) == _componentDefinitions.end())
+        throw err::ParserError("Unknown component: " + componentName,
+            err::ParserError::UNKNOWN);
 
     auto [typeIndex, fieldsDef] = _componentDefinitions.at(componentName);
 
@@ -38,7 +48,8 @@ std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::pa
 
     for (const auto& field : fieldsDef) {
         if (componentData.find(field.name) == componentData.end()) {
-            throw err::ParserError("Missing field: " + field.name + " in component " + componentName, err::ParserError::MISSING_FIELD);
+            throw err::ParserError("Missing field: " + field.name +
+                " in component " + componentName, err::ParserError::MISSING_FIELD);
         }
         fields[field.name] = parseFieldValue(componentData[field.name], field.type);
     }
@@ -51,31 +62,36 @@ std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::pa
     return {component, typeIndex};
 }
 
-std::shared_ptr<FieldValue> ComposantParser::parseFieldValue(const nlohmann::json& jsonValue, FieldType type) {
+std::shared_ptr<FieldValue> ComposantParser::parseFieldValue
+    (const nlohmann::json& jsonValue, FieldType type) {
     switch (type) {
         case FieldType::VECTOR2F: {
-            if (!jsonValue.is_object() || !jsonValue.contains("x") || !jsonValue.contains("y")) {
-                throw err::ParserError("Invalid Vector2f format", err::ParserError::INVALID_FORMAT);
+            if (!jsonValue.is_object() ||
+                !jsonValue.contains("x") ||
+                !jsonValue.contains("y")) {
+                throw err::ParserError("Invalid Vector2f format",
+                    err::ParserError::INVALID_FORMAT);
             }
             math::Vector2f vec(jsonValue["x"], jsonValue["y"]);
             return std::make_shared<FieldValue>(vec);
         }
         case FieldType::FLOAT: {
             if (!jsonValue.is_number()) {
-                throw err::ParserError("Invalid float format", err::ParserError::TYPE_MISMATCH);
+                throw err::ParserError("Invalid float format",
+                    err::ParserError::TYPE_MISMATCH);
             }
             return std::make_shared<FieldValue>(jsonValue.get<float>());
         }
         case FieldType::STRING: {
-            if (!jsonValue.is_string()) {
-                throw err::ParserError("Invalid string format", err::ParserError::TYPE_MISMATCH);
-            }
+            if (!jsonValue.is_string())
+                throw err::ParserError("Invalid string format",
+                    err::ParserError::TYPE_MISMATCH);
             return std::make_shared<FieldValue>(jsonValue.get<std::string>());
         }
         case FieldType::INT: {
-            if (!jsonValue.is_number_integer()) {
-                throw err::ParserError("Invalid int format", err::ParserError::TYPE_MISMATCH);
-            }
+            if (!jsonValue.is_number_integer())
+                throw err::ParserError("Invalid int format",
+                    err::ParserError::TYPE_MISMATCH);
             return std::make_shared<FieldValue>(jsonValue.get<int>());
         }
         default:
