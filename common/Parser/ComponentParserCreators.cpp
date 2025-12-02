@@ -11,45 +11,46 @@
 #include <vector>
 #include <utility>
 #include "Parser.hpp"
+#include "../constants.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
     std::vector<Field>>> componentDefinitions = {
-        {"TransformComponent", {std::type_index(typeid(ecs::TransformComponent)), {
-            {"target", FieldType::STRING},
-            {"position", FieldType::VECTOR2F},
-            {"scale", FieldType::VECTOR2F},
-            {"rotation", FieldType::FLOAT}
+        {constants::TRANSFORMCOMPONENT, {std::type_index(typeid(ecs::TransformComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::POSITION_FIELD, FieldType::VECTOR2F},
+            {constants::SCALE_FIELD, FieldType::VECTOR2F},
+            {constants::ROTATION_FIELD, FieldType::FLOAT}
         }}},
-        {"VelocityComponent", {std::type_index(typeid(ecs::VelocityComponent)), {
-            {"target", FieldType::STRING}
+        {constants::VELOCITYCOMPONENT, {std::type_index(typeid(ecs::VelocityComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
         }}},
-        {"SpeedComponent", {std::type_index(typeid(ecs::SpeedComponent)), {
-            {"target", FieldType::STRING},
-            {"speed", FieldType::FLOAT}
+        {constants::SPEEDCOMPONENT, {std::type_index(typeid(ecs::SpeedComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::SPEED_FIELD, FieldType::FLOAT}
         }}},
-        {"SpriteComponent", {std::type_index(typeid(ecs::SpriteComponent)), {
-            {"target", FieldType::STRING},
-            {"filePath", FieldType::STRING}
+        {constants::SPRITECOMPONENT, {std::type_index(typeid(ecs::SpriteComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::FILEPATH_FIELD, FieldType::STRING}
         }}},
-        {"AnimationComponent", {std::type_index(typeid(ecs::AnimationComponent)), {
-            {"target", FieldType::STRING},
-            {"animationPath", FieldType::STRING},
-            {"frameWidth", FieldType::FLOAT},
-            {"frameHeight", FieldType::FLOAT},
-            {"frameCount", FieldType::INT},
-            {"startWidth", FieldType::FLOAT},
-            {"startHeight", FieldType::FLOAT}
+        {constants::ANIMATIONCOMPONENT, {std::type_index(typeid(ecs::AnimationComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::ANIMATIONPATH_FIELD, FieldType::STRING},
+            {constants::FRAMEWIDTH_FIELD, FieldType::FLOAT},
+            {constants::FRAMEHEIGHT_FIELD, FieldType::FLOAT},
+            {constants::FRAMECOUNT_FIELD, FieldType::INT},
+            {constants::STARTWIDTH_FIELD, FieldType::FLOAT},
+            {constants::STARTHEIGHT_FIELD, FieldType::FLOAT}
         }}},
-        {"ControllableTag", {std::type_index(typeid(ecs::ControllableTag)), {
-            {"target", FieldType::STRING}
+        {constants::CONTROLLABLETAG, {std::type_index(typeid(ecs::ControllableTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
         }}},
-        {"PlayerTag", {std::type_index(typeid(ecs::PlayerTag)), {
-            {"target", FieldType::STRING}
+        {constants::PLAYERTAG, {std::type_index(typeid(ecs::PlayerTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
         }}},
-        {"ColliderComponent", {std::type_index(typeid(ecs::ColliderComponent)), {
-            {"target", FieldType::STRING},
-            {"size", FieldType::VECTOR2F}
+        {constants::COLLIDERCOMPONENT, {std::type_index(typeid(ecs::ColliderComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::SIZE_FIELD, FieldType::VECTOR2F}
         }}}
     };
     _componentDefinitions = componentDefinitions;
@@ -58,9 +59,9 @@ void Parser::instanciateComponentDefinitions() {
 void Parser::instanciateComponentCreators() {
     registerComponent<ecs::TransformComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-        auto pos = std::get<math::Vector2f>(*fields.at("position"));
-        auto scale = std::get<math::Vector2f>(*fields.at("scale"));
-        auto rot = std::get<float>(*fields.at("rotation"));
+        auto pos = std::get<math::Vector2f>(*fields.at(constants::POSITION_FIELD));
+        auto scale = std::get<math::Vector2f>(*fields.at(constants::SCALE_FIELD));
+        auto rot = std::get<float>(*fields.at(constants::ROTATION_FIELD));
         return std::make_shared<ecs::TransformComponent>(pos, rot, scale);
     });
 
@@ -71,24 +72,24 @@ void Parser::instanciateComponentCreators() {
 
     registerComponent<ecs::SpeedComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-        auto speed = std::get<float>(*fields.at("speed"));
+        auto speed = std::get<float>(*fields.at(constants::SPEED_FIELD));
         return std::make_shared<ecs::SpeedComponent>(speed);
     });
 
     registerComponent<ecs::SpriteComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-        auto path = std::get<std::string>(*fields.at("filePath"));
+        auto path = std::get<std::string>(*fields.at(constants::FILEPATH_FIELD));
         return std::make_shared<ecs::SpriteComponent>(path);
     });
 
     registerComponent<ecs::AnimationComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-        auto animPath = std::get<std::string>(*fields.at("animationPath"));
-        auto fw = std::get<float>(*fields.at("frameWidth"));
-        auto fh = std::get<float>(*fields.at("frameHeight"));
-        auto fc = std::get<int>(*fields.at("frameCount"));
-        auto sw = std::get<float>(*fields.at("startWidth"));
-        auto sh = std::get<float>(*fields.at("startHeight"));
+        auto animPath = std::get<std::string>(*fields.at(constants::ANIMATIONPATH_FIELD));
+        auto fw = std::get<float>(*fields.at(constants::FRAMEWIDTH_FIELD));
+        auto fh = std::get<float>(*fields.at(constants::FRAMEHEIGHT_FIELD));
+        auto fc = std::get<int>(*fields.at(constants::FRAMECOUNT_FIELD));
+        auto sw = std::get<float>(*fields.at(constants::STARTWIDTH_FIELD));
+        auto sh = std::get<float>(*fields.at(constants::STARTHEIGHT_FIELD));
         return std::make_shared<ecs::AnimationComponent>(animPath, fw, fh, fc, sw, sh);
     });
 
@@ -104,7 +105,7 @@ void Parser::instanciateComponentCreators() {
 
     registerComponent<ecs::ColliderComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-        auto size = std::get<math::Vector2f>(*fields.at("size"));
+        auto size = std::get<math::Vector2f>(*fields.at(constants::SIZE_FIELD));
         return std::make_shared<ecs::ColliderComponent>(math::Vector2f(0.0f, 0.0f), size);
     });
 }
