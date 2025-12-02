@@ -35,7 +35,7 @@ class UIManager {
         bool handleNavigationInput(ecs::InputAction action);
         bool handleNavigationInputs(std::shared_ptr<ecs::IInputProvider> inputProvider, float deltaTime);
 
-        UINavigationManager& getNavigationManager();
+        std::shared_ptr<UINavigationManager> getNavigationManager();
 
         void setNavigationEnabled(bool enabled);
         bool isNavigationEnabled() const;
@@ -47,7 +47,7 @@ class UIManager {
 
     private:
         std::vector<std::shared_ptr<UIElement>> _elements;
-        UINavigationManager _navigationManager;
+        std::shared_ptr<UINavigationManager> _navigationManager;
         math::Vector2f _lastMousePos;
         bool _mouseMovementDetected;
 
