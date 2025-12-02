@@ -12,7 +12,7 @@
 #include <vector>
 #include <functional>
 #include "../../common/types/Vector2f.hpp"
-#include "../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../common/resourceManager/ResourceManager.hpp"
 
 namespace ui {
 
@@ -25,7 +25,7 @@ enum class UIState {
 
 class UIElement : public std::enable_shared_from_this<UIElement> {
     public:
-        UIElement(std::shared_ptr<ecs::ResourceManager> resourceManager);
+        UIElement(std::shared_ptr<ResourceManager> resourceManager);
         virtual ~UIElement() = default;
 
         void setPosition(const math::Vector2f& position);
@@ -60,7 +60,7 @@ class UIElement : public std::enable_shared_from_this<UIElement> {
         virtual void update(float deltaTime);
 
     protected:
-        std::weak_ptr<ecs::ResourceManager> _resourceManager;
+        std::weak_ptr<ResourceManager> _resourceManager;
         math::Vector2f _position;
         math::Vector2f _size;
         bool _visible = true;
