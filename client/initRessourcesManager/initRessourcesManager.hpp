@@ -18,7 +18,8 @@
 std::shared_ptr<ecs::ResourceManager> initRessourcesManager(
     std::shared_ptr<DLLoader<gfx::createWindow_t>>,
     std::shared_ptr<DLLoader<gfx::createEvent_t>>,
-    std::shared_ptr<DLLoader<gfx::createAudio_t>>
+    std::shared_ptr<DLLoader<gfx::createAudio_t>>,
+    std::shared_ptr<ClientNetwork>
 );
 
 #endif /* !INITRESSOURCESMANAGER_HPP_ */
