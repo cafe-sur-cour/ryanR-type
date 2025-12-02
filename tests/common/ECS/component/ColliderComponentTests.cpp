@@ -69,11 +69,6 @@ TEST(ColliderComponentTest, RelativePosition) {
     EXPECT_FLOAT_EQ(hitbox.getHeight(), 40.0f);
 }
 
-TEST(ColliderComponentTest, InheritsFromAComponent) {
-    ColliderComponent comp;
-    EXPECT_EQ(comp.getState(), ComponentState::Permanent);
-}
-
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

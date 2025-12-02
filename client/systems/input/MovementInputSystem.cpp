@@ -36,7 +36,8 @@ void MovementInputSystem::update(
 }
 
 math::Vector2f MovementInputSystem::getMovementDirection(
-    std::shared_ptr<ResourceManager> resourceManager) const {
+    std::shared_ptr<ResourceManager> resourceManager
+) const {
     math::Vector2f direction(0.0f, 0.0f);
 
     if (!resourceManager->has<IInputProvider>()) {
@@ -102,7 +103,6 @@ void MovementInputSystem::updateInputIntent(
         auto existingIntent =
             registry->getComponent<InputIntentComponent>(entityId);
         existingIntent->setDirection(direction);
-        existingIntent->setState(ComponentState::Temporary);
     } else {
         registry->addComponent(entityId, inputIntent);
     }

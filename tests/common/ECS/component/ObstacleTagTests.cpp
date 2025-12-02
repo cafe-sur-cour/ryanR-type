@@ -17,19 +17,6 @@ TEST(ObstacleTagTest, DefaultConstructor) {
     SUCCEED();
 }
 
-TEST(ObstacleTagTest, InheritsFromAComponent) {
-    ObstacleTag tag;
-    EXPECT_EQ(tag.getState(), ComponentState::Permanent);
-}
-
-TEST(ObstacleTagTest, CanChangeState) {
-    ObstacleTag tag;
-    tag.setState(ComponentState::Temporary);
-    EXPECT_EQ(tag.getState(), ComponentState::Temporary);
-    tag.setState(ComponentState::Processed);
-    EXPECT_EQ(tag.getState(), ComponentState::Processed);
-}
-
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
