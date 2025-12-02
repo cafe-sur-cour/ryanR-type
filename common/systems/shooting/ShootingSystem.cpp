@@ -39,45 +39,51 @@ void ShootingSystem::update(
         if (!hasShootIntent || !shootingStats || !transform)
             continue;
 
-        shootingStats->updateCooldown(deltaTime);
+        registry->removeComponent<ShootIntentComponent>(entityId);
 
-        if (shootingStats->canShoot()) {
-            auto projectilePrefab = shootingStats->getProjectilePrefab();
+        if (!shootingStats->canShoot())
+            continue;
 
-            shootingStats->resetCooldown();
+        auto projectilePrefab = shootingStats->getProjectilePrefab();
+        auto pattern = shootingStats->getMultiShotPattern();
+        float speed = shootingStats->getProjectileSpeed();
 
-            auto pattern = shootingStats->getMultiShotPattern();
-            float speed = shootingStats->getProjectileSpeed();
+        math::Vector2f spawnPos = transform->getPosition();
 
-            math::Vector2f spawnPos = transform->getPosition();
+        float baseAngle = 0.0f;
 
-            float baseAngle = 0.0f;
+        if (pattern.shotCount == 1) {
+            spawnProjectile(registry, projectilePrefab, spawnPos, baseAngle, speed);
+        } else {
+            float totalSpread = pattern.angleSpread * static_cast<float>(
+                pattern.shotCount - 1
+            );
+            float startAngle = baseAngle - (totalSpread / 2.0f);
 
-            if (pattern.shotCount == 1) {
-                spawnProjectile(registry, projectilePrefab, spawnPos, baseAngle, speed);
-            } else {
-                float totalSpread = pattern.angleSpread * static_cast<float>(
-                    pattern.shotCount - 1
-                );
-                float startAngle = baseAngle - (totalSpread / 2.0f);
+            for (int i = 0; i < pattern.shotCount; i++) {
+                float angle = startAngle + (static_cast<float>(i) * pattern.angleSpread);
 
-                for (int i = 0; i < pattern.shotCount; i++) {
-                    float angle = startAngle + (static_cast<float>(i) * pattern.angleSpread);
-
-                    math::Vector2f offsetPosition = spawnPos;
-                    if (pattern.offsetDistance > 0.0f) {
-                        float offsetAngle = angle * static_cast<float>(M_PI) / 180.0f;
-                        offsetPosition = math::Vector2f(
-                            spawnPos.getX() + pattern.offsetDistance * std::cos(offsetAngle),
-                            spawnPos.getY() + pattern.offsetDistance * std::sin(offsetAngle)
-                        );
-                    }
-
-                    spawnProjectile(registry, projectilePrefab, offsetPosition, angle, speed);
+                math::Vector2f offsetPosition = spawnPos;
+                if (pattern.offsetDistance > 0.0f) {
+                    float offsetAngle = angle * static_cast<float>(M_PI) / 180.0f;
+                    offsetPosition = math::Vector2f(
+                        spawnPos.getX() + pattern.offsetDistance * std::cos(offsetAngle),
+                        spawnPos.getY() + pattern.offsetDistance * std::sin(offsetAngle)
+                    );
                 }
-            }
 
-            registry->removeComponent<ShootIntentComponent>(entityId);
+                spawnProjectile(registry, projectilePrefab, offsetPosition, angle, speed);
+            }
+        }
+
+        shootingStats->resetCooldown();
+    }
+
+    auto cooldownView = registry->view<ShootingStatsComponent>();
+    for (auto entityId : cooldownView) {
+        auto shootingStats = registry->getComponent<ShootingStatsComponent>(entityId);
+        if (shootingStats) {
+            shootingStats->updateCooldown(deltaTime);
         }
     }
 }
