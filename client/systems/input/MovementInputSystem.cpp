@@ -5,6 +5,8 @@
 ** MovementInputSystem
 */
 
+#include <iostream>
+
 #include "MovementInputSystem.hpp"
 #include <cmath>
 #include <memory>
@@ -30,6 +32,8 @@ void MovementInputSystem::update(
     auto view = registry->view<ControllableTag>();
     math::Vector2f movementDirection = getMovementDirection(resourceManager);
 
+    // if resourceManager->has<network
+        // resourceManager->get<networ>->addToqueue
     for (auto entityId : view) {
         updateInputIntent(registry, entityId, movementDirection);
     }

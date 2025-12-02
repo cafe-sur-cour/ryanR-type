@@ -17,14 +17,6 @@
 
 namespace net {
 
-enum class ConnectionState {
-    DISCONNECTED,
-    CONNECTING,
-    CONNECTED,
-    RECONNECTING,
-    ERROR
-};
-
 class ANetwork : public INetwork {
     public:
 
@@ -32,8 +24,8 @@ class ANetwork : public INetwork {
         virtual void init(uint32_t port,const std::string host) override = 0;
         virtual void stop() override = 0;
         virtual uint8_t acceptConnection() override = 0;
-        virtual void sendTo(int connectionId, const pm::IPacketManager &packet) override = 0;
-        virtual void broadcast(const pm::IPacketManager &packet) override = 0;
+        virtual void sendTo(int connectionId, std::vector<uint8_t> data) override = 0;
+        virtual void broadcast(std::vector<uint8_t> data) override = 0;
         virtual bool hasIncomingData() const override = 0;
         virtual std::shared_ptr<pm::IPacketManager> receiveFrom(const int &connectionId) override = 0;
 
@@ -42,6 +34,8 @@ class ANetwork : public INetwork {
         std::vector<int> getActiveConnections() const override;
         size_t getConnectionCount() const override;
         void closeConnection(int connectionId) override;
+        void setConnectionState(ConnectionState state) override;
+        ConnectionState getConnectionState() const override;
 
     protected:
         std::shared_ptr<asio::io_context> _ioContext;
@@ -50,6 +44,7 @@ class ANetwork : public INetwork {
         std::function<void(int)> _onConnectCallback;
         std::function<void(int)> _onDisconnectCallback;
         bool _isRunning;
+        ConnectionState _connectionState;
 
 };
 

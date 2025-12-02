@@ -85,7 +85,7 @@ uint8_t ServerNetwork::acceptConnection() {
     return newClientId;
 }
 
-void ServerNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
+void ServerNetwork::sendTo(int connectionId, std::vector<uint8_t> data) {
     auto it = _clients.find(connectionId);
     if (it == _clients.end()) {
         std::cerr << "[ServerNetwork] Client " << connectionId <<
@@ -100,7 +100,7 @@ void ServerNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
 
     try {
         /* Packet serialization */
-        (void)packet;
+        (void)data;
         std::string data = "Response from server";
         _socket->send_to(asio::buffer(data), it->second);
         std::cout << "[ServerNetwork] Sent data to client " <<
@@ -111,9 +111,9 @@ void ServerNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
     }
 }
 
-void ServerNetwork::broadcast(const pm::IPacketManager &packet) {
+void ServerNetwork::broadcast(std::vector<uint8_t> data) {
     for (const auto& [clientId, endpoint] : _clients) {
-        sendTo(clientId, packet);
+        sendTo(clientId, data);
     }
 }
 
