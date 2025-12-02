@@ -1,0 +1,40 @@
+{
+    "name": "heavy_shot",
+    "components": {
+        "ProjectileTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 5.0, "y": 5.0 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "server" },
+        "AnimationComponent": {
+            "target": "client",
+            "animationPath": "assets/sprites/projectile_heavy.png",
+            "frameWidth": 24.0,
+            "frameHeight": 24.0,
+            "frameCount": 1,
+            "startWidth": 0.0,
+            "startHeight": 0.0
+        },
+        "RectangleRenderComponent": {
+            "target": "client",
+            "width": 24.0,
+            "height": 24.0,
+            "color": { "r": 128, "g": 0, "b": 255, "a": 255 }
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "size": { "x": 24.0, "y": 24.0 }
+        },
+        "ShootingStatsComponent": {
+            "target": "both",
+            "fireRate": 0.5,
+            "projectileSpeed": 300.0,
+            "shotCount": 1,
+            "angleOffset": 0.0,
+            "spreadAngle": 0.0
+        }
+    }
+}
