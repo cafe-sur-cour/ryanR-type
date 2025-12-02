@@ -11,7 +11,7 @@
 #include <utility>
 #include <vector>
 #include "../../libs/Multimedia/IWindow.hpp"
-#include "../../common/constants.hpp"
+#include "../constants.hpp"
 
 namespace ui {
 

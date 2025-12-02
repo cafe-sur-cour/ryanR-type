@@ -12,7 +12,7 @@
 #include "SfmlAudio.hpp"
 #include "../../common/ECS/resourceManager/ResourceManager.hpp"
 #include "../../common/DLLoader/LoaderType.hpp"
-#include "../../common/constants.hpp"
+#include "../../client/constants.hpp"
 
 extern "C" {
     void* createWindow() {
