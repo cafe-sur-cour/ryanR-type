@@ -2,14 +2,14 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** MultimediaEntry - Entry points for dynamic loading
+** SfmlEntry - Entry points for dynamic loading
 */
 
 #include <memory>
 #include "IWindow.hpp"
-#include "IEvent.hpp"
 #include "SfmlWindow.hpp"
 #include "SfmlEvent.hpp"
+#include "SfmlAudio.hpp"
 #include "../../common/ECS/resourceManager/ResourceManager.hpp"
 #include "../../common/DLLoader/LoaderType.hpp"
 
@@ -30,6 +30,10 @@ extern "C" {
             [](gfx::IWindow*){}
         );
         return new SfmlEvent(sharedResManager, sharedWindow);
+    }
+
+    void* createAudio() {
+        return new gfx::SfmlAudio();
     }
 
     int getType() {
