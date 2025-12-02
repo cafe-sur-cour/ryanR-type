@@ -53,11 +53,6 @@ TEST(SpriteComponentTest, PathWithSpaces) {
     EXPECT_TRUE(comp.isValid());
 }
 
-TEST(SpriteComponentTest, InheritsFromAComponent) {
-    SpriteComponent comp;
-    EXPECT_EQ(comp.getState(), ComponentState::Permanent);
-}
-
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

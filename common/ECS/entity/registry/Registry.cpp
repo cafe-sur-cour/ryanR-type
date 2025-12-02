@@ -15,12 +15,6 @@ Registry::Registry() : _nextEntityId(1) {
 Registry::~Registry() {
 }
 
-void Registry::removeAllComponentsWithState(ComponentState state) {
-    for (const auto& pair : _components) {
-        pair.second->removeAllComponentsWithState(state);
-    }
-}
-
 Entity Registry::getMaxEntityId() const {
     Entity maxId = 0;
     for (const auto& pair : _components) {

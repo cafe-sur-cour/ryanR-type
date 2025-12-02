@@ -55,6 +55,9 @@ gfx::IEvent::event_t SfmlEvent::pollEvents() {
         } else if (const auto* mousePressed =
                 event->getIf<sf::Event::MouseButtonPressed>()) {
             return processMouseEvent(*mousePressed);
+        } else if (const auto* mouseReleased =
+                event->getIf<sf::Event::MouseButtonReleased>()) {
+            return processMouseReleaseEvent(*mouseReleased);
         } else if (const auto* joystickPressed =
                 event->getIf<sf::Event::JoystickButtonPressed>()) {
             return processJoystickButtonEvent(*joystickPressed);
@@ -82,6 +85,21 @@ event_t SfmlEvent::processMouseEvent
             return pair.first;
     }
     return event_t::MOUSECLICK;
+}
+
+event_t SfmlEvent::processMouseReleaseEvent
+    (const sf::Event::MouseButtonReleased& mouseReleased) {
+    for (const auto& pair : _mouseMap) {
+        if (pair.second == mouseReleased.button) {
+            if (pair.first == event_t::MOUSELEFTCLICK)
+                return event_t::MOUSELEFTRELEASE;
+            else if (pair.first == event_t::MOUSERIGHTCLICK)
+                return event_t::MOUSERIGHTRELEASE;
+            else if (pair.first == event_t::MOUSEMIDDLECLICK)
+                return event_t::MOUSEMIDDLERELEASE;
+        }
+    }
+    return event_t::NOTHING;
 }
 
 event_t SfmlEvent::processJoystickButtonEvent

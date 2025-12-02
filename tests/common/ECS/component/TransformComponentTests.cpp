@@ -57,11 +57,6 @@ TEST(TransformComponentTest, ScaleGettersAndSetters) {
     EXPECT_EQ(comp.getScale().getY(), 1.5f);
 }
 
-TEST(TransformComponentTest, InheritsFromAComponent) {
-    TransformComponent comp;
-    EXPECT_EQ(comp.getState(), ComponentState::Permanent);
-}
-
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
