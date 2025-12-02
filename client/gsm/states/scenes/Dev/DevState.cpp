@@ -7,11 +7,13 @@
 #include "../../../../../common/components/tags/ControllableTag.hpp"
 #include "../../../../../libs/Multimedia/IWindow.hpp"
 #include "../../../../../libs/Multimedia/IEvent.hpp"
+#include "../../../../../libs/Multimedia/IAudio.hpp"
 #include "../../../../components/rendering/SpriteComponent.hpp"
 #include "../../../../components/rendering/AnimationComponent.hpp"
 #include "../../../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../../../common/components/permanent/VelocityComponent.hpp"
 #include "../../../../../common/components/permanent/ColliderComponent.hpp"
+#include "../../../../../common/components/temporary/SoundIntentComponent.hpp"
 #include "../../../../systems/rendering/AnimationRenderingSystem.hpp"
 #include "../../../../components/rendering/HitboxRenderComponent.hpp"
 #include "../../../../components/rendering/RectangleRenderComponent.hpp"
@@ -35,6 +37,7 @@ DevState::DevState(
     _inputToVelocitySystem = std::make_shared<ecs::InputToVelocitySystem>();
     _inputSystem = std::make_shared<ecs::MovementInputSystem>();
     _spriteRenderingSystem = std::make_shared<ecs::SpriteRenderingSystem>();
+    _soundSystem = std::make_shared<ecs::SoundSystem>();
     _prefabManager = std::make_shared<EntityPrefabManager>();
     auto animationRenderingSystem =
         std::make_shared<ecs::AnimationRenderingSystem>();
@@ -46,6 +49,7 @@ DevState::DevState(
     _systemManager->addSystem(_inputToVelocitySystem);
     _systemManager->addSystem(_movementSystem);
     _systemManager->addSystem(_inputSystem);
+    _systemManager->addSystem(_soundSystem);
     _systemManager->addSystem(_spriteRenderingSystem);
     _systemManager->addSystem(animationRenderingSystem);
     _systemManager->addSystem(hitboxRenderingSystem);
@@ -55,7 +59,7 @@ DevState::DevState(
 }
 
 void DevState::enter() {
-    ecs::Entity playerId = _prefabManager->createEntityFromPrefab("player", _registry);
+    _prefabManager->createEntityFromPrefab("player", _registry);
 }
 
 void DevState::update(float deltaTime) {
