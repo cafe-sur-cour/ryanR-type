@@ -27,7 +27,6 @@ class Parser {
         std::shared_ptr<EntityPrefabManager> getPrefabManager() const;
         void setPrefabManager(std::shared_ptr<EntityPrefabManager> prefab);
         void parseAllEntities(std::string directoryPath);
-        void getNamegetNamegetNamegetNamegetName(std::string entityPath);
         void parseEntity(std::string entityPath);
 
         void instanciateComponentDefinitions();
@@ -36,8 +35,6 @@ class Parser {
         template<typename T>
         void registerComponent(const ComponentCreator& creator);
 
-        template<typename T>
-        void componentAdders(const std::shared_ptr<ecs::Registry>& registry, ecs::Entity entity, std::shared_ptr<ecs::IComponent> component);
         const std::map<std::type_index, ComponentAdder>& getComponentAdders() const;
         ParsingType getParsingType() const;
         bool isClientParsing() const;
