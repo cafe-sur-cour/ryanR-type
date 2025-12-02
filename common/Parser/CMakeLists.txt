@@ -23,5 +23,6 @@ target_link_libraries(${PARSER_LIB} PUBLIC
     PREFAB
     COMPOSANT_PARSER
     ENTITY_PARSER
+    ERROR
     nlohmann_json::nlohmann_json
 )

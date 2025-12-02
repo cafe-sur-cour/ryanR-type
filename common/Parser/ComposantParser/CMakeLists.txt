@@ -16,5 +16,6 @@ target_include_directories(${COMPOSANT_PARSER_LIB} PUBLIC
 
 target_link_libraries(${COMPOSANT_PARSER_LIB} PUBLIC
     ECS
+    ERROR
     nlohmann_json::nlohmann_json
 )

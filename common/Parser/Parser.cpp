@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <iostream>
 #include "../Prefab/ParsedEntityPrefab.hpp"
+#include "../Error/ParserError.hpp"
 
 Parser::Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type) : _prefabManager(prefab), _parsingType(type) {
     instanciateComponentDefinitions();
@@ -43,10 +44,14 @@ void Parser::parseAllEntities(std::string directoryPath) {
 
 void Parser::parseEntity(std::string entityPath) {
     std::cout << "Parsing entity from: " << entityPath << std::endl;
-    auto prefab = _entityParser->parseEntity(entityPath);
-    std::string name = std::static_pointer_cast<ParsedEntityPrefab>(prefab)->getName();
-    std::cout << "Registering prefab: " << name << std::endl;
-    _prefabManager->registerPrefab(name, prefab);
+    try {
+        auto prefab = _entityParser->parseEntity(entityPath);
+        std::string name = std::static_pointer_cast<ParsedEntityPrefab>(prefab)->getName();
+        std::cout << "Registering prefab: " << name << std::endl;
+        _prefabManager->registerPrefab(name, prefab);
+    } catch (const err::ParserError& e) {
+        throw err::ParserError(std::string("Failed to parse entity '") + entityPath + "': " + e.what());
+    }
 }
 
 ParsingType Parser::getParsingType() const {

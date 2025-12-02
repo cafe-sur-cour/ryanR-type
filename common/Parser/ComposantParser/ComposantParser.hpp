@@ -20,7 +20,7 @@
 class ComposantParser {
     public:
         using ShouldParseComponentCallback = std::function<bool(const std::map<std::string, std::shared_ptr<FieldValue>>&)>;
-        
+
         ComposantParser(const std::map<std::string, std::pair<std::type_index, std::vector<Field>>>& componentDefinitions, const std::map<std::type_index, ComponentCreator>& componentCreators, const ShouldParseComponentCallback& shouldParseCallback = nullptr);
         ~ComposantParser();
 
