@@ -14,7 +14,7 @@
 #include "../../../../MouseInputHandler.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
-#include "../../../../../common/ECS/resourceManager/IInputProvider.hpp"
+#include "../../../../../common/ImputMapping/IInputProvider.hpp"
 #include "../Dev/DevState.hpp"
 
 namespace gsm {
