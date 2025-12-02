@@ -48,7 +48,7 @@ class Parser {
         std::shared_ptr<EntityParser> _entityParser;
         std::shared_ptr<EntityPrefabManager> _prefabManager;
 
-        std::map<std::string, std::pair<std::type_index, std::vector<Field>>> _componentDefinitions;
+        std::shared_ptr<std::map<std::string, std::pair<std::type_index, std::vector<Field>>>> _componentDefinitions;
         std::map<std::type_index, ComponentCreator> _componentCreators;
         std::map<std::type_index, ComponentAdder> _componentAdders;
         ParsingType _parsingType;
