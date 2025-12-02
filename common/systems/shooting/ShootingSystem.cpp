@@ -56,15 +56,15 @@ void ShootingSystem::update(
             if (pattern.shotCount == 1) {
                 spawnProjectile(registry, projectilePrefab, spawnPos, baseAngle, speed);
             } else {
-                float totalSpread = pattern.angleSpread * (pattern.shotCount - 1);
+                float totalSpread = pattern.angleSpread * (float) (pattern.shotCount - 1);
                 float startAngle = baseAngle - (totalSpread / 2.0f);
 
                 for (int i = 0; i < pattern.shotCount; i++) {
-                    float angle = startAngle + (i * pattern.angleSpread);
+                    float angle = startAngle + ((float) i * pattern.angleSpread);
 
                     math::Vector2f offsetPosition = spawnPos;
                     if (pattern.offsetDistance > 0.0f) {
-                        float offsetAngle = angle * M_PI / 180.0f;
+                        float offsetAngle = angle * (float) M_PI / 180.0f;
                         offsetPosition = math::Vector2f(
                             spawnPos.getX() + pattern.offsetDistance * std::cos(offsetAngle),
                             spawnPos.getY() + pattern.offsetDistance * std::sin(offsetAngle)
@@ -123,7 +123,7 @@ math::Vector2f ShootingSystem::calculateProjectileVelocity(
     float angle,
     float speed
 ) {
-    float angleRad = angle * M_PI / 180.0f;
+    float angleRad = angle * (float) M_PI / 180.0f;
 
     float vx = speed * std::cos(angleRad);
     float vy = speed * std::sin(angleRad);
