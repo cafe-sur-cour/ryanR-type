@@ -2,25 +2,24 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** Button
+** Button - Focusable button UI element
 */
 
 #include "Button.hpp"
 #include <string>
-#include "../../libs/Multimedia/IWindow.hpp"
+#include "../../../../libs/Multimedia/IWindow.hpp"
 
 namespace ui {
 
 Button::Button(std::shared_ptr<ecs::ResourceManager> resourceManager)
-    : UIElement(resourceManager) {
+    : AFocusableElement(resourceManager) {
 }
 
 void Button::render() {
-    if (!_visible) {
+    if (!_visible)
         return;
-    }
 
-    UIElement::render();
+    AFocusableElement::render();
 
     auto resourceManager = _resourceManager.lock();
     if (!resourceManager) {
@@ -65,6 +64,8 @@ gfx::color_t Button::getCurrentColor() const {
             return _pressedColor;
         case UIState::Disabled:
             return _disabledColor;
+        case UIState::Focused:
+            return _focusedColor;
         default:
             return _normalColor;
     }
@@ -100,6 +101,10 @@ void Button::setPressedColor(const gfx::color_t& color) {
 
 void Button::setDisabledColor(const gfx::color_t& color) {
     _disabledColor = color;
+}
+
+void Button::setFocusedColor(const gfx::color_t& color) {
+    _focusedColor = color;
 }
 
 }  // namespace ui
