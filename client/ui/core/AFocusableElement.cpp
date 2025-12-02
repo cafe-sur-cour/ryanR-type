@@ -9,7 +9,7 @@
 
 namespace ui {
 
-AFocusableElement::AFocusableElement(std::shared_ptr<ecs::ResourceManager> resourceManager)
+AFocusableElement::AFocusableElement(std::shared_ptr<ResourceManager> resourceManager)
     : UIElement(resourceManager), _focused(false) {
 }
 

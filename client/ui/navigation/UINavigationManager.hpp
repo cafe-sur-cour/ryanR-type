@@ -12,7 +12,7 @@
 #include <memory>
 #include <functional>
 #include "../core/IFocusable.hpp"
-#include "../../../common/ECS/resourceManager/InputAction.hpp"
+#include "../../../common/ImputMapping/InputAction.hpp"
 #include "../../../common/types/Vector2f.hpp"
 
 namespace ui {

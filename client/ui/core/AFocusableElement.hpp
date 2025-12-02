@@ -16,7 +16,7 @@ namespace ui {
 
 class AFocusableElement : public UIElement, public IFocusable {
     public:
-        explicit AFocusableElement(std::shared_ptr<ecs::ResourceManager> resourceManager);
+        explicit AFocusableElement(std::shared_ptr<ResourceManager> resourceManager);
         virtual ~AFocusableElement() = default;
 
         virtual void setFocused(bool focused) override;
