@@ -22,12 +22,15 @@ namespace constants {
     constexpr float GAMEPAD_DEADZONE = 0.15f;
     constexpr int SMOOTH_MOVEMENT_ITERATIONS = 4;
 
-    /* Mouse Buttons */
     enum MouseButton {
         LEFT = 0,
         RIGHT = 1,
         MIDDLE = 2,
     };
+
+    /* Window */
+    constexpr int WINDOW_WIDTH = 1920;
+    constexpr int WINDOW_HEIGHT = 1080;
 }
 
 #endif /* !CONSTANTS_HPP_ */
