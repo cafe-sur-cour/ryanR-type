@@ -53,6 +53,7 @@ class UIElement : public std::enable_shared_from_this<UIElement> {
 
         void setOnClick(std::function<void()> callback) { _onClick = callback; }
         void setOnHover(std::function<void()> callback) { _onHover = callback; }
+        void setOnRelease(std::function<void()> callback) { _onRelease = callback; }
 
         virtual void render();
 
@@ -69,6 +70,7 @@ class UIElement : public std::enable_shared_from_this<UIElement> {
 
         std::function<void()> _onClick;
         std::function<void()> _onHover;
+        std::function<void()> _onRelease;
 
         std::pair<int, int> getWindowSize() const;
 };

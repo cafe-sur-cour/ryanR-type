@@ -8,6 +8,7 @@
 #include "UIElement.hpp"
 #include <algorithm>
 #include <utility>
+#include <iostream>
 #include "../../libs/Multimedia/IWindow.hpp"
 
 namespace ui {
@@ -65,19 +66,23 @@ void UIElement::handleInput(const math::Vector2f& mousePos, bool mousePressed) {
 
     if (containsMouse) {
         if (mousePressed) {
-            _state = UIState::Pressed;
+            if (_state != UIState::Pressed) {
+                _state = UIState::Pressed;
+                if (_onClick) _onClick();
+            }
         } else {
-            _state = UIState::Hovered;
-            if (!wasHovered && _onHover) {
-                _onHover();
+            if (_state == UIState::Pressed) {
+                _state = UIState::Hovered;
+                if (_onRelease) _onRelease();
+            } else {
+                _state = UIState::Hovered;
+                if (!wasHovered && _onHover) {
+                    _onHover();
+                }
             }
         }
     } else {
         _state = UIState::Normal;
-    }
-
-    if (!mousePressed && _state == UIState::Pressed && containsMouse && _onClick) {
-        _onClick();
     }
 
     for (auto it = _children.rbegin(); it != _children.rend(); ++it) {
