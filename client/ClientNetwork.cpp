@@ -4,6 +4,7 @@
 ** File description:
 ** ClientNetwork
 */
+#include <cstring>
 
 #include <thread>
 #include <chrono>
@@ -18,10 +19,13 @@
 ClientNetwork::ClientNetwork() {
     this->_port = 0;
     this->_ip = "";
+    this->_name = ""; //  init with a default name
+    this->_idClient = 0;
 
     this->_network = nullptr;
     this->_buffer = nullptr;
     this->_packet = nullptr;
+    this->_sequenceNumber = 0;
 }
 
 ClientNetwork::~ClientNetwork() {
@@ -51,6 +55,7 @@ void ClientNetwork::start() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     if (Signal::stopFlag) {
+        this->disconnectionPacket();
         std::cout << "[Client] Received signal, stopping client" << std::endl;
         this->stop();
     }
@@ -90,72 +95,88 @@ void ClientNetwork::setIp(const std::string &ip) {
     _ip = ip;
 }
 
-
-void ClientNetwork::loadNetworkLibrary() {
-    if (!_networloader.Open(pathLoad "/" networkClientLib sharedLibExt)) {
-        throw err::ClientNetworkError("[ClientNetwork] Loading network lib failed",
-            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
-    }
-    if (!_networloader.getHandler()) {
-        throw err::ClientNetworkError("[ClientNetwork] Loading network lib failed",
-            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
-    }
-    createNetworkLib_t createNetwork = _networloader.getSymbol
-        ("createNetworkInstance");
-    if (!createNetwork) {
-        throw err::ClientNetworkError("[ClientNetwork] Loading network lib failed",
-            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
-    }
-    _network = std::shared_ptr<net::INetwork>
-        (reinterpret_cast<net::INetwork *>(createNetwork()));
+void ClientNetwork::sendConnectionData(std::vector<uint8_t> packet) {
     if (!_network) {
-        throw err::ClientNetworkError("[ClientNetwork] Loading network lib failed",
-            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
     }
+    this->_network->sendTo(0, packet);
 }
 
-void ClientNetwork::loadBufferLibrary() {
-    if (!_bufferloader.Open(pathLoad "/" bufferLib sharedLibExt)) {
-        throw err::ClientNetworkError("[ClientNetwork] Loading buffer lib failed",
-            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
-    }
-    if (!_bufferloader.getHandler()) {
-        throw err::ClientNetworkError("[ClientNetwork] Loading buffer lib failed",
-            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
-    }
-    createBuffer_t createBuffer = _bufferloader.getSymbol
-        ("createBufferInstance");
-    if (!createBuffer) {
-        throw err::ClientNetworkError("[ClientNetwork] Loading buffer lib failed",
-            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
-    }
-    _buffer = std::shared_ptr<IBuffer>
-        (reinterpret_cast<IBuffer *>(createBuffer()));
-    if (!_buffer) {
-        throw err::ClientNetworkError("[ClientNetwork] Loading buffer lib failed",
-            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
-    }
+std::string ClientNetwork::getName() const {
+    return this->_name;
 }
 
-void ClientNetwork::loadPacketLibrary() {
-    if (!_packetloader.Open(pathLoad "/" packetLib sharedLibExt)) {
-        throw err::ClientNetworkError("[ClientNetwork] Loading packet lib failed",
-            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
+void ClientNetwork::setName(const std::string &name) {
+    this->_name = name;
+}
+
+uint8_t ClientNetwork::getIdClient() const {
+    return this->_idClient;
+}
+
+void ClientNetwork::setIdClient(uint8_t idClient) {
+    this->_idClient = idClient;
+}
+
+net::ConnectionState ClientNetwork::getConnectionState() const {
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
     }
-    if (!_packetloader.getHandler()) {
-        throw err::ClientNetworkError("[ClientNetwork] Loading packet lib failed",
-            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
+    return this->_network->getConnectionState();
+}
+
+
+/* Packet Handling */
+void ClientNetwork::connectionPacket() {
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
     }
-    createPacket_t createPacket = _packetloader.getSymbol
-        ("createPacketInstance");
-    if (!createPacket) {
-        throw err::ClientNetworkError("[ClientNetwork] Loading packet lib failed",
-            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
+    std::vector<uint8_t> header = this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x01);
+    this->_network->sendTo(this->_idClient, header);
+    /* Replace this with name */
+    std::vector<uint64_t> payloadData = {0x01, 'A', 'L', 'B', 'A', 'N', 'E', '\0', '\0', '\r', '\n'};
+    std::vector<uint8_t> payload = this->_packet->pack(payloadData);
+    this->_network->sendTo(this->_idClient, payload);
+    this->_sequenceNumber++;
+}
+
+
+void ClientNetwork::eventPacket(const constants::EventType &eventType, double depth, double direction)
+{
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
     }
-    _packet = std::shared_ptr<pm::IPacketManager>
-        (reinterpret_cast<pm::IPacketManager *>(createPacket()));
-    if (!_packet) {
-        throw err::ClientNetworkError("[ClientNetwork] Loading packet lib failed",
-            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
+    std::vector<uint8_t> header =
+        this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x02);
+    this->_network->sendTo(this->_idClient, header);
+
+    std::vector<uint64_t> payloadData;
+    payloadData.push_back(static_cast<uint64_t>(eventType));
+
+    uint64_t depthBits;
+    std::memcpy(&depthBits, &depth, sizeof(double));
+    payloadData.push_back(depthBits);
+
+    uint64_t dirBits;
+    std::memcpy(&dirBits, &direction, sizeof(double));
+    payloadData.push_back(dirBits);
+
+    std::vector<uint8_t> payload = this->_packet->pack(payloadData);
+    this->_network->sendTo(this->_idClient, payload);
+    this->_sequenceNumber++;
+}
+
+
+void ClientNetwork::disconnectionPacket() {
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
     }
+    std::vector<uint8_t> header = this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x03);
+    this->_network->sendTo(this->_idClient, header);
+    this->_sequenceNumber++;
 }

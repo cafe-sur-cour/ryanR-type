@@ -5,6 +5,7 @@ add_executable(${CLIENT_BIN_NAME}
     Utils.cpp
     Utils.hpp
     ClientNetwork.cpp
+    ClientLibLoading.cpp
     ClientNetwork.hpp
     Core.cpp
 )

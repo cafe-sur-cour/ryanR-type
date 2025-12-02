@@ -47,6 +47,9 @@ void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork>
         } else if (arg == "-h") {
             this->helper();
             exit(0);
+        } else if (arg == "-n" && i + 1 < ac) {
+            clientNetwork->setName(av[i + 1]);
+            i++;
         } else {
             std::cerr << "Unknown argument: " << arg << std::endl;
             this->helper();

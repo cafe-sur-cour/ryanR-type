@@ -13,7 +13,7 @@
 namespace constants {
     /* Network Defaults */
     constexpr int DEFAULT_SERVER_PORT = 4242;
-    constexpr uint32_t DEFAULT_SERVER_IP = 0x7F000001;  // 127.0.0.1
+    constexpr const char *DEFAULT_SERVER_IP = "127.0.0.1";  // 127.0.0.1
 
     /* Game Defaults */
     constexpr float BASE_SPEED = 100.0f;
@@ -21,6 +21,14 @@ namespace constants {
     constexpr float PLAYER_BASE_SPEED = 300.0f;
     constexpr float GAMEPAD_DEADZONE = 0.15f;
     constexpr int SMOOTH_MOVEMENT_ITERATIONS = 4;
+
+    enum class EventType {
+        UP = 0,
+        DOWN = 1,
+        LEFT = 2,
+        RIGHT = 3,
+        SHOOT = 4,
+    };
 }
 
 #endif /* !CONSTANTS_HPP_ */
