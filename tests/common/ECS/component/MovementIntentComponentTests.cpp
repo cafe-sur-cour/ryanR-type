@@ -18,7 +18,6 @@ TEST(MovementIntentComponentTest, DefaultConstructor) {
     EXPECT_EQ(comp.getDirection().getX(), expected.getX());
     EXPECT_EQ(comp.getDirection().getY(), expected.getY());
     EXPECT_FALSE(comp.isActive());
-    EXPECT_EQ(comp.getState(), ComponentState::Temporary);
 }
 
 TEST(MovementIntentComponentTest, ParameterizedConstructor) {
@@ -27,7 +26,6 @@ TEST(MovementIntentComponentTest, ParameterizedConstructor) {
     EXPECT_EQ(comp.getDirection().getX(), 1.0f);
     EXPECT_EQ(comp.getDirection().getY(), -2.0f);
     EXPECT_TRUE(comp.isActive());
-    EXPECT_EQ(comp.getState(), ComponentState::Temporary);
 }
 
 TEST(MovementIntentComponentTest, GettersAndSetters) {
@@ -42,14 +40,7 @@ TEST(MovementIntentComponentTest, GettersAndSetters) {
 
 TEST(MovementIntentComponentTest, InheritsFromAComponent) {
     MovementIntentComponent comp;
-    EXPECT_EQ(comp.getState(), ComponentState::Temporary);
-}
-
-TEST(MovementIntentComponentTest, StateCanBeChanged) {
-    MovementIntentComponent comp;
-    EXPECT_EQ(comp.getState(), ComponentState::Temporary);
-    comp.setState(ComponentState::Processed);
-    EXPECT_EQ(comp.getState(), ComponentState::Processed);
+    // Should inherit from AComponent
 }
 
 int main(int argc, char **argv) {

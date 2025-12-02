@@ -116,11 +116,6 @@ TEST(AnimationComponentTest, TexturePathGetter) {
     EXPECT_EQ(comp.getTexturePath(), path);
 }
 
-TEST(AnimationComponentTest, InheritsFromAComponent) {
-    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f);
-    EXPECT_EQ(comp.getState(), ComponentState::Permanent);
-}
-
 TEST(AnimationComponentTest, StartWidthAndHeightGetterAndSetter) {
     AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 10.0f, 20.0f);
 

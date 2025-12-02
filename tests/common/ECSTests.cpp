@@ -14,15 +14,9 @@ using namespace ecs;
 
 /* AComponent Tests */
 
-TEST(AComponentTest, DefaultState) {
+TEST(AComponentTest, DefaultConstruction) {
     AComponent comp;
-    EXPECT_EQ(comp.getState(), ComponentState::Permanent);
-}
-
-TEST(AComponentTest, SetState) {
-    AComponent comp;
-    comp.setState(ComponentState::Temporary);
-    EXPECT_EQ(comp.getState(), ComponentState::Temporary);
+    // Should not crash
 }
 
 /* Registry Tests */
@@ -76,19 +70,6 @@ TEST(ARegistryTest, RemoveComponent) {
     EXPECT_TRUE(registry.hasComponent<TestComponent>(entityId));
 
     registry.removeComponent<TestComponent>(entityId);
-    EXPECT_FALSE(registry.hasComponent<TestComponent>(entityId));
-}
-
-TEST(ARegistryTest, RemoveAllComponentsWithState) {
-    Registry registry;
-    registry.registerComponent<TestComponent>();
-
-    ecs::Entity entityId = 1;
-    auto comp = std::make_shared<TestComponent>(42);
-    comp->setState(ComponentState::Temporary);
-    registry.addComponent<TestComponent>(entityId, comp);
-
-    registry.removeAllComponentsWithState(ComponentState::Temporary);
     EXPECT_FALSE(registry.hasComponent<TestComponent>(entityId));
 }
 

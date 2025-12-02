@@ -34,11 +34,6 @@ TEST(VelocityComponentTest, GettersAndSetters) {
     EXPECT_EQ(comp.getVelocity().getY(), 4.0f);
 }
 
-TEST(VelocityComponentTest, InheritsFromAComponent) {
-    VelocityComponent comp;
-    EXPECT_EQ(comp.getState(), ComponentState::Permanent);
-}
-
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -57,19 +57,6 @@ bool AComponentArray<T>::has(Entity entityId) const
 }
 
 template <typename T>
-void AComponentArray<T>::removeAllComponentsWithState(ComponentState state) {
-    for (auto& entityComponents : _components) {
-        entityComponents.erase(
-            std::remove_if(entityComponents.begin(), entityComponents.end(),
-                [state](const std::shared_ptr<T>& comp) {
-                    return comp && comp->getState() == state;
-                }),
-            entityComponents.end()
-        );
-    }
-}
-
-template <typename T>
 Entity AComponentArray<T>::getMaxEntityId() const {
     return _components.size();
 }
