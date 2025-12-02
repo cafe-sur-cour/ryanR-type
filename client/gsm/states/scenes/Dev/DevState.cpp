@@ -13,7 +13,7 @@
 #include "../../../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../../../common/components/permanent/VelocityComponent.hpp"
 #include "../../../../../common/components/permanent/ColliderComponent.hpp"
-#include "../../../../../common/components/temporary/SoundIntentComponent.hpp"
+#include "../../../../components/temporary/SoundIntentComponent.hpp"
 #include "../../../../systems/rendering/AnimationRenderingSystem.hpp"
 #include "../../../../components/rendering/HitboxRenderComponent.hpp"
 #include "../../../../components/rendering/RectangleRenderComponent.hpp"
@@ -70,7 +70,6 @@ void DevState::update(float deltaTime) {
     }
 
     _systemManager->updateAllSystems(_resourceManager, _registry, deltaTime);
-    _registry->removeAllComponentsWithState(ecs::ComponentState::Processed);
 }
 
 void DevState::exit() {

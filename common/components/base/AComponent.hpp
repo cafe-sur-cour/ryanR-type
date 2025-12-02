@@ -17,12 +17,7 @@ class AComponent : public IComponent {
         AComponent();
         ~AComponent();
 
-        ComponentState getState() const override;
-        void setState(ComponentState newState) override;
-
     protected:
-        ComponentState _state = Permanent;
-
     private:
 };
 

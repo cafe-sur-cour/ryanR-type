@@ -21,6 +21,7 @@ public:
     virtual void changeState(std::shared_ptr<IGameState> newState) = 0;
     virtual void pushState(std::shared_ptr<IGameState> newState) = 0;
     virtual void popState() = 0;
+    virtual void requestStateChange(std::shared_ptr<IGameState> newState) = 0;
 
     virtual void update(float deltaTime) = 0;
 };
