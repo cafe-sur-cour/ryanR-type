@@ -75,7 +75,7 @@ math::Vector2f MovementInputSystem::getAnalogStickInput(
         inputProvider->getAxisValue(gfx::EventType::GAMEPAD_LEFT_STICK_DOWN);
 
     const float deadzone = constants::GAMEPAD_DEADZONE * 100.0f;
-    const float maxValue = 100.0f;
+    const float maxValue = constants::AXIS_MAX_VALUE;
     const float range = maxValue - deadzone;
 
     if (std::abs(rawX) < deadzone) {
