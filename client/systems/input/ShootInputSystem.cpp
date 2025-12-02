@@ -30,16 +30,17 @@ void ShootInputSystem::update(
         return;
 
     auto inputProvider = resourceManager->get<IInputProvider>();
-    if (inputProvider->isActionPressed(InputAction::SHOOT))
+    if (!inputProvider->isActionPressed(InputAction::SHOOT))
         return;
 
     auto playerView = registry->view<ControllableTag, ShooterTag, PlayerTag>();
 
     for (auto playerId : playerView) {
-        auto shootIntentComponent = std::make_shared<ShootIntentComponent>();
+        if (registry->hasComponent<ShootIntentComponent>(playerId))
+            continue;
 
-        if (!registry->hasComponent<ShootIntentComponent>(playerId))
-            registry->addComponent<ShootIntentComponent>(playerId, shootIntentComponent);
+        auto shootIntentComponent = std::make_shared<ShootIntentComponent>();
+        registry->addComponent<ShootIntentComponent>(playerId, shootIntentComponent);
     }
 }
 
