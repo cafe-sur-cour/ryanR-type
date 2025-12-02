@@ -13,6 +13,8 @@
 #include "../../../../../libs/Multimedia/IEvent.hpp"
 #include "../../../../MouseInputHandler.hpp"
 #include "../../../../../common/constants.hpp"
+#include "../../../../../common/gsm/IGameStateMachine.hpp"
+#include "../Dev/DevState.hpp"
 
 namespace gsm {
 
@@ -27,8 +29,8 @@ MainMenuState::MainMenuState(
     _testButton->setText("Test Button");
     _testButton->setPosition(math::Vector2f(0.4f, 0.4f));
     _testButton->setSize(math::Vector2f(0.2f, 0.1f));
-    _testButton->setOnClick([this]() {
-        std::cout << "Button clicked!" << std::endl;
+    _testButton->setOnRelease([this]() {
+        _gsm->requestStateChange(std::make_shared<DevState>(_gsm, _resourceManager));
     });
 }
 
