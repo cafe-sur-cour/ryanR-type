@@ -7,11 +7,11 @@
 
 #include "ShootInputSystem.hpp"
 #include <memory>
-#include "../../../common/ImputMapping/InputAction.hpp"
+#include "../../../common/InputMapping/InputAction.hpp"
 #include "../../../common/components/tags/ShooterTag.hpp"
 #include "../../../common/components/tags/ControllableTag.hpp"
 #include "../../../common/components/tags/PlayerTag.hpp"
-#include "../../../common/ImputMapping/IInputProvider.hpp"
+#include "../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../common/components/temporary/ShootIntentComponent.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 

@@ -11,8 +11,8 @@
 #include <memory>
 #include <vector>
 #include <functional>
-#include "../../common/types/Vector2f.hpp"
-#include "../../common/resourceManager/ResourceManager.hpp"
+#include "../../../../common/types/Vector2f.hpp"
+#include "../../../../common/resourceManager/ResourceManager.hpp"
 
 namespace ui {
 
@@ -20,7 +20,8 @@ enum class UIState {
     Normal,
     Hovered,
     Pressed,
-    Disabled
+    Disabled,
+    Focused
 };
 
 class UIElement : public std::enable_shared_from_this<UIElement> {

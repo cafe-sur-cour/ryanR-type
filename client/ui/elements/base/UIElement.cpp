@@ -10,8 +10,8 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include "../../libs/Multimedia/IWindow.hpp"
-#include "../constants.hpp"
+#include "../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../constants.hpp"
 
 namespace ui {
 
@@ -77,23 +77,23 @@ void UIElement::handleInput(const math::Vector2f& mousePos, bool mousePressed) {
     if (containsMouse) {
         if (mousePressed) {
             if (_state != UIState::Pressed) {
-                _state = UIState::Pressed;
+                setState(UIState::Pressed);
                 if (_onClick)
                     _onClick();
             }
         } else {
             if (_state == UIState::Pressed) {
-                _state = UIState::Hovered;
+                setState(UIState::Hovered);
                 if (_onRelease)
                     _onRelease();
             } else {
-                _state = UIState::Hovered;
+                setState(UIState::Hovered);
                 if (!wasHovered && _onHover)
                     _onHover();
             }
         }
     } else {
-        _state = UIState::Normal;
+        setState(UIState::Normal);
     }
 
     for (auto it = _children.rbegin(); it != _children.rend(); ++it) {

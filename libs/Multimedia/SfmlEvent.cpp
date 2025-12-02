@@ -122,9 +122,9 @@ event_t SfmlEvent::processJoystickAxisEvent
             return event_t::GAMEPAD_DPAD_RIGHT;
     } else if (joystickMoved.axis == sf::Joystick::Axis::PovY) {
         if (joystickMoved.position < -deadzoneThreshold)
-            return event_t::GAMEPAD_DPAD_DOWN;
-        else if (joystickMoved.position > deadzoneThreshold)
             return event_t::GAMEPAD_DPAD_UP;
+        else if (joystickMoved.position > deadzoneThreshold)
+            return event_t::GAMEPAD_DPAD_DOWN;
     } else if (joystickMoved.axis == sf::Joystick::Axis::X) {
         if (joystickMoved.position < -deadzoneThreshold)
             return event_t::GAMEPAD_LEFT_STICK_LEFT;
@@ -236,12 +236,12 @@ bool SfmlEvent::isJoystickAxisPressed(event_t key) {
         case event_t::GAMEPAD_DPAD_UP:
             axisValue =
                 sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::PovY);
-            result = axisValue > deadzoneThreshold;
+            result = axisValue < -deadzoneThreshold;
             break;
         case event_t::GAMEPAD_DPAD_DOWN:
             axisValue =
                 sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::PovY);
-            result = axisValue < -deadzoneThreshold;
+            result = axisValue > deadzoneThreshold;
             break;
         default:
             return false;

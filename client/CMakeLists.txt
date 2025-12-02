@@ -7,8 +7,6 @@ add_executable(${CLIENT_BIN_NAME}
     ClientNetwork.cpp
     ClientNetwork.hpp
     Core.cpp
-    MouseInputHandler.cpp
-    MouseInputHandler.hpp
 )
 
 add_dependencies(${CLIENT_BIN_NAME} generate_embedded_assets)
@@ -28,6 +26,7 @@ add_subdirectory(initResourcesManager)
 add_subdirectory(gsm)
 add_subdirectory(components)
 add_subdirectory(systems)
+add_subdirectory(input)
 add_subdirectory(ui)
 
 add_custom_command(TARGET ${CLIENT_BIN_NAME} POST_BUILD

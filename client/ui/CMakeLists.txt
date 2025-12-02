@@ -1,17 +1,4 @@
-set(UI_SOURCES
-    UIElement.cpp
-    UIElement.hpp
-    Button.cpp
-    Button.hpp
-)
-
-add_library(UI ${UI_SOURCES})
-
-target_link_libraries(UI
-    PUBLIC
-        ECS
-        Multimedia
-)
+add_library(UI STATIC)
 
 target_include_directories(UI
     PUBLIC
@@ -19,3 +6,14 @@ target_include_directories(UI
         ${CMAKE_SOURCE_DIR}/common
         ${CMAKE_SOURCE_DIR}/libs
 )
+
+target_link_libraries(UI
+    PUBLIC
+        ECS
+        Multimedia
+)
+
+add_subdirectory(core)
+add_subdirectory(elements)
+add_subdirectory(navigation)
+add_subdirectory(manager)
