@@ -8,9 +8,9 @@
 #ifndef INITRESSOURCESMANAGER_HPP_
 #define INITRESSOURCESMANAGER_HPP_
 
-#include "../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../common/resourceManager/ResourceManager.hpp"
 #include <memory>
 
-std::shared_ptr<ecs::ResourceManager> initRessourcesManager();
+std::shared_ptr<ResourceManager> initRessourcesManager();
 
 #endif /* !INITRESSOURCESMANAGER_HPP_ */

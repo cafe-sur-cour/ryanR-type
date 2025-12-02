@@ -2,7 +2,7 @@
 #define DEVSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
-#include "../../../../../common/ECS/resourceManager/ResourceManager.hpp"
+#include "../../../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../../../common/systems/systemManager/ASystemManager.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
@@ -15,7 +15,7 @@ namespace gsm {
 
 class DevState : public AGameState {
 public:
-    DevState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ecs::ResourceManager> resourceManager);
+    DevState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
     ~DevState() override = default;
 
     void enter() override;
@@ -23,7 +23,7 @@ public:
     void exit() override;
 
 private:
-    std::shared_ptr<ecs::ResourceManager> _resourceManager;
+    std::shared_ptr<ResourceManager> _resourceManager;
     std::shared_ptr<ecs::Registry> _registry;
     std::shared_ptr<ecs::ASystemManager> _systemManager;
     std::shared_ptr<ecs::MovementSystem> _movementSystem;
