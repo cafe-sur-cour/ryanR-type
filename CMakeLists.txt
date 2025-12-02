@@ -12,6 +12,7 @@ if(WIN32)
 endif()
 
 find_package(asio CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 option(BUILD_TESTS "Build unit tests" OFF)
 option(BUILD_CLIENT "Build client and multimedia library" ON)
 option(BUILD_SERVER "Build server" ON)

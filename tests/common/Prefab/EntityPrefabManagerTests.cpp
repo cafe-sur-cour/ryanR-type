@@ -10,6 +10,7 @@
 #include "../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../common/Prefab/APrefab.hpp"
 #include "../../../common/ECS/entity/registry/Registry.hpp"
+#include "../../../common/Error/ParserError.hpp"
 
 using namespace ecs;
 
@@ -72,9 +73,16 @@ TEST(EntityPrefabManagerTest, CreateEntityFromNonExistentPrefab) {
     auto registry = std::make_shared<Registry>();
     std::string name = "nonExistent";
 
-    ecs::Entity entityId = manager.createEntityFromPrefab(name, registry);
+    EXPECT_THROW({
+        manager.createEntityFromPrefab(name, registry);
+    }, err::ParserError);
 
-    EXPECT_EQ(entityId, 0); // As per implementation
+    try {
+        manager.createEntityFromPrefab(name, registry);
+    } catch (const err::ParserError& e) {
+        EXPECT_EQ(e.getCode(), static_cast<int>(err::ParserError::UNKNOWN));
+        EXPECT_NE(std::string(e.what()).find("not found"), std::string::npos);
+    }
 }
 
 TEST(EntityPrefabManagerTest, CreateEntityWithNullRegistry) {
@@ -83,9 +91,17 @@ TEST(EntityPrefabManagerTest, CreateEntityWithNullRegistry) {
     std::string name = "nullRegistry";
 
     manager.registerPrefab(name, prefab);
-    ecs::Entity entityId = manager.createEntityFromPrefab(name, nullptr);
 
-    EXPECT_EQ(entityId, 0);
+    EXPECT_THROW({
+        manager.createEntityFromPrefab(name, nullptr);
+    }, err::ParserError);
+
+    try {
+        manager.createEntityFromPrefab(name, nullptr);
+    } catch (const err::ParserError& e) {
+        EXPECT_EQ(e.getCode(), static_cast<int>(err::ParserError::UNKNOWN));
+        EXPECT_NE(std::string(e.what()).find("not found"), std::string::npos);
+    }
 }
 
 TEST(EntityPrefabManagerTest, DeletePrefab) {
