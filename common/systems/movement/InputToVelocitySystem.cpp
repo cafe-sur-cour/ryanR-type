@@ -43,7 +43,7 @@ void InputToVelocitySystem::update(
             registry->addComponent(entityId, velocityComp);
         }
 
-        inputIntent->setState(ComponentState::Processed);
+        registry->removeComponent<InputIntentComponent>(entityId);
     }
 }
 

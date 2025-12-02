@@ -7,7 +7,7 @@
 
 #include <memory>
 #include "SoundSystem.hpp"
-#include "../../../common/components/temporary/SoundIntentComponent.hpp"
+#include "../../components/temporary/SoundIntentComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/ECS/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IAudio.hpp"
@@ -35,7 +35,7 @@ void SoundSystem::update(std::shared_ptr<ResourceManager>
             audio->playSound(soundIntent->getSoundPath(), soundIntent->getVolume());
         }
 
-        soundIntent->setState(ComponentState::Processed);
+        registry->removeComponent<SoundIntentComponent>(entityId);
     }
 }
 

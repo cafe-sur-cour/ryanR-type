@@ -45,7 +45,6 @@ class Registry : public std::enable_shared_from_this<Registry> {
 
         Entity getMaxEntityId() const;
 
-        void removeAllComponentsWithState(ComponentState state);
         Entity createEntity();
     protected:
     private:
