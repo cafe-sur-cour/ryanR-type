@@ -112,12 +112,6 @@ void Parser::instanciateComponentCreators() {
 }
 
 template<typename T>
-void Parser::componentAdders(const std::shared_ptr<ecs::Registry>& registry,
-    ecs::Entity entity, std::shared_ptr<ecs::IComponent> component) {
-    registry->addComponent(entity, std::static_pointer_cast<T>(component));
-}
-
-template<typename T>
 void Parser::registerComponent(const ComponentCreator& creator) {
     std::type_index idx(typeid(T));
     _componentCreators[idx] = creator;
