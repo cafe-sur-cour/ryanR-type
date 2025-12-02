@@ -17,8 +17,8 @@
 #include "../../Error/ParserError.hpp"
 #include "../../Prefab/ParsedEntityPrefab.hpp"
 
-EntityParser::EntityParser(std::shared_ptr<const std::map<std::string, std::pair<std::type_index,
-    std::vector<Field>>>> componentDefinitions,
+EntityParser::EntityParser(std::shared_ptr<const std::map<std::string,
+    std::pair<std::type_index, std::vector<Field>>>> componentDefinitions,
     const std::map<std::type_index, ComponentCreator>& componentCreators,
     const std::map<std::type_index, ComponentAdder>& componentAdders,
     const ShouldParseComponentCallback& shouldParseCallback) :
