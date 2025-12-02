@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <vector>
 #include <memory>
+#include <utility>
 #include <string>
 
 #include "ServerNetwork.hpp"
@@ -54,7 +55,8 @@ void ServerNetwork::stop() {
     _isRunning = false;
 }
 
-uint8_t ServerNetwork::acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
+uint8_t ServerNetwork::acceptConnection(
+    asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
     (void)packetManager;
     if (!_socket || !_socket->is_open()) {
         return 0;
@@ -94,11 +96,7 @@ void ServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> pack
 }
 
 void ServerNetwork::broadcast(const pm::IPacketManager &packet) {
-    std::vector<uint8_t> data = packet.pack(0, 0, packet.getType());
-    for (const auto& [clientId, endpoint] : _clients) {
-        (void)clientId;
-        sendTo(endpoint, data);
-    }
+    (void)packet;
 }
 
 bool ServerNetwork::hasIncomingData() const {
