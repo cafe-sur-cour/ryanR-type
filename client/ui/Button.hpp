@@ -19,16 +19,16 @@ class Button : public UIElement {
         Button(std::shared_ptr<ecs::ResourceManager> resourceManager);
         virtual ~Button() = default;
 
-        void setText(const std::string& text) { _text = text; }
-        const std::string& getText() const { return _text; }
+        void setText(const std::string& text);
+        const std::string& getText() const;
 
-        void setTextColor(const gfx::color_t& color) { _textColor = color; }
-        void setFontPath(const std::string& fontPath) { _fontPath = fontPath; }
+        void setTextColor(const gfx::color_t& color);
+        void setFontPath(const std::string& fontPath);
 
-        void setNormalColor(const gfx::color_t& color) { _normalColor = color; }
-        void setHoveredColor(const gfx::color_t& color) { _hoveredColor = color; }
-        void setPressedColor(const gfx::color_t& color) { _pressedColor = color; }
-        void setDisabledColor(const gfx::color_t& color) { _disabledColor = color; }
+        void setNormalColor(const gfx::color_t& color);
+        void setHoveredColor(const gfx::color_t& color);
+        void setPressedColor(const gfx::color_t& color);
+        void setDisabledColor(const gfx::color_t& color);
 
         virtual void render() override;
 

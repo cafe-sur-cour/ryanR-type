@@ -7,8 +7,9 @@
 
 #include "UIElement.hpp"
 #include <algorithm>
+#include <memory>
 #include <utility>
-#include <iostream>
+#include <vector>
 #include "../../libs/Multimedia/IWindow.hpp"
 
 namespace ui {
@@ -23,6 +24,14 @@ void UIElement::setPosition(const math::Vector2f& position) {
 
 void UIElement::setSize(const math::Vector2f& size) {
     _size = size;
+}
+
+math::Vector2f UIElement::getPosition() const {
+    return _position;
+}
+
+math::Vector2f UIElement::getSize() const {
+    return _size;
 }
 
 math::Vector2f UIElement::getAbsolutePosition() const {
@@ -122,10 +131,50 @@ void UIElement::update(float deltaTime) {
     }
 }
 
+void UIElement::setVisible(bool visible) {
+    _visible = visible;
+}
+
+bool UIElement::isVisible() const {
+    return _visible;
+}
+
+void UIElement::setState(UIState state) {
+    _state = state;
+}
+
+UIState UIElement::getState() const {
+    return _state;
+}
+
+void UIElement::setParent(std::weak_ptr<UIElement> parent) {
+    _parent = parent;
+}
+
+std::shared_ptr<UIElement> UIElement::getParent() const {
+    return _parent.lock();
+}
+
+const std::vector<std::shared_ptr<UIElement>>& UIElement::getChildren() const {
+    return _children;
+}
+
+void UIElement::setOnClick(std::function<void()> callback) {
+    _onClick = callback;
+}
+
+void UIElement::setOnHover(std::function<void()> callback) {
+    _onHover = callback;
+}
+
+void UIElement::setOnRelease(std::function<void()> callback) {
+    _onRelease = callback;
+}
+
 std::pair<int, int> UIElement::getWindowSize() const {
     auto resourceManager = _resourceManager.lock();
     if (!resourceManager) {
-        return {800, 600};
+        return {800, 600};  /* Fallback size, should never happen */
     }
     return resourceManager->get<gfx::IWindow>()->getWindowSize();
 }
