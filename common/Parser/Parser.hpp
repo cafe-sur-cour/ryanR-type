@@ -32,7 +32,12 @@ class Parser {
 
         void instanciateComponentDefinitions();
         void instanciateComponentCreators();
-        void instanciateComponentAdders();
+
+        template<typename T>
+        void registerComponent(const ComponentCreator& creator);
+
+        template<typename T>
+        void componentAdders(const std::shared_ptr<ecs::Registry>& registry, ecs::Entity entity, std::shared_ptr<ecs::IComponent> component);
         const std::map<std::type_index, ComponentAdder>& getComponentAdders() const;
         ParsingType getParsingType() const;
         bool isClientParsing() const;

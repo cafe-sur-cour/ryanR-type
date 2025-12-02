@@ -13,7 +13,6 @@
 Parser::Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type) : _prefabManager(prefab), _parsingType(type) {
     instanciateComponentDefinitions();
     instanciateComponentCreators();
-    instanciateComponentAdders();
     auto shouldParseCallback = [this](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> bool {
         return this->shouldParseComponent(fields);
     };
