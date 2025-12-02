@@ -8,7 +8,7 @@
 #ifndef SOUNDINTENTCOMPONENT_HPP_
 #define SOUNDINTENTCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../../../common/components/base/AComponent.hpp"
 #include <string>
 
 namespace ecs {
