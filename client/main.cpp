@@ -20,7 +20,7 @@ int main(int ac, char **av) {
 
     try {
         utils.parseCli(ac, av, core.getNetwork());
-        core.getNetwork()->init();
+        core.startNetwork();
         core.run();
     } catch (const err::IError &e) {
         std::cerr << e.what() << std::endl;

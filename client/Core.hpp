@@ -24,6 +24,7 @@ class Core
         ~Core();
 
         void run();
+        void startNetwork();
 
         std::shared_ptr<ClientNetwork> getNetwork();
 
