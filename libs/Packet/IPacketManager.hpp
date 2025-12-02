@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <cstdint>
+#include <string>
 #include "../Buffer/IBuffer.hpp"
 
 namespace pm {
