@@ -34,6 +34,16 @@ target_compile_definitions(${NETWORK_CLIENT_LIB_NAME}
     PUBLIC ASIO_STANDALONE
 )
 
+# Disable sign-conversion warnings for ASIO library
+if(APPLE OR UNIX)
+    target_compile_options(${NETWORK_CLIENT_LIB_NAME} PRIVATE 
+        -Wno-sign-conversion 
+        -Wno-implicit-int-conversion 
+        -Wno-shorten-64-to-32 
+        -Wno-shadow
+    )
+endif()
+
 # Link asio for networking functionality
 target_link_libraries(${NETWORK_CLIENT_LIB_NAME}
     PUBLIC asio::asio

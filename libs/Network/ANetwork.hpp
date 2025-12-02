@@ -23,7 +23,7 @@ class ANetwork : public INetwork {
         virtual ~ANetwork() override = default;
         virtual void init(uint16_t port, const std::string host) override = 0;
         virtual void stop() override = 0;
-        virtual uint8_t acceptConnection() override = 0;
+        virtual uint8_t acceptConnection(std::shared_ptr<IBuffer> buffer) override = 0;
         virtual void sendTo(uint8_t connectionId, const pm::IPacketManager &packet) override = 0;
         virtual void broadcast(const pm::IPacketManager &packet) override = 0;
         virtual bool hasIncomingData() const override = 0;

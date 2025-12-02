@@ -23,7 +23,7 @@ class INetwork {
         virtual void init(uint16_t port, const std::string host) = 0;
         virtual void stop() = 0;
 
-        virtual uint8_t acceptConnection() = 0;
+        virtual uint8_t acceptConnection(std::shared_ptr<IBuffer> buffer) = 0;
         virtual void closeConnection(uint8_t connectionId) = 0;
         virtual std::vector<uint8_t> getActiveConnections() const = 0;
         virtual size_t getConnectionCount() const = 0;

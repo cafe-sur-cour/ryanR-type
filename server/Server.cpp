@@ -73,7 +73,7 @@ void rserv::Server::start() {
 
     Signal::setupSignalHandlers();
     while (this->getState() == 1 && !Signal::stopFlag) {
-        // processConnections();
+        processConnections();
         // processIncomingPackets();
         if (std::cin.eof()) {
             std::cout << "EOF received (Ctrl+D pressed)" << std::endl;
@@ -148,10 +148,8 @@ void rserv::Server::setNetwork(std::shared_ptr<net::INetwork> network) {
 void rserv::Server::processConnections() {
     if (!_network) return;
 
-    uint8_t newClientId = _network->acceptConnection();
-    while (newClientId != 0) {
-        newClientId = _network->acceptConnection();
-    }
+    uint8_t newClientId = _network->acceptConnection(this->_buffer);
+    (void)newClientId;
 }
 
 void rserv::Server::processIncomingPackets() {
