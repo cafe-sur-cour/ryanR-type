@@ -19,7 +19,7 @@
 #include <typeindex>
 #include <map>
 
-ComposantParser::ComposantParser(const std::map<std::string, std::pair<std::type_index, std::vector<Field>>>& componentDefinitions, const std::map<std::type_index, ComponentCreator>& componentCreators) : _componentDefinitions(componentDefinitions), _componentCreators(componentCreators) {
+ComposantParser::ComposantParser(const std::map<std::string, std::pair<std::type_index, std::vector<Field>>>& componentDefinitions, const std::map<std::type_index, ComponentCreator>& componentCreators, const ShouldParseComponentCallback& shouldParseCallback) : _componentDefinitions(componentDefinitions), _componentCreators(componentCreators), _shouldParseCallback(shouldParseCallback) {
 }
 
 ComposantParser::~ComposantParser() {
@@ -40,6 +40,10 @@ std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::pa
             throw std::runtime_error("Missing field: " + field.name + " in component " + componentName);
         }
         fields[field.name] = parseFieldValue(componentData[field.name], field.type);
+    }
+
+    if (_shouldParseCallback && !_shouldParseCallback(fields)) {
+        return {nullptr, typeIndex};
     }
 
     auto component = _componentCreators.at(typeIndex)(fields);

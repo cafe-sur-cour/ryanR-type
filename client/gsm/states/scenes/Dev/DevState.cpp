@@ -54,7 +54,7 @@ DevState::DevState(
     _systemManager->addSystem(animationRenderingSystem);
     _systemManager->addSystem(hitboxRenderingSystem);
     _systemManager->addSystem(rectangleRenderingSystem);
-    _parser = std::make_shared<Parser>(_prefabManager);
+    _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT);
     _parser->parseAllEntities("assets/entity/player/");
 }
 
