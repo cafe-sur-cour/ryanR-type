@@ -74,6 +74,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cmake --build --preset "release-unix"
+cmake --build --preset "release-unix" -j4
 
 exit $?
