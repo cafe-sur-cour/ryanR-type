@@ -73,7 +73,8 @@ void Parser::instanciateComponentDefinitions() {
                 {constants::SHOOTINGSTATSREF_FIELD, FieldType::STRING, true}
             }
         }},
-        {constants::RECTANGLERENDERCOMPONENT, {std::type_index(typeid(ecs::RectangleRenderComponent)), {
+        {constants::RECTANGLERENDERCOMPONENT, {
+            std::type_index(typeid(ecs::RectangleRenderComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::WIDTH_FIELD, FieldType::FLOAT},
             {constants::HEIGHT_FIELD, FieldType::FLOAT},
@@ -149,9 +150,10 @@ void Parser::instanciateComponentCreators() {
 
     registerComponent<ecs::ShootingStatsComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-
         if (fields.find(constants::SHOOTINGSTATSREF_FIELD) != fields.end()) {
-            auto statsName = std::get<std::string>(*fields.at(constants::SHOOTINGSTATSREF_FIELD));
+            auto statsName = std::get<std::string>(
+                *fields.at(constants::SHOOTINGSTATSREF_FIELD)
+            );
             auto component = std::make_shared<ecs::ShootingStatsComponent>();
             return component;
         }
