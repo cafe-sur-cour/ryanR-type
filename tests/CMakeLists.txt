@@ -106,3 +106,7 @@ add_test(NAME SerializerTests COMMAND SerializerTests)
 add_executable(ErrorTests common/Error/Error-test.cpp)
 target_link_libraries(ErrorTests ERROR GTest::gtest GTest::gtest_main)
 add_test(NAME ErrorTests COMMAND ErrorTests)
+
+add_executable(ParserTests common/Parser/ParserTests.cpp)
+target_link_libraries(ParserTests PARSER PREFAB ECS ERROR GTest::gtest GTest::gtest_main)
+add_test(NAME ParserTests COMMAND ParserTests)
