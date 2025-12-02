@@ -1,0 +1,40 @@
+{
+    "name": "spread_shot",
+    "components": {
+        "ProjectileTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 2.5, "y": 2.5 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "server" },
+        "AnimationComponent": {
+            "target": "client",
+            "animationPath": "assets/sprites/projectile_spread.png",
+            "frameWidth": 14.0,
+            "frameHeight": 14.0,
+            "frameCount": 1,
+            "startWidth": 0.0,
+            "startHeight": 0.0
+        },
+        "RectangleRenderComponent": {
+            "target": "client",
+            "width": 14.0,
+            "height": 14.0,
+            "color": { "r": 255, "g": 165, "b": 0, "a": 255 }
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "size": { "x": 14.0, "y": 14.0 }
+        },
+        "ShootingStatsComponent": {
+            "target": "both",
+            "fireRate": 1.0,
+            "projectileSpeed": 400.0,
+            "shotCount": 5,
+            "angleOffset": 0.0,
+            "spreadAngle": 30.0
+        }
+    }
+}
