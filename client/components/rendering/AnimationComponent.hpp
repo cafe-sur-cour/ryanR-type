@@ -42,7 +42,7 @@ class AnimationComponent : public AComponent {
         AnimationComponent()
             : _currentState(""), _timer(0.f), _isPlaying(false), _currentFrame(0) {}
 
-        void addState(const std::string& name, const AnimationClip& clip) {
+        void addState(const std::string& name, std::shared_ptr<AnimationClip> clip) {
             _states[name] = clip;
         }
 
@@ -66,9 +66,9 @@ class AnimationComponent : public AComponent {
         bool isPlaying() const { return _isPlaying; }
         void setPlaying(bool playing) { _isPlaying = playing; }
 
-        const AnimationClip* getCurrentClip() const {
+        std::shared_ptr<const AnimationClip> getCurrentClip() const {
             auto it = _states.find(_currentState);
-            return it != _states.end() ? &it->second : nullptr;
+            return it != _states.end() ? it->second : nullptr;
         }
 
         const std::vector<Transition>& getTransitions() const { return _transitions; }
@@ -82,7 +82,7 @@ class AnimationComponent : public AComponent {
         bool isValid() const { return !_states.empty() && !_currentState.empty(); }
 
     private:
-        std::unordered_map<std::string, AnimationClip> _states;
+        std::unordered_map<std::string, std::shared_ptr<AnimationClip>> _states;
         std::vector<Transition> _transitions;
         std::string _currentState;
         float _timer;

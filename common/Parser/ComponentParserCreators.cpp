@@ -99,7 +99,7 @@ void Parser::instanciateComponentCreators() {
             ecs::AnimationClip clip{
                 texturePath, frameWidth, frameHeight,
                 frameCount, startWidth, startHeight, speed, loop};
-            anim->addState(stateName, clip);
+            anim->addState(stateName, std::make_shared<ecs::AnimationClip>(clip));
         }
 
         anim->setCurrentState(initialState);
