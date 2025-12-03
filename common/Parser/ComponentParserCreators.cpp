@@ -119,12 +119,12 @@ void Parser::instanciateComponentDefinitions() {
             std::type_index(typeid(ecs::BackGroundMusicTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
-        {"MusicComponent", {
+        {constants::MUSICCOMPONENT, {
             std::type_index(typeid(ecs::MusicComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
-            {"musicFile", FieldType::STRING},
-            {"initialState", FieldType::STRING},
-            {"volume", FieldType::FLOAT}
+            {constants::MUSICFILE_FIELD, FieldType::STRING},
+            {constants::INITIALSTATEMUSIC_FIELD, FieldType::STRING},
+            {constants::VOLUME_FIELD, FieldType::FLOAT}
         }}}
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
@@ -345,19 +345,22 @@ void Parser::instanciateComponentCreators() {
         parallax->sortLayersByZIndex();
         return parallax;
     });
-        registerComponent<ecs::BackGroundMusicTag>([]([[maybe_unused]] const std::map<std::string,
+        registerComponent<ecs::BackGroundMusicTag>([]([[maybe_unused]]
+            const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::BackGroundMusicTag>();
     });
     registerComponent<ecs::MusicComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-        auto musicFile = std::get<std::string>(*fields.at("musicFile"));
-        auto initialStateStr = std::get<std::string>(*fields.at("initialState"));
-        auto volume = std::get<float>(*fields.at("volume"));
+        auto musicFile = std::get<std::string>(*fields.at(constants::MUSICFILE_FIELD));
+        auto initialStateStr = std::get<std::string>
+            (*fields.at(constants::INITIALSTATEMUSIC_FIELD));
+        auto volume = std::get<float>(*fields.at(constants::VOLUME_FIELD));
         ecs::MusicState initialState = ecs::STOPPED;
-        if (initialStateStr == "PLAYING") initialState = ecs::PLAYING;
-        else if (initialStateStr == "PAUSED") initialState = ecs::PAUSED;
-        else if (initialStateStr == "CHANGING") initialState = ecs::CHANGING;
+        if (initialStateStr == constants::PLAYING_FIELD) initialState = ecs::PLAYING;
+        else if (initialStateStr == constants::PAUSED_FIELD) initialState = ecs::PAUSED;
+        else if (initialStateStr == constants::CHANGING_FIELD) initialState = ecs::CHANGING;
+        else if (initialStateStr == constants::STOPPED_FIELD) initialState = ecs::STOPPED;
         return std::make_shared<ecs::MusicComponent>(musicFile, initialState, volume);
     });
 }
