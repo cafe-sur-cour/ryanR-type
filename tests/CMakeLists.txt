@@ -76,6 +76,10 @@ add_executable(ColliderComponentTests common/ECS/component/ColliderComponentTest
 target_link_libraries(ColliderComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME ColliderComponentTests COMMAND ColliderComponentTests)
 
+add_executable(LifetimeComponentTests common/ECS/component/LifetimeComponentTests.cpp)
+target_link_libraries(LifetimeComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME LifetimeComponentTests COMMAND LifetimeComponentTests)
+
 add_executable(RegistryTests common/ECS/RegistryTests.cpp)
 target_link_libraries(RegistryTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME RegistryTests COMMAND RegistryTests)
@@ -83,6 +87,10 @@ add_test(NAME RegistryTests COMMAND RegistryTests)
 add_executable(MovementSystemTests common/ECS/system/MovementSystemTests.cpp)
 target_link_libraries(MovementSystemTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME MovementSystemTests COMMAND MovementSystemTests)
+
+add_executable(LifetimeSystemTests common/ECS/system/LifetimeSystemTests.cpp)
+target_link_libraries(LifetimeSystemTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME LifetimeSystemTests COMMAND LifetimeSystemTests)
 
 add_executable(BufferTests server/buffer/circularBufferTest.cpp)
 target_link_libraries(BufferTests Buffer GTest::gtest GTest::gtest_main)
