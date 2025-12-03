@@ -5,14 +5,16 @@
 ** WindowsNetwork
 */
 
-#include <vector>
-#include <memory>
+#include <iostream>
 #include <stdexcept>
-#include <utility>
 #include <string>
+#include <memory>
+#include <vector>
+#include <utility>
 
 #include "ClientNetwork.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
+
 
 namespace net {
 
@@ -30,6 +32,12 @@ void WindowsNetwork::init(uint16_t port, const std::string host) {
 void WindowsNetwork::stop() {
 }
 
+void WindowsNetwork::disconnect() {
+}
+
+bool WindowsNetwork::isConnected() const {
+    return _connected;
+}
 
 uint8_t WindowsNetwork::acceptConnection(
     asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
@@ -43,18 +51,18 @@ void WindowsNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> pac
     (void)packet;
 }
 
-void WindowsNetwork::broadcast(const pm::IPacketManager &packet) {
-    (void)packet;
+void WindowsNetwork::broadcast(std::vector<uint8_t> data) {
+    (void)data;
 }
 
 bool WindowsNetwork::hasIncomingData() const {
     return false;
 }
 
-std::shared_ptr<pm::IPacketManager> WindowsNetwork::receiveFrom(
+std::vector<uint8_t> WindowsNetwork::receiveFrom(
     const uint8_t &connectionId) {
     (void)connectionId;
-    return nullptr;
+    return std::vector<uint8_t>();
 }
 
 std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> WindowsNetwork::receiveAny() {

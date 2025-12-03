@@ -116,7 +116,6 @@ Server :
 
 4.1.1 CONNECTION (0x01) – Sent from client to server
 
-
    - Player name (UTF-8, max 7 chars + null terminator)
 
 
@@ -126,9 +125,9 @@ Server :
 
 4.1.3. EVENT (0x04) – Client notifies input
 
-   - Player ID (4 bytes)
    - Event type (1 byte, e.g., Up, Down, Left, Right, Space)
-
+   - Depth of movement
+   - Direction of shoot
 
 
 **4.2 Server Details**
