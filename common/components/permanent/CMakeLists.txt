@@ -6,4 +6,5 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     ShootingStatsComponent.hpp
     ProjectilePrefabComponent.hpp
     LifetimeComponent.hpp
+    HealthComponent.hpp
 )
