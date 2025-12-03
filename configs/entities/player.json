@@ -4,19 +4,25 @@
         "TransformComponent": {
             "target": "both",
             "position": { "x": 100.0, "y": 100.0 },
-            "scale": { "x": 5.0, "y": 5.0 },
+            "scale": { "x": 3.0, "y": 3.0 },
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "server" },
         "SpeedComponent": { "target": "both", "speed": 10.0 },
         "AnimationComponent": {
             "target": "client",
-            "animationPath": "assets/sprites/frog_spritesheet.png",
-            "frameWidth": 64.0,
-            "frameHeight": 32.0,
-            "frameCount": 4,
+            "animationPath": "assets/sprites/player_ship.png",
+            "frameWidth": 33.2,
+            "frameHeight": 17.2,
+            "frameCount": 5,
             "startWidth": 0.0,
-            "startHeight": 96.0
+            "startHeight": 0.0
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 33.2, "y": 17.2 },
+            "type": "Solid"
         },
         "PlayerTag": { "target": "both" },
         "ControllableTag": { "target": "both" }
