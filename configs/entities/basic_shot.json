@@ -1,0 +1,21 @@
+{
+    "name": "basic_shot",
+    "components": {
+        "ProjectileTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 0.4, "y": 0.4 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpriteComponent": {
+            "target": "client",
+            "filePath": "assets/sprites/bullet.png"
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "size": { "x": 16.0, "y": 16.0 }
+        }
+    }
+}
