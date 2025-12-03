@@ -19,7 +19,7 @@ int main(int ac, char **av) {
     Core core;
 
     utils.parsCli(ac, av, core.getConfig());
-    std::cout << "[Server] Starting server..." << std::endl;
+    std::cout << "[Server] RTYPE SERVER" << std::endl;
     std::cout << "------------------------" << std::endl;
     std::cout << "Port: " << core.getConfig()->getPort() << std::endl;
     std::cout << "Max Clients: " << core.getConfig()->getNbClients();
@@ -29,10 +29,13 @@ int main(int ac, char **av) {
         core.loop();
     } catch (const err::IError &e) {
         std::cerr << e.getDetails() << std::endl;
-        return 84;
+        exit(84);
+    } catch (const std::runtime_error &e) {
+        std::cerr << "Runtime error: " << e.what() << std::endl;
+        exit(84);
     } catch (...) {
         std::cerr << "Unknown error occurred in server." << std::endl;
-        return 84;
+        exit(84);
     }
     return 0;
 }
