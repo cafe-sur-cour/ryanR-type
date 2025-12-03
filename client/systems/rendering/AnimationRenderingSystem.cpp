@@ -8,9 +8,11 @@
 #include <memory>
 #include <iostream>
 #include <algorithm>
+#include <unordered_map>
 #include "AnimationRenderingSystem.hpp"
 #include "../../components/rendering/AnimationComponent.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
+#include "../../../common/components/permanent/VelocityComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/ECS/entity/Entity.hpp"
 #include "../../../libs/Multimedia/IWindow.hpp"
@@ -36,7 +38,34 @@ void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
             if (transition.from == animation->getCurrentState() &&
                 transition.condition(registry, entityId)
             ) {
-                animation->setCurrentState(transition.to);
+                if (transition.playRewind) {
+                    std::shared_ptr<const AnimationClip> currentClip =
+                        animation->getCurrentClip();
+                    if (!currentClip)
+                        continue;
+
+                    if (!animation->isPlayingRewind()) {
+                        animation->setRewindStartFrame(animation->getCurrentFrame());
+                        animation->setPlayingRewind(true);
+                        animation->setTimer(0.0f);
+                    } else {
+                        if (animation->getCurrentFrame() == 0) {
+                            static std::unordered_map<Entity, float> waitTimers;
+                            if (waitTimers.find(entityId) == waitTimers.end())
+                                waitTimers[entityId] = 0.0f;
+
+                            waitTimers[entityId] += deltaTime;
+
+                            if (waitTimers[entityId] >= currentClip->speed) {
+                                animation->setCurrentState(transition.to);
+                                animation->setPlayingRewind(false);
+                                waitTimers.erase(entityId);
+                            }
+                        }
+                    }
+                } else {
+                    animation->setCurrentState(transition.to);
+                }
                 break;
             }
         }
@@ -44,19 +73,29 @@ void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
         if (!animation->isPlaying())
             continue;
 
-        animation->setTimer(animation->getTimer() + deltaTime);
-
         std::shared_ptr<const AnimationClip> clip = animation->getCurrentClip();
         if (!clip)
             continue;
 
+        animation->setTimer(animation->getTimer() + deltaTime);
+
         int frameIndex;
-        if (clip->loop) {
-            frameIndex = static_cast<int>(animation->getTimer() / clip->speed)
-                % clip->frameCount;
+        if (animation->isPlayingRewind()) {
+            int framesPassed = static_cast<int>(animation->getTimer() / clip->speed);
+            int startFrame = animation->getRewindStartFrame();
+
+            frameIndex = startFrame - framesPassed;
+
+            if (frameIndex < 0)
+                frameIndex = 0;
         } else {
-            frameIndex = std::min(static_cast<int>(animation->getTimer() /
-                clip->speed), clip->frameCount - 1);
+            if (clip->loop) {
+                frameIndex = static_cast<int>(animation->getTimer() /
+                    clip->speed) % clip->frameCount;
+            } else {
+                frameIndex = std::min(static_cast<int>(animation->getTimer() /
+                    clip->speed), clip->frameCount - 1);
+            }
         }
         animation->setCurrentFrame(frameIndex);
 
