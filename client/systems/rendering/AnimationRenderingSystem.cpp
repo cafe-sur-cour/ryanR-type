@@ -38,9 +38,18 @@ void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
 
         for (const auto& transition : animation->getTransitions()) {
             if (transition.from == animation->getCurrentState()) {
-                if (AnimationConditionFactory::getCondition(transition.conditionKey)
-                    (registry, entityId)
-                ) {
+                bool allConditionsMet = true;
+                for (const auto& condition : transition.conditions) {
+                    bool value = AnimationConditionFactory::getConditionValue(
+                        condition.param,
+                        registry,
+                        entityId);
+                    if (value != condition.equals) {
+                        allConditionsMet = false;
+                        break;
+                    }
+                }
+                if (allConditionsMet) {
                     if (transition.playRewind) {
                         std::shared_ptr<const AnimationClip> currentClip =
                             animation->getCurrentClip();
