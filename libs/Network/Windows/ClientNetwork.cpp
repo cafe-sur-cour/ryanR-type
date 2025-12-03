@@ -5,14 +5,16 @@
 ** WindowsNetwork
 */
 
-#include <vector>
-#include <memory>
+#include <iostream>
 #include <stdexcept>
-#include <utility>
 #include <string>
+#include <memory>
+#include <vector>
+#include <utility>
 
 #include "ClientNetwork.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
+
 
 namespace net {
 
@@ -65,6 +67,7 @@ void WindowsNetwork::broadcast(const pm::IPacketManager &packet) {
     (void)packet;
 }
 
+}
 extern "C" {
     void *createNetworkInstance() {
         return new net::WindowsNetwork();

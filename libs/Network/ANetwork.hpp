@@ -21,7 +21,7 @@ class ANetwork : public INetwork {
     public:
 
         virtual ~ANetwork() override = default;
-        virtual void init(uint16_t port,const std::string host) override = 0;
+        virtual void init(uint16_t port, const std::string host) override = 0;
         virtual void stop() override = 0;
         virtual uint8_t acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) override = 0;
         virtual void sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override = 0;
