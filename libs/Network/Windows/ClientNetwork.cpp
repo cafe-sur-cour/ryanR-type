@@ -52,7 +52,7 @@ void WindowsNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> pac
 }
 
 void WindowsNetwork::broadcast(std::vector<uint8_t> data) {
-    (void)packet;
+    (void)data;
 }
 
 bool WindowsNetwork::hasIncomingData() const {
