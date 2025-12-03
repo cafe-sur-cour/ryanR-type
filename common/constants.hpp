@@ -99,6 +99,7 @@ namespace constants {
     const std::string PREFABNAME_FIELD = "prefabName";
     const std::string LIFETIMECOMPONENT = "LifetimeComponent";
     const std::string LIFETIME_FIELD = "lifetime";
+    const std::string BACKGROUNDMUSICTAG = "BackGroundMusicTag";
 
 
     const math::Vector2f TILE_SIZE = math::Vector2f(64.0f, 64.0f);
@@ -106,6 +107,7 @@ namespace constants {
     const float MAX_HEIGHT = 1080.0f;
 
     /* Map parsing constants */
+    const std::string MUSIC_FIELD = "music";
     const std::string BACKGROUND_FIELD = "background";
     const std::string SCROLLSPEED_FIELD = "scrollSpeed";
     const std::string TILE_FIELD = "tile";
