@@ -119,7 +119,7 @@ bool UnixClientNetwork::hasIncomingData() const {
 }
 
 
-std::shared_ptr<pm::IPacketManager> UnixClientNetwork::receiveFrom(
+std::vector<uint8_t> UnixClientNetwork::receiveFrom(
     const uint8_t &connectionId) {
     (void)connectionId;
 
@@ -129,11 +129,11 @@ std::shared_ptr<pm::IPacketManager> UnixClientNetwork::receiveFrom(
     if (ec) {
         std::cerr << "[CLIENT NETWORK] Error checking available data: "
                   << ec.message() << std::endl;
-        return nullptr;
+        return std::vector<uint8_t>();
     }
 
     if (available == 0) {
-        return nullptr;
+        return std::vector<uint8_t>();
     }
     std::cout << "[CLIENT NETWORK] " << available << " bytes available" << std::endl;
 
@@ -145,10 +145,10 @@ std::shared_ptr<pm::IPacketManager> UnixClientNetwork::receiveFrom(
 
     if (ec) {
         if (ec == asio::error::would_block || ec == asio::error::try_again) {
-            return nullptr;
+            return std::vector<uint8_t>();
         }
         std::cerr << "[CLIENT NETWORK] Receive error: " << ec.message() << std::endl;
-        return nullptr;
+        return std::vector<uint8_t>();
     }
 
     if (bytesReceived > 0) {
@@ -158,11 +158,11 @@ std::shared_ptr<pm::IPacketManager> UnixClientNetwork::receiveFrom(
 
         // Resize buffer to actual bytes received
         buffer.resize(bytesReceived);
-
+        return buffer;
         // TODO(albane) Process buffer and create IPacketManager
         // return your packet manager here
     }
-    return nullptr;
+    return std::vector<uint8_t>();
 }
 
 std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> UnixClientNetwork::receiveAny() {

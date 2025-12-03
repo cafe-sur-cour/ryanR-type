@@ -126,10 +126,10 @@ bool UnixServerNetwork::hasIncomingData() const {
 }
 
 
-std::shared_ptr<pm::IPacketManager> UnixServerNetwork::receiveFrom(
+std::vector<uint8_t> UnixServerNetwork::receiveFrom(
     const uint8_t &connectionId) {
     (void)connectionId;
-    return nullptr;
+    return std::vector<uint8_t>();
 }
 
 std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> UnixServerNetwork::receiveAny() {
