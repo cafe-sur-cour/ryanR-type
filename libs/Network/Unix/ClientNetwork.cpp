@@ -49,7 +49,7 @@ UnixClientNetwork::~UnixClientNetwork() {
 //             ("[UnixClientNetwork] Connection failed: ") + e.what());
 //     }
 // 
-void UnixClientNetwork::init(uint32_t port, const std::string host) {
+void UnixClientNetwork::init(uint16_t port, const std::string host) {
     std::error_code ec;
     
     if (!_socket) {
@@ -113,21 +113,24 @@ bool UnixClientNetwork::isConnected() const {
     return _connected;
 }
 
-uint8_t UnixClientNetwork::acceptConnection() {
+uint8_t UnixClientNetwork::acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
     // Not applicable for client
+    (void)id;
+    (void)packetManager;
     return 1;
 }
 
-void UnixClientNetwork::sendTo(int connectionId, std::vector<uint8_t> packet) {
-   (void)connectionId;  // In client, connectionId is not used
+void UnixClientNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
+   (void)id;  // In client, id is not used
    std::cout << "Sending to " << _serverEndpoint.address().to_string() << ":"
              << _serverEndpoint.port() << " Data size: " << packet.size() << std::endl;
     _socket->send_to(asio::buffer(packet), _serverEndpoint);
 }
 
-void UnixClientNetwork::broadcast(std::vector<uint8_t> packet) {
+void UnixClientNetwork::broadcast(const pm::IPacketManager &packet) {
     // For client, broadcast is the same as sending to the server
-    sendTo(0, packet);
+    // sendTo(0, packet);
+    (void)packet;
 }
 
 bool UnixClientNetwork::hasIncomingData() const {
@@ -155,7 +158,7 @@ bool UnixClientNetwork::hasIncomingData() const {
 // }
 
 std::shared_ptr<pm::IPacketManager> UnixClientNetwork::receiveFrom(
-    const int &connectionId) {
+    const uint8_t &connectionId) {
     (void)connectionId;
     
     asio::error_code ec;
@@ -206,7 +209,11 @@ std::shared_ptr<pm::IPacketManager> UnixClientNetwork::receiveFrom(
     return nullptr;
 }
 
-}  // namespace net
+std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> UnixClientNetwork::receiveAny() {
+    return {};
+}
+
+} // namespace net
 
 extern "C" {
     void *createNetworkInstance() {
