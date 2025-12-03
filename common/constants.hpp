@@ -54,6 +54,7 @@ namespace constants {
     const std::string RECTANGLERENDERCOMPONENT = "RectangleRenderComponent";
     const std::string PROJECTILEPREFABCOMPONENT = "ProjectilePrefabComponent";
     const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
+    const std::string PARALLAXCOMPONENT = "ParallaxComponent";
 
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
@@ -88,10 +89,24 @@ namespace constants {
     const std::string PARAM_FIELD = "param";
     const std::string EQUALS_FIELD = "equals";
     const std::string FROM_FIELD = "from";
+    const std::string BASESCROLLSPEED_FIELD = "baseScrollSpeed";
+    const std::string DIRECTION_FIELD = "direction";
+    const std::string LAYERS_FIELD = "layers";
+    const std::string NAME_FIELD = "name";
+    const std::string SPEEDMULTIPLIER_FIELD = "speedMultiplier";
+    const std::string OFFSET_FIELD = "offset";
+    const std::string SCALEMODE_FIELD = "scaleMode";
+    const std::string SOURCESIZE_FIELD = "sourceSize";
+    const std::string REPEAT_FIELD = "repeat";
+    const std::string OPACITY_FIELD = "opacity";
+    const std::string ZINDEX_FIELD = "zIndex";
     const std::string TO_FIELD = "to";
     const std::string REWIND_FIELD = "rewind";
     const std::string TEXTUREPATH_FIELD = "texturePath";
     const std::string LOOP_FIELD = "loop";
+    const std::string SCALEMODE_FITSCREEN = "FIT_SCREEN";
+    const std::string SCALEMODE_STRETCH = "STRETCH";
+    const std::string SCALEMODE_MANUAL = "MANUAL";
 
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";

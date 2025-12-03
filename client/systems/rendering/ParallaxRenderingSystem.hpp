@@ -1,0 +1,42 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** ParallaxRenderingSystem
+*/
+
+#ifndef PARALLAXRENDERINGSYSTEM_HPP_
+#define PARALLAXRENDERINGSYSTEM_HPP_
+
+#include "../../../common/systems/base/ASystem.hpp"
+#include "../../components/rendering/ParallaxComponent.hpp"
+#include "../../../common/types/Vector2f.hpp"
+#include <memory>
+
+namespace ecs {
+
+class ParallaxRenderingSystem : public ASystem {
+    public:
+        ParallaxRenderingSystem();
+        ~ParallaxRenderingSystem() override = default;
+
+    protected:
+        void update(std::shared_ptr<ResourceManager> resourceManager,
+            std::shared_ptr<Registry> registry, float deltaTime) override;
+
+    private:
+        void updateLayerOffset(ParallaxLayer& layer, const math::Vector2f& direction,
+            float baseSpeed, float deltaTime);
+
+        math::Vector2f calculateScale(const ParallaxLayer& layer,
+            float screenWidth, float screenHeight);
+
+        void renderLayer(const ParallaxLayer& layer,
+            std::shared_ptr<ResourceManager> resourceManager,
+            const math::Vector2f& basePosition,
+            float screenWidth, float screenHeight);
+};
+
+} // namespace ecs
+
+#endif /* !PARALLAXRENDERINGSYSTEM_HPP_ */
