@@ -21,7 +21,7 @@ enum class ConnectionState {
     CONNECTING,
     CONNECTED,
     RECONNECTING,
-    ERROR
+    ERROR_STATE
 };
 
 
