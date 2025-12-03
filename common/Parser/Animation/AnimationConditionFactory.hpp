@@ -19,21 +19,17 @@ namespace ecs {
 
 class AnimationConditionFactory {
     public:
-        static std::function<bool(std::shared_ptr<Registry>, Entity)> getCondition(const std::string& key) {
-            if (key == constants::VELOCITY_UP_CONDITION) {
-                return [](std::shared_ptr<Registry> registry, Entity entity) {
-                    auto velocity = registry->getComponent<VelocityComponent>(entity);
-                    if (!velocity) return false;
-                    return velocity->getVelocity().getY() < 0;
-                };
-            } else if (key == constants::VELOCITY_DOWN_CONDITION) {
-                return [](std::shared_ptr<Registry> registry, Entity entity) {
-                    auto velocity = registry->getComponent<VelocityComponent>(entity);
-                    if (!velocity) return false;
-                    return velocity->getVelocity().getY() >= 0;
-                };
+        static bool getConditionValue(const std::string& param, std::shared_ptr<Registry> registry, Entity entity) {
+            if (param == constants::VELOCITY_UP_CONDITION) {
+                auto velocity = registry->getComponent<VelocityComponent>(entity);
+                if (!velocity) return false;
+                return velocity->getVelocity().getY() < 0;
+            } else if (param == constants::VELOCITY_DOWN_CONDITION) {
+                auto velocity = registry->getComponent<VelocityComponent>(entity);
+                if (!velocity) return false;
+                return velocity->getVelocity().getY() >= 0;
             }
-            return [](std::shared_ptr<Registry>, Entity) { return false; };
+            return false;
         }
 };
 

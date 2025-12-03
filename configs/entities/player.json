@@ -37,13 +37,17 @@
                 {
                     "from": "idle",
                     "to": "up",
-                    "condition": "isVelocityUp",
+                    "conditions": [
+                        { "param": "isVelocityUp", "equals": true }
+                    ],
                     "rewind": false
                 },
                 {
                     "from": "up",
                     "to": "idle",
-                    "condition": "isVelocityDown",
+                    "conditions": [
+                        { "param": "isVelocityDown", "equals": true }
+                    ],
                     "rewind": true
                 }
             ],

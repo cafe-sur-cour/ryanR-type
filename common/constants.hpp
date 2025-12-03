@@ -75,7 +75,10 @@ namespace constants {
     const std::string STATES_FIELD = "states";
     const std::string INITIALSTATE_FIELD = "initialState";
     const std::string TRANSITIONS_FIELD = "transitions";
+    const std::string CONDITIONS_FIELD = "conditions";
     const std::string CONDITION_FIELD = "condition";
+    const std::string PARAM_FIELD = "param";
+    const std::string EQUALS_FIELD = "equals";
     const std::string FROM_FIELD = "from";
     const std::string TO_FIELD = "to";
     const std::string REWIND_FIELD = "rewind";

@@ -31,10 +31,15 @@ struct AnimationClip {
     bool loop;
 };
 
+struct AnimationCondition {
+    std::string param;
+    bool equals;
+};
+
 struct Transition {
     std::string from;
     std::string to;
-    std::string conditionKey;
+    std::vector<AnimationCondition> conditions;
     bool playRewind = false;
 };
 
@@ -48,9 +53,9 @@ class AnimationComponent : public AComponent {
         }
 
         void addTransition(const std::string& from, const std::string& to,
-            const std::string& conditionKey,
+            const std::vector<AnimationCondition>& conditions,
             bool playRewind = false) {
-            _transitions.push_back({from, to, conditionKey, playRewind});
+            _transitions.push_back({from, to, conditions, playRewind});
         }
 
         void setCurrentState(const std::string& state) {

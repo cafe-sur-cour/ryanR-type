@@ -154,10 +154,17 @@ void Parser::instanciateComponentCreators() {
             for (auto& transitionData : transitionsJson) {
                 std::string from = transitionData[constants::FROM_FIELD];
                 std::string to = transitionData[constants::TO_FIELD];
-                std::string condition = transitionData[constants::CONDITION_FIELD];
                 bool rewind = transitionData[constants::REWIND_FIELD];
 
-                anim->addTransition(from, to, condition, rewind);
+                std::vector<ecs::AnimationCondition> conditions;
+                auto conditionsJson = transitionData[constants::CONDITIONS_FIELD];
+                for (auto& condData : conditionsJson) {
+                    std::string param = condData[constants::PARAM_FIELD];
+                    bool equals = condData[constants::EQUALS_FIELD];
+                    conditions.push_back({param, equals});
+                }
+
+                anim->addTransition(from, to, conditions, rewind);
             }
         }
 
