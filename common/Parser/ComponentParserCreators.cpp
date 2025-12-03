@@ -20,6 +20,7 @@
 #include "../components/permanent/ProjectilePrefabComponent.hpp"
 #include "../components/permanent/VelocityComponent.hpp"
 #include "../../client/components/rendering/RectangleRenderComponent.hpp"
+#include "../components/permanent/LifetimeComponent.hpp"
 #include "../../client/components/rendering/AnimationComponent.hpp"
 #include "../ECS/entity/Entity.hpp"
 #include "../ECS/entity/registry/Registry.hpp"
@@ -91,6 +92,11 @@ void Parser::instanciateComponentDefinitions() {
             std::type_index(typeid(ecs::ProjectilePrefabComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::PREFABNAME_FIELD, FieldType::STRING}
+        }}},
+        {constants::LIFETIMECOMPONENT, {
+            std::type_index(typeid(ecs::LifetimeComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::LIFETIME_FIELD, FieldType::FLOAT}
         }}}
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
@@ -233,6 +239,12 @@ void Parser::instanciateComponentCreators() {
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto prefabName = std::get<std::string>(*fields.at(constants::PREFABNAME_FIELD));
         return std::make_shared<ecs::ProjectilePrefabComponent>(prefabName);
+    });
+
+    registerComponent<ecs::LifetimeComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto lifetime = std::get<float>(*fields.at(constants::LIFETIME_FIELD));
+        return std::make_shared<ecs::LifetimeComponent>(lifetime);
     });
 }
 

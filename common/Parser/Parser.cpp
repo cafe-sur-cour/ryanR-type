@@ -15,10 +15,12 @@
 #include "../Error/ParserError.hpp"
 #include "../constants.hpp"
 
-Parser::Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type) :
+Parser::Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type,
+    std::shared_ptr<ecs::Registry> registry) :
     _prefabManager(prefab), _parsingType(type) {
     instanciateComponentDefinitions();
     instanciateComponentCreators();
+    _mapParser = std::make_shared<MapParser>(_prefabManager, registry);
     auto shouldParseCallback =
         [this](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> bool {
         return this->shouldParseComponent(fields);
@@ -79,4 +81,8 @@ bool Parser::shouldParseComponent(std::map<std::string,
     if (target == constants::SERVER_VALUE && isServerParsing())
         return true;
     return false;
+}
+
+void Parser::parseMapFromFile(const std::string& filePath) {
+    _mapParser->parseMapFromFile(filePath);
 }

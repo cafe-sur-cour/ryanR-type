@@ -1,0 +1,26 @@
+{
+    "name": "enemy2",
+    "components": {
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 100.0, "y": 100.0 },
+            "scale": { "x": 5.0, "y": 5.0 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "server" },
+        "SpeedComponent": { "target": "both", "speed": 10.0 },
+        "AnimationComponent": {
+            "target": "client",
+            "animationPath": "assets/sprites/frog_spritesheet.png",
+            "frameWidth": 64.0,
+            "frameHeight": 32.0,
+            "frameCount": 4,
+            "startWidth": 0.0,
+            "startHeight": 0.0
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "size" : { "x": 64.0, "y": 64.0 }
+        }
+    }
+}
