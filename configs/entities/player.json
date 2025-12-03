@@ -18,7 +18,20 @@
             "startWidth": 0.0,
             "startHeight": 96.0
         },
+        "ProjectilePrefabComponent": {
+            "target": "both",
+            "prefabName": "basic_shot"
+        },
+        "ShootingStatsComponent": {
+            "target": "both",
+            "fireRate": 5.0,
+            "projectileSpeed": 1000.0,
+            "shotCount": 1,
+            "angleOffset": 0.0,
+            "spreadAngle": 0.0
+        },
         "PlayerTag": { "target": "both" },
-        "ControllableTag": { "target": "both" }
+        "ControllableTag": { "target": "both" },
+        "ShooterTag": { "target": "both" }
     }
 }

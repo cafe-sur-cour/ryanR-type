@@ -12,6 +12,11 @@
 #include <utility>
 #include "Parser.hpp"
 #include "../constants.hpp"
+#include "../components/tags/ShooterTag.hpp"
+#include "../components/tags/ProjectileTag.hpp"
+#include "../components/permanent/ShootingStatsComponent.hpp"
+#include "../components/permanent/ProjectilePrefabComponent.hpp"
+#include "../../client/components/rendering/RectangleRenderComponent.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -48,9 +53,37 @@ void Parser::instanciateComponentDefinitions() {
         {constants::PLAYERTAG, {std::type_index(typeid(ecs::PlayerTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
+        {constants::SHOOTERTAG, {std::type_index(typeid(ecs::ShooterTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::PROJECTILETAG, {std::type_index(typeid(ecs::ProjectileTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
         {constants::COLLIDERCOMPONENT, {std::type_index(typeid(ecs::ColliderComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::SIZE_FIELD, FieldType::VECTOR2F}
+        }}},
+        {constants::SHOOTINGSTATSCOMPONENT,
+            {std::type_index(typeid(ecs::ShootingStatsComponent)), {
+                {constants::TARGET_FIELD, FieldType::STRING},
+                {constants::FIRERATE_FIELD, FieldType::FLOAT},
+                {constants::PROJECTILESPEED_FIELD, FieldType::FLOAT},
+                {constants::SHOTCOUNT_FIELD, FieldType::INT},
+                {constants::ANGLEOFFSET_FIELD, FieldType::FLOAT},
+                {constants::SPREADANGLE_FIELD, FieldType::FLOAT}
+            }
+        }},
+        {constants::RECTANGLERENDERCOMPONENT, {
+            std::type_index(typeid(ecs::RectangleRenderComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::WIDTH_FIELD, FieldType::FLOAT},
+            {constants::HEIGHT_FIELD, FieldType::FLOAT},
+            {constants::COLOR_FIELD, FieldType::OBJECT}
+        }}},
+        {constants::PROJECTILEPREFABCOMPONENT, {
+            std::type_index(typeid(ecs::ProjectilePrefabComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::PREFABNAME_FIELD, FieldType::STRING}
         }}}
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
@@ -104,10 +137,52 @@ void Parser::instanciateComponentCreators() {
         return std::make_shared<ecs::PlayerTag>();
     });
 
+    registerComponent<ecs::ShooterTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::ShooterTag>();
+    });
+
+    registerComponent<ecs::ProjectileTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::ProjectileTag>();
+    });
+
     registerComponent<ecs::ColliderComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto size = std::get<math::Vector2f>(*fields.at(constants::SIZE_FIELD));
         return std::make_shared<ecs::ColliderComponent>(math::Vector2f(0.0f, 0.0f), size);
+    });
+
+    registerComponent<ecs::ShootingStatsComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto fireRate = std::get<float>(*fields.at(constants::FIRERATE_FIELD));
+        auto projectileSpeed = std::get<float>(*fields.at(constants::PROJECTILESPEED_FIELD));
+        auto shotCount = std::get<int>(*fields.at(constants::SHOTCOUNT_FIELD));
+        auto angleOffset = std::get<float>(*fields.at(constants::ANGLEOFFSET_FIELD));
+        auto spreadAngle = std::get<float>(*fields.at(constants::SPREADANGLE_FIELD));
+        ecs::MultiShotPattern pattern(shotCount, spreadAngle, angleOffset);
+        return std::make_shared<ecs::ShootingStatsComponent>(
+            fireRate, projectileSpeed, pattern
+        );
+    });
+
+    registerComponent<ecs::RectangleRenderComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto width = std::get<float>(*fields.at(constants::WIDTH_FIELD));
+        auto height = std::get<float>(*fields.at(constants::HEIGHT_FIELD));
+        auto colorObj = std::get<std::map<std::string, std::shared_ptr<FieldValue>>>
+            (*fields.at(constants::COLOR_FIELD));
+        auto r = static_cast<uint8_t>(std::get<int>(*colorObj.at(constants::R_FIELD)));
+        auto g = static_cast<uint8_t>(std::get<int>(*colorObj.at(constants::G_FIELD)));
+        auto b = static_cast<uint8_t>(std::get<int>(*colorObj.at(constants::B_FIELD)));
+        gfx::color_t color = {r, g, b};
+        return std::make_shared<ecs::RectangleRenderComponent>(color, width, height);
+    });
+
+    registerComponent<ecs::ProjectilePrefabComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto prefabName = std::get<std::string>(*fields.at(constants::PREFABNAME_FIELD));
+        return std::make_shared<ecs::ProjectilePrefabComponent>(prefabName);
     });
 }
 
@@ -117,6 +192,8 @@ void Parser::registerComponent(const ComponentCreator& creator) {
     _componentCreators[idx] = creator;
     _componentAdders[idx] = [](const std::shared_ptr<ecs::Registry>& registry,
         ecs::Entity entity, std::shared_ptr<ecs::IComponent> component) {
-        registry->addComponent(entity, std::static_pointer_cast<T>(component));
+        auto originalComponent = std::static_pointer_cast<T>(component);
+        auto clonedComponent = std::make_shared<T>(*originalComponent);
+        registry->addComponent(entity, clonedComponent);
     };
 }
