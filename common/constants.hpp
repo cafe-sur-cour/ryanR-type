@@ -76,6 +76,8 @@ namespace constants {
     const std::string Y_FIELD = "y";
 
     const std::string PREFABNAME_FIELD = "prefabName";
+    const std::string LIFETIMECOMPONENT = "LifetimeComponent";
+    const std::string LIFETIME_FIELD = "lifetime";
 
 
     const math::Vector2f TILE_SIZE = math::Vector2f(64.0f, 64.0f);

@@ -23,6 +23,7 @@
 #include "../../../../../common/components/tags/ShooterTag.hpp"
 #include "../../../../systems/input/ShootInputSystem.hpp"
 #include "../../../../../common/systems/shooting/ShootingSystem.hpp"
+#include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
 #include "../../../../../common/components/permanent/ShootingStatsComponent.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
@@ -49,6 +50,7 @@ DevState::DevState(
         std::make_shared<ecs::RectangleRenderingSystem>();
     auto shootInputSystem = std::make_shared<ecs::ShootInputSystem>();
     auto shootingSystem = std::make_shared<ecs::ShootingSystem>();
+    auto lifetimeSystem = std::make_shared<ecs::LifetimeSystem>();
 
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
 
@@ -62,6 +64,7 @@ DevState::DevState(
     _systemManager->addSystem(rectangleRenderingSystem);
     _systemManager->addSystem(shootInputSystem);
     _systemManager->addSystem(shootingSystem);
+    _systemManager->addSystem(lifetimeSystem);
 
     _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
     _parser->parseAllEntities(constants::CONFIG_PATH);
