@@ -26,9 +26,13 @@
     #define _WIN32_WINNT 0x0A00
 #endif
 
+#include <asio.hpp>
+#include <memory>
+#include <string>
 #include "../ANetwork.hpp"
-#include "../../Packet/IPacketManager.hpp"
 #include "../../Buffer/IBuffer.hpp"
+#include "../../Packet/IPacketManager.hpp"
+
 
 namespace net {
 

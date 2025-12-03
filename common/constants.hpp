@@ -14,7 +14,7 @@
 namespace constants {
     /* Network Defaults */
     constexpr int DEFAULT_SERVER_PORT = 4242;
-    constexpr const char *DEFAULT_SERVER_IP = "127.0.0.1";  // 127.0.0.1
+    const std::string DEFAULT_SERVER_IP = "127.0.0.1";  // 127.0.0.1
 
     /* Game Defaults */
     constexpr float BASE_SPEED = 100.0f;
