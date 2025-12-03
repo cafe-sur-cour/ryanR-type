@@ -16,6 +16,10 @@
         "ColliderComponent": {
             "target": "both",
             "size": { "x": 16.0, "y": 16.0 }
+        },
+        "LifetimeComponent": {
+            "target": "both",
+            "lifetime": 1.0
         }
     }
 }
