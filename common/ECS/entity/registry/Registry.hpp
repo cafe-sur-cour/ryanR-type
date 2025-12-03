@@ -37,7 +37,8 @@ class Registry : public std::enable_shared_from_this<Registry> {
         template <typename T>
         void removeComponent(Entity entityId);
         template <typename T>
-        bool hasComponent(Entity entityId) const;        template <typename... Components>
+        bool hasComponent(Entity entityId) const;
+        template <typename... Components>
         View<Components...> view();
 
         template <typename... Components>
@@ -46,6 +47,7 @@ class Registry : public std::enable_shared_from_this<Registry> {
         Entity getMaxEntityId() const;
 
         Entity createEntity();
+        void destroyEntity(Entity entityId);
     protected:
     private:
         Entity _nextEntityId;
