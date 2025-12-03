@@ -9,4 +9,6 @@ target_sources(${CLIENT_BIN_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/RectangleRenderingSystem.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextRenderingSystem.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextRenderingSystem.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ParallaxRenderingSystem.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ParallaxRenderingSystem.hpp
 )
