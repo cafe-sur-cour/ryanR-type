@@ -36,7 +36,7 @@ class ServerNetwork :  public ANetwork {
         std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override;
 
     private:
-        std::queue<std::pair<uint8_t, std::shared_ptr<pm::IPacketManager>>> _incomingPackets;
+        std::queue<std::pair<int, std::shared_ptr<pm::IPacketManager>>> _incomingPackets;
         uint8_t _nextClientId;
         uint16_t _port;
 };

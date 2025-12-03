@@ -32,6 +32,12 @@ void WindowsNetwork::init(uint16_t port, const std::string host) {
 void WindowsNetwork::stop() {
 }
 
+void WindowsNetwork::disconnect() {
+}
+
+bool WindowsNetwork::isConnected() const {
+    return _connected;
+}
 
 uint8_t WindowsNetwork::acceptConnection(
     asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
