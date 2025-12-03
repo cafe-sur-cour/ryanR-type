@@ -9,7 +9,6 @@
 #include "../../../../../libs/Multimedia/IEvent.hpp"
 #include "../../../../../libs/Multimedia/IAudio.hpp"
 #include "../../../../components/rendering/SpriteComponent.hpp"
-#include "../../../../components/rendering/AnimationComponent.hpp"
 #include "../../../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../../../common/components/permanent/VelocityComponent.hpp"
 #include "../../../../../common/components/permanent/ColliderComponent.hpp"
@@ -78,7 +77,10 @@ void DevState::enter() {
         audio->setMusicVolume(50.0f);
     }
 
-    _prefabManager->createEntityFromPrefab("player", _registry);
+    ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
+    _registry->addComponent<ecs::HitboxRenderComponent>(
+        playerEntity,
+        std::make_shared<ecs::HitboxRenderComponent>());
 }
 
 void DevState::update(float deltaTime) {

@@ -11,6 +11,10 @@
 
 #include "../../../common/systems/base/ASystem.hpp"
 #include <memory>
+#include "../../components/rendering/AnimationComponent.hpp"
+#include "../../../common/ECS/entity/Entity.hpp"
+#include "../../../common/ECS/entity/registry/Registry.hpp"
+#include "../../../common/Parser/Animation/AnimationConditionFactory.hpp"
 namespace ecs {
 
 class AnimationRenderingSystem : public ASystem {

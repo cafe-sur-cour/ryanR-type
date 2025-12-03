@@ -48,6 +48,10 @@ add_executable(ControllableTagTests common/ECS/component/ControllableTagTests.cp
 target_link_libraries(ControllableTagTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME ControllableTagTests COMMAND ControllableTagTests)
 
+add_executable(ProjectilePassThroughTagTests common/ECS/component/ProjectilePassThroughTagTests.cpp)
+target_link_libraries(ProjectilePassThroughTagTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME ProjectilePassThroughTagTests COMMAND ProjectilePassThroughTagTests)
+
 add_executable(MovementIntentComponentTests common/ECS/component/MovementIntentComponentTests.cpp)
 target_link_libraries(MovementIntentComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME MovementIntentComponentTests COMMAND MovementIntentComponentTests)
