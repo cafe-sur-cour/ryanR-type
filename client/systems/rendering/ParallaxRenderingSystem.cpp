@@ -6,14 +6,15 @@
 */
 
 #include "ParallaxRenderingSystem.hpp"
+#include <memory>
+#include <cmath>
+#include <iostream>
+#include <algorithm>
 #include "../../components/rendering/ParallaxComponent.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IWindow.hpp"
-#include <memory>
-#include <cmath>
-#include <iostream>
 
 namespace ecs {
 
@@ -122,4 +123,4 @@ void ParallaxRenderingSystem::renderLayer(const ParallaxLayer& layer,
     }
 }
 
-} // namespace ecs
+}  // namespace ecs
