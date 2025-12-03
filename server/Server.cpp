@@ -156,8 +156,14 @@ void rserv::Server::processIncomingPackets() {
         return;
     }
 
+    if (!this->_packet) {
+        std::cerr << "[SERVER] Warning: Packet manager not initialized" << std::endl;
+        return;
+    }
     if (received.second.at(0) == 0x93) {
+        std::cout << "Received a header packet, disconnecting client." << std::endl;
         this->_packet->unpack(received.second);
+        std::cout << "No body following " << std::endl;
         return;
     }
 
