@@ -5,6 +5,8 @@
 ** Server Config
 */
 
+#include <cstdint>
+#include <string>
 #include "ServerConfig.hpp"
 
 rserv::ServerConfig::ServerConfig() :
@@ -32,11 +34,11 @@ int rserv::ServerConfig::getState() const {
 }
 
 
-void rserv::ServerConfig::setPort(unsigned int port) {
+void rserv::ServerConfig::setPort(uint16_t port) {
     this->_port = port;
 }
 
-unsigned int rserv::ServerConfig::getPort() const {
+uint16_t rserv::ServerConfig::getPort() const {
     return this->_port;
 }
 
@@ -48,10 +50,10 @@ int rserv::ServerConfig::getNbClients() const {
     return this->_nbClients;
 }
 
-uint32_t rserv::ServerConfig::getIp() const {
+std::string rserv::ServerConfig::getIp() const {
     return this->_ip;
 }
 
-void rserv::ServerConfig::setIp(uint32_t ip) {
+void rserv::ServerConfig::setIp(std::string ip) {
     this->_ip = ip;
 }
