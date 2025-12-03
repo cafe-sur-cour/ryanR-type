@@ -9,6 +9,7 @@
 #include <memory>
 #include "../../components/permanent/HealthComponent.hpp"
 #include "../../components/temporary/DamageIntentComponent.hpp"
+#include "../../components/temporary/DeathIntentComponent.hpp"
 
 namespace ecs {
 
@@ -50,10 +51,9 @@ void HealthSystem::_handleHealthUpdates(std::shared_ptr<Registry> registry) {
         auto healthComponent = registry->getComponent<HealthComponent>(entityId);
 
         if (healthComponent->getHealth() <= 0.0f) {
-            registry->destroyEntity(entityId);
+            registry->addComponent(entityId, std::make_shared<DeathIntentComponent>());
         }
     }
 }
-
 
 }
