@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <string>
 #include <memory>
+#include <vector>
 
 #include "ClientNetwork.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
@@ -26,8 +27,9 @@ UnixClientNetwork::~UnixClientNetwork() {
     }
 }
 
-void UnixClientNetwork::init(int port) {
+void UnixClientNetwork::init(uint16_t port, const std::string host) {
     (void)port;
+    (void)host;
     _socket = std::make_shared<asio::ip::udp::socket>(*_ioContext);
     _socket->open(asio::ip::udp::v4());
     _isRunning = true;
@@ -41,7 +43,7 @@ void UnixClientNetwork::stop() {
     _isRunning = false;
 }
 
-void UnixClientNetwork::connect(const std::string& host, int port) {
+void UnixClientNetwork::connect(const std::string& host, uint16_t port) {
     if (!_socket || !_socket->is_open()) {
         throw std::runtime_error("[UnixClientNetwork] Socket not initialized.");
     }
@@ -85,13 +87,15 @@ bool UnixClientNetwork::isConnected() const {
     return _connected;
 }
 
-int UnixClientNetwork::acceptConnection() {
-    // Not applicable for client
-    return -1;
+uint8_t UnixClientNetwork::acceptConnection(
+    asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
+    (void)id;
+    (void)packetManager;
+    return 0;
 }
 
-void UnixClientNetwork::sendTo(int connectionId, const pm::IPacketManager &packet) {
-    (void)connectionId;
+void UnixClientNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
+    (void)id;
 
     if (!_connected) {
         std::cerr << "[UnixClientNetwork] Not connected to server" << std::endl;
@@ -116,7 +120,7 @@ void UnixClientNetwork::sendTo(int connectionId, const pm::IPacketManager &packe
 
 void UnixClientNetwork::broadcast(const pm::IPacketManager &packet) {
     // For client, broadcast is the same as sending to the server
-    sendTo(0, packet);
+    (void)packet;
 }
 
 bool UnixClientNetwork::hasIncomingData() const {
@@ -130,7 +134,7 @@ bool UnixClientNetwork::hasIncomingData() const {
 }
 
 std::shared_ptr<pm::IPacketManager> UnixClientNetwork::receiveFrom(
-    const int &connectionId) {
+    const uint8_t &connectionId) {
     (void)connectionId;
 
     if (!_connected) {
