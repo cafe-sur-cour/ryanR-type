@@ -65,6 +65,10 @@ class AnimationComponent : public AComponent {
                 _isPlaying = true;
                 _currentFrame = 0;
                 _playRewind = false;
+                _stateJustChanged = true;
+
+                auto clip = _states[state];
+                _minAnimationTime = clip->speed;
             }
         }
 
@@ -106,6 +110,12 @@ class AnimationComponent : public AComponent {
             }
         }
 
+        void setStateJustChanged(bool changed) { _stateJustChanged = changed; }
+        bool getStateJustChanged() const { return _stateJustChanged; }
+
+        void setMinAnimationTime(float time) { _minAnimationTime = time; }
+        float getMinAnimationTime() const { return _minAnimationTime; }
+
     private:
         std::unordered_map<std::string, std::shared_ptr<AnimationClip>> _states;
         std::vector<Transition> _transitions;
@@ -116,6 +126,8 @@ class AnimationComponent : public AComponent {
         int _currentFrame;
         int _rewindStartFrame;
         math::FRect _frameRect;
+        bool _stateJustChanged = false;
+        float _minAnimationTime = 0.0f;
 };
 
 }  // namespace ecs
