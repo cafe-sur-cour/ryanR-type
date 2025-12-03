@@ -15,7 +15,9 @@
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../types/Vector2f.hpp"
+#include "../../Prefab/IPrefab.hpp"
 #include <cmath>
+#include <string>
 
 namespace ecs {
 
@@ -33,7 +35,7 @@ class ShootingSystem : public ASystem {
     private:
         void spawnProjectile(
             std::shared_ptr<Registry> registry,
-            std::shared_ptr<IPrefab> projectilePrefab,
+            std::shared_ptr<IPrefab> prefab,
             const math::Vector2f &position,
             float angle,
             float speed

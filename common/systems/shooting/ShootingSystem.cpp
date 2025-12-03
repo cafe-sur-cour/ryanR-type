@@ -11,9 +11,12 @@
 #include "ShootingSystem.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
+#include "../../components/permanent/ShootingStatsComponent.hpp"
+#include "../../components/permanent/ProjectilePrefabComponent.hpp"
 #include "../../components/tags/ProjectileTag.hpp"
 #include "../../../client/components/rendering/RectangleRenderComponent.hpp"
-
+#include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
+#include <iostream>
 namespace ecs {
 
 ShootingSystem::ShootingSystem() {
@@ -24,20 +27,20 @@ void ShootingSystem::update(
     std::shared_ptr<Registry> registry,
     float deltaTime
 ) {
-    (void)resourceManager;
-
     auto view = registry->view<
         ShootIntentComponent,
         ShootingStatsComponent,
+        ProjectilePrefabComponent,
         TransformComponent
     >();
 
     for (auto entityId : view) {
         auto hasShootIntent = registry->hasComponent<ShootIntentComponent>(entityId);
         auto shootingStats = registry->getComponent<ShootingStatsComponent>(entityId);
+        auto projectilePrefabComponent = registry->getComponent<ProjectilePrefabComponent>(entityId);
         auto transform = registry->getComponent<TransformComponent>(entityId);
 
-        if (!hasShootIntent || !shootingStats || !transform)
+        if (!hasShootIntent || !shootingStats || !projectilePrefabComponent || !transform)
             continue;
 
         registry->removeComponent<ShootIntentComponent>(entityId);
@@ -45,7 +48,10 @@ void ShootingSystem::update(
         if (!shootingStats->canShoot())
             continue;
 
-        auto projectilePrefab = shootingStats->getProjectilePrefab();
+        auto prefabManager = resourceManager->get<EntityPrefabManager>();
+        std::string prefabName = projectilePrefabComponent->getPrefabName();
+        auto prefab = prefabManager->getPrefab(prefabName);
+
         auto pattern = shootingStats->getMultiShotPattern();
         float speed = shootingStats->getProjectileSpeed();
 
@@ -54,7 +60,7 @@ void ShootingSystem::update(
         float baseAngle = 0.0f;
 
         if (pattern.shotCount == 1) {
-            spawnProjectile(registry, projectilePrefab, spawnPos, baseAngle, speed);
+            spawnProjectile(registry, prefab, spawnPos, baseAngle, speed);
         } else {
             float totalSpread = pattern.angleSpread * static_cast<float>(
                 pattern.shotCount - 1
@@ -73,7 +79,7 @@ void ShootingSystem::update(
                     );
                 }
 
-                spawnProjectile(registry, projectilePrefab, offsetPosition, angle, speed);
+                spawnProjectile(registry, prefab, offsetPosition, angle, speed);
             }
         }
 
@@ -91,27 +97,30 @@ void ShootingSystem::update(
 
 void ShootingSystem::spawnProjectile(
     std::shared_ptr<Registry> registry,
-    std::shared_ptr<IPrefab> projectilePrefab,
+    std::shared_ptr<IPrefab> prefab,
     const math::Vector2f &position,
     float angle,
     float speed
 ) {
     Entity projectileEntity;
 
-    if (!projectilePrefab) {
+    if (prefab) {
+        projectileEntity = prefab->instantiate(registry);
+    } else {
         projectileEntity = registry->createEntity();
+
         auto transform = std::make_shared<TransformComponent>();
         registry->addComponent(projectileEntity, transform);
+
         auto velocity = std::make_shared<VelocityComponent>();
         registry->addComponent(projectileEntity, velocity);
+
         auto render = std::make_shared<RectangleRenderComponent>(
             gfx::color_t{255, 215, 0},
             10.0f,
             10.0f
         );
         registry->addComponent(projectileEntity, render);
-    } else {
-        projectileEntity = projectilePrefab->instantiate(registry);
     }
 
     registry->addComponent(projectileEntity, std::make_shared<ProjectileTag>());
