@@ -25,9 +25,12 @@ class ANetwork : public INetwork {
         virtual void stop() override = 0;
         virtual uint8_t acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) override = 0;
         virtual void sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override = 0;
-        virtual void broadcast(const pm::IPacketManager &packet) override = 0;
+        virtual void broadcast(std::vector<uint8_t> data) override = 0;
         virtual bool hasIncomingData() const override = 0;
-        virtual std::shared_ptr<pm::IPacketManager> receiveFrom(const uint8_t &connectionId) override = 0;
+        virtual std::vector<uint8_t> receiveFrom(const uint8_t &connectionId) override = 0;
+
+        ConnectionState getConnectionState() const override;
+        void setConnectionState(ConnectionState state) override;
         virtual std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override = 0;
 
         void setConnectionCallback(std::function<void(int)> onConnect) override;
@@ -43,6 +46,7 @@ class ANetwork : public INetwork {
         std::function<void(int)> _onConnectCallback;
         std::function<void(int)> _onDisconnectCallback;
         bool _isRunning;
+        ConnectionState _connectionState;
 
 };
 

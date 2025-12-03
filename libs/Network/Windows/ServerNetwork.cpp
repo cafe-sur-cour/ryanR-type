@@ -6,15 +6,17 @@
 */
 
 #include <iostream>
+#include <iomanip>
 #include <queue>
 #include <stdexcept>
 #include <vector>
 #include <memory>
-#include <utility>
 #include <string>
+#include <utility>
 
 #include "ServerNetwork.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
+#include "../../Packet/PacketManager.hpp"
 
 namespace net {
 
@@ -95,8 +97,8 @@ void ServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> pack
     }
 }
 
-void ServerNetwork::broadcast(const pm::IPacketManager &packet) {
-    (void)packet;
+void ServerNetwork::broadcast(std::vector<uint8_t> data) {
+    (void)data;
 }
 
 bool ServerNetwork::hasIncomingData() const {
@@ -109,10 +111,10 @@ bool ServerNetwork::hasIncomingData() const {
     return !ec && available > 0;
 }
 
-std::shared_ptr<pm::IPacketManager> ServerNetwork::receiveFrom(
+std::vector<uint8_t> ServerNetwork::receiveFrom(
     const uint8_t &connectionId) {
     (void)connectionId;
-    return nullptr;
+    return std::vector<uint8_t>();
 }
 
 std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> ServerNetwork::receiveAny() {
