@@ -51,10 +51,10 @@ bool WindowsNetwork::hasIncomingData() const {
     return false;
 }
 
-std::shared_ptr<pm::IPacketManager> WindowsNetwork::receiveFrom(
+std::vector<uint8_t> WindowsNetwork::receiveFrom(
     const uint8_t &connectionId) {
     (void)connectionId;
-    return nullptr;
+    return std::vector<uint8_t>();
 }
 
 std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> WindowsNetwork::receiveAny() {

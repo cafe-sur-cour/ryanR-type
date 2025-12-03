@@ -79,14 +79,12 @@ void ClientNetwork::start() {
 
     while (!Signal::stopFlag) {
         //   Hande the event queue
-        this->_packet = this->_network->receiveFrom(this->_idClient);
-        if (this->_packet) {
-            std::cout << "[ClientNetwork] Packet received of type: "
-                      << static_cast<int>(this->_packet->getType())
-                      << " Length: " << this->_packet->getLength()
-                      << " Payload " << this->_packet->getPayload().size()
-                      << std::endl;
-            this->_packet->reset();
+        std::vector<uint8_t> receivedData = this->_network->receiveFrom(this->_idClient);
+        if (receivedData.size() > 0) {
+            /* Transform the vector to packet to handle it correctly */
+            std::cout << "[ClientNetwork] Received data of size: "
+                      << receivedData.size() << std::endl;
+            receivedData.clear();
         }
     }
     if (Signal::stopFlag) {

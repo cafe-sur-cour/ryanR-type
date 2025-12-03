@@ -27,7 +27,7 @@ class ANetwork : public INetwork {
         virtual void sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override = 0;
         virtual void broadcast(const pm::IPacketManager &packet) override = 0;
         virtual bool hasIncomingData() const override = 0;
-        virtual std::shared_ptr<pm::IPacketManager> receiveFrom(const uint8_t &connectionId) override = 0;
+        virtual std::vector<uint8_t> receiveFrom(const uint8_t &connectionId) override = 0;
 
         ConnectionState getConnectionState() const override;
         void setConnectionState(ConnectionState state) override;
