@@ -15,7 +15,7 @@ namespace ecs {
 
 class TextRenderingSystem : public ASystem {
     public:
-        TextRenderingSystem();
+        TextRenderingSystem() ;
         ~TextRenderingSystem() override = default;
 
     protected:

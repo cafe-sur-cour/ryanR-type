@@ -16,8 +16,10 @@ namespace ecs {
 
 class TextComponent : public AComponent {
     public:
-        TextComponent(const std::string& text, const std::string& fontPath, gfx::color_t color = gfx::color_t{255, 255, 255});
-        ~TextComponent();
+        TextComponent(const std::string& text, const std::string& fontPath,
+            gfx::color_t color = gfx::color_t{255, 255, 255})
+            : _text(text), _fontPath(fontPath), _color(color) {};
+        ~TextComponent() {};
 
         const std::string& getText() const { return _text; }
         const std::string& getFontPath() const { return _fontPath; }
