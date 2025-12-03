@@ -38,6 +38,10 @@ void HitboxRenderingSystem::update(std::shared_ptr<ResourceManager>
         auto collider = colliders[0];
         math::FRect hitboxRect = collider->getHitbox(transform->getPosition());
 
+        math::Vector2f scale = transform->getScale();
+        hitboxRect.setWidth(hitboxRect.getWidth() * scale.getX());
+        hitboxRect.setHeight(hitboxRect.getHeight() * scale.getY());
+
         if (resourceManager->has<gfx::IWindow>()) {
             auto window = resourceManager->get<gfx::IWindow>();
             const gfx::color_t& color = hitbox->getColor();

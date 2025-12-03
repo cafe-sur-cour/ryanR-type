@@ -54,6 +54,7 @@ void Utils::parsCli(int ac, char **av,
     config->setNbClients(nbClients);
 }
 
+
 void Utils::helper() {
     std::cout << "Usage: ./r-type_server [options]\n"
         << "Options:\n"

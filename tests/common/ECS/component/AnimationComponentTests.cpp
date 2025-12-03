@@ -13,31 +13,54 @@ using namespace ecs;
 
 /* AnimationComponent Tests */
 
-TEST(AnimationComponentTest, ConstructorWithParameters) {
-    std::string texturePath = "assets/sprites/player.png";
-    float frameWidth = 64.0f;
-    float frameHeight = 64.0f;
-    int frameCount = 4;
-    float startWidth = 0.0f;
-    float startHeight = 0.0f;
-    float speed = 0.2f;
+TEST(AnimationComponentTest, DefaultConstructor) {
+    AnimationComponent comp;
 
-    AnimationComponent comp(texturePath, frameWidth, frameHeight, frameCount, startWidth, startHeight, speed);
-
-    EXPECT_EQ(comp.getTexturePath(), texturePath);
-    EXPECT_FLOAT_EQ(comp.getFrameWidth(), frameWidth);
-    EXPECT_FLOAT_EQ(comp.getFrameHeight(), frameHeight);
-    EXPECT_EQ(comp.getFrameCount(), frameCount);
-    EXPECT_FLOAT_EQ(comp.getAnimationSpeed(), speed);
-    EXPECT_EQ(comp.getCurrentFrame(), 0);
-    EXPECT_TRUE(comp.isValid());
-    EXPECT_TRUE(comp.getChrono().isRunning()); // Should start automatically
-    EXPECT_FLOAT_EQ(comp.getStartWidth(), startWidth);
-    EXPECT_FLOAT_EQ(comp.getStartHeight(), startHeight);
+    EXPECT_EQ(comp.getCurrentState(), "");
+    EXPECT_FALSE(comp.isPlaying());
+    EXPECT_FALSE(comp.isValid());
 }
 
-TEST(AnimationComponentTest, DefaultFrameRect) {
-    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f);
+TEST(AnimationComponentTest, AddState) {
+    AnimationComponent comp;
+    AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
+
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
+    EXPECT_TRUE(comp.isValid());
+}
+
+TEST(AnimationComponentTest, SetCurrentState) {
+    AnimationComponent comp;
+    AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
+
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
+    comp.setCurrentState("idle");
+
+    EXPECT_EQ(comp.getCurrentState(), "idle");
+    EXPECT_TRUE(comp.isPlaying());
+}
+
+TEST(AnimationComponentTest, GetCurrentClip) {
+    AnimationComponent comp;
+    AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
+
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
+    comp.setCurrentState("idle");
+
+    auto currentClip = comp.getCurrentClip();
+    ASSERT_NE(currentClip, nullptr);
+    EXPECT_EQ(currentClip->texturePath, "texture.png");
+    EXPECT_FLOAT_EQ(currentClip->frameWidth, 32.0f);
+    EXPECT_FLOAT_EQ(currentClip->frameHeight, 32.0f);
+    EXPECT_EQ(currentClip->frameCount, 3);
+}
+
+TEST(AnimationComponentTest, FrameRect) {
+    AnimationComponent comp;
+    AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
+
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
+    comp.setCurrentState("idle");
 
     const math::FRect& rect = comp.getFrameRect();
     EXPECT_FLOAT_EQ(rect.getLeft(), 0.0f);
@@ -47,86 +70,55 @@ TEST(AnimationComponentTest, DefaultFrameRect) {
 }
 
 TEST(AnimationComponentTest, SetFrameRect) {
-    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f);
+    AnimationComponent comp;
+    AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
+
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
+    comp.setCurrentState("idle");
+
     math::FRect newRect(64.0f, 32.0f, 32.0f, 32.0f);
-
     comp.setFrameRect(newRect);
-    const math::FRect& rect = comp.getFrameRect();
 
+    const math::FRect& rect = comp.getFrameRect();
     EXPECT_FLOAT_EQ(rect.getLeft(), 64.0f);
     EXPECT_FLOAT_EQ(rect.getTop(), 32.0f);
     EXPECT_FLOAT_EQ(rect.getWidth(), 32.0f);
     EXPECT_FLOAT_EQ(rect.getHeight(), 32.0f);
 }
 
-TEST(AnimationComponentTest, CurrentFrameGetterAndSetter) {
-    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f);
+TEST(AnimationComponentTest, CurrentFrame) {
+    AnimationComponent comp;
+    AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
+
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
+    comp.setCurrentState("idle");
 
     EXPECT_EQ(comp.getCurrentFrame(), 0);
 
     comp.setCurrentFrame(2);
     EXPECT_EQ(comp.getCurrentFrame(), 2);
-
-    comp.setCurrentFrame(5); // Should work even if > frameCount
-    EXPECT_EQ(comp.getCurrentFrame(), 5);
 }
 
-TEST(AnimationComponentTest, AnimationSpeedGetterAndSetter) {
-    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f);
+TEST(AnimationComponentTest, Timer) {
+    AnimationComponent comp;
+    AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
 
-    EXPECT_FLOAT_EQ(comp.getAnimationSpeed(), 0.1f);
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
+    comp.setCurrentState("idle");
 
-    comp.setAnimationSpeed(0.5f);
-    EXPECT_FLOAT_EQ(comp.getAnimationSpeed(), 0.5f);
-}
+    EXPECT_FLOAT_EQ(comp.getTimer(), 0.0f);
 
-TEST(AnimationComponentTest, ChronoAccess) {
-    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f);
-
-    // Chrono should be running from constructor
-    EXPECT_TRUE(comp.getChrono().isRunning());
-
-    // Can access const version
-    const AnimationComponent& constComp = comp;
-    EXPECT_TRUE(constComp.getChrono().isRunning());
+    comp.setTimer(1.5f);
+    EXPECT_FLOAT_EQ(comp.getTimer(), 1.5f);
 }
 
 TEST(AnimationComponentTest, IsValid) {
-    // Valid component
-    AnimationComponent validComp("texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f);
-    EXPECT_TRUE(validComp.isValid());
+    AnimationComponent comp;
+    EXPECT_FALSE(comp.isValid());
 
-    // Invalid: zero frame count
-    AnimationComponent invalidCount("texture.png", 32.0f, 32.0f, 0, 0.0f, 0.0f);
-    EXPECT_FALSE(invalidCount.isValid());
-
-    // Invalid: zero width
-    AnimationComponent invalidWidth("texture.png", 0.0f, 32.0f, 3, 0.0f, 0.0f);
-    EXPECT_FALSE(invalidWidth.isValid());
-
-    // Invalid: zero height
-    AnimationComponent invalidHeight("texture.png", 32.0f, 0.0f, 3, 0.0f, 0.0f);
-    EXPECT_FALSE(invalidHeight.isValid());
-}
-
-TEST(AnimationComponentTest, TexturePathGetter) {
-    std::string path = "assets/animations/walk.png";
-    AnimationComponent comp(path, 32.0f, 32.0f, 4, 0.0f, 0.0f);
-
-    EXPECT_EQ(comp.getTexturePath(), path);
-}
-
-TEST(AnimationComponentTest, StartWidthAndHeightGetterAndSetter) {
-    AnimationComponent comp("texture.png", 32.0f, 32.0f, 3, 10.0f, 20.0f);
-
-    EXPECT_FLOAT_EQ(comp.getStartWidth(), 10.0f);
-    EXPECT_FLOAT_EQ(comp.getStartHeight(), 20.0f);
-
-    comp.setStartWidth(15.0f);
-    comp.setStartHeight(25.0f);
-
-    EXPECT_FLOAT_EQ(comp.getStartWidth(), 15.0f);
-    EXPECT_FLOAT_EQ(comp.getStartHeight(), 25.0f);
+    AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
+    EXPECT_TRUE(comp.isValid());
 }
 
 int main(int argc, char **argv) {

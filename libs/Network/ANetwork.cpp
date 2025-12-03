@@ -9,7 +9,9 @@
 #include <vector>
 #include "ANetwork.hpp"
 
-std::vector<uint8_t> net::ANetwork::getActiveConnections() const {
+namespace net {
+
+std::vector<uint8_t> ANetwork::getActiveConnections() const {
     std::vector<uint8_t> connections;
     for (const auto& [clientId, endpoint] : _clients) {
         connections.push_back(clientId);
@@ -17,11 +19,11 @@ std::vector<uint8_t> net::ANetwork::getActiveConnections() const {
     return connections;
 }
 
-size_t net::ANetwork::getConnectionCount() const {
+size_t ANetwork::getConnectionCount() const {
     return _clients.size();
 }
 
-void net::ANetwork::closeConnection(uint8_t connectionId) {
+void ANetwork::closeConnection(uint8_t connectionId) {
     auto it = _clients.find(connectionId);
     if (it != _clients.end()) {
         std::cout << "[Network] Closing connection " <<
@@ -34,12 +36,22 @@ void net::ANetwork::closeConnection(uint8_t connectionId) {
     }
 }
 
-void net::ANetwork::setConnectionCallback(
+void ANetwork::setConnectionCallback(
     std::function<void(int)> onConnect) {
     _onConnectCallback = onConnect;
 }
 
-void net::ANetwork::setDisconnectionCallback(std::function<void(int)>
+void ANetwork::setDisconnectionCallback(std::function<void(int)>
     onDisconnect) {
     _onDisconnectCallback = onDisconnect;
+}
+
+void ANetwork::setConnectionState(ConnectionState state) {
+    this->_connectionState = state;
+}
+
+ConnectionState ANetwork::getConnectionState() const {
+    return this->_connectionState;
+}
+
 }

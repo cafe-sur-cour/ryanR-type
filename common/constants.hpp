@@ -15,7 +15,7 @@
 namespace constants {
     /* Network Defaults */
     constexpr int DEFAULT_SERVER_PORT = 4242;
-    constexpr uint32_t DEFAULT_SERVER_IP = 0x7F000001;  // 127.0.0.1
+    const std::string DEFAULT_SERVER_IP = "127.0.0.1";  // 127.0.0.1
 
     /* Game Defaults */
     constexpr float BASE_SPEED = 100.0f;
@@ -25,6 +25,13 @@ namespace constants {
     constexpr float AXIS_MAX_VALUE = 100.0f;
     constexpr int SMOOTH_MOVEMENT_ITERATIONS = 4;
 
+    enum class EventType {
+        UP = 0,
+        DOWN = 1,
+        LEFT = 2,
+        RIGHT = 3,
+        SHOOT = 4,
+    };
     /* Paths */
     const std::string CONFIG_PATH = "configs/entities/";
 
@@ -47,6 +54,7 @@ namespace constants {
     const std::string RECTANGLERENDERCOMPONENT = "RectangleRenderComponent";
     const std::string PROJECTILEPREFABCOMPONENT = "ProjectilePrefabComponent";
     const std::string TEXTCOMPONENT = "TextComponent";
+    const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
 
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
@@ -72,6 +80,19 @@ namespace constants {
     const std::string R_FIELD = "r";
     const std::string G_FIELD = "g";
     const std::string B_FIELD = "b";
+
+    const std::string STATES_FIELD = "states";
+    const std::string INITIALSTATE_FIELD = "initialState";
+    const std::string TRANSITIONS_FIELD = "transitions";
+    const std::string CONDITIONS_FIELD = "conditions";
+    const std::string CONDITION_FIELD = "condition";
+    const std::string PARAM_FIELD = "param";
+    const std::string EQUALS_FIELD = "equals";
+    const std::string FROM_FIELD = "from";
+    const std::string TO_FIELD = "to";
+    const std::string REWIND_FIELD = "rewind";
+    const std::string TEXTUREPATH_FIELD = "texturePath";
+    const std::string LOOP_FIELD = "loop";
 
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";
@@ -103,6 +124,10 @@ namespace constants {
     const math::Vector2f BACKGROUND_POSITION = math::Vector2f(0.0f, 0.0f);
     const float SCROLL_VELOCITY_X_MULTIPLIER = -1.0f;
     const float SCROLL_VELOCITY_Y = 0.0f;
+
+    /* Animation conditions */
+    const std::string VELOCITY_UP_CONDITION = "isVelocityUp";
+    const std::string VELOCITY_DOWN_CONDITION = "isVelocityDown";
 }
 
 #endif /* !CONSTANTS_HPP_ */
