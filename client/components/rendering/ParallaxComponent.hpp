@@ -17,9 +17,9 @@
 namespace ecs {
 
 enum class ParallaxScaleMode {
-    FIT_SCREEN,     // Adapt the texture to fit the screen while maintaining aspect ratio
-    STRETCH,        // Stretch the texture to fill the screen (may distort aspect ratio)
-    MANUAL          // Use only the provided scale values
+    FIT_SCREEN,
+    STRETCH,
+    MANUAL,
 };
 
 struct ParallaxLayer {
