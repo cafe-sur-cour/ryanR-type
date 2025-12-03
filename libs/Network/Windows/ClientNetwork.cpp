@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 #include <stdexcept>
+#include <utility>
 #include <string>
 
 #include "ClientNetwork.hpp"
@@ -21,7 +22,7 @@ WindowsNetwork::WindowsNetwork() {
 WindowsNetwork::~WindowsNetwork() {
 }
 
-void WindowsNetwork::init(uint32_t port, const std::string host) {
+void WindowsNetwork::init(uint16_t port, const std::string host) {
     (void)port;
     (void)host;
 }
@@ -29,24 +30,16 @@ void WindowsNetwork::init(uint32_t port, const std::string host) {
 void WindowsNetwork::stop() {
 }
 
-uint8_t WindowsNetwork::acceptConnection() {
-    return 1;
-}
 
-void WindowsNetwork::closeConnection(int connectionId) {
-    (void)connectionId;
-}
-
-std::vector<int> WindowsNetwork::getActiveConnections() const {
-    return std::vector<int>();
-}
-
-size_t WindowsNetwork::getConnectionCount() const {
+uint8_t WindowsNetwork::acceptConnection(
+    asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
+    (void)id;
+    (void)packetManager;
     return 0;
 }
 
-void WindowsNetwork::sendTo(int connectionId, std::vector<uint8_t> data) {
-    (void)connectionId;
+void WindowsNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
+    (void)id;
     (void)packet;
 }
 
@@ -59,18 +52,13 @@ bool WindowsNetwork::hasIncomingData() const {
 }
 
 std::shared_ptr<pm::IPacketManager> WindowsNetwork::receiveFrom(
-    const int &connectionId) {
+    const uint8_t &connectionId) {
     (void)connectionId;
     return nullptr;
 }
 
-void WindowsNetwork::setConnectionCallback(std::function<void(int)> onConnect) {
-    (void)onConnect;
-}
-
-void WindowsNetwork::setDisconnectionCallback(std::function<void(int)>
-    onDisconnect) {
-    (void)onDisconnect;
+std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> WindowsNetwork::receiveAny() {
+    return std::make_pair(asio::ip::udp::endpoint(), std::vector<uint8_t>());
 }
 
 }

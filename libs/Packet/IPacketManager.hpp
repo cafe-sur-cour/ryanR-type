@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <cstdint>
+#include <string>
 #include "../Buffer/IBuffer.hpp"
 
 namespace pm {
@@ -30,6 +31,7 @@ class IPacketManager {
         virtual void setPayload(std::vector<uint64_t> payload) = 0;
         virtual void setIdClient(uint8_t idClient) = 0;
 
+        virtual std::vector<uint64_t> formatString(const std::string str) = 0;
         virtual std::vector<uint8_t> pack(uint8_t idClient, uint32_t sequenceNumber, uint8_t type) = 0;
         virtual std::vector<uint8_t> pack(std::vector<uint64_t> payload) = 0;
         virtual bool unpack(std::vector<uint8_t> data) = 0;

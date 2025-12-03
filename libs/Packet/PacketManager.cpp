@@ -165,6 +165,25 @@ void pm::PacketManager::reset() {
     this->_payload.clear();
 }
 
+std::vector<uint64_t> pm::PacketManager::formatString(const std::string str) {
+    if (str.size() > 8) {
+        throw err::PacketError(
+            "[PacketManager] String length exceeds 8 characters",
+            err::PacketError::STRING_FORMATTING_ERROR
+        );
+    }
+    int i = 0;
+    std::vector<uint64_t> formatted;
+    for (char c : str) {
+        formatted.push_back(static_cast<uint64_t>(c));
+        i++;
+    }
+    for (; i < 8; i++) {
+        formatted.push_back('\0');
+    }
+    return formatted;
+}
+
 
 
 extern "C" {
