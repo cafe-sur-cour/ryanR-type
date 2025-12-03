@@ -35,10 +35,10 @@ class FRect {
         bool operator!=(FRect const &other) const;
 
         private:
-        float left;
-        float top;
-        float width;
-        float height;
+            float left;
+            float top;
+            float width;
+            float height;
 };
 
 } // namespace math
