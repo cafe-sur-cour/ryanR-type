@@ -69,6 +69,7 @@ class AnimationComponent : public AComponent {
 
                 auto clip = _states[state];
                 _minAnimationTime = clip->speed;
+                _frameRect = math::FRect(clip->startWidth, clip->startHeight, clip->frameWidth, clip->frameHeight);
             }
         }
 
@@ -96,7 +97,7 @@ class AnimationComponent : public AComponent {
         const math::FRect& getFrameRect() const { return _frameRect; }
         void setFrameRect(const math::FRect& rect) { _frameRect = rect; }
 
-        bool isValid() const { return !_states.empty() && !_currentState.empty(); }
+        bool isValid() const { return !_states.empty(); }
 
         bool isAnimationFinished() const {
             auto clip = getCurrentClip();
