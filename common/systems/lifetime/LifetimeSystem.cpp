@@ -8,6 +8,7 @@
 #include "LifetimeSystem.hpp"
 #include <memory>
 #include "../../components/permanent/LifetimeComponent.hpp"
+#include "../../components/temporary/DeathIntentComponent.hpp"
 
 namespace ecs {
 
@@ -31,7 +32,7 @@ void LifetimeSystem::update(
         lifetimeComponent->setLifetime(currentLifetime - deltaTime);
 
         if (currentLifetime - deltaTime <= 0.0f) {
-            registry->destroyEntity(entityId);
+            registry->addComponent(entityId, std::make_shared<DeathIntentComponent>());
         }
     }
 }
