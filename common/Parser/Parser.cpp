@@ -15,7 +15,8 @@
 #include "../Error/ParserError.hpp"
 #include "../constants.hpp"
 
-Parser::Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type, std::shared_ptr<ecs::Registry> registry) :
+Parser::Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type,
+    std::shared_ptr<ecs::Registry> registry) :
     _prefabManager(prefab), _parsingType(type) {
     instanciateComponentDefinitions();
     instanciateComponentCreators();
