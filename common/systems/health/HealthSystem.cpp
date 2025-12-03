@@ -38,6 +38,8 @@ void HealthSystem::_handleDamageUpdates(std::shared_ptr<Registry> registry) {
         float health = healthComponent->getHealth();
 
         healthComponent->setHealth(health - damages);
+
+        registry->removeComponent<DamageIntentComponent>(entityId);
     }
 }
 
