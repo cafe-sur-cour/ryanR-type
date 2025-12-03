@@ -95,6 +95,22 @@ std::shared_ptr<FieldValue> ComposantParser::parseFieldValue
                     err::ParserError::TYPE_MISMATCH);
             return std::make_shared<FieldValue>(jsonValue.get<int>());
         }
+        case FieldType::OBJECT: {
+            if (!jsonValue.is_object())
+                throw err::ParserError("Invalid object format",
+                    err::ParserError::TYPE_MISMATCH);
+            std::map<std::string, std::shared_ptr<FieldValue>> objMap;
+            for (auto& [key, value] : jsonValue.items()) {
+                if (value.is_number_integer()) {
+                    objMap[key] = std::make_shared<FieldValue>(value.get<int>());
+                } else if (value.is_number_float()) {
+                    objMap[key] = std::make_shared<FieldValue>(value.get<float>());
+                } else if (value.is_string()) {
+                    objMap[key] = std::make_shared<FieldValue>(value.get<std::string>());
+                }
+            }
+            return std::make_shared<FieldValue>(objMap);
+        }
         case FieldType::JSON: {
             return std::make_shared<FieldValue>(jsonValue);
         }
