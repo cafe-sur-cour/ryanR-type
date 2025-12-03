@@ -43,6 +43,7 @@ namespace constants {
     const std::string PROJECTILETAG = "ProjectileTag";
     const std::string SHOOTINGSTATSCOMPONENT = "ShootingStatsComponent";
     const std::string RECTANGLERENDERCOMPONENT = "RectangleRenderComponent";
+    const std::string PROJECTILEPREFABCOMPONENT = "ProjectilePrefabComponent";
 
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
@@ -71,6 +72,8 @@ namespace constants {
 
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";
+
+    const std::string PREFABNAME_FIELD = "prefabName";
 }
 
 #endif /* !CONSTANTS_HPP_ */
