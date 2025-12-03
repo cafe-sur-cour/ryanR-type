@@ -43,7 +43,6 @@ enum class FieldType {
 struct Field {
     std::string name;
     FieldType type;
-    bool optional = false;
 };
 
 struct FieldValue;

@@ -62,7 +62,6 @@ namespace constants {
     const std::string SHOTCOUNT_FIELD = "shotCount";
     const std::string ANGLEOFFSET_FIELD = "angleOffset";
     const std::string SPREADANGLE_FIELD = "spreadAngle";
-    const std::string SHOOTINGSTATSREF_FIELD = "shootingStatsRef";
     const std::string WIDTH_FIELD = "width";
     const std::string HEIGHT_FIELD = "height";
     const std::string COLOR_FIELD = "color";

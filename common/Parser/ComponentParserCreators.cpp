@@ -65,12 +65,11 @@ void Parser::instanciateComponentDefinitions() {
         {constants::SHOOTINGSTATSCOMPONENT,
             {std::type_index(typeid(ecs::ShootingStatsComponent)), {
                 {constants::TARGET_FIELD, FieldType::STRING},
-                {constants::FIRERATE_FIELD, FieldType::FLOAT, true},
-                {constants::PROJECTILESPEED_FIELD, FieldType::FLOAT, true},
-                {constants::SHOTCOUNT_FIELD, FieldType::INT, true},
-                {constants::ANGLEOFFSET_FIELD, FieldType::FLOAT, true},
-                {constants::SPREADANGLE_FIELD, FieldType::FLOAT, true},
-                {constants::SHOOTINGSTATSREF_FIELD, FieldType::STRING, true}
+                {constants::FIRERATE_FIELD, FieldType::FLOAT},
+                {constants::PROJECTILESPEED_FIELD, FieldType::FLOAT},
+                {constants::SHOTCOUNT_FIELD, FieldType::INT},
+                {constants::ANGLEOFFSET_FIELD, FieldType::FLOAT},
+                {constants::SPREADANGLE_FIELD, FieldType::FLOAT}
             }
         }},
         {constants::RECTANGLERENDERCOMPONENT, {
@@ -150,14 +149,6 @@ void Parser::instanciateComponentCreators() {
 
     registerComponent<ecs::ShootingStatsComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-        if (fields.find(constants::SHOOTINGSTATSREF_FIELD) != fields.end()) {
-            auto statsName = std::get<std::string>(
-                *fields.at(constants::SHOOTINGSTATSREF_FIELD)
-            );
-            auto component = std::make_shared<ecs::ShootingStatsComponent>();
-            return component;
-        }
-
         auto fireRate = std::get<float>(*fields.at(constants::FIRERATE_FIELD));
         auto projectileSpeed = std::get<float>(*fields.at(constants::PROJECTILESPEED_FIELD));
         auto shotCount = std::get<int>(*fields.at(constants::SHOTCOUNT_FIELD));

@@ -49,9 +49,6 @@ std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::pa
 
     for (const auto& field : fieldsDef) {
         if (componentData.find(field.name) == componentData.end()) {
-            if (field.optional) {
-                continue;
-            }
             throw err::ParserError("Missing field: " + field.name +
                 " in component " + componentName, err::ParserError::MISSING_FIELD);
         }
