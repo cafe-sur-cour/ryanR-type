@@ -14,6 +14,9 @@
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../types/FRect.hpp"
 #include "../../constants.hpp"
+#include "../../components/tags/ObstacleTag.hpp"
+#include "../../components/tags/ProjectileTag.hpp"
+#include "../../components/tags/ProjectilePassThroughTag.hpp"
 
 namespace ecs {
 
@@ -66,6 +69,8 @@ bool MovementSystem::checkCollision(
         return true;
     }
 
+    bool isProjectile = registry->hasComponent<ProjectileTag>(entityId);
+
     auto allEntitiesView = registry->view<
         TransformComponent, ColliderComponent>();
     for (auto otherEntityId : allEntitiesView) {
@@ -75,6 +80,9 @@ bool MovementSystem::checkCollision(
             TransformComponent>(otherEntityId);
         auto otherColliders = registry->getComponents<
             ColliderComponent>(otherEntityId);
+
+        if (isProjectile && registry->hasComponent<ProjectilePassThroughTag>(otherEntityId))
+            continue;
 
         for (auto& movingCollider : movingColliders) {
             if (movingCollider->getType() != CollisionType::Solid) continue;

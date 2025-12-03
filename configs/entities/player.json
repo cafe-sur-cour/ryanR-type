@@ -54,6 +54,7 @@
             "spreadAngle": 0.0
         },
         "PlayerTag": { "target": "both" },
+        "ProjectilePassThroughTag": { "target": "both" },
         "ControllableTag": { "target": "both" },
         "ShooterTag": { "target": "both" }
     }
