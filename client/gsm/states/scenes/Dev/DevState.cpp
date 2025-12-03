@@ -30,12 +30,9 @@
 namespace gsm {
 
 DevState::DevState(
-
     std::shared_ptr<IGameStateMachine> gsm,
-
-    std::shared_ptr<ResourceManager> resourceManager)
-
-    : AGameState(gsm), _resourceManager(resourceManager) {
+    std::shared_ptr<ResourceManager> resourceManager
+) : AGameState(gsm), _resourceManager(resourceManager) {
     _registry = std::make_shared<ecs::Registry>();
     _systemManager = std::make_shared<ecs::ASystemManager>();
     _movementSystem = std::make_shared<ecs::MovementSystem>();
@@ -52,6 +49,8 @@ DevState::DevState(
         std::make_shared<ecs::RectangleRenderingSystem>();
     auto shootInputSystem = std::make_shared<ecs::ShootInputSystem>();
     auto shootingSystem = std::make_shared<ecs::ShootingSystem>();
+
+    _resourceManager->add<EntityPrefabManager>(_prefabManager);
 
     _systemManager->addSystem(_inputToVelocitySystem);
     _systemManager->addSystem(_movementSystem);
