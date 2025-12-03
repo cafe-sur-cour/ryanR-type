@@ -1,0 +1,55 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** MusicComponent
+*/
+
+#ifndef MUSICCOMPONENT_HPP_
+#define MUSICCOMPONENT_HPP_
+
+#include "../../../common/components/base/AComponent.hpp"
+#include <string>
+
+
+namespace ecs {
+
+typedef enum MusicState {
+    PLAYING,
+    PAUSED,
+    CHANGING,
+    STOPPED
+} MusicState;
+
+class MusicComponent : public AComponent {
+    public:
+        MusicComponent(std::string musicFile = "", MusicState initialState = STOPPED, float volume = 100.0f)
+            : _currentMusic(musicFile), _state(initialState), _volume(volume) {};
+        ~MusicComponent() = default;
+
+        void playMusic() { _state = PLAYING; };
+        void pauseMusic() { _state = PAUSED; };
+        void stopMusic() { _state = STOPPED; };
+        bool isPlaying() const { return _state == PLAYING; };
+        MusicState getState() const { return _state; };
+        void playNewMusic(const std::string& musicFile) {
+            _currentMusic = musicFile;
+            _state = CHANGING;
+        };
+
+        std::string getCurrentMusic() const { return _currentMusic; };
+        void setCurrentMusic(const std::string& musicFile) { _currentMusic = musicFile; };
+
+        float getVolume() const { return _volume; };
+        void setVolume(float volume) { _volume = volume; };
+
+    protected:
+    private:
+        std::string _currentMusic;
+        MusicState _state;
+        float _volume;
+};
+
+}  // namespace ecs
+
+#endif /* !MUSICCOMPONENT_HPP_ */
