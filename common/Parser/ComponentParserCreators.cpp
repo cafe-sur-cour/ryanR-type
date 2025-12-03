@@ -24,6 +24,7 @@
 #include "../components/permanent/LifetimeComponent.hpp"
 #include "../../client/components/rendering/AnimationComponent.hpp"
 #include "../../client/components/rendering/MusicComponent.hpp"
+#include "../../client/components/rendering/ParallaxComponent.hpp"
 #include "../ECS/entity/Entity.hpp"
 #include "../ECS/entity/registry/Registry.hpp"
 #include "../../client/components/tags/BackGroundMusicTag.hpp"
@@ -107,7 +108,14 @@ void Parser::instanciateComponentDefinitions() {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::LIFETIME_FIELD, FieldType::FLOAT}
         }}},
-        {constants::BACKGROUNDMUSICTAG, {
+        {constants::PARALLAXCOMPONENT, {
+            std::type_index(typeid(ecs::ParallaxComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::BASESCROLLSPEED_FIELD, FieldType::FLOAT},
+            {constants::DIRECTION_FIELD, FieldType::VECTOR2F},
+            {constants::LAYERS_FIELD, FieldType::JSON}
+        }}},
+                {constants::BACKGROUNDMUSICTAG, {
             std::type_index(typeid(ecs::BackGroundMusicTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
@@ -117,7 +125,7 @@ void Parser::instanciateComponentDefinitions() {
             {"musicFile", FieldType::STRING},
             {"initialState", FieldType::STRING},
             {"volume", FieldType::FLOAT}
-        }}},
+        }}}
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
         std::pair<std::type_index, std::vector<Field>>>>(componentDefinitions);
@@ -279,7 +287,65 @@ void Parser::instanciateComponentCreators() {
         auto lifetime = std::get<float>(*fields.at(constants::LIFETIME_FIELD));
         return std::make_shared<ecs::LifetimeComponent>(lifetime);
     });
-    registerComponent<ecs::BackGroundMusicTag>([]([[maybe_unused]] const std::map<std::string,
+
+    registerComponent<ecs::ParallaxComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto parallax = std::make_shared<ecs::ParallaxComponent>();
+
+        auto baseSpeed = std::get<float>(*fields.at(constants::BASESCROLLSPEED_FIELD));
+        auto direction = std::get<math::Vector2f>(*fields.at(constants::DIRECTION_FIELD));
+        auto layersJson = std::get<nlohmann::json>(*fields.at(constants::LAYERS_FIELD));
+
+        parallax->setBaseScrollSpeed(baseSpeed);
+        parallax->setDirection(direction);
+
+        for (const auto& layerJson : layersJson) {
+            ecs::ParallaxLayer layer;
+
+            layer.name = layerJson.value(constants::NAME_FIELD, "");
+            layer.filePath = layerJson.value(constants::FILEPATH_FIELD, "");
+            layer.speedMultiplier = layerJson.value(constants::SPEEDMULTIPLIER_FIELD, 1.0f);
+
+            if (layerJson.contains(constants::SCALE_FIELD)) {
+                auto scaleJson = layerJson[constants::SCALE_FIELD];
+                layer.scale = math::Vector2f(
+                    scaleJson.value(constants::X_FIELD, 1.0f),
+                    scaleJson.value(constants::Y_FIELD, 1.0f)
+                );
+            }
+
+            if (layerJson.contains(constants::SCALEMODE_FIELD)) {
+                std::string scaleModeStr = layerJson[constants::SCALEMODE_FIELD];
+                if (scaleModeStr == constants::SCALEMODE_FITSCREEN) {
+                    layer.scaleMode = ecs::ParallaxScaleMode::FIT_SCREEN;
+                } else if (scaleModeStr == constants::SCALEMODE_STRETCH) {
+                    layer.scaleMode = ecs::ParallaxScaleMode::STRETCH;
+                } else if (scaleModeStr == constants::SCALEMODE_MANUAL) {
+                    layer.scaleMode = ecs::ParallaxScaleMode::MANUAL;
+                } else {
+                    layer.scaleMode = ecs::ParallaxScaleMode::FIT_SCREEN;
+                }
+            }
+
+            if (layerJson.contains(constants::SOURCESIZE_FIELD)) {
+                auto sourceSizeJson = layerJson[constants::SOURCESIZE_FIELD];
+                layer.sourceSize = math::Vector2f(
+                    sourceSizeJson.value(constants::X_FIELD, constants::DEFAULT_TEXTURE_WIDTH),
+                    sourceSizeJson.value(constants::Y_FIELD, constants::DEFAULT_TEXTURE_HEIGHT)
+                );
+            }
+
+            layer.repeat = layerJson.value(constants::REPEAT_FIELD, true);
+            layer.zIndex = layerJson.value(constants::ZINDEX_FIELD, 0);
+            layer.currentOffset = math::Vector2f(0.0f, 0.0f);
+
+            parallax->addLayer(layer);
+        }
+
+        parallax->sortLayersByZIndex();
+        return parallax;
+    });
+        registerComponent<ecs::BackGroundMusicTag>([]([[maybe_unused]] const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::BackGroundMusicTag>();
     });
