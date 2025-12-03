@@ -22,7 +22,7 @@
             "target": "client",
             "width": 16.0,
             "height": 16.0,
-            "color": { "r": 255, "g": 255, "b": 0, "a": 255 }
+            "color": { "r": 255, "g": 255, "b": 0 }
         },
         "ColliderComponent": {
             "target": "both",

@@ -20,10 +20,6 @@
         },
         "PlayerTag": { "target": "both" },
         "ControllableTag": { "target": "both" },
-        "ShooterTag": { "target": "both" },
-        "ShootingStatsComponent": {
-            "target": "both",
-            "shootingStatsRef": "basic_shot"
-        }
+        "ShooterTag": { "target": "both" }
     }
 }
