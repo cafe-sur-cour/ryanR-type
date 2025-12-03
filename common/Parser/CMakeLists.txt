@@ -2,6 +2,7 @@ set(PARSER_LIB PARSER)
 
 add_subdirectory(ComposantParser)
 add_subdirectory(EntityParser)
+add_subdirectory(MapParser)
 
 set(PARSER_SOURCES
     Parser.cpp
@@ -23,6 +24,7 @@ target_link_libraries(${PARSER_LIB} PUBLIC
     PREFAB
     COMPOSANT_PARSER
     ENTITY_PARSER
+    MAP_PARSER
     ERROR
     nlohmann_json::nlohmann_json
 )

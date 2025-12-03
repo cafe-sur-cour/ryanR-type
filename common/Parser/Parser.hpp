@@ -13,6 +13,8 @@
 #include "./EntityParser/EntityParser.hpp"
 #include "../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "ParserParam.hpp"
+#include "./MapParser/MapParser.hpp"
+#include "../common/ECS/entity/registry/Registry.hpp"
 
 typedef enum {
     CLIENT,
@@ -21,7 +23,8 @@ typedef enum {
 
 class Parser {
     public:
-        Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type);
+        Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type,
+            std::shared_ptr<ecs::Registry> registry);
         ~Parser();
 
         std::shared_ptr<EntityPrefabManager> getPrefabManager() const;
@@ -41,8 +44,11 @@ class Parser {
         bool isServerParsing() const;
         bool shouldParseComponent(std::map<std::string, std::shared_ptr<FieldValue>> fields) const;
 
+        void parseMapFromFile(const std::string& filePath);
+
     private:
         std::shared_ptr<EntityParser> _entityParser;
+        std::shared_ptr<MapParser> _mapParser;
         std::shared_ptr<EntityPrefabManager> _prefabManager;
 
         std::shared_ptr<std::map<std::string, std::pair<std::type_index, std::vector<Field>>>> _componentDefinitions;
