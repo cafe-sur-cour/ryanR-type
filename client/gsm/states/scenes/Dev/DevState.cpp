@@ -23,6 +23,8 @@
 #include "../../../../systems/input/ShootInputSystem.hpp"
 #include "../../../../../common/systems/shooting/ShootingSystem.hpp"
 #include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
+#include "../../../../../common/systems/death/DeathSystem.hpp"
+#include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/components/permanent/ShootingStatsComponent.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
@@ -50,6 +52,8 @@ DevState::DevState(
     auto shootInputSystem = std::make_shared<ecs::ShootInputSystem>();
     auto shootingSystem = std::make_shared<ecs::ShootingSystem>();
     auto lifetimeSystem = std::make_shared<ecs::LifetimeSystem>();
+    auto healthSystem = std::make_shared<ecs::HealthSystem>();
+    auto deathSystem = std::make_shared<ecs::DeathSystem>();
 
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
 
@@ -64,6 +68,8 @@ DevState::DevState(
     _systemManager->addSystem(shootInputSystem);
     _systemManager->addSystem(shootingSystem);
     _systemManager->addSystem(lifetimeSystem);
+    _systemManager->addSystem(healthSystem);
+    _systemManager->addSystem(deathSystem);
 
     _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
     _parser->parseAllEntities(constants::CONFIG_PATH);
