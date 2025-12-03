@@ -10,6 +10,7 @@ Makefile
 *.so
 .idea/
 build/
+build_debug/
 bin/
 cmake-build-*/
 r-type_client
