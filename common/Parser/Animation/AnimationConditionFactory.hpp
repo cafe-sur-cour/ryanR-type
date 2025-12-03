@@ -10,27 +10,35 @@
 
 #include <functional>
 #include <string>
+#include <unordered_map>
+#include <memory>
 #include "../../ECS/entity/Entity.hpp"
 #include "../../ECS/entity/registry/Registry.hpp"
-#include "../../components/permanent/VelocityComponent.hpp"
-#include "../../constants.hpp"
 
 namespace ecs {
 
 class AnimationConditionFactory {
     public:
-        static bool getConditionValue(const std::string& param, std::shared_ptr<Registry> registry, Entity entity) {
-            if (param == constants::VELOCITY_UP_CONDITION) {
-                auto velocity = registry->getComponent<VelocityComponent>(entity);
-                if (!velocity) return false;
-                return velocity->getVelocity().getY() < 0;
-            } else if (param == constants::VELOCITY_DOWN_CONDITION) {
-                auto velocity = registry->getComponent<VelocityComponent>(entity);
-                if (!velocity) return false;
-                return velocity->getVelocity().getY() >= 0;
-            }
-            return false;
-        }
+        using ConditionFunction = std::function<bool(std::shared_ptr<Registry>, Entity)>;
+
+        static const AnimationConditionFactory& getInstance();
+
+        void registerCondition(const std::string& name, ConditionFunction condition);
+        bool evaluateCondition(const std::string& name, std::shared_ptr<Registry> registry, Entity entity) const;
+        bool hasCondition(const std::string& name) const;
+        void unregisterCondition(const std::string& name);
+        void clearConditions();
+
+        static bool getConditionValue(const std::string& param, std::shared_ptr<Registry> registry, Entity entity);
+
+    private:
+        AnimationConditionFactory();
+        void initializeConditions();
+
+        AnimationConditionFactory(const AnimationConditionFactory&) = delete;
+        AnimationConditionFactory& operator=(const AnimationConditionFactory&) = delete;
+
+        std::unordered_map<std::string, ConditionFunction> _conditions;
 };
 
 }  // namespace ecs
