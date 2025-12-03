@@ -5,36 +5,17 @@
         "TransformComponent": {
             "target": "both",
             "position": { "x": 0.0, "y": 0.0 },
-            "scale": { "x": 3.0, "y": 3.0 },
+            "scale": { "x": 0.4, "y": 0.4 },
             "rotation": 0.0
         },
-        "VelocityComponent": { "target": "server" },
-        "AnimationComponent": {
+        "VelocityComponent": { "target": "both" },
+        "SpriteComponent": {
             "target": "client",
-            "animationPath": "assets/sprites/projectile_basic.png",
-            "frameWidth": 16.0,
-            "frameHeight": 16.0,
-            "frameCount": 1,
-            "startWidth": 0.0,
-            "startHeight": 0.0
-        },
-        "RectangleRenderComponent": {
-            "target": "client",
-            "width": 16.0,
-            "height": 16.0,
-            "color": { "r": 255, "g": 255, "b": 0 }
+            "filePath": "assets/sprites/bullet.png"
         },
         "ColliderComponent": {
             "target": "both",
             "size": { "x": 16.0, "y": 16.0 }
-        },
-        "ShootingStatsComponent": {
-            "target": "both",
-            "fireRate": 2.0,
-            "projectileSpeed": 500.0,
-            "shotCount": 1,
-            "angleOffset": 0.0,
-            "spreadAngle": 0.0
         }
     }
 }
