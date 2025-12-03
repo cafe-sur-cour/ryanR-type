@@ -9,7 +9,6 @@
 #include "../../../../../libs/Multimedia/IEvent.hpp"
 #include "../../../../../libs/Multimedia/IAudio.hpp"
 #include "../../../../components/rendering/SpriteComponent.hpp"
-#include "../../../../components/rendering/AnimationComponent.hpp"
 #include "../../../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../../../common/components/permanent/VelocityComponent.hpp"
 #include "../../../../../common/components/permanent/ColliderComponent.hpp"
@@ -78,21 +77,6 @@ void DevState::enter() {
     _registry->addComponent<ecs::HitboxRenderComponent>(
         playerEntity,
         std::make_shared<ecs::HitboxRenderComponent>());
-
-    auto animation = _registry->getComponent<ecs::AnimationComponent>(playerEntity);
-    if (animation) {
-        animation->addTransition("idle", "up",
-            [this](std::shared_ptr<ecs::Registry> registry, ecs::Entity entity) {
-            auto velocity = registry->getComponent<ecs::VelocityComponent>(entity);
-            return velocity && velocity->getVelocity().getY() < 0;
-        }, false);
-
-        animation->addTransition("up", "idle",
-            [this](std::shared_ptr<ecs::Registry> registry, ecs::Entity entity) {
-            auto velocity = registry->getComponent<ecs::VelocityComponent>(entity);
-            return velocity && velocity->getVelocity().getY() >= 0;
-        }, true);
-    }
 }
 
 void DevState::update(float deltaTime) {

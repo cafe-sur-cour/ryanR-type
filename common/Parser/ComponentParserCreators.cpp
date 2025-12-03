@@ -10,6 +10,7 @@
 #include <map>
 #include <vector>
 #include <utility>
+#include <functional>
 #include "Parser.hpp"
 #include "../constants.hpp"
 #include "../components/tags/ShooterTag.hpp"
@@ -17,7 +18,11 @@
 #include "../components/tags/ProjectilePassThroughTag.hpp"
 #include "../components/permanent/ShootingStatsComponent.hpp"
 #include "../components/permanent/ProjectilePrefabComponent.hpp"
+#include "../components/permanent/VelocityComponent.hpp"
 #include "../../client/components/rendering/RectangleRenderComponent.hpp"
+#include "../../client/components/rendering/AnimationComponent.hpp"
+#include "../ECS/entity/Entity.hpp"
+#include "../ECS/entity/registry/Registry.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -42,7 +47,8 @@ void Parser::instanciateComponentDefinitions() {
         {constants::ANIMATIONCOMPONENT, {std::type_index(typeid(ecs::AnimationComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::STATES_FIELD, FieldType::JSON},
-            {constants::INITIALSTATE_FIELD, FieldType::STRING}
+            {constants::INITIALSTATE_FIELD, FieldType::STRING},
+            {constants::TRANSITIONS_FIELD, FieldType::JSON}
         }}},
         {constants::CONTROLLABLETAG, {std::type_index(typeid(ecs::ControllableTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
@@ -125,14 +131,14 @@ void Parser::instanciateComponentCreators() {
         auto anim = std::make_shared<ecs::AnimationComponent>();
 
         for (auto& [stateName, stateData] : statesJson.items()) {
-            std::string texturePath = stateData["texturePath"];
+            std::string texturePath = stateData[constants::TEXTUREPATH_FIELD];
             float frameWidth = stateData[constants::FRAMEWIDTH_FIELD];
             float frameHeight = stateData[constants::FRAMEHEIGHT_FIELD];
             int frameCount = stateData[constants::FRAMECOUNT_FIELD];
             float startWidth = stateData[constants::STARTWIDTH_FIELD];
             float startHeight = stateData[constants::STARTHEIGHT_FIELD];
-            float speed = stateData.value("speed", 0.1f);
-            bool loop = stateData.value("loop", true);
+            float speed = stateData.value(constants::SPEED_FIELD, 0.1f);
+            bool loop = stateData.value(constants::LOOP_FIELD, true);
 
             ecs::AnimationClip clip{
                 texturePath, frameWidth, frameHeight,
@@ -141,6 +147,20 @@ void Parser::instanciateComponentCreators() {
         }
 
         anim->setCurrentState(initialState);
+
+        if (fields.count(constants::TRANSITIONS_FIELD)) {
+            auto transitionsJson =
+                std::get<nlohmann::json>(*fields.at(constants::TRANSITIONS_FIELD));
+            for (auto& transitionData : transitionsJson) {
+                std::string from = transitionData[constants::FROM_FIELD];
+                std::string to = transitionData[constants::TO_FIELD];
+                std::string condition = transitionData[constants::CONDITION_FIELD];
+                bool rewind = transitionData[constants::REWIND_FIELD];
+
+                anim->addTransition(from, to, condition, rewind);
+            }
+        }
+
         return anim;
     });
 

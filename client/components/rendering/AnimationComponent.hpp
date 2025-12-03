@@ -34,7 +34,7 @@ struct AnimationClip {
 struct Transition {
     std::string from;
     std::string to;
-    std::function<bool(std::shared_ptr<Registry>, Entity)> condition;
+    std::string conditionKey;
     bool playRewind = false;
 };
 
@@ -48,9 +48,9 @@ class AnimationComponent : public AComponent {
         }
 
         void addTransition(const std::string& from, const std::string& to,
-            std::function<bool(std::shared_ptr<Registry>, Entity)> condition,
+            const std::string& conditionKey,
             bool playRewind = false) {
-            _transitions.push_back({from, to, condition, playRewind});
+            _transitions.push_back({from, to, conditionKey, playRewind});
         }
 
         void setCurrentState(const std::string& state) {
