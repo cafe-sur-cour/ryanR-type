@@ -63,8 +63,9 @@ DevState::DevState(
     _systemManager->addSystem(shootInputSystem);
     _systemManager->addSystem(shootingSystem);
 
-    _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT);
+    _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
     _parser->parseAllEntities(constants::CONFIG_PATH);
+    _parser->parseMapFromFile("configs/map/map1.json");
 }
 
 void DevState::enter() {
