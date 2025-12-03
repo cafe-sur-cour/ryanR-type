@@ -10,6 +10,8 @@
 #include <chrono>
 #include <string>
 #include <iostream>
+#include <vector>
+#include <queue>
 #include <memory>
 
 #include "ClientNetwork.hpp"
@@ -19,7 +21,7 @@
 ClientNetwork::ClientNetwork() {
     this->_port = 0;
     this->_ip = "";
-    this->_name = ""; //  init with a default name
+    this->_name = "Doof";
     this->_idClient = 0;
     this->_eventQueue = std::queue<NetworkEvent>();
 
@@ -27,6 +29,7 @@ ClientNetwork::ClientNetwork() {
     this->_buffer = nullptr;
     this->_packet = nullptr;
     this->_sequenceNumber = 0;
+    this->_isConnected = false;
 }
 
 ClientNetwork::~ClientNetwork() {
@@ -48,7 +51,7 @@ void ClientNetwork::init() {
     );
     this->_serverEndpoint = asio::ip::udp::endpoint(
         asio::ip::address::from_string(this->_ip),
-        static_cast<unsigned short>(this->_port)
+        static_cast<uint16_t>(this->_port)
     );
 }
 
@@ -75,19 +78,16 @@ void ClientNetwork::start() {
     Signal::setupSignalHandlers();
 
     while (!Signal::stopFlag) {
-        // std::unique_lock<std::mutex> lock(_queueMutex);
-        // _queueCond.wait(lock, [this]() { return !_eventQueue.empty() || Signal::stopFlag; });
-        // if (Signal::stopFlag) break;
-        // while (!_eventQueue.empty()) {
-        //     NetworkEvent event = _eventQueue.front();
-        //     _eventQueue.pop();
-        //     lock.unlock();
-
-        //     this->eventPacket(event.eventType, event.depth, event.direction);
-
-        //     lock.lock();
-        // }
-        this->_network->receiveFrom(this->_idClient);
+        //   Hande the event queue
+        this->_packet = this->_network->receiveFrom(this->_idClient);
+        if (this->_packet) {
+            std::cout << "[ClientNetwork] Packet received of type: "
+                      << static_cast<int>(this->_packet->getType())
+                      << " Length: " << this->_packet->getLength()
+                      << " Payload " << this->_packet->getPayload().size()
+                      << std::endl;
+            this->_packet->reset();
+        }
     }
     if (Signal::stopFlag) {
         this->disconnectionPacket();
@@ -170,18 +170,21 @@ void ClientNetwork::connectionPacket() {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);
     }
-    std::vector<uint8_t> header = this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x01);
+    std::vector<uint8_t> header = this->_packet->pack(this->_idClient,
+        this->_sequenceNumber, 0x01);
     this->_network->sendTo(this->_serverEndpoint, header);
     /* Replace this with name */
-    std::vector<uint64_t> payloadData = {0x01, 'A', 'L', 'B', 'A', 'N', 'E', '\0', '\0', '\r', '\n'};
+    std::vector<uint64_t> payloadData = {0x01};
+    for (size_t i = 0; i < this->_packet->formatString(this->_name).size(); i++)
+        payloadData.push_back(this->_packet->formatString(this->_name)[i]);
     std::vector<uint8_t> payload = this->_packet->pack(payloadData);
     this->_network->sendTo(this->_serverEndpoint, payload);
     this->_sequenceNumber++;
 }
 
 
-void ClientNetwork::eventPacket(const constants::EventType &eventType, double depth, double direction)
-{
+void ClientNetwork::eventPacket(const constants::EventType &eventType,
+    double depth, double direction) {
     if (!_network) {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);
@@ -212,7 +215,18 @@ void ClientNetwork::disconnectionPacket() {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);
     }
-    std::vector<uint8_t> header = this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x03);
+    if (this->_idClient != 0) {
+        std::cerr << "[ClientNetwork] Warning: Client ID is not set"
+            << " cannot send disconnection packet" << std::endl;
+        return;
+    }
+    if (!this->_packet) {
+        std::cerr << "[ClientNetwork] Warning: Packet manager not initialized,"
+        << " cannot send disconnection packet" << std::endl;
+        return;
+    }
+    std::vector<uint8_t> header = this->_packet->pack(this->_idClient,
+        this->_sequenceNumber, 0x03);
     this->_network->sendTo(this->_serverEndpoint, header);
     this->_sequenceNumber++;
 }

@@ -5,6 +5,8 @@
 ** ClientLibLoading
 */
 
+#include <memory>
+
 #include "ClientNetwork.hpp"
 #include "../common/Error/ClientNetworkError.hpp"
 

@@ -23,7 +23,7 @@ int main(int ac, char **av) {
         core.startNetwork();
         core.run();
     } catch (const err::IError &e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.getDetails() << std::endl;
         exit(84);
     } catch (const std::runtime_error &e) {
         std::cerr << "Runtime error: " << e.what() << std::endl;
