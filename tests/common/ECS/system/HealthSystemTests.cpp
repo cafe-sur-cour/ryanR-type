@@ -11,6 +11,7 @@
 #include "../../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../../common/components/permanent/HealthComponent.hpp"
 #include "../../../../common/components/temporary/DamageIntentComponent.hpp"
+#include "../../../../common/components/temporary/DeathIntentComponent.hpp"
 
 using namespace ecs;
 
@@ -26,6 +27,7 @@ protected:
         // Register components
         registry->registerComponent<HealthComponent>();
         registry->registerComponent<DamageIntentComponent>();
+        registry->registerComponent<DeathIntentComponent>();
     }
 
     std::shared_ptr<Registry> registry;
@@ -76,7 +78,7 @@ TEST_F(HealthSystemTest, EntityWithHealthAndDamage_AppliesDamage) {
     EXPECT_TRUE(registry->hasComponent<HealthComponent>(entityId));
 }
 
-TEST_F(HealthSystemTest, EntityWithZeroHealthAfterDamage_Destroyed) {
+TEST_F(HealthSystemTest, EntityWithZeroHealthAfterDamage_AddsDeathIntent) {
     // Create entity with low health
     ecs::Entity entityId = 0;
     auto health = std::make_shared<HealthComponent>(25.0f);
@@ -88,14 +90,11 @@ TEST_F(HealthSystemTest, EntityWithZeroHealthAfterDamage_Destroyed) {
     // Update
     healthSystem->update(resourceManager, registry, 0.016f);
 
-    // Health zero
-    // But since damage is applied first, health becomes 0, then in _handleHealthUpdates, <=0 destroys
-
-    // Entity destroyed
-    EXPECT_FALSE(registry->hasComponent<HealthComponent>(entityId));
+    // Health zero, death intent added
+    EXPECT_TRUE(registry->hasComponent<DeathIntentComponent>(entityId));
 }
 
-TEST_F(HealthSystemTest, EntityWithNegativeHealthAfterDamage_Destroyed) {
+TEST_F(HealthSystemTest, EntityWithNegativeHealthAfterDamage_AddsDeathIntent) {
     // Create entity with health
     ecs::Entity entityId = 0;
     auto health = std::make_shared<HealthComponent>(20.0f);
@@ -107,11 +106,11 @@ TEST_F(HealthSystemTest, EntityWithNegativeHealthAfterDamage_Destroyed) {
     // Update
     healthSystem->update(resourceManager, registry, 0.016f);
 
-    // Health negative, entity destroyed
-    EXPECT_FALSE(registry->hasComponent<HealthComponent>(entityId));
+    // Health negative, death intent added
+    EXPECT_TRUE(registry->hasComponent<DeathIntentComponent>(entityId));
 }
 
-TEST_F(HealthSystemTest, EntityWithHealthZero_Destroyed) {
+TEST_F(HealthSystemTest, EntityWithHealthZero_AddsDeathIntent) {
     // Create entity with zero health
     ecs::Entity entityId = 0;
     auto health = std::make_shared<HealthComponent>(0.0f);
@@ -121,11 +120,11 @@ TEST_F(HealthSystemTest, EntityWithHealthZero_Destroyed) {
     // Update
     healthSystem->update(resourceManager, registry, 0.016f);
 
-    // Entity destroyed
-    EXPECT_FALSE(registry->hasComponent<HealthComponent>(entityId));
+    // Death intent added
+    EXPECT_TRUE(registry->hasComponent<DeathIntentComponent>(entityId));
 }
 
-TEST_F(HealthSystemTest, EntityWithNegativeHealth_Destroyed) {
+TEST_F(HealthSystemTest, EntityWithNegativeHealth_AddsDeathIntent) {
     // Create entity with negative health
     ecs::Entity entityId = 0;
     auto health = std::make_shared<HealthComponent>(-10.0f);
@@ -135,8 +134,8 @@ TEST_F(HealthSystemTest, EntityWithNegativeHealth_Destroyed) {
     // Update
     healthSystem->update(resourceManager, registry, 0.016f);
 
-    // Entity destroyed
-    EXPECT_FALSE(registry->hasComponent<HealthComponent>(entityId));
+    // Death intent added
+    EXPECT_TRUE(registry->hasComponent<DeathIntentComponent>(entityId));
 }
 
 TEST_F(HealthSystemTest, MultipleEntities_UpdatesCorrectly) {
@@ -147,7 +146,7 @@ TEST_F(HealthSystemTest, MultipleEntities_UpdatesCorrectly) {
     registry->addComponent<HealthComponent>(entityId0, health0);
     registry->addComponent<DamageIntentComponent>(entityId0, damage0);
 
-    // Entity 1: health 50, damage 50 -> health 0, destroyed
+    // Entity 1: health 50, damage 50 -> health 0, death intent added
     ecs::Entity entityId1 = 1;
     auto health1 = std::make_shared<HealthComponent>(50.0f);
     auto damage1 = std::make_shared<DamageIntentComponent>(50.0f);
@@ -167,8 +166,8 @@ TEST_F(HealthSystemTest, MultipleEntities_UpdatesCorrectly) {
     auto updatedHealth0 = registry->getComponent<HealthComponent>(entityId0);
     EXPECT_FLOAT_EQ(updatedHealth0->getHealth(), 80.0f);
 
-    // Entity 1: destroyed
-    EXPECT_FALSE(registry->hasComponent<HealthComponent>(entityId1));
+    // Entity 1: death intent added
+    EXPECT_TRUE(registry->hasComponent<DeathIntentComponent>(entityId1));
 
     // Entity 2: health 30, exists
     EXPECT_TRUE(registry->hasComponent<HealthComponent>(entityId2));

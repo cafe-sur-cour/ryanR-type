@@ -10,6 +10,7 @@
 #include "../../../../common/systems/lifetime/LifetimeSystem.hpp"
 #include "../../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../../common/components/permanent/LifetimeComponent.hpp"
+#include "../../../../common/components/temporary/DeathIntentComponent.hpp"
 
 using namespace ecs;
 
@@ -24,6 +25,7 @@ protected:
 
         // Register components
         registry->registerComponent<LifetimeComponent>();
+        registry->registerComponent<DeathIntentComponent>();
     }
 
     std::shared_ptr<Registry> registry;
@@ -71,7 +73,7 @@ TEST_F(LifetimeSystemTest, EntityWithLifetimeComponent_MultipleUpdates) {
     EXPECT_FLOAT_EQ(updatedLifetime2->getLifetime(), 6.5f);
 }
 
-TEST_F(LifetimeSystemTest, EntityLifetimeReachesZero_DestroysEntity) {
+TEST_F(LifetimeSystemTest, EntityLifetimeReachesZero_AddsDeathIntent) {
     // Create entity with lifetime component
     ecs::Entity entityId = registry->createEntity();
     auto lifetimeComp = std::make_shared<LifetimeComponent>(2.0f);
@@ -81,11 +83,11 @@ TEST_F(LifetimeSystemTest, EntityLifetimeReachesZero_DestroysEntity) {
     float deltaTime = 2.5f;
     lifetimeSystem->update(resourceManager, registry, deltaTime);
 
-    // Entity should be destroyed
-    EXPECT_FALSE(registry->hasComponent<LifetimeComponent>(entityId));
+    // Death intent added
+    EXPECT_TRUE(registry->hasComponent<DeathIntentComponent>(entityId));
 }
 
-TEST_F(LifetimeSystemTest, EntityLifetimeBecomesNegative_DestroysEntity) {
+TEST_F(LifetimeSystemTest, EntityLifetimeBecomesNegative_AddsDeathIntent) {
     // Create entity with lifetime component
     ecs::Entity entityId = registry->createEntity();
     auto lifetimeComp = std::make_shared<LifetimeComponent>(1.0f);
@@ -95,11 +97,11 @@ TEST_F(LifetimeSystemTest, EntityLifetimeBecomesNegative_DestroysEntity) {
     float deltaTime = 2.0f;
     lifetimeSystem->update(resourceManager, registry, deltaTime);
 
-    // Entity should be destroyed
-    EXPECT_FALSE(registry->hasComponent<LifetimeComponent>(entityId));
+    // Death intent added
+    EXPECT_TRUE(registry->hasComponent<DeathIntentComponent>(entityId));
 }
 
-TEST_F(LifetimeSystemTest, EntityLifetimeExactlyZero_DestroysEntity) {
+TEST_F(LifetimeSystemTest, EntityLifetimeExactlyZero_AddsDeathIntent) {
     // Create entity with lifetime component
     ecs::Entity entityId = registry->createEntity();
     auto lifetimeComp = std::make_shared<LifetimeComponent>(1.0f);
@@ -109,11 +111,11 @@ TEST_F(LifetimeSystemTest, EntityLifetimeExactlyZero_DestroysEntity) {
     float deltaTime = 1.0f;
     lifetimeSystem->update(resourceManager, registry, deltaTime);
 
-    // Entity should be destroyed
-    EXPECT_FALSE(registry->hasComponent<LifetimeComponent>(entityId));
+    // Death intent added
+    EXPECT_TRUE(registry->hasComponent<DeathIntentComponent>(entityId));
 }
 
-TEST_F(LifetimeSystemTest, EntityWithZeroLifetime_DestroysImmediately) {
+TEST_F(LifetimeSystemTest, EntityWithZeroLifetime_AddsDeathIntent) {
     // Create entity with zero lifetime
     ecs::Entity entityId = registry->createEntity();
     auto lifetimeComp = std::make_shared<LifetimeComponent>(0.0f);
@@ -123,11 +125,11 @@ TEST_F(LifetimeSystemTest, EntityWithZeroLifetime_DestroysImmediately) {
     float deltaTime = 0.1f;
     lifetimeSystem->update(resourceManager, registry, deltaTime);
 
-    // Entity should be destroyed
-    EXPECT_FALSE(registry->hasComponent<LifetimeComponent>(entityId));
+    // Death intent added
+    EXPECT_TRUE(registry->hasComponent<DeathIntentComponent>(entityId));
 }
 
-TEST_F(LifetimeSystemTest, EntityWithNegativeLifetime_DestroysImmediately) {
+TEST_F(LifetimeSystemTest, EntityWithNegativeLifetime_AddsDeathIntent) {
     // Create entity with negative lifetime
     ecs::Entity entityId = registry->createEntity();
     auto lifetimeComp = std::make_shared<LifetimeComponent>(-1.0f);
@@ -137,8 +139,8 @@ TEST_F(LifetimeSystemTest, EntityWithNegativeLifetime_DestroysImmediately) {
     float deltaTime = 0.1f;
     lifetimeSystem->update(resourceManager, registry, deltaTime);
 
-    // Entity should be destroyed
-    EXPECT_FALSE(registry->hasComponent<LifetimeComponent>(entityId));
+    // Death intent added
+    EXPECT_TRUE(registry->hasComponent<DeathIntentComponent>(entityId));
 }
 
 TEST_F(LifetimeSystemTest, MultipleEntities_DifferentLifetimes) {
@@ -161,8 +163,8 @@ TEST_F(LifetimeSystemTest, MultipleEntities_DifferentLifetimes) {
     auto updatedLifetime1 = registry->getComponent<LifetimeComponent>(entityId1);
     EXPECT_FLOAT_EQ(updatedLifetime1->getLifetime(), 8.5f);
 
-    // Second entity should be destroyed
-    EXPECT_FALSE(registry->hasComponent<LifetimeComponent>(entityId2));
+    // Second entity should have death intent added
+    EXPECT_TRUE(registry->hasComponent<DeathIntentComponent>(entityId2));
 }
 
 TEST_F(LifetimeSystemTest, EntityWithoutLifetimeComponent_Ignored) {
