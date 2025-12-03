@@ -10,6 +10,7 @@
 #include <queue>
 #include <mutex>
 #include <condition_variable>
+#include <atomic>
 
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
@@ -61,6 +62,8 @@ class ClientNetwork {
 
         void addToEventQueue(const NetworkEvent &event);
         bool getEventFromQueue(NetworkEvent &event);
+
+        std::atomic<bool> _isConnected;
     protected:
     private:
         DLLoader<createNetworkLib_t> _networloader;

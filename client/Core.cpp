@@ -33,7 +33,6 @@ Core::Core() {
     std::shared_ptr<gsm::MainMenuState> mainMenuState =
         std::make_shared<gsm::MainMenuState>(this->_gsm, this->_resourceManager);
     this->_gsm->changeState(mainMenuState);
-
 }
 
 Core::~Core() {
@@ -47,7 +46,6 @@ Core::~Core() {
 }
 
 void Core::run() {
-
     std::cout << "[Core] Entering main loop" << std::endl;
     auto previousTime = std::chrono::high_resolution_clock::now();
 

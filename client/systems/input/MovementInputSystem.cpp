@@ -4,32 +4,33 @@
 ** File description:
 ** MovementInputSystem
 */
+#include <cmath>
 
 #include <iostream>
+#include <memory>
+#include <utility>
 
 #include "MovementInputSystem.hpp"
-#include <cmath>
-#include <memory>
 #include "../../../common/types/Vector2f.hpp"
 #include "../../../common/constants.hpp"
 #include "../../../common/components/tags/ControllableTag.hpp"
 #include "../../../common/components/temporary/InputIntentComponent.hpp"
 #include "../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../common/InputMapping/InputAction.hpp"
+#include "../../ClientNetwork.hpp"
 
 namespace ecs {
 
 MovementInputSystem::MovementInputSystem() {
 }
 
-std::pair<int, double> MovementInputSystem::formatDirection(const math::Vector2f &direction) const {
-
+std::pair<int, double> MovementInputSystem::formatDirection(const math::Vector2f
+    &direction) const {
     float absX = std::abs(direction.getX());
     float absY = std::abs(direction.getY());
 
     int eventType;
     double depth;
-
     if (absY >= absX) {
         if (direction.getY() < 0) {
             eventType = static_cast<int>(constants::EventType::UP);
@@ -37,8 +38,7 @@ std::pair<int, double> MovementInputSystem::formatDirection(const math::Vector2f
             eventType = static_cast<int>(constants::EventType::DOWN);
         }
         depth = absY;
-    }
-    else {
+    } else {
         if (direction.getX() > 0) {
             eventType = static_cast<int>(constants::EventType::RIGHT);
         } else {
