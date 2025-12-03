@@ -1,0 +1,21 @@
+{
+    "name": "spread_shot",
+    "components": {
+        "ProjectileTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 0.5, "y": 0.5 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpriteComponent": {
+            "target": "client",
+            "filePath": "assets/sprites/projectile_spread.png"
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "size": { "x": 14.0, "y": 14.0 }
+        }
+    }
+}
