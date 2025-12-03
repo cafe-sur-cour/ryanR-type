@@ -15,6 +15,7 @@
 #include "../components/tags/ShooterTag.hpp"
 #include "../components/tags/ProjectileTag.hpp"
 #include "../components/permanent/ShootingStatsComponent.hpp"
+#include "../components/permanent/ProjectilePrefabComponent.hpp"
 #include "../../client/components/rendering/RectangleRenderComponent.hpp"
 
 void Parser::instanciateComponentDefinitions() {
@@ -78,6 +79,11 @@ void Parser::instanciateComponentDefinitions() {
             {constants::WIDTH_FIELD, FieldType::FLOAT},
             {constants::HEIGHT_FIELD, FieldType::FLOAT},
             {constants::COLOR_FIELD, FieldType::OBJECT}
+        }}},
+        {constants::PROJECTILEPREFABCOMPONENT, {
+            std::type_index(typeid(ecs::ProjectilePrefabComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::PREFABNAME_FIELD, FieldType::STRING}
         }}}
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
@@ -156,7 +162,7 @@ void Parser::instanciateComponentCreators() {
         auto spreadAngle = std::get<float>(*fields.at(constants::SPREADANGLE_FIELD));
         ecs::MultiShotPattern pattern(shotCount, spreadAngle, angleOffset);
         return std::make_shared<ecs::ShootingStatsComponent>(
-            fireRate, nullptr, projectileSpeed, pattern
+            fireRate, projectileSpeed, pattern
         );
     });
 
@@ -172,6 +178,12 @@ void Parser::instanciateComponentCreators() {
         gfx::color_t color = {r, g, b};
         return std::make_shared<ecs::RectangleRenderComponent>(color, width, height);
     });
+
+    registerComponent<ecs::ProjectilePrefabComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto prefabName = std::get<std::string>(*fields.at(constants::PREFABNAME_FIELD));
+        return std::make_shared<ecs::ProjectilePrefabComponent>(prefabName);
+    });
 }
 
 template<typename T>
@@ -180,6 +192,8 @@ void Parser::registerComponent(const ComponentCreator& creator) {
     _componentCreators[idx] = creator;
     _componentAdders[idx] = [](const std::shared_ptr<ecs::Registry>& registry,
         ecs::Entity entity, std::shared_ptr<ecs::IComponent> component) {
-        registry->addComponent(entity, std::static_pointer_cast<T>(component));
+        auto originalComponent = std::static_pointer_cast<T>(component);
+        auto clonedComponent = std::make_shared<T>(*originalComponent);
+        registry->addComponent(entity, clonedComponent);
     };
 }

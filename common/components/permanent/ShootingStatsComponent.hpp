@@ -29,11 +29,9 @@ class ShootingStatsComponent : public AComponent {
     public:
         ShootingStatsComponent(
             float fireRate = 1.0f,
-            std::shared_ptr<IPrefab> projectilePrefab = nullptr,
             float projectileSpeed = 300.0f,
             const MultiShotPattern &pattern = MultiShotPattern()
         ) : _fireRate(fireRate),
-            _projectilePrefab(projectilePrefab),
             _projectileSpeed(projectileSpeed),
             _multiShotPattern(pattern),
             _cooldownTimer(0.0f) {};
@@ -41,9 +39,6 @@ class ShootingStatsComponent : public AComponent {
 
         float getFireRate() const { return _fireRate; };
         void setFireRate(float fireRate) { _fireRate = fireRate; };
-
-        std::shared_ptr<IPrefab> getProjectilePrefab() const { return _projectilePrefab; };
-        void setProjectilePrefab(std::shared_ptr<IPrefab> prefab) { _projectilePrefab = prefab; };
 
         float getProjectileSpeed() const { return _projectileSpeed; };
         void setProjectileSpeed(float speed) { _projectileSpeed = speed; };
@@ -68,7 +63,6 @@ class ShootingStatsComponent : public AComponent {
 
     private:
         float _fireRate;
-        std::shared_ptr<IPrefab> _projectilePrefab;
         float _projectileSpeed;
         MultiShotPattern _multiShotPattern;
         float _cooldownTimer;
