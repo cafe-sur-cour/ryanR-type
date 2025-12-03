@@ -30,7 +30,7 @@ TEST_F(UtilsTest, ParsCliSetsConfigCorrectly) {
     utils.parsCli(argc, const_cast<char**>(argv), config);
 
     EXPECT_EQ(config->getPort(), 8080);
-    EXPECT_EQ(config->getIp(), 127001);
+    EXPECT_EQ(config->getIp(), "127001");
     EXPECT_EQ(config->getNbClients(), 2);
 }
 

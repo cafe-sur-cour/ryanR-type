@@ -16,7 +16,8 @@ class PacketError : public AError {
     public:
         enum ErrorCode {
             UNKNOWN = 1000,
-            SERIALIZER_ATTRIBUTION_FAILED = 1001
+            SERIALIZER_ATTRIBUTION_FAILED = 1001,
+            STRING_FORMATTING_ERROR = 1002
         };
 
         PacketError(const std::string &message, ErrorCode code = UNKNOWN);

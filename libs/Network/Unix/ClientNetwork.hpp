@@ -22,20 +22,21 @@ class UnixClientNetwork : public ANetwork {
         UnixClientNetwork();
         ~UnixClientNetwork() override;
 
-        void init(int port) override;
+        void init(uint16_t port, const std::string host) override;
         void stop() override;
 
         // Client-specific methods
-        void connect(const std::string& host, int port);
+        void connect(const std::string& host, uint16_t port);
         void disconnect();
         bool isConnected() const;
 
-        int acceptConnection() override;
+        uint8_t acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) override;
 
-        void sendTo(int connectionId, const pm::IPacketManager &packet) override;
+        void sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override;
         void broadcast(const pm::IPacketManager &packet) override;
         bool hasIncomingData() const override;
-        std::shared_ptr<pm::IPacketManager> receiveFrom(const int &connectionId) override;
+        std::shared_ptr<pm::IPacketManager> receiveFrom(const uint8_t &connectionId) override;
+        std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override { return {}; }
 
     private:
         asio::ip::udp::endpoint _serverEndpoint;
