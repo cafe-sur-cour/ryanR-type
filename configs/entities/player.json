@@ -4,19 +4,86 @@
         "TransformComponent": {
             "target": "both",
             "position": { "x": 100.0, "y": 100.0 },
-            "scale": { "x": 5.0, "y": 5.0 },
+            "scale": { "x": 3.0, "y": 3.0 },
             "rotation": 0.0
         },
-        "VelocityComponent": { "target": "server" },
+        "VelocityComponent": { "target": "both" },
         "SpeedComponent": { "target": "both", "speed": 10.0 },
         "AnimationComponent": {
             "target": "client",
-            "animationPath": "assets/sprites/frog_spritesheet.png",
-            "frameWidth": 64.0,
-            "frameHeight": 32.0,
-            "frameCount": 4,
-            "startWidth": 0.0,
-            "startHeight": 96.0
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/player_ship/idle.png",
+                    "frameWidth": 33.0,
+                    "frameHeight": 17.0,
+                    "frameCount": 1,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.2,
+                    "loop": true
+                },
+                "up": {
+                    "texturePath": "assets/sprites/player_ship/up.png",
+                    "frameWidth": 33.0,
+                    "frameHeight": 17.0,
+                    "frameCount": 2,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.2,
+                    "loop": false
+                },
+                "down": {
+                    "texturePath": "assets/sprites/player_ship/down.png",
+                    "frameWidth": 33.0,
+                    "frameHeight": 17.0,
+                    "frameCount": 2,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.2,
+                    "loop": false
+                }
+            },
+            "transitions": [
+                {
+                    "from": "idle",
+                    "to": "up",
+                    "conditions": [
+                        { "param": "isVelocityUp", "equals": true }
+                    ],
+                    "rewind": false
+                },
+                {
+                    "from": "idle",
+                    "to": "down",
+                    "conditions": [
+                        { "param": "isVelocityDown", "equals": true }
+                    ],
+                    "rewind": false
+                },
+                {
+                    "from": "up",
+                    "to": "idle",
+                    "conditions": [
+                        { "param": "isVelocityUp", "equals": false }
+                    ],
+                    "rewind": true
+                },
+                {
+                    "from": "down",
+                    "to": "idle",
+                    "conditions": [
+                        { "param": "isVelocityDown", "equals": false }
+                    ],
+                    "rewind": true
+                }
+            ],
+            "initialState": "idle"
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 33.2, "y": 17.2 },
+            "type": "Solid"
         },
         "ProjectilePrefabComponent": {
             "target": "both",
@@ -31,6 +98,7 @@
             "spreadAngle": 0.0
         },
         "PlayerTag": { "target": "both" },
+        "ProjectilePassThroughTag": { "target": "both" },
         "ControllableTag": { "target": "both" },
         "ShooterTag": { "target": "both" }
     }
