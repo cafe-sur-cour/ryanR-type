@@ -95,6 +95,9 @@ std::shared_ptr<FieldValue> ComposantParser::parseFieldValue
                     err::ParserError::TYPE_MISMATCH);
             return std::make_shared<FieldValue>(jsonValue.get<int>());
         }
+        case FieldType::JSON: {
+            return std::make_shared<FieldValue>(jsonValue);
+        }
         default:
             throw err::ParserError("Unknown field type", err::ParserError::UNKNOWN);
     }

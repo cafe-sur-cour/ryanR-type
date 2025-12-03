@@ -11,12 +11,29 @@
         "SpeedComponent": { "target": "both", "speed": 10.0 },
         "AnimationComponent": {
             "target": "client",
-            "animationPath": "assets/sprites/player_ship.png",
-            "frameWidth": 33.2,
-            "frameHeight": 17.2,
-            "frameCount": 5,
-            "startWidth": 0.0,
-            "startHeight": 0.0
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/player_ship.png",
+                    "frameWidth": 33.2,
+                    "frameHeight": 17.2,
+                    "frameCount": 5,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "second": {
+                    "texturePath": "assets/sprites/player_ship.png",
+                    "frameWidth": 33.2,
+                    "frameHeight": 17.2,
+                    "frameCount": 5,
+                    "startWidth": 0.0,
+                    "startHeight": 17.2,
+                    "speed": 0.1,
+                    "loop": false
+                }
+            },
+            "initialState": "idle"
         },
         "ColliderComponent": {
             "target": "both",

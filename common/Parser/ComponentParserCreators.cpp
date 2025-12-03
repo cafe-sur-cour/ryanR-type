@@ -35,12 +35,8 @@ void Parser::instanciateComponentDefinitions() {
         }}},
         {constants::ANIMATIONCOMPONENT, {std::type_index(typeid(ecs::AnimationComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
-            {constants::ANIMATIONPATH_FIELD, FieldType::STRING},
-            {constants::FRAMEWIDTH_FIELD, FieldType::FLOAT},
-            {constants::FRAMEHEIGHT_FIELD, FieldType::FLOAT},
-            {constants::FRAMECOUNT_FIELD, FieldType::INT},
-            {constants::STARTWIDTH_FIELD, FieldType::FLOAT},
-            {constants::STARTHEIGHT_FIELD, FieldType::FLOAT}
+            {constants::STATES_FIELD, FieldType::JSON},
+            {constants::INITIALSTATE_FIELD, FieldType::STRING}
         }}},
         {constants::CONTROLLABLETAG, {std::type_index(typeid(ecs::ControllableTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
@@ -85,13 +81,29 @@ void Parser::instanciateComponentCreators() {
 
     registerComponent<ecs::AnimationComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-        auto animPath = std::get<std::string>(*fields.at(constants::ANIMATIONPATH_FIELD));
-        auto fw = std::get<float>(*fields.at(constants::FRAMEWIDTH_FIELD));
-        auto fh = std::get<float>(*fields.at(constants::FRAMEHEIGHT_FIELD));
-        auto fc = std::get<int>(*fields.at(constants::FRAMECOUNT_FIELD));
-        auto sw = std::get<float>(*fields.at(constants::STARTWIDTH_FIELD));
-        auto sh = std::get<float>(*fields.at(constants::STARTHEIGHT_FIELD));
-        return std::make_shared<ecs::AnimationComponent>(animPath, fw, fh, fc, sw, sh);
+        auto statesJson = std::get<nlohmann::json>(*fields.at(constants::STATES_FIELD));
+        auto initialState = std::get<std::string>(*fields.at(constants::INITIALSTATE_FIELD));
+
+        auto anim = std::make_shared<ecs::AnimationComponent>();
+
+        for (auto& [stateName, stateData] : statesJson.items()) {
+            std::string texturePath = stateData["texturePath"];
+            float frameWidth = stateData[constants::FRAMEWIDTH_FIELD];
+            float frameHeight = stateData[constants::FRAMEHEIGHT_FIELD];
+            int frameCount = stateData[constants::FRAMECOUNT_FIELD];
+            float startWidth = stateData[constants::STARTWIDTH_FIELD];
+            float startHeight = stateData[constants::STARTHEIGHT_FIELD];
+            float speed = stateData.value("speed", 0.1f);
+            bool loop = stateData.value("loop", true);
+
+            ecs::AnimationClip clip{
+                texturePath, frameWidth, frameHeight,
+                frameCount, startWidth, startHeight, speed, loop};
+            anim->addState(stateName, clip);
+        }
+
+        anim->setCurrentState(initialState);
+        return anim;
     });
 
     registerComponent<ecs::ControllableTag>([]([[maybe_unused]] const std::map<std::string,
