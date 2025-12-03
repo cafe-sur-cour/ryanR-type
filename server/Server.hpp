@@ -73,6 +73,7 @@ namespace rserv {
             DLLoader<createBuffer_t> _bufferloader;
             DLLoader<createPacket_t> _packetloader;
             uint8_t _nextClientId;
+            uint32_t _sequenceNumber;
             std::vector<std::tuple<uint8_t, asio::ip::udp::endpoint, std::string>> _clients;
 
             std::shared_ptr<ServerConfig> _config;

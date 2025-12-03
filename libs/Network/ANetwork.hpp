@@ -23,7 +23,6 @@ class ANetwork : public INetwork {
         virtual ~ANetwork() override = default;
         virtual void init(uint16_t port, const std::string host) override = 0;
         virtual void stop() override = 0;
-        virtual bool acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager, uint8_t idClient) override = 0;
         virtual bool sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override = 0;
         virtual void broadcast(std::vector<uint8_t> data) override = 0;
         virtual bool hasIncomingData() const override = 0;

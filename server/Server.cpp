@@ -18,7 +18,7 @@
 #include "../common/Error/ServerErrror.hpp"
 #include "Signal.hpp"
 
-rserv::Server::Server() : _nextClientId(1) {
+rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
     this->_clients = {};
     this->_config = nullptr;
     this->_network = nullptr;
@@ -187,9 +187,18 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
         return false;
     }
 
-    bool success = _network->acceptConnection(id, this->_packet, this->_nextClientId);
-    if (!success) {
-        std::cerr << "[SERVER] Warning: Failed to accept connection" << std::endl;
+    std::vector<uint8_t> header =
+        this->_packet->pack(0, this->_sequenceNumber, 0x02);
+    if (!this->_network->sendTo(id, header)) {
+        std::cerr << "[SERVER NETWORK] Failed to send connection acceptance header to "
+            << id.address().to_string() << ":" << id.port() << std::endl;
+        return false;
+    }
+    std::vector<uint8_t> payload =
+        this->_packet->pack({0x02, static_cast<uint64_t>(this->_nextClientId)});
+    if (!this->_network->sendTo(id, payload)) {
+        std::cerr << "[SERVER NETWORK] Failed to send acceptation payload to "
+            << id.address().to_string() << ":" << id.port() << std::endl;
         return false;
     }
 

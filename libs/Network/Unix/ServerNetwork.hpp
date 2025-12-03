@@ -27,8 +27,6 @@ class UnixServerNetwork : public ANetwork {
         void init(uint16_t port, const std::string host) override;
         void stop() override;
 
-        bool acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager, uint8_t idClient) override;
-
         bool sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override;
         void broadcast(std::vector<uint8_t> data) override;
         bool hasIncomingData() const override;

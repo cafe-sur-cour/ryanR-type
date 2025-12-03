@@ -57,44 +57,10 @@ void ServerNetwork::stop() {
     _isRunning = false;
 }
 
-uint8_t ServerNetwork::acceptConnection(
-    asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
-    (void)packetManager;
-    if (!_socket || !_socket->is_open()) {
-        return 0;
-    }
-
-    for (const auto& [clientId, endpoint] : _clients) {
-        if (endpoint == id) {
-            //* Add Packet */
-            return clientId;
-        }
-    }
-
-    uint8_t newClientId = _nextClientId++;
-    _clients[newClientId] = id;
-    if (_onConnectCallback) {
-        _onConnectCallback(newClientId);
-    }
-    std::cout << "[ServerNetwork] New client " << static_cast<int>(newClientId) << " from "
-              << id.address().to_string() << ":"
-              << id.port() << std::endl;
-    return newClientId;
-}
-
-void ServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
-    if (!_socket || !_socket->is_open()) {
-        std::cerr << "[ServerNetwork] Socket not available" << std::endl;
-        return;
-    }
-
-    try {
-        _socket->send_to(asio::buffer(packet), id);
-        std::cout << "[ServerNetwork] Sent data to " <<
-            id.address().to_string() << ":" << id.port() << std::endl;
-    } catch (const std::exception& e) {
-        std::cerr << "[ServerNetwork] Error sending to endpoint: " << e.what() << std::endl;
-    }
+bool ServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
+    (void)id;
+    (void)packet;
+    return false;
 }
 
 void ServerNetwork::broadcast(std::vector<uint8_t> data) {
