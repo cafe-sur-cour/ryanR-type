@@ -28,7 +28,7 @@ class MapParser {
     private:
         std::shared_ptr<EntityPrefabManager> _prefabManager;
         std::shared_ptr<ecs::Registry> _registry;
-        void createBackgroundEntity(const std::string& entityName, float scrollSpeed);
+        void createBackgroundEntity(const std::string& entityName);
         void parseMapGrid(const nlohmann::json& legend, const nlohmann::json& mapGrid,
             float tileWidth, float tileHeight);
         void parseWaves(const nlohmann::json& waves, float tileWidth);
