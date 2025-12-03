@@ -1,0 +1,17 @@
+{
+    "name": "obstacle2",
+    "components": {
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 0.2, "y": 0.2 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "server" },
+        "SpeedComponent": { "target": "both", "speed": 10.0 },
+        "SpriteComponent": {
+            "target": "client",
+            "filePath": "assets/sprites/obstacle2.jpg"
+        }
+    }
+}

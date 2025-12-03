@@ -28,7 +28,7 @@ protected:
 
         prefabManager = std::make_shared<EntityPrefabManager>();
 
-        parser = std::make_shared<Parser>(prefabManager, CLIENT);
+        parser = std::make_shared<Parser>(prefabManager, CLIENT, registry);
     }
 
     void TearDown() override {

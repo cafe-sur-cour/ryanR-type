@@ -2,16 +2,22 @@
 title: Parser
 ---
 
+---
+title: Parser
+---
+
 Presentation
-- **Purpose:** The parser transforms entity files (prefabs) into `ParsedEntityPrefab` objects and registers them in the `EntityPrefabManager`.
+- **Purpose:** The parser system transforms configuration files (entity prefabs and maps) into game entities and registers them in the appropriate managers.
 - **Location:** `common/Parser`.
+- **Components:** Entity Parser, Map Parser, Component Parsers.
 
 Key concepts
 - **Main class:** `Parser`
-  - **Constructor:** `Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type)` — `type` is `CLIENT` or `SERVER`.
+  - **Constructor:** `Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type, std::shared_ptr<ecs::Registry> registry)` — `type` is `CLIENT` or `SERVER`.
   - **Important methods:**
     - `void parseAllEntities(std::string directoryPath)`: browses a folder and calls `parseEntity` for each file.
     - `void parseEntity(std::string entityPath)`: parses an entity file and registers the prefab in the `EntityPrefabManager`.
+    - `void parseMapFromFile(const std::string& filePath)`: parses a map file and creates entities in the game world.
     - `std::shared_ptr<EntityPrefabManager> getPrefabManager() const` / `void setPrefabManager(...)`: access to the prefab manager.
     - `bool isClientParsing() const` / `bool isServerParsing() const`: helpers for the `ParsingType`.
     - `bool shouldParseComponent(std::map<std::string, std::shared_ptr<FieldValue>> fields) const`: decides if a component should be parsed according to the `target` field (`"both"`, `"client"`, `"server"`).
@@ -43,15 +49,19 @@ Registering creators
 Usage example
 ```cpp
 auto prefabManager = std::make_shared<EntityPrefabManager>();
-Parser parser(prefabManager, ParsingType::CLIENT);
-// Parse all files in a folder
-parser.parseAllEntities("configs");
-// or parse a specific file
+auto registry = std::make_shared<ecs::Registry>();
+Parser parser(prefabManager, ParsingType::CLIENT, registry);
+
+// Parse all entity files in a folder
+parser.parseAllEntities("configs/entities");
+
+// Parse a specific entity file
 parser.parseEntity("configs/player.json");
+
+// Parse a map file
+parser.parseMapFromFile("configs/maps/level1.json");
 ```
 
-`target` behavior
-- If a component's `target` field is empty -> the component is not parsed.
-- `target == "both"` -> parsed on both client and server.
-- `target == "client"` -> parsed only when `Parser` is constructed with `ParsingType::CLIENT`.
-- `target == "server"` -> parsed only when `Parser` is constructed with `ParsingType::SERVER`.
+## Map Parser Integration
+
+The Parser class also integrates map parsing capabilities through the `MapParser` component. Map files define level layouts, backgrounds, and enemy waves. See the [Map Parser documentation](./map-parser.md) for detailed information about map file formats and usage.

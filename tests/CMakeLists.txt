@@ -76,6 +76,18 @@ add_executable(ColliderComponentTests common/ECS/component/ColliderComponentTest
 target_link_libraries(ColliderComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME ColliderComponentTests COMMAND ColliderComponentTests)
 
+add_executable(LifetimeComponentTests common/ECS/component/LifetimeComponentTests.cpp)
+target_link_libraries(LifetimeComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME LifetimeComponentTests COMMAND LifetimeComponentTests)
+
+add_executable(HealthComponentTests common/ECS/component/HealthComponentTests.cpp)
+target_link_libraries(HealthComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME HealthComponentTests COMMAND HealthComponentTests)
+
+add_executable(DamageIntentComponentTests common/ECS/component/DamageIntentComponentTests.cpp)
+target_link_libraries(DamageIntentComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME DamageIntentComponentTests COMMAND DamageIntentComponentTests)
+
 add_executable(RegistryTests common/ECS/RegistryTests.cpp)
 target_link_libraries(RegistryTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME RegistryTests COMMAND RegistryTests)
@@ -83,6 +95,14 @@ add_test(NAME RegistryTests COMMAND RegistryTests)
 add_executable(MovementSystemTests common/ECS/system/MovementSystemTests.cpp)
 target_link_libraries(MovementSystemTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME MovementSystemTests COMMAND MovementSystemTests)
+
+add_executable(LifetimeSystemTests common/ECS/system/LifetimeSystemTests.cpp)
+target_link_libraries(LifetimeSystemTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME LifetimeSystemTests COMMAND LifetimeSystemTests)
+
+add_executable(HealthSystemTests common/ECS/system/HealthSystemTests.cpp)
+target_link_libraries(HealthSystemTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME HealthSystemTests COMMAND HealthSystemTests)
 
 add_executable(BufferTests server/buffer/circularBufferTest.cpp)
 target_link_libraries(BufferTests Buffer GTest::gtest GTest::gtest_main)
@@ -106,3 +126,7 @@ add_test(NAME ErrorTests COMMAND ErrorTests)
 add_executable(ParserTests common/Parser/ParserTests.cpp)
 target_link_libraries(ParserTests PARSER PREFAB ECS ERROR GTest::gtest GTest::gtest_main)
 add_test(NAME ParserTests COMMAND ParserTests)
+
+add_executable(MapParserTests common/Parser/MapParserTests.cpp)
+target_link_libraries(MapParserTests MAP_PARSER PREFAB ECS ERROR GTest::gtest GTest::gtest_main)
+add_test(NAME MapParserTests COMMAND MapParserTests)

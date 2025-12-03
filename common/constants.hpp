@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <string>
+#include "types/Vector2f.hpp"
 
 namespace constants {
     /* Network Defaults */
@@ -89,6 +90,30 @@ namespace constants {
     const std::string Y_FIELD = "y";
 
     const std::string PREFABNAME_FIELD = "prefabName";
+    const std::string LIFETIMECOMPONENT = "LifetimeComponent";
+    const std::string LIFETIME_FIELD = "lifetime";
+
+
+    const math::Vector2f TILE_SIZE = math::Vector2f(64.0f, 64.0f);
+
+    const float MAX_HEIGHT = 1080.0f;
+
+    /* Map parsing constants */
+    const std::string BACKGROUND_FIELD = "background";
+    const std::string SCROLLSPEED_FIELD = "scrollSpeed";
+    const std::string TILE_FIELD = "tile";
+    const std::string LEGEND_FIELD = "legend";
+    const std::string MAP_FIELD = "map";
+    const std::string WAVES_FIELD = "waves";
+    const std::string SPAWNLENGTH_FIELD = "spawnLength";
+    const std::string POSX_FIELD = "posX";
+    const std::string ENEMIES_FIELD = "enemies";
+    const std::string TYPE_FIELD = "type";
+    const std::string COUNT_FIELD = "count";
+    const std::string EMPTY_PREFAB = "empty";
+    const math::Vector2f BACKGROUND_POSITION = math::Vector2f(0.0f, 0.0f);
+    const float SCROLL_VELOCITY_X_MULTIPLIER = -1.0f;
+    const float SCROLL_VELOCITY_Y = 0.0f;
 
     /* Animation conditions */
     const std::string VELOCITY_UP_CONDITION = "isVelocityUp";
