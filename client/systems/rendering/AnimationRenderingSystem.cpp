@@ -46,7 +46,7 @@ void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
 
         animation->setTimer(animation->getTimer() + deltaTime);
 
-        const AnimationClip* clip = animation->getCurrentClip();
+        std::shared_ptr<const AnimationClip> clip = animation->getCurrentClip();
         if (!clip)
             continue;
 
