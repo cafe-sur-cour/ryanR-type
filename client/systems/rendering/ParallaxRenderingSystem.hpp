@@ -25,9 +25,6 @@ class ParallaxRenderingSystem : public ASystem {
             std::shared_ptr<Registry> registry, float deltaTime) override;
 
     private:
-        void updateLayerOffset(ParallaxLayer& layer, const math::Vector2f& direction,
-            float baseSpeed, float deltaTime);
-
         math::Vector2f calculateScale(const ParallaxLayer& layer,
             float screenWidth, float screenHeight);
 
@@ -37,6 +34,6 @@ class ParallaxRenderingSystem : public ASystem {
             float screenWidth, float screenHeight);
 };
 
-} // namespace ecs
+}  // namespace ecs
 
 #endif /* !PARALLAXRENDERINGSYSTEM_HPP_ */

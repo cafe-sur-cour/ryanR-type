@@ -54,25 +54,30 @@ class ParallaxComponent : public AComponent {
 
         ~ParallaxComponent() = default;
 
-        // Getters
         float getBaseScrollSpeed() const { return _baseScrollSpeed; }
         const math::Vector2f& getDirection() const { return _direction; }
         const std::vector<ParallaxLayer>& getLayers() const { return _layers; }
-        std::vector<ParallaxLayer>& getLayers() { return _layers; }
 
-        // Setters
         void setBaseScrollSpeed(float speed) { _baseScrollSpeed = speed; }
         void setDirection(const math::Vector2f& direction) { _direction = direction; }
         void addLayer(const ParallaxLayer& layer) { _layers.push_back(layer); }
         void clearLayers() { _layers.clear(); }
 
-        // Utility
-        size_t getLayerCount() const { return _layers.size(); }
-        ParallaxLayer* getLayer(size_t index) {
-            if (index < _layers.size())
-                return &_layers[index];
-            return nullptr;
+        void updateLayerOffsets(const math::Vector2f& direction, float baseSpeed, float deltaTime) {
+            for (auto& layer : _layers) {
+                float speed = baseSpeed * layer.speedMultiplier;
+                math::Vector2f movement(
+                    direction.getX() * speed * deltaTime,
+                    direction.getY() * speed * deltaTime
+                );
+                layer.currentOffset = math::Vector2f(
+                    layer.currentOffset.getX() + movement.getX(),
+                    layer.currentOffset.getY() + movement.getY()
+                );
+            }
         }
+
+        size_t getLayerCount() const { return _layers.size(); }
 
         void sortLayersByZIndex() {
             std::sort(_layers.begin(), _layers.end(),
