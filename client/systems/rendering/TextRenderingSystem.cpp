@@ -6,13 +6,13 @@
 */
 
 #include <memory>
+#include <utility>
 #include "TextRenderingSystem.hpp"
 #include "../../components/rendering/TextComponent.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IWindow.hpp"
-#include <iostream>
 namespace ecs {
 
 TextRenderingSystem::TextRenderingSystem() {
@@ -33,8 +33,10 @@ void TextRenderingSystem::update(std::shared_ptr<ResourceManager>
         if (resourceManager->has<gfx::IWindow>()) {
             auto window = resourceManager->get<gfx::IWindow>();
             const math::Vector2f& pos = transform->getPosition();
-            std::pair<size_t, size_t> position(static_cast<size_t>(pos.getX()), static_cast<size_t>(pos.getY()));
-            window->drawText(textComp->getText(), textComp->getColor(), position, textComp->getFontPath());
+            std::pair<size_t, size_t> position(static_cast<size_t>(pos.getX()),
+                static_cast<size_t>(pos.getY()));
+            window->drawText(textComp->getText(), textComp->getColor(),
+                position, textComp->getFontPath());
         }
     }
 }
