@@ -27,6 +27,7 @@ target_link_libraries(${CLIENT_BIN_NAME}
 
 target_compile_definitions(${CLIENT_BIN_NAME}
     PUBLIC ASIO_STANDALONE
+    PUBLIC R_TYPE_CLIENT
 )
 
 add_subdirectory(initResourcesManager)

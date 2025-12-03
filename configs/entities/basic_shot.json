@@ -20,6 +20,12 @@
         "LifetimeComponent": {
             "target": "both",
             "lifetime": 1.0
+        },
+        "TextComponent": {
+            "target": "client",
+            "text": "abcd",
+            "fontPath": "assets/fonts/ARIAL.TTF",
+            "color": { "r": 55, "g": 34, "b": 145, "a": 255 }
         }
     }
 }
