@@ -115,8 +115,8 @@ void UnixServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> 
         << id.port() << std::endl;
 }
 
-void UnixServerNetwork::broadcast(const pm::IPacketManager &packet) {
-    (void)packet;
+void UnixServerNetwork::broadcast(std::vector<uint8_t> data) {
+    (void)data;
 }
 
 bool UnixServerNetwork::hasIncomingData() const {
@@ -126,10 +126,10 @@ bool UnixServerNetwork::hasIncomingData() const {
 }
 
 
-std::shared_ptr<pm::IPacketManager> UnixServerNetwork::receiveFrom(
+std::vector<uint8_t> UnixServerNetwork::receiveFrom(
     const uint8_t &connectionId) {
     (void)connectionId;
-    return nullptr;
+    return std::vector<uint8_t>();
 }
 
 std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> UnixServerNetwork::receiveAny() {

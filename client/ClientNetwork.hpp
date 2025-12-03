@@ -5,14 +5,27 @@
 ** ClientNetwork
 */
 
+
+#ifndef CLIENTNETWORK_HPP_
+#define CLIENTNETWORK_HPP_
+
 #include <memory>
+#include <thread>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
 #include "../libs/Network/INetwork.hpp"
+#include "../common/constants.hpp"
 
-#ifndef CLIENTNETWORK_HPP_
-#define CLIENTNETWORK_HPP_
+struct NetworkEvent {
+    constants::EventType eventType;
+    double depth;
+    double direction;
+};
 
 class ClientNetwork {
     public:
@@ -23,15 +36,35 @@ class ClientNetwork {
         void start();
         void stop();
 
-        int getPort() const;
+        uint16_t getPort() const;
         void setPort(int port);
 
-        uint32_t getIp() const;
-        void setIp(uint32_t ip);
+        std::string getIp() const;
+        void setIp(const std::string &ip);
 
         void loadNetworkLibrary();
         void loadBufferLibrary();
         void loadPacketLibrary();
+
+        void sendConnectionData(std::vector<uint8_t> packet);
+
+        std::string getName() const;
+        void setName(const std::string &name);
+
+        uint8_t getIdClient() const;
+        void setIdClient(uint8_t idClient);
+
+        net::ConnectionState getConnectionState() const;
+
+        /* Packet Handling */
+        void eventPacket(const constants::EventType &eventType, double depth, double direction);
+        void disconnectionPacket();
+        void connectionPacket();
+
+        void addToEventQueue(const NetworkEvent &event);
+        bool getEventFromQueue(NetworkEvent &event);
+
+        std::atomic<bool> _isConnected;
     protected:
     private:
         DLLoader<createNetworkLib_t> _networloader;
@@ -42,8 +75,16 @@ class ClientNetwork {
         std::shared_ptr<IBuffer> _buffer;
         std::shared_ptr<pm::IPacketManager> _packet;
 
-        int _port;
-        uint32_t _ip;
+        uint32_t _sequenceNumber;
+        uint16_t _port;
+        std::string  _ip;
+        std::string _name;
+        uint8_t _idClient;
+        asio::ip::udp::endpoint _serverEndpoint;
+
+        std::queue<NetworkEvent> _eventQueue;
+        std::mutex _queueMutex;
+        std::condition_variable _queueCond;
 };
 
 #endif /* !CLIENTNETWORK_HPP_ */

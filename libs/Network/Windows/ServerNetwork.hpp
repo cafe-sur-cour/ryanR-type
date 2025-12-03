@@ -30,13 +30,13 @@ class ServerNetwork :  public ANetwork {
         uint8_t acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) override;
 
         void sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override;
-        void broadcast(const pm::IPacketManager &packet) override;
+        void broadcast(std::vector<uint8_t> data) override;
         bool hasIncomingData() const override;
-        std::shared_ptr<pm::IPacketManager> receiveFrom(const uint8_t &connectionId) override;
+        std::vector<uint8_t> receiveFrom(const uint8_t &connectionId) override;
         std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override;
 
     private:
-        std::queue<std::pair<uint8_t, std::shared_ptr<pm::IPacketManager>>> _incomingPackets;
+        std::queue<std::pair<int, std::shared_ptr<pm::IPacketManager>>> _incomingPackets;
         uint8_t _nextClientId;
         uint16_t _port;
 };
