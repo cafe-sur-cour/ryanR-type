@@ -80,6 +80,14 @@ add_executable(LifetimeComponentTests common/ECS/component/LifetimeComponentTest
 target_link_libraries(LifetimeComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME LifetimeComponentTests COMMAND LifetimeComponentTests)
 
+add_executable(HealthComponentTests common/ECS/component/HealthComponentTests.cpp)
+target_link_libraries(HealthComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME HealthComponentTests COMMAND HealthComponentTests)
+
+add_executable(DamageIntentComponentTests common/ECS/component/DamageIntentComponentTests.cpp)
+target_link_libraries(DamageIntentComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME DamageIntentComponentTests COMMAND DamageIntentComponentTests)
+
 add_executable(RegistryTests common/ECS/RegistryTests.cpp)
 target_link_libraries(RegistryTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME RegistryTests COMMAND RegistryTests)
@@ -91,6 +99,10 @@ add_test(NAME MovementSystemTests COMMAND MovementSystemTests)
 add_executable(LifetimeSystemTests common/ECS/system/LifetimeSystemTests.cpp)
 target_link_libraries(LifetimeSystemTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME LifetimeSystemTests COMMAND LifetimeSystemTests)
+
+add_executable(HealthSystemTests common/ECS/system/HealthSystemTests.cpp)
+target_link_libraries(HealthSystemTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME HealthSystemTests COMMAND HealthSystemTests)
 
 add_executable(BufferTests server/buffer/circularBufferTest.cpp)
 target_link_libraries(BufferTests Buffer GTest::gtest GTest::gtest_main)
