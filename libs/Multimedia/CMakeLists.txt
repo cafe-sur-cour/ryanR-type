@@ -30,7 +30,6 @@ add_library(${MULTIMEDIA_LIB_NAME} SHARED
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_6.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_7.cpp
     ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_8.cpp
-    ${CMAKE_SOURCE_DIR}/common/types/FRect.cpp
 )
 
 set_source_files_properties(${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp PROPERTIES GENERATED TRUE)
@@ -83,6 +82,7 @@ target_include_directories(${MULTIMEDIA_LIB_NAME}
 
 target_link_libraries(${MULTIMEDIA_LIB_NAME}
     PUBLIC SFML::Graphics SFML::Window SFML::System SFML::Audio
+    PUBLIC ECS
 )
 
 add_custom_command(TARGET ${MULTIMEDIA_LIB_NAME} POST_BUILD
