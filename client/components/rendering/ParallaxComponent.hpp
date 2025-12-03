@@ -49,7 +49,7 @@ class ParallaxComponent : public AComponent {
     public:
         ParallaxComponent()
             : _baseScrollSpeed(1.0f),
-              _direction(-1.0f, 0.0f),
+              _direction(constants::BACKGROUND_PARALLAX_DIRECTION_X, constants::BACKGROUND_PARALLAX_DIRECTION_Y),
               _layers() {}
 
         ~ParallaxComponent() = default;

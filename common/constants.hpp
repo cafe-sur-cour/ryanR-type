@@ -127,7 +127,7 @@ namespace constants {
 
     /* Map parsing constants */
     const std::string BACKGROUND_FIELD = "background";
-    const std::string SCROLLSPEED_FIELD = "scrollSpeed";
+    const std::string BACKGROUND_SCROLL_SPEED_FIELD = "scrollSpeed";
     const std::string TILE_FIELD = "tile";
     const std::string LEGEND_FIELD = "legend";
     const std::string MAP_FIELD = "map";
@@ -139,8 +139,8 @@ namespace constants {
     const std::string COUNT_FIELD = "count";
     const std::string EMPTY_PREFAB = "empty";
     const math::Vector2f BACKGROUND_POSITION = math::Vector2f(0.0f, 0.0f);
-    const float SCROLL_VELOCITY_X_MULTIPLIER = -1.0f;
-    const float SCROLL_VELOCITY_Y = 0.0f;
+    const float BACKGROUND_PARALLAX_DIRECTION_X = -1.0f;
+    const float BACKGROUND_PARALLAX_DIRECTION_Y = 0.0f;
 
     /* Animation conditions */
     const std::string VELOCITY_UP_CONDITION = "isVelocityUp";
