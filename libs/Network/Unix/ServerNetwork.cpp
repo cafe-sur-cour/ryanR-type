@@ -115,8 +115,8 @@ void UnixServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> 
         << id.port() << std::endl;
 }
 
-void UnixServerNetwork::broadcast(const pm::IPacketManager &packet) {
-    (void)packet;
+void UnixServerNetwork::broadcast(std::vector<uint8_t> data) {
+    (void)data;
 }
 
 bool UnixServerNetwork::hasIncomingData() const {

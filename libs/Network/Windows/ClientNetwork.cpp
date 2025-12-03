@@ -69,8 +69,8 @@ std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> WindowsNetwork::receive
     return std::make_pair(asio::ip::udp::endpoint(), std::vector<uint8_t>());
 }
 
-void WindowsNetwork::broadcast(const pm::IPacketManager &packet) {
-    (void)packet;
+void WindowsNetwork::broadcast(std::vector<uint8_t> data) {
+    (void)data;
 }
 
 }

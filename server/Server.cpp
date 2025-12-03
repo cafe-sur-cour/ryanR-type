@@ -189,8 +189,9 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
 }
 
 void rserv::Server::broadcastPacket() {
+    std::vector<uint8_t> packedData;
     if (_network) {
-        _network->broadcast(*this->_packet);
+        _network->broadcast(packedData);
     }
 }
 
