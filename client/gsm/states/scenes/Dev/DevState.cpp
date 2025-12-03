@@ -59,7 +59,8 @@ DevState::DevState(
 }
 
 void DevState::enter() {
-    _prefabManager->createEntityFromPrefab("player", _registry);
+    ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
+    _registry->addComponent<ecs::HitboxRenderComponent>(playerEntity, std::make_shared<ecs::HitboxRenderComponent>());
 }
 
 void DevState::update(float deltaTime) {
