@@ -31,6 +31,7 @@ class ANetwork : public INetwork {
 
         ConnectionState getConnectionState() const override;
         void setConnectionState(ConnectionState state) override;
+        virtual std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override = 0;
 
         void setConnectionCallback(std::function<void(int)> onConnect) override;
         void setDisconnectionCallback(std::function<void(int)> onDisconnect) override;

@@ -5,6 +5,8 @@
 ** Server Config
 */
 
+#include <cstdint>
+#include <string>
 #include "ServerConfig.hpp"
 
 rserv::ServerConfig::ServerConfig() :

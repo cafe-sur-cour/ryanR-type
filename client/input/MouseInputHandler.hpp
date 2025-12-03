@@ -12,7 +12,7 @@
 #include <optional>
 #include "../../common/resourceManager/ResourceManager.hpp"
 #include "../../common/types/Vector2f.hpp"
-#include "constants.hpp"
+#include "../constants.hpp"
 
 struct MouseClickInfo {
     math::Vector2f position;

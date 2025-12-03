@@ -16,7 +16,7 @@
 #include "../../libs/Multimedia/IEvent.hpp"
 #include "../../libs/Multimedia/IWindow.hpp"
 #include "../../libs/Multimedia/IAudio.hpp"
-#include "../../common/ImputMapping/InputMappingManager.hpp"
+#include "../../common/InputMapping/InputMappingManager.hpp"
 #include "initResourcesManager.hpp"
 
 std::shared_ptr<ResourceManager> initResourcesManager(

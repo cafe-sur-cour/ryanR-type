@@ -21,7 +21,7 @@ void InputMappingManager::loadDefault() {
     _mapping.mappings[InputAction::MOVE_X][gfx::EventType::D] = 1.0f;
     _mapping.mappings[InputAction::MOVE_X][gfx::EventType::GAMEPAD_DPAD_LEFT] = -1.0f;
     _mapping.mappings[InputAction::MOVE_X][gfx::EventType::GAMEPAD_DPAD_RIGHT] = 1.0f;
-    _mapping.mappings[InputAction::MOVE_X][gfx::EventType::GAMEPAD_LEFT_STICK_LEFT] = 1.0f;
+    _mapping.mappings[InputAction::MOVE_X][gfx::EventType::GAMEPAD_LEFT_STICK_LEFT] = -1.0f;
     _mapping.mappings[InputAction::MOVE_X][gfx::EventType::GAMEPAD_LEFT_STICK_RIGHT] = 1.0f;
 
     /* MOVE_Y */
@@ -31,7 +31,7 @@ void InputMappingManager::loadDefault() {
     _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::S] = 1.0f;
     _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::GAMEPAD_DPAD_UP] = -1.0f;
     _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::GAMEPAD_DPAD_DOWN] = 1.0f;
-    _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::GAMEPAD_LEFT_STICK_UP] = 1.0f;
+    _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::GAMEPAD_LEFT_STICK_UP] = -1.0f;
     _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::GAMEPAD_LEFT_STICK_DOWN] = 1.0f;
 
     /* SHOOT */

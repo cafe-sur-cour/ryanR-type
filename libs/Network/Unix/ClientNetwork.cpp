@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <string>
 #include <memory>
+#include <vector>
 
 #include "ClientNetwork.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"

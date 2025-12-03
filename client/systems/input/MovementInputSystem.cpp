@@ -14,10 +14,8 @@
 #include "../../../common/constants.hpp"
 #include "../../../common/components/tags/ControllableTag.hpp"
 #include "../../../common/components/temporary/InputIntentComponent.hpp"
-#include "../../../common/ImputMapping/IInputProvider.hpp"
-#include "../../../common/ImputMapping/InputAction.hpp"
-#include "../../ClientNetwork.hpp"
-
+#include "../../../common/InputMapping/IInputProvider.hpp"
+#include "../../../common/InputMapping/InputAction.hpp"
 
 namespace ecs {
 
@@ -117,12 +115,25 @@ math::Vector2f MovementInputSystem::getAnalogStickInput(
     float rawY =
         inputProvider->getAxisValue(gfx::EventType::GAMEPAD_LEFT_STICK_DOWN);
 
-    /* Deadzone */
     const float deadzone = constants::GAMEPAD_DEADZONE * 100.0f;
-    if (std::abs(rawX) < deadzone) rawX = 0.0f;
-    if (std::abs(rawY) < deadzone) rawY = 0.0f;
+    const float maxValue = constants::AXIS_MAX_VALUE;
+    const float range = maxValue - deadzone;
 
-    math::Vector2f normalized(rawX / 100.0f, rawY / 100.0f);
+    if (std::abs(rawX) < deadzone) {
+        rawX = 0.0f;
+    } else {
+        float sign = rawX > 0 ? 1.0f : -1.0f;
+        rawX = (std::abs(rawX) - deadzone) / range * sign;
+    }
+
+    if (std::abs(rawY) < deadzone) {
+        rawY = 0.0f;
+    } else {
+        float sign = rawY > 0 ? 1.0f : -1.0f;
+        rawY = (std::abs(rawY) - deadzone) / range * sign;
+    }
+
+    math::Vector2f normalized(rawX, rawY);
 
     float magnitude = std::sqrt(normalized.getX() *
                     normalized.getX() + normalized.getY() * normalized.getY());

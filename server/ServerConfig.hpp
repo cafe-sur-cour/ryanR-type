@@ -5,12 +5,11 @@
 ** Header
 */
 
+#ifndef SERVER_CONFIG_HPP_
+    #define SERVER_CONFIG_HPP_
 
 #include <cstdint>
 #include <string>
-
-#ifndef SERVER_CONFIG_HPP_
-    #define SERVER_CONFIG_HPP_
 
 namespace rserv {
     class ServerConfig {

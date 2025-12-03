@@ -37,21 +37,15 @@ class WindowsNetwork : public ANetwork {
         WindowsNetwork();
         ~WindowsNetwork() override;
 
-        void init(uint32_t port,const std::string host) override;
+        void init(uint16_t port, const std::string host) override;
         void stop() override;
 
-        uint8_t acceptConnection() override;
-        void closeConnection(int connectionId) override;
-        std::vector<int> getActiveConnections() const override;
-        size_t getConnectionCount() const override;
-
-        void sendTo(int connectionId, std::vector<uint8_t> data) override;
-        void broadcast(std::vector<uint8_t> data) override;
+        uint8_t acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) override;
+        void sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override;
+        void broadcast(const pm::IPacketManager &packet) override;
         bool hasIncomingData() const override;
-        std::shared_ptr<pm::IPacketManager> receiveFrom(const int &connectionId) override;
-
-        void setConnectionCallback(std::function<void(int)> onConnect) override;
-        void setDisconnectionCallback(std::function<void(int)> onDisconnect) override;
+        std::shared_ptr<pm::IPacketManager> receiveFrom(const uint8_t &connectionId) override;
+        std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override;
 
     protected:
     private:

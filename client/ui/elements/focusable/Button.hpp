@@ -8,20 +8,19 @@
 #ifndef BUTTON_HPP_
 #define BUTTON_HPP_
 
-#include "UIElement.hpp"
+#include "../../core/AFocusableElement.hpp"
 #include <string>
-#include "../../libs/Multimedia/IWindow.hpp"
+#include "../../../../libs/Multimedia/IWindow.hpp"
 
 namespace ui {
 
-class Button : public UIElement {
+class Button : public AFocusableElement {
     public:
-        Button(std::shared_ptr<ResourceManager> resourceManager);
+        explicit Button(std::shared_ptr<ResourceManager> resourceManager);
         virtual ~Button() = default;
 
         void setText(const std::string& text);
         const std::string& getText() const;
-
         void setTextColor(const gfx::color_t& color);
         void setFontPath(const std::string& fontPath);
 
@@ -29,6 +28,7 @@ class Button : public UIElement {
         void setHoveredColor(const gfx::color_t& color);
         void setPressedColor(const gfx::color_t& color);
         void setDisabledColor(const gfx::color_t& color);
+        void setFocusedColor(const gfx::color_t& color);
 
         virtual void render() override;
 
@@ -41,6 +41,7 @@ class Button : public UIElement {
         gfx::color_t _hoveredColor = {150, 150, 150};
         gfx::color_t _pressedColor = {200, 200, 200};
         gfx::color_t _disabledColor = {50, 50, 50};
+        gfx::color_t _focusedColor = {255, 215, 0};
 
         gfx::color_t getCurrentColor() const;
 };
