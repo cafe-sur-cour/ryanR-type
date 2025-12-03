@@ -7,7 +7,7 @@
             "scale": { "x": 3.0, "y": 3.0 },
             "rotation": 0.0
         },
-        "VelocityComponent": { "target": "server" },
+        "VelocityComponent": { "target": "both" },
         "SpeedComponent": { "target": "both", "speed": 10.0 },
         "AnimationComponent": {
             "target": "client",
@@ -16,19 +16,19 @@
                     "texturePath": "assets/sprites/player_ship.png",
                     "frameWidth": 33.2,
                     "frameHeight": 17.2,
-                    "frameCount": 5,
-                    "startWidth": 0.0,
+                    "frameCount": 1,
+                    "startWidth": 66.4,
                     "startHeight": 0.0,
                     "speed": 0.1,
                     "loop": true
                 },
-                "second": {
+                "up": {
                     "texturePath": "assets/sprites/player_ship.png",
                     "frameWidth": 33.2,
                     "frameHeight": 17.2,
-                    "frameCount": 5,
-                    "startWidth": 0.0,
-                    "startHeight": 17.2,
+                    "frameCount": 2,
+                    "startWidth": 99.6,
+                    "startHeight": 0.0,
                     "speed": 0.1,
                     "loop": false
                 }

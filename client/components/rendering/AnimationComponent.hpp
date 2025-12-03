@@ -35,20 +35,22 @@ struct Transition {
     std::string from;
     std::string to;
     std::function<bool(std::shared_ptr<Registry>, Entity)> condition;
+    bool playRewind = false;
 };
 
 class AnimationComponent : public AComponent {
     public:
         AnimationComponent()
-            : _currentState(""), _timer(0.f), _isPlaying(false), _currentFrame(0) {}
+            : _currentState(""), _timer(0.f), _isPlaying(false), _currentFrame(0), _rewindStartFrame(-1) {}
 
         void addState(const std::string& name, std::shared_ptr<AnimationClip> clip) {
             _states[name] = clip;
         }
 
         void addTransition(const std::string& from, const std::string& to,
-            std::function<bool(std::shared_ptr<Registry>, Entity)> condition) {
-            _transitions.push_back({from, to, condition});
+            std::function<bool(std::shared_ptr<Registry>, Entity)> condition,
+            bool playRewind = false) {
+            _transitions.push_back({from, to, condition, playRewind});
         }
 
         void setCurrentState(const std::string& state) {
@@ -57,6 +59,7 @@ class AnimationComponent : public AComponent {
                 _timer = 0.f;
                 _isPlaying = true;
                 _currentFrame = 0;
+                _playRewind = false;
             }
         }
 
@@ -65,6 +68,11 @@ class AnimationComponent : public AComponent {
         void setTimer(float timer) { _timer = timer; }
         bool isPlaying() const { return _isPlaying; }
         void setPlaying(bool playing) { _isPlaying = playing; }
+        bool isPlayingRewind() const { return _playRewind; }
+        void setPlayingRewind(bool rewind) { _playRewind = rewind; }
+
+        int getRewindStartFrame() const { return _rewindStartFrame; }
+        void setRewindStartFrame(int frame) { _rewindStartFrame = frame; }
 
         std::shared_ptr<const AnimationClip> getCurrentClip() const {
             auto it = _states.find(_currentState);
@@ -81,13 +89,27 @@ class AnimationComponent : public AComponent {
 
         bool isValid() const { return !_states.empty() && !_currentState.empty(); }
 
+        bool isAnimationFinished() const {
+            auto clip = getCurrentClip();
+            if (!clip) return true;
+            if (clip->loop) return false;
+            int currentFrame = static_cast<int>(_timer / clip->speed);
+            if (_playRewind) {
+                return currentFrame >= clip->frameCount;
+            } else {
+                return currentFrame >= clip->frameCount - 1;
+            }
+        }
+
     private:
         std::unordered_map<std::string, std::shared_ptr<AnimationClip>> _states;
         std::vector<Transition> _transitions;
         std::string _currentState;
         float _timer;
         bool _isPlaying;
+        bool _playRewind;
         int _currentFrame;
+        int _rewindStartFrame;
         math::FRect _frameRect;
 };
 
