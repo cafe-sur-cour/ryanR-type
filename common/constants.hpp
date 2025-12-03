@@ -121,7 +121,14 @@ namespace constants {
     const std::string TEXT_FIELD = "text";
     const std::string FONTPATH_FIELD = "fontPath";
 
-
+    const std::string MUSICCOMPONENT = "MusicComponent";
+    const std::string MUSICFILE_FIELD = "musicFile";
+    const std::string VOLUME_FIELD = "volume";
+    const std::string INITIALSTATEMUSIC_FIELD = "initialState";
+    const std::string PLAYING_FIELD = "PLAYING";
+    const std::string PAUSED_FIELD = "PAUSED";
+    const std::string STOPPED_FIELD = "STOPPED";
+    const std::string CHANGING_FIELD = "CHANGING";
     const math::Vector2f TILE_SIZE = math::Vector2f(64.0f, 64.0f);
 
     const float MAX_HEIGHT = 1080.0f;
