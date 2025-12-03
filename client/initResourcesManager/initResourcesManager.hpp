@@ -18,7 +18,8 @@
 std::shared_ptr<ResourceManager> initResourcesManager(
     std::shared_ptr<DLLoader<gfx::createWindow_t>>,
     std::shared_ptr<DLLoader<gfx::createEvent_t>>,
-    std::shared_ptr<DLLoader<gfx::createAudio_t>>
+    std::shared_ptr<DLLoader<gfx::createAudio_t>>,
+    std::shared_ptr<ClientNetwork>
 );
 
 #endif /* !initResourcesManager_HPP_ */

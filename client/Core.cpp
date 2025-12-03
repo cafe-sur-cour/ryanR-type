@@ -21,20 +21,18 @@ Core::Core() {
     Signal::setupSignalHandlers();
 
     initLibraries();
-
+    initNetwork();
     this->_resourceManager = initResourcesManager(
         this->_windowLoader,
         this->_eventLoader,
-        this->_audioLoader
+        this->_audioLoader,
+        this->_clientNetwork
     );
 
     this->_gsm = std::make_shared<gsm::GameStateMachine>();
     std::shared_ptr<gsm::MainMenuState> mainMenuState =
         std::make_shared<gsm::MainMenuState>(this->_gsm, this->_resourceManager);
     this->_gsm->changeState(mainMenuState);
-
-    initNetwork();
-    this->_networkThread = std::thread(&Core::networkLoop, this);
 }
 
 Core::~Core() {
@@ -48,6 +46,7 @@ Core::~Core() {
 }
 
 void Core::run() {
+    std::cout << "[Core] Entering main loop" << std::endl;
     auto previousTime = std::chrono::high_resolution_clock::now();
 
     while (this->_resourceManager->get<gfx::IWindow>()->isOpen()
@@ -66,6 +65,10 @@ void Core::run() {
 
 void Core::initNetwork() {
     this->_clientNetwork = std::make_shared<ClientNetwork>();
+}
+
+void Core::startNetwork() {
+    this->_networkThread = std::thread(&Core::networkLoop, this);
 }
 
 void Core::initLibraries() {
@@ -111,6 +114,18 @@ void Core::initLibraries() {
 }
 
 void Core::networkLoop() {
+    this->_clientNetwork->init();
+
+    if (this->_clientNetwork->getConnectionState()
+        == net::ConnectionState::CONNECTING) {
+        std::cout << "[Core] Sending connection packet to server" << std::endl;
+        this->_clientNetwork->connectionPacket();
+        // sleep for five
+        // std::this_thread::sleep_for(std::chrono::seconds(5));
+        // if i still don't have id then failed
+        std::cout << " Stopped sleeping" << std::endl;
+    }
+    // sleep for five if still "Connecting" then it failed
     this->_clientNetwork->start();
 }
 

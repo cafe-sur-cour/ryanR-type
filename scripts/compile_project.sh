@@ -6,6 +6,7 @@ if [ -z "$VCPKG_ROOT" ]; then
 fi
 
 build_tests=false
+build_debug=false
 target=""
 
 while [[ $# -gt 0 ]]; do
@@ -14,9 +15,14 @@ while [[ $# -gt 0 ]]; do
             build_tests=true
             shift
             ;;
+        --debug)
+            build_debug=true
+            shift
+            ;;
         --help|-h)
-            echo "Usage: $0 [--with-tests] [<target>]"
+            echo "Usage: $0 [--with-tests] [--debug] [<target>]"
             echo "  --with-tests : Build with tests"
+            echo "  --debug      : Build in debug mode"
             echo "  <target>     : (Optional) The specific target to build (all, server, client, tests)."
             echo ""
             echo "When specifying a target, all dependencies (common + libs) will be built automatically."
@@ -32,10 +38,13 @@ done
 build_client_option="ON"
 build_server_option="ON"
 build_tests_option="OFF"
+preset="release-unix"
 
 if [ "$build_tests" = true ]; then
     build_tests_option="ON"
 fi
+
+# No need to change preset; we'll override CMAKE_BUILD_TYPE below
 
 case "$target" in
     "server"|"r-type_server")
@@ -67,13 +76,19 @@ case "$target" in
         ;;
 esac
 
-cmake --preset "release-unix" -DBUILD_TESTS="$build_tests_option" -DBUILD_CLIENT="$build_client_option" -DBUILD_SERVER="$build_server_option"
+# Build the cmake command with conditional CMAKE_BUILD_TYPE
+cmake_cmd="cmake --preset \"$preset\" -DBUILD_TESTS=\"$build_tests_option\" -DBUILD_CLIENT=\"$build_client_option\" -DBUILD_SERVER=\"$build_server_option\""
+if [ "$build_debug" = true ]; then
+    cmake_cmd="$cmake_cmd -DCMAKE_BUILD_TYPE=Debug"
+fi
+
+eval "$cmake_cmd"
 
 if [ $? -ne 0 ]; then
     echo "CMake configuration failed."
     exit 1
 fi
 
-cmake --build --preset "release-unix" -j4
+cmake --build --preset "$preset" -j4
 
 exit $?
