@@ -33,6 +33,20 @@
                     "loop": false
                 }
             },
+            "transitions": [
+                {
+                    "from": "idle",
+                    "to": "up",
+                    "condition": "isVelocityUp",
+                    "rewind": false
+                },
+                {
+                    "from": "up",
+                    "to": "idle",
+                    "condition": "isVelocityDown",
+                    "rewind": true
+                }
+            ],
             "initialState": "idle"
         },
         "ColliderComponent": {

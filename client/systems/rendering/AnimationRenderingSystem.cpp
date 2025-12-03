@@ -16,6 +16,8 @@
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/ECS/entity/Entity.hpp"
 #include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/Parser/Animation/AnimationConditionFactory.hpp"
+#include "../../../common/constants.hpp"
 
 namespace ecs {
 
@@ -35,38 +37,40 @@ void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
             continue;
 
         for (const auto& transition : animation->getTransitions()) {
-            if (transition.from == animation->getCurrentState() &&
-                transition.condition(registry, entityId)
-            ) {
-                if (transition.playRewind) {
-                    std::shared_ptr<const AnimationClip> currentClip =
-                        animation->getCurrentClip();
-                    if (!currentClip)
-                        continue;
+            if (transition.from == animation->getCurrentState()) {
+                if (AnimationConditionFactory::getCondition(transition.conditionKey)
+                    (registry, entityId)
+                ) {
+                    if (transition.playRewind) {
+                        std::shared_ptr<const AnimationClip> currentClip =
+                            animation->getCurrentClip();
+                        if (!currentClip)
+                            continue;
 
-                    if (!animation->isPlayingRewind()) {
-                        animation->setRewindStartFrame(animation->getCurrentFrame());
-                        animation->setPlayingRewind(true);
-                        animation->setTimer(0.0f);
-                    } else {
-                        if (animation->getCurrentFrame() == 0) {
-                            static std::unordered_map<Entity, float> waitTimers;
-                            if (waitTimers.find(entityId) == waitTimers.end())
-                                waitTimers[entityId] = 0.0f;
+                        if (!animation->isPlayingRewind()) {
+                            animation->setRewindStartFrame(animation->getCurrentFrame());
+                            animation->setPlayingRewind(true);
+                            animation->setTimer(0.0f);
+                        } else {
+                            if (animation->getCurrentFrame() == 0) {
+                                static std::unordered_map<Entity, float> waitTimers;
+                                if (waitTimers.find(entityId) == waitTimers.end())
+                                    waitTimers[entityId] = 0.0f;
 
-                            waitTimers[entityId] += deltaTime;
+                                waitTimers[entityId] += deltaTime;
 
-                            if (waitTimers[entityId] >= currentClip->speed) {
-                                animation->setCurrentState(transition.to);
-                                animation->setPlayingRewind(false);
-                                waitTimers.erase(entityId);
+                                if (waitTimers[entityId] >= currentClip->speed) {
+                                    animation->setCurrentState(transition.to);
+                                    animation->setPlayingRewind(false);
+                                    waitTimers.erase(entityId);
+                                }
                             }
                         }
+                    } else {
+                        animation->setCurrentState(transition.to);
                     }
-                } else {
-                    animation->setCurrentState(transition.to);
+                    break;
                 }
-                break;
             }
         }
 

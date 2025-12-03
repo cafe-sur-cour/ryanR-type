@@ -74,11 +74,22 @@ namespace constants {
 
     const std::string STATES_FIELD = "states";
     const std::string INITIALSTATE_FIELD = "initialState";
+    const std::string TRANSITIONS_FIELD = "transitions";
+    const std::string CONDITION_FIELD = "condition";
+    const std::string FROM_FIELD = "from";
+    const std::string TO_FIELD = "to";
+    const std::string REWIND_FIELD = "rewind";
+    const std::string TEXTUREPATH_FIELD = "texturePath";
+    const std::string LOOP_FIELD = "loop";
 
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";
 
     const std::string PREFABNAME_FIELD = "prefabName";
+
+    /* Animation conditions */
+    const std::string VELOCITY_UP_CONDITION = "isVelocityUp";
+    const std::string VELOCITY_DOWN_CONDITION = "isVelocityDown";
 }
 
 #endif /* !CONSTANTS_HPP_ */
