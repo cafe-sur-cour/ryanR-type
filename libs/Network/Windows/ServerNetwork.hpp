@@ -24,20 +24,21 @@ class ServerNetwork :  public ANetwork {
         ServerNetwork();
         ~ServerNetwork() override;
 
-        void init(uint32_t port,const std::string host) override;
+        void init(uint16_t port, const std::string host) override;
         void stop() override;
 
-        uint8_t acceptConnection() override;
+        uint8_t acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) override;
 
-        void sendTo(int connectionId, std::vector<uint8_t> data) override;
-        void broadcast(std::vector<uint8_t> data) override;
+        void sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override;
+        void broadcast(const pm::IPacketManager &packet) override;
         bool hasIncomingData() const override;
-        std::shared_ptr<pm::IPacketManager> receiveFrom(const int &connectionId) override;
+        std::shared_ptr<pm::IPacketManager> receiveFrom(const uint8_t &connectionId) override;
+        std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override;
 
     private:
-        std::queue<std::pair<int, std::shared_ptr<pm::IPacketManager>>> _incomingPackets;
-        int _nextClientId;
-        int _port;
+        std::queue<std::pair<uint8_t, std::shared_ptr<pm::IPacketManager>>> _incomingPackets;
+        uint8_t _nextClientId;
+        uint16_t _port;
 };
 
 } // namespace net

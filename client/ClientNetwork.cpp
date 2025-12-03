@@ -46,6 +46,10 @@ void ClientNetwork::init() {
         this->_port,
         this->_ip
     );
+    this->_serverEndpoint = asio::ip::udp::endpoint(
+        asio::ip::address::from_string(this->_ip),
+        static_cast<unsigned short>(this->_port)
+    );
 }
 
 void ClientNetwork::stop() {
@@ -93,12 +97,12 @@ void ClientNetwork::start() {
 }
 
 
-uint32_t ClientNetwork::getPort() const {
+uint16_t ClientNetwork::getPort() const {
     return _port;
 }
 
 void ClientNetwork::setPort(int port) {
-    _port = static_cast<uint32_t>(port);
+    _port = static_cast<uint16_t>(port);
 }
 
 std::string ClientNetwork::getIp() const {
@@ -114,7 +118,7 @@ void ClientNetwork::sendConnectionData(std::vector<uint8_t> packet) {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);
     }
-    this->_network->sendTo(0, packet);
+    this->_network->sendTo(this->_serverEndpoint, packet);
 }
 
 std::string ClientNetwork::getName() const {
@@ -167,11 +171,11 @@ void ClientNetwork::connectionPacket() {
             err::ClientNetworkError::INTERNAL_ERROR);
     }
     std::vector<uint8_t> header = this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x01);
-    this->_network->sendTo(this->_idClient, header);
+    this->_network->sendTo(this->_serverEndpoint, header);
     /* Replace this with name */
     std::vector<uint64_t> payloadData = {0x01, 'A', 'L', 'B', 'A', 'N', 'E', '\0', '\0', '\r', '\n'};
     std::vector<uint8_t> payload = this->_packet->pack(payloadData);
-    this->_network->sendTo(this->_idClient, payload);
+    this->_network->sendTo(this->_serverEndpoint, payload);
     this->_sequenceNumber++;
 }
 
@@ -184,7 +188,7 @@ void ClientNetwork::eventPacket(const constants::EventType &eventType, double de
     }
     std::vector<uint8_t> header =
         this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x02);
-    this->_network->sendTo(this->_idClient, header);
+    this->_network->sendTo(this->_serverEndpoint, header);
 
     std::vector<uint64_t> payloadData;
     payloadData.push_back(static_cast<uint64_t>(eventType));
@@ -198,7 +202,7 @@ void ClientNetwork::eventPacket(const constants::EventType &eventType, double de
     payloadData.push_back(dirBits);
 
     std::vector<uint8_t> payload = this->_packet->pack(payloadData);
-    this->_network->sendTo(this->_idClient, payload);
+    this->_network->sendTo(this->_serverEndpoint, payload);
     this->_sequenceNumber++;
 }
 
@@ -209,6 +213,6 @@ void ClientNetwork::disconnectionPacket() {
             err::ClientNetworkError::INTERNAL_ERROR);
     }
     std::vector<uint8_t> header = this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x03);
-    this->_network->sendTo(this->_idClient, header);
+    this->_network->sendTo(this->_serverEndpoint, header);
     this->_sequenceNumber++;
 }

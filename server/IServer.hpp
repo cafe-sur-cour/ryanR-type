@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <vector>
+#include <asio.hpp>
 
 #include "ServerConfig.hpp"
 #include "../libs/Packet/IPacketManager.hpp"
@@ -26,8 +27,8 @@ public:
 
     virtual void setConfig(std::shared_ptr<ServerConfig> config) = 0;
     virtual std::shared_ptr<ServerConfig> getConfig() const = 0;
-    virtual unsigned int getPort() const = 0;
-    virtual void setPort(unsigned int port) = 0;
+    virtual uint16_t getPort() const = 0;
+    virtual void setPort(uint16_t port) = 0;
 
     virtual int getState() const = 0;
     virtual void setState(int state) = 0;
@@ -39,16 +40,16 @@ public:
     virtual std::shared_ptr<net::INetwork> getNetwork() const = 0;
     virtual void setNetwork(std::shared_ptr<net::INetwork> network) = 0;
 
-    virtual void onClientConnected(int idClient) = 0;
-    virtual void onClientDisconnected(int idClient) = 0;
-    virtual void onPacketReceived(int idClient, const pm::IPacketManager &packet) = 0;
+    virtual void onClientConnected(uint8_t idClient) = 0;
+    virtual void onClientDisconnected(uint8_t idClient) = 0;
+    virtual void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet) = 0;
 
-    virtual void processConnections() = 0;
+    virtual bool processConnections(asio::ip::udp::endpoint id) = 0;
     virtual void processIncomingPackets() = 0;
 
     virtual void broadcastPacket() = 0;
-    virtual void sendToClient(int idClient) = 0;
-    virtual std::vector<int> getConnectedClients() const = 0;
+    virtual void sendToClient(uint8_t idClient) = 0;
+    virtual std::vector<uint8_t> getConnectedClients() const = 0;
     virtual size_t getClientCount() const = 0;
 };
 } // namespace rserv = r-type server

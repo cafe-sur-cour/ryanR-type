@@ -5,7 +5,9 @@
 ** Header
 */
 
+
 #include <cstdint>
+#include <string>
 
 #ifndef SERVER_CONFIG_HPP_
     #define SERVER_CONFIG_HPP_
@@ -19,8 +21,8 @@ namespace rserv {
             int getState() const;
             int getFd() const;
 
-            void setPort(unsigned int port);
-            unsigned int getPort() const;
+            void setPort(uint16_t port);
+            uint16_t getPort() const;
 
             void setState(int state);
             void setFd(int fd);
@@ -28,15 +30,15 @@ namespace rserv {
             void setNbClients(int nbClients);
             int getNbClients() const;
 
-            uint32_t getIp() const;
-            void setIp(uint32_t ip);
+            std::string getIp() const;
+            void setIp(std::string ip);
 
         private:
             int _state;
             int _fd;
-            unsigned int _port;
+            uint16_t _port;
             int _nbClients;
-            uint32_t _ip;
+            std::string _ip;
     };
 } // namespace rserv = r-type server
 

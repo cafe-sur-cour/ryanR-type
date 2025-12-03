@@ -34,7 +34,7 @@ class ClientNetwork {
         void start();
         void stop();
 
-        uint32_t getPort() const;
+        uint16_t getPort() const;
         void setPort(int port);
 
         std::string getIp() const;
@@ -72,10 +72,11 @@ class ClientNetwork {
         std::shared_ptr<pm::IPacketManager> _packet;
 
         uint32_t _sequenceNumber;
-        uint32_t _port;
+        uint16_t _port;
         std::string  _ip;
         std::string _name;
         uint8_t _idClient;
+        asio::ip::udp::endpoint _serverEndpoint;
 
         std::queue<NetworkEvent> _eventQueue;
         std::mutex _queueMutex;
