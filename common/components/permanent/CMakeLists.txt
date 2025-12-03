@@ -4,4 +4,5 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     SpeedComponent.hpp
     ColliderComponent.hpp
     ShootingStatsComponent.hpp
+    ProjectilePrefabComponent.hpp
 )
