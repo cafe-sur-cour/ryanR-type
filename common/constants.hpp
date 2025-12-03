@@ -53,6 +53,7 @@ namespace constants {
     const std::string SHOOTINGSTATSCOMPONENT = "ShootingStatsComponent";
     const std::string RECTANGLERENDERCOMPONENT = "RectangleRenderComponent";
     const std::string PROJECTILEPREFABCOMPONENT = "ProjectilePrefabComponent";
+    const std::string TEXTCOMPONENT = "TextComponent";
     const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
 
     const std::string TARGET_FIELD = "target";
@@ -99,6 +100,8 @@ namespace constants {
     const std::string PREFABNAME_FIELD = "prefabName";
     const std::string LIFETIMECOMPONENT = "LifetimeComponent";
     const std::string LIFETIME_FIELD = "lifetime";
+    const std::string TEXT_FIELD = "text";
+    const std::string FONTPATH_FIELD = "fontPath";
 
 
     const math::Vector2f TILE_SIZE = math::Vector2f(64.0f, 64.0f);
