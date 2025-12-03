@@ -57,6 +57,7 @@ namespace rserv {
             void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet) override;
 
             bool processConnections(asio::ip::udp::endpoint id) override;
+            bool processDisconnections(uint8_t idClient) override;
             void processIncomingPackets() override;
 
             void broadcastPacket() override;
@@ -71,6 +72,8 @@ namespace rserv {
             DLLoader<createNetworkLib_t> _networloader;
             DLLoader<createBuffer_t> _bufferloader;
             DLLoader<createPacket_t> _packetloader;
+            uint8_t _nextClientId;
+            std::vector<std::tuple<uint8_t, asio::ip::udp::endpoint, std::string>> _clients;
 
             std::shared_ptr<ServerConfig> _config;
             std::shared_ptr<net::INetwork> _network;

@@ -18,7 +18,8 @@
 #include "../common/Error/ServerErrror.hpp"
 #include "Signal.hpp"
 
-rserv::Server::Server() {
+rserv::Server::Server() : _nextClientId(1) {
+    this->_clients = {};
     this->_config = nullptr;
     this->_network = nullptr;
     this->_buffer = nullptr;
@@ -161,9 +162,7 @@ void rserv::Server::processIncomingPackets() {
         return;
     }
     if (received.second.at(0) == 0x93) {
-        std::cout << "Received a header packet, disconnecting client." << std::endl;
         this->_packet->unpack(received.second);
-        std::cout << "No body following " << std::endl;
         return;
     }
 
@@ -174,7 +173,7 @@ void rserv::Server::processIncomingPackets() {
         // Other packet types will be handled here
     }
 
-    this->_packet.reset();
+    this->_packet->reset();
 }
 
 bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
@@ -183,8 +182,24 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
         return false;
     }
 
-    uint8_t clientId = _network->acceptConnection(id, this->_packet);
-    (void)clientId;
+    if (this->_nextClientId > this->getConfig()->getNbClients()) {
+        std::cerr << "[SERVER] Warning: Maximum clients reached" << std::endl;
+        return false;
+    }
+
+    bool success = _network->acceptConnection(id, this->_packet, this->_nextClientId);
+    if (!success) {
+        std::cerr << "[SERVER] Warning: Failed to accept connection" << std::endl;
+        return false;
+    }
+
+    this->_clients.push_back(std::make_tuple(this->_nextClientId, id, ""));
+    this->_nextClientId++;
+    return true;
+}
+
+bool rserv::Server::processDisconnections(uint8_t idClient) {
+    (void)idClient;
     return true;
 }
 

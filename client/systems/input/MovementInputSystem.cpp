@@ -37,14 +37,14 @@ std::pair<int, double> MovementInputSystem::formatDirection(const math::Vector2f
         } else {
             eventType = static_cast<int>(constants::EventType::DOWN);
         }
-        depth = absY;
+        depth = static_cast<double>(absY);
     } else {
         if (direction.getX() > 0) {
             eventType = static_cast<int>(constants::EventType::RIGHT);
         } else {
             eventType = static_cast<int>(constants::EventType::LEFT);
         }
-        depth = absX;
+        depth = static_cast<double>(absX);
     }
     depth = std::clamp(depth, 0.000, 1.0);
     return {eventType, depth};
