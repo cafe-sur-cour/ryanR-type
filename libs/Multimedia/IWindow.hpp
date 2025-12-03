@@ -10,6 +10,7 @@
 
 #include <string>
 #include <utility>
+#include <cstdint>
 #include "../../common/types/FRect.hpp"
 
 namespace gfx {
