@@ -6,9 +6,11 @@
 */
 
 #define _USE_MATH_DEFINES
+#include "ShootingSystem.hpp"
 #include <memory>
 #include <cmath>
-#include "ShootingSystem.hpp"
+#include <iostream>
+#include <string>
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ShootingStatsComponent.hpp"
@@ -16,7 +18,6 @@
 #include "../../components/tags/ProjectileTag.hpp"
 #include "../../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
-#include <iostream>
 namespace ecs {
 
 ShootingSystem::ShootingSystem() {
@@ -37,7 +38,9 @@ void ShootingSystem::update(
     for (auto entityId : view) {
         auto hasShootIntent = registry->hasComponent<ShootIntentComponent>(entityId);
         auto shootingStats = registry->getComponent<ShootingStatsComponent>(entityId);
-        auto projectilePrefabComponent = registry->getComponent<ProjectilePrefabComponent>(entityId);
+        auto projectilePrefabComponent = registry->getComponent<ProjectilePrefabComponent>(
+            entityId
+        );
         auto transform = registry->getComponent<TransformComponent>(entityId);
 
         if (!hasShootIntent || !shootingStats || !projectilePrefabComponent || !transform)
