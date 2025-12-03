@@ -50,10 +50,8 @@ void MapParser::parseMapFromFile(const std::string& filePath) {
 }
 
 void MapParser::parseMap(const nlohmann::json& mapJson) {
-    if (mapJson.contains(constants::BACKGROUND_FIELD) &&
-        mapJson.contains(constants::SCROLLSPEED_FIELD))
-        createBackgroundEntity(mapJson[constants::BACKGROUND_FIELD],
-            mapJson[constants::SCROLLSPEED_FIELD]);
+    if (mapJson.contains(constants::BACKGROUND_FIELD))
+        createBackgroundEntity(mapJson[constants::BACKGROUND_FIELD]);
 
     if (mapJson.contains(constants::MUSIC_FIELD)) {
         std::string prefabName = mapJson[constants::MUSIC_FIELD].get<std::string>();
@@ -77,22 +75,15 @@ void MapParser::parseMap(const nlohmann::json& mapJson) {
         parseWaves(mapJson[constants::WAVES_FIELD], tileWidth);
 }
 
-void MapParser::createBackgroundEntity(const std::string& entityName, float scrollSpeed) {
+void MapParser::createBackgroundEntity(const std::string& entityName) {
     if (entityName.empty())
         return;
 
     if (_prefabManager->hasPrefab(entityName)) {
         try {
-            ecs::Entity bgEntity = createEntityFromPrefab(entityName,
+            createEntityFromPrefab(entityName,
                 constants::BACKGROUND_POSITION.getX(),
                 constants::BACKGROUND_POSITION.getY());
-            if (_registry->hasComponent<ecs::VelocityComponent>(bgEntity)) {
-                auto velocity = _registry->getComponent<ecs::VelocityComponent>(bgEntity);
-                if (velocity )
-                    velocity->setVelocity(math::Vector2f(scrollSpeed *
-                        constants::SCROLL_VELOCITY_X_MULTIPLIER,
-                        constants::SCROLL_VELOCITY_Y));
-            }
         } catch (const std::exception& e) {
             std::cerr << "Error creating background entity: " << e.what() << std::endl;
         }

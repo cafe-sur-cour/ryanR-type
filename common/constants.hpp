@@ -25,6 +25,10 @@ namespace constants {
     constexpr float AXIS_MAX_VALUE = 100.0f;
     constexpr int SMOOTH_MOVEMENT_ITERATIONS = 4;
 
+    /* Texture Defaults */
+    constexpr float DEFAULT_TEXTURE_WIDTH = 1920.0f;
+    constexpr float DEFAULT_TEXTURE_HEIGHT = 1080.0f;
+
     enum class EventType {
         UP = 0,
         DOWN = 1,
@@ -55,6 +59,7 @@ namespace constants {
     const std::string PROJECTILEPREFABCOMPONENT = "ProjectilePrefabComponent";
     const std::string TEXTCOMPONENT = "TextComponent";
     const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
+    const std::string PARALLAXCOMPONENT = "ParallaxComponent";
 
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
@@ -89,10 +94,22 @@ namespace constants {
     const std::string PARAM_FIELD = "param";
     const std::string EQUALS_FIELD = "equals";
     const std::string FROM_FIELD = "from";
+    const std::string BASESCROLLSPEED_FIELD = "baseScrollSpeed";
+    const std::string DIRECTION_FIELD = "direction";
+    const std::string LAYERS_FIELD = "layers";
+    const std::string NAME_FIELD = "name";
+    const std::string SPEEDMULTIPLIER_FIELD = "speedMultiplier";
+    const std::string SCALEMODE_FIELD = "scaleMode";
+    const std::string SOURCESIZE_FIELD = "sourceSize";
+    const std::string REPEAT_FIELD = "repeat";
+    const std::string ZINDEX_FIELD = "zIndex";
     const std::string TO_FIELD = "to";
     const std::string REWIND_FIELD = "rewind";
     const std::string TEXTUREPATH_FIELD = "texturePath";
     const std::string LOOP_FIELD = "loop";
+    const std::string SCALEMODE_FITSCREEN = "FIT_SCREEN";
+    const std::string SCALEMODE_STRETCH = "STRETCH";
+    const std::string SCALEMODE_MANUAL = "MANUAL";
 
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";
@@ -112,7 +129,7 @@ namespace constants {
     /* Map parsing constants */
     const std::string MUSIC_FIELD = "music";
     const std::string BACKGROUND_FIELD = "background";
-    const std::string SCROLLSPEED_FIELD = "scrollSpeed";
+    const std::string BACKGROUND_SCROLL_SPEED_FIELD = "scrollSpeed";
     const std::string TILE_FIELD = "tile";
     const std::string LEGEND_FIELD = "legend";
     const std::string MAP_FIELD = "map";
@@ -124,8 +141,8 @@ namespace constants {
     const std::string COUNT_FIELD = "count";
     const std::string EMPTY_PREFAB = "empty";
     const math::Vector2f BACKGROUND_POSITION = math::Vector2f(0.0f, 0.0f);
-    const float SCROLL_VELOCITY_X_MULTIPLIER = -1.0f;
-    const float SCROLL_VELOCITY_Y = 0.0f;
+    const float BACKGROUND_PARALLAX_DIRECTION_X = -1.0f;
+    const float BACKGROUND_PARALLAX_DIRECTION_Y = 0.0f;
 
     /* Animation conditions */
     const std::string VELOCITY_UP_CONDITION = "isVelocityUp";
