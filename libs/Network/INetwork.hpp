@@ -33,7 +33,6 @@ class INetwork {
         virtual void init(uint16_t port, const std::string host) = 0;
         virtual void stop() = 0;
 
-        virtual bool acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager, uint8_t idClient) = 0;
         virtual void closeConnection(uint8_t connectionId) = 0;
         virtual std::vector<uint8_t> getActiveConnections() const = 0;
         virtual size_t getConnectionCount() const = 0;

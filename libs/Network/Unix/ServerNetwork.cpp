@@ -82,30 +82,6 @@ void UnixServerNetwork::stop() {
     _isRunning = false;
 }
 
-bool UnixServerNetwork::acceptConnection(asio::ip::udp::endpoint id,
-    std::shared_ptr<pm::IPacketManager> packetManager, uint8_t idClient) {
-    if (!_socket || !_socket->is_open()) {
-        std::cerr << "[SERVER NETWORK] Socket is not open" << std::endl;
-        return false;
-    }
-
-    std::vector<uint8_t> header =
-        packetManager->pack(0, packetManager->getSequenceNumber(), 0x02);
-    if (!this->sendTo(id, header)) {
-        std::cerr << "[SERVER NETWORK] Failed to send connection acceptance to "
-            << id.address().to_string() << ":" << id.port() << std::endl;
-        return false;
-    }
-    std::vector<uint8_t> payload =
-        packetManager->pack({0x02, static_cast<uint64_t>(idClient)});
-    if (!this->sendTo(id, payload)) {
-        std::cerr << "[SERVER NETWORK] Failed to send connection payload to "
-            << id.address().to_string() << ":" << id.port() << std::endl;
-        return false;
-    }
-    return true;
-}
-
 bool UnixServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
     if (!_socket || !_socket->is_open()) {
         std::cerr << "[SERVER NETWORK] Socket is not open" << std::endl;
