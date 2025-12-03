@@ -21,7 +21,7 @@ struct MultiShotPattern {
     float offsetDistance = 0.0f;
 
     MultiShotPattern() = default;
-    MultiShotPattern(int count, float spread = 0.0f, float offset = 0.0f)
+    MultiShotPattern(int count, float spread, float offset)
         : shotCount(count), angleSpread(spread), offsetDistance(offset) {}
 };
 
