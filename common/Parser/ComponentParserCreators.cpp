@@ -22,8 +22,10 @@
 #include "../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../components/permanent/LifetimeComponent.hpp"
 #include "../../client/components/rendering/AnimationComponent.hpp"
+#include "../../client/components/rendering/MusicComponent.hpp"
 #include "../ECS/entity/Entity.hpp"
 #include "../ECS/entity/registry/Registry.hpp"
+#include "../../client/components/tags/BackGroundMusicTag.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -97,7 +99,18 @@ void Parser::instanciateComponentDefinitions() {
             std::type_index(typeid(ecs::LifetimeComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::LIFETIME_FIELD, FieldType::FLOAT}
-        }}}
+        }}},
+        {constants::BACKGROUNDMUSICTAG, {
+            std::type_index(typeid(ecs::BackGroundMusicTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {"MusicComponent", {
+            std::type_index(typeid(ecs::MusicComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {"musicFile", FieldType::STRING},
+            {"initialState", FieldType::STRING},
+            {"volume", FieldType::FLOAT}
+        }}},
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
         std::pair<std::type_index, std::vector<Field>>>>(componentDefinitions);
@@ -245,6 +258,21 @@ void Parser::instanciateComponentCreators() {
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto lifetime = std::get<float>(*fields.at(constants::LIFETIME_FIELD));
         return std::make_shared<ecs::LifetimeComponent>(lifetime);
+    });
+    registerComponent<ecs::BackGroundMusicTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::BackGroundMusicTag>();
+    });
+    registerComponent<ecs::MusicComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto musicFile = std::get<std::string>(*fields.at("musicFile"));
+        auto initialStateStr = std::get<std::string>(*fields.at("initialState"));
+        auto volume = std::get<float>(*fields.at("volume"));
+        ecs::MusicState initialState = ecs::STOPPED;
+        if (initialStateStr == "PLAYING") initialState = ecs::PLAYING;
+        else if (initialStateStr == "PAUSED") initialState = ecs::PAUSED;
+        else if (initialStateStr == "CHANGING") initialState = ecs::CHANGING;
+        return std::make_shared<ecs::MusicComponent>(musicFile, initialState, volume);
     });
 }
 
