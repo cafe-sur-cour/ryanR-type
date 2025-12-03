@@ -45,6 +45,7 @@ namespace constants {
     const std::string SHOOTINGSTATSCOMPONENT = "ShootingStatsComponent";
     const std::string RECTANGLERENDERCOMPONENT = "RectangleRenderComponent";
     const std::string PROJECTILEPREFABCOMPONENT = "ProjectilePrefabComponent";
+    const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
 
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
