@@ -5,6 +5,10 @@
 ** ClientNetwork
 */
 
+
+#ifndef CLIENTNETWORK_HPP_
+#define CLIENTNETWORK_HPP_
+
 #include <memory>
 #include <thread>
 #include <queue>
@@ -16,9 +20,6 @@
 #include "../common/DLLoader/LoaderType.hpp"
 #include "../libs/Network/INetwork.hpp"
 #include "../common/constants.hpp"
-
-#ifndef CLIENTNETWORK_HPP_
-#define CLIENTNETWORK_HPP_
 
 struct NetworkEvent {
     constants::EventType eventType;
