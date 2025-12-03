@@ -2,6 +2,26 @@ set(MULTIMEDIA_LIB_NAME Multimedia)
 
 find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
 
+set(EMBEDDED_ASSET_FILES "")
+set(ASSET_COUNT 0)
+
+file(GLOB_RECURSE ALL_ASSETS "${CMAKE_SOURCE_DIR}/assets/*")
+list(LENGTH ALL_ASSETS ASSET_COUNT)
+
+message(STATUS "Found ${ASSET_COUNT} assets in ${CMAKE_SOURCE_DIR}/assets")
+
+if(ASSET_COUNT GREATER 0)
+    math(EXPR ASSET_COUNT_MINUS_ONE "${ASSET_COUNT} - 1")
+    foreach(i RANGE 0 ${ASSET_COUNT_MINUS_ONE})
+        list(APPEND EMBEDDED_ASSET_FILES "${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_${i}.cpp")
+    endforeach()
+endif()
+
+set_source_files_properties(${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp PROPERTIES GENERATED TRUE)
+foreach(asset_file ${EMBEDDED_ASSET_FILES})
+    set_source_files_properties(${asset_file} PROPERTIES GENERATED TRUE)
+endforeach()
+
 add_library(${MULTIMEDIA_LIB_NAME} SHARED
     IAudio.hpp
     IEvent.hpp
@@ -21,22 +41,8 @@ add_library(${MULTIMEDIA_LIB_NAME} SHARED
     SfmlEntry.cpp
     EventTypes.hpp
     ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
-    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_0.cpp
-    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_1.cpp
-    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_2.cpp
-    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_3.cpp
-    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_4.cpp
+    ${EMBEDDED_ASSET_FILES}
     ${CMAKE_SOURCE_DIR}/common/types/FRect.cpp
-)
-
-set_source_files_properties(${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp PROPERTIES GENERATED TRUE)
-set_source_files_properties(
-    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_0.cpp
-    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_1.cpp
-    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_2.cpp
-    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_3.cpp
-    ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_4.cpp
-    PROPERTIES GENERATED TRUE
 )
 
 if(WIN32)
@@ -54,12 +60,7 @@ endif()
 if(MSVC)
     set_source_files_properties(
         ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
-        ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_0.cpp
-        ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_1.cpp
-        ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_2.cpp
-        ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_3.cpp
-        ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_4.cpp
-        ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_5.cpp
+        ${EMBEDDED_ASSET_FILES}
         PROPERTIES COMPILE_FLAGS "/Od /bigobj"
     )
 endif()
