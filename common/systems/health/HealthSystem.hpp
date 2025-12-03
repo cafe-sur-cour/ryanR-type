@@ -23,6 +23,10 @@ class HealthSystem : public ASystem {
             std::shared_ptr<Registry> registry,
             float deltaTime
         ) override;
+
+    private:
+        void _handleDamageUpdates(std::shared_ptr<Registry> registry);
+        void _handleHealthUpdates(std::shared_ptr<Registry> registry);
 };
 
 }

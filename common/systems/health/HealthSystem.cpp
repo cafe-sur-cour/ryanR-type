@@ -8,6 +8,7 @@
 #include "HealthSystem.hpp"
 #include <memory>
 #include "../../components/permanent/HealthComponent.hpp"
+#include "../../components/temporary/DamageIntentComponent.hpp"
 
 namespace ecs {
 
@@ -22,6 +23,25 @@ void HealthSystem::update(
     (void) resourceManager;
     (void) deltaTime;
 
+    _handleDamageUpdates(registry);
+    _handleHealthUpdates(registry);
+}
+
+void HealthSystem::_handleDamageUpdates(std::shared_ptr<Registry> registry) {
+    auto view = registry->view<HealthComponent, DamageIntentComponent>();
+
+    for (auto entityId : view) {
+        auto healthComponent = registry->getComponent<HealthComponent>(entityId);
+        auto damageComponent = registry->getComponent<DamageIntentComponent>(entityId);
+
+        float damages = damageComponent->getDamages();
+        float health = healthComponent->getHealth();
+
+        healthComponent->setHealth(health - damages);
+    }
+}
+
+void HealthSystem::_handleHealthUpdates(std::shared_ptr<Registry> registry) {
     auto view = registry->view<HealthComponent>();
 
     for (auto entityId : view) {
@@ -32,5 +52,6 @@ void HealthSystem::update(
         }
     }
 }
+
 
 }
