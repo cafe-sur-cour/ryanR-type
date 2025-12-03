@@ -10,6 +10,7 @@
 
 #include "../../../common/components/base/AComponent.hpp"
 #include "../../../common/types/Vector2f.hpp"
+#include "../../../common/constants.hpp"
 #include <string>
 #include <vector>
 
@@ -25,12 +26,10 @@ struct ParallaxLayer {
     std::string name;
     std::string filePath;
     float speedMultiplier;
-    math::Vector2f offset;
     math::Vector2f scale;
     ParallaxScaleMode scaleMode;
     math::Vector2f sourceSize;
     bool repeat;
-    float opacity;
     int zIndex;
     math::Vector2f currentOffset;
 
@@ -38,12 +37,10 @@ struct ParallaxLayer {
         : name(""),
           filePath(""),
           speedMultiplier(1.0f),
-          offset(0.0f, 0.0f),
           scale(1.0f, 1.0f),
           scaleMode(ParallaxScaleMode::FIT_SCREEN),
-          sourceSize(1920.0f, 1080.0f),
+          sourceSize(constants::DEFAULT_TEXTURE_WIDTH, constants::DEFAULT_TEXTURE_HEIGHT),
           repeat(true),
-          opacity(1.0f),
           zIndex(0),
           currentOffset(0.0f, 0.0f) {}
 };

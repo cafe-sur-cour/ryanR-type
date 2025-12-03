@@ -25,6 +25,10 @@ namespace constants {
     constexpr float AXIS_MAX_VALUE = 100.0f;
     constexpr int SMOOTH_MOVEMENT_ITERATIONS = 4;
 
+    /* Texture Defaults */
+    constexpr float DEFAULT_TEXTURE_WIDTH = 1920.0f;
+    constexpr float DEFAULT_TEXTURE_HEIGHT = 1080.0f;
+
     enum class EventType {
         UP = 0,
         DOWN = 1,
@@ -94,11 +98,9 @@ namespace constants {
     const std::string LAYERS_FIELD = "layers";
     const std::string NAME_FIELD = "name";
     const std::string SPEEDMULTIPLIER_FIELD = "speedMultiplier";
-    const std::string OFFSET_FIELD = "offset";
     const std::string SCALEMODE_FIELD = "scaleMode";
     const std::string SOURCESIZE_FIELD = "sourceSize";
     const std::string REPEAT_FIELD = "repeat";
-    const std::string OPACITY_FIELD = "opacity";
     const std::string ZINDEX_FIELD = "zIndex";
     const std::string TO_FIELD = "to";
     const std::string REWIND_FIELD = "rewind";
