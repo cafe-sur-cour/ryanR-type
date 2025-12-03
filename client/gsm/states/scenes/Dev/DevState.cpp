@@ -19,6 +19,7 @@
 #include "../../../../components/rendering/RectangleRenderComponent.hpp"
 #include "../../../../systems/rendering/HitboxRenderingSystem.hpp"
 #include "../../../../systems/rendering/RectangleRenderingSystem.hpp"
+#include "../../../../systems/rendering/TextRenderingSystem.hpp"
 #include "../../../../../common/components/tags/ObstacleTag.hpp"
 #include "../../../../../common/components/tags/ShooterTag.hpp"
 #include "../../../../systems/input/ShootInputSystem.hpp"
@@ -51,6 +52,8 @@ DevState::DevState(
         std::make_shared<ecs::HitboxRenderingSystem>();
     auto rectangleRenderingSystem =
         std::make_shared<ecs::RectangleRenderingSystem>();
+    auto textRenderingSystem =
+        std::make_shared<ecs::TextRenderingSystem>();
     auto shootInputSystem = std::make_shared<ecs::ShootInputSystem>();
     auto shootingSystem = std::make_shared<ecs::ShootingSystem>();
     auto lifetimeSystem = std::make_shared<ecs::LifetimeSystem>();
@@ -68,6 +71,7 @@ DevState::DevState(
     _systemManager->addSystem(animationRenderingSystem);
     _systemManager->addSystem(hitboxRenderingSystem);
     _systemManager->addSystem(rectangleRenderingSystem);
+    _systemManager->addSystem(textRenderingSystem);
     _systemManager->addSystem(shootInputSystem);
     _systemManager->addSystem(shootingSystem);
     _systemManager->addSystem(lifetimeSystem);
