@@ -45,26 +45,12 @@ void ParallaxRenderingSystem::update(std::shared_ptr<ResourceManager> resourceMa
         float baseSpeed = parallax->getBaseScrollSpeed();
         const math::Vector2f& basePosition = transform->getPosition();
 
-        for (auto& layer : layers) {
-            updateLayerOffset(layer, direction, baseSpeed, deltaTime);
+        parallax->updateLayerOffsets(direction, baseSpeed, deltaTime);
+
+        for (const auto& layer : layers) {
             renderLayer(layer, resourceManager, basePosition, screenWidth, screenHeight);
         }
     }
-}
-
-void ParallaxRenderingSystem::updateLayerOffset(ParallaxLayer& layer,
-    const math::Vector2f& direction, float baseSpeed, float deltaTime) {
-
-    float speed = baseSpeed * layer.speedMultiplier;
-    math::Vector2f movement(
-        direction.getX() * speed * deltaTime,
-        direction.getY() * speed * deltaTime
-    );
-
-    layer.currentOffset = math::Vector2f(
-        layer.currentOffset.getX() + movement.getX(),
-        layer.currentOffset.getY() + movement.getY()
-    );
 }
 
 math::Vector2f ParallaxRenderingSystem::calculateScale(const ParallaxLayer& layer,
