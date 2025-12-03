@@ -57,6 +57,8 @@ namespace constants {
     const std::string STARTWIDTH_FIELD = "startWidth";
     const std::string STARTHEIGHT_FIELD = "startHeight";
     const std::string SIZE_FIELD = "size";
+    const std::string STATES_FIELD = "states";
+    const std::string INITIALSTATE_FIELD = "initialState";
 
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";

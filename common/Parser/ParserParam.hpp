@@ -37,6 +37,7 @@ enum class FieldType {
     FLOAT,
     STRING,
     INT,
+    JSON,
 };
 
 struct Field {
@@ -44,7 +45,7 @@ struct Field {
     FieldType type;
 };
 
-using FieldValue = std::variant<math::Vector2f, float, std::string, int>;
+using FieldValue = std::variant<math::Vector2f, float, std::string, int, nlohmann::json>;
 
 #include <typeindex>
 #include "../ECS/entity/registry/Registry.hpp"
