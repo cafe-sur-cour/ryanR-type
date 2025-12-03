@@ -39,7 +39,7 @@ class INetwork {
         virtual size_t getConnectionCount() const = 0;
 
         virtual void sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) = 0;
-        virtual void broadcast(const pm::IPacketManager &packet) = 0;
+        virtual void broadcast(std::vector<uint8_t> data) = 0;
         virtual bool hasIncomingData() const = 0;
         virtual std::vector<uint8_t> receiveFrom(const uint8_t &connectionId) = 0;
         virtual std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() = 0;

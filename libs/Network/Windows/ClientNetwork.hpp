@@ -46,7 +46,7 @@ class WindowsNetwork : public ANetwork {
 
         uint8_t acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) override;
         void sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override;
-        void broadcast(const pm::IPacketManager &packet) override;
+        void broadcast(std::vector<uint8_t> data) override;
         bool hasIncomingData() const override;
         std::vector<uint8_t> receiveFrom(const uint8_t &connectionId) override;
         std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override;

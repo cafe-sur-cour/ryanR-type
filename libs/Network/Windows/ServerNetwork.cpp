@@ -97,8 +97,8 @@ void ServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> pack
     }
 }
 
-void ServerNetwork::broadcast(const pm::IPacketManager &packet) {
-    (void)packet;
+void ServerNetwork::broadcast(std::vector<uint8_t> data) {
+    (void)data;
 }
 
 bool ServerNetwork::hasIncomingData() const {
