@@ -38,15 +38,16 @@ if(BUILD_CLIENT)
     target_include_directories(generate_assets PRIVATE ${CMAKE_SOURCE_DIR}/libs/Multimedia/AssetManager)
 
     add_custom_command(
-        OUTPUT ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp ${CMAKE_BINARY_DIR}/EmbeddedAssets.hpp
+        OUTPUT ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp ${CMAKE_BINARY_DIR}/EmbeddedAssets.hpp ${CMAKE_BINARY_DIR}/EmbeddedAssets_list.txt
         COMMAND generate_assets ${ASSETS_DIR} ${CMAKE_BINARY_DIR}/EmbeddedAssets
         DEPENDS generate_assets
+        COMMENT "Generating embedded assets from ${ASSETS_DIR}"
     )
 
     set_source_files_properties(${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp PROPERTIES GENERATED TRUE)
     set_source_files_properties(${CMAKE_BINARY_DIR}/EmbeddedAssets.hpp PROPERTIES GENERATED TRUE)
 
-    add_custom_target(generate_embedded_assets DEPENDS ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp ${CMAKE_BINARY_DIR}/EmbeddedAssets.hpp)
+    add_custom_target(generate_embedded_assets DEPENDS ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp ${CMAKE_BINARY_DIR}/EmbeddedAssets.hpp ${CMAKE_BINARY_DIR}/EmbeddedAssets_list.txt)
 endif()
 
 add_subdirectory(common)

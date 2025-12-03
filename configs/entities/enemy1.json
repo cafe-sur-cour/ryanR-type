@@ -11,12 +11,20 @@
         "SpeedComponent": { "target": "both", "speed": 10.0 },
         "AnimationComponent": {
             "target": "client",
-            "animationPath": "assets/sprites/frog_spritesheet.png",
-            "frameWidth": 64.0,
-            "frameHeight": 32.0,
-            "frameCount": 2,
-            "startWidth": 0.0,
-            "startHeight": 64.0
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/frog_spritesheet.png",
+                    "frameWidth": 64.0,
+                    "frameHeight": 32.0,
+                    "frameCount": 2,
+                    "startWidth": 0.0,
+                    "startHeight": 64.0,
+                    "speed": 0.2,
+                    "loop": true
+                }
+            },
+            "initialState": "idle",
+            "transitions": []
         },
         "ColliderComponent": {
             "target": "both",

@@ -10,14 +10,21 @@
 #include <map>
 #include <vector>
 #include <utility>
+#include <functional>
 #include "Parser.hpp"
 #include "../constants.hpp"
 #include "../components/tags/ShooterTag.hpp"
 #include "../components/tags/ProjectileTag.hpp"
+#include "../components/tags/ProjectilePassThroughTag.hpp"
 #include "../components/permanent/ShootingStatsComponent.hpp"
 #include "../components/permanent/ProjectilePrefabComponent.hpp"
+#include "../components/permanent/VelocityComponent.hpp"
 #include "../../client/components/rendering/RectangleRenderComponent.hpp"
+#include "../../client/components/rendering/TextComponent.hpp"
 #include "../components/permanent/LifetimeComponent.hpp"
+#include "../../client/components/rendering/AnimationComponent.hpp"
+#include "../ECS/entity/Entity.hpp"
+#include "../ECS/entity/registry/Registry.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -41,12 +48,9 @@ void Parser::instanciateComponentDefinitions() {
         }}},
         {constants::ANIMATIONCOMPONENT, {std::type_index(typeid(ecs::AnimationComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
-            {constants::ANIMATIONPATH_FIELD, FieldType::STRING},
-            {constants::FRAMEWIDTH_FIELD, FieldType::FLOAT},
-            {constants::FRAMEHEIGHT_FIELD, FieldType::FLOAT},
-            {constants::FRAMECOUNT_FIELD, FieldType::INT},
-            {constants::STARTWIDTH_FIELD, FieldType::FLOAT},
-            {constants::STARTHEIGHT_FIELD, FieldType::FLOAT}
+            {constants::STATES_FIELD, FieldType::JSON},
+            {constants::INITIALSTATE_FIELD, FieldType::STRING},
+            {constants::TRANSITIONS_FIELD, FieldType::JSON}
         }}},
         {constants::CONTROLLABLETAG, {std::type_index(typeid(ecs::ControllableTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
@@ -58,6 +62,10 @@ void Parser::instanciateComponentDefinitions() {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
         {constants::PROJECTILETAG, {std::type_index(typeid(ecs::ProjectileTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::PROJECTILEPASSTHROUGHTAG,
+            {std::type_index(typeid(ecs::ProjectilePassThroughTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
         {constants::COLLIDERCOMPONENT, {std::type_index(typeid(ecs::ColliderComponent)), {
@@ -79,6 +87,12 @@ void Parser::instanciateComponentDefinitions() {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::WIDTH_FIELD, FieldType::FLOAT},
             {constants::HEIGHT_FIELD, FieldType::FLOAT},
+            {constants::COLOR_FIELD, FieldType::OBJECT}
+        }}},
+        {constants::TEXTCOMPONENT, {std::type_index(typeid(ecs::TextComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::TEXT_FIELD, FieldType::STRING},
+            {constants::FONTPATH_FIELD, FieldType::STRING},
             {constants::COLOR_FIELD, FieldType::OBJECT}
         }}},
         {constants::PROJECTILEPREFABCOMPONENT, {
@@ -124,13 +138,50 @@ void Parser::instanciateComponentCreators() {
 
     registerComponent<ecs::AnimationComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-        auto animPath = std::get<std::string>(*fields.at(constants::ANIMATIONPATH_FIELD));
-        auto fw = std::get<float>(*fields.at(constants::FRAMEWIDTH_FIELD));
-        auto fh = std::get<float>(*fields.at(constants::FRAMEHEIGHT_FIELD));
-        auto fc = std::get<int>(*fields.at(constants::FRAMECOUNT_FIELD));
-        auto sw = std::get<float>(*fields.at(constants::STARTWIDTH_FIELD));
-        auto sh = std::get<float>(*fields.at(constants::STARTHEIGHT_FIELD));
-        return std::make_shared<ecs::AnimationComponent>(animPath, fw, fh, fc, sw, sh);
+        auto statesJson = std::get<nlohmann::json>(*fields.at(constants::STATES_FIELD));
+        auto initialState = std::get<std::string>(*fields.at(constants::INITIALSTATE_FIELD));
+
+        auto anim = std::make_shared<ecs::AnimationComponent>();
+
+        for (auto& [stateName, stateData] : statesJson.items()) {
+            std::string texturePath = stateData[constants::TEXTUREPATH_FIELD];
+            float frameWidth = stateData[constants::FRAMEWIDTH_FIELD];
+            float frameHeight = stateData[constants::FRAMEHEIGHT_FIELD];
+            int frameCount = stateData[constants::FRAMECOUNT_FIELD];
+            float startWidth = stateData[constants::STARTWIDTH_FIELD];
+            float startHeight = stateData[constants::STARTHEIGHT_FIELD];
+            float speed = stateData.value(constants::SPEED_FIELD, 0.1f);
+            bool loop = stateData.value(constants::LOOP_FIELD, true);
+
+            ecs::AnimationClip clip{
+                texturePath, frameWidth, frameHeight,
+                frameCount, startWidth, startHeight, speed, loop};
+            anim->addState(stateName, std::make_shared<ecs::AnimationClip>(clip));
+        }
+
+        anim->setCurrentState(initialState);
+
+        if (fields.count(constants::TRANSITIONS_FIELD)) {
+            auto transitionsJson =
+                std::get<nlohmann::json>(*fields.at(constants::TRANSITIONS_FIELD));
+            for (auto& transitionData : transitionsJson) {
+                std::string from = transitionData[constants::FROM_FIELD];
+                std::string to = transitionData[constants::TO_FIELD];
+                bool rewind = transitionData[constants::REWIND_FIELD];
+
+                std::vector<ecs::AnimationCondition> conditions;
+                auto conditionsJson = transitionData[constants::CONDITIONS_FIELD];
+                for (auto& condData : conditionsJson) {
+                    std::string param = condData[constants::PARAM_FIELD];
+                    bool equals = condData[constants::EQUALS_FIELD];
+                    conditions.push_back({param, equals});
+                }
+
+                anim->addTransition(from, to, conditions, rewind);
+            }
+        }
+
+        return anim;
     });
 
     registerComponent<ecs::ControllableTag>([]([[maybe_unused]] const std::map<std::string,
@@ -151,6 +202,12 @@ void Parser::instanciateComponentCreators() {
     registerComponent<ecs::ProjectileTag>([]([[maybe_unused]] const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::ProjectileTag>();
+    });
+
+    registerComponent<
+    ecs::ProjectilePassThroughTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::ProjectilePassThroughTag>();
     });
 
     registerComponent<ecs::ColliderComponent>([](const std::map<std::string,
@@ -183,6 +240,19 @@ void Parser::instanciateComponentCreators() {
         auto b = static_cast<uint8_t>(std::get<int>(*colorObj.at(constants::B_FIELD)));
         gfx::color_t color = {r, g, b};
         return std::make_shared<ecs::RectangleRenderComponent>(color, width, height);
+    });
+
+    registerComponent<ecs::TextComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto text = std::get<std::string>(*fields.at(constants::TEXT_FIELD));
+        auto fontPath = std::get<std::string>(*fields.at(constants::FONTPATH_FIELD));
+        auto colorObj = std::get<std::map<std::string, std::shared_ptr<FieldValue>>>
+            (*fields.at(constants::COLOR_FIELD));
+        auto r = static_cast<uint8_t>(std::get<int>(*colorObj.at(constants::R_FIELD)));
+        auto g = static_cast<uint8_t>(std::get<int>(*colorObj.at(constants::G_FIELD)));
+        auto b = static_cast<uint8_t>(std::get<int>(*colorObj.at(constants::B_FIELD)));
+        gfx::color_t color = {r, g, b};
+        return std::make_shared<ecs::TextComponent>(text, fontPath, color);
     });
 
     registerComponent<ecs::ProjectilePrefabComponent>([](const std::map<std::string,

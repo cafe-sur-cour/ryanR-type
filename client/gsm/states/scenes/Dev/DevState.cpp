@@ -9,7 +9,6 @@
 #include "../../../../../libs/Multimedia/IEvent.hpp"
 #include "../../../../../libs/Multimedia/IAudio.hpp"
 #include "../../../../components/rendering/SpriteComponent.hpp"
-#include "../../../../components/rendering/AnimationComponent.hpp"
 #include "../../../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../../../common/components/permanent/VelocityComponent.hpp"
 #include "../../../../../common/components/permanent/ColliderComponent.hpp"
@@ -19,11 +18,14 @@
 #include "../../../../components/rendering/RectangleRenderComponent.hpp"
 #include "../../../../systems/rendering/HitboxRenderingSystem.hpp"
 #include "../../../../systems/rendering/RectangleRenderingSystem.hpp"
+#include "../../../../systems/rendering/TextRenderingSystem.hpp"
 #include "../../../../../common/components/tags/ObstacleTag.hpp"
 #include "../../../../../common/components/tags/ShooterTag.hpp"
 #include "../../../../systems/input/ShootInputSystem.hpp"
 #include "../../../../../common/systems/shooting/ShootingSystem.hpp"
 #include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
+#include "../../../../../common/systems/death/DeathSystem.hpp"
+#include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/components/permanent/ShootingStatsComponent.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
@@ -48,9 +50,13 @@ DevState::DevState(
         std::make_shared<ecs::HitboxRenderingSystem>();
     auto rectangleRenderingSystem =
         std::make_shared<ecs::RectangleRenderingSystem>();
+    auto textRenderingSystem =
+        std::make_shared<ecs::TextRenderingSystem>();
     auto shootInputSystem = std::make_shared<ecs::ShootInputSystem>();
     auto shootingSystem = std::make_shared<ecs::ShootingSystem>();
     auto lifetimeSystem = std::make_shared<ecs::LifetimeSystem>();
+    auto healthSystem = std::make_shared<ecs::HealthSystem>();
+    auto deathSystem = std::make_shared<ecs::DeathSystem>();
 
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
 
@@ -62,9 +68,12 @@ DevState::DevState(
     _systemManager->addSystem(animationRenderingSystem);
     _systemManager->addSystem(hitboxRenderingSystem);
     _systemManager->addSystem(rectangleRenderingSystem);
+    _systemManager->addSystem(textRenderingSystem);
     _systemManager->addSystem(shootInputSystem);
     _systemManager->addSystem(shootingSystem);
     _systemManager->addSystem(lifetimeSystem);
+    _systemManager->addSystem(healthSystem);
+    _systemManager->addSystem(deathSystem);
 
     _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
     _parser->parseAllEntities(constants::CONFIG_PATH);
@@ -78,7 +87,10 @@ void DevState::enter() {
         audio->setMusicVolume(50.0f);
     }
 
-    _prefabManager->createEntityFromPrefab("player", _registry);
+    ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
+    _registry->addComponent<ecs::HitboxRenderComponent>(
+        playerEntity,
+        std::make_shared<ecs::HitboxRenderComponent>());
 }
 
 void DevState::update(float deltaTime) {
