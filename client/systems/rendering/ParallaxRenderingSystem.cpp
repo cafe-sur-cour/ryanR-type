@@ -108,8 +108,8 @@ void ParallaxRenderingSystem::renderLayer(const ParallaxLayer& layer,
     float textureHeight = layer.sourceSize.getY() * scale.getY();
 
     if (layer.repeat) {
-        float startX = layer.currentOffset.getX() + layer.offset.getX() + basePosition.getX();
-        float startY = layer.currentOffset.getY() + layer.offset.getY() + basePosition.getY();
+        float startX = layer.currentOffset.getX() + basePosition.getX();
+        float startY = layer.currentOffset.getY() + basePosition.getY();
 
         startX = std::fmod(startX, textureWidth);
         if (startX > 0) startX -= textureWidth;
@@ -129,8 +129,8 @@ void ParallaxRenderingSystem::renderLayer(const ParallaxLayer& layer,
             }
         }
     } else {
-        float drawX = layer.currentOffset.getX() + layer.offset.getX() + basePosition.getX();
-        float drawY = layer.currentOffset.getY() + layer.offset.getY() + basePosition.getY();
+        float drawX = layer.currentOffset.getX() + basePosition.getX();
+        float drawY = layer.currentOffset.getY() + basePosition.getY();
 
         window->drawSprite(layer.filePath, drawX, drawY, scale.getX(), scale.getY());
     }

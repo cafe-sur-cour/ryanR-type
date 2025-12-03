@@ -273,14 +273,6 @@ void Parser::instanciateComponentCreators() {
             layer.filePath = layerJson.value(constants::FILEPATH_FIELD, "");
             layer.speedMultiplier = layerJson.value(constants::SPEEDMULTIPLIER_FIELD, 1.0f);
 
-            if (layerJson.contains(constants::OFFSET_FIELD)) {
-                auto offsetJson = layerJson[constants::OFFSET_FIELD];
-                layer.offset = math::Vector2f(
-                    offsetJson.value(constants::X_FIELD, 0.0f),
-                    offsetJson.value(constants::Y_FIELD, 0.0f)
-                );
-            }
-
             if (layerJson.contains(constants::SCALE_FIELD)) {
                 auto scaleJson = layerJson[constants::SCALE_FIELD];
                 layer.scale = math::Vector2f(
@@ -305,13 +297,12 @@ void Parser::instanciateComponentCreators() {
             if (layerJson.contains(constants::SOURCESIZE_FIELD)) {
                 auto sourceSizeJson = layerJson[constants::SOURCESIZE_FIELD];
                 layer.sourceSize = math::Vector2f(
-                    sourceSizeJson.value(constants::X_FIELD, 1920.0f),
-                    sourceSizeJson.value(constants::Y_FIELD, 1080.0f)
+                    sourceSizeJson.value(constants::X_FIELD, constants::DEFAULT_TEXTURE_WIDTH),
+                    sourceSizeJson.value(constants::Y_FIELD, constants::DEFAULT_TEXTURE_HEIGHT)
                 );
             }
 
             layer.repeat = layerJson.value(constants::REPEAT_FIELD, true);
-            layer.opacity = layerJson.value(constants::OPACITY_FIELD, 1.0f);
             layer.zIndex = layerJson.value(constants::ZINDEX_FIELD, 0);
             layer.currentOffset = math::Vector2f(0.0f, 0.0f);
 
