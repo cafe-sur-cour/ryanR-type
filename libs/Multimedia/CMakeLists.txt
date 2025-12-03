@@ -2,20 +2,25 @@ set(MULTIMEDIA_LIB_NAME Multimedia)
 
 find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
 
-# Read the number of embedded asset files
-if(EXISTS ${CMAKE_BINARY_DIR}/EmbeddedAssets_count.txt)
-    file(READ ${CMAKE_BINARY_DIR}/EmbeddedAssets_count.txt EMBEDDED_ASSETS_COUNT)
-    string(STRIP "${EMBEDDED_ASSETS_COUNT}" EMBEDDED_ASSETS_COUNT)
-    
-    # Generate list of embedded asset files
-    set(EMBEDDED_ASSET_FILES "")
-    math(EXPR EMBEDDED_ASSETS_MAX "${EMBEDDED_ASSETS_COUNT} - 1")
-    foreach(i RANGE 0 ${EMBEDDED_ASSETS_MAX})
-        list(APPEND EMBEDDED_ASSET_FILES ${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_${i}.cpp)
+set(EMBEDDED_ASSET_FILES "")
+set(ASSET_COUNT 0)
+
+file(GLOB_RECURSE ALL_ASSETS "${CMAKE_SOURCE_DIR}/assets/*")
+list(LENGTH ALL_ASSETS ASSET_COUNT)
+
+message(STATUS "Found ${ASSET_COUNT} assets in ${CMAKE_SOURCE_DIR}/assets")
+
+if(ASSET_COUNT GREATER 0)
+    math(EXPR ASSET_COUNT_MINUS_ONE "${ASSET_COUNT} - 1")
+    foreach(i RANGE 0 ${ASSET_COUNT_MINUS_ONE})
+        list(APPEND EMBEDDED_ASSET_FILES "${CMAKE_BINARY_DIR}/embeddedAssets/EmbeddedAsset_${i}.cpp")
     endforeach()
-else()
-    set(EMBEDDED_ASSET_FILES "")
 endif()
+
+set_source_files_properties(${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp PROPERTIES GENERATED TRUE)
+foreach(asset_file ${EMBEDDED_ASSET_FILES})
+    set_source_files_properties(${asset_file} PROPERTIES GENERATED TRUE)
+endforeach()
 
 add_library(${MULTIMEDIA_LIB_NAME} SHARED
     IAudio.hpp
@@ -37,15 +42,8 @@ add_library(${MULTIMEDIA_LIB_NAME} SHARED
     EventTypes.hpp
     ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
     ${EMBEDDED_ASSET_FILES}
+    ${CMAKE_SOURCE_DIR}/common/types/FRect.cpp
 )
-
-set_source_files_properties(${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp PROPERTIES GENERATED TRUE)
-if(EMBEDDED_ASSET_FILES)
-    set_source_files_properties(
-        ${EMBEDDED_ASSET_FILES}
-        PROPERTIES GENERATED TRUE
-    )
-endif()
 
 if(WIN32)
     set_target_properties(${MULTIMEDIA_LIB_NAME} PROPERTIES
@@ -60,18 +58,11 @@ if(TARGET generate_embedded_assets)
 endif()
 
 if(MSVC)
-    if(EMBEDDED_ASSET_FILES)
-        set_source_files_properties(
-            ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
-            ${EMBEDDED_ASSET_FILES}
-            PROPERTIES COMPILE_FLAGS "/Od /bigobj"
-        )
-    else()
-        set_source_files_properties(
-            ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
-            PROPERTIES COMPILE_FLAGS "/Od /bigobj"
-        )
-    endif()
+    set_source_files_properties(
+        ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
+        ${EMBEDDED_ASSET_FILES}
+        PROPERTIES COMPILE_FLAGS "/Od /bigobj"
+    )
 endif()
 
 target_include_directories(${MULTIMEDIA_LIB_NAME}

@@ -53,6 +53,8 @@ namespace constants {
     const std::string SHOOTINGSTATSCOMPONENT = "ShootingStatsComponent";
     const std::string RECTANGLERENDERCOMPONENT = "RectangleRenderComponent";
     const std::string PROJECTILEPREFABCOMPONENT = "ProjectilePrefabComponent";
+    const std::string TEXTCOMPONENT = "TextComponent";
+    const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
 
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
@@ -79,12 +81,27 @@ namespace constants {
     const std::string G_FIELD = "g";
     const std::string B_FIELD = "b";
 
+    const std::string STATES_FIELD = "states";
+    const std::string INITIALSTATE_FIELD = "initialState";
+    const std::string TRANSITIONS_FIELD = "transitions";
+    const std::string CONDITIONS_FIELD = "conditions";
+    const std::string CONDITION_FIELD = "condition";
+    const std::string PARAM_FIELD = "param";
+    const std::string EQUALS_FIELD = "equals";
+    const std::string FROM_FIELD = "from";
+    const std::string TO_FIELD = "to";
+    const std::string REWIND_FIELD = "rewind";
+    const std::string TEXTUREPATH_FIELD = "texturePath";
+    const std::string LOOP_FIELD = "loop";
+
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";
 
     const std::string PREFABNAME_FIELD = "prefabName";
     const std::string LIFETIMECOMPONENT = "LifetimeComponent";
     const std::string LIFETIME_FIELD = "lifetime";
+    const std::string TEXT_FIELD = "text";
+    const std::string FONTPATH_FIELD = "fontPath";
 
 
     const math::Vector2f TILE_SIZE = math::Vector2f(64.0f, 64.0f);
@@ -107,6 +124,10 @@ namespace constants {
     const math::Vector2f BACKGROUND_POSITION = math::Vector2f(0.0f, 0.0f);
     const float SCROLL_VELOCITY_X_MULTIPLIER = -1.0f;
     const float SCROLL_VELOCITY_Y = 0.0f;
+
+    /* Animation conditions */
+    const std::string VELOCITY_UP_CONDITION = "isVelocityUp";
+    const std::string VELOCITY_DOWN_CONDITION = "isVelocityDown";
 }
 
 #endif /* !CONSTANTS_HPP_ */

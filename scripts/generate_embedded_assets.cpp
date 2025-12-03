@@ -134,14 +134,19 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Generated " << file_index << " individual asset files." << std::endl;
 
-    /* Generate a simple list file with the count */
+    /* Generate a list file with all generated asset filenames for CMake */
     {
-        std::ofstream f(output_file + "_count.txt");
+        std::ofstream f(output_file + "_list.txt");
         if (!f) {
-            std::cerr << "Failed to create count file" << std::endl;
+            std::cerr << "Failed to create list file" << std::endl;
             return 1;
         }
-        f << file_index << "\n";
+        for (int i = 0; i < file_index; ++i) {
+            std::string cpp_filename = (
+                embedded_dir / ("EmbeddedAsset_" + std::to_string(i) + ".cpp")
+            ).string();
+            f << cpp_filename << "\n";
+        }
     }
 
     /* Generate main .cpp with the getter function and reference */
