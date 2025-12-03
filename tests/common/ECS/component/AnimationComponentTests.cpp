@@ -25,7 +25,7 @@ TEST(AnimationComponentTest, AddState) {
     AnimationComponent comp;
     AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
 
-    comp.addState("idle", clip);
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
     EXPECT_TRUE(comp.isValid());
 }
 
@@ -33,7 +33,7 @@ TEST(AnimationComponentTest, SetCurrentState) {
     AnimationComponent comp;
     AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
 
-    comp.addState("idle", clip);
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
     comp.setCurrentState("idle");
 
     EXPECT_EQ(comp.getCurrentState(), "idle");
@@ -44,10 +44,10 @@ TEST(AnimationComponentTest, GetCurrentClip) {
     AnimationComponent comp;
     AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
 
-    comp.addState("idle", clip);
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
     comp.setCurrentState("idle");
 
-    const AnimationClip* currentClip = comp.getCurrentClip();
+    auto currentClip = comp.getCurrentClip();
     ASSERT_NE(currentClip, nullptr);
     EXPECT_EQ(currentClip->texturePath, "texture.png");
     EXPECT_FLOAT_EQ(currentClip->frameWidth, 32.0f);
@@ -59,7 +59,7 @@ TEST(AnimationComponentTest, FrameRect) {
     AnimationComponent comp;
     AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
 
-    comp.addState("idle", clip);
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
     comp.setCurrentState("idle");
 
     const math::FRect& rect = comp.getFrameRect();
@@ -73,7 +73,7 @@ TEST(AnimationComponentTest, SetFrameRect) {
     AnimationComponent comp;
     AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
 
-    comp.addState("idle", clip);
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
     comp.setCurrentState("idle");
 
     math::FRect newRect(64.0f, 32.0f, 32.0f, 32.0f);
@@ -90,7 +90,7 @@ TEST(AnimationComponentTest, CurrentFrame) {
     AnimationComponent comp;
     AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
 
-    comp.addState("idle", clip);
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
     comp.setCurrentState("idle");
 
     EXPECT_EQ(comp.getCurrentFrame(), 0);
@@ -103,7 +103,7 @@ TEST(AnimationComponentTest, Timer) {
     AnimationComponent comp;
     AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
 
-    comp.addState("idle", clip);
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
     comp.setCurrentState("idle");
 
     EXPECT_FLOAT_EQ(comp.getTimer(), 0.0f);
@@ -117,7 +117,7 @@ TEST(AnimationComponentTest, IsValid) {
     EXPECT_FALSE(comp.isValid());
 
     AnimationClip clip{"texture.png", 32.0f, 32.0f, 3, 0.0f, 0.0f, 0.1f, true};
-    comp.addState("idle", clip);
+    comp.addState("idle", std::make_shared<AnimationClip>(clip));
     EXPECT_TRUE(comp.isValid());
 }
 
