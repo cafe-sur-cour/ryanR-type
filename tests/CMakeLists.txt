@@ -106,3 +106,7 @@ add_test(NAME ErrorTests COMMAND ErrorTests)
 add_executable(ParserTests common/Parser/ParserTests.cpp)
 target_link_libraries(ParserTests PARSER PREFAB ECS ERROR GTest::gtest GTest::gtest_main)
 add_test(NAME ParserTests COMMAND ParserTests)
+
+add_executable(MapParserTests common/Parser/MapParserTests.cpp)
+target_link_libraries(MapParserTests MAP_PARSER PREFAB ECS ERROR GTest::gtest GTest::gtest_main)
+add_test(NAME MapParserTests COMMAND MapParserTests)
