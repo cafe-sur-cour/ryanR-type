@@ -156,8 +156,14 @@ void rserv::Server::processIncomingPackets() {
         return;
     }
 
+    if (!this->_packet) {
+        std::cerr << "[SERVER] Warning: Packet manager not initialized" << std::endl;
+        return;
+    }
     if (received.second.at(0) == 0x93) {
+        std::cout << "Received a header packet, disconnecting client." << std::endl;
         this->_packet->unpack(received.second);
+        std::cout << "No body following " << std::endl;
         return;
     }
 
@@ -183,8 +189,9 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
 }
 
 void rserv::Server::broadcastPacket() {
+    std::vector<uint8_t> packedData;
     if (_network) {
-        _network->broadcast(*this->_packet);
+        _network->broadcast(packedData);
     }
 }
 

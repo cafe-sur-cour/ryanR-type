@@ -18,6 +18,8 @@
 #include "gsm/machine/GameStateMachine.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
 
+
+
 class Core
 {
     public:
@@ -25,6 +27,7 @@ class Core
         ~Core();
 
         void run();
+        void startNetwork();
 
         std::shared_ptr<ClientNetwork> getNetwork();
 

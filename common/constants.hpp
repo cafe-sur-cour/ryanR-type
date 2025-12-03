@@ -15,7 +15,7 @@
 namespace constants {
     /* Network Defaults */
     constexpr int DEFAULT_SERVER_PORT = 4242;
-    constexpr uint32_t DEFAULT_SERVER_IP = 0x7F000001;  // 127.0.0.1
+    const std::string DEFAULT_SERVER_IP = "127.0.0.1";  // 127.0.0.1
 
     /* Game Defaults */
     constexpr float BASE_SPEED = 100.0f;
@@ -25,6 +25,13 @@ namespace constants {
     constexpr float AXIS_MAX_VALUE = 100.0f;
     constexpr int SMOOTH_MOVEMENT_ITERATIONS = 4;
 
+    enum class EventType {
+        UP = 0,
+        DOWN = 1,
+        LEFT = 2,
+        RIGHT = 3,
+        SHOOT = 4,
+    };
     /* Paths */
     const std::string CONFIG_PATH = "configs/entities/";
 

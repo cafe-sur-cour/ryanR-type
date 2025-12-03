@@ -10,6 +10,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <utility>
 
 #include "ClientNetwork.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
@@ -27,12 +28,51 @@ UnixClientNetwork::~UnixClientNetwork() {
     }
 }
 
+
 void UnixClientNetwork::init(uint16_t port, const std::string host) {
-    (void)port;
-    (void)host;
-    _socket = std::make_shared<asio::ip::udp::socket>(*_ioContext);
-    _socket->open(asio::ip::udp::v4());
-    _isRunning = true;
+    std::error_code ec;
+
+    if (!_socket) {
+        _socket = std::make_shared<asio::ip::udp::socket>(*_ioContext);
+    }
+
+    if (!_socket->is_open()) {
+        _socket->open(asio::ip::udp::v4(), ec);
+        if (ec) {
+            throw std::runtime_error(
+                std::string("[CLIENT NETWORK] Failed to open socket: ") + ec.message());
+        }
+    }
+
+    std::cout << "[CLIENT NETWORK] Socket is open" << std::endl;
+    try {
+        asio::ip::udp::resolver resolver(*_ioContext);
+        asio::ip::udp::resolver::results_type endpoints =
+            resolver.resolve(asio::ip::udp::v4(), host, std::to_string(port));
+        if (endpoints.empty()) {
+            throw std::runtime_error(
+                "[CLIENT NETWORK] Failed to resolve host '" + host + "': no results");
+        }
+        std::cout << "[CLIENT NETWORK] Resolved host " << host << std::endl;
+        _serverEndpoint = *endpoints.begin();
+
+        _socket->non_blocking(true, ec);
+        if (ec) {
+            throw std::runtime_error(
+                std::string("[CLIENT NETWORK] Failed to set non-blocking mode: ") +
+                ec.message());
+        }
+
+        this->setConnectionState(ConnectionState::CONNECTING);
+
+        std::cout << "[CLIENT NETWORK] Configured for server at "
+                  << _serverEndpoint.address().to_string() << ":"
+                  << _serverEndpoint.port() << std::endl;
+    } catch (const std::exception& e) {
+        _connected = false;
+        throw std::runtime_error(
+            std::string("[CLIENT NETWORK] Connection failed: ") + e.what());
+    }
 }
 
 void UnixClientNetwork::stop() {
@@ -43,84 +83,29 @@ void UnixClientNetwork::stop() {
     _isRunning = false;
 }
 
-void UnixClientNetwork::connect(const std::string& host, uint16_t port) {
-    if (!_socket || !_socket->is_open()) {
-        throw std::runtime_error("[UnixClientNetwork] Socket not initialized.");
-    }
-
-    try {
-        asio::ip::udp::resolver resolver(*_ioContext);
-        asio::ip::udp::resolver::results_type endpoints =
-            resolver.resolve(asio::ip::udp::v4(), host, std::to_string(port));
-
-        _serverEndpoint = *endpoints.begin();
-        _connected = true;
-
-        std::cout << "[UnixClientNetwork] Connected to server " << host
-                  << ":" << port << std::endl;
-
-        std::string connectMsg = "CLIENT_CONNECT";
-        _socket->send_to(asio::buffer(connectMsg), _serverEndpoint);
-    } catch (const std::exception& e) {
-        _connected = false;
-        throw std::runtime_error(std::string
-            ("[UnixClientNetwork] Connection failed: ") + e.what());
-    }
-}
-
 void UnixClientNetwork::disconnect() {
-    if (_connected && _socket && _socket->is_open()) {
-        try {
-            std::string disconnectMsg = "CLIENT_DISCONNECT";
-            _socket->send_to(asio::buffer(disconnectMsg), _serverEndpoint);
-            std::cout << "[UnixClientNetwork] Disconnected from server"
-                << std::endl;
-        } catch (const std::exception& e) {
-            std::cerr << "[UnixClientNetwork] Error during disconnect: "
-            << e.what() << std::endl;
-        }
-    }
-    _connected = false;
 }
 
 bool UnixClientNetwork::isConnected() const {
     return _connected;
 }
 
-uint8_t UnixClientNetwork::acceptConnection(
-    asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
+uint8_t UnixClientNetwork::acceptConnection(asio::ip::udp::endpoint id,
+    std::shared_ptr<pm::IPacketManager> packetManager) {
     (void)id;
     (void)packetManager;
-    return 0;
+    return 1;
 }
 
 void UnixClientNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
     (void)id;
-
-    if (!_connected) {
-        std::cerr << "[UnixClientNetwork] Not connected to server" << std::endl;
-        return;
-    }
-    if (!_socket || !_socket->is_open()) {
-        std::cerr << "[UnixClientNetwork] Socket not available" << std::endl;
-        return;
-    }
-
-    try {
-        /* Packet serialization */
-        (void)packet;
-        std::string data = "Client message";
-        _socket->send_to(asio::buffer(data), _serverEndpoint);
-        std::cout << "[UnixClientNetwork] Sent data to server" << std::endl;
-    } catch (const std::exception& e) {
-        std::cerr << "[UnixClientNetwork] Error sending data: "
-            << e.what() << std::endl;
-    }
+    std::cout << "Sending to " << _serverEndpoint.address().to_string() << ":"
+             << _serverEndpoint.port() << " Data size: " << packet.size() << std::endl;
+    _socket->send_to(asio::buffer(packet), _serverEndpoint);
 }
 
-void UnixClientNetwork::broadcast(const pm::IPacketManager &packet) {
-    // For client, broadcast is the same as sending to the server
-    (void)packet;
+void UnixClientNetwork::broadcast(std::vector<uint8_t> data) {
+    (void)data;
 }
 
 bool UnixClientNetwork::hasIncomingData() const {
@@ -133,41 +118,58 @@ bool UnixClientNetwork::hasIncomingData() const {
     return !ec && available > 0;
 }
 
-std::shared_ptr<pm::IPacketManager> UnixClientNetwork::receiveFrom(
+
+std::vector<uint8_t> UnixClientNetwork::receiveFrom(
     const uint8_t &connectionId) {
     (void)connectionId;
 
-    if (!_connected) {
-        return nullptr;
+    asio::error_code ec;
+    std::size_t available = _socket->available(ec);
+
+    if (ec) {
+        std::cerr << "[CLIENT NETWORK] Error checking available data: "
+                  << ec.message() << std::endl;
+        return std::vector<uint8_t>();
     }
 
-    if (!hasIncomingData()) {
-        return nullptr;
+    if (available == 0) {
+        return std::vector<uint8_t>();
     }
+    std::cout << "[CLIENT NETWORK] " << available << " bytes available" << std::endl;
 
-    try {
-        std::array<char, 1024> buffer;
-        asio::ip::udp::endpoint senderEndpoint;
-        std::error_code ec;
+    std::vector<uint8_t> buffer(available);
+    asio::ip::udp::endpoint senderEndpoint;
 
-        size_t received = _socket->receive_from(asio::buffer(buffer),
-            senderEndpoint, 0, ec);
-        if (ec || received == 0) {
-            return nullptr;
+    std::size_t bytesReceived = _socket->receive_from(
+        asio::buffer(buffer), senderEndpoint, 0, ec);
+
+    if (ec) {
+        if (ec == asio::error::would_block || ec == asio::error::try_again) {
+            return std::vector<uint8_t>();
         }
-
-        std::cout << "[UnixClientNetwork] Received " << received
-                  << " bytes from server" << std::endl;
-
-        return nullptr;
-    } catch (const std::exception& e) {
-        std::cerr << "[UnixClientNetwork] Error receiving data: "
-                  << e.what() << std::endl;
-        return nullptr;
+        std::cerr << "[CLIENT NETWORK] Receive error: " << ec.message() << std::endl;
+        return std::vector<uint8_t>();
     }
+
+    if (bytesReceived > 0) {
+        std::cout << "[CLIENT NETWORK] Received " << bytesReceived
+                  << " bytes from " << senderEndpoint.address().to_string()
+                  << ":" << senderEndpoint.port() << std::endl;
+
+        // Resize buffer to actual bytes received
+        buffer.resize(bytesReceived);
+        return buffer;
+        // TODO(albane) Process buffer and create IPacketManager
+        // return your packet manager here
+    }
+    return std::vector<uint8_t>();
 }
 
-}  // namespace net
+std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> UnixClientNetwork::receiveAny() {
+    return {};
+}
+
+}  //  namespace net
 
 extern "C" {
     void *createNetworkInstance() {

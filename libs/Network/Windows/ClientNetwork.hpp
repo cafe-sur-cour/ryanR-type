@@ -26,9 +26,13 @@
     #define _WIN32_WINNT 0x0A00
 #endif
 
+#include <asio.hpp>
+#include <memory>
+#include <string>
 #include "../ANetwork.hpp"
-#include "../../Packet/IPacketManager.hpp"
 #include "../../Buffer/IBuffer.hpp"
+#include "../../Packet/IPacketManager.hpp"
+
 
 namespace net {
 
@@ -42,13 +46,17 @@ class WindowsNetwork : public ANetwork {
 
         uint8_t acceptConnection(asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) override;
         void sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override;
-        void broadcast(const pm::IPacketManager &packet) override;
+        void broadcast(std::vector<uint8_t> data) override;
         bool hasIncomingData() const override;
-        std::shared_ptr<pm::IPacketManager> receiveFrom(const uint8_t &connectionId) override;
+        std::vector<uint8_t> receiveFrom(const uint8_t &connectionId) override;
         std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override;
 
     protected:
+        void disconnect();
+        bool isConnected() const;
     private:
+        asio::ip::udp::endpoint _serverEndpoint;
+        bool _connected;
 };
 
 } // namespace net
