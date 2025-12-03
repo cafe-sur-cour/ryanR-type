@@ -36,50 +36,56 @@ void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
         if (!animation || !transform || !animation->isValid())
             continue;
 
-        for (const auto& transition : animation->getTransitions()) {
-            if (transition.from == animation->getCurrentState()) {
-                bool allConditionsMet = true;
-                for (const auto& condition : transition.conditions) {
-                    bool value = AnimationConditionFactory::getConditionValue(
-                        condition.param,
-                        registry,
-                        entityId);
-                    if (value != condition.equals) {
-                        allConditionsMet = false;
+        if (!animation->getStateJustChanged()) {
+            for (const auto& transition : animation->getTransitions()) {
+                if (transition.from == animation->getCurrentState()) {
+                    bool allConditionsMet = true;
+                    for (const auto& condition : transition.conditions) {
+                        bool value = AnimationConditionFactory::getConditionValue(
+                            condition.param,
+                            registry,
+                            entityId);
+                        if (value != condition.equals) {
+                            allConditionsMet = false;
+                            break;
+                        }
+                    }
+                    if (allConditionsMet) {
+                        if (transition.playRewind) {
+                            std::shared_ptr<const AnimationClip> currentClip =
+                                animation->getCurrentClip();
+                            if (!currentClip)
+                                continue;
+
+                            if (!animation->isPlayingRewind()) {
+                                animation->setRewindStartFrame(animation->getCurrentFrame());
+                                animation->setPlayingRewind(true);
+                                animation->setTimer(0.0f);
+                            } else {
+                                if (animation->getCurrentFrame() == 0) {
+                                    static std::unordered_map<Entity, float> waitTimers;
+                                    if (waitTimers.find(entityId) == waitTimers.end())
+                                        waitTimers[entityId] = 0.0f;
+
+                                    waitTimers[entityId] += deltaTime;
+
+                                    if (waitTimers[entityId] >= currentClip->speed) {
+                                        animation->setCurrentState(transition.to);
+                                        animation->setPlayingRewind(false);
+                                        waitTimers.erase(entityId);
+                                    }
+                                }
+                            }
+                        } else {
+                            animation->setCurrentState(transition.to);
+                        }
                         break;
                     }
                 }
-                if (allConditionsMet) {
-                    if (transition.playRewind) {
-                        std::shared_ptr<const AnimationClip> currentClip =
-                            animation->getCurrentClip();
-                        if (!currentClip)
-                            continue;
-
-                        if (!animation->isPlayingRewind()) {
-                            animation->setRewindStartFrame(animation->getCurrentFrame());
-                            animation->setPlayingRewind(true);
-                            animation->setTimer(0.0f);
-                        } else {
-                            if (animation->getCurrentFrame() == 0) {
-                                static std::unordered_map<Entity, float> waitTimers;
-                                if (waitTimers.find(entityId) == waitTimers.end())
-                                    waitTimers[entityId] = 0.0f;
-
-                                waitTimers[entityId] += deltaTime;
-
-                                if (waitTimers[entityId] >= currentClip->speed) {
-                                    animation->setCurrentState(transition.to);
-                                    animation->setPlayingRewind(false);
-                                    waitTimers.erase(entityId);
-                                }
-                            }
-                        }
-                    } else {
-                        animation->setCurrentState(transition.to);
-                    }
-                    break;
-                }
+            }
+        } else {
+            if (animation->getTimer() >= animation->getMinAnimationTime()) {
+                animation->setStateJustChanged(false);
             }
         }
 

@@ -23,7 +23,7 @@ void AnimationConditionFactory::initializeConditions() {
         [](std::shared_ptr<Registry> registry, Entity entity) -> bool {
             auto velocity = registry->getComponent<VelocityComponent>(entity);
             if (!velocity) return false;
-            return velocity->getVelocity().getY() >= 0;
+            return velocity->getVelocity().getY() > 0;
         });
 }
 
