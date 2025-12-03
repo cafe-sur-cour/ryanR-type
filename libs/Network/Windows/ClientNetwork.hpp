@@ -52,7 +52,11 @@ class WindowsNetwork : public ANetwork {
         std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override;
 
     protected:
+        void disconnect();
+        bool isConnected() const;
     private:
+        asio::ip::udp::endpoint _serverEndpoint;
+        bool _connected;
 };
 
 } // namespace net
