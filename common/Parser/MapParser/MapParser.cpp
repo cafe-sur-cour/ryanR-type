@@ -17,6 +17,7 @@
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../types/Vector2f.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
+#include "../../../client/components/rendering/MusicComponent.hpp"
 #include "../../components/permanent/GameZoneComponent.hpp"
 
 MapParser::MapParser(std::shared_ptr<EntityPrefabManager> prefabManager,
@@ -53,6 +54,10 @@ void MapParser::parseMap(const nlohmann::json& mapJson) {
     if (mapJson.contains(constants::BACKGROUND_FIELD))
         createBackgroundEntity(mapJson[constants::BACKGROUND_FIELD]);
 
+    if (mapJson.contains(constants::MUSIC_FIELD)) {
+        std::string prefabName = mapJson[constants::MUSIC_FIELD].get<std::string>();
+        createMusicEntity(prefabName);
+    }
     if (mapJson.contains(constants::BACKGROUND_SCROLL_SPEED_FIELD))
         createGameZoneEntity(mapJson[constants::BACKGROUND_SCROLL_SPEED_FIELD]);
 
@@ -244,4 +249,16 @@ ecs::Entity MapParser::createEntityFromPrefab(const std::string& prefabName,
     }
 
     return entity;
+}
+
+void MapParser::createMusicEntity(const std::string& prefabName) {
+    if (_prefabManager->hasPrefab(prefabName)) {
+        try {
+            _prefabManager->createEntityFromPrefab(prefabName, _registry);
+        } catch (const std::exception& e) {
+            std::cerr << "Error creating music entity: " << e.what() << std::endl;
+        }
+    } else {
+        std::cerr << "Warning: 'music' prefab not found" << std::endl;
+    }
 }
