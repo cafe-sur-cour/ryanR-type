@@ -5,21 +5,21 @@
         "TransformComponent": {
             "target": "both",
             "position": { "x": 0.0, "y": 0.0 },
-            "scale": { "x": 0.4, "y": 0.4 },
+            "scale": { "x": 3.0, "y": 3.0 },
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "both" },
         "SpriteComponent": {
             "target": "client",
-            "filePath": "assets/sprites/bullet.png"
+            "filePath": "assets/sprites/projectiles/player_basic.png"
         },
         "ColliderComponent": {
             "target": "both",
-            "size": { "x": 16.0, "y": 16.0 }
+            "size": { "x": 16.0, "y": 4.0 }
         },
         "LifetimeComponent": {
             "target": "both",
-            "lifetime": 1.0
+            "lifetime": 2.0
         },
         "TextComponent": {
             "target": "client",

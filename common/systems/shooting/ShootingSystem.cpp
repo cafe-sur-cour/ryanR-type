@@ -16,6 +16,7 @@
 #include "../../components/permanent/ShootingStatsComponent.hpp"
 #include "../../components/permanent/ProjectilePrefabComponent.hpp"
 #include "../../components/tags/ProjectileTag.hpp"
+#include "../../components/permanent/ColliderComponent.hpp"
 #include "../../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 namespace ecs {
@@ -59,6 +60,13 @@ void ShootingSystem::update(
         float speed = shootingStats->getProjectileSpeed();
 
         math::Vector2f spawnPos = transform->getPosition();
+
+        auto collider = registry->getComponent<ColliderComponent>(entityId);
+        if (collider) {
+            math::Vector2f colliderCenter =
+                collider->getOffset() + (collider->getSize() * 0.5f);
+            spawnPos = spawnPos + colliderCenter;
+        }
 
         float baseAngle = 0.0f;
 
