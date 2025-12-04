@@ -63,7 +63,9 @@ namespace constants {
 
     const std::string SCORETAG = "ScoreTag";
     const std::string SCORECOMPONENT = "ScoreComponent";
+    const std::string DAMAGECOMPONENT = "DamageComponent";
     const std::string SCORE_FIELD = "score";
+    const std::string DAMAGE_FIELD = "damage";
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
     const std::string OFFSET_FIELD = "offset";

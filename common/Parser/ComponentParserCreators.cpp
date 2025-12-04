@@ -31,6 +31,7 @@
 #include "../../client/components/tags/BackGroundMusicTag.hpp"
 #include "../components/tags/ScoreTag.hpp"
 #include "../components/permanent/ScoreComponent.hpp"
+#include "../components/permanent/DamageComponent.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -140,6 +141,11 @@ void Parser::instanciateComponentDefinitions() {
             std::type_index(typeid(ecs::ScoreComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::SCORE_FIELD, FieldType::INT}
+        }}},
+        {constants::DAMAGECOMPONENT, {
+            std::type_index(typeid(ecs::DamageComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::DAMAGE_FIELD, FieldType::FLOAT}
         }}}
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
@@ -400,6 +406,18 @@ void Parser::instanciateComponentCreators() {
         else if (initialStateStr == constants::CHANGING_FIELD) initialState = ecs::CHANGING;
         else if (initialStateStr == constants::STOPPED_FIELD) initialState = ecs::STOPPED;
         return std::make_shared<ecs::MusicComponent>(musicFile, initialState, volume, loop);
+    });
+
+    registerComponent<ecs::ScoreComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto score = std::get<int>(*fields.at(constants::SCORE_FIELD));
+        return std::make_shared<ecs::ScoreComponent>(score);
+    });
+
+    registerComponent<ecs::DamageComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto damage = std::get<float>(*fields.at(constants::DAMAGE_FIELD));
+        return std::make_shared<ecs::DamageComponent>(damage);
     });
 }
 
