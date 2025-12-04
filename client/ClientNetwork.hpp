@@ -42,6 +42,9 @@ class ClientNetwork {
         std::string getIp() const;
         void setIp(const std::string &ip);
 
+        void setDebugMode(bool isDebug);
+        bool isDebugMode() const;
+
         void loadNetworkLibrary();
         void loadBufferLibrary();
         void loadPacketLibrary();
@@ -86,12 +89,16 @@ class ClientNetwork {
 
         std::shared_ptr<net::INetwork> _network;
         std::shared_ptr<IBuffer> _receptionBuffer;
+        std::shared_ptr<IBuffer> _sendBuffer;
         std::shared_ptr<pm::IPacketManager> _packet;
 
         uint32_t _sequenceNumber;
         uint16_t _port;
         std::string  _ip;
         std::string _name;
+        bool _isDebug;
+
+
         uint8_t _idClient;
         asio::ip::udp::endpoint _serverEndpoint;
 

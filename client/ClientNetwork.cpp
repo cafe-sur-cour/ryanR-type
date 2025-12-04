@@ -17,6 +17,7 @@
 #include "ClientNetwork.hpp"
 #include "../common/Error/ClientNetworkError.hpp"
 #include "../common/Signal/Signal.hpp"
+#include "../common/debug.hpp"
 
 ClientNetwork::ClientNetwork() {
     this->_port = 0;
@@ -26,10 +27,12 @@ ClientNetwork::ClientNetwork() {
     this->_eventQueue = std::queue<NetworkEvent>();
 
     this->_network = nullptr;
-    this->_buffer = nullptr;
+    this->_receptionBuffer = nullptr;
+    this->_sendBuffer = nullptr;
     this->_packet = nullptr;
     this->_sequenceNumber = 0;
     this->_isConnected = false;
+    this->_isDebug = false;
 
     // Initialize packet handlers
     _packetHandlers[0x00] = &ClientNetwork::handleNoOp;
@@ -47,6 +50,7 @@ ClientNetwork::ClientNetwork() {
 ClientNetwork::~ClientNetwork() {
     this->stop();
 }
+
 
 void ClientNetwork::init() {
     if (this->_port == 0 || this->_ip == "") {
@@ -73,10 +77,14 @@ void ClientNetwork::stop() {
         this->_network.reset();
         this->_networloader.Close();
     }
-    if (this->_buffer != nullptr
-        && this->_bufferloader.getHandler() != nullptr) {
-            this->_buffer.reset();
-            this->_bufferloader.Close();
+    if (this->_receptionBuffer != nullptr) {
+            this->_receptionBuffer.reset();
+    }
+    if (this->_sendBuffer != nullptr) {
+            this->_sendBuffer.reset();
+    }
+    if (this->_bufferloader.getHandler() != nullptr) {
+        this->_bufferloader.Close();
     }
     if (this->_packet != nullptr
         && this->_packetloader.getHandler() != nullptr) {
@@ -86,14 +94,16 @@ void ClientNetwork::stop() {
 }
 
 void ClientNetwork::handlePacketType(uint8_t type) {
-    // If payload is empty, it's the header part, wait for payload
     if (this->_packet->getPayload().empty()) {
         return;
     }
     if (type < 10) {
         (this->*_packetHandlers[type])();
     } else {
-        std::cerr << "[ClientNetwork] Unknown packet type: " << (int)type << std::endl;
+        debug::Debug::printDebug(this->_isDebug,
+            "[Client] Unknown packet type: " + std::to_string(static_cast<int>(type)),
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
     }
 }
 
@@ -102,17 +112,28 @@ void ClientNetwork::start() {
     Signal::setupSignalHandlers();
 
     while (!Signal::stopFlag) {
-        //   Hande the event queue
         std::vector<uint8_t> receivedData = this->_network->receiveFrom(this->_idClient);
         if (receivedData.size() > 0) {
             this->_packet->unpack(receivedData);
             handlePacketType(this->_packet->getType());
             receivedData.clear();
         }
+        if (!this->_eventQueue.empty()) {
+            std::lock_guard<std::mutex> lock(this->_queueMutex);
+            this->eventPacket(
+                this->_eventQueue.front().eventType,
+                this->_eventQueue.front().depth,
+                this->_eventQueue.front().direction
+            );
+            this->_eventQueue.pop();
+        }
     }
     if (Signal::stopFlag) {
         this->disconnectionPacket();
-        std::cout << "[Client] Received signal, stopping client" << std::endl;
+        debug::Debug::printDebug(this->_isDebug,
+            "[Client] Signal received, stopping client network",
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
         this->stop();
     }
 }
@@ -132,6 +153,14 @@ std::string ClientNetwork::getIp() const {
 
 void ClientNetwork::setIp(const std::string &ip) {
     _ip = ip;
+}
+
+void ClientNetwork::setDebugMode(bool isDebug) {
+    this->_isDebug = isDebug;
+}
+
+bool ClientNetwork::isDebugMode() const {
+    return this->_isDebug;
 }
 
 void ClientNetwork::sendConnectionData(std::vector<uint8_t> packet) {
@@ -182,147 +211,3 @@ bool ClientNetwork::getEventFromQueue(NetworkEvent &event) {
     return true;
 }
 
-
-/* Packet Handling */
-void ClientNetwork::connectionPacket() {
-    if (!_network) {
-        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
-            err::ClientNetworkError::INTERNAL_ERROR);
-    }
-    std::vector<uint8_t> header = this->_packet->pack(this->_idClient,
-        this->_sequenceNumber, 0x01);
-    this->_network->sendTo(this->_serverEndpoint, header);
-    /* Replace this with name */
-    std::vector<uint64_t> payloadData = {0x01};
-    for (size_t i = 0; i < this->_packet->formatString(this->_name).size(); i++)
-        payloadData.push_back(this->_packet->formatString(this->_name)[i]);
-    std::vector<uint8_t> payload = this->_packet->pack(payloadData);
-    this->_network->sendTo(this->_serverEndpoint, payload);
-    this->_sequenceNumber++;
-}
-
-
-void ClientNetwork::eventPacket(const constants::EventType &eventType,
-    double depth, double direction) {
-    if (!_network) {
-        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
-            err::ClientNetworkError::INTERNAL_ERROR);
-    }
-    std::vector<uint8_t> header =
-        this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x02);
-    this->_network->sendTo(this->_serverEndpoint, header);
-
-    std::vector<uint64_t> payloadData;
-    payloadData.push_back(static_cast<uint64_t>(eventType));
-
-    uint64_t depthBits;
-    std::memcpy(&depthBits, &depth, sizeof(double));
-    payloadData.push_back(depthBits);
-
-    uint64_t dirBits;
-    std::memcpy(&dirBits, &direction, sizeof(double));
-    payloadData.push_back(dirBits);
-
-    std::vector<uint8_t> payload = this->_packet->pack(payloadData);
-    this->_network->sendTo(this->_serverEndpoint, payload);
-    this->_sequenceNumber++;
-}
-
-
-void ClientNetwork::disconnectionPacket() {
-    if (!_network) {
-        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
-            err::ClientNetworkError::INTERNAL_ERROR);
-    }
-    if (this->_idClient == 0) {
-        std::cerr << "[ClientNetwork] Warning: Client ID is not set"
-            << " cannot send disconnection packet" << std::endl;
-        return;
-    }
-    if (!this->_packet) {
-        std::cerr << "[ClientNetwork] Warning: Packet manager not initialized,"
-        << " cannot send disconnection packet" << std::endl;
-        return;
-    }
-    std::vector<uint8_t> header = this->_packet->pack(this->_idClient,
-        this->_sequenceNumber, 0x03);
-    this->_network->sendTo(this->_serverEndpoint, header);
-    this->_sequenceNumber++;
-}
-
-/* Packet Handlers */
-void ClientNetwork::handleNoOp() {
-    // No operation
-}
-
-void ClientNetwork::handleConnectionAcceptation() {
-    auto payload = _packet->getPayload();
-    if (payload.size() >= 1) {
-        uint8_t id = static_cast<uint8_t>(payload[0]);
-        setIdClient(id);
-        _isConnected = true;
-        this->_network->setConnectionState(net::ConnectionState::CONNECTED);
-        this->_packet->reset();
-        std::cout << "[Client] Connection accepted, assigned ID: " << (int)id << std::endl;
-    } else {
-        this->_network->setConnectionState(net::ConnectionState::ERROR_STATE);
-        std::cerr << "[ClientNetwork] Invalid acceptation packet payload" << std::endl;
-    }
-}
-
-void ClientNetwork::handleGameState() {
-    // Handle game state update
-    // Payload: Player ID, State (position, velocity, etc.)
-    auto payload = _packet->getPayload();
-    if (payload.size() >= 2) {
-        uint8_t playerId = static_cast<uint8_t>(payload[0]);
-        // Process game state data
-        std::cout << "[Client] Game state update for player " << (int)playerId << std::endl;
-        // Add to event queue or update local state
-    }
-}
-
-void ClientNetwork::handleMapSend() {
-    // Handle map data
-    // Payload: Player ID, Map Data (JSON)
-    auto payload = _packet->getPayload();
-    if (payload.size() >= 2) {
-        uint8_t playerId = static_cast<uint8_t>(payload[0]);
-        // Process map data
-        std::cout << "[Client] Map data received for player " << (int)playerId << std::endl;
-        // Parse JSON and load map
-    }
-}
-
-void ClientNetwork::handleEndMap() {
-    // Handle end of map
-    auto payload = _packet->getPayload();
-    if (payload.size() >= 1) {
-        uint8_t playerId = static_cast<uint8_t>(payload[0]);
-        std::cout << "[Client] End of map for player " << (int)playerId << std::endl;
-        // Transition to next map or end game
-    }
-}
-
-void ClientNetwork::handleEndGame() {
-    // Handle end of game
-    // Payload: Player ID, Winner ID
-    auto payload = _packet->getPayload();
-    if (payload.size() >= 2) {
-        uint8_t playerId = static_cast<uint8_t>(payload[0]);
-        uint8_t winnerId = static_cast<uint8_t>(payload[1]);
-        std::cout << "[Client] Game ended, winner: " << (int)winnerId << std::endl;
-        (void)playerId;
-        // Show end game screen
-    }
-}
-
-void ClientNetwork::handleCanStart() {
-    // Handle can start signal
-    auto payload = _packet->getPayload();
-    if (payload.size() >= 1) {
-        uint8_t playerId = static_cast<uint8_t>(payload[0]);
-        std::cout << "[Client] Can start game for player " << (int)playerId << std::endl;
-        // Enable game start
-    }
-}
