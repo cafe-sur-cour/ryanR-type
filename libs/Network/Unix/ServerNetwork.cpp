@@ -20,7 +20,7 @@
 
 namespace net {
 
-UnixServerNetwork::UnixServerNetwork() : _nextClientId(1), _port(0) {
+UnixServerNetwork::UnixServerNetwork() : _port(0) {
     _ioContext = std::make_shared<asio::io_context>();
     _isRunning = false;
 }
@@ -75,44 +75,25 @@ void UnixServerNetwork::stop() {
     if (_socket && _socket->is_open()) {
         _socket->close();
     }
-    _clients.clear();
     while (!_incomingPackets.empty()) {
         _incomingPackets.pop();
     }
     _isRunning = false;
 }
 
-uint8_t UnixServerNetwork::acceptConnection(
-    asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
+bool UnixServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
     if (!_socket || !_socket->is_open()) {
         std::cerr << "[SERVER NETWORK] Socket is not open" << std::endl;
-        return 0;
-    }
-
-    uint8_t clientId = this->_nextClientId++;
-    std::vector<uint8_t> header =
-        packetManager->pack(0, packetManager->getSequenceNumber(), 0x02);
-    this->sendTo(id, header);
-    std::vector<uint8_t> payload =
-        packetManager->pack({0x02, static_cast<uint64_t>(clientId)});
-    this->sendTo(id, payload);
-    return clientId;
-}
-
-void UnixServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
-    if (!_socket || !_socket->is_open()) {
-        std::cerr << "[SERVER NETWORK] Socket is not open" << std::endl;
-        return;
+        return false;
     }
 
     asio::error_code ec;
     _socket->send_to(asio::buffer(packet), id, 0, ec);
     if (ec) {
         std::cerr << "[SERVER NETWORK] Send error: " << ec.message() << std::endl;
+        return false;
     }
-    std::cout << "[SERVER NETWORK] Sent " << packet.size()
-        << " bytes to " << id.address().to_string() << ":"
-        << id.port() << std::endl;
+    return true;
 }
 
 void UnixServerNetwork::broadcast(std::vector<uint8_t> data) {

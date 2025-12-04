@@ -38,12 +38,17 @@ class SfmlWindow : public gfx::IWindow {
         void drawSprite(const std::string& texturePath, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f) override;
         void drawSprite(const std::string& texturePath, float x, float y, const math::FRect frameRect, float scaleX = 1.0f, float scaleY = 1.0f) override;
         std::shared_ptr<sf::RenderWindow> getSfmlWindow();
+        void updateView() override;
+        void setViewCenter(float x, float y) override;
+        math::Vector2f getViewCenter() override;
+        math::Vector2f mapPixelToCoords(int x, int y) override;
 
     private:
         std::shared_ptr<sf::RenderWindow> _window;
         std::shared_ptr<assets::AssetManager> _assetManager;
         gfx::TextureManager _textureManager;
         gfx::FontManager _fontManager;
+        sf::View _view;
 };
 
 #endif /* !SFMLWINDOW_HPP_ */

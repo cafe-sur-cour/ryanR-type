@@ -10,6 +10,7 @@
 #include "../../../../systems/input/MovementInputSystem.hpp"
 #include "../../../../systems/rendering/SpriteRenderingSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
+#include "../../../../systems/audio/MusicSystem.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
 
@@ -33,6 +34,7 @@ private:
     std::shared_ptr<ecs::MovementInputSystem> _inputSystem;
     std::shared_ptr<ecs::SpriteRenderingSystem> _spriteRenderingSystem;
     std::shared_ptr<ecs::SoundSystem> _soundSystem;
+    std::shared_ptr<ecs::MusicSystem> _musicSystem;
     std::shared_ptr<EntityPrefabManager> _prefabManager;
     std::shared_ptr<Parser> _parser;
 };

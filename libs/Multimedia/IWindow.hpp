@@ -10,7 +10,9 @@
 
 #include <string>
 #include <utility>
+#include <cstdint>
 #include "../../common/types/FRect.hpp"
+#include "../../common/types/Vector2f.hpp"
 
 namespace gfx {
 
@@ -18,6 +20,7 @@ struct color_t {
     uint8_t r;
     uint8_t g;
     uint8_t b;
+    uint8_t a = 255;
 };
 
 class IWindow {
@@ -41,6 +44,11 @@ class IWindow {
 
         virtual void drawSprite(const std::string& texturePath, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f) = 0;
         virtual void drawSprite(const std::string& texturePath, float x, float y, const math::FRect frameRect, float scaleX = 1.0f, float scaleY = 1.0f) = 0;
+
+        virtual void updateView() = 0;
+        virtual void setViewCenter(float x, float y) = 0;
+        virtual math::Vector2f getViewCenter() = 0;
+        virtual math::Vector2f mapPixelToCoords(int x, int y) = 0;
 };
 
 typedef IWindow *(*createWindow_t)();

@@ -26,6 +26,7 @@ class MouseInputHandler {
 
         std::optional<MouseClickInfo> pollMouseClick();
         math::Vector2f getMousePosition() const;
+        math::Vector2f getWorldMousePosition() const;
         math::Vector2f getNormalizedMousePosition() const;
         bool isMouseButtonPressed(int button) const;
 

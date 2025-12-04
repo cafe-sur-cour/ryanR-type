@@ -26,6 +26,7 @@ class FontManager {
     private:
         std::shared_ptr<assets::AssetManager> _assetManager;
         std::unordered_map<std::string, std::shared_ptr<sf::Font>> _fontCache;
+        std::unordered_map<std::string, std::vector<unsigned char>> _fontDataCache;
 };
 
 } // namespace gfx

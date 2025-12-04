@@ -20,10 +20,16 @@
 #include "../components/permanent/ProjectilePrefabComponent.hpp"
 #include "../components/permanent/VelocityComponent.hpp"
 #include "../../client/components/rendering/RectangleRenderComponent.hpp"
+#include "../../client/components/rendering/TextComponent.hpp"
 #include "../components/permanent/LifetimeComponent.hpp"
 #include "../../client/components/rendering/AnimationComponent.hpp"
+#include "../../client/components/rendering/MusicComponent.hpp"
+#include "../../client/components/rendering/ParallaxComponent.hpp"
 #include "../ECS/entity/Entity.hpp"
 #include "../ECS/entity/registry/Registry.hpp"
+#include "../../client/components/tags/BackGroundMusicTag.hpp"
+#include "../components/tags/ScoreTag.hpp"
+#include "../components/permanent/ScoreComponent.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -88,6 +94,12 @@ void Parser::instanciateComponentDefinitions() {
             {constants::HEIGHT_FIELD, FieldType::FLOAT},
             {constants::COLOR_FIELD, FieldType::OBJECT}
         }}},
+        {constants::TEXTCOMPONENT, {std::type_index(typeid(ecs::TextComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::TEXT_FIELD, FieldType::STRING},
+            {constants::FONTPATH_FIELD, FieldType::STRING},
+            {constants::COLOR_FIELD, FieldType::OBJECT}
+        }}},
         {constants::PROJECTILEPREFABCOMPONENT, {
             std::type_index(typeid(ecs::ProjectilePrefabComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
@@ -97,6 +109,34 @@ void Parser::instanciateComponentDefinitions() {
             std::type_index(typeid(ecs::LifetimeComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::LIFETIME_FIELD, FieldType::FLOAT}
+        }}},
+        {constants::PARALLAXCOMPONENT, {
+            std::type_index(typeid(ecs::ParallaxComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::BASESCROLLSPEED_FIELD, FieldType::FLOAT},
+            {constants::DIRECTION_FIELD, FieldType::VECTOR2F},
+            {constants::LAYERS_FIELD, FieldType::JSON}
+        }}},
+                {constants::BACKGROUNDMUSICTAG, {
+            std::type_index(typeid(ecs::BackGroundMusicTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::MUSICCOMPONENT, {
+            std::type_index(typeid(ecs::MusicComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::MUSICFILE_FIELD, FieldType::STRING},
+            {constants::INITIALSTATEMUSIC_FIELD, FieldType::STRING},
+            {constants::VOLUME_FIELD, FieldType::FLOAT},
+            {constants::LOOP_FIELD, FieldType::BOOL}
+        }}},
+        {constants::SCORETAG, {
+            std::type_index(typeid(ecs::ScoreTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::SCORECOMPONENT, {
+            std::type_index(typeid(ecs::ScoreComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::SCORE_FIELD, FieldType::INT}
         }}}
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
@@ -235,6 +275,19 @@ void Parser::instanciateComponentCreators() {
         return std::make_shared<ecs::RectangleRenderComponent>(color, width, height);
     });
 
+    registerComponent<ecs::TextComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto text = std::get<std::string>(*fields.at(constants::TEXT_FIELD));
+        auto fontPath = std::get<std::string>(*fields.at(constants::FONTPATH_FIELD));
+        auto colorObj = std::get<std::map<std::string, std::shared_ptr<FieldValue>>>
+            (*fields.at(constants::COLOR_FIELD));
+        auto r = static_cast<uint8_t>(std::get<int>(*colorObj.at(constants::R_FIELD)));
+        auto g = static_cast<uint8_t>(std::get<int>(*colorObj.at(constants::G_FIELD)));
+        auto b = static_cast<uint8_t>(std::get<int>(*colorObj.at(constants::B_FIELD)));
+        gfx::color_t color = {r, g, b};
+        return std::make_shared<ecs::TextComponent>(text, fontPath, color);
+    });
+
     registerComponent<ecs::ProjectilePrefabComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto prefabName = std::get<std::string>(*fields.at(constants::PREFABNAME_FIELD));
@@ -245,6 +298,91 @@ void Parser::instanciateComponentCreators() {
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto lifetime = std::get<float>(*fields.at(constants::LIFETIME_FIELD));
         return std::make_shared<ecs::LifetimeComponent>(lifetime);
+    });
+    registerComponent<ecs::ScoreTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::ScoreTag>();
+    });
+    registerComponent<ecs::ScoreComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto score = std::get<int>(*fields.at(constants::SCORE_FIELD));
+        return std::make_shared<ecs::ScoreComponent>(score);
+    });
+    registerComponent<ecs::ParallaxComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto parallax = std::make_shared<ecs::ParallaxComponent>();
+
+        auto baseSpeed = std::get<float>(*fields.at(constants::BASESCROLLSPEED_FIELD));
+        auto direction = std::get<math::Vector2f>(*fields.at(constants::DIRECTION_FIELD));
+        auto layersJson = std::get<nlohmann::json>(*fields.at(constants::LAYERS_FIELD));
+
+        parallax->setBaseScrollSpeed(baseSpeed);
+        parallax->setDirection(direction);
+
+        for (const auto& layerJson : layersJson) {
+            ecs::ParallaxLayer layer;
+
+            layer.name = layerJson.value(constants::NAME_FIELD, "");
+            layer.filePath = layerJson.value(constants::FILEPATH_FIELD, "");
+            layer.speedMultiplier = layerJson.value(constants::SPEEDMULTIPLIER_FIELD, 1.0f);
+
+            if (layerJson.contains(constants::SCALE_FIELD)) {
+                auto scaleJson = layerJson[constants::SCALE_FIELD];
+                layer.scale = math::Vector2f(
+                    scaleJson.value(constants::X_FIELD, 1.0f),
+                    scaleJson.value(constants::Y_FIELD, 1.0f)
+                );
+            }
+
+            if (layerJson.contains(constants::SCALEMODE_FIELD)) {
+                std::string scaleModeStr = layerJson[constants::SCALEMODE_FIELD];
+                if (scaleModeStr == constants::SCALEMODE_FITSCREEN) {
+                    layer.scaleMode = ecs::ParallaxScaleMode::FIT_SCREEN;
+                } else if (scaleModeStr == constants::SCALEMODE_STRETCH) {
+                    layer.scaleMode = ecs::ParallaxScaleMode::STRETCH;
+                } else if (scaleModeStr == constants::SCALEMODE_MANUAL) {
+                    layer.scaleMode = ecs::ParallaxScaleMode::MANUAL;
+                } else {
+                    layer.scaleMode = ecs::ParallaxScaleMode::FIT_SCREEN;
+                }
+            }
+
+            if (layerJson.contains(constants::SOURCESIZE_FIELD)) {
+                auto sourceSizeJson = layerJson[constants::SOURCESIZE_FIELD];
+                layer.sourceSize = math::Vector2f(
+                    sourceSizeJson.value(constants::X_FIELD, constants::DEFAULT_TEXTURE_WIDTH),
+                    sourceSizeJson.value(constants::Y_FIELD, constants::DEFAULT_TEXTURE_HEIGHT)
+                );
+            }
+
+            layer.repeat = layerJson.value(constants::REPEAT_FIELD, true);
+            layer.zIndex = layerJson.value(constants::ZINDEX_FIELD, 0);
+            layer.currentOffset = math::Vector2f(0.0f, 0.0f);
+
+            parallax->addLayer(layer);
+        }
+
+        parallax->sortLayersByZIndex();
+        return parallax;
+    });
+    registerComponent<ecs::BackGroundMusicTag>([]([[maybe_unused]]
+        const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::BackGroundMusicTag>();
+    });
+    registerComponent<ecs::MusicComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto musicFile = std::get<std::string>(*fields.at(constants::MUSICFILE_FIELD));
+        auto initialStateStr = std::get<std::string>
+            (*fields.at(constants::INITIALSTATEMUSIC_FIELD));
+        auto volume = std::get<float>(*fields.at(constants::VOLUME_FIELD));
+        auto loop = std::get<bool>(*fields.at(constants::LOOP_FIELD));
+        ecs::MusicState initialState = ecs::STOPPED;
+        if (initialStateStr == constants::PLAYING_FIELD) initialState = ecs::PLAYING;
+        else if (initialStateStr == constants::PAUSED_FIELD) initialState = ecs::PAUSED;
+        else if (initialStateStr == constants::CHANGING_FIELD) initialState = ecs::CHANGING;
+        else if (initialStateStr == constants::STOPPED_FIELD) initialState = ecs::STOPPED;
+        return std::make_shared<ecs::MusicComponent>(musicFile, initialState, volume, loop);
     });
 }
 

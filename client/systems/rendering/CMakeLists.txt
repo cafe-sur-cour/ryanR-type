@@ -7,4 +7,12 @@ target_sources(${CLIENT_BIN_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/HitboxRenderingSystem.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RectangleRenderingSystem.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RectangleRenderingSystem.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TextRenderingSystem.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TextRenderingSystem.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ParallaxRenderingSystem.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ParallaxRenderingSystem.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameZoneRenderingSystem.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameZoneRenderingSystem.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameZoneViewSystem.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameZoneViewSystem.hpp
 )
