@@ -19,6 +19,9 @@ namespace constants {
     constexpr float INVALID_MOUSE_POSITION = -1.0f;
     constexpr float NAVIGATION_COOLDOWN_TIME = 0.2f;
 
+    /* View */
+    constexpr float VIEW_SMOOTHING_SPEED = 15.0f;
+
     enum MouseButton {
         LEFT = 0,
         RIGHT = 1,

@@ -95,6 +95,12 @@ std::shared_ptr<FieldValue> ComposantParser::parseFieldValue
                     err::ParserError::TYPE_MISMATCH);
             return std::make_shared<FieldValue>(jsonValue.get<int>());
         }
+        case FieldType::BOOL: {
+            if (!jsonValue.is_boolean())
+                throw err::ParserError("Invalid bool format",
+                    err::ParserError::TYPE_MISMATCH);
+            return std::make_shared<FieldValue>(jsonValue.get<bool>());
+        }
         case FieldType::OBJECT: {
             if (!jsonValue.is_object())
                 throw err::ParserError("Invalid object format",

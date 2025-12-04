@@ -8,7 +8,7 @@
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "both" },
-        "SpeedComponent": { "target": "both", "speed": 10.0 },
+        "SpeedComponent": { "target": "both", "speed": 500.0 },
         "AnimationComponent": {
             "target": "client",
             "states": {
@@ -82,7 +82,7 @@
         "ColliderComponent": {
             "target": "both",
             "offset": { "x": 0.0, "y": 0.0 },
-            "size": { "x": 33.2, "y": 17.2 },
+            "size": { "x": 33.0, "y": 17.0 },
             "type": "Solid"
         },
         "ProjectilePrefabComponent": {
@@ -100,6 +100,11 @@
         "PlayerTag": { "target": "both" },
         "ProjectilePassThroughTag": { "target": "both" },
         "ControllableTag": { "target": "both" },
-        "ShooterTag": { "target": "both" }
+        "ShooterTag": { "target": "both" },
+        "ScoreComponent": {
+            "target": "both",
+            "score": 0
+        },
+        "ScoreTag": { "target": "both" }
     }
 }

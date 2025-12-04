@@ -7,4 +7,6 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     ProjectilePrefabComponent.hpp
     LifetimeComponent.hpp
     HealthComponent.hpp
+    ScoreComponent.hpp
+    GameZoneComponent.hpp
 )

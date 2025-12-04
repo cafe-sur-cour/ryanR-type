@@ -62,6 +62,12 @@ class MovementSystem : public ASystem {
             math::Vector2f desiredPos,
             std::shared_ptr<ecs::VelocityComponent> velocityComp
         );
+        void handlePushCollision(
+            std::shared_ptr<Registry> registry,
+            size_t entityId,
+            math::Vector2f finalPos,
+            float deltaTime
+        );
 };
 
 }  // namespace ecs

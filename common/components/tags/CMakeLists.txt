@@ -6,4 +6,6 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     ObstacleTag.hpp
     ControllableTag.hpp
     ShooterTag.hpp
+    ScoreTag.hpp
+    GameZoneColliderTag.hpp
 )

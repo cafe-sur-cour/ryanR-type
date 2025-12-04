@@ -17,6 +17,10 @@
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../types/Vector2f.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
+#include "../../components/permanent/ColliderComponent.hpp"
+#include "../../../client/components/rendering/MusicComponent.hpp"
+#include "../../components/permanent/GameZoneComponent.hpp"
+#include "../../components/tags/GameZoneColliderTag.hpp"
 
 MapParser::MapParser(std::shared_ptr<EntityPrefabManager> prefabManager,
     std::shared_ptr<ecs::Registry> registry)
@@ -49,10 +53,15 @@ void MapParser::parseMapFromFile(const std::string& filePath) {
 }
 
 void MapParser::parseMap(const nlohmann::json& mapJson) {
-    if (mapJson.contains(constants::BACKGROUND_FIELD) &&
-        mapJson.contains(constants::SCROLLSPEED_FIELD))
-        createBackgroundEntity(mapJson[constants::BACKGROUND_FIELD],
-            mapJson[constants::SCROLLSPEED_FIELD]);
+    if (mapJson.contains(constants::BACKGROUND_FIELD))
+        createBackgroundEntity(mapJson[constants::BACKGROUND_FIELD]);
+
+    if (mapJson.contains(constants::MUSIC_FIELD)) {
+        std::string prefabName = mapJson[constants::MUSIC_FIELD].get<std::string>();
+        createMusicEntity(prefabName);
+    }
+    if (mapJson.contains(constants::BACKGROUND_SCROLL_SPEED_FIELD))
+        createGameZoneEntity(mapJson[constants::BACKGROUND_SCROLL_SPEED_FIELD]);
 
     float tileWidth = constants::TILE_SIZE.getX();
     float tileHeight = constants::TILE_SIZE.getY();
@@ -72,28 +81,59 @@ void MapParser::parseMap(const nlohmann::json& mapJson) {
         parseWaves(mapJson[constants::WAVES_FIELD], tileWidth);
 }
 
-void MapParser::createBackgroundEntity(const std::string& entityName, float scrollSpeed) {
+void MapParser::createBackgroundEntity(const std::string& entityName) {
     if (entityName.empty())
         return;
 
     if (_prefabManager->hasPrefab(entityName)) {
         try {
-            ecs::Entity bgEntity = createEntityFromPrefab(entityName,
+            createEntityFromPrefab(entityName,
                 constants::BACKGROUND_POSITION.getX(),
                 constants::BACKGROUND_POSITION.getY());
-            if (_registry->hasComponent<ecs::VelocityComponent>(bgEntity)) {
-                auto velocity = _registry->getComponent<ecs::VelocityComponent>(bgEntity);
-                if (velocity )
-                    velocity->setVelocity(math::Vector2f(scrollSpeed *
-                        constants::SCROLL_VELOCITY_X_MULTIPLIER,
-                        constants::SCROLL_VELOCITY_Y));
-            }
         } catch (const std::exception& e) {
             std::cerr << "Error creating background entity: " << e.what() << std::endl;
         }
     } else {
         std::cerr << "Warning: 'background' prefab not found" << std::endl;
     }
+}
+
+void MapParser::createGameZoneEntity(float scrollSpeed) {
+    ecs::Entity gameZoneEntity = _registry->createEntity();
+
+    math::FRect zoneRect(0.0f, 0.0f,
+        constants::MAX_WIDTH, constants::MAX_HEIGHT);
+
+    _registry->addComponent<ecs::TransformComponent>(gameZoneEntity,
+        std::make_shared<ecs::TransformComponent>(math::Vector2f(0.0f, 0.0f)));
+    _registry->addComponent<ecs::VelocityComponent>(gameZoneEntity,
+        std::make_shared<ecs::VelocityComponent>(math::Vector2f(scrollSpeed, 0.0f)));
+    _registry->addComponent<ecs::GameZoneComponent>(gameZoneEntity,
+        std::make_shared<ecs::GameZoneComponent>(zoneRect));
+
+    _registry->addComponent<ecs::GameZoneColliderTag>(gameZoneEntity,
+        std::make_shared<ecs::GameZoneColliderTag>());
+
+    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
+        std::make_shared<ecs::ColliderComponent>(
+            math::Vector2f(0.0f, -constants::GAME_ZONE_BOUNDARY_THICKNESS),
+            math::Vector2f(constants::MAX_WIDTH, constants::GAME_ZONE_BOUNDARY_THICKNESS)));
+
+    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
+        std::make_shared<ecs::ColliderComponent>(
+            math::Vector2f(0.0f, constants::MAX_HEIGHT),
+            math::Vector2f(constants::MAX_WIDTH, constants::GAME_ZONE_BOUNDARY_THICKNESS)));
+
+    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
+        std::make_shared<ecs::ColliderComponent>(
+            math::Vector2f(constants::MAX_WIDTH, 0.0f),
+            math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT)));
+
+    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
+        std::make_shared<ecs::ColliderComponent>(
+            math::Vector2f(-constants::GAME_ZONE_BOUNDARY_THICKNESS, 0.0f),
+            math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT),
+            ecs::CollisionType::Push));
 }
 
 void MapParser::parseMapGrid(const nlohmann::json& legend, const nlohmann::json& mapGrid,
@@ -165,8 +205,8 @@ void MapParser::parseWaves(const nlohmann::json& waves, float tileWidth) {
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<> disY(0.0f, static_cast<float>(constants::MAX_HEIGHT));
-    std::uniform_real_distribution<> disX(0.0f, 1.0f);
+    std::uniform_real_distribution<> disY(0.0, static_cast<double>(constants::MAX_HEIGHT));
+    std::uniform_real_distribution<> disX(0.0, 1.0);
 
     for (size_t waveIndex = 0; waveIndex < waves.size(); ++waveIndex) {
         const auto& wave = waves[waveIndex];
@@ -236,4 +276,16 @@ ecs::Entity MapParser::createEntityFromPrefab(const std::string& prefabName,
     }
 
     return entity;
+}
+
+void MapParser::createMusicEntity(const std::string& prefabName) {
+    if (_prefabManager->hasPrefab(prefabName)) {
+        try {
+            _prefabManager->createEntityFromPrefab(prefabName, _registry);
+        } catch (const std::exception& e) {
+            std::cerr << "Error creating music entity: " << e.what() << std::endl;
+        }
+    } else {
+        std::cerr << "Warning: 'music' prefab not found" << std::endl;
+    }
 }

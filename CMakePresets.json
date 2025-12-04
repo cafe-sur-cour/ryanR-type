@@ -27,12 +27,42 @@
             }
         },
         {
+            "name": "debug-unix",
+            "inherits": ["vcpkg"],
+            "binaryDir": "${sourceDir}/build/unix/bin/",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CXX_STANDARD": "20"
+            },
+            "condition": {
+                "type": "inList",
+                "string": "${hostSystemName}",
+                "list": ["Linux", "Darwin"]
+            }
+        },
+        {
             "name": "release-windows",
             "inherits": ["vcpkg"],
             "binaryDir": "${sourceDir}/build/windows/bin/",
             "generator": "Visual Studio 17 2022",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CXX_STANDARD": "20"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "debug-windows",
+            "inherits": ["vcpkg"],
+            "binaryDir": "${sourceDir}/build/windows/bin/",
+            "generator": "Visual Studio 17 2022",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_CXX_STANDARD": "20"
             },
             "condition": {
@@ -48,8 +78,18 @@
             "configurePreset": "release-unix"
         },
         {
+            "name": "debug-unix",
+            "configurePreset": "debug-unix"
+        },
+        {
             "name": "release-windows",
-            "configurePreset": "release-windows"
+            "configurePreset": "release-windows",
+            "configuration": "Release"
+        },
+        {
+            "name": "debug-windows",
+            "configurePreset": "debug-windows",
+            "configuration": "Debug"
         }
     ]
 }

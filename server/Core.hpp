@@ -9,6 +9,7 @@
 #include "Utils.hpp"
 #include "ServerConfig.hpp"
 #include "../common/resourceManager/ResourceManager.hpp"
+#include <thread>
 
 #ifndef CORE_HPP_
 #define CORE_HPP_
@@ -29,8 +30,8 @@ class Core {
     private:
         std::shared_ptr<Utils> _utils;
         std::shared_ptr<rserv::Server> _server;
+        std::thread _serverThread;
 
-        /* Add esc related elem here */
         std::shared_ptr<ResourceManager> _resourceManager;
 };
 
