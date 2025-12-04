@@ -111,7 +111,6 @@ bool MovementSystem::checkCollision(
             math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale);
 
             for (auto& otherCollider : otherColliders) {
-                // Solid collider collides with both Solid and Push colliders
                 if (otherCollider->getType() != CollisionType::Solid &&
                     otherCollider->getType() != CollisionType::Push) continue;
 
