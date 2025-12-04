@@ -126,7 +126,8 @@ void Parser::instanciateComponentDefinitions() {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::MUSICFILE_FIELD, FieldType::STRING},
             {constants::INITIALSTATEMUSIC_FIELD, FieldType::STRING},
-            {constants::VOLUME_FIELD, FieldType::FLOAT}
+            {constants::VOLUME_FIELD, FieldType::FLOAT},
+            {constants::LOOP_FIELD, FieldType::BOOL}
         }}},
         {constants::SCORETAG, {
             std::type_index(typeid(ecs::ScoreTag)), {
@@ -375,12 +376,13 @@ void Parser::instanciateComponentCreators() {
         auto initialStateStr = std::get<std::string>
             (*fields.at(constants::INITIALSTATEMUSIC_FIELD));
         auto volume = std::get<float>(*fields.at(constants::VOLUME_FIELD));
+        auto loop = std::get<bool>(*fields.at(constants::LOOP_FIELD));
         ecs::MusicState initialState = ecs::STOPPED;
         if (initialStateStr == constants::PLAYING_FIELD) initialState = ecs::PLAYING;
         else if (initialStateStr == constants::PAUSED_FIELD) initialState = ecs::PAUSED;
         else if (initialStateStr == constants::CHANGING_FIELD) initialState = ecs::CHANGING;
         else if (initialStateStr == constants::STOPPED_FIELD) initialState = ecs::STOPPED;
-        return std::make_shared<ecs::MusicComponent>(musicFile, initialState, volume);
+        return std::make_shared<ecs::MusicComponent>(musicFile, initialState, volume, loop);
     });
 }
 
