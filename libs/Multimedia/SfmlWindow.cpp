@@ -66,7 +66,7 @@ void SfmlWindow::drawSprite(std::string asset, gfx::color_t color,
         throw std::runtime_error("Failed to load texture: " + asset);
 
     sf::Sprite sprite(*texture);
-    sprite.setColor(sf::Color(color.r, color.g, color.b));
+    sprite.setColor(sf::Color(color.r, color.g, color.b, color.a));
     sprite.setPosition(sf::Vector2f(static_cast<float>(position.first),
         static_cast<float>(position.second)));
     _window->draw(sprite);
@@ -81,7 +81,7 @@ void SfmlWindow::drawText(std::string text, gfx::color_t color,
     }
 
     sf::Text sfText(*font, sf::String(text), 24);
-    sfText.setFillColor(sf::Color(color.r, color.g, color.b));
+    sfText.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
     sfText.setPosition(sf::Vector2f(static_cast<float>(position.first),
         static_cast<float>(position.second)));
     _window->draw(sfText);
@@ -92,7 +92,7 @@ void SfmlWindow::drawRectangleOutline(gfx::color_t color,
     sf::RectangleShape rectangle(sf::Vector2f(static_cast<float>(size.first),
     static_cast<float>(size.second)));
     rectangle.setFillColor(sf::Color::Transparent);
-    rectangle.setOutlineColor(sf::Color(color.r, color.g, color.b));
+    rectangle.setOutlineColor(sf::Color(color.r, color.g, color.b, color.a));
     rectangle.setOutlineThickness(1.0f);
     rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first),
     static_cast<float>(position.second)));
@@ -103,7 +103,7 @@ void SfmlWindow::drawFilledRectangle(gfx::color_t color,
     std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) {
     sf::RectangleShape rectangle(sf::Vector2f(static_cast<float>(size.first),
     static_cast<float>(size.second)));
-    rectangle.setFillColor(sf::Color(color.r, color.g, color.b));
+    rectangle.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
     rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first),
     static_cast<float>(position.second)));
     _window->draw(rectangle);

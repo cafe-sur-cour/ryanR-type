@@ -37,24 +37,10 @@ void GameZoneRenderingSystem::update(std::shared_ptr<ResourceManager>
         if (resourceManager->has<gfx::IWindow>()) {
             auto window = resourceManager->get<gfx::IWindow>();
 
-            gfx::color_t color = {255, 0, 0};
-
+            gfx::color_t color = {255, 0, 0, 50};
             window->drawFilledRectangle(color,
-                {static_cast<size_t>(zone.getLeft()),
-                    static_cast<size_t>(zone.getTop())},
-                {static_cast<size_t>(zone.getWidth()), 1});
-            window->drawFilledRectangle(color,
-                {static_cast<size_t>(zone.getLeft()),
-                    static_cast<size_t>(zone.getTop() + zone.getHeight() - 1)},
-                {static_cast<size_t>(zone.getWidth()), 1});
-            window->drawFilledRectangle(color,
-                {static_cast<size_t>(zone.getLeft()),
-                    static_cast<size_t>(zone.getTop())},
-                {1, static_cast<size_t>(zone.getHeight())});
-            window->drawFilledRectangle(color,
-                {static_cast<size_t>(zone.getLeft() + zone.getWidth() - 1),
-                    static_cast<size_t>(zone.getTop())},
-                {1, static_cast<size_t>(zone.getHeight())});
+                {static_cast<size_t>(zone.getLeft()), static_cast<size_t>(zone.getTop())},
+                {static_cast<size_t>(zone.getWidth()), static_cast<size_t>(zone.getHeight())});
         }
     }
 }
