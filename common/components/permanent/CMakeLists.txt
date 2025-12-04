@@ -10,4 +10,5 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     ScoreComponent.hpp
     DamageComponent.hpp
     GameZoneComponent.hpp
+    InteractionConfigComponent.hpp
 )

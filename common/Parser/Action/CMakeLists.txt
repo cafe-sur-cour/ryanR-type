@@ -3,10 +3,12 @@ set(ACTION_LIB ACTION)
 set(ACTION_SOURCES
     ActionFactory.cpp
     ActionRegistry.cpp
+    TagRegistry.cpp
 )
 
 set(ACTION_HEADERS
     ActionFactory.hpp
+    TagRegistry.hpp
 )
 
 add_library(${ACTION_LIB} STATIC ${ACTION_SOURCES} ${ACTION_HEADERS})
