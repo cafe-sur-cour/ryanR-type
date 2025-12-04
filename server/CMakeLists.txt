@@ -46,3 +46,11 @@ add_custom_command(TARGET ${SERVER_BIN_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${SERVER_BIN_NAME}> ${CMAKE_SOURCE_DIR}/
     COMMENT "Copying ${SERVER_BIN_NAME} to root directory"
 )
+
+if(WIN32)
+    # Copy vcpkg DLLs
+    add_custom_command(TARGET ${SERVER_BIN_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/bin/ ${CMAKE_SOURCE_DIR}/
+        COMMENT "Copying vcpkg DLLs to root directory"
+    )
+endif()
