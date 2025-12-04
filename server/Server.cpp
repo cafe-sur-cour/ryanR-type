@@ -225,6 +225,13 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
     return false;
 }
 
+bool rserv::Server::processEvents(uint8_t idClient) {
+    constants::EventType event = static_cast<constants::EventType>(
+        this->_packet->getPayload().at(1));
+    this->_eventQueue.push(std::make_pair(idClient, event));
+    return true;
+}
+
 void rserv::Server::broadcastPacket() {
     std::vector<uint8_t> packedData;
     if (_network) {

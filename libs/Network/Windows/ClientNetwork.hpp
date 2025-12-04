@@ -53,6 +53,7 @@ class WindowsNetwork : public ANetwork {
     protected:
         void disconnect();
         bool isConnected() const;
+
     private:
         asio::ip::udp::endpoint _serverEndpoint;
         bool _connected;

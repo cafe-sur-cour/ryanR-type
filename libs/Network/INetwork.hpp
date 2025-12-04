@@ -43,8 +43,6 @@ class INetwork {
         virtual void setDisconnectionCallback(std::function<void(int)> onDisconnect) = 0;
         virtual ConnectionState getConnectionState() const = 0;
         virtual void setConnectionState(ConnectionState state) = 0;
-    protected:
-    private:
 };
 
 } // namespace net
