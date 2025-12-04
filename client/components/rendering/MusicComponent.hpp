@@ -23,8 +23,8 @@ typedef enum MusicState {
 
 class MusicComponent : public AComponent {
     public:
-        MusicComponent(std::string musicFile = "", MusicState initialState = STOPPED, float volume = 100.0f)
-            : _currentMusic(musicFile), _state(initialState), _volume(volume) {};
+        MusicComponent(std::string musicFile = "", MusicState initialState = STOPPED, float volume = 100.0f, bool loop = false)
+            : _currentMusic(musicFile), _state(initialState), _volume(volume), _loop(loop) {};
         ~MusicComponent() = default;
 
         void playMusic() { _state = PLAYING; };
@@ -43,11 +43,15 @@ class MusicComponent : public AComponent {
         float getVolume() const { return _volume; };
         void setVolume(float volume) { _volume = volume; };
 
+        bool isLooping() const { return _loop; };
+        void setLoop(bool loop) { _loop = loop; };
+
     protected:
     private:
         std::string _currentMusic;
         MusicState _state;
         float _volume;
+        bool _loop;
 };
 
 }  // namespace ecs

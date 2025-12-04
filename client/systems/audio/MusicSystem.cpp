@@ -52,7 +52,8 @@ void MusicSystem::update(std::shared_ptr<ResourceManager>
             switch (intent->getAction()) {
                 case PLAY:
                     audio->setMusicVolume(intent->getVolume());
-                    audio->playMusic(musicComp->getCurrentMusic());
+                    audio->playMusic(musicComp->getCurrentMusic(),
+                        musicComp->isLooping());
                     musicComp->playMusic();
                     break;
                 case PAUSE:
@@ -60,7 +61,8 @@ void MusicSystem::update(std::shared_ptr<ResourceManager>
                     musicComp->pauseMusic();
                     break;
                 case CHANGE:
-                    audio->playMusic(intent->getMusicPath());
+                    audio->playMusic(intent->getMusicPath(),
+                        musicComp->isLooping());
                     audio->setMusicVolume(intent->getVolume());
                     musicComp->playNewMusic(intent->getMusicPath());
                     break;
