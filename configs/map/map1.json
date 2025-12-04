@@ -28,7 +28,7 @@
             "spawnLength": 15,
             "posX": 5,
             "enemies": [
-                    { "type": "enemy1", "count": 3}
+                    { "type": "enemy1", "count": 2}
             ]
         }
     ]
