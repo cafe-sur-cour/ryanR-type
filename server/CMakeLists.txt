@@ -23,6 +23,7 @@ target_link_libraries(${SERVER_LIB_NAME}
         DLLoader
         NetworkServer
         NetworkClient
+        DEBUG
         Packet
         asio::asio
         nlohmann_json::nlohmann_json

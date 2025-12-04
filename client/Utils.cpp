@@ -42,6 +42,11 @@ void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork>
         std::string arg = av[i];
         if (arg == "-p" && i + 1 < ac) {
             port = std::stoi(av[i + 1]);
+            if (port < 1024 || port > 65535) {
+                std::cerr << "[SERVER] Error: Port must be between 1024 and 65535"
+                    << std::endl;
+                exit(84);
+            }
             i++;
         } else if (arg == "-i" && i + 1 < ac) {
             ip = av[i + 1];
