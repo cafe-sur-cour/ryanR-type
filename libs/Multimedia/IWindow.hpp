@@ -48,6 +48,7 @@ class IWindow {
         virtual void updateView() = 0;
         virtual void setViewCenter(float x, float y) = 0;
         virtual math::Vector2f getViewCenter() = 0;
+        virtual math::Vector2f mapPixelToCoords(int x, int y) = 0;
 };
 
 typedef IWindow *(*createWindow_t)();
