@@ -26,6 +26,7 @@ ClientNetwork::ClientNetwork() {
     this->_idClient = 0;
     this->_eventQueue = std::queue<NetworkEvent>();
 
+    this->_isConnected = false;
     this->_network = nullptr;
     this->_receptionBuffer = nullptr;
     this->_sendBuffer = nullptr;
@@ -91,6 +92,70 @@ void ClientNetwork::stop() {
         this->_packet.reset();
         this->_packetloader.Close();
     }
+}
+
+uint16_t ClientNetwork::getPort() const {
+    return _port;
+}
+
+void ClientNetwork::setPort(int port) {
+    _port = static_cast<uint16_t>(port);
+}
+
+std::string ClientNetwork::getIp() const {
+    return _ip;
+}
+
+void ClientNetwork::setIp(const std::string &ip) {
+    _ip = ip;
+}
+
+void ClientNetwork::setDebugMode(bool isDebug) {
+    this->_isDebug = isDebug;
+}
+
+bool ClientNetwork::isDebugMode() const {
+    return this->_isDebug;
+}
+
+std::shared_ptr<net::INetwork> ClientNetwork::getNetwork() const {
+    return this->_network;
+}
+
+void ClientNetwork::sendConnectionData(std::vector<uint8_t> packet) {
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
+    }
+    this->_network->sendTo(this->_serverEndpoint, packet);
+}
+
+std::string ClientNetwork::getName() const {
+    return this->_name;
+}
+
+void ClientNetwork::setName(const std::string &name) {
+    this->_name = name;
+}
+
+uint8_t ClientNetwork::getIdClient() const {
+    return this->_idClient;
+}
+
+void ClientNetwork::setIdClient(uint8_t idClient) {
+    this->_idClient = idClient;
+}
+
+net::ConnectionState ClientNetwork::getConnectionState() const {
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
+    }
+    return this->_network->getConnectionState();
+}
+
+bool ClientNetwork::isConnected() const {
+    return this->_isConnected.load();
 }
 
 void ClientNetwork::handlePacketType(uint8_t type) {
@@ -182,65 +247,6 @@ void ClientNetwork::start() {
 }
 
 
-uint16_t ClientNetwork::getPort() const {
-    return _port;
-}
-
-void ClientNetwork::setPort(int port) {
-    _port = static_cast<uint16_t>(port);
-}
-
-std::string ClientNetwork::getIp() const {
-    return _ip;
-}
-
-void ClientNetwork::setIp(const std::string &ip) {
-    _ip = ip;
-}
-
-void ClientNetwork::setDebugMode(bool isDebug) {
-    this->_isDebug = isDebug;
-}
-
-bool ClientNetwork::isDebugMode() const {
-    return this->_isDebug;
-}
-
-std::shared_ptr<net::INetwork> ClientNetwork::getNetwork() const {
-    return this->_network;
-}
-
-void ClientNetwork::sendConnectionData(std::vector<uint8_t> packet) {
-    if (!_network) {
-        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
-            err::ClientNetworkError::INTERNAL_ERROR);
-    }
-    this->_network->sendTo(this->_serverEndpoint, packet);
-}
-
-std::string ClientNetwork::getName() const {
-    return this->_name;
-}
-
-void ClientNetwork::setName(const std::string &name) {
-    this->_name = name;
-}
-
-uint8_t ClientNetwork::getIdClient() const {
-    return this->_idClient;
-}
-
-void ClientNetwork::setIdClient(uint8_t idClient) {
-    this->_idClient = idClient;
-}
-
-net::ConnectionState ClientNetwork::getConnectionState() const {
-    if (!_network) {
-        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
-            err::ClientNetworkError::INTERNAL_ERROR);
-    }
-    return this->_network->getConnectionState();
-}
 
 void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
     std::lock_guard<std::mutex> lock(this->_queueMutex);
