@@ -85,7 +85,6 @@ void Parser::instanciateComponentDefinitions() {
             {std::type_index(typeid(ecs::ShootingStatsComponent)), {
                 {constants::TARGET_FIELD, FieldType::STRING},
                 {constants::FIRERATE_FIELD, FieldType::FLOAT},
-                {constants::PROJECTILESPEED_FIELD, FieldType::FLOAT},
                 {constants::SHOTCOUNT_FIELD, FieldType::INT},
                 {constants::ANGLEOFFSET_FIELD, FieldType::FLOAT},
                 {constants::SPREADANGLE_FIELD, FieldType::FLOAT}
@@ -275,13 +274,12 @@ void Parser::instanciateComponentCreators() {
     registerComponent<ecs::ShootingStatsComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto fireRate = std::get<float>(*fields.at(constants::FIRERATE_FIELD));
-        auto projectileSpeed = std::get<float>(*fields.at(constants::PROJECTILESPEED_FIELD));
         auto shotCount = std::get<int>(*fields.at(constants::SHOTCOUNT_FIELD));
         auto angleOffset = std::get<float>(*fields.at(constants::ANGLEOFFSET_FIELD));
         auto spreadAngle = std::get<float>(*fields.at(constants::SPREADANGLE_FIELD));
         ecs::MultiShotPattern pattern(shotCount, spreadAngle, angleOffset);
         return std::make_shared<ecs::ShootingStatsComponent>(
-            fireRate, projectileSpeed, pattern
+            fireRate, pattern
         );
     });
 

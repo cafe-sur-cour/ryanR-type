@@ -81,7 +81,6 @@ namespace constants {
     const std::string STARTHEIGHT_FIELD = "startHeight";
     const std::string SIZE_FIELD = "size";
     const std::string FIRERATE_FIELD = "fireRate";
-    const std::string PROJECTILESPEED_FIELD = "projectileSpeed";
     const std::string SHOTCOUNT_FIELD = "shotCount";
     const std::string ANGLEOFFSET_FIELD = "angleOffset";
     const std::string SPREADANGLE_FIELD = "spreadAngle";

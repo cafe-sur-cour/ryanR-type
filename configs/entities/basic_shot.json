@@ -23,6 +23,10 @@
             "target": "both",
             "damage": 25.0
         },
+        "SpeedComponent": {
+            "target": "both",
+            "speed": 1000.0
+        },
         "LifetimeComponent": {
             "target": "both",
             "lifetime": 2.0

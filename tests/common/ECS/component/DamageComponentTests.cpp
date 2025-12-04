@@ -6,7 +6,7 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../../common/components/permanent/DamageComponent.hpp"
+#include "../../../../common/components/permanent/DamageComponent.hpp"
 
 using namespace ecs;
 

@@ -17,6 +17,7 @@
 #include "../../components/permanent/ProjectilePrefabComponent.hpp"
 #include "../../components/tags/ProjectileTag.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
+#include "../../components/permanent/SpeedComponent.hpp"
 #include "../../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 namespace ecs {
@@ -57,7 +58,6 @@ void ShootingSystem::update(
         auto prefab = prefabManager->getPrefab(prefabName);
 
         auto pattern = shootingStats->getMultiShotPattern();
-        float speed = shootingStats->getProjectileSpeed();
 
         math::Vector2f spawnPos = transform->getPosition();
 
@@ -71,7 +71,7 @@ void ShootingSystem::update(
         float baseAngle = 0.0f;
 
         if (pattern.shotCount == 1) {
-            spawnProjectile(registry, prefab, spawnPos, baseAngle, speed);
+            spawnProjectile(registry, prefab, spawnPos, baseAngle, 0.0f);
         } else {
             float totalSpread = pattern.angleSpread * static_cast<float>(
                 pattern.shotCount - 1
@@ -90,7 +90,7 @@ void ShootingSystem::update(
                     );
                 }
 
-                spawnProjectile(registry, prefab, offsetPosition, angle, speed);
+                spawnProjectile(registry, prefab, offsetPosition, angle, 0.0f);
             }
         }
 
@@ -111,7 +111,7 @@ void ShootingSystem::spawnProjectile(
     std::shared_ptr<IPrefab> prefab,
     const math::Vector2f &position,
     float angle,
-    float speed
+    float defaultSpeed
 ) {
     Entity projectileEntity;
 
@@ -139,6 +139,12 @@ void ShootingSystem::spawnProjectile(
     auto transform = registry->getComponent<TransformComponent>(projectileEntity);
     if (transform) {
         transform->setPosition(position);
+    }
+
+    float speed = defaultSpeed;
+    auto projectileSpeedComp = registry->getComponent<SpeedComponent>(projectileEntity);
+    if (projectileSpeedComp) {
+        speed = projectileSpeedComp->getSpeed();
     }
 
     auto velocity = registry->getComponent<VelocityComponent>(projectileEntity);

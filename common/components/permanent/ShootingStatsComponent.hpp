@@ -29,19 +29,14 @@ class ShootingStatsComponent : public AComponent {
     public:
         ShootingStatsComponent(
             float fireRate = 1.0f,
-            float projectileSpeed = 300.0f,
             const MultiShotPattern &pattern = MultiShotPattern()
         ) : _fireRate(fireRate),
-            _projectileSpeed(projectileSpeed),
             _multiShotPattern(pattern),
             _cooldownTimer(0.0f) {};
         ~ShootingStatsComponent() = default;
 
         float getFireRate() const { return _fireRate; };
         void setFireRate(float fireRate) { _fireRate = fireRate; };
-
-        float getProjectileSpeed() const { return _projectileSpeed; };
-        void setProjectileSpeed(float speed) { _projectileSpeed = speed; };
 
         MultiShotPattern getMultiShotPattern() const { return _multiShotPattern; };
         void setMultiShotPattern(const MultiShotPattern &pattern) { _multiShotPattern = pattern; };
@@ -63,7 +58,6 @@ class ShootingStatsComponent : public AComponent {
 
     private:
         float _fireRate;
-        float _projectileSpeed;
         MultiShotPattern _multiShotPattern;
         float _cooldownTimer;
 };
