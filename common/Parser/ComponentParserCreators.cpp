@@ -28,6 +28,7 @@
 #include "../../client/components/rendering/MusicComponent.hpp"
 #include "../../client/components/rendering/ParallaxComponent.hpp"
 #include "../components/permanent/InteractionConfigComponent.hpp"
+#include "../components/permanent/HealthComponent.hpp"
 #include "../ECS/entity/Entity.hpp"
 #include "../ECS/entity/registry/Registry.hpp"
 #include "../../client/components/tags/BackGroundMusicTag.hpp"
@@ -150,6 +151,11 @@ void Parser::instanciateComponentDefinitions() {
             std::type_index(typeid(ecs::DamageComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::DAMAGE_FIELD, FieldType::FLOAT}
+        }}},
+        {constants::HEALTHCOMPONENT, {
+            std::type_index(typeid(ecs::HealthComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::HEALTH_FIELD, FieldType::FLOAT}
         }}},
         {constants::INTERACTIONCONFIGCOMPONENT, {
             std::type_index(typeid(ecs::InteractionConfigComponent)), {
@@ -431,6 +437,12 @@ void Parser::instanciateComponentCreators() {
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto damage = std::get<float>(*fields.at(constants::DAMAGE_FIELD));
         return std::make_shared<ecs::DamageComponent>(damage);
+    });
+
+    registerComponent<ecs::HealthComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto health = std::get<float>(*fields.at(constants::HEALTH_FIELD));
+        return std::make_shared<ecs::HealthComponent>(health);
     });
 
     registerComponent<ecs::InteractionConfigComponent>([](const std::map<std::string,

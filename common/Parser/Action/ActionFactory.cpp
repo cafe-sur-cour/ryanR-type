@@ -10,6 +10,8 @@
 #include <string>
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
+#include "../../components/temporary/DamageIntentComponent.hpp"
+#include "../../components/permanent/DamageComponent.hpp"
 #include "../../constants.hpp"
 
 const ActionFactory& ActionFactory::getInstance() {
@@ -60,5 +62,32 @@ void ActionFactory::initializeConditions() {
             (void)otherEntity;
             reg->addComponent<ecs::DeathIntentComponent>(selfEntity,
                 std::make_shared<ecs::DeathIntentComponent>());
+        });
+
+    registerAction(constants::DEALDAMAGE_ACTION,
+        [](std::shared_ptr<ecs::Registry> reg,
+            ecs::Entity selfEntity,
+            ecs::Entity otherEntity
+        ) {
+            auto damageComp = reg->getComponent<ecs::DamageComponent>(selfEntity);
+            if (damageComp) {
+                float damage = damageComp->getDamage();
+                reg->addComponent<ecs::DamageIntentComponent>(otherEntity,
+                    std::make_shared<ecs::DamageIntentComponent>(damage));
+            }
+        });
+
+    registerAction(constants::TAKEDAMAGE_ACTION,
+        [](std::shared_ptr<ecs::Registry> reg,
+            ecs::Entity selfEntity,
+            ecs::Entity otherEntity
+        ) {
+            (void)otherEntity;
+            auto damageComp = reg->getComponent<ecs::DamageComponent>(selfEntity);
+            if (damageComp) {
+                float damage = damageComp->getDamage();
+                reg->addComponent<ecs::DamageIntentComponent>(selfEntity,
+                    std::make_shared<ecs::DamageIntentComponent>(damage));
+            }
         });
 }
