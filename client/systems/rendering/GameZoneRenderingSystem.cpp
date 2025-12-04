@@ -8,6 +8,7 @@
 #include <memory>
 #include "GameZoneRenderingSystem.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
+#include "../../../common/components/permanent/ColliderComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IWindow.hpp"
@@ -57,6 +58,29 @@ void GameZoneRenderingSystem::update(std::shared_ptr<ResourceManager>
                     static_cast<size_t>(constants::MAX_HEIGHT)},
                 {static_cast<size_t>(zone.getWidth()),
                     static_cast<size_t>(constants::GAME_ZONE_BOUNDARY_THICKNESS)});
+
+            auto colliders = registry->getComponents<ColliderComponent>(entityId);
+            math::Vector2f entityScale = transform->getScale();
+            math::Vector2f entityPos = transform->getPosition();
+
+            for (auto& collider : colliders) {
+                math::FRect hitbox = collider->getHitbox(entityPos, entityScale);
+
+                gfx::color_t colliderColor;
+                if (collider->getType() == CollisionType::Push) {
+                    colliderColor = {0, 0, 255, 150};
+                } else if (collider->getType() == CollisionType::Solid) {
+                    colliderColor = {0, 255, 0, 150};
+                } else {
+                    continue;
+                }
+
+                window->drawFilledRectangle(colliderColor,
+                    {static_cast<size_t>(hitbox.getLeft()),
+                        static_cast<size_t>(hitbox.getTop())},
+                    {static_cast<size_t>(hitbox.getWidth()),
+                        static_cast<size_t>(hitbox.getHeight())});
+            }
         }
     }
 }

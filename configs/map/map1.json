@@ -1,7 +1,7 @@
 {
     "name": "Level 1",
     "background": "background",
-    "scrollSpeed": 20,
+    "scrollSpeed": 50,
     "music": "music",
 
     "legend": {
