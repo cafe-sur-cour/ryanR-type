@@ -74,6 +74,7 @@ target_include_directories(${MULTIMEDIA_LIB_NAME}
 target_link_libraries(${MULTIMEDIA_LIB_NAME}
     PUBLIC SFML::Graphics SFML::Window SFML::System SFML::Audio
     PUBLIC ECS
+    PUBLIC ACTION
 )
 
 add_custom_command(TARGET ${MULTIMEDIA_LIB_NAME} POST_BUILD
