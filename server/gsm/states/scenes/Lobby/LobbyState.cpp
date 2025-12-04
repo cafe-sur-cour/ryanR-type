@@ -9,21 +9,13 @@
 
 namespace gsm {
 
-LobbyState::LobbyState(std::shared_ptr<IGameStateMachine> gsm)
-    : AGameState(gsm) {
+LobbyState::LobbyState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager)
+    : AGameState(gsm, resourceManager) {
 }
 
 void LobbyState::enter() {
     // TODO(anyone): Initialize server lobby state
 }
 
-void LobbyState::update(float deltaTime) {
-    (void)deltaTime;
-    // TODO(anyone): Update server lobby state
-}
-
-void LobbyState::exit() {
-    // TODO(anyone): Cleanup server lobby state
-}
 
 }  // namespace gsm

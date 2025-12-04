@@ -9,21 +9,13 @@
 
 namespace gsm {
 
-GameEndState::GameEndState(std::shared_ptr<IGameStateMachine> gsm)
-    : AGameState(gsm) {
+GameEndState::GameEndState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager)
+    : AGameState(gsm, resourceManager) {
 }
 
 void GameEndState::enter() {
     // TODO(anyone): Initialize server game end state
 }
 
-void GameEndState::update(float deltaTime) {
-    (void)deltaTime;
-    // TODO(anyone): Update server game end state
-}
-
-void GameEndState::exit() {
-    // TODO(anyone): Cleanup server game end state
-}
 
 }  // namespace gsm
