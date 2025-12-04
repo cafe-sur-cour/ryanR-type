@@ -52,6 +52,7 @@ namespace constants {
     const std::string CONTROLLABLETAG = "ControllableTag";
     const std::string PLAYERTAG = "PlayerTag";
     const std::string COLLIDERCOMPONENT = "ColliderComponent";
+    const std::string MOBTAG = "MobTag";
     const std::string SHOOTERTAG = "ShooterTag";
     const std::string PROJECTILETAG = "ProjectileTag";
     const std::string SHOOTINGSTATSCOMPONENT = "ShootingStatsComponent";
