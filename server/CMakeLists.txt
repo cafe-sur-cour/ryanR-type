@@ -24,7 +24,6 @@ target_link_libraries(${SERVER_LIB_NAME}
         NetworkServer
         NetworkClient
         Packet
-        PARSER
         asio::asio
         nlohmann_json::nlohmann_json
 )
