@@ -41,6 +41,7 @@ class SfmlWindow : public gfx::IWindow {
         void updateView() override;
         void setViewCenter(float x, float y) override;
         math::Vector2f getViewCenter() override;
+        math::Vector2f mapPixelToCoords(int x, int y) override;
 
     private:
         std::shared_ptr<sf::RenderWindow> _window;
