@@ -8,7 +8,7 @@
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "both" },
-        "SpeedComponent": { "target": "both", "speed": 10.0 },
+        "SpeedComponent": { "target": "both", "speed": 500.0 },
         "AnimationComponent": {
             "target": "client",
             "states": {

@@ -95,7 +95,10 @@ void ParallaxRenderingSystem::renderLayer(const ParallaxLayer& layer,
     float textureHeight = layer.sourceSize.getY() * scale.getY();
 
     if (layer.repeat) {
-        float startX = layer.currentOffset.getX() + basePosition.getX();
+        math::Vector2f viewCenter = window->getViewCenter();
+        float viewLeft = viewCenter.getX() - screenWidth / 2.0f;
+
+        float startX = layer.currentOffset.getX() + basePosition.getX() - viewLeft;
         float startY = layer.currentOffset.getY() + basePosition.getY();
 
         startX = std::fmod(startX, textureWidth);
@@ -109,7 +112,7 @@ void ParallaxRenderingSystem::renderLayer(const ParallaxLayer& layer,
 
         for (int y = 0; y < tilesY; ++y) {
             for (int x = 0; x < tilesX; ++x) {
-                float drawX = startX + (static_cast<float>(x) * textureWidth);
+                float drawX = startX + (static_cast<float>(x) * textureWidth) + viewLeft;
                 float drawY = startY + (static_cast<float>(y) * textureHeight);
 
                 window->drawSprite(layer.filePath, drawX, drawY, scale.getX(), scale.getY());

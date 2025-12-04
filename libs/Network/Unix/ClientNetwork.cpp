@@ -90,18 +90,12 @@ bool UnixClientNetwork::isConnected() const {
     return _connected;
 }
 
-uint8_t UnixClientNetwork::acceptConnection(asio::ip::udp::endpoint id,
-    std::shared_ptr<pm::IPacketManager> packetManager) {
-    (void)id;
-    (void)packetManager;
-    return 1;
-}
-
-void UnixClientNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
+bool UnixClientNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
     (void)id;
     std::cout << "Sending to " << _serverEndpoint.address().to_string() << ":"
              << _serverEndpoint.port() << " Data size: " << packet.size() << std::endl;
     _socket->send_to(asio::buffer(packet), _serverEndpoint);
+    return true;
 }
 
 void UnixClientNetwork::broadcast(std::vector<uint8_t> data) {

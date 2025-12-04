@@ -18,6 +18,8 @@
     #endif
 #endif
 
+#include <queue>
+#include <map>
 #include <memory>
 #include "IServer.hpp"
 #include "ServerConfig.hpp"
@@ -25,6 +27,7 @@
 #include "../libs/Buffer/IBuffer.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
+#include "../common/constants.hpp"
 #include "Signal.hpp"
 
 namespace rserv {
@@ -56,8 +59,10 @@ namespace rserv {
             void onClientDisconnected(uint8_t idClient) override;
             void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet) override;
 
-            bool processConnections(asio::ip::udp::endpoint id) override;
             void processIncomingPackets() override;
+            bool processConnections(asio::ip::udp::endpoint id) override;
+            bool processDisconnections(uint8_t idClient) override;
+            bool processEvents(uint8_t idClient) override;
 
             void broadcastPacket() override;
             void sendToClient(uint8_t idClient ) override;
@@ -71,11 +76,15 @@ namespace rserv {
             DLLoader<createNetworkLib_t> _networloader;
             DLLoader<createBuffer_t> _bufferloader;
             DLLoader<createPacket_t> _packetloader;
+            uint8_t _nextClientId;
+            uint32_t _sequenceNumber;
+            std::vector<std::tuple<uint8_t, asio::ip::udp::endpoint, std::string>> _clients;
 
             std::shared_ptr<ServerConfig> _config;
             std::shared_ptr<net::INetwork> _network;
             std::shared_ptr<IBuffer> _buffer;
             std::shared_ptr<pm::IPacketManager> _packet;
+            std::queue<std::pair<uint8_t, constants::EventType>> _eventQueue;
 
     };
 } // namespace rserv = r-type server

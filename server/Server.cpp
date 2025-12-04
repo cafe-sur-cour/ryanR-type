@@ -18,7 +18,8 @@
 #include "../common/Error/ServerErrror.hpp"
 #include "Signal.hpp"
 
-rserv::Server::Server() {
+rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
+    this->_clients = {};
     this->_config = nullptr;
     this->_network = nullptr;
     this->_buffer = nullptr;
@@ -161,9 +162,10 @@ void rserv::Server::processIncomingPackets() {
         return;
     }
     if (received.second.at(0) == 0x93) {
-        std::cout << "Received a header packet, disconnecting client." << std::endl;
         this->_packet->unpack(received.second);
-        std::cout << "No body following " << std::endl;
+        if (this->_packet->getType() == 0x03) {
+            this->processDisconnections(this->_packet->getIdClient());
+        }
         return;
     }
 
@@ -174,7 +176,7 @@ void rserv::Server::processIncomingPackets() {
         // Other packet types will be handled here
     }
 
-    this->_packet.reset();
+    this->_packet->reset();
 }
 
 bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
@@ -183,8 +185,50 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
         return false;
     }
 
-    uint8_t clientId = _network->acceptConnection(id, this->_packet);
-    (void)clientId;
+    if (this->_nextClientId > this->getConfig()->getNbClients()) {
+        std::cerr << "[SERVER] Warning: Maximum clients reached" << std::endl;
+        return false;
+    }
+
+    std::vector<uint8_t> header =
+        this->_packet->pack(0, this->_sequenceNumber, 0x02);
+    if (!this->_network->sendTo(id, header)) {
+        std::cerr << "[SERVER NETWORK] Failed to send connection acceptance header to "
+            << id.address().to_string() << ":" << id.port() << std::endl;
+        return false;
+    }
+    std::vector<uint8_t> payload =
+        this->_packet->pack({0x02, static_cast<uint64_t>(this->_nextClientId)});
+    if (!this->_network->sendTo(id, payload)) {
+        std::cerr << "[SERVER NETWORK] Failed to send acceptation payload to "
+            << id.address().to_string() << ":" << id.port() << std::endl;
+        return false;
+    }
+
+    this->_clients.push_back(std::make_tuple(this->_nextClientId, id, ""));
+    this->_nextClientId++;
+    return true;
+}
+
+bool rserv::Server::processDisconnections(uint8_t idClient) {
+    for (auto &client : this->_clients) {
+        if (std::get<0>(client) == idClient) {
+            this->_clients.erase(
+                std::remove(this->_clients.begin(), this->_clients.end(), client),
+                this->_clients.end());
+            this->_nextClientId--;
+            std::cout << "[SERVER] Client " << static_cast<int>(idClient)
+                << " disconnected and removed from the lobby" << std::endl;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool rserv::Server::processEvents(uint8_t idClient) {
+    constants::EventType event = static_cast<constants::EventType>(
+        this->_packet->getPayload().at(1));
+    this->_eventQueue.push(std::make_pair(idClient, event));
     return true;
 }
 
@@ -200,17 +244,11 @@ void rserv::Server::sendToClient(uint8_t idClient) {
 }
 
 std::vector<uint8_t> rserv::Server::getConnectedClients() const {
-    if (_network) {
-        return _network->getActiveConnections();
-    }
     return {};
 }
 
 size_t rserv::Server::getClientCount() const {
-    if (_network) {
-        return _network->getConnectionCount();
-    }
-    return 0;
+    return this->_clients.size();
 }
 
 void rserv::Server::onClientConnected(uint8_t idClient) {
