@@ -151,9 +151,17 @@ add_executable(SerializerTests server/packet/serializer/SerializerTests.cpp)
 target_link_libraries(SerializerTests Packet GTest::gtest GTest::gtest_main)
 add_test(NAME SerializerTests COMMAND SerializerTests)
 
-add_executable(ErrorTests common/Error/Error-test.cpp)
-target_link_libraries(ErrorTests ERROR GTest::gtest GTest::gtest_main)
-add_test(NAME ErrorTests COMMAND ErrorTests)
+add_executable(TriggerIntentComponentTests common/ECS/component/TriggerIntentComponentTests.cpp)
+target_link_libraries(TriggerIntentComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME TriggerIntentComponentTests COMMAND TriggerIntentComponentTests)
+
+add_executable(InteractionConfigComponentTests common/ECS/component/InteractionConfigComponentTests.cpp)
+target_link_libraries(InteractionConfigComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME InteractionConfigComponentTests COMMAND InteractionConfigComponentTests)
+
+add_executable(TriggerSystemTests common/ECS/system/TriggerSystemTests.cpp)
+target_link_libraries(TriggerSystemTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME TriggerSystemTests COMMAND TriggerSystemTests)
 
 add_executable(ParserTests common/Parser/ParserTests.cpp)
 target_link_libraries(ParserTests PARSER PREFAB ECS ERROR GTest::gtest GTest::gtest_main)
