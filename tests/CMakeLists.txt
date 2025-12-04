@@ -100,6 +100,10 @@ add_executable(HealthComponentTests common/ECS/component/HealthComponentTests.cp
 target_link_libraries(HealthComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME HealthComponentTests COMMAND HealthComponentTests)
 
+add_executable(DamageComponentTests common/ECS/component/DamageComponentTests.cpp)
+target_link_libraries(DamageComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME DamageComponentTests COMMAND DamageComponentTests)
+
 add_executable(DamageIntentComponentTests common/ECS/component/DamageIntentComponentTests.cpp)
 target_link_libraries(DamageIntentComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME DamageIntentComponentTests COMMAND DamageIntentComponentTests)
