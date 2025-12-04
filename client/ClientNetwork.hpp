@@ -66,13 +66,26 @@ class ClientNetwork {
 
         std::atomic<bool> _isConnected;
     protected:
+        void handlePacketType(uint8_t type);
     private:
+        typedef void (ClientNetwork::*PacketHandler)();
+        PacketHandler _packetHandlers[10];
+
+        void handleNoOp();
+        void handleConnectionAcceptation();
+        void handleDisconnection();
+        void handleEvent();
+        void handleGameState();
+        void handleMapSend();
+        void handleEndMap();
+        void handleEndGame();
+        void handleCanStart();
         DLLoader<createNetworkLib_t> _networloader;
         DLLoader<createBuffer_t> _bufferloader;
         DLLoader<createPacket_t> _packetloader;
 
         std::shared_ptr<net::INetwork> _network;
-        std::shared_ptr<IBuffer> _buffer;
+        std::shared_ptr<IBuffer> _receptionBuffer;
         std::shared_ptr<pm::IPacketManager> _packet;
 
         uint32_t _sequenceNumber;
