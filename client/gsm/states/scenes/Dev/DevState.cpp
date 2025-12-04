@@ -33,6 +33,7 @@
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
 #include "../../../../systems/rendering/GameZoneRenderingSystem.hpp"
+#include "../../../../systems/rendering/GameZoneViewSystem.hpp"
 
 namespace gsm {
 
@@ -66,6 +67,7 @@ DevState::DevState(
     auto deathSystem = std::make_shared<ecs::DeathSystem>();
     auto scoreSystem = std::make_shared<ecs::ScoreSystem>();
     auto gameZoneRenderingSystem = std::make_shared<ecs::GameZoneRenderingSystem>();
+    auto gameZoneViewSystem = std::make_shared<ecs::GameZoneViewSystem>();
 
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
 
@@ -81,6 +83,7 @@ DevState::DevState(
     _systemManager->addSystem(rectangleRenderingSystem);
     _systemManager->addSystem(textRenderingSystem);
     _systemManager->addSystem(gameZoneRenderingSystem);
+    _systemManager->addSystem(gameZoneViewSystem);
     _systemManager->addSystem(shootInputSystem);
     _systemManager->addSystem(shootingSystem);
     _systemManager->addSystem(lifetimeSystem);
