@@ -27,6 +27,7 @@
 #include "../../client/components/rendering/AnimationComponent.hpp"
 #include "../../client/components/rendering/MusicComponent.hpp"
 #include "../../client/components/rendering/ParallaxComponent.hpp"
+#include "../components/permanent/InteractionConfigComponent.hpp"
 #include "../ECS/entity/Entity.hpp"
 #include "../ECS/entity/registry/Registry.hpp"
 #include "../../client/components/tags/BackGroundMusicTag.hpp"
@@ -149,7 +150,12 @@ void Parser::instanciateComponentDefinitions() {
             std::type_index(typeid(ecs::DamageComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::DAMAGE_FIELD, FieldType::FLOAT}
-        }}}
+        }}},
+        {constants::INTERACTIONCONFIGCOMPONENT, {
+            std::type_index(typeid(ecs::InteractionConfigComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::MAPPINGS_FIELD, FieldType::JSON}
+        }}},
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
         std::pair<std::type_index, std::vector<Field>>>>(componentDefinitions);
@@ -425,6 +431,29 @@ void Parser::instanciateComponentCreators() {
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto damage = std::get<float>(*fields.at(constants::DAMAGE_FIELD));
         return std::make_shared<ecs::DamageComponent>(damage);
+    });
+
+    registerComponent<ecs::InteractionConfigComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto mappingsJson = std::get<nlohmann::json>(*fields.at(constants::MAPPINGS_FIELD));
+        std::vector<ecs::InteractionMapping> mappings;
+
+        for (const auto& interaction : mappingsJson) {
+            ecs::InteractionMapping mapping;
+            if (interaction.contains(constants::TAGS_FIELD)) {
+                for (const auto& tag : interaction[constants::TAGS_FIELD]) {
+                    mapping.targetTags.push_back(tag);
+                }
+            }
+            if (interaction.contains(constants::TOENTITY_FIELD)) {
+                mapping.actionToOther = interaction[constants::TOENTITY_FIELD];
+            }
+            if (interaction.contains(constants::TOSELF_FIELD)) {
+                mapping.actionToSelf = interaction[constants::TOSELF_FIELD];
+            }
+            mappings.push_back(mapping);
+        }
+        return std::make_shared<ecs::InteractionConfigComponent>(mappings);
     });
 }
 

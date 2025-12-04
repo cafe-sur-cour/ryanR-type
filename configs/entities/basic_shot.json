@@ -30,6 +30,16 @@
         "LifetimeComponent": {
             "target": "both",
             "lifetime": 2.0
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["MobTag"],
+                    "toEntity": "DealDeath",
+                    "toSelf": "TakeDeath"
+                }
+            ]
         }
     }
 }
