@@ -2,7 +2,7 @@
     "name": "Level 1",
     "background": "background",
     "scrollSpeed": 20,
-    "music": "assets/musics/level1.ogg",
+    "music": "music",
 
     "legend": {
         "0": "empty",

@@ -1,0 +1,15 @@
+{
+    "name": "music",
+    "components": {
+        "BackGroundMusicTag": {
+            "target": "client"
+        },
+        "MusicComponent": {
+            "target": "client",
+            "musicFile": "musics/hava-nagila.ogg",
+            "initialState": "STOPPED",
+            "volume": 100.0,
+            "loop": true
+        }
+    }
+}
