@@ -56,9 +56,11 @@ namespace constants {
 
     const std::string SCORECOMPONENT = "ScoreComponent";
     const std::string DAMAGECOMPONENT = "DamageComponent";
+    const std::string HEALTHCOMPONENT = "HealthComponent";
     const std::string INTERACTIONCONFIGCOMPONENT = "InteractionConfigComponent";
     const std::string SCORE_FIELD = "score";
     const std::string DAMAGE_FIELD = "damage";
+    const std::string HEALTH_FIELD = "health";
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
     const std::string OFFSET_FIELD = "offset";
@@ -181,6 +183,8 @@ namespace constants {
     /* Action constants */
     const std::string DEALDEATH_ACTION = "DealDeath";
     const std::string TAKEDEATH_ACTION = "TakeDeath";
+    const std::string DEALDAMAGE_ACTION = "DealDamage";
+    const std::string TAKEDAMAGE_ACTION = "TakeDamage";
 }
 
 #endif /* !CONSTANTS_HPP_ */
