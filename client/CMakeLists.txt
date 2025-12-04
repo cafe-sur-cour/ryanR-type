@@ -7,6 +7,8 @@ add_executable(${CLIENT_BIN_NAME}
     ClientNetwork.cpp
     ClientLibLoading.cpp
     ClientNetwork.hpp
+    ClientReceivedPacket.cpp
+    ClientSentPacket.cpp
     Core.cpp
 )
 
@@ -21,6 +23,7 @@ target_link_libraries(${CLIENT_BIN_NAME}
         PREFAB
         PARSER
         UI
+        DEBUG
         asio::asio
         nlohmann_json::nlohmann_json
 )
