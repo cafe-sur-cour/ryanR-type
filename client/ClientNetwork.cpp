@@ -107,11 +107,45 @@ void ClientNetwork::handlePacketType(uint8_t type) {
     }
 }
 
-/* Call this in a separate thread */
+
+void ClientNetwork::tryConnection(const int maxRetries, int &retryCount,
+    std::chrono::steady_clock::time_point &lastRetryTime) {
+    auto currentTime = std::chrono::steady_clock::now();
+
+    if (this->_network->getConnectionState() == net::ConnectionState::CONNECTING &&
+        retryCount < maxRetries &&
+        std::chrono::duration_cast<std::chrono::seconds>(currentTime -
+            lastRetryTime).count() >= 2) {
+        debug::Debug::printDebug(this->_isDebug,
+            "Retrying connection (attempt " + std::to_string(retryCount + 1) + "/"
+            + std::to_string(maxRetries) + ")",
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
+        this->connectionPacket();
+        retryCount++;
+        lastRetryTime = currentTime;
+    }
+}
+
 void ClientNetwork::start() {
     Signal::setupSignalHandlers();
 
+    const int maxRetries = 3;
+    int retryCount = 0;
+    auto lastRetryTime = std::chrono::steady_clock::now();
+
+    if (this->_network->getConnectionState() == net::ConnectionState::CONNECTING) {
+        debug::Debug::printDebug(this->_isDebug,
+            "Attempting initial connection (attempt 1/" + std::to_string(maxRetries) + ")",
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
+        this->connectionPacket();
+        retryCount++;
+        lastRetryTime = std::chrono::steady_clock::now();
+    }
+
     while (!Signal::stopFlag) {
+        tryConnection(maxRetries, retryCount, lastRetryTime);
         std::vector<uint8_t> receivedData = this->_network->receiveFrom(this->_idClient);
         if (receivedData.size() > 0) {
             this->_packet->unpack(receivedData);
@@ -127,6 +161,15 @@ void ClientNetwork::start() {
             );
             this->_eventQueue.pop();
         }
+    }
+    if (this->_network->getConnectionState() != net::ConnectionState::CONNECTED
+        && retryCount >= maxRetries) {
+        debug::Debug::printDebug(this->_isDebug,
+            "Connection failed after " + std::to_string(maxRetries) +
+            " attempts. Setting to ERROR_STATE.",
+            debug::debugType::NETWORK,
+            debug::debugLevel::ERROR);
+        this->_network->setConnectionState(net::ConnectionState::ERROR_STATE);
     }
     if (Signal::stopFlag) {
         this->disconnectionPacket();
@@ -161,6 +204,10 @@ void ClientNetwork::setDebugMode(bool isDebug) {
 
 bool ClientNetwork::isDebugMode() const {
     return this->_isDebug;
+}
+
+std::shared_ptr<net::INetwork> ClientNetwork::getNetwork() const {
+    return this->_network;
 }
 
 void ClientNetwork::sendConnectionData(std::vector<uint8_t> packet) {

@@ -41,6 +41,7 @@ class ClientNetwork {
 
         std::string getIp() const;
         void setIp(const std::string &ip);
+        std::shared_ptr<net::INetwork> getNetwork() const;
 
         void setDebugMode(bool isDebug);
         bool isDebugMode() const;
@@ -69,6 +70,7 @@ class ClientNetwork {
 
         std::atomic<bool> _isConnected;
     protected:
+        void tryConnection(const int maxRetries, int &retryCount, std::chrono::steady_clock::time_point &lastRetryTime);
         void handlePacketType(uint8_t type);
     private:
         typedef void (ClientNetwork::*PacketHandler)();

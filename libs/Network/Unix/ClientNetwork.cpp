@@ -169,8 +169,6 @@ std::vector<uint8_t> UnixClientNetwork::receiveFrom(
     if (bytesReceived > 0) {
         buffer.resize(bytesReceived);
         return buffer;
-        // TODO(albane) Process buffer and create IPacketManager
-        // return your packet manager here
     }
     return std::vector<uint8_t>();
 }
