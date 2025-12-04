@@ -11,14 +11,17 @@
 #include <utility>
 #include <string>
 #include <memory>
+#include "../../common/constants.hpp"
 
 SfmlWindow::SfmlWindow(std::string title, size_t width, size_t height)
     : _window(std::make_shared<sf::RenderWindow>(
     sf::VideoMode({static_cast<unsigned int>(width),
-    static_cast<unsigned int>(height)}), title)),
+    static_cast<unsigned int>(height)}), title, sf::Style::Default)),
     _assetManager(std::make_shared<assets::AssetManager>()),
     _textureManager(_assetManager),
-    _fontManager(_assetManager) {
+    _fontManager(_assetManager),
+    _view(sf::FloatRect(sf::Vector2f(0.f, 0.f),
+        sf::Vector2f(constants::MAX_WIDTH, constants::MAX_HEIGHT))) {
     init();
 }
 
@@ -31,6 +34,7 @@ void SfmlWindow::init() {
     bool isActive = false;
 
     _window->setFramerateLimit(60);
+    updateView();
     _window->clear(sf::Color::Black);
     _window->clear();
     _window->display();
@@ -159,4 +163,28 @@ void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y,
     sprite.setPosition(sf::Vector2f(x, y));
     sprite.setScale(sf::Vector2f(scaleX, scaleY));
     _window->draw(sprite);
+}
+
+void SfmlWindow::updateView() {
+    sf::Vector2u windowSize = _window->getSize();
+    float windowRatio = static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y);
+    float viewRatio = constants::MAX_WIDTH / constants::MAX_HEIGHT;
+
+    sf::FloatRect viewport;
+    if (windowRatio > viewRatio) {
+        float scale = static_cast<float>(windowSize.y) / constants::MAX_HEIGHT;
+        float viewportWidth = (constants::MAX_WIDTH * scale) /
+            static_cast<float>(windowSize.x);
+        viewport = sf::FloatRect(sf::Vector2f((1.f - viewportWidth) / 2.f, 0.f),
+            sf::Vector2f(viewportWidth, 1.f));
+    } else {
+        float scale = static_cast<float>(windowSize.x) / constants::MAX_WIDTH;
+        float viewportHeight = (constants::MAX_HEIGHT * scale) /
+            static_cast<float>(windowSize.y);
+        viewport = sf::FloatRect(sf::Vector2f(0.f, (1.f - viewportHeight) / 2.f),
+            sf::Vector2f(1.f, viewportHeight));
+    }
+
+    _view.setViewport(viewport);
+    _window->setView(_view);
 }

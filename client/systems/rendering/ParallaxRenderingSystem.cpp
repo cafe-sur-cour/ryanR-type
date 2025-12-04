@@ -15,6 +15,7 @@
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/constants.hpp"
 
 namespace ecs {
 
@@ -28,9 +29,8 @@ void ParallaxRenderingSystem::update(std::shared_ptr<ResourceManager> resourceMa
         return;
 
     auto window = resourceManager->get<gfx::IWindow>();
-    auto windowSize = window->getWindowSize();
-    float screenWidth = static_cast<float>(windowSize.first);
-    float screenHeight = static_cast<float>(windowSize.second);
+    float screenWidth = constants::MAX_WIDTH;
+    float screenHeight = constants::MAX_HEIGHT;
 
     View<ParallaxComponent, TransformComponent> view(registry);
 

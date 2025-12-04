@@ -36,7 +36,8 @@ void HitboxRenderingSystem::update(std::shared_ptr<ResourceManager>
             continue;
 
         auto collider = colliders[0];
-        math::FRect hitboxRect = collider->getHitbox(transform->getPosition(), transform->getScale());
+        math::FRect hitboxRect = collider->getHitbox(transform->getPosition(),
+            transform->getScale());
 
         if (resourceManager->has<gfx::IWindow>()) {
             auto window = resourceManager->get<gfx::IWindow>();
