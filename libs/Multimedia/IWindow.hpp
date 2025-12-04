@@ -12,6 +12,7 @@
 #include <utility>
 #include <cstdint>
 #include "../../common/types/FRect.hpp"
+#include "../../common/types/Vector2f.hpp"
 
 namespace gfx {
 
@@ -46,6 +47,7 @@ class IWindow {
 
         virtual void updateView() = 0;
         virtual void setViewCenter(float x, float y) = 0;
+        virtual math::Vector2f getViewCenter() = 0;
 };
 
 typedef IWindow *(*createWindow_t)();

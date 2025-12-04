@@ -193,3 +193,8 @@ void SfmlWindow::setViewCenter(float x, float y) {
     _view.setCenter(sf::Vector2f(x, y));
     _window->setView(_view);
 }
+
+math::Vector2f SfmlWindow::getViewCenter() {
+    sf::Vector2f center = _view.getCenter();
+    return math::Vector2f(center.x, center.y);
+}
