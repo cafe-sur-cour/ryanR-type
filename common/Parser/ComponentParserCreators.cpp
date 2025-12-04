@@ -26,6 +26,8 @@
 #include "../../client/components/rendering/ParallaxComponent.hpp"
 #include "../ECS/entity/Entity.hpp"
 #include "../ECS/entity/registry/Registry.hpp"
+#include "../components/tags/ScoreTag.hpp"
+#include "../components/permanent/ScoreComponent.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -112,7 +114,16 @@ void Parser::instanciateComponentDefinitions() {
             {constants::BASESCROLLSPEED_FIELD, FieldType::FLOAT},
             {constants::DIRECTION_FIELD, FieldType::VECTOR2F},
             {constants::LAYERS_FIELD, FieldType::JSON}
-        }}}
+        }}},
+        {constants::SCORETAG, {
+            std::type_index(typeid(ecs::ScoreTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::SCORECOMPONENT, {
+            std::type_index(typeid(ecs::ScoreComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::SCORE_FIELD, FieldType::INT}
+        }}},
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
         std::pair<std::type_index, std::vector<Field>>>>(componentDefinitions);
@@ -274,7 +285,15 @@ void Parser::instanciateComponentCreators() {
         auto lifetime = std::get<float>(*fields.at(constants::LIFETIME_FIELD));
         return std::make_shared<ecs::LifetimeComponent>(lifetime);
     });
-
+    registerComponent<ecs::ScoreTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::ScoreTag>();
+    });
+    registerComponent<ecs::ScoreComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto score = std::get<int>(*fields.at(constants::SCORE_FIELD));
+        return std::make_shared<ecs::ScoreComponent>(score);
+    });
     registerComponent<ecs::ParallaxComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto parallax = std::make_shared<ecs::ParallaxComponent>();
