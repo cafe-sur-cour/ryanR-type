@@ -17,6 +17,8 @@
 #include "../../components/tags/ObstacleTag.hpp"
 #include "../../components/tags/ProjectileTag.hpp"
 #include "../../components/tags/ProjectilePassThroughTag.hpp"
+#include "../../components/tags/GameZoneColliderTag.hpp"
+#include "../../components/tags/PlayerTag.hpp"
 
 namespace ecs {
 
@@ -103,6 +105,16 @@ bool MovementSystem::checkCollision(
                 math::Vector2f otherScale = otherTransform->getScale();
                 math::FRect otherHitbox =
                     otherCollider->getHitbox(otherTransform->getPosition(), otherScale);
+
+                bool isGameZoneCollision = registry->hasComponent<
+                    GameZoneColliderTag>(otherEntityId) ||
+                    registry->hasComponent<GameZoneColliderTag>(entityId);
+                bool isPlayerInvolved = registry->hasComponent<PlayerTag>(entityId) ||
+                                       registry->hasComponent<PlayerTag>(otherEntityId);
+
+                if (isGameZoneCollision && !isPlayerInvolved) {
+                    continue;
+                }
 
                 if (movingHitbox.intersects(otherHitbox)) {
                     return false;

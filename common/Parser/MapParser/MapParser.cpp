@@ -20,6 +20,7 @@
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../../client/components/rendering/MusicComponent.hpp"
 #include "../../components/permanent/GameZoneComponent.hpp"
+#include "../../components/tags/GameZoneColliderTag.hpp"
 
 MapParser::MapParser(std::shared_ptr<EntityPrefabManager> prefabManager,
     std::shared_ptr<ecs::Registry> registry)
@@ -110,6 +111,9 @@ void MapParser::createGameZoneEntity(float scrollSpeed) {
     _registry->addComponent<ecs::GameZoneComponent>(gameZoneEntity,
         std::make_shared<ecs::GameZoneComponent>(zoneRect));
 
+    _registry->addComponent<ecs::GameZoneColliderTag>(gameZoneEntity,
+        std::make_shared<ecs::GameZoneColliderTag>());
+
     _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
         std::make_shared<ecs::ColliderComponent>(
             math::Vector2f(0.0f, -constants::GAME_ZONE_BOUNDARY_THICKNESS),
@@ -119,6 +123,11 @@ void MapParser::createGameZoneEntity(float scrollSpeed) {
         std::make_shared<ecs::ColliderComponent>(
             math::Vector2f(0.0f, constants::MAX_HEIGHT),
             math::Vector2f(constants::MAX_WIDTH, constants::GAME_ZONE_BOUNDARY_THICKNESS)));
+
+    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
+        std::make_shared<ecs::ColliderComponent>(
+            math::Vector2f(constants::MAX_WIDTH, 0.0f),
+            math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT)));
 }
 
 void MapParser::parseMapGrid(const nlohmann::json& legend, const nlohmann::json& mapGrid,
