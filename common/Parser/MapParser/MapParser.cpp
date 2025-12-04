@@ -17,6 +17,7 @@
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../types/Vector2f.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
+#include "../../components/permanent/GameZoneComponent.hpp"
 
 MapParser::MapParser(std::shared_ptr<EntityPrefabManager> prefabManager,
     std::shared_ptr<ecs::Registry> registry)
@@ -52,6 +53,9 @@ void MapParser::parseMap(const nlohmann::json& mapJson) {
     if (mapJson.contains(constants::BACKGROUND_FIELD))
         createBackgroundEntity(mapJson[constants::BACKGROUND_FIELD]);
 
+    if (mapJson.contains(constants::BACKGROUND_SCROLL_SPEED_FIELD))
+        createGameZoneEntity(mapJson[constants::BACKGROUND_SCROLL_SPEED_FIELD]);
+
     float tileWidth = constants::TILE_SIZE.getX();
     float tileHeight = constants::TILE_SIZE.getY();
 
@@ -85,6 +89,19 @@ void MapParser::createBackgroundEntity(const std::string& entityName) {
     } else {
         std::cerr << "Warning: 'background' prefab not found" << std::endl;
     }
+}
+
+void MapParser::createGameZoneEntity(float scrollSpeed) {
+    ecs::Entity gameZoneEntity = _registry->createEntity();
+
+    _registry->addComponent<ecs::TransformComponent>(gameZoneEntity,
+        std::make_shared<ecs::TransformComponent>(math::Vector2f(0.0f, 0.0f)));
+    _registry->addComponent<ecs::VelocityComponent>(gameZoneEntity,
+        std::make_shared<ecs::VelocityComponent>(math::Vector2f(scrollSpeed, 0.0f)));
+    _registry->addComponent<ecs::GameZoneComponent>(gameZoneEntity,
+        std::make_shared<ecs::GameZoneComponent>(math::FRect(
+            0.0f, 0.0f,
+            constants::MAX_WIDTH, constants::MAX_HEIGHT)));
 }
 
 void MapParser::parseMapGrid(const nlohmann::json& legend, const nlohmann::json& mapGrid,

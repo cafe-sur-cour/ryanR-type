@@ -31,6 +31,7 @@
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
+#include "../../../../systems/rendering/GameZoneRenderingSystem.hpp"
 
 namespace gsm {
 
@@ -62,6 +63,7 @@ DevState::DevState(
     auto healthSystem = std::make_shared<ecs::HealthSystem>();
     auto deathSystem = std::make_shared<ecs::DeathSystem>();
     auto scoreSystem = std::make_shared<ecs::ScoreSystem>();
+    auto gameZoneRenderingSystem = std::make_shared<ecs::GameZoneRenderingSystem>();
 
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
 
@@ -75,6 +77,7 @@ DevState::DevState(
     _systemManager->addSystem(hitboxRenderingSystem);
     _systemManager->addSystem(rectangleRenderingSystem);
     _systemManager->addSystem(textRenderingSystem);
+    _systemManager->addSystem(gameZoneRenderingSystem);
     _systemManager->addSystem(shootInputSystem);
     _systemManager->addSystem(shootingSystem);
     _systemManager->addSystem(lifetimeSystem);

@@ -8,4 +8,5 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     LifetimeComponent.hpp
     HealthComponent.hpp
     ScoreComponent.hpp
+    GameZoneComponent.hpp
 )
