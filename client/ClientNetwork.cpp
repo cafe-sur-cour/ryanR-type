@@ -11,6 +11,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <utility>
 #include <queue>
 #include <memory>
 
@@ -179,9 +180,11 @@ std::pair<int, std::chrono::steady_clock::time_point> ClientNetwork::tryConnecti
 
     if (this->_network->getConnectionState() == net::ConnectionState::CONNECTING &&
         retryCount < maxRetries &&
-        std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastRetryTime).count() >= 2) {
+        std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastRetryTime).count()
+            >= 2) {
         debug::Debug::printDebug(this->_isDebug,
-            "Retrying connection (attempt " + std::to_string(retryCount + 1) + "/" + std::to_string(maxRetries) + ")",
+            "Retrying connection (attempt " + std::to_string(retryCount + 1) + "/" +
+            std::to_string(maxRetries) + ")",
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
         this->connectionPacket();
@@ -209,7 +212,8 @@ void ClientNetwork::start() {
     }
 
     while (!Signal::stopFlag) {
-        std::tie(retryCount, lastRetryTime) = tryConnection(maxRetries, retryCount, lastRetryTime);
+        std::tie(retryCount, lastRetryTime) = tryConnection(maxRetries, retryCount,
+            lastRetryTime);
         std::vector<uint8_t> receivedData = this->_network->receiveFrom(this->_idClient);
         if (receivedData.size() > 0) {
             this->_packet->unpack(receivedData);
