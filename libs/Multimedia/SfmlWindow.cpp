@@ -188,3 +188,19 @@ void SfmlWindow::updateView() {
     _view.setViewport(viewport);
     _window->setView(_view);
 }
+
+void SfmlWindow::setViewCenter(float x, float y) {
+    _view.setCenter(sf::Vector2f(x, y));
+    _window->setView(_view);
+}
+
+math::Vector2f SfmlWindow::getViewCenter() {
+    sf::Vector2f center = _view.getCenter();
+    return math::Vector2f(center.x, center.y);
+}
+
+math::Vector2f SfmlWindow::mapPixelToCoords(int x, int y) {
+    sf::Vector2i pixelPos(x, y);
+    sf::Vector2f worldPos = _window->mapPixelToCoords(pixelPos);
+    return math::Vector2f(worldPos.x, worldPos.y);
+}

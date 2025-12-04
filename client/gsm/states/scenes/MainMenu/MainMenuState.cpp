@@ -69,7 +69,7 @@ void MainMenuState::update(float deltaTime) {
         return;
     }
 
-    math::Vector2f mousePos = _mouseHandler->getMousePosition();
+    math::Vector2f mousePos = _mouseHandler->getWorldMousePosition();
     bool mousePressed = _mouseHandler->isMouseButtonPressed(
         static_cast<int>(constants::MouseButton::LEFT));
 
