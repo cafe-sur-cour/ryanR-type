@@ -11,8 +11,8 @@
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../components/temporary/TriggerIntentComponent.hpp"
 #include "../../components/permanent/InteractionConfigComponent.hpp"
-#include "../../Parser/Action/ActionFactory.hpp"
-#include "../../Parser/Action/TagRegistry.hpp"
+#include "ActionFactory.hpp"
+#include "TagRegistry.hpp"
 
 namespace ecs {
 
