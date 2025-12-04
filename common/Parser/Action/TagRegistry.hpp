@@ -13,14 +13,11 @@
 #include <memory>
 #include <string>
 #include "../../ECS/entity/Entity.hpp"
-
-namespace ecs {
-    class Registry;
-}
+#include "../../ECS/entity/registry/Registry.hpp"
 
 class TagRegistry {
     public:
-        static TagRegistry& getInstance();
+        static const TagRegistry& getInstance();
 
         template<typename T>
         void registerTag(const std::string& tagName) {
@@ -32,12 +29,15 @@ class TagRegistry {
         bool hasTag(std::shared_ptr<ecs::Registry> registry, ecs::Entity entity, const std::string& tagName) const;
 
     private:
-        TagRegistry() = default;
+        TagRegistry();
         ~TagRegistry() = default;
         TagRegistry(const TagRegistry&) = delete;
         TagRegistry& operator=(const TagRegistry&) = delete;
 
-        std::unordered_map<std::string, std::function<bool(std::shared_ptr<ecs::Registry>, ecs::Entity)>> _tagCheckers;
+        void initializeTags();
+
+        std::unordered_map<std::string,
+            std::function<bool(std::shared_ptr<ecs::Registry>, ecs::Entity)>> _tagCheckers;
 };
 
 #endif /* !TAGREGISTRY_HPP_ */

@@ -30,7 +30,6 @@ class InteractionSystem : public ASystem {
         ) override;
 
     private:
-        bool entityHasTag(std::shared_ptr<Registry> registry, ecs::Entity entity, const std::string& tagName);
 };
 
 }  // namespace ecs
