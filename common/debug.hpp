@@ -12,16 +12,16 @@
 
 namespace debug {
 
-enum class debugType {
-    NETWORK,
-    ECS,
-    CORE
+enum debugType {
+    NETWORK = 0,
+    ECS = 1,
+    CORE = 2
 };
 
-enum class debugLevel {
-    INFO,
-    WARNING,
-    ERROR
+enum debugLevel {
+    INFO = 0,
+    WARNING = 1,
+    ERROR = 2
 };
 
 class Debug {
