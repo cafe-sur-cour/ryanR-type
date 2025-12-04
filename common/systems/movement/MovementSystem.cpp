@@ -83,8 +83,10 @@ bool MovementSystem::checkCollision(
 
         bool otherIsProjectile = registry->hasComponent<ProjectileTag>(otherEntityId);
 
-        if ((isProjectile && registry->hasComponent<ProjectilePassThroughTag>(otherEntityId)) ||
-            (otherIsProjectile && registry->hasComponent<ProjectilePassThroughTag>(entityId)))
+        if ((isProjectile && registry->hasComponent<
+                ProjectilePassThroughTag>(otherEntityId)) ||
+            (otherIsProjectile && registry->hasComponent<
+                ProjectilePassThroughTag>(entityId)))
             continue;
 
         for (auto& movingCollider : movingColliders) {
