@@ -65,6 +65,13 @@ void MovementSystem::update(std::shared_ptr<ResourceManager> resourceManager,
             math::Vector2f finalPos = calculateSmoothSlidingPosition(
                 registry, entityId, currentPos, desiredPos);
             transform->setPosition(finalPos);
+
+            if (registry->hasComponent<ProjectileTag>(entityId) &&
+                (std::abs(finalPos.getX() - desiredPos.getX()) > constants::EPS ||
+                 std::abs(finalPos.getY() - desiredPos.getY()) > constants::EPS)) {
+                velocityComp->setVelocity(math::Vector2f(0.0f, 0.0f));
+            }
+
             if (hasPushCollider) {
                 handlePushCollision(registry, entityId, finalPos, deltaTime);
             }
@@ -151,7 +158,7 @@ math::Vector2f MovementSystem::calculateSmoothMovement(
     float distance = std::sqrt(movement.getX() *
         movement.getX() + movement.getY() * movement.getY());
 
-    if (distance < 0.001f) {
+    if (distance < constants::EPS) {
         return startPos;
     }
 
@@ -186,7 +193,7 @@ math::Vector2f MovementSystem::calculateSlidingMovement(
     math::Vector2f remainingMovement = desiredPos - basePos;
     math::Vector2f slidePos = basePos;
 
-    if (std::abs(remainingMovement.getX()) > 0.001f) {
+    if (std::abs(remainingMovement.getX()) > constants::EPS) {
         math::Vector2f horizontalSlide =
             basePos + math::Vector2f(remainingMovement.getX(), 0.0f);
         if (checkCollision(registry, entityId, horizontalSlide)) {
@@ -194,7 +201,7 @@ math::Vector2f MovementSystem::calculateSlidingMovement(
         }
     }
 
-    if (std::abs(remainingMovement.getY()) > 0.001f) {
+    if (std::abs(remainingMovement.getY()) > constants::EPS) {
         math::Vector2f verticalSlide =
             basePos + math::Vector2f(0.0f, remainingMovement.getY());
         if (checkCollision(registry, entityId, verticalSlide)) {
