@@ -19,7 +19,6 @@
 #include "../../components/tags/ProjectileTag.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/permanent/SpeedComponent.hpp"
-#include "../../components/permanent/InteractionConfigComponent.hpp"
 #include "../../constants.hpp"
 #include "../../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
@@ -138,15 +137,6 @@ void ShootingSystem::spawnProjectile(
     }
 
     registry->addComponent(projectileEntity, std::make_shared<ProjectileTag>());
-
-    InteractionMapping deathMapping;
-    deathMapping.targetTags = {"MobTag"};
-    deathMapping.actionToOther = constants::DEALDEATH_ACTION;
-    deathMapping.actionToSelf = constants::TAKEDEATH_ACTION;
-
-    std::vector<InteractionMapping> mappings = {deathMapping};
-    registry->addComponent(projectileEntity,
-        std::make_shared<InteractionConfigComponent>(mappings));
 
     auto transform = registry->getComponent<TransformComponent>(projectileEntity);
     if (transform) {
