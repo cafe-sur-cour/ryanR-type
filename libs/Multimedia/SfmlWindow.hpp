@@ -40,6 +40,7 @@ class SfmlWindow : public gfx::IWindow {
         std::shared_ptr<sf::RenderWindow> getSfmlWindow();
         void updateView() override;
         void setViewCenter(float x, float y) override;
+        math::Vector2f getViewCenter() override;
 
     private:
         std::shared_ptr<sf::RenderWindow> _window;

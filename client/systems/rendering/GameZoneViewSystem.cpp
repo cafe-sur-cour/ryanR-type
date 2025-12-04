@@ -11,6 +11,7 @@
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../constants.hpp"
 
 namespace ecs {
 
@@ -19,7 +20,6 @@ GameZoneViewSystem::GameZoneViewSystem() {
 
 void GameZoneViewSystem::update(std::shared_ptr<ResourceManager>
     resourceManager, std::shared_ptr<Registry> registry, float deltaTime) {
-    (void)deltaTime;
 
     View<GameZoneComponent, TransformComponent> view(registry);
 
@@ -35,10 +35,17 @@ void GameZoneViewSystem::update(std::shared_ptr<ResourceManager>
 
         float centerX = position.getX() + zone.getLeft() + zone.getWidth() / 2.0f;
         float centerY = position.getY() + zone.getTop() + zone.getHeight() / 2.0f;
+        math::Vector2f targetCenter(centerX, centerY);
 
         if (resourceManager->has<gfx::IWindow>()) {
             auto window = resourceManager->get<gfx::IWindow>();
-            window->setViewCenter(centerX, centerY);
+            math::Vector2f currentCenter = window->getViewCenter();
+
+            float smoothingSpeed = constants::VIEW_SMOOTHING_SPEED;
+            math::Vector2f direction = targetCenter - currentCenter;
+            math::Vector2f newCenter = currentCenter + direction * smoothingSpeed * deltaTime;
+
+            window->setViewCenter(newCenter.getX(), newCenter.getY());
         }
         break;
     }
