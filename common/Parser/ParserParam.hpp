@@ -37,6 +37,7 @@ enum class FieldType {
     FLOAT,
     STRING,
     INT,
+    BOOL,
     OBJECT,
     JSON,
 };
@@ -49,7 +50,7 @@ struct Field {
 struct FieldValue;
 
 using FieldValueMap = std::map<std::string, std::shared_ptr<FieldValue>>;
-using FieldValueVariant = std::variant<math::Vector2f, float, std::string, int, FieldValueMap, nlohmann::json>;
+using FieldValueVariant = std::variant<math::Vector2f, float, std::string, int, bool, FieldValueMap, nlohmann::json>;
 
 struct FieldValue : FieldValueVariant {
     using FieldValueVariant::FieldValueVariant;
