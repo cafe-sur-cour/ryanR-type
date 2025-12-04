@@ -35,9 +35,11 @@ std::shared_ptr<sf::Font> FontManager::getFont(const std::string& path) {
     }
 
     std::vector<unsigned char> fontData = asset->data;
+    _fontDataCache[path] = fontData;
 
     auto font = std::make_shared<sf::Font>();
-    if (!font->openFromMemory(fontData.data(), fontData.size())) {
+    if (!_fontDataCache[path].empty() &&
+        !font->openFromMemory(_fontDataCache[path].data(), _fontDataCache[path].size())) {
         std::cerr << "[FontManager] Failed to load font from memory: "
                    << path << std::endl;
         return nullptr;
