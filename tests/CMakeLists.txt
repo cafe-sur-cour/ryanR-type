@@ -68,6 +68,18 @@ add_executable(AnimationComponentTests common/ECS/component/AnimationComponentTe
 target_link_libraries(AnimationComponentTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME AnimationComponentTests COMMAND AnimationComponentTests)
 
+add_executable(ScoreComponentTests common/ECS/component/ScoreComponentTests.cpp)
+target_link_libraries(ScoreComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME ScoreComponentTests COMMAND ScoreComponentTests)
+
+add_executable(ScoreTagTests common/ECS/component/ScoreTagTests.cpp)
+target_link_libraries(ScoreTagTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME ScoreTagTests COMMAND ScoreTagTests)
+
+add_executable(ScoreIntentComponentTests common/ECS/component/ScoreIntentComponentTests.cpp)
+target_link_libraries(ScoreIntentComponentTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME ScoreIntentComponentTests COMMAND ScoreIntentComponentTests)
+
 add_executable(APrefabTests common/Prefab/APrefabTests.cpp)
 target_link_libraries(APrefabTests PREFAB ECS GTest::gtest GTest::gtest_main)
 add_test(NAME APrefabTests COMMAND APrefabTests)
@@ -115,6 +127,10 @@ add_test(NAME HealthSystemTests COMMAND HealthSystemTests)
 add_executable(DeathSystemTests common/ECS/system/DeathSystemTests.cpp)
 target_link_libraries(DeathSystemTests ECS GTest::gtest GTest::gtest_main)
 add_test(NAME DeathSystemTests COMMAND DeathSystemTests)
+
+add_executable(ScoreSystemTests common/ECS/system/ScoreSystemTests.cpp)
+target_link_libraries(ScoreSystemTests ECS GTest::gtest GTest::gtest_main)
+add_test(NAME ScoreSystemTests COMMAND ScoreSystemTests)
 
 add_executable(BufferTests server/buffer/circularBufferTest.cpp)
 target_link_libraries(BufferTests Buffer GTest::gtest GTest::gtest_main)
