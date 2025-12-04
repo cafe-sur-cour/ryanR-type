@@ -48,9 +48,13 @@ add_custom_command(TARGET ${SERVER_BIN_NAME} POST_BUILD
 )
 
 if(WIN32)
-    # Copy vcpkg DLLs
+    # Copy vcpkg DLLs (and PDBs only in Debug mode)
     add_custom_command(TARGET ${SERVER_BIN_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/bin/ ${CMAKE_SOURCE_DIR}/
+        COMMAND powershell -Command "Get-ChildItem -Path '${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/bin/*.dll' | ForEach-Object { Copy-Item $_.FullName -Destination '${CMAKE_SOURCE_DIR}/' -Force }"
         COMMENT "Copying vcpkg DLLs to root directory"
+    )
+    add_custom_command(TARGET ${SERVER_BIN_NAME} POST_BUILD
+        COMMAND powershell -Command "if ('$<CONFIG>' -eq 'Debug') { Get-ChildItem -Path '${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/bin/*.pdb' -ErrorAction SilentlyContinue | ForEach-Object { Copy-Item $_.FullName -Destination '${CMAKE_SOURCE_DIR}/' -Force } }"
+        COMMENT "Copying vcpkg PDBs to root directory (Debug only)"
     )
 endif()
