@@ -6,6 +6,9 @@
 */
 
 #include <memory>
+#include <iostream>
+#include <chrono>
+#include <thread>
 
 #include "Core.hpp"
 #include "initResourcesManager/initResourcesManager.hpp"
@@ -44,6 +47,35 @@ void Core::loop() {
         this->_server->init();
         this->_server->start();
     });
+
+    while (this->_server->getState() != 0) {
+        processServerEvents();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+}
+
+void Core::processServerEvents() {
+    if (this->_server == nullptr) {
+        return;
+    }
+
+    if (!this->_server->hasEvents()) {
+        return;
+    }
+
+    auto eventQueue = this->_server->getEventQueue();
+    if (!eventQueue) {
+        return;
+    }
+
+    while (!eventQueue->empty()) {
+        auto event = eventQueue->front();
+        eventQueue->pop();
+        uint8_t clientId = event.first;
+        constants::EventType eventType = event.second;
+        std::cout << "[CORE] Processing event from client " << static_cast<int>(clientId)
+                  << ": " << static_cast<int>(eventType) << std::endl;
+    }
 }
 
 std::shared_ptr<rserv::ServerConfig> Core::getConfig() const {
