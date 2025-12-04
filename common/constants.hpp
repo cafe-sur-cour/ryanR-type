@@ -49,22 +49,14 @@ namespace constants {
     const std::string SPEEDCOMPONENT = "SpeedComponent";
     const std::string SPRITECOMPONENT = "SpriteComponent";
     const std::string ANIMATIONCOMPONENT = "AnimationComponent";
-    const std::string CONTROLLABLETAG = "ControllableTag";
-    const std::string PLAYERTAG = "PlayerTag";
-    const std::string COLLIDERCOMPONENT = "ColliderComponent";
-    const std::string MOBTAG = "MobTag";
-    const std::string SHOOTERTAG = "ShooterTag";
-    const std::string PROJECTILETAG = "ProjectileTag";
     const std::string SHOOTINGSTATSCOMPONENT = "ShootingStatsComponent";
     const std::string RECTANGLERENDERCOMPONENT = "RectangleRenderComponent";
     const std::string PROJECTILEPREFABCOMPONENT = "ProjectilePrefabComponent";
     const std::string TEXTCOMPONENT = "TextComponent";
-    const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
-    const std::string PARALLAXCOMPONENT = "ParallaxComponent";
 
-    const std::string SCORETAG = "ScoreTag";
     const std::string SCORECOMPONENT = "ScoreComponent";
     const std::string DAMAGECOMPONENT = "DamageComponent";
+    const std::string INTERACTIONCONFIGCOMPONENT = "InteractionConfigComponent";
     const std::string SCORE_FIELD = "score";
     const std::string DAMAGE_FIELD = "damage";
     const std::string TARGET_FIELD = "target";
@@ -132,6 +124,11 @@ namespace constants {
     const std::string TEXT_FIELD = "text";
     const std::string FONTPATH_FIELD = "fontPath";
 
+    const std::string MAPPINGS_FIELD = "mappings";
+    const std::string TAGS_FIELD = "tags";
+    const std::string TOENTITY_FIELD = "toEntity";
+    const std::string TOSELF_FIELD = "toSelf";
+
     const std::string MUSICCOMPONENT = "MusicComponent";
     const std::string MUSICFILE_FIELD = "musicFile";
     const std::string VOLUME_FIELD = "volume";
@@ -167,6 +164,19 @@ namespace constants {
     /* Animation conditions */
     const std::string VELOCITY_UP_CONDITION = "isVelocityUp";
     const std::string VELOCITY_DOWN_CONDITION = "isVelocityDown";
+
+    /* Tags */
+    const std::string CONTROLLABLETAG = "ControllableTag";
+    const std::string PLAYERTAG = "PlayerTag";
+    const std::string COLLIDERCOMPONENT = "ColliderComponent";
+    const std::string MOBTAG = "MobTag";
+    const std::string SHOOTERTAG = "ShooterTag";
+    const std::string PROJECTILETAG = "ProjectileTag";
+    const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
+    const std::string PARALLAXCOMPONENT = "ParallaxComponent";
+    const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
+    const std::string OBSTACLETAG = "ObstacleTag";
+    const std::string SCORETAG = "ScoreTag";
 
     /* Action constants */
     const std::string DEALDEATH_ACTION = "DealDeath";
