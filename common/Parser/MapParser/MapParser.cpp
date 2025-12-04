@@ -17,7 +17,10 @@
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../types/Vector2f.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
+#include "../../components/permanent/ColliderComponent.hpp"
 #include "../../../client/components/rendering/MusicComponent.hpp"
+#include "../../components/permanent/GameZoneComponent.hpp"
+#include "../../components/tags/GameZoneColliderTag.hpp"
 
 MapParser::MapParser(std::shared_ptr<EntityPrefabManager> prefabManager,
     std::shared_ptr<ecs::Registry> registry)
@@ -57,6 +60,9 @@ void MapParser::parseMap(const nlohmann::json& mapJson) {
         std::string prefabName = mapJson[constants::MUSIC_FIELD].get<std::string>();
         createMusicEntity(prefabName);
     }
+    if (mapJson.contains(constants::BACKGROUND_SCROLL_SPEED_FIELD))
+        createGameZoneEntity(mapJson[constants::BACKGROUND_SCROLL_SPEED_FIELD]);
+
     float tileWidth = constants::TILE_SIZE.getX();
     float tileHeight = constants::TILE_SIZE.getY();
 
@@ -90,6 +96,44 @@ void MapParser::createBackgroundEntity(const std::string& entityName) {
     } else {
         std::cerr << "Warning: 'background' prefab not found" << std::endl;
     }
+}
+
+void MapParser::createGameZoneEntity(float scrollSpeed) {
+    ecs::Entity gameZoneEntity = _registry->createEntity();
+
+    math::FRect zoneRect(0.0f, 0.0f,
+        constants::MAX_WIDTH, constants::MAX_HEIGHT);
+
+    _registry->addComponent<ecs::TransformComponent>(gameZoneEntity,
+        std::make_shared<ecs::TransformComponent>(math::Vector2f(0.0f, 0.0f)));
+    _registry->addComponent<ecs::VelocityComponent>(gameZoneEntity,
+        std::make_shared<ecs::VelocityComponent>(math::Vector2f(scrollSpeed, 0.0f)));
+    _registry->addComponent<ecs::GameZoneComponent>(gameZoneEntity,
+        std::make_shared<ecs::GameZoneComponent>(zoneRect));
+
+    _registry->addComponent<ecs::GameZoneColliderTag>(gameZoneEntity,
+        std::make_shared<ecs::GameZoneColliderTag>());
+
+    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
+        std::make_shared<ecs::ColliderComponent>(
+            math::Vector2f(0.0f, -constants::GAME_ZONE_BOUNDARY_THICKNESS),
+            math::Vector2f(constants::MAX_WIDTH, constants::GAME_ZONE_BOUNDARY_THICKNESS)));
+
+    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
+        std::make_shared<ecs::ColliderComponent>(
+            math::Vector2f(0.0f, constants::MAX_HEIGHT),
+            math::Vector2f(constants::MAX_WIDTH, constants::GAME_ZONE_BOUNDARY_THICKNESS)));
+
+    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
+        std::make_shared<ecs::ColliderComponent>(
+            math::Vector2f(constants::MAX_WIDTH, 0.0f),
+            math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT)));
+
+    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
+        std::make_shared<ecs::ColliderComponent>(
+            math::Vector2f(-constants::GAME_ZONE_BOUNDARY_THICKNESS, 0.0f),
+            math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT),
+            ecs::CollisionType::Push));
 }
 
 void MapParser::parseMapGrid(const nlohmann::json& legend, const nlohmann::json& mapGrid,

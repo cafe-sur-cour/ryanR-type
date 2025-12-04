@@ -7,4 +7,5 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     ControllableTag.hpp
     ShooterTag.hpp
     ScoreTag.hpp
+    GameZoneColliderTag.hpp
 )
