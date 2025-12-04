@@ -8,6 +8,9 @@ obj/
 .DS_Store
 Makefile
 *.so
+*.dll
+*.pdb
+*.dylib
 .idea/
 build/
 build_debug/
@@ -15,5 +18,6 @@ bin/
 cmake-build-*/
 r-type_client
 r-type_server
-*.dylib
+r-type_client.exe
+r-type_server.exe
 vcpkg/
