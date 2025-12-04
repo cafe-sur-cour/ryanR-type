@@ -85,7 +85,7 @@ if errorlevel 1 (
 )
 
 REM Build the project - CMake will handle dependencies automatically based on BUILD_CLIENT/BUILD_SERVER options
-cmake --build --preset "release-windows" --config Release -j4
+cmake --build --preset "release-windows" --config Release -- /maxcpucount
 if errorlevel 1 (
     echo Build failed.
     exit /b 1
