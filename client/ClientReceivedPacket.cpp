@@ -19,7 +19,7 @@ void ClientNetwork::handleConnectionAcceptation() {
     if (payload.size() >= 1) {
         uint8_t id = static_cast<uint8_t>(payload[0]);
         setIdClient(id);
-        _isConnected = true;
+        this->_isConnected = true;
         this->_network->setConnectionState(net::ConnectionState::CONNECTED);
         this->_packet->reset();
         debug::Debug::printDebug(this->_isDebug,
