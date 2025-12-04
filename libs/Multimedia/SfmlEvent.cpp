@@ -49,6 +49,8 @@ gfx::IEvent::event_t SfmlEvent::pollEvents() {
     while (auto event = window->pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
             return event_t::CLOSE;
+        } else if (event->is<sf::Event::Resized>()) {
+            sfmlWindow->updateView();
         } else if (const auto* keyPressed =
                 event->getIf<sf::Event::KeyPressed>()) {
             return processKeyboardEvent(*keyPressed);

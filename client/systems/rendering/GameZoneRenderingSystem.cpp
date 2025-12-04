@@ -12,7 +12,6 @@
 #include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IWindow.hpp"
 #include "../../../common/constants.hpp"
-#include "../../../common/constants.hpp"
 
 namespace ecs {
 
