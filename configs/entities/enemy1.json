@@ -4,22 +4,22 @@
         "TransformComponent": {
             "target": "both",
             "position": { "x": 100.0, "y": 100.0 },
-            "scale": { "x": 5.0, "y": 5.0 },
+            "scale": { "x": 2.5, "y": 2.5 },
             "rotation": 0.0
         },
-        "VelocityComponent": { "target": "server" },
+        "VelocityComponent": { "target": "both" },
         "SpeedComponent": { "target": "both", "speed": 10.0 },
         "AnimationComponent": {
             "target": "client",
             "states": {
                 "idle": {
-                    "texturePath": "assets/sprites/frog_spritesheet.png",
-                    "frameWidth": 64.0,
-                    "frameHeight": 32.0,
-                    "frameCount": 2,
+                    "texturePath": "assets/sprites/ennemies/red_spinning.png",
+                    "frameWidth": 33.0,
+                    "frameHeight": 36.0,
+                    "frameCount": 8,
                     "startWidth": 0.0,
-                    "startHeight": 64.0,
-                    "speed": 0.2,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
                     "loop": true
                 }
             },
@@ -28,7 +28,7 @@
         },
         "ColliderComponent": {
             "target": "both",
-            "size" : { "x": 64.0, "y": 64.0 }
+            "size" : { "x": 33.0, "y": 36.0 }
         }
     }
 }

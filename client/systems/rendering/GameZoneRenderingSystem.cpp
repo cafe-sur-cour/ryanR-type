@@ -12,6 +12,7 @@
 #include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IWindow.hpp"
 #include "../../../common/constants.hpp"
+#include "../../../common/constants.hpp"
 
 namespace ecs {
 
@@ -37,10 +38,26 @@ void GameZoneRenderingSystem::update(std::shared_ptr<ResourceManager>
         if (resourceManager->has<gfx::IWindow>()) {
             auto window = resourceManager->get<gfx::IWindow>();
 
-            gfx::color_t color = {255, 0, 0, 50};
-            window->drawFilledRectangle(color,
-                {static_cast<size_t>(zone.getLeft()), static_cast<size_t>(zone.getTop())},
-                {static_cast<size_t>(zone.getWidth()), static_cast<size_t>(zone.getHeight())});
+            gfx::color_t zoneColor = {255, 0, 0, 50};
+            window->drawFilledRectangle(zoneColor,
+                {static_cast<size_t>(zone.getLeft()),
+                    static_cast<size_t>(zone.getTop())},
+                {static_cast<size_t>(zone.getWidth()),
+                    static_cast<size_t>(zone.getHeight())});
+
+            gfx::color_t boundaryColor = {0, 255, 0, 100};
+
+            window->drawFilledRectangle(boundaryColor,
+                {static_cast<size_t>(zone.getLeft()),
+                    static_cast<size_t>(-constants::GAME_ZONE_BOUNDARY_THICKNESS)},
+                {static_cast<size_t>(zone.getWidth()),
+                    static_cast<size_t>(constants::GAME_ZONE_BOUNDARY_THICKNESS)});
+
+            window->drawFilledRectangle(boundaryColor,
+                {static_cast<size_t>(zone.getLeft()),
+                    static_cast<size_t>(constants::MAX_HEIGHT)},
+                {static_cast<size_t>(zone.getWidth()),
+                    static_cast<size_t>(constants::GAME_ZONE_BOUNDARY_THICKNESS)});
         }
     }
 }
