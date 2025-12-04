@@ -6,24 +6,19 @@
 */
 
 #include "BootState.hpp"
+#include "../Lobby/LobbyState.hpp"
+#include "../../../../../common/gsm/IGameStateMachine.hpp"
+#include <iostream>
 
 namespace gsm {
 
-BootState::BootState(std::shared_ptr<IGameStateMachine> gsm)
-    : AGameState(gsm) {
+BootState::BootState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager)
+    : AGameState(gsm, resourceManager) {
 }
 
 void BootState::enter() {
-    // TODO(anyone): Initialize server boot state
-}
-
-void BootState::update(float deltaTime) {
-    (void)deltaTime;
-    // TODO(anyone): Update server boot state
-}
-
-void BootState::exit() {
-    // TODO(anyone): Cleanup server boot state
+    auto lobbyState = std::make_shared<LobbyState>(_gsm, _resourceManager);
+    _gsm->changeState(lobbyState);
 }
 
 }  // namespace gsm

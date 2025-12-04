@@ -9,17 +9,16 @@
 #define SERVER_BOOTSTATE_HPP_
 
 #include "../../AGameState.hpp"
+#include "resourceManager/ResourceManager.hpp"
 
 namespace gsm {
 
 class BootState : public AGameState {
 public:
-    BootState(std::shared_ptr<IGameStateMachine> gsm);
+    BootState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
     ~BootState() override = default;
 
     void enter() override;
-    void update(float deltaTime) override;
-    void exit() override;
 };
 
 }  // namespace gsm
