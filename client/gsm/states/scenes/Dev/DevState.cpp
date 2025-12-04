@@ -13,6 +13,7 @@
 #include "../../../../../common/components/permanent/VelocityComponent.hpp"
 #include "../../../../../common/components/permanent/ColliderComponent.hpp"
 #include "../../../../components/temporary/SoundIntentComponent.hpp"
+#include "../../../../components/temporary/MusicIntentComponent.hpp"
 #include "../../../../systems/rendering/AnimationRenderingSystem.hpp"
 #include "../../../../components/rendering/HitboxRenderComponent.hpp"
 #include "../../../../components/rendering/RectangleRenderComponent.hpp"
@@ -46,6 +47,7 @@ DevState::DevState(
     _inputSystem = std::make_shared<ecs::MovementInputSystem>();
     _spriteRenderingSystem = std::make_shared<ecs::SpriteRenderingSystem>();
     _soundSystem = std::make_shared<ecs::SoundSystem>();
+    _musicSystem = std::make_shared<ecs::MusicSystem>();
     _prefabManager = std::make_shared<EntityPrefabManager>();
     auto animationRenderingSystem =
         std::make_shared<ecs::AnimationRenderingSystem>();
@@ -71,6 +73,7 @@ DevState::DevState(
     _systemManager->addSystem(_movementSystem);
     _systemManager->addSystem(_inputSystem);
     _systemManager->addSystem(_soundSystem);
+    _systemManager->addSystem(_musicSystem);
     _systemManager->addSystem(parallaxRenderingSystem);
     _systemManager->addSystem(_spriteRenderingSystem);
     _systemManager->addSystem(animationRenderingSystem);
@@ -91,16 +94,14 @@ DevState::DevState(
 }
 
 void DevState::enter() {
-    auto audio = _resourceManager->get<gfx::IAudio>();
-    if (audio) {
-        audio->playMusic("musics/hava-nagila.ogg", true);
-        audio->setMusicVolume(50.0f);
-    }
-
     ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
     _registry->addComponent<ecs::HitboxRenderComponent>(
         playerEntity,
         std::make_shared<ecs::HitboxRenderComponent>());
+
+    ecs::Entity musicIntentEntity = _registry->createEntity();
+    _registry->addComponent<ecs::MusicIntentComponent>(musicIntentEntity,
+        std::make_shared<ecs::MusicIntentComponent>(ecs::PLAY, ""));
 }
 
 void DevState::update(float deltaTime) {

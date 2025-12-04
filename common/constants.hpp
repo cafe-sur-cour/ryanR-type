@@ -120,16 +120,25 @@ namespace constants {
     const std::string PREFABNAME_FIELD = "prefabName";
     const std::string LIFETIMECOMPONENT = "LifetimeComponent";
     const std::string LIFETIME_FIELD = "lifetime";
+    const std::string BACKGROUNDMUSICTAG = "BackGroundMusicTag";
     const std::string TEXT_FIELD = "text";
     const std::string FONTPATH_FIELD = "fontPath";
 
-
+    const std::string MUSICCOMPONENT = "MusicComponent";
+    const std::string MUSICFILE_FIELD = "musicFile";
+    const std::string VOLUME_FIELD = "volume";
+    const std::string INITIALSTATEMUSIC_FIELD = "initialState";
+    const std::string PLAYING_FIELD = "PLAYING";
+    const std::string PAUSED_FIELD = "PAUSED";
+    const std::string STOPPED_FIELD = "STOPPED";
+    const std::string CHANGING_FIELD = "CHANGING";
     const math::Vector2f TILE_SIZE = math::Vector2f(64.0f, 64.0f);
 
     const float MAX_HEIGHT = 1080.0f;
     const float MAX_WIDTH = 1920.0f;
 
     /* Map parsing constants */
+    const std::string MUSIC_FIELD = "music";
     const std::string BACKGROUND_FIELD = "background";
     const std::string BACKGROUND_SCROLL_SPEED_FIELD = "scrollSpeed";
     const std::string TILE_FIELD = "tile";
