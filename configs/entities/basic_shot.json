@@ -17,7 +17,7 @@
             "target": "both",
             "offset": { "x": 0.0, "y": 0.0 },
             "size": { "x": 16.0, "y": 4.0 },
-            "type": "Solid"
+            "type": "Trigger"
         },
         "LifetimeComponent": {
             "target": "both",
