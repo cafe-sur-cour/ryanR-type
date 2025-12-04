@@ -18,6 +18,8 @@
     #endif
 #endif
 
+#include <queue>
+#include <map>
 #include <memory>
 #include "IServer.hpp"
 #include "ServerConfig.hpp"
@@ -25,6 +27,7 @@
 #include "../libs/Buffer/IBuffer.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
+#include "../common/constants.hpp"
 #include "Signal.hpp"
 
 namespace rserv {
@@ -59,6 +62,7 @@ namespace rserv {
             void processIncomingPackets() override;
             bool processConnections(asio::ip::udp::endpoint id) override;
             bool processDisconnections(uint8_t idClient) override;
+            bool processEvents(uint8_t idClient) override;
 
             void broadcastPacket() override;
             void sendToClient(uint8_t idClient ) override;
@@ -80,6 +84,7 @@ namespace rserv {
             std::shared_ptr<net::INetwork> _network;
             std::shared_ptr<IBuffer> _buffer;
             std::shared_ptr<pm::IPacketManager> _packet;
+            std::queue<std::pair<uint8_t, constants::EventType>> _eventQueue;
 
     };
 } // namespace rserv = r-type server

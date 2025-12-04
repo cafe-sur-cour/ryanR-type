@@ -46,6 +46,7 @@ public:
 
     virtual bool processConnections(asio::ip::udp::endpoint id) = 0;
     virtual bool processDisconnections(uint8_t idClient) = 0;
+    virtual bool processEvents(uint8_t idClient) = 0;
     virtual void processIncomingPackets() = 0;
 
     virtual void broadcastPacket() = 0;
