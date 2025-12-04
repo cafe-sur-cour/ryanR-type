@@ -5,6 +5,7 @@
 ** ComponentCreators
 */
 
+#include <iostream>
 #include <memory>
 #include <string>
 #include <map>
@@ -75,7 +76,9 @@ void Parser::instanciateComponentDefinitions() {
         }}},
         {constants::COLLIDERCOMPONENT, {std::type_index(typeid(ecs::ColliderComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
-            {constants::SIZE_FIELD, FieldType::VECTOR2F}
+            {constants::OFFSET_FIELD, FieldType::VECTOR2F},
+            {constants::SIZE_FIELD, FieldType::VECTOR2F},
+            {constants::TYPE_FIELD, FieldType::STRING}
         }}},
         {constants::SHOOTINGSTATSCOMPONENT,
             {std::type_index(typeid(ecs::ShootingStatsComponent)), {
@@ -245,8 +248,22 @@ void Parser::instanciateComponentCreators() {
 
     registerComponent<ecs::ColliderComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto offset = std::get<math::Vector2f>(*fields.at(constants::OFFSET_FIELD));
         auto size = std::get<math::Vector2f>(*fields.at(constants::SIZE_FIELD));
-        return std::make_shared<ecs::ColliderComponent>(math::Vector2f(0.0f, 0.0f), size);
+        auto typeStr = std::get<std::string>(*fields.at(constants::TYPE_FIELD));
+
+        ecs::CollisionType type = ecs::CollisionType::Solid;
+        if (typeStr == constants::COLLISION_TYPE_SOLID) {
+            type = ecs::CollisionType::Solid;
+        } else if (typeStr == constants::COLLISION_TYPE_TRIGGER) {
+            type = ecs::CollisionType::Trigger;
+        } else if (typeStr == constants::COLLISION_TYPE_PUSH) {
+            type = ecs::CollisionType::Push;
+        } else if (typeStr == constants::COLLISION_TYPE_NONE) {
+            type = ecs::CollisionType::None;
+        }
+
+        return std::make_shared<ecs::ColliderComponent>(offset, size, type);
     });
 
     registerComponent<ecs::ShootingStatsComponent>([](const std::map<std::string,
