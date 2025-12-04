@@ -15,17 +15,13 @@
         },
         "ColliderComponent": {
             "target": "both",
-            "size": { "x": 16.0, "y": 4.0 }
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 16.0, "y": 4.0 },
+            "type": "Solid"
         },
         "LifetimeComponent": {
             "target": "both",
             "lifetime": 2.0
-        },
-        "TextComponent": {
-            "target": "client",
-            "text": "abcd",
-            "fontPath": "assets/fonts/ARIAL.TTF",
-            "color": { "r": 55, "g": 34, "b": 145, "a": 255 }
         }
     }
 }

@@ -28,7 +28,9 @@
         },
         "ColliderComponent": {
             "target": "both",
-            "size" : { "x": 33.0, "y": 36.0 }
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size" : { "x": 33.0, "y": 36.0 },
+            "type": "Solid"
         }
     }
 }
