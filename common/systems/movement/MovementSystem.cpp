@@ -71,6 +71,9 @@ bool MovementSystem::checkCollision(
 
     bool isProjectile = registry->hasComponent<ProjectileTag>(entityId);
 
+    auto movingTransform = registry->getComponent<TransformComponent>(entityId);
+    math::Vector2f movingScale = movingTransform->getScale();
+
     auto allEntitiesView = registry->view<
         TransformComponent, ColliderComponent>();
     for (auto otherEntityId : allEntitiesView) {
@@ -92,13 +95,14 @@ bool MovementSystem::checkCollision(
         for (auto& movingCollider : movingColliders) {
             if (movingCollider->getType() != CollisionType::Solid) continue;
 
-            math::FRect movingHitbox = movingCollider->getHitbox(newPos);
+            math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale);
 
             for (auto& otherCollider : otherColliders) {
                 if (otherCollider->getType() != CollisionType::Solid) continue;
 
+                math::Vector2f otherScale = otherTransform->getScale();
                 math::FRect otherHitbox =
-                    otherCollider->getHitbox(otherTransform->getPosition());
+                    otherCollider->getHitbox(otherTransform->getPosition(), otherScale);
 
                 if (movingHitbox.intersects(otherHitbox)) {
                     return false;
@@ -201,6 +205,9 @@ math::Vector2f MovementSystem::handleBounceCollision(
         return desiredPos;
     }
 
+    auto entityTransform = registry->getComponent<TransformComponent>(entityId);
+    math::Vector2f entityScale = entityTransform->getScale();
+
     auto allEntitiesView = registry->view<TransformComponent, ColliderComponent>();
 
     for (auto otherEntityId : allEntitiesView) {
@@ -214,13 +221,14 @@ math::Vector2f MovementSystem::handleBounceCollision(
         for (auto& bounceCollider : bounceColliders) {
             if (bounceCollider->getType() != CollisionType::Bounce) continue;
 
-            math::FRect bounceHitbox = bounceCollider->getHitbox(desiredPos);
+            math::FRect bounceHitbox = bounceCollider->getHitbox(desiredPos, entityScale);
 
             for (auto& otherCollider : otherColliders) {
                 if (otherCollider->getType() != CollisionType::Solid) continue;
 
+                math::Vector2f otherScale = otherTransform->getScale();
                 math::FRect otherHitbox =
-                    otherCollider->getHitbox(otherTransform->getPosition());
+                    otherCollider->getHitbox(otherTransform->getPosition(), otherScale);
 
                 if (bounceHitbox.intersects(otherHitbox)) {
                     math::Vector2f currentVelocity = velocityComp->getVelocity();

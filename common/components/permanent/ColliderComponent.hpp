@@ -36,8 +36,12 @@ class ColliderComponent : public AComponent {
         CollisionType getType() const { return _type; };
         void setType(CollisionType type) { _type = type; };
 
-        math::FRect getHitbox(math::Vector2f entityPosition) const {
-            return math::FRect(entityPosition.getX() + _offset.getX(), entityPosition.getY() + _offset.getY(), _size.getX(), _size.getY());
+        math::FRect getHitbox(math::Vector2f entityPosition, math::Vector2f scale = math::Vector2f(1.0f, 1.0f)) const {
+            return math::FRect(entityPosition.getX() + _offset.getX(), entityPosition.getY() + _offset.getY(), _size.getX() * scale.getX(), _size.getY() * scale.getY());
+        };
+
+        math::FRect getScaledHitbox(math::Vector2f entityPosition, math::Vector2f scale) const {
+            return getHitbox(entityPosition, scale);
         };
 
     private:
