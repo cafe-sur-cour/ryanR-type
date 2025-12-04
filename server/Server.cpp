@@ -163,6 +163,9 @@ void rserv::Server::processIncomingPackets() {
     }
     if (received.second.at(0) == 0x93) {
         this->_packet->unpack(received.second);
+        if (this->_packet->getType() == 0x03) {
+            this->processDisconnections(this->_packet->getIdClient());
+        }
         return;
     }
 
@@ -210,12 +213,11 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
 bool rserv::Server::processDisconnections(uint8_t idClient) {
     for (auto &client : this->_clients) {
         if (std::get<0>(client) == idClient) {
-            this->_network->closeConnection(std::get<1>(client));
             this->_clients.erase(
                 std::remove(this->_clients.begin(), this->_clients.end(), client),
                 this->_clients.end());
             std::cout << "[SERVER] Client " << static_cast<int>(idClient)
-                << " disconnected and removed from client list" << std::endl;
+                << " disconnected and removed from the lobby" << std::endl;
             return true;
         }
     }
