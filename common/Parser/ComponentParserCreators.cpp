@@ -16,6 +16,7 @@
 #include "../constants.hpp"
 #include "../components/tags/ShooterTag.hpp"
 #include "../components/tags/ProjectileTag.hpp"
+#include "../components/tags/MobTag.hpp"
 #include "../components/tags/ProjectilePassThroughTag.hpp"
 #include "../components/permanent/ShootingStatsComponent.hpp"
 #include "../components/permanent/ProjectilePrefabComponent.hpp"
@@ -69,6 +70,9 @@ void Parser::instanciateComponentDefinitions() {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
         {constants::PROJECTILETAG, {std::type_index(typeid(ecs::ProjectileTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::MOBTAG, {std::type_index(typeid(ecs::MobTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
         {constants::PROJECTILEPASSTHROUGHTAG,
@@ -243,6 +247,11 @@ void Parser::instanciateComponentCreators() {
     registerComponent<ecs::ProjectileTag>([]([[maybe_unused]] const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::ProjectileTag>();
+    });
+
+    registerComponent<ecs::MobTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::MobTag>();
     });
 
     registerComponent<
