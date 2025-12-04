@@ -27,9 +27,9 @@ enum class debugLevel {
 class Debug {
     public:
         ~Debug() = default;
-        static void printDebug(const bool isDebug, const std::string &message, const debugType type, const debugLevel level);
+        static void printDebug(const bool isDebug, const std::string &message, debugType type, debugLevel level);
 };
 
-}
+} // namespace debug
 
 #endif /* !DEBUG_HPP_ */
