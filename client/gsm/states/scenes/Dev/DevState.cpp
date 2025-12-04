@@ -13,12 +13,14 @@
 #include "../../../../../common/components/permanent/VelocityComponent.hpp"
 #include "../../../../../common/components/permanent/ColliderComponent.hpp"
 #include "../../../../components/temporary/SoundIntentComponent.hpp"
+#include "../../../../components/temporary/MusicIntentComponent.hpp"
 #include "../../../../systems/rendering/AnimationRenderingSystem.hpp"
 #include "../../../../components/rendering/HitboxRenderComponent.hpp"
 #include "../../../../components/rendering/RectangleRenderComponent.hpp"
 #include "../../../../systems/rendering/HitboxRenderingSystem.hpp"
 #include "../../../../systems/rendering/RectangleRenderingSystem.hpp"
 #include "../../../../systems/rendering/TextRenderingSystem.hpp"
+#include "../../../../systems/rendering/ParallaxRenderingSystem.hpp"
 #include "../../../../../common/components/tags/ObstacleTag.hpp"
 #include "../../../../../common/components/tags/ShooterTag.hpp"
 #include "../../../../systems/input/ShootInputSystem.hpp"
@@ -27,6 +29,7 @@
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/components/permanent/ShootingStatsComponent.hpp"
+#include "../../../../../common/systems/score/ScoreSystem.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
 
@@ -43,6 +46,7 @@ DevState::DevState(
     _inputSystem = std::make_shared<ecs::MovementInputSystem>();
     _spriteRenderingSystem = std::make_shared<ecs::SpriteRenderingSystem>();
     _soundSystem = std::make_shared<ecs::SoundSystem>();
+    _musicSystem = std::make_shared<ecs::MusicSystem>();
     _prefabManager = std::make_shared<EntityPrefabManager>();
     auto animationRenderingSystem =
         std::make_shared<ecs::AnimationRenderingSystem>();
@@ -52,11 +56,14 @@ DevState::DevState(
         std::make_shared<ecs::RectangleRenderingSystem>();
     auto textRenderingSystem =
         std::make_shared<ecs::TextRenderingSystem>();
+    auto parallaxRenderingSystem =
+        std::make_shared<ecs::ParallaxRenderingSystem>();
     auto shootInputSystem = std::make_shared<ecs::ShootInputSystem>();
     auto shootingSystem = std::make_shared<ecs::ShootingSystem>();
     auto lifetimeSystem = std::make_shared<ecs::LifetimeSystem>();
     auto healthSystem = std::make_shared<ecs::HealthSystem>();
     auto deathSystem = std::make_shared<ecs::DeathSystem>();
+    auto scoreSystem = std::make_shared<ecs::ScoreSystem>();
 
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
 
@@ -64,6 +71,8 @@ DevState::DevState(
     _systemManager->addSystem(_movementSystem);
     _systemManager->addSystem(_inputSystem);
     _systemManager->addSystem(_soundSystem);
+    _systemManager->addSystem(_musicSystem);
+    _systemManager->addSystem(parallaxRenderingSystem);
     _systemManager->addSystem(_spriteRenderingSystem);
     _systemManager->addSystem(animationRenderingSystem);
     _systemManager->addSystem(hitboxRenderingSystem);
@@ -74,6 +83,7 @@ DevState::DevState(
     _systemManager->addSystem(lifetimeSystem);
     _systemManager->addSystem(healthSystem);
     _systemManager->addSystem(deathSystem);
+    _systemManager->addSystem(scoreSystem);
 
     _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
     _parser->parseAllEntities(constants::CONFIG_PATH);
@@ -81,16 +91,14 @@ DevState::DevState(
 }
 
 void DevState::enter() {
-    auto audio = _resourceManager->get<gfx::IAudio>();
-    if (audio) {
-        audio->playMusic("musics/hava-nagila.ogg", true);
-        audio->setMusicVolume(50.0f);
-    }
-
     ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
     _registry->addComponent<ecs::HitboxRenderComponent>(
         playerEntity,
         std::make_shared<ecs::HitboxRenderComponent>());
+
+    ecs::Entity musicIntentEntity = _registry->createEntity();
+    _registry->addComponent<ecs::MusicIntentComponent>(musicIntentEntity,
+        std::make_shared<ecs::MusicIntentComponent>(ecs::PLAY, ""));
 }
 
 void DevState::update(float deltaTime) {
