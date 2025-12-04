@@ -188,3 +188,8 @@ void SfmlWindow::updateView() {
     _view.setViewport(viewport);
     _window->setView(_view);
 }
+
+void SfmlWindow::setViewCenter(float x, float y) {
+    _view.setCenter(sf::Vector2f(x, y));
+    _window->setView(_view);
+}
