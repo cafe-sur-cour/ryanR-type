@@ -208,8 +208,18 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
 }
 
 bool rserv::Server::processDisconnections(uint8_t idClient) {
-    (void)idClient;
-    return true;
+    for (auto &client : this->_clients) {
+        if (std::get<0>(client) == idClient) {
+            this->_network->closeConnection(std::get<1>(client));
+            this->_clients.erase(
+                std::remove(this->_clients.begin(), this->_clients.end(), client),
+                this->_clients.end());
+            std::cout << "[SERVER] Client " << static_cast<int>(idClient)
+                << " disconnected and removed from client list" << std::endl;
+            return true;
+        }
+    }
+    return false;
 }
 
 void rserv::Server::broadcastPacket() {
@@ -224,17 +234,11 @@ void rserv::Server::sendToClient(uint8_t idClient) {
 }
 
 std::vector<uint8_t> rserv::Server::getConnectedClients() const {
-    if (_network) {
-        return _network->getActiveConnections();
-    }
     return {};
 }
 
 size_t rserv::Server::getClientCount() const {
-    if (_network) {
-        return _network->getConnectionCount();
-    }
-    return 0;
+    return this->_clients.size();
 }
 
 void rserv::Server::onClientConnected(uint8_t idClient) {

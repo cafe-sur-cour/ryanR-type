@@ -75,7 +75,6 @@ void UnixServerNetwork::stop() {
     if (_socket && _socket->is_open()) {
         _socket->close();
     }
-    _clients.clear();
     while (!_incomingPackets.empty()) {
         _incomingPackets.pop();
     }
