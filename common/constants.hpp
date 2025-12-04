@@ -61,6 +61,9 @@ namespace constants {
     const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
     const std::string PARALLAXCOMPONENT = "ParallaxComponent";
 
+    const std::string SCORETAG = "ScoreTag";
+    const std::string SCORECOMPONENT = "ScoreComponent";
+    const std::string SCORE_FIELD = "score";
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
     const std::string SCALE_FIELD = "scale";
