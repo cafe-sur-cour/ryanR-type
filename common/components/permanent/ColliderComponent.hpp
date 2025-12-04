@@ -18,7 +18,8 @@ enum class CollisionType {
     None,
     Solid,
     Bounce,
-    Trigger
+    Trigger,
+    Push
 };
 
 class ColliderComponent : public AComponent {

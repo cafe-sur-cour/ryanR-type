@@ -8,6 +8,7 @@
 #include <memory>
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 #include "MovementSystem.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
@@ -19,6 +20,7 @@
 #include "../../components/tags/ProjectilePassThroughTag.hpp"
 #include "../../components/tags/GameZoneColliderTag.hpp"
 #include "../../components/tags/PlayerTag.hpp"
+#include "../../components/temporary/DeathIntentComponent.hpp"
 
 namespace ecs {
 
@@ -42,10 +44,13 @@ void MovementSystem::update(std::shared_ptr<ResourceManager> resourceManager,
 
         auto colliders = registry->getComponents<ColliderComponent>(entityId);
         bool hasBounceCollider = false;
+        bool hasPushCollider = false;
         for (auto& collider : colliders) {
             if (collider->getType() == CollisionType::Bounce) {
                 hasBounceCollider = true;
-                break;
+            }
+            if (collider->getType() == CollisionType::Push) {
+                hasPushCollider = true;
             }
         }
 
@@ -53,10 +58,16 @@ void MovementSystem::update(std::shared_ptr<ResourceManager> resourceManager,
             math::Vector2f finalPos = handleBounceCollision(
                 registry, entityId, currentPos, desiredPos, velocityComp);
             transform->setPosition(finalPos);
+            if (hasPushCollider) {
+                handlePushCollision(registry, entityId, finalPos, deltaTime);
+            }
         } else {
             math::Vector2f finalPos = calculateSmoothSlidingPosition(
                 registry, entityId, currentPos, desiredPos);
             transform->setPosition(finalPos);
+            if (hasPushCollider) {
+                handlePushCollision(registry, entityId, finalPos, deltaTime);
+            }
         }
     }
 }
@@ -100,7 +111,9 @@ bool MovementSystem::checkCollision(
             math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale);
 
             for (auto& otherCollider : otherColliders) {
-                if (otherCollider->getType() != CollisionType::Solid) continue;
+                // Solid collider collides with both Solid and Push colliders
+                if (otherCollider->getType() != CollisionType::Solid &&
+                    otherCollider->getType() != CollisionType::Push) continue;
 
                 math::Vector2f otherScale = otherTransform->getScale();
                 math::FRect otherHitbox =
@@ -270,6 +283,66 @@ math::Vector2f MovementSystem::handleBounceCollision(
 
     return calculateSmoothSlidingPosition(
         registry, entityId, startPos, desiredPos);
+}
+
+void MovementSystem::handlePushCollision(
+    std::shared_ptr<Registry> registry,
+    size_t entityId,
+    math::Vector2f finalPos,
+    float deltaTime) {
+
+    auto pushColliders = registry->getComponents<ColliderComponent>(entityId);
+    if (pushColliders.empty()) {
+        return;
+    }
+
+    auto entityTransform = registry->getComponent<TransformComponent>(entityId);
+    math::Vector2f entityScale = entityTransform->getScale();
+
+    auto allEntitiesView = registry->view<TransformComponent, ColliderComponent>();
+
+    for (auto otherEntityId : allEntitiesView) {
+        if (otherEntityId == entityId) continue;
+
+        auto otherTransform = registry->getComponent<TransformComponent>(otherEntityId);
+        auto otherColliders = registry->getComponents<ColliderComponent>(otherEntityId);
+
+        if (registry->hasComponent<GameZoneColliderTag>(entityId)) {
+            if (!registry->hasComponent<PlayerTag>(otherEntityId)) {
+                continue;
+            }
+        }
+
+        for (auto& pushCollider : pushColliders) {
+            if (pushCollider->getType() != CollisionType::Push) continue;
+
+            math::FRect pushHitbox = pushCollider->getHitbox(finalPos, entityScale);
+
+            for (auto& otherCollider : otherColliders) {
+                if (otherCollider->getType() == CollisionType::None) continue;
+
+                math::Vector2f otherScale = otherTransform->getScale();
+                math::FRect otherHitbox =
+                    otherCollider->getHitbox(otherTransform->getPosition(), otherScale);
+
+                if (pushHitbox.intersects(otherHitbox)) {
+                    auto pusherVelocity = registry->getComponent<VelocityComponent>(entityId);
+                    math::Vector2f pushVelocity = pusherVelocity->getVelocity();
+                    math::Vector2f pushAmount = pushVelocity * deltaTime;
+                    math::Vector2f newOtherPos = otherTransform->getPosition() + pushAmount;
+
+                    if (checkCollision(registry, otherEntityId, newOtherPos)) {
+                        otherTransform->setPosition(newOtherPos);
+                    } else {
+                        if (registry->hasComponent<PlayerTag>(otherEntityId)) {
+                            registry->addComponent<DeathIntentComponent>(otherEntityId,
+                                std::make_shared<DeathIntentComponent>());
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 }  // namespace ecs
