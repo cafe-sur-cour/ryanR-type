@@ -27,9 +27,9 @@
 #include "../../client/components/rendering/ParallaxComponent.hpp"
 #include "../ECS/entity/Entity.hpp"
 #include "../ECS/entity/registry/Registry.hpp"
+#include "../../client/components/tags/BackGroundMusicTag.hpp"
 #include "../components/tags/ScoreTag.hpp"
 #include "../components/permanent/ScoreComponent.hpp"
-#include "../../client/components/tags/BackGroundMusicTag.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -364,8 +364,8 @@ void Parser::instanciateComponentCreators() {
         parallax->sortLayersByZIndex();
         return parallax;
     });
-        registerComponent<ecs::BackGroundMusicTag>([]([[maybe_unused]]
-            const std::map<std::string,
+    registerComponent<ecs::BackGroundMusicTag>([]([[maybe_unused]]
+        const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::BackGroundMusicTag>();
     });
