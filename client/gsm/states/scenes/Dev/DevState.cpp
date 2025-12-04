@@ -28,6 +28,7 @@
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/components/permanent/ShootingStatsComponent.hpp"
+#include "../../../../../common/systems/score/ScoreSystem.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
 
@@ -60,6 +61,7 @@ DevState::DevState(
     auto lifetimeSystem = std::make_shared<ecs::LifetimeSystem>();
     auto healthSystem = std::make_shared<ecs::HealthSystem>();
     auto deathSystem = std::make_shared<ecs::DeathSystem>();
+    auto scoreSystem = std::make_shared<ecs::ScoreSystem>();
 
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
 
@@ -78,6 +80,7 @@ DevState::DevState(
     _systemManager->addSystem(lifetimeSystem);
     _systemManager->addSystem(healthSystem);
     _systemManager->addSystem(deathSystem);
+    _systemManager->addSystem(scoreSystem);
 
     _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
     _parser->parseAllEntities(constants::CONFIG_PATH);
