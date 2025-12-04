@@ -458,10 +458,24 @@ void Parser::instanciateComponentCreators() {
                 }
             }
             if (interaction.contains(constants::TOENTITY_FIELD)) {
-                mapping.actionToOther = interaction[constants::TOENTITY_FIELD];
+                auto toEntityValue = interaction[constants::TOENTITY_FIELD];
+                if (toEntityValue.is_array()) {
+                    for (const auto& action : toEntityValue) {
+                        mapping.actionsToOther.push_back(action);
+                    }
+                } else if (toEntityValue.is_string()) {
+                    mapping.actionsToOther.push_back(toEntityValue);
+                }
             }
             if (interaction.contains(constants::TOSELF_FIELD)) {
-                mapping.actionToSelf = interaction[constants::TOSELF_FIELD];
+                auto toSelfValue = interaction[constants::TOSELF_FIELD];
+                if (toSelfValue.is_array()) {
+                    for (const auto& action : toSelfValue) {
+                        mapping.actionsToSelf.push_back(action);
+                    }
+                } else if (toSelfValue.is_string()) {
+                    mapping.actionsToSelf.push_back(toSelfValue);
+                }
             }
             mappings.push_back(mapping);
         }

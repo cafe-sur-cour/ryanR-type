@@ -36,8 +36,8 @@
             "mappings": [
                 {
                     "tags": ["MobTag"],
-                    "toEntity": "DealDamage",
-                    "toSelf": "TakeDeath"
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDeath"]
                 }
             ]
         }

@@ -16,8 +16,8 @@ namespace ecs {
 
 struct InteractionMapping {
     std::vector<std::string> targetTags;
-    std::string actionToOther;
-    std::string actionToSelf;
+    std::vector<std::string> actionsToOther;
+    std::vector<std::string> actionsToSelf;
 };
 
 class InteractionConfigComponent : public AComponent {

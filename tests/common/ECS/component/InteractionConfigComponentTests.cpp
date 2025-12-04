@@ -29,40 +29,40 @@ TEST_F(InteractionConfigComponentTests, DefaultConstructor) {
 
 TEST_F(InteractionConfigComponentTests, ConstructorWithMappings) {
     std::vector<InteractionMapping> mappings = {
-        {{"enemy", "player"}, "damage", "score"},
-        {{"powerup"}, "collect", ""}
+        {{"enemy", "player"}, {"damage"}, {"score"}},
+        {{"powerup"}, {"collect"}, {}}
     };
 
     InteractionConfigComponent comp(mappings);
 
     EXPECT_EQ(comp.getMappings().size(), 2);
     EXPECT_EQ(comp.getMappings()[0].targetTags, std::vector<std::string>({"enemy", "player"}));
-    EXPECT_EQ(comp.getMappings()[0].actionToOther, "damage");
-    EXPECT_EQ(comp.getMappings()[0].actionToSelf, "score");
+    EXPECT_EQ(comp.getMappings()[0].actionsToOther, std::vector<std::string>({"damage"}));
+    EXPECT_EQ(comp.getMappings()[0].actionsToSelf, std::vector<std::string>({"score"}));
     EXPECT_EQ(comp.getMappings()[1].targetTags, std::vector<std::string>({"powerup"}));
-    EXPECT_EQ(comp.getMappings()[1].actionToOther, "collect");
-    EXPECT_EQ(comp.getMappings()[1].actionToSelf, "");
+    EXPECT_EQ(comp.getMappings()[1].actionsToOther, std::vector<std::string>({"collect"}));
+    EXPECT_EQ(comp.getMappings()[1].actionsToSelf, std::vector<std::string>({}));
 }
 
 TEST_F(InteractionConfigComponentTests, SetMappings) {
     InteractionConfigComponent comp;
     std::vector<InteractionMapping> mappings = {
-        {{"test"}, "action1", "action2"}
+        {{"test"}, {"action1"}, {"action2"}}
     };
 
     comp.setMappings(mappings);
 
     EXPECT_EQ(comp.getMappings().size(), 1);
     EXPECT_EQ(comp.getMappings()[0].targetTags, std::vector<std::string>({"test"}));
-    EXPECT_EQ(comp.getMappings()[0].actionToOther, "action1");
-    EXPECT_EQ(comp.getMappings()[0].actionToSelf, "action2");
+    EXPECT_EQ(comp.getMappings()[0].actionsToOther, std::vector<std::string>({"action1"}));
+    EXPECT_EQ(comp.getMappings()[0].actionsToSelf, std::vector<std::string>({"action2"}));
 }
 
 TEST_F(InteractionConfigComponentTests, AddMapping) {
     InteractionConfigComponent comp;
 
-    InteractionMapping mapping1 = {{"enemy"}, "damage", ""};
-    InteractionMapping mapping2 = {{"player"}, "", "heal"};
+    InteractionMapping mapping1 = {{"enemy"}, {"damage"}, {}};
+    InteractionMapping mapping2 = {{"player"}, {}, {"heal"}};
 
     comp.addMapping(mapping1);
     EXPECT_EQ(comp.getMappings().size(), 1);
@@ -71,27 +71,27 @@ TEST_F(InteractionConfigComponentTests, AddMapping) {
     EXPECT_EQ(comp.getMappings().size(), 2);
 
     EXPECT_EQ(comp.getMappings()[0].targetTags, std::vector<std::string>({"enemy"}));
-    EXPECT_EQ(comp.getMappings()[0].actionToOther, "damage");
-    EXPECT_EQ(comp.getMappings()[0].actionToSelf, "");
+    EXPECT_EQ(comp.getMappings()[0].actionsToOther, std::vector<std::string>({"damage"}));
+    EXPECT_EQ(comp.getMappings()[0].actionsToSelf, std::vector<std::string>({}));
 
     EXPECT_EQ(comp.getMappings()[1].targetTags, std::vector<std::string>({"player"}));
-    EXPECT_EQ(comp.getMappings()[1].actionToOther, "");
-    EXPECT_EQ(comp.getMappings()[1].actionToSelf, "heal");
+    EXPECT_EQ(comp.getMappings()[1].actionsToOther, std::vector<std::string>({}));
+    EXPECT_EQ(comp.getMappings()[1].actionsToSelf, std::vector<std::string>({"heal"}));
 }
 
 TEST_F(InteractionConfigComponentTests, EmptyActions) {
     InteractionConfigComponent comp;
-    InteractionMapping mapping = {{"neutral"}, "", ""};
+    InteractionMapping mapping = {{"neutral"}, {}, {}};
 
     comp.addMapping(mapping);
 
-    EXPECT_EQ(comp.getMappings()[0].actionToOther, "");
-    EXPECT_EQ(comp.getMappings()[0].actionToSelf, "");
+    EXPECT_EQ(comp.getMappings()[0].actionsToOther, std::vector<std::string>({}));
+    EXPECT_EQ(comp.getMappings()[0].actionsToSelf, std::vector<std::string>({}));
 }
 
 TEST_F(InteractionConfigComponentTests, MultipleTargetTags) {
     InteractionConfigComponent comp;
-    InteractionMapping mapping = {{"tag1", "tag2", "tag3"}, "complex_action", "response_action"};
+    InteractionMapping mapping = {{"tag1", "tag2", "tag3"}, {"complex_action"}, {"response_action"}};
 
     comp.addMapping(mapping);
 
@@ -99,13 +99,13 @@ TEST_F(InteractionConfigComponentTests, MultipleTargetTags) {
     EXPECT_EQ(comp.getMappings()[0].targetTags[0], "tag1");
     EXPECT_EQ(comp.getMappings()[0].targetTags[1], "tag2");
     EXPECT_EQ(comp.getMappings()[0].targetTags[2], "tag3");
-    EXPECT_EQ(comp.getMappings()[0].actionToOther, "complex_action");
-    EXPECT_EQ(comp.getMappings()[0].actionToSelf, "response_action");
+    EXPECT_EQ(comp.getMappings()[0].actionsToOther, std::vector<std::string>({"complex_action"}));
+    EXPECT_EQ(comp.getMappings()[0].actionsToSelf, std::vector<std::string>({"response_action"}));
 }
 
 TEST_F(InteractionConfigComponentTests, GetMappingsReturnsConstReference) {
     InteractionConfigComponent comp;
-    InteractionMapping mapping = {{"test"}, "action", ""};
+    InteractionMapping mapping = {{"test"}, {"action"}, {}};
     comp.addMapping(mapping);
 
     const auto& mappings = comp.getMappings();

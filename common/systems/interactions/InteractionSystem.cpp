@@ -8,6 +8,7 @@
 #include "InteractionSystem.hpp"
 #include <memory>
 #include <string>
+#include <vector>
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../components/temporary/TriggerIntentComponent.hpp"
 #include "../../components/permanent/InteractionConfigComponent.hpp"
@@ -41,8 +42,8 @@ void InteractionSystem::update(
         }
 
         bool shouldInteract = false;
-        std::string actionToOther;
-        std::string actionToSelf;
+        std::vector<std::string> actionsToOther;
+        std::vector<std::string> actionsToSelf;
 
         for (const auto& mapping : interactionConfig->getMappings()) {
             bool hasRequiredTag = false;
@@ -55,21 +56,25 @@ void InteractionSystem::update(
 
             if (hasRequiredTag) {
                 shouldInteract = true;
-                actionToOther = mapping.actionToOther;
-                actionToSelf = mapping.actionToSelf;
+                actionsToOther = mapping.actionsToOther;
+                actionsToSelf = mapping.actionsToSelf;
                 break;
             }
         }
 
         if (shouldInteract) {
-            if (!actionToOther.empty()) {
-                ActionFactory::getInstance().executeAction(actionToOther,
-                    registry, entity, otherEntity);
+            for (const auto& action : actionsToOther) {
+                if (!action.empty()) {
+                    ActionFactory::getInstance().executeAction(action,
+                        registry, entity, otherEntity);
+                }
             }
 
-            if (!actionToSelf.empty()) {
-                ActionFactory::getInstance().executeAction(actionToSelf,
-                    registry, entity, otherEntity);
+            for (const auto& action : actionsToSelf) {
+                if (!action.empty()) {
+                    ActionFactory::getInstance().executeAction(action,
+                        registry, entity, otherEntity);
+                }
             }
         }
 
