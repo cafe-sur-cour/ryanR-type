@@ -14,9 +14,13 @@
 #include <functional>
 #include "Parser.hpp"
 #include "../constants.hpp"
+#include "../components/tags/ControllableTag.hpp"
+#include "../components/tags/PlayerTag.hpp"
 #include "../components/tags/ShooterTag.hpp"
 #include "../components/tags/ProjectileTag.hpp"
 #include "../components/tags/MobTag.hpp"
+#include "../components/tags/ObstacleTag.hpp"
+#include "../components/tags/GameZoneColliderTag.hpp"
 #include "../components/tags/ProjectilePassThroughTag.hpp"
 #include "../components/permanent/ShootingStatsComponent.hpp"
 #include "../components/permanent/ProjectilePrefabComponent.hpp"
@@ -75,6 +79,12 @@ void Parser::instanciateComponentDefinitions() {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
         {constants::MOBTAG, {std::type_index(typeid(ecs::MobTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::OBSTACLETAG, {std::type_index(typeid(ecs::ObstacleTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::GAMEZONECOLLIDERTAG, {std::type_index(typeid(ecs::GameZoneColliderTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
         {constants::PROJECTILEPASSTHROUGHTAG,
@@ -264,6 +274,16 @@ void Parser::instanciateComponentCreators() {
     registerComponent<ecs::MobTag>([]([[maybe_unused]] const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::MobTag>();
+    });
+
+    registerComponent<ecs::ObstacleTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::ObstacleTag>();
+    });
+
+    registerComponent<ecs::GameZoneColliderTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::GameZoneColliderTag>();
     });
 
     registerComponent<

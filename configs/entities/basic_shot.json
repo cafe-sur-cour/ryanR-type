@@ -38,6 +38,11 @@
                     "tags": ["MobTag"],
                     "toEntity": ["DealDamage"],
                     "toSelf": ["TakeDeath"]
+                },
+                {
+                    "tags": ["ObstacleTag"],
+                    "toEntity": ["DealDeath"],
+                    "toSelf": ["TakeDeath"]
                 }
             ]
         }
