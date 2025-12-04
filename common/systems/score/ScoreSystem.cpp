@@ -7,6 +7,7 @@
 
 #include "ScoreSystem.hpp"
 #include <iostream>
+#include <memory>
 #include "../../components/permanent/ScoreComponent.hpp"
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../ECS/view/View.hpp"
