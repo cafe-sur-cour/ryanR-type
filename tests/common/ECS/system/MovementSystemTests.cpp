@@ -48,13 +48,15 @@ TEST_F(MovementSystemsTest, NoEntities_NoUpdate) {
 }
 
 TEST_F(MovementSystemsTest, EntityWithIntentAndTransform_UsesBaseSpeed) {
-    // Create entity with input intent and transform
+    // Create entity with input intent, transform and speed
     ecs::Entity entityId = 0;
     auto intent = std::make_shared<InputIntentComponent>(math::Vector2f(1.0f, 0.0f));
     auto transform = std::make_shared<TransformComponent>(math::Vector2f(0.0f, 0.0f));
+    auto speed = std::make_shared<SpeedComponent>(300.0f);
 
     registry->addComponent<InputIntentComponent>(entityId, intent);
     registry->addComponent<TransformComponent>(entityId, transform);
+    registry->addComponent<SpeedComponent>(entityId, speed);
 
     // Process input to velocity
     inputToVelocitySystem->update(resourceManager, registry, 0.016f);
@@ -79,13 +81,15 @@ TEST_F(MovementSystemsTest, EntityWithIntentAndTransform_UsesBaseSpeed) {
 }
 
 TEST_F(MovementSystemsTest, EntityWithIntentAndTransform_MovesVertically) {
-    // Create entity with input intent and transform
+    // Create entity with input intent, transform and speed
     ecs::Entity entityId = 0;
     auto intent = std::make_shared<InputIntentComponent>(math::Vector2f(0.0f, 1.0f));
     auto transform = std::make_shared<TransformComponent>(math::Vector2f(10.0f, 20.0f));
+    auto speed = std::make_shared<SpeedComponent>(300.0f);
 
     registry->addComponent<InputIntentComponent>(entityId, intent);
     registry->addComponent<TransformComponent>(entityId, transform);
+    registry->addComponent<SpeedComponent>(entityId, speed);
 
     // Process input to velocity
     inputToVelocitySystem->update(resourceManager, registry, 0.02f);
@@ -114,9 +118,11 @@ TEST_F(MovementSystemsTest, ZeroDirectionIntent_NoMovement) {
     ecs::Entity entityId = 0;
     auto intent = std::make_shared<InputIntentComponent>(math::Vector2f(0.0f, 0.0f));
     auto transform = std::make_shared<TransformComponent>(math::Vector2f(0.0f, 0.0f));
+    auto speed = std::make_shared<SpeedComponent>(300.0f);
 
     registry->addComponent<InputIntentComponent>(entityId, intent);
     registry->addComponent<TransformComponent>(entityId, transform);
+    registry->addComponent<SpeedComponent>(entityId, speed);
 
     // Process input to velocity
     inputToVelocitySystem->update(resourceManager, registry, 0.016f);
@@ -140,8 +146,10 @@ TEST_F(MovementSystemsTest, EntityWithIntentWithoutTransform_CreatesVelocity) {
     // ecs::Entity with intent but no transform
     ecs::Entity entityId = 0;
     auto intent = std::make_shared<InputIntentComponent>(math::Vector2f(1.0f, 0.0f));
+    auto speed = std::make_shared<SpeedComponent>(300.0f);
 
     registry->addComponent<InputIntentComponent>(entityId, intent);
+    registry->addComponent<SpeedComponent>(entityId, speed);
 
     // Process input to velocity
     inputToVelocitySystem->update(resourceManager, registry, 0.016f);
@@ -182,15 +190,19 @@ TEST_F(MovementSystemsTest, MultipleEntities_UpdatesCorrectly) {
     ecs::Entity entityId0 = 0;
     auto intent0 = std::make_shared<InputIntentComponent>(math::Vector2f(1.0f, 0.0f));
     auto transform0 = std::make_shared<TransformComponent>(math::Vector2f(0.0f, 0.0f));
+    auto speed0 = std::make_shared<SpeedComponent>(300.0f);
     registry->addComponent<InputIntentComponent>(entityId0, intent0);
     registry->addComponent<TransformComponent>(entityId0, transform0);
+    registry->addComponent<SpeedComponent>(entityId0, speed0);
 
     // ecs::Entity 1: with intent and transform
     ecs::Entity entityId1 = 1;
     auto intent1 = std::make_shared<InputIntentComponent>(math::Vector2f(0.0f, -1.0f));
     auto transform1 = std::make_shared<TransformComponent>(math::Vector2f(100.0f, 100.0f));
+    auto speed1 = std::make_shared<SpeedComponent>(300.0f);
     registry->addComponent<InputIntentComponent>(entityId1, intent1);
     registry->addComponent<TransformComponent>(entityId1, transform1);
+    registry->addComponent<SpeedComponent>(entityId1, speed1);
 
     // Process inputs to velocities
     inputToVelocitySystem->update(resourceManager, registry, 0.01f);
