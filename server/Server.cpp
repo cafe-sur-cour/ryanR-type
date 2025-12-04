@@ -216,6 +216,7 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
             this->_clients.erase(
                 std::remove(this->_clients.begin(), this->_clients.end(), client),
                 this->_clients.end());
+            this->_nextClientId--;
             std::cout << "[SERVER] Client " << static_cast<int>(idClient)
                 << " disconnected and removed from the lobby" << std::endl;
             return true;
