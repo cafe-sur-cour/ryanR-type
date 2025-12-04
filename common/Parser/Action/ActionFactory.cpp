@@ -40,3 +40,25 @@ void ActionFactory::executeAction(
 bool ActionFactory::hasAction(const std::string& actionId) const {
     return _actions.find(actionId) != _actions.end();
 }
+
+void ActionFactory::initializeConditions() {
+    registerAction(constants::DEALDEATH_ACTION,
+        [](std::shared_ptr<ecs::Registry> reg,
+            ecs::Entity selfEntity,
+            ecs::Entity otherEntity
+        ) {
+            (void)selfEntity;
+            reg->addComponent<ecs::DeathIntentComponent>(otherEntity,
+                std::make_shared<ecs::DeathIntentComponent>());
+        });
+
+    registerAction(constants::TAKEDEATH_ACTION,
+        [](std::shared_ptr<ecs::Registry> reg,
+            ecs::Entity selfEntity,
+            ecs::Entity otherEntity
+        ) {
+            (void)otherEntity;
+            reg->addComponent<ecs::DeathIntentComponent>(selfEntity,
+                std::make_shared<ecs::DeathIntentComponent>());
+        });
+}

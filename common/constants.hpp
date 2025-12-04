@@ -169,7 +169,8 @@ namespace constants {
     const std::string VELOCITY_DOWN_CONDITION = "isVelocityDown";
 
     /* Action constants */
-    const std::string DEATHINTENT_ACTION = "DeathIntent";
+    const std::string DEALDEATH_ACTION = "DealDeath";
+    const std::string TAKEDEATH_ACTION = "TakeDeath";
 }
 
 #endif /* !CONSTANTS_HPP_ */

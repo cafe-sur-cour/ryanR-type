@@ -141,8 +141,8 @@ void ShootingSystem::spawnProjectile(
 
     InteractionMapping deathMapping;
     deathMapping.targetTags = {"MobTag"};
-    deathMapping.actionToOther = constants::DEATHINTENT_ACTION;
-    deathMapping.actionToSelf = "";
+    deathMapping.actionToOther = constants::DEALDEATH_ACTION;
+    deathMapping.actionToSelf = constants::TAKEDEATH_ACTION;
 
     std::vector<InteractionMapping> mappings = {deathMapping};
     registry->addComponent(projectileEntity,
