@@ -12,13 +12,13 @@
 
 namespace debug {
 
-enum class debugType {
+enum debugType {
     NETWORK,
     ECS,
     CORE,
 };
 
-enum class debugLevel {
+enum debugLevel {
     INFO,
     WARNING,
     ERROR,
@@ -26,7 +26,7 @@ enum class debugLevel {
 
 class Debug {
     public:
-        virtual ~Debug() = default;
+        ~Debug() = default;
         static void printDebug(const bool isDebug, const std::string &message, const debugType type, const debugLevel level);
 };
 
