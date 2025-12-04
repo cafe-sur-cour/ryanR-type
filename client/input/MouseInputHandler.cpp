@@ -26,9 +26,7 @@ std::optional<MouseClickInfo> MouseInputHandler::pollMouseClick() {
             eventResult == gfx::EventType::MOUSERIGHTCLICK ||
             eventResult == gfx::EventType::MOUSEMIDDLECLICK ||
             eventResult == gfx::EventType::MOUSECLICK) {
-            auto mousePos = resourceManager->get<gfx::IEvent>()->getMousePos();
-            math::Vector2f position(static_cast<float>(mousePos.first),
-                                   static_cast<float>(mousePos.second));
+            auto mousePos = getWorldMousePosition();
 
             constants::MouseButton button = constants::MouseButton::LEFT;
             if (eventResult == gfx::EventType::MOUSELEFTCLICK)
@@ -38,7 +36,7 @@ std::optional<MouseClickInfo> MouseInputHandler::pollMouseClick() {
             else if (eventResult == gfx::EventType::MOUSEMIDDLECLICK)
                 button = constants::MouseButton::MIDDLE;
 
-            return MouseClickInfo{position, button};
+            return MouseClickInfo{mousePos, button};
         } else if (eventResult == gfx::EventType::NOTHING) {
             break;
         }
@@ -55,6 +53,16 @@ math::Vector2f MouseInputHandler::getMousePosition() const {
     auto mousePos = resourceManager->get<gfx::IEvent>()->getMousePos();
     return math::Vector2f(static_cast<float>(mousePos.first),
                          static_cast<float>(mousePos.second));
+}
+
+math::Vector2f MouseInputHandler::getWorldMousePosition() const {
+    auto resourceManager = _resourceManager.lock();
+    if (!resourceManager) {
+        return math::Vector2f(0.0f, 0.0f);
+    }
+    auto mousePos = resourceManager->get<gfx::IEvent>()->getMousePos();
+    return resourceManager->get<gfx::IWindow>()->mapPixelToCoords(
+        mousePos.first, mousePos.second);
 }
 
 math::Vector2f MouseInputHandler::getNormalizedMousePosition() const {
