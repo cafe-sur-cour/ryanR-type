@@ -36,6 +36,7 @@ class ServerNetwork :  public ANetwork {
 
     private:
         std::queue<std::pair<int, std::shared_ptr<pm::IPacketManager>>> _incomingPackets;
+        std::unordered_map<uint8_t, asio::ip::udp::endpoint> _clients;
         uint8_t _nextClientId;
         uint16_t _port;
 };
