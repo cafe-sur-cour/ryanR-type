@@ -25,6 +25,8 @@ target_link_libraries(${CLIENT_BIN_NAME}
         nlohmann_json::nlohmann_json
 )
 
+target_include_directories(${CLIENT_BIN_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/common)
+
 target_compile_definitions(${CLIENT_BIN_NAME}
     PUBLIC ASIO_STANDALONE
     PUBLIC R_TYPE_CLIENT
