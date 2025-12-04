@@ -20,7 +20,7 @@ namespace constants {
     constexpr float NAVIGATION_COOLDOWN_TIME = 0.2f;
 
     /* View */
-    constexpr float VIEW_SMOOTHING_SPEED = 5.0f;
+    constexpr float VIEW_SMOOTHING_SPEED = 15.0f;
 
     enum MouseButton {
         LEFT = 0,
