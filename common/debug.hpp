@@ -8,6 +8,23 @@
 #ifndef DEBUG_HPP_
 #define DEBUG_HPP_
 
+#ifdef _WIN32
+    #ifndef WIN32_LEAN_AND_MEAN
+        #define WIN32_LEAN_AND_MEAN
+    #endif
+    #include <windows.h>
+    #ifdef ERROR
+        #undef ERROR
+    #endif
+    #ifdef INFO
+        #undef INFO
+    #endif
+    #ifdef WARNING
+        #undef WARNING
+    #endif
+#endif
+
+
 #include <string>
 
 namespace debug {
