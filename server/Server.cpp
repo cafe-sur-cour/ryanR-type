@@ -173,6 +173,8 @@ void rserv::Server::processIncomingPackets() {
     if (this->_packet->getType() == 0x01) {
         this->processConnections(received.first);
     } else {
+        std::cout << "[SERVER] Packet received of type "
+            << static_cast<int>(this->_packet->getType()) << std::endl;
         // Other packet types will be handled here
     }
 

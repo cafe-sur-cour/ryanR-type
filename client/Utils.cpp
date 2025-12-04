@@ -25,6 +25,7 @@ void Utils::helper() {
         << "\r-i <ip_address>  "
         << "Specify the IP address of the server (default: 127.0.0.1)\n"
         << "\r-n <name>        Optional specify the name of the client\n"
+        << "\r-d               Enable debug mode\n"
         << "\r-h               Display this help message\n"
         << "Example:\n"
         << "\r./r-type_client -p 8080 -i 127.0.0.1\n"
@@ -35,6 +36,7 @@ void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork>
     clientNetwork) {
     int port = constants::DEFAULT_SERVER_PORT;
     std::string ip = constants::DEFAULT_SERVER_IP;
+    bool debugMode = false;
 
     for (int i = 1; i < ac; i++) {
         std::string arg = av[i];
@@ -50,6 +52,8 @@ void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork>
         } else if (arg == "-n" && i + 1 < ac) {
             clientNetwork->setName(av[i + 1]);
             i++;
+        } else if (arg == "-d") {
+            debugMode = true;
         } else {
             std::cerr << "Unknown argument: " << arg << std::endl;
             this->helper();
@@ -58,4 +62,5 @@ void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork>
     }
     clientNetwork->setPort(port);
     clientNetwork->setIp(ip);
+    clientNetwork->setDebugMode(debugMode);
 }
