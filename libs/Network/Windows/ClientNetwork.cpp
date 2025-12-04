@@ -39,16 +39,10 @@ bool WindowsNetwork::isConnected() const {
     return _connected;
 }
 
-uint8_t WindowsNetwork::acceptConnection(
-    asio::ip::udp::endpoint id, std::shared_ptr<pm::IPacketManager> packetManager) {
-    (void)id;
-    (void)packetManager;
-    return 0;
-}
-
-void WindowsNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
+bool WindowsNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
     (void)id;
     (void)packet;
+    return false;
 }
 
 void WindowsNetwork::broadcast(std::vector<uint8_t> data) {
