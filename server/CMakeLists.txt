@@ -26,7 +26,11 @@ target_link_libraries(${SERVER_LIB_NAME}
         Packet
         asio::asio
         nlohmann_json::nlohmann_json
+        PARSER
+        PREFAB
 )
+
+target_include_directories(${SERVER_LIB_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/common)
 
 add_subdirectory(gsm)
 add_subdirectory(initResourcesManager)
