@@ -2,7 +2,6 @@ set(ACTION_LIB ACTION)
 
 set(ACTION_SOURCES
     ActionFactory.cpp
-    ActionRegistry.cpp
     TagRegistry.cpp
 )
 
