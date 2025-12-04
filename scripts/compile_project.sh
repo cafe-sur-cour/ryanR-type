@@ -1,7 +1,17 @@
 #!/bin/bash
 
-if [ -z "$VCPKG_ROOT" ]; then
-    echo "Error: VCPKG_ROOT environment variable is not set."
+# Get the script's directory and project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Always use the local vcpkg in the project
+export VCPKG_ROOT="$PROJECT_ROOT/vcpkg"
+echo "Using vcpkg at: $VCPKG_ROOT"
+
+# Verify vcpkg exists
+if [ ! -f "$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" ]; then
+    echo "Error: vcpkg toolchain file not found at $VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+    echo "Please bootstrap vcpkg by running: ./vcpkg/bootstrap-vcpkg.sh"
     exit 1
 fi
 

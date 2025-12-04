@@ -24,6 +24,7 @@ rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
     this->_network = nullptr;
     this->_buffer = nullptr;
     this->_packet = nullptr;
+    this->_eventQueue = std::make_shared<std::queue<std::pair<uint8_t, constants::EventType>>>();
     this->_config = std::make_shared<rserv::ServerConfig>();
 }
 
@@ -75,7 +76,7 @@ void rserv::Server::start() {
 
     Signal::setupSignalHandlers();
     while (this->getState() == 1 && !Signal::stopFlag) {
-        processIncomingPackets();
+        this->processIncomingPackets();
         if (std::cin.eof()) {
             std::cout << "EOF received (Ctrl+D pressed)" << std::endl;
             break;
@@ -172,6 +173,9 @@ void rserv::Server::processIncomingPackets() {
     this->_packet->unpack(received.second);
     if (this->_packet->getType() == 0x01) {
         this->processConnections(received.first);
+    } else if (this->_packet->getType() == 0x04) {
+        // Process event packet
+        this->processEvents(this->_packet->getIdClient());
     } else {
         // Other packet types will be handled here
     }
@@ -226,9 +230,17 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
 }
 
 bool rserv::Server::processEvents(uint8_t idClient) {
-    constants::EventType event = static_cast<constants::EventType>(
-        this->_packet->getPayload().at(1));
-    this->_eventQueue.push(std::make_pair(idClient, event));
+    // if (!this->_packet || this->_packet->getPayload().empty()) {
+    //     std::cerr << "[SERVER] Warning: No packet data to process events" << std::endl;
+    //     return false;
+    // }
+    // if (this->_packet->getPayload().size() < 2) {
+    //     std::cerr << "[SERVER] Warning: Packet payload too small for event" << std::endl;
+    //     return false;
+    // }
+    // constants::EventType event = static_cast<constants::EventType>(
+    //     this->_packet->getPayload().at(1));
+    this->_eventQueue->push(std::make_pair(idClient, constants::EventType::DOWN));
     return true;
 }
 
@@ -249,6 +261,14 @@ std::vector<uint8_t> rserv::Server::getConnectedClients() const {
 
 size_t rserv::Server::getClientCount() const {
     return this->_clients.size();
+}
+
+std::shared_ptr<std::queue<std::pair<uint8_t, constants::EventType>>> rserv::Server::getEventQueue() {
+    return this->_eventQueue;
+}
+
+bool rserv::Server::hasEvents() const {
+    return !this->_eventQueue->empty();
 }
 
 void rserv::Server::onClientConnected(uint8_t idClient) {
