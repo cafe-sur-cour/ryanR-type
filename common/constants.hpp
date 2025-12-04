@@ -66,6 +66,7 @@ namespace constants {
     const std::string SCORE_FIELD = "score";
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
+    const std::string OFFSET_FIELD = "offset";
     const std::string SCALE_FIELD = "scale";
     const std::string ROTATION_FIELD = "rotation";
     const std::string SPEED_FIELD = "speed";
@@ -113,6 +114,11 @@ namespace constants {
     const std::string SCALEMODE_FITSCREEN = "FIT_SCREEN";
     const std::string SCALEMODE_STRETCH = "STRETCH";
     const std::string SCALEMODE_MANUAL = "MANUAL";
+
+    const std::string COLLISION_TYPE_SOLID = "Solid";
+    const std::string COLLISION_TYPE_TRIGGER = "Trigger";
+    const std::string COLLISION_TYPE_PUSH = "Push";
+    const std::string COLLISION_TYPE_NONE = "None";
 
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";
