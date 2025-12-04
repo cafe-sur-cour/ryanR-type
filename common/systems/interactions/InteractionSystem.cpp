@@ -6,11 +6,14 @@
 */
 
 #include "InteractionSystem.hpp"
+#include <memory>
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../components/temporary/TriggerIntentComponent.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../components/tags/ProjectileTag.hpp"
 #include "../../components/tags/MobTag.hpp"
+#include "../../Parser/Action/ActionFactory.hpp"
+#include "../../constants.hpp"
 
 namespace ecs {
 
@@ -36,10 +39,8 @@ void InteractionSystem::update(
         bool isMob = registry->hasComponent<MobTag>(otherEntity);
 
         if (isProjectile && isMob) {
-            registry->addComponent<DeathIntentComponent>(
-                otherEntity, std::make_shared<DeathIntentComponent>());
-            registry->addComponent<DeathIntentComponent>(
-                entity, std::make_shared<DeathIntentComponent>());
+            ActionFactory::getInstance().executeAction(
+                constants::DEATHINTENT_ACTION, registry, entity, otherEntity);
         }
 
         registry->removeComponent<TriggerIntentComponent>(entity);

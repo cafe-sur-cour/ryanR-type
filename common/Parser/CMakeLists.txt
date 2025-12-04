@@ -4,6 +4,7 @@ add_subdirectory(ComposantParser)
 add_subdirectory(EntityParser)
 add_subdirectory(MapParser)
 add_subdirectory(Animation)
+add_subdirectory(Action)
 
 set(PARSER_SOURCES
     Parser.cpp
@@ -27,6 +28,7 @@ target_link_libraries(${PARSER_LIB} PUBLIC
     ENTITY_PARSER
     MAP_PARSER
     ANIMATION
+    ACTION
     ERROR
     nlohmann_json::nlohmann_json
 )
