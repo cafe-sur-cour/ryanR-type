@@ -131,7 +131,6 @@ void Core::networkLoop() {
     this->_clientNetwork->start();
 }
 
-
 std::shared_ptr<ClientNetwork> Core::getNetwork() {
     return this->_clientNetwork;
 }
