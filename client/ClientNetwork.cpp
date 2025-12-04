@@ -173,29 +173,28 @@ void ClientNetwork::handlePacketType(uint8_t type) {
 }
 
 
-void ClientNetwork::tryConnection(const int maxRetries, int &retryCount,
-    std::chrono::steady_clock::time_point &lastRetryTime) {
+std::pair<int, std::chrono::steady_clock::time_point> ClientNetwork::tryConnection(
+    int maxRetries, int retryCount, std::chrono::steady_clock::time_point lastRetryTime) {
     auto currentTime = std::chrono::steady_clock::now();
 
     if (this->_network->getConnectionState() == net::ConnectionState::CONNECTING &&
         retryCount < maxRetries &&
-        std::chrono::duration_cast<std::chrono::seconds>(currentTime -
-            lastRetryTime).count() >= 2) {
+        std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastRetryTime).count() >= 2) {
         debug::Debug::printDebug(this->_isDebug,
-            "Retrying connection (attempt " + std::to_string(retryCount + 1) + "/"
-            + std::to_string(maxRetries) + ")",
+            "Retrying connection (attempt " + std::to_string(retryCount + 1) + "/" + std::to_string(maxRetries) + ")",
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
         this->connectionPacket();
         retryCount++;
         lastRetryTime = currentTime;
     }
+    return {retryCount, lastRetryTime};
 }
 
 void ClientNetwork::start() {
     Signal::setupSignalHandlers();
 
-    const int maxRetries = 3;
+    const int maxRetries = constants::MAX_RETRY_CONNECTIONS;
     int retryCount = 0;
     auto lastRetryTime = std::chrono::steady_clock::now();
 
@@ -210,7 +209,7 @@ void ClientNetwork::start() {
     }
 
     while (!Signal::stopFlag) {
-        tryConnection(maxRetries, retryCount, lastRetryTime);
+        std::tie(retryCount, lastRetryTime) = tryConnection(maxRetries, retryCount, lastRetryTime);
         std::vector<uint8_t> receivedData = this->_network->receiveFrom(this->_idClient);
         if (receivedData.size() > 0) {
             this->_packet->unpack(receivedData);
@@ -253,14 +252,3 @@ void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
     this->_eventQueue.push(event);
     this->_queueCond.notify_one();
 }
-
-bool ClientNetwork::getEventFromQueue(NetworkEvent &event) {
-    std::unique_lock<std::mutex> lock(this->_queueMutex);
-    if (this->_eventQueue.empty()) {
-        return false;
-    }
-    event = this->_eventQueue.front();
-    this->_eventQueue.pop();
-    return true;
-}
-

@@ -66,12 +66,11 @@ class ClientNetwork {
         void connectionPacket();
 
         void addToEventQueue(const NetworkEvent &event);
-        bool getEventFromQueue(NetworkEvent &event);
 
         bool isConnected() const;
         std::atomic<bool> _isConnected;
     protected:
-        void tryConnection(const int maxRetries, int &retryCount, std::chrono::steady_clock::time_point &lastRetryTime);
+        std::pair<int, std::chrono::steady_clock::time_point> tryConnection(const int maxRetries, int retryCount, std::chrono::steady_clock::time_point lastRetryTime);
         void handlePacketType(uint8_t type);
     private:
         typedef void (ClientNetwork::*PacketHandler)();
