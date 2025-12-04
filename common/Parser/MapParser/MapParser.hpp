@@ -30,6 +30,7 @@ class MapParser {
         std::shared_ptr<ecs::Registry> _registry;
         void createBackgroundEntity(const std::string& entityName);
         void createMusicEntity(const std::string& prefabName);
+        void createGameZoneEntity(float scrollSpeed);
         void parseMapGrid(const nlohmann::json& legend, const nlohmann::json& mapGrid,
             float tileWidth, float tileHeight);
         void parseWaves(const nlohmann::json& waves, float tileWidth);

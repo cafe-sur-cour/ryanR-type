@@ -32,6 +32,7 @@
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
+#include "../../../../systems/rendering/GameZoneRenderingSystem.hpp"
 
 namespace gsm {
 
@@ -64,6 +65,7 @@ DevState::DevState(
     auto healthSystem = std::make_shared<ecs::HealthSystem>();
     auto deathSystem = std::make_shared<ecs::DeathSystem>();
     auto scoreSystem = std::make_shared<ecs::ScoreSystem>();
+    auto gameZoneRenderingSystem = std::make_shared<ecs::GameZoneRenderingSystem>();
 
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
 
@@ -78,6 +80,7 @@ DevState::DevState(
     _systemManager->addSystem(hitboxRenderingSystem);
     _systemManager->addSystem(rectangleRenderingSystem);
     _systemManager->addSystem(textRenderingSystem);
+    _systemManager->addSystem(gameZoneRenderingSystem);
     _systemManager->addSystem(shootInputSystem);
     _systemManager->addSystem(shootingSystem);
     _systemManager->addSystem(lifetimeSystem);
@@ -88,6 +91,20 @@ DevState::DevState(
     _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
     _parser->parseAllEntities(constants::CONFIG_PATH);
     _parser->parseMapFromFile("configs/map/map1.json");
+
+    auto colliderView = _registry->view<ecs::ColliderComponent>();
+    for (auto entityId : colliderView) {
+        if (_registry->hasComponent<ecs::PlayerTag>(entityId)) continue;
+
+        gfx::color_t color = {255, 255, 255, 255};
+        if (_registry->hasComponent<ecs::ObstacleTag>(entityId)) {
+            color = {255, 0, 0, 255};
+        }
+
+        _registry->addComponent<ecs::HitboxRenderComponent>(
+            entityId,
+            std::make_shared<ecs::HitboxRenderComponent>(color));
+    }
 }
 
 void DevState::enter() {

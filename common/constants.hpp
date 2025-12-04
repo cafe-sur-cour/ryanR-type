@@ -135,6 +135,8 @@ namespace constants {
     const math::Vector2f TILE_SIZE = math::Vector2f(64.0f, 64.0f);
 
     const float MAX_HEIGHT = 1080.0f;
+    const float MAX_WIDTH = 1920.0f;
+    const float GAME_ZONE_BOUNDARY_THICKNESS = 100.0f;
 
     /* Map parsing constants */
     const std::string MUSIC_FIELD = "music";
