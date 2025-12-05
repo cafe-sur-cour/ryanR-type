@@ -78,8 +78,6 @@ class ClientNetwork {
 
         void handleNoOp();
         void handleConnectionAcceptation();
-        void handleDisconnection();
-        void handleEvent();
         void handleGameState();
         void handleMapSend();
         void handleEndMap();
