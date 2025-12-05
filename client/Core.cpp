@@ -119,15 +119,6 @@ void Core::initLibraries() {
 
 void Core::networkLoop() {
     this->_clientNetwork->init();
-
-    if (this->_clientNetwork->getConnectionState()
-        == net::ConnectionState::CONNECTING) {
-        debug::Debug::printDebug(this->_clientNetwork->isDebugMode(),
-        "Sending Connection request",
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
-        this->_clientNetwork->connectionPacket();
-    }
     this->_clientNetwork->start();
 }
 

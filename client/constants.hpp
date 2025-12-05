@@ -11,6 +11,9 @@
 #include "../common/constants.hpp"
 
 namespace constants {
+    /* Timeout */
+    constexpr int NETWORK_TIMEOUT = 5;
+
     /* Window */
     constexpr int WINDOW_WIDTH = 1920;
     constexpr int WINDOW_HEIGHT = 1080;
