@@ -16,13 +16,6 @@ void ClientNetwork::handleNoOp() {
 
 void ClientNetwork::handleConnectionAcceptation() {
     auto payload = _packet->getPayload();
-
-    std::cout << "Payload contains: " << std::endl;
-    for (const auto &data : payload) {
-        std::cout << std::hex << static_cast<int>(data) << " ";
-    }
-    std::cout << std::dec << std::endl;
-
     if (payload.size() >= 1) {
         uint8_t id = static_cast<uint8_t>(payload.at(0));
         setIdClient(id);
