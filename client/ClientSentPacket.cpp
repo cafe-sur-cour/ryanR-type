@@ -51,16 +51,9 @@ void ClientNetwork::eventPacket(const constants::EventType &eventType,
     payload.push_back(static_cast<uint64_t>(eventType));
     payload.push_back(depthBits);
     payload.push_back(dirBits);
+
     std::vector<uint8_t> packet =
         this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x04, payload);
-
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Preparing to send event packet: EventType="
-        + std::to_string(static_cast<int>(eventType))
-        + ", Depth=" + std::to_string(depth)
-        + ", Direction=" + std::to_string(direction),
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
 
     this->_network->sendTo(this->_serverEndpoint, packet);
     this->_sequenceNumber++;

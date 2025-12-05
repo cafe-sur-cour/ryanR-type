@@ -38,7 +38,7 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
     length = this->_serializer->deserializeUInt(
         std::vector<uint8_t>(data.begin() + 7, data.begin() + 11));
 
-    if (data.size() - 11 != length) {
+    if (data.size() - HEADER_SIZE != length) {
         debug::Debug::printDebug(true,
             "[PACKET] Mismatch between declared length and actual data size",
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
@@ -47,8 +47,7 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
 
     for (auto &handler : this->_packetReceived) {
         if (handler.first == type) {
-            std::vector<uint8_t> payload(
-                data.begin() + 11, data.end());
+            std::vector<uint8_t> payload(data.begin() + 11, data.end());
             bool result = handler.second(payload);
             if (!result) {
                 debug::Debug::printDebug(true,
