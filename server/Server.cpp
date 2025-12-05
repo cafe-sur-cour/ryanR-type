@@ -13,6 +13,7 @@
 #include <vector>
 #include <utility>
 #include <cstring>
+#include <queue>
 
 #include "Server.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
@@ -26,7 +27,8 @@ rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
     this->_network = nullptr;
     this->_buffer = nullptr;
     this->_packet = nullptr;
-    this->_eventQueue = std::make_shared<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>>();
+    this->_eventQueue = std::make_shared<std::queue<std::tuple<uint8_t,
+        constants::EventType, double, double>>>();
     this->_config = std::make_shared<rserv::ServerConfig>();
 }
 
@@ -280,7 +282,8 @@ size_t rserv::Server::getClientCount() const {
     return this->_clients.size();
 }
 
-std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> rserv::Server::getEventQueue() {
+std::shared_ptr<std::queue<std::tuple<uint8_t,
+    constants::EventType, double, double>>> rserv::Server::getEventQueue() {
     return this->_eventQueue;
 }
 
