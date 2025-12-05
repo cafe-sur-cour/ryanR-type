@@ -34,6 +34,7 @@ private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::shared_ptr<ui::Button> _playButton;
     std::shared_ptr<ui::Button> _quitButton;
+    std::shared_ptr<ui::Button> _highContrastButton;
     std::unique_ptr<ui::UIManager> _uiManager;
 };
 

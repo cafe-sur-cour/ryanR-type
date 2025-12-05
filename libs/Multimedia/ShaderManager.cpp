@@ -12,71 +12,82 @@
 #include <vector>
 #include <memory>
 
-ShaderManager::ShaderManager() : _combinedShader(nullptr) {
+ShaderManager::ShaderManager(std::shared_ptr<assets::AssetManager> assetManager)
+    : _assetManager(assetManager), _combinedShader(nullptr) {
 }
 
-bool ShaderManager::loadShader(const std::string& name, const std::string& vertexPath,
-                               const std::string& fragmentPath) {
+std::shared_ptr<sf::Shader> ShaderManager::loadShader(const std::string& path) {
+    if (_failedShaders.find(path) != _failedShaders.end())
+        return nullptr;
+
+    auto it = _shaderCache.find(path);
+    if (it != _shaderCache.end())
+        return it->second;
+
+    std::string normalizedPath = path;
+    if (normalizedPath.find("./assets/") == 0)
+        normalizedPath = normalizedPath.substr(9);
+    if (normalizedPath.find("assets/") == 0)
+        normalizedPath = normalizedPath.substr(7);
+
+    auto asset = _assetManager->getAsset(normalizedPath);
+    if (!asset) {
+        std::cerr << "[ShaderManager] Failed to load shader asset: " << path << std::endl;
+        _failedShaders.insert(path);
+        return nullptr;
+    }
+
     auto shader = std::make_shared<sf::Shader>();
 
-    bool loaded = false;
-
     if (!sf::Shader::isAvailable()) {
-        std::cerr << "Shaders are not available on this system" << std::endl;
-        return false;
+        std::cerr << "[ShaderManager] Shaders are not available on this system" << std::endl;
+        _failedShaders.insert(path);
+        return nullptr;
     }
 
-    if (vertexPath.empty()) {
-        loaded = shader->loadFromFile(fragmentPath, sf::Shader::Type::Fragment);
-        if (!loaded) {
-            std::cerr << "Failed to load fragment shader '" << name << "' from: "
-                      << fragmentPath << std::endl;
-        }
-    } else {
-        loaded = shader->loadFromFile(vertexPath, fragmentPath);
-        if (!loaded) {
-            std::cerr << "Failed to load shader '" << name << "' from: "
-                      << vertexPath << " / " << fragmentPath << std::endl;
-        }
+    // Load fragment shader from memory
+    if (!shader->loadFromMemory(std::string(asset->data.begin(), asset->data.end()),
+                                sf::Shader::Type::Fragment)) {
+        std::cerr << "[ShaderManager] Failed to load fragment shader from memory: "
+            << path << std::endl;
+        _failedShaders.insert(path);
+        return nullptr;
     }
 
-    if (loaded) {
-        _shaders[name] = shader;
-        return true;
-    }
-    return false;
+    _shaderCache[path] = shader;
+    return shader;
 }
 
 std::shared_ptr<sf::Shader> ShaderManager::getShader(const std::string& name) const {
-    auto it = _shaders.find(name);
-    if (it != _shaders.end()) {
+    auto it = _shaderCache.find(name);
+    if (it != _shaderCache.end()) {
         return it->second;
     }
     return nullptr;
 }
 
 bool ShaderManager::hasShader(const std::string& name) const {
-    return _shaders.find(name) != _shaders.end();
+    return _shaderCache.find(name) != _shaderCache.end();
 }
 
-void ShaderManager::enableFilter(const std::string& name) {
-    if (!hasShader(name)) {
-        std::cerr << "Filter not found: " << name << std::endl;
-        return;
+void ShaderManager::enableFilter(const std::string& path) {
+    // Load shader if not already cached
+    if (!hasShader(path)) {
+        loadShader(path);
     }
 
     _activeFilters.clear();
-    _activeFilters.insert(name);
+    _activeFilters.insert(path);
     rebuildCombinedShader();
 }
 
-void ShaderManager::addFilter(const std::string& name) {
-    if (!hasShader(name)) {
-        std::cerr << "Filter not found: " << name << std::endl;
-        return;
+void ShaderManager::addFilter(const std::string& path) {
+    // Load shader if not already cached
+    if (!hasShader(path)) {
+        loadShader(path);
     }
 
-    _activeFilters.insert(name);
+    _activeFilters.insert(path);
     rebuildCombinedShader();
 }
 
@@ -125,4 +136,11 @@ void ShaderManager::rebuildCombinedShader() {
 
 std::shared_ptr<sf::Shader> ShaderManager::getCombinedShader() {
     return _combinedShader;
+}
+
+void ShaderManager::clearCache() {
+    _shaderCache.clear();
+    _failedShaders.clear();
+    _activeFilters.clear();
+    _combinedShader = nullptr;
 }
