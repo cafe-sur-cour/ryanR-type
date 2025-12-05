@@ -12,15 +12,17 @@
 #include <string>
 #include <map>
 #include <set>
+#include <unordered_map>
+#include <unordered_set>
 #include <SFML/Graphics.hpp>
+#include "AssetManager/AssetManager.hpp"
 
 class ShaderManager {
     public:
-        ShaderManager();
+        ShaderManager(std::shared_ptr<assets::AssetManager> assetManager);
         ~ShaderManager() = default;
 
-        bool loadShader(const std::string& name, const std::string& vertexPath,
-                       const std::string& fragmentPath);
+        std::shared_ptr<sf::Shader> loadShader(const std::string& path);
 
         std::shared_ptr<sf::Shader> getShader(const std::string& name) const;
         bool hasShader(const std::string& name) const;
@@ -35,8 +37,12 @@ class ShaderManager {
         std::vector<std::shared_ptr<sf::Shader>> getActiveShaders() const;
         std::shared_ptr<sf::Shader> getCombinedShader();
 
+        void clearCache();
+
     private:
-        std::map<std::string, std::shared_ptr<sf::Shader>> _shaders;
+        std::shared_ptr<assets::AssetManager> _assetManager;
+        std::unordered_map<std::string, std::shared_ptr<sf::Shader>> _shaderCache;
+        std::unordered_set<std::string> _failedShaders;
         std::set<std::string> _activeFilters;
         std::shared_ptr<sf::Shader> _combinedShader;
         std::vector<sf::RenderTexture> _intermediateTextures;

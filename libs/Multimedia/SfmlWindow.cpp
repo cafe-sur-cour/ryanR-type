@@ -20,6 +20,7 @@ SfmlWindow::SfmlWindow(std::string title, size_t width, size_t height)
     _assetManager(std::make_shared<assets::AssetManager>()),
     _textureManager(_assetManager),
     _fontManager(_assetManager),
+    _shaderManager(_assetManager),
     _view(sf::FloatRect(sf::Vector2f(0.f, 0.f),
         sf::Vector2f(constants::MAX_WIDTH, constants::MAX_HEIGHT))),
     _renderTexture({static_cast<unsigned int>(constants::MAX_WIDTH),
@@ -38,9 +39,6 @@ void SfmlWindow::init() {
 
     _window->setFramerateLimit(60);
     _renderTexture.setView(_view);
-
-    _shaderManager.loadShader(constants::FILTER_HIGH_CONTRAST, "",
-                              constants::FILTER_HIGH_CONTRAST_FRAGMENT_PATH);
 
     updateView();
     _window->clear(sf::Color::Black);

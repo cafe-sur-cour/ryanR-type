@@ -10,9 +10,11 @@
 #include <iostream>
 #include <optional>
 #include "../../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../../libs/Multimedia/SfmlWindow.hpp"
 #include "../../../../../libs/Multimedia/IEvent.hpp"
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../../common/constants.hpp"
+#include "../../../../constants.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../../common/InputMapping/IInputProvider.hpp"
 #include "../Dev/DevState.hpp"
@@ -76,6 +78,43 @@ MainMenuState::MainMenuState(
         _resourceManager->get<gfx::IWindow>()->closeWindow();
     });
     _uiManager->addElement(_quitButton);
+
+    _highContrastButton = std::make_shared<ui::Button>(resourceManager);
+    _highContrastButton->setText("HC");
+    _highContrastButton->setPosition(math::Vector2f(0.92f, 0.02f));
+    _highContrastButton->setSize(math::Vector2f(0.06f, 0.06f));
+    _highContrastButton->setNormalColor({100, 100, 150});
+    _highContrastButton->setHoveredColor({150, 150, 200});
+    _highContrastButton->setFocusedColor({100, 200, 255});
+    _highContrastButton->setOnRelease([this]() {
+        auto window = _resourceManager->get<gfx::IWindow>();
+        auto sfmlWindow = std::dynamic_pointer_cast<SfmlWindow>(window);
+        if (sfmlWindow) {
+            if (sfmlWindow->getShaderManager().isFilterActive(
+                    constants::FILTER_HIGH_CONTRAST_SHADER_PATH)) {
+                sfmlWindow->getShaderManager().removeFilter(
+                    constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
+            } else {
+                sfmlWindow->getShaderManager().addFilter(
+                    constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
+            }
+        }
+    });
+    _highContrastButton->setOnActivated([this]() {
+        auto window = _resourceManager->get<gfx::IWindow>();
+        auto sfmlWindow = std::dynamic_pointer_cast<SfmlWindow>(window);
+        if (sfmlWindow) {
+            if (sfmlWindow->getShaderManager().isFilterActive(
+                    constants::FILTER_HIGH_CONTRAST_SHADER_PATH)) {
+                sfmlWindow->getShaderManager().removeFilter(
+                    constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
+            } else {
+                sfmlWindow->getShaderManager().addFilter(
+                    constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
+            }
+        }
+    });
+    _uiManager->addElement(_highContrastButton);
 }
 
 void MainMenuState::enter() {
@@ -113,6 +152,7 @@ void MainMenuState::exit() {
     _uiManager->clearElements();
     _playButton.reset();
     _quitButton.reset();
+    _highContrastButton.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }

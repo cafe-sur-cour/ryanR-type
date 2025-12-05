@@ -56,10 +56,10 @@ class SfmlWindow : public gfx::IWindow {
         std::shared_ptr<assets::AssetManager> _assetManager;
         gfx::TextureManager _textureManager;
         gfx::FontManager _fontManager;
+        ShaderManager _shaderManager;
         sf::View _view;
         sf::RenderTexture _renderTexture;
         sf::Sprite _renderSprite;
-        ShaderManager _shaderManager;
 };
 
 #endif /* !SFMLWINDOW_HPP_ */

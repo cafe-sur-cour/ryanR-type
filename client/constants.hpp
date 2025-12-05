@@ -27,6 +27,9 @@ namespace constants {
         RIGHT = 1,
         MIDDLE = 2,
     };
+
+    /* Accessibility Filters */
+    const std::string FILTER_HIGH_CONTRAST_SHADER_PATH = "assets/shaders/highcontrast.frag";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
