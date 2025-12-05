@@ -11,6 +11,7 @@
 #include <thread>
 
 #include "Core.hpp"
+#include "../common/debug.hpp"
 #include "initResourcesManager/initResourcesManager.hpp"
 
 Core::Core() {
@@ -73,8 +74,10 @@ void Core::processServerEvents() {
         eventQueue->pop();
         uint8_t clientId = event.first;
         constants::EventType eventType = event.second;
-        std::cout << "[CORE] Processing event from client " << static_cast<int>(clientId)
-                  << ": " << static_cast<int>(eventType) << std::endl;
+        debug::Debug::printDebug(true,
+            "[CORE] Processing event from client " + std::to_string(clientId)
+            + ": " + std::to_string(static_cast<int>(eventType)),
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
     }
 }
 
