@@ -12,6 +12,7 @@
 #include <chrono>
 #include <vector>
 #include <utility>
+#include <cstring>
 
 #include "Server.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
@@ -25,7 +26,7 @@ rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
     this->_network = nullptr;
     this->_buffer = nullptr;
     this->_packet = nullptr;
-    this->_eventQueue = std::make_shared<std::queue<std::pair<uint8_t, constants::EventType>>>();
+    this->_eventQueue = std::make_shared<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>>();
     this->_config = std::make_shared<rserv::ServerConfig>();
 }
 
@@ -246,8 +247,17 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
 
 bool rserv::Server::processEvents(uint8_t idClient) {
     constants::EventType eventType =
-        static_cast<constants::EventType>(this->_packet->getPayload().at(1));
-    this->_eventQueue->push(std::make_pair(idClient, eventType));
+        static_cast<constants::EventType>(this->_packet->getPayload().at(0));
+
+    uint64_t param1Bits = this->_packet->getPayload().at(1);
+    uint64_t param2Bits = this->_packet->getPayload().at(2);
+
+    double param1;
+    double param2;
+    std::memcpy(&param1, &param1Bits, sizeof(double));
+    std::memcpy(&param2, &param2Bits, sizeof(double));
+
+    this->_eventQueue->push(std::tuple(idClient, eventType, param1, param2));
     return true;
 }
 
@@ -270,7 +280,7 @@ size_t rserv::Server::getClientCount() const {
     return this->_clients.size();
 }
 
-std::shared_ptr<std::queue<std::pair<uint8_t, constants::EventType>>> rserv::Server::getEventQueue() {
+std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> rserv::Server::getEventQueue() {
     return this->_eventQueue;
 }
 
