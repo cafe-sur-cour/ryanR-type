@@ -17,8 +17,7 @@ BootState::BootState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<Res
 }
 
 void BootState::enter() {
-    auto lobbyState = std::make_shared<LobbyState>(_gsm, _resourceManager);
-    _gsm->changeState(lobbyState);
+    _gsm->requestStateChange(std::make_shared<LobbyState>(_gsm, _resourceManager));
 }
 
 }  // namespace gsm
