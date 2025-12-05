@@ -23,14 +23,14 @@ void ClientNetwork::handleConnectionAcceptation() {
         this->_network->setConnectionState(net::ConnectionState::CONNECTED);
         this->_packet->reset();
         debug::Debug::printDebug(this->_isDebug,
-            "[Client] Connection accepted, assigned ID: " +
+            "[CLIENT] Connection accepted, assigned ID: " +
             std::to_string(static_cast<int>(id)),
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
     } else {
         this->_network->setConnectionState(net::ConnectionState::ERROR_STATE);
         debug::Debug::printDebug(this->_isDebug,
-            "[Client] Connection acceptation failed: Invalid payload",
+            "[CLIENT] Connection acceptation failed: Invalid payload",
             debug::debugType::NETWORK,
             debug::debugLevel::ERROR);
     }
