@@ -6,13 +6,14 @@
 */
 
 #include "BootState.hpp"
+#include <memory>
 #include "../Lobby/LobbyState.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
-#include <iostream>
 
 namespace gsm {
 
-BootState::BootState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager)
+BootState::BootState(std::shared_ptr<IGameStateMachine> gsm,
+    std::shared_ptr<ResourceManager> resourceManager)
     : AGameState(gsm, resourceManager) {
 }
 

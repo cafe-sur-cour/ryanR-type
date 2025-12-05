@@ -6,10 +6,12 @@
 */
 
 #include "LoadingState.hpp"
+#include <memory>
 
 namespace gsm {
 
-LoadingState::LoadingState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager)
+LoadingState::LoadingState(std::shared_ptr<IGameStateMachine> gsm,
+    std::shared_ptr<ResourceManager> resourceManager)
     : AGameState(gsm, resourceManager) {
 }
 

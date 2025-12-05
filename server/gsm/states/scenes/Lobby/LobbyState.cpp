@@ -6,10 +6,12 @@
 */
 
 #include "LobbyState.hpp"
+#include <memory>
 
 namespace gsm {
 
-LobbyState::LobbyState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager)
+LobbyState::LobbyState(std::shared_ptr<IGameStateMachine> gsm,
+    std::shared_ptr<ResourceManager> resourceManager)
     : AGameState(gsm, resourceManager) {
 }
 
