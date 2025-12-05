@@ -16,13 +16,10 @@
 #include "../../common/Error/PacketError.hpp"
 
 pm::PacketManager::PacketManager(uint32_t seqNumber) {
-    this->_magicNumber = MAGIC_NUMBER;
     this->_idClient = 0;
     this->_sequenceNumber = seqNumber;
     this->_type = NO_OP_PACKET;
     this->_length = 0;
-    this->_firstEndOfPacket = FIRST_EOP_CHAR;
-    this->_secondEndOfPacket = SECOND_EOP_CHAR;
     this->_payload = std::vector<uint64_t>();
     this->_serializer = std::make_shared<BigEndianSerialization>();
     if (!this->_serializer) {
@@ -106,10 +103,6 @@ pm::PacketManager::~PacketManager() {
 
 
 
-uint8_t pm::PacketManager::getMagicNumber() const {
-    return this->_magicNumber;
-}
-
 uint32_t pm::PacketManager::getLength() const {
     return this->_length;
 }
@@ -155,13 +148,10 @@ void pm::PacketManager::setIdClient(uint8_t idClient) {
 
 
 void pm::PacketManager::reset() {
-    this->_magicNumber = MAGIC_NUMBER;
     this->_idClient = 0;
     this->_sequenceNumber = 0;
     this->_type = NO_OP_PACKET;
     this->_length = 0;
-    this->_firstEndOfPacket = FIRST_EOP_CHAR;
-    this->_secondEndOfPacket = SECOND_EOP_CHAR;
     this->_payload.clear();
 }
 

@@ -20,6 +20,7 @@ class ISerializer {
         virtual std::vector<uint8_t> serializeULong(uint64_t value) = 0;
         virtual std::vector<uint8_t> serializeUShort(uint64_t value) = 0;
         virtual std::vector<uint8_t> serializeUChar(uint64_t value) = 0;
+        virtual std::vector<uint8_t> serializeUDouble(uint64_t value) = 0;
 
         virtual uint64_t deserializeUInt(std::vector<uint8_t>) = 0;
         virtual uint64_t deserializeULong(std::vector<uint8_t>) = 0;

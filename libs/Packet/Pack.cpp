@@ -8,24 +8,25 @@
 #include <vector>
 #include <iostream>
 #include "PacketManager.hpp"
+#include "../../common/debug.hpp"
 
-std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient,
-    uint32_t sequenceNumber, uint8_t type) {
-    std::vector<uint8_t> header;
+std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequenceNumber,
+    uint8_t type, std::vector<uint64_t> payload) {
+    std::vector<uint8_t> packet;
     std::vector<uint8_t> temp;
     uint32_t length = 0;
 
-    temp = this->_serializer->serializeUChar(this->_magicNumber);
-    header.insert(header.end(), temp.begin(), temp.end());
+    temp = this->_serializer->serializeUChar(MAGIC_NUMBER);
+    packet.insert(packet.end(), temp.begin(), temp.end());
 
     temp = this->_serializer->serializeUChar(idClient);
-    header.insert(header.end(), temp.begin(), temp.end());
+    packet.insert(packet.end(), temp.begin(), temp.end());
 
     temp = this->_serializer->serializeUInt(sequenceNumber);
-    header.insert(header.end(), temp.begin(), temp.end());
+    packet.insert(packet.end(), temp.begin(), temp.end());
 
     temp = this->_serializer->serializeUChar(type);
-    header.insert(header.end(), temp.begin(), temp.end());
+    packet.insert(packet.end(), temp.begin(), temp.end());
 
     for (auto &pair : this->_packetLengths) {
         if (pair.first == type) {
@@ -33,31 +34,25 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient,
             break;
         }
     }
-    temp = this->_serializer->serializeUInt(length);
-    header.insert(header.end(), temp.begin(), temp.end());
 
-    temp = this->_serializer->serializeUChar(this->_firstEndOfPacket);
-    header.insert(header.end(), temp.begin(), temp.end());
-
-    temp = this->_serializer->serializeUChar(this->_secondEndOfPacket);
-    header.insert(header.end(), temp.begin(), temp.end());
-    return header;
-}
-
-std::vector<uint8_t> pm::PacketManager::pack(std::vector<uint64_t> payload) {
-    std::vector<uint8_t> body;
-    uint64_t type = NO_OP_PACKET;
-
-    if (payload.empty()) {
-        return body;
+    if (length == 0) {
+        debug::Debug::printDebug(true,
+            "[PACKET] Error: Unknown packet type or NO_OP_PACKET "
+            + std::to_string(static_cast<int>(type))
+            + " for packing",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return {};
     }
 
-    type = payload.at(0);
+    temp = this->_serializer->serializeUInt(length);
+    packet.insert(packet.end(), temp.begin(), temp.end());
+
     for (auto &handler : this->_packetHandlers) {
         if (handler.first == type) {
-            body = handler.second(payload);
+            std::vector<uint8_t> body = handler.second(payload);
+            packet.insert(packet.end(), body.begin(), body.end());
             break;
         }
     }
-    return body;
+    return packet;
 }
