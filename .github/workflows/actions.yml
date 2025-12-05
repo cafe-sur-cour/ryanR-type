@@ -90,25 +90,17 @@ jobs:
           packages: cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
           version: 1.0
 
-      - name: CACHE VCPKG
+      - name: SETUP VCPKG
+        uses: ./.github/actions/setup-vcpkg
+
+      - name: CACHE CMAKE BUILD
         uses: actions/cache@v4
         with:
           path: |
-            vcpkg
-            ~/.cache/vcpkg
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+            build/unix/bin
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-vcpkg-
-
-      - name: INSTALL VCPKG
-        run: |
-          if [ ! -d "vcpkg" ]; then
-            git clone https://github.com/Microsoft/vcpkg.git
-            cd vcpkg
-            ./bootstrap-vcpkg.sh
-            cd ..
-          fi
-          echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
+            ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
 
       - name: RUN COMPILATION
         run: |
@@ -125,27 +117,17 @@ jobs:
         with:
           submodules: true
 
-      - name: CACHE VCPKG
+      - name: SETUP VCPKG
+        uses: ./.github/actions/setup-vcpkg
+
+      - name: CACHE CMAKE BUILD
         uses: actions/cache@v4
         with:
           path: |
-            vcpkg
-            ~\AppData\Local\vcpkg
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+            build/windows/bin
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-vcpkg-
-
-      - name: INSTALL VCPKG
-        run: |
-          if (-not (Test-Path "vcpkg")) {
-            git clone https://github.com/Microsoft/vcpkg.git
-          }
-          cd vcpkg
-          if ((-not (Test-Path "vcpkg.exe")) -or (-not (Test-Path "scripts\buildsystems\vcpkg.cmake"))) {
-            .\bootstrap-vcpkg.bat
-          }
-          cd ..
-          echo "VCPKG_ROOT=$PWD\vcpkg" >> $env:GITHUB_ENV
+            ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
 
       - name: RUN COMPILATION
         run: |
@@ -171,27 +153,17 @@ jobs:
           packages: cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
           version: 1.0
 
-      - name: CACHE VCPKG
+      - name: SETUP VCPKG
+        uses: ./.github/actions/setup-vcpkg
+
+      - name: CACHE CMAKE BUILD
         uses: actions/cache@v4
         with:
           path: |
-            vcpkg
-            ~/.cache/vcpkg
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+            build/unix/bin
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-vcpkg-
-
-      - name: INSTALL VCPKG
-        run: |
-          if [ ! -d "vcpkg" ]; then
-            git clone https://github.com/Microsoft/vcpkg.git
-          fi
-          cd vcpkg
-          if [ ! -f "vcpkg" ] || [ ! -f "scripts/buildsystems/vcpkg.cmake" ]; then
-            ./bootstrap-vcpkg.sh
-          fi
-          cd ..
-          echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
+            ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
 
       - name: RUN COMPILATION
         run: |
@@ -332,8 +304,8 @@ jobs:
           path: r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz
           retention-days: 1
 
-  build_windows_package:
-    name: build windows package
+  build_windows_server_package:
+    name: build windows server package
     needs: [calculate_version]
     if: ${{ github.event_name == 'push' }}
     runs-on: windows-latest
@@ -343,53 +315,31 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: CACHE VCPKG
+      - name: SETUP VCPKG
+        uses: ./.github/actions/setup-vcpkg
+
+      - name: CACHE CMAKE BUILD
         uses: actions/cache@v4
         with:
           path: |
-            vcpkg
-            ~\AppData\Local\vcpkg
-          key: ${{ runner.os }}-vcpkg-release-${{ hashFiles('**/vcpkg.json') }}
+            build/windows/bin
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-vcpkg-release-
-            ${{ runner.os }}-vcpkg-
-
-      - name: INSTALL VCPKG
-        run: |
-          if (-not (Test-Path "vcpkg")) {
-            git clone https://github.com/Microsoft/vcpkg.git
-          }
-          cd vcpkg
-          if ((-not (Test-Path "vcpkg.exe")) -or (-not (Test-Path "scripts\buildsystems\vcpkg.cmake"))) {
-            .\bootstrap-vcpkg.bat
-          }
-          cd ..
-          echo "VCPKG_ROOT=$PWD\vcpkg" >> $env:GITHUB_ENV
+            ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
 
       - name: BUILD PROJECT
         run: |
-          .\scripts\compile_project.bat
+          .\scripts\compile_project.bat server
 
-      - name: CREATE WINDOWS BINARIES ARCHIVE
+      - name: CREATE WINDOWS SERVER BINARIES ARCHIVE
         run: |
-          New-Item -ItemType Directory -Force -Path "r-type-client-windows"
-          Copy-Item -Path "r-type_client.exe" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
-          Copy-Item -Path "build\windows\bin\client\Release\*.dll" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
-          Copy-Item -Path "build\windows\vcpkg_installed\x64-windows\bin\*.dll" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
-          Compress-Archive -Path "r-type-client-windows" -DestinationPath "r-type-client-windows-${{ needs.calculate_version.outputs.version }}.zip"
-
           New-Item -ItemType Directory -Force -Path "r-type-server-windows"
+          New-Item -ItemType Directory -Force -Path "r-type-server-windows\libraries"
           Copy-Item -Path "r-type_server.exe" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
           Copy-Item -Path "build\windows\bin\server\Release\*.dll" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
-          Copy-Item -Path "build\windows\vcpkg_installed\x64-windows\bin\*.dll" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "build\windows\bin\vcpkg_installed\x64-windows\bin\*.dll" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "libraries\*.dll" -Destination "r-type-server-windows\libraries\" -ErrorAction SilentlyContinue
           Compress-Archive -Path "r-type-server-windows" -DestinationPath "r-type-server-windows-${{ needs.calculate_version.outputs.version }}.zip"
-
-      - name: UPLOAD WINDOWS CLIENT ARTIFACT
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-client-package
-          path: r-type-client-windows-${{ needs.calculate_version.outputs.version }}.zip
-          retention-days: 1
 
       - name: UPLOAD WINDOWS SERVER ARTIFACT
         uses: actions/upload-artifact@v4
@@ -398,9 +348,53 @@ jobs:
           path: r-type-server-windows-${{ needs.calculate_version.outputs.version }}.zip
           retention-days: 1
 
+  build_windows_client_package:
+    name: build windows client package
+    needs: [calculate_version]
+    if: ${{ github.event_name == 'push' }}
+    runs-on: windows-latest
+    steps:
+      - name: CHECKOUT
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SETUP VCPKG
+        uses: ./.github/actions/setup-vcpkg
+
+      - name: CACHE CMAKE BUILD
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/windows/bin
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
+
+      - name: BUILD PROJECT
+        run: |
+          .\scripts\compile_project.bat client
+
+      - name: CREATE WINDOWS CLIENT BINARIES ARCHIVE
+        run: |
+          New-Item -ItemType Directory -Force -Path "r-type-client-windows"
+          New-Item -ItemType Directory -Force -Path "r-type-client-windows\libraries"
+          Copy-Item -Path "r-type_client.exe" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "build\windows\bin\client\Release\*.dll" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "build\windows\bin\vcpkg_installed\x64-windows\bin\*.dll" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "libraries\*.dll" -Destination "r-type-client-windows\libraries\" -ErrorAction SilentlyContinue
+          Compress-Archive -Path "r-type-client-windows" -DestinationPath "r-type-client-windows-${{ needs.calculate_version.outputs.version }}.zip"
+
+      - name: UPLOAD WINDOWS CLIENT ARTIFACT
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-client-package
+          path: r-type-client-windows-${{ needs.calculate_version.outputs.version }}.zip
+          retention-days: 1
+
   create_release:
     name: create unified release
-    needs: [calculate_version, build_unix_package, build_windows_package]
+    needs: [calculate_version, build_unix_package, build_windows_server_package, build_windows_client_package]
     if: ${{ github.event_name == 'push' }}
     environment: RTYPE
     runs-on: ubuntu-latest
@@ -449,7 +443,7 @@ jobs:
             2. Extract: `tar -xzf r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz`
 
             if you do not have vcpkg setup already:
-            - Install dependdencies: `chmod +x scripts/install_dependencies.sh && ./scripts/install_dependencies.sh`
+            - Install dependencies: `chmod +x scripts/install_dependencies.sh && ./scripts/install_dependencies.sh`
 
             3. Compile: `chmod +x scripts/compile_project.sh && ./scripts/compile_project.sh`
           draft: false
