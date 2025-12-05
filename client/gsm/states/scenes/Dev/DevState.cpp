@@ -29,6 +29,8 @@
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
+#include "../../../../../common/systems/interactions/TriggerSystem.hpp"
+#include "../../../../../common/systems/interactions/InteractionSystem.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../../systems/rendering/GameZoneViewSystem.hpp"
@@ -71,6 +73,7 @@ void DevState::enter() {
     addSystem(std::make_shared<ecs::ScoreSystem>());
     addSystem(std::make_shared<ecs::GameZoneViewSystem>());
     addSystem(std::make_shared<ecs::MusicSystem>());
+    addSystem(std::make_shared<ecs::TriggerSystem>());
 
     auto audio = _resourceManager->get<gfx::IAudio>();
 

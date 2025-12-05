@@ -17,27 +17,7 @@
 #include "../Buffer/IBuffer.hpp"
 #include "serializer/ISerializer.hpp"
 
-#define MAGIC_NUMBER 0x93
-#define FIRST_EOP_CHAR '\r'
-#define SECOND_EOP_CHAR '\n'
-#define HEADER_SIZE 13
 
-#define LENGTH_CONNECTION_PACKET 11
-#define LENGTH_ACCEPTATION_PACKET 4
-#define LENGTH_DISCONNECTION_PACKET 4
-#define LENGTH_EVENT_PACKET 5
-#define LENGTH_EOP 2
-
-#define NO_OP_PACKET 0x00
-#define CONNECTION_CLIENT_PACKET 0x01
-#define ACCEPTATION_PACKET 0x02
-#define DISCONNECTION_PACKET 0x03
-#define EVENT_PACKET 0x04
-#define GAME_STATE_PACKET 0x05
-#define MAP_SEND_PACKET 0x06
-#define END_MAP_PACKET 0x07
-#define END_GAME_PACKET 0x08
-#define CAN_START_PACKET 0x09
 
 namespace pm {
 class PacketManager : public IPacketManager {

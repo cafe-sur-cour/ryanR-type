@@ -16,6 +16,7 @@
 #include "Server.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../common/Error/ServerErrror.hpp"
+#include "../common/debug.hpp"
 #include "Signal.hpp"
 
 rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
@@ -58,6 +59,9 @@ void rserv::Server::init() {
     this->loadPacketLibrary();
     this->_network->init(this->getPort(), this->_config->getIp());
     this->setState(0);
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Server initialized on port " + std::to_string(this->getPort()),
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
 }
 
 void rserv::Server::start() {
@@ -70,19 +74,25 @@ void rserv::Server::start() {
             "[SERVER] Error: init() must be called before start()",
             err::ServerError::INTERNAL_ERROR);
     }
-    std::cout << "[SERVER] Starting server..." << std::endl;
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Starting server...",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
     this->setState(1);
 
     Signal::setupSignalHandlers();
     while (this->getState() == 1 && !Signal::stopFlag) {
         processIncomingPackets();
         if (std::cin.eof()) {
-            std::cout << "EOF received (Ctrl+D pressed)" << std::endl;
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "EOF received (Ctrl+D pressed)",
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
             break;
         }
     }
     if (Signal::stopFlag) {
-        std::cout << "[SERVER] Received signal, stopping server" << std::endl;
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "Termination signal received",
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
         this->stop();
     }
 }
@@ -94,12 +104,16 @@ void rserv::Server::stop() {
             err::ServerError::INTERNAL_ERROR);
     }
     if (this->getState() == 0) {
-        std::cerr << "[SERVER] Info: Server is not running." << std::endl;
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Info: Server is not running.",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return;
     }
     _network->stop();
     this->setState(0);
-    std::cout << "[SERVER] Server stopped." << std::endl;
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Server stopped.",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
 }
 
 rserv::Server::operator int() const noexcept {
@@ -173,7 +187,10 @@ void rserv::Server::processIncomingPackets() {
     if (this->_packet->getType() == 0x01) {
         this->processConnections(received.first);
     } else {
-        // Other packet types will be handled here
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Packet received of type "
+            + std::to_string(static_cast<int>(this->_packet->getType())),
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
     }
 
     this->_packet->reset();
@@ -200,11 +217,10 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
     std::vector<uint8_t> payload =
         this->_packet->pack({0x02, static_cast<uint64_t>(this->_nextClientId)});
     if (!this->_network->sendTo(id, payload)) {
-        std::cerr << "[SERVER NETWORK] Failed to send acceptation payload to "
+        std::cerr << "[SERVER NETWORK] Failed to send acceptation paylo0x02ad to "
             << id.address().to_string() << ":" << id.port() << std::endl;
         return false;
     }
-
     this->_clients.push_back(std::make_tuple(this->_nextClientId, id, ""));
     this->_nextClientId++;
     return true;
@@ -217,8 +233,10 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
                 std::remove(this->_clients.begin(), this->_clients.end(), client),
                 this->_clients.end());
             this->_nextClientId--;
-            std::cout << "[SERVER] Client " << static_cast<int>(idClient)
-                << " disconnected and removed from the lobby" << std::endl;
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "Client " + std::to_string(idClient)
+                + " disconnected and removed from the lobby",
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
             return true;
         }
     }
@@ -252,20 +270,25 @@ size_t rserv::Server::getClientCount() const {
 }
 
 void rserv::Server::onClientConnected(uint8_t idClient) {
-    std::cout << "[SERVER] Client " << static_cast<int>(idClient) << " connected" << std::endl;
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "Client " + std::to_string(idClient) + " connected",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
     // Add game-specific logic here
 }
 
 void rserv::Server::onClientDisconnected(uint8_t idClient) {
-    std::cout << "[SERVER] Client " << static_cast<int>(idClient)
-        << " disconnected" << std::endl;
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "Client " + std::to_string(idClient) + " disconnected",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
     // Add game-specific cleanup logic here
 }
 
 void rserv::Server::onPacketReceived(
     uint8_t idClient, const pm::IPacketManager &packet) {
-    std::cout << "[SERVER] Received packet from client "
-        << static_cast<int>(idClient) << std::endl;
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "Packet received from client " + std::to_string(idClient)
+        + " of type " + std::to_string(static_cast<int>(packet.getType())),
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
     (void)packet;
     // Add game-specific packet processing logic here
 }

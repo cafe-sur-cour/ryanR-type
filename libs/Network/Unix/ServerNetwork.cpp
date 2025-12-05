@@ -66,8 +66,6 @@ void UnixServerNetwork::init(uint16_t port, const std::string host) {
             std::string("[SERVER NETWORK] Failed to bind socket: ") + ec.message());
     }
     _socket->non_blocking(true, ec);
-    std::cout << "[SERVER NETWORK] Server started on " <<
-        bindAddress.to_string() << ":" << _port << std::endl;
     _isRunning = true;
 }
 

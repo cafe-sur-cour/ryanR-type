@@ -6,6 +6,7 @@
 */
 
 #include <vector>
+#include <iostream>
 #include "PacketManager.hpp"
 
 std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient,

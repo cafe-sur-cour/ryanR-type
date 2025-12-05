@@ -20,6 +20,7 @@ void Utils::parsCli(int ac, char **av,
     std::shared_ptr<rserv::ServerConfig> config) {
     int port = 0;
     int nbClients = 1;
+    bool isDebug = false;
 
     for (int i = 1; i < ac; i++) {
         if (std::string(av[i]) == "-p" && i + 1 < ac) {
@@ -36,6 +37,10 @@ void Utils::parsCli(int ac, char **av,
         }
         if (std::string(av[i]) == "-i" && i + 1 < ac) {
             config->setIp(av[i + 1]);
+        }
+        if (std::string(av[i]) == "-d") {
+            isDebug = true;
+            config->setIsDebug(isDebug);
         }
         if (std::string(av[i]) == "-h") {
             this->helper();
