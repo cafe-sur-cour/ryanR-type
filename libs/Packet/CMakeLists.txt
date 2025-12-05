@@ -20,7 +20,6 @@ target_include_directories(${PACKET_LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 target_link_libraries(${PACKET_LIB_NAME}
     PRIVATE ERROR
     PRIVATE DEBUG
-    PRIVATE ECS
 )
 
 add_subdirectory(serializer)
