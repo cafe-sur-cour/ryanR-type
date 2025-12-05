@@ -144,6 +144,14 @@ add_executable(PacketTests server/packet/packettest.cpp)
 target_link_libraries(PacketTests Packet Buffer GTest::gtest GTest::gtest_main)
 add_test(NAME PacketTests COMMAND PacketTests)
 
+add_executable(AdditionalPacketTests server/packet/AdditionalPacketTests.cpp)
+target_link_libraries(AdditionalPacketTests Packet Buffer GTest::gtest GTest::gtest_main)
+add_test(NAME AdditionalPacketTests COMMAND AdditionalPacketTests)
+
+add_executable(AdditionalServerConfigTests server/AdditionalServerConfigTests.cpp)
+target_link_libraries(AdditionalServerConfigTests r-type_server_lib GTest::gtest GTest::gtest_main)
+add_test(NAME AdditionalServerConfigTests COMMAND AdditionalServerConfigTests)
+
 add_executable(UtilsFuncTests server/utils/utils-func-test.cpp)
 target_link_libraries(UtilsFuncTests r-type_server_lib GTest::gtest GTest::gtest_main)
 add_test(NAME UtilsFuncTests COMMAND UtilsFuncTests)

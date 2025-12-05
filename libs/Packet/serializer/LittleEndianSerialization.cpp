@@ -56,6 +56,21 @@ std::vector<std::uint8_t> pm::LittleEndianSerialization::serializeUChar(
     return bytes;
 }
 
+std::vector<std::uint8_t> pm::LittleEndianSerialization::serializeUDouble(
+    uint64_t value) {
+    std::vector<std::uint8_t> bytes;
+
+    bytes.push_back(static_cast<std::uint8_t>(value & 0xFF));
+    bytes.push_back(static_cast<std::uint8_t>((value >> 8) & 0xFF));
+    bytes.push_back(static_cast<std::uint8_t>((value >> 16) & 0xFF));
+    bytes.push_back(static_cast<std::uint8_t>((value >> 24) & 0xFF));
+    bytes.push_back(static_cast<std::uint8_t>((value >> 32) & 0xFF));
+    bytes.push_back(static_cast<std::uint8_t>((value >> 40) & 0xFF));
+    bytes.push_back(static_cast<std::uint8_t>((value >> 48) & 0xFF));
+    bytes.push_back(static_cast<std::uint8_t>((value >> 56) & 0xFF));
+    return bytes;
+}
+
 uint64_t pm::LittleEndianSerialization::deserializeUInt(
     std::vector<uint8_t> data) {
     if (data.size() < 4) {
