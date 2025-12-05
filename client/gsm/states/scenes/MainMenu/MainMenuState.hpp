@@ -33,7 +33,6 @@ private:
     void cycleBrightnessFilter();
 
 private:
-    std::shared_ptr<ResourceManager> _resourceManager;
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::shared_ptr<ui::Button> _playButton;
     std::shared_ptr<ui::Button> _quitButton;
