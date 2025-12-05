@@ -36,6 +36,7 @@ namespace constants {
         RIGHT = 3,
         SHOOT = 4,
     };
+    constexpr int MAX_RETRY_CONNECTIONS = 3;
     /* Paths */
     const std::string CONFIG_PATH = "configs/entities/";
 
