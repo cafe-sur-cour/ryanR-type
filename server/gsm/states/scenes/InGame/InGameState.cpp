@@ -6,6 +6,7 @@
 */
 
 #include "InGameState.hpp"
+#include <memory>
 #include "../../../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
@@ -20,7 +21,8 @@
 
 namespace gsm {
 
-InGameState::InGameState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager)
+InGameState::InGameState(std::shared_ptr<IGameStateMachine> gsm,
+    std::shared_ptr<ResourceManager> resourceManager)
     : AGameState(gsm, resourceManager) {
 }
 

@@ -6,10 +6,11 @@
 */
 
 #include "GameEndState.hpp"
-
+#include <memory>
 namespace gsm {
 
-GameEndState::GameEndState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager)
+GameEndState::GameEndState(std::shared_ptr<IGameStateMachine> gsm,
+    std::shared_ptr<ResourceManager> resourceManager)
     : AGameState(gsm, resourceManager) {
 }
 

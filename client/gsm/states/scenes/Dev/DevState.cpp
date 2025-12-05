@@ -105,7 +105,8 @@ void DevState::update(float deltaTime) {
         return;
     }
 
-    _resourceManager->get<ecs::ISystemManager>()->updateAllSystems(_resourceManager, _registry, deltaTime);
+    _resourceManager->get<ecs::ISystemManager>()->updateAllSystems
+        (_resourceManager, _registry, deltaTime);
 }
 
 void DevState::exit() {

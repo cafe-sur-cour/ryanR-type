@@ -6,10 +6,11 @@
 */
 
 #include "ShutdownState.hpp"
-
+#include <memory>
 namespace gsm {
 
-ShutdownState::ShutdownState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager)
+ShutdownState::ShutdownState(std::shared_ptr<IGameStateMachine> gsm,
+    std::shared_ptr<ResourceManager> resourceManager)
     : AGameState(gsm, resourceManager) {
 }
 
