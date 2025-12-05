@@ -46,7 +46,7 @@ Core::Core() {
 
 Core::~Core() {
     if (this->_serverThread.joinable()) {
-        if (this->_server != nullptr && this->_server->getState() == 1) {
+        if (this->_server != nullptr && this->_server->getState() == SERVER_UP) {
             this->_server->stop();
         }
         this->_serverThread.join();
@@ -119,11 +119,11 @@ void Core::processServerEvents() {
 void Core::loop() {
     auto previousTime = std::chrono::high_resolution_clock::now();
 
-    while (this->_server->getState() < 1) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    while (this->_server->getState() < SERVER_UP) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_THREAD_SLEEP_MS));
     }
 
-    while (this->_server->getState() == 1) {
+    while (this->_server->getState() == SERVER_UP) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float>(currentTime - previousTime).count();
         previousTime = currentTime;

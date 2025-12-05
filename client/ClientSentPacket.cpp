@@ -12,7 +12,7 @@
 #include "ClientNetwork.hpp"
 #include "../common/Error/ClientNetworkError.hpp"
 #include "../common/debug.hpp"
-
+#include "../common/constants.hpp"
 
 /* Packet Handling */
 void ClientNetwork::connectionPacket() {
@@ -23,7 +23,7 @@ void ClientNetwork::connectionPacket() {
 
     std::vector<uint64_t> payload = this->_packet->formatString(this->_name);
     std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
-        this->_sequenceNumber, 0x01, payload);
+        this->_sequenceNumber, constants::PACKET_CONNECTION, payload);
 
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Sending connection packet with name: " + this->_name,
@@ -53,7 +53,8 @@ void ClientNetwork::eventPacket(const constants::EventType &eventType,
     payload.push_back(dirBits);
 
     std::vector<uint8_t> packet =
-        this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x04, payload);
+        this->_packet->pack(this->_idClient, this->_sequenceNumber,
+        constants::PACKET_EVENT, payload);
 
     this->_network->sendTo(this->_serverEndpoint, packet);
     this->_sequenceNumber++;
@@ -83,7 +84,7 @@ void ClientNetwork::disconnectionPacket() {
     payload.push_back(static_cast<uint64_t>(this->_idClient));
 
     std::vector<uint8_t> header = this->_packet->pack(this->_idClient,
-        this->_sequenceNumber, 0x03, payload);
+        this->_sequenceNumber, constants::PACKET_DISC, payload);
 
     this->_network->sendTo(this->_serverEndpoint, header);
     this->_sequenceNumber++;

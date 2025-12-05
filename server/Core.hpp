@@ -21,6 +21,8 @@
 #include "gsm/machine/GameStateMachine.hpp"
 #include "initResourcesManager/ServerInputProvider.hpp"
 
+#define SERVER_THREAD_SLEEP_MS 10
+#define SERVER_UP 1
 
 class Core {
     public:
