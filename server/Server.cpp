@@ -19,6 +19,7 @@
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../common/Error/ServerErrror.hpp"
 #include "../common/debug.hpp"
+#include "../common/constants.hpp"
 #include "Signal.hpp"
 
 rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
@@ -182,9 +183,9 @@ void rserv::Server::processIncomingPackets() {
 
     this->_packet->unpack(received.second);
 
-    if (this->_packet->getType() == 0x01) {
+    if (this->_packet->getType() == constants::PACKET_CONNECTION) {
         this->processConnections(received.first);
-    } else if (this->_packet->getType() == 0x04) {
+    } else if (this->_packet->getType() == constants::PACKET_EVENT) {
         this->processEvents(this->_packet->getIdClient());
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -212,8 +213,9 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
         return false;
     }
 
-    std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber, 0x02
-        , std::vector<uint64_t>{static_cast<uint64_t>(this->_nextClientId)});
+    std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber,
+        constants::PACKET_ACCEPT, std::vector<uint64_t>{
+        static_cast<uint64_t>(this->_nextClientId)});
     if (!this->_network->sendTo(id, packet)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER NETWORK] Failed to send connection acceptance header to "
