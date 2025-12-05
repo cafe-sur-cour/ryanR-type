@@ -74,6 +74,7 @@ void DevState::enter() {
     addSystem(std::make_shared<ecs::GameZoneViewSystem>());
     addSystem(std::make_shared<ecs::MusicSystem>());
     addSystem(std::make_shared<ecs::TriggerSystem>());
+    addSystem(std::make_shared<ecs::InteractionSystem>());
 
     auto audio = _resourceManager->get<gfx::IAudio>();
 

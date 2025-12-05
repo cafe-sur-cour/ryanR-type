@@ -27,6 +27,13 @@ namespace constants {
         RIGHT = 1,
         MIDDLE = 2,
     };
+
+    /* Accessibility Filters */
+    const std::string FILTER_HIGH_CONTRAST_SHADER_PATH = "assets/shaders/highcontrast.frag";
+    const std::string FILTER_PROTANOPIA_SHADER_PATH = "assets/shaders/protanopia.frag";
+    const std::string FILTER_DEUTERANOPIA_SHADER_PATH = "assets/shaders/deuteranopia.frag";
+    const std::string FILTER_TRITANOPIA_SHADER_PATH = "assets/shaders/tritanopia.frag";
+    const std::string FILTER_BRIGHTNESS_SHADER_PATH = "assets/shaders/brightness.frag";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
