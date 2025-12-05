@@ -25,7 +25,9 @@ SfmlWindow::SfmlWindow(std::string title, size_t width, size_t height)
         sf::Vector2f(constants::MAX_WIDTH, constants::MAX_HEIGHT))),
     _renderTexture({static_cast<unsigned int>(constants::MAX_WIDTH),
         static_cast<unsigned int>(constants::MAX_HEIGHT)}),
-    _renderSprite(_renderTexture.getTexture()) {
+    _renderSprite(_renderTexture.getTexture()),
+    _viewportOffset(0.f, 0.f),
+    _viewportScale(1.f, 1.f) {
     init();
 }
 
@@ -62,9 +64,13 @@ void SfmlWindow::display() {
     auto activeShaders = _shaderManager.getActiveShaders();
     if (activeShaders.empty()) {
         _renderSprite.setTexture(_renderTexture.getTexture());
+        _renderSprite.setPosition(_viewportOffset);
+        _renderSprite.setScale(_viewportScale);
         _window->draw(_renderSprite);
     } else if (activeShaders.size() == 1) {
         _renderSprite.setTexture(_renderTexture.getTexture());
+        _renderSprite.setPosition(_viewportOffset);
+        _renderSprite.setScale(_viewportScale);
         _window->draw(_renderSprite, activeShaders[0].get());
     } else {
         sf::RenderTexture intermediate({static_cast<unsigned int>(constants::MAX_WIDTH),
@@ -89,6 +95,8 @@ void SfmlWindow::display() {
         }
 
         sf::Sprite finalSprite(intermediate.getTexture());
+        finalSprite.setPosition(_viewportOffset);
+        finalSprite.setScale(_viewportScale);
         _window->draw(finalSprite);
     }
 
@@ -111,6 +119,7 @@ void SfmlWindow::resizeWindow(size_t x, size_t y) {
     _window->setSize(sf::Vector2u(
         static_cast<unsigned int>(x),
         static_cast<unsigned int>(y) ));
+    updateView();
 }
 void SfmlWindow::drawSprite(std::string asset, gfx::color_t color,
     std::pair<size_t, size_t> position) {
@@ -216,25 +225,13 @@ void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y,
 
 void SfmlWindow::updateView() {
     sf::Vector2u windowSize = _window->getSize();
-    float windowRatio = static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y);
-    float viewRatio = constants::MAX_WIDTH / constants::MAX_HEIGHT;
 
-    sf::FloatRect viewport;
-    if (windowRatio > viewRatio) {
-        float scale = static_cast<float>(windowSize.y) / constants::MAX_HEIGHT;
-        float viewportWidth = (constants::MAX_WIDTH * scale) /
-            static_cast<float>(windowSize.x);
-        viewport = sf::FloatRect(sf::Vector2f((1.f - viewportWidth) / 2.f, 0.f),
-            sf::Vector2f(viewportWidth, 1.f));
-    } else {
-        float scale = static_cast<float>(windowSize.x) / constants::MAX_WIDTH;
-        float viewportHeight = (constants::MAX_HEIGHT * scale) /
-            static_cast<float>(windowSize.y);
-        viewport = sf::FloatRect(sf::Vector2f(0.f, (1.f - viewportHeight) / 2.f),
-            sf::Vector2f(1.f, viewportHeight));
-    }
+    float scaleX = static_cast<float>(windowSize.x) / constants::MAX_WIDTH;
+    float scaleY = static_cast<float>(windowSize.y) / constants::MAX_HEIGHT;
 
-    _view.setViewport(viewport);
+    _view.setViewport(sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(1.f, 1.f)));
+    _viewportOffset = sf::Vector2f(0.f, 0.f);
+    _viewportScale = sf::Vector2f(scaleX, scaleY);
 }
 
 void SfmlWindow::setViewCenter(float x, float y) {
@@ -248,9 +245,27 @@ math::Vector2f SfmlWindow::getViewCenter() {
 }
 
 math::Vector2f SfmlWindow::mapPixelToCoords(int x, int y) {
-    sf::Vector2i pixelPos(x, y);
-    sf::Vector2f worldPos = _window->mapPixelToCoords(pixelPos);
-    return math::Vector2f(worldPos.x, worldPos.y);
+    sf::Vector2f pixelPos(static_cast<float>(x), static_cast<float>(y));
+
+    pixelPos -= _viewportOffset;
+
+    if (_viewportScale.x > 0.f && _viewportScale.y > 0.f) {
+        pixelPos.x *= (1.f / _viewportScale.x);
+        pixelPos.y *= (1.f / _viewportScale.y);
+    }
+
+    return math::Vector2f(pixelPos.x, pixelPos.y);
+}
+
+std::pair<int, int> SfmlWindow::getLogicalSize() const {
+    return {static_cast<int>(constants::MAX_WIDTH), static_cast<int>(constants::MAX_HEIGHT)};
+}
+
+float SfmlWindow::getScaleFactor() const {
+    if (_viewportScale.x > 0.f) {
+        return _viewportScale.x;
+    }
+    return 1.f;
 }
 
 void SfmlWindow::enableFilter(const std::string& filterName) {

@@ -44,6 +44,10 @@ class SfmlWindow : public gfx::IWindow {
         math::Vector2f getViewCenter() override;
         math::Vector2f mapPixelToCoords(int x, int y) override;
 
+        std::pair<int, int> getLogicalSize() const;
+
+        float getScaleFactor() const;
+
         void enableFilter(const std::string& filterName);
         void addFilter(const std::string& filterName);
         void removeFilter(const std::string& filterName);
@@ -60,6 +64,9 @@ class SfmlWindow : public gfx::IWindow {
         sf::View _view;
         sf::RenderTexture _renderTexture;
         sf::Sprite _renderSprite;
+
+        sf::Vector2f _viewportOffset;
+        sf::Vector2f _viewportScale;
 };
 
 #endif /* !SFMLWINDOW_HPP_ */
