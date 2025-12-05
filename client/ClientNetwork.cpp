@@ -167,7 +167,7 @@ void ClientNetwork::handlePacketType(uint8_t type) {
         (this->*_packetHandlers[type])();
     } else {
         debug::Debug::printDebug(this->_isDebug,
-            "[Client] Unknown packet type: " + std::to_string(static_cast<int>(type)),
+            "[CLIENT] Unknown packet type: " + std::to_string(static_cast<int>(type)),
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
     }
@@ -181,7 +181,7 @@ std::pair<int, std::chrono::steady_clock::time_point> ClientNetwork::tryConnecti
     if (this->_network->getConnectionState() == net::ConnectionState::CONNECTING &&
         retryCount < maxRetries &&
         std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastRetryTime).count()
-            >= 2) {
+            >= 5) {
         debug::Debug::printDebug(this->_isDebug,
             "Retrying connection (attempt " + std::to_string(retryCount + 1) + "/" +
             std::to_string(maxRetries) + ")",
@@ -242,7 +242,7 @@ void ClientNetwork::start() {
     if (Signal::stopFlag) {
         this->disconnectionPacket();
         debug::Debug::printDebug(this->_isDebug,
-            "[Client] Signal received, stopping client network",
+            "[CLIENT] Signal received, stopping client network",
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
         this->stop();
