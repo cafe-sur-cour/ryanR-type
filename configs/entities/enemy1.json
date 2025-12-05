@@ -1,6 +1,7 @@
 {
     "name": "enemy1",
     "components": {
+        "MobTag": { "target": "both" },
         "TransformComponent": {
             "target": "both",
             "position": { "x": 100.0, "y": 100.0 },
@@ -9,6 +10,7 @@
         },
         "VelocityComponent": { "target": "both" },
         "SpeedComponent": { "target": "both", "speed": 10.0 },
+        "HealthComponent": { "target": "both", "health": 50.0 },
         "AnimationComponent": {
             "target": "client",
             "states": {
@@ -28,7 +30,9 @@
         },
         "ColliderComponent": {
             "target": "both",
-            "size" : { "x": 33.0, "y": 36.0 }
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size" : { "x": 33.0, "y": 36.0 },
+            "type": "Solid"
         }
     }
 }

@@ -9,17 +9,16 @@
 #define SERVER_SHUTDOWNSTATE_HPP_
 
 #include "../../AGameState.hpp"
+#include "resourceManager/ResourceManager.hpp"
 
 namespace gsm {
 
 class ShutdownState : public AGameState {
 public:
-    ShutdownState(std::shared_ptr<IGameStateMachine> gsm);
+    ShutdownState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
     ~ShutdownState() override = default;
 
     void enter() override;
-    void update(float deltaTime) override;
-    void exit() override;
 };
 
 }  // namespace gsm

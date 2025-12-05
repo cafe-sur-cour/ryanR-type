@@ -13,7 +13,7 @@ namespace gsm {
 ResultsState::ResultsState(
     std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager)
-    : AGameState(gsm), _resourceManager(resourceManager) {
+    : AGameState(gsm, resourceManager) {
 }
 
 void ResultsState::enter() {

@@ -8,6 +8,8 @@
 #pragma once
 
 #include <memory>
+#include <vector>
+#include "../systems/base/ISystem.hpp"
 
 namespace gsm {
 
@@ -20,6 +22,8 @@ public:
     virtual void enter() = 0;
     virtual void update(float deltaTime) = 0;
     virtual void exit() = 0;
+    virtual void addSystem(std::shared_ptr<ecs::ISystem> system) = 0;
+    virtual std::vector<std::shared_ptr<ecs::ISystem>> getSystems() const = 0;
 };
 
 } // namespace gsm

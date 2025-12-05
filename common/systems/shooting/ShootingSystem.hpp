@@ -37,8 +37,7 @@ class ShootingSystem : public ASystem {
             std::shared_ptr<Registry> registry,
             std::shared_ptr<IPrefab> prefab,
             const math::Vector2f &position,
-            float angle,
-            float speed
+            float angle
         );
 
         math::Vector2f calculateProjectileVelocity(
