@@ -217,11 +217,10 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
     std::vector<uint8_t> payload =
         this->_packet->pack({0x02, static_cast<uint64_t>(this->_nextClientId)});
     if (!this->_network->sendTo(id, payload)) {
-        std::cerr << "[SERVER NETWORK] Failed to send acceptation payload to "
+        std::cerr << "[SERVER NETWORK] Failed to send acceptation paylo0x02ad to "
             << id.address().to_string() << ":" << id.port() << std::endl;
         return false;
     }
-
     this->_clients.push_back(std::make_tuple(this->_nextClientId, id, ""));
     this->_nextClientId++;
     return true;

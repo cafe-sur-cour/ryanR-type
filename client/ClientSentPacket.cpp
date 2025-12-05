@@ -44,12 +44,14 @@ void ClientNetwork::eventPacket(const constants::EventType &eventType,
             err::ClientNetworkError::INTERNAL_ERROR);
     }
     std::vector<uint8_t> header =
-        this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x02);
+        this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x04);
     this->_network->sendTo(this->_serverEndpoint, header);
 
     std::vector<uint64_t> payloadData;
-    payloadData.push_back(0x02);
+    payloadData.push_back(0x04);
     payloadData.push_back(static_cast<uint64_t>(eventType));
+
+    payloadData.push_back(this->_idClient);
 
     uint64_t depthBits;
     std::memcpy(&depthBits, &depth, sizeof(double));
