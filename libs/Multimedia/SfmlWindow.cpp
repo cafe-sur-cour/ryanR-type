@@ -39,6 +39,9 @@ void SfmlWindow::init() {
     _window->setFramerateLimit(60);
     _renderTexture.setView(_view);
 
+    _shaderManager.loadShader(constants::FILTER_HIGH_CONTRAST, "",
+                              constants::FILTER_HIGH_CONTRAST_FRAGMENT_PATH);
+
     updateView();
     _window->clear(sf::Color::Black);
     _window->clear();
@@ -49,7 +52,6 @@ void SfmlWindow::init() {
 
 void SfmlWindow::display() {
     _renderTexture.display();
-    _renderSprite.setTexture(_renderTexture.getTexture());
 
     sf::Vector2u windowSize = _window->getSize();
     sf::View defaultView(sf::FloatRect(sf::Vector2f(0.f, 0.f),
@@ -58,7 +60,40 @@ void SfmlWindow::display() {
 
     _window->clear();
     _window->setView(defaultView);
-    _window->draw(_renderSprite);
+
+    auto activeShaders = _shaderManager.getActiveShaders();
+    if (activeShaders.empty()) {
+        _renderSprite.setTexture(_renderTexture.getTexture());
+        _window->draw(_renderSprite);
+    } else if (activeShaders.size() == 1) {
+        _renderSprite.setTexture(_renderTexture.getTexture());
+        _window->draw(_renderSprite, activeShaders[0].get());
+    } else {
+        sf::RenderTexture intermediate({static_cast<unsigned int>(constants::MAX_WIDTH),
+                                       static_cast<unsigned int>(constants::MAX_HEIGHT)});
+
+        sf::Sprite tempSprite(_renderTexture.getTexture());
+        intermediate.clear();
+        intermediate.draw(tempSprite, activeShaders[0].get());
+        intermediate.display();
+
+        for (size_t i = 1; i < activeShaders.size(); ++i) {
+            sf::RenderTexture nextIntermediate(
+                {static_cast<unsigned int>(constants::MAX_WIDTH),
+                static_cast<unsigned int>(constants::MAX_HEIGHT)});
+
+            sf::Sprite intermediateSprite(intermediate.getTexture());
+            nextIntermediate.clear();
+            nextIntermediate.draw(intermediateSprite, activeShaders[i].get());
+            nextIntermediate.display();
+
+            intermediate = std::move(nextIntermediate);
+        }
+
+        sf::Sprite finalSprite(intermediate.getTexture());
+        _window->draw(finalSprite);
+    }
+
     _window->display();
 }
 
@@ -218,4 +253,28 @@ math::Vector2f SfmlWindow::mapPixelToCoords(int x, int y) {
     sf::Vector2i pixelPos(x, y);
     sf::Vector2f worldPos = _window->mapPixelToCoords(pixelPos);
     return math::Vector2f(worldPos.x, worldPos.y);
+}
+
+void SfmlWindow::enableFilter(const std::string& filterName) {
+    _shaderManager.enableFilter(filterName);
+}
+
+void SfmlWindow::addFilter(const std::string& filterName) {
+    _shaderManager.addFilter(filterName);
+}
+
+void SfmlWindow::removeFilter(const std::string& filterName) {
+    _shaderManager.removeFilter(filterName);
+}
+
+void SfmlWindow::disableAllFilters() {
+    _shaderManager.disableAllFilters();
+}
+
+bool SfmlWindow::isFilterActive(const std::string& filterName) const {
+    return _shaderManager.isFilterActive(filterName);
+}
+
+ShaderManager& SfmlWindow::getShaderManager() {
+    return _shaderManager;
 }

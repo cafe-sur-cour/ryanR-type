@@ -160,6 +160,10 @@ namespace constants {
     /* Animation conditions */
     const std::string VELOCITY_UP_CONDITION = "isVelocityUp";
     const std::string VELOCITY_DOWN_CONDITION = "isVelocityDown";
+
+    /* Accessibility Filters */
+    const std::string FILTER_HIGH_CONTRAST = "highcontrast";
+    const std::string FILTER_HIGH_CONTRAST_FRAGMENT_PATH = "assets/shaders/highcontrast.frag";
 }
 
 #endif /* !CONSTANTS_HPP_ */

@@ -38,6 +38,8 @@ add_library(${MULTIMEDIA_LIB_NAME} SHARED
     TextureManager.hpp
     FontManager.cpp
     FontManager.hpp
+    ShaderManager.cpp
+    ShaderManager.hpp
     SfmlEntry.cpp
     EventTypes.hpp
     ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
