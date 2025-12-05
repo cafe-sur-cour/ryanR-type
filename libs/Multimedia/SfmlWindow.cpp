@@ -113,6 +113,7 @@ bool SfmlWindow::isOpen() {
 
 void SfmlWindow::clear() {
     _renderTexture.clear();
+    _window->clear();
 }
 
 void SfmlWindow::resizeWindow(size_t x, size_t y) {
