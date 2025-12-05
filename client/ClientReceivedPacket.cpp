@@ -16,6 +16,13 @@ void ClientNetwork::handleNoOp() {
 
 void ClientNetwork::handleConnectionAcceptation() {
     auto payload = _packet->getPayload();
+
+    std::cout << "Payload contains: " << std::endl;
+    for (const auto &data : payload) {
+        std::cout << std::hex << static_cast<int>(data) << " ";
+    }
+    std::cout << std::dec << std::endl;
+
     if (payload.size() >= 1) {
         uint8_t id = static_cast<uint8_t>(payload.at(0));
         setIdClient(id);
@@ -23,14 +30,14 @@ void ClientNetwork::handleConnectionAcceptation() {
         this->_network->setConnectionState(net::ConnectionState::CONNECTED);
         this->_packet->reset();
         debug::Debug::printDebug(this->_isDebug,
-            "[Client] Connection accepted, assigned ID: " +
+            "[CLIENT] Connection accepted, assigned ID: " +
             std::to_string(static_cast<int>(id)),
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
     } else {
         this->_network->setConnectionState(net::ConnectionState::ERROR_STATE);
         debug::Debug::printDebug(this->_isDebug,
-            "[Client] Connection acceptation failed: Invalid payload",
+            "[CLIENT] Connection acceptation failed: Invalid payload",
             debug::debugType::NETWORK,
             debug::debugLevel::ERROR);
     }
