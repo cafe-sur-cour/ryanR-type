@@ -84,11 +84,6 @@ void Core::init() {
         this->_server->init();
         this->_server->start();
     });
-
-    while (this->_server->getState() != 0) {
-        processServerEvents();
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
 }
 
 void Core::processServerEvents() {
@@ -108,22 +103,25 @@ void Core::processServerEvents() {
     while (!eventQueue->empty()) {
         auto event = eventQueue->front();
         eventQueue->pop();
-        uint8_t clientId = event.first;
-        constants::EventType eventType = event.second;
-        debug::Debug::printDebug(true,
-            "[CORE] Processing event from client " + std::to_string(clientId)
-            + ": " + std::to_string(static_cast<int>(eventType)),
-            debug::debugType::NETWORK, debug::debugLevel::INFO);
+        uint8_t clientId = std::get<0>(event);
+        constants::EventType eventType = std::get<1>(event);
+        double param1 = std::get<2>(event);
+        double param2 = std::get<3>(event);
     }
 }
 
 void Core::loop() {
     auto previousTime = std::chrono::high_resolution_clock::now();
 
+    while (this->_server->getState() < 1) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
     while (this->_server->getState() == 1) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float>(currentTime - previousTime).count();
         previousTime = currentTime;
+        processServerEvents();
         this->_gsm->update(deltaTime);
     }
 }

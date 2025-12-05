@@ -56,7 +56,7 @@ public:
     virtual std::vector<uint8_t> getConnectedClients() const = 0;
     virtual size_t getClientCount() const = 0;
 
-    virtual std::shared_ptr<std::queue<std::pair<uint8_t, constants::EventType>>> getEventQueue() = 0;
+    virtual std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> getEventQueue() = 0;
     virtual bool hasEvents() const = 0;
 };
 } // namespace rserv = r-type server
