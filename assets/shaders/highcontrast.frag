@@ -2,12 +2,18 @@
 
 uniform sampler2D texture;
 
+const float contrast = 3.0;     // Strong contrast
+const float brightness = 0.0;   // Normal brightness
+const float gamma = 1.0;        // Normal gamma
+
 void main() {
     vec4 color = texture2D(texture, gl_TexCoord[0].xy);
 
-    vec3 adjusted = (color.rgb - 0.5) * 2.0 + 0.5;
+    color.rgb += brightness;
 
-    adjusted = clamp(adjusted, 0.0, 1.0);
+    color.rgb = ((color.rgb - 0.5) * contrast) + 0.5;
 
-    gl_FragColor = vec4(adjusted, color.a);
+    color.rgb = pow(color.rgb, vec3(1.0 / gamma));
+
+    gl_FragColor = color;
 }
