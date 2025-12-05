@@ -5,6 +5,7 @@
 ** ComponentCreators
 */
 
+#include <iostream>
 #include <memory>
 #include <string>
 #include <map>
@@ -13,8 +14,13 @@
 #include <functional>
 #include "Parser.hpp"
 #include "../constants.hpp"
+#include "../components/tags/ControllableTag.hpp"
+#include "../components/tags/PlayerTag.hpp"
 #include "../components/tags/ShooterTag.hpp"
 #include "../components/tags/ProjectileTag.hpp"
+#include "../components/tags/MobTag.hpp"
+#include "../components/tags/ObstacleTag.hpp"
+#include "../components/tags/GameZoneColliderTag.hpp"
 #include "../components/tags/ProjectilePassThroughTag.hpp"
 #include "../components/permanent/ShootingStatsComponent.hpp"
 #include "../components/permanent/ProjectilePrefabComponent.hpp"
@@ -25,11 +31,14 @@
 #include "../../client/components/rendering/AnimationComponent.hpp"
 #include "../../client/components/rendering/MusicComponent.hpp"
 #include "../../client/components/rendering/ParallaxComponent.hpp"
+#include "../components/permanent/InteractionConfigComponent.hpp"
+#include "../components/permanent/HealthComponent.hpp"
 #include "../ECS/entity/Entity.hpp"
 #include "../ECS/entity/registry/Registry.hpp"
 #include "../../client/components/tags/BackGroundMusicTag.hpp"
 #include "../components/tags/ScoreTag.hpp"
 #include "../components/permanent/ScoreComponent.hpp"
+#include "../components/permanent/DamageComponent.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -69,19 +78,29 @@ void Parser::instanciateComponentDefinitions() {
         {constants::PROJECTILETAG, {std::type_index(typeid(ecs::ProjectileTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
+        {constants::MOBTAG, {std::type_index(typeid(ecs::MobTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::OBSTACLETAG, {std::type_index(typeid(ecs::ObstacleTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::GAMEZONECOLLIDERTAG, {std::type_index(typeid(ecs::GameZoneColliderTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
         {constants::PROJECTILEPASSTHROUGHTAG,
             {std::type_index(typeid(ecs::ProjectilePassThroughTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
         {constants::COLLIDERCOMPONENT, {std::type_index(typeid(ecs::ColliderComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
-            {constants::SIZE_FIELD, FieldType::VECTOR2F}
+            {constants::OFFSET_FIELD, FieldType::VECTOR2F},
+            {constants::SIZE_FIELD, FieldType::VECTOR2F},
+            {constants::TYPE_FIELD, FieldType::STRING}
         }}},
         {constants::SHOOTINGSTATSCOMPONENT,
             {std::type_index(typeid(ecs::ShootingStatsComponent)), {
                 {constants::TARGET_FIELD, FieldType::STRING},
                 {constants::FIRERATE_FIELD, FieldType::FLOAT},
-                {constants::PROJECTILESPEED_FIELD, FieldType::FLOAT},
                 {constants::SHOTCOUNT_FIELD, FieldType::INT},
                 {constants::ANGLEOFFSET_FIELD, FieldType::FLOAT},
                 {constants::SPREADANGLE_FIELD, FieldType::FLOAT}
@@ -137,7 +156,22 @@ void Parser::instanciateComponentDefinitions() {
             std::type_index(typeid(ecs::ScoreComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::SCORE_FIELD, FieldType::INT}
-        }}}
+        }}},
+        {constants::DAMAGECOMPONENT, {
+            std::type_index(typeid(ecs::DamageComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::DAMAGE_FIELD, FieldType::FLOAT}
+        }}},
+        {constants::HEALTHCOMPONENT, {
+            std::type_index(typeid(ecs::HealthComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::HEALTH_FIELD, FieldType::FLOAT}
+        }}},
+        {constants::INTERACTIONCONFIGCOMPONENT, {
+            std::type_index(typeid(ecs::InteractionConfigComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::MAPPINGS_FIELD, FieldType::JSON}
+        }}},
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
         std::pair<std::type_index, std::vector<Field>>>>(componentDefinitions);
@@ -237,6 +271,21 @@ void Parser::instanciateComponentCreators() {
         return std::make_shared<ecs::ProjectileTag>();
     });
 
+    registerComponent<ecs::MobTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::MobTag>();
+    });
+
+    registerComponent<ecs::ObstacleTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::ObstacleTag>();
+    });
+
+    registerComponent<ecs::GameZoneColliderTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::GameZoneColliderTag>();
+    });
+
     registerComponent<
     ecs::ProjectilePassThroughTag>([]([[maybe_unused]] const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
@@ -245,20 +294,33 @@ void Parser::instanciateComponentCreators() {
 
     registerComponent<ecs::ColliderComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto offset = std::get<math::Vector2f>(*fields.at(constants::OFFSET_FIELD));
         auto size = std::get<math::Vector2f>(*fields.at(constants::SIZE_FIELD));
-        return std::make_shared<ecs::ColliderComponent>(math::Vector2f(0.0f, 0.0f), size);
+        auto typeStr = std::get<std::string>(*fields.at(constants::TYPE_FIELD));
+
+        ecs::CollisionType type = ecs::CollisionType::Solid;
+        if (typeStr == constants::COLLISION_TYPE_SOLID) {
+            type = ecs::CollisionType::Solid;
+        } else if (typeStr == constants::COLLISION_TYPE_TRIGGER) {
+            type = ecs::CollisionType::Trigger;
+        } else if (typeStr == constants::COLLISION_TYPE_PUSH) {
+            type = ecs::CollisionType::Push;
+        } else if (typeStr == constants::COLLISION_TYPE_NONE) {
+            type = ecs::CollisionType::None;
+        }
+
+        return std::make_shared<ecs::ColliderComponent>(offset, size, type);
     });
 
     registerComponent<ecs::ShootingStatsComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto fireRate = std::get<float>(*fields.at(constants::FIRERATE_FIELD));
-        auto projectileSpeed = std::get<float>(*fields.at(constants::PROJECTILESPEED_FIELD));
         auto shotCount = std::get<int>(*fields.at(constants::SHOTCOUNT_FIELD));
         auto angleOffset = std::get<float>(*fields.at(constants::ANGLEOFFSET_FIELD));
         auto spreadAngle = std::get<float>(*fields.at(constants::SPREADANGLE_FIELD));
         ecs::MultiShotPattern pattern(shotCount, spreadAngle, angleOffset);
         return std::make_shared<ecs::ShootingStatsComponent>(
-            fireRate, projectileSpeed, pattern
+            fireRate, pattern
         );
     });
 
@@ -383,6 +445,61 @@ void Parser::instanciateComponentCreators() {
         else if (initialStateStr == constants::CHANGING_FIELD) initialState = ecs::CHANGING;
         else if (initialStateStr == constants::STOPPED_FIELD) initialState = ecs::STOPPED;
         return std::make_shared<ecs::MusicComponent>(musicFile, initialState, volume, loop);
+    });
+
+    registerComponent<ecs::ScoreComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto score = std::get<int>(*fields.at(constants::SCORE_FIELD));
+        return std::make_shared<ecs::ScoreComponent>(score);
+    });
+
+    registerComponent<ecs::DamageComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto damage = std::get<float>(*fields.at(constants::DAMAGE_FIELD));
+        return std::make_shared<ecs::DamageComponent>(damage);
+    });
+
+    registerComponent<ecs::HealthComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto health = std::get<float>(*fields.at(constants::HEALTH_FIELD));
+        return std::make_shared<ecs::HealthComponent>(health);
+    });
+
+    registerComponent<ecs::InteractionConfigComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto mappingsJson = std::get<nlohmann::json>(*fields.at(constants::MAPPINGS_FIELD));
+        std::vector<ecs::InteractionMapping> mappings;
+
+        for (const auto& interaction : mappingsJson) {
+            ecs::InteractionMapping mapping;
+            if (interaction.contains(constants::TAGS_FIELD)) {
+                for (const auto& tag : interaction[constants::TAGS_FIELD]) {
+                    mapping.targetTags.push_back(tag);
+                }
+            }
+            if (interaction.contains(constants::TOENTITY_FIELD)) {
+                auto toEntityValue = interaction[constants::TOENTITY_FIELD];
+                if (toEntityValue.is_array()) {
+                    for (const auto& action : toEntityValue) {
+                        mapping.actionsToOther.push_back(action);
+                    }
+                } else if (toEntityValue.is_string()) {
+                    mapping.actionsToOther.push_back(toEntityValue);
+                }
+            }
+            if (interaction.contains(constants::TOSELF_FIELD)) {
+                auto toSelfValue = interaction[constants::TOSELF_FIELD];
+                if (toSelfValue.is_array()) {
+                    for (const auto& action : toSelfValue) {
+                        mapping.actionsToSelf.push_back(action);
+                    }
+                } else if (toSelfValue.is_string()) {
+                    mapping.actionsToSelf.push_back(toSelfValue);
+                }
+            }
+            mappings.push_back(mapping);
+        }
+        return std::make_shared<ecs::InteractionConfigComponent>(mappings);
     });
 }
 

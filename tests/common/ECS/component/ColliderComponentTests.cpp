@@ -23,19 +23,6 @@ TEST(ColliderComponentTest, DefaultConstructor) {
     EXPECT_EQ(comp.getType(), CollisionType::Solid);
 }
 
-TEST(ColliderComponentTest, ParameterizedConstructor) {
-    math::Vector2f offset(1.0f, 2.0f);
-    math::Vector2f size(10.0f, 20.0f);
-    ColliderComponent comp(offset, size, CollisionType::Bounce);
-    math::Vector2f entityPos(0.0f, 0.0f);
-    math::FRect hitbox = comp.getHitbox(entityPos);
-    EXPECT_FLOAT_EQ(hitbox.getLeft(), 1.0f);
-    EXPECT_FLOAT_EQ(hitbox.getTop(), 2.0f);
-    EXPECT_FLOAT_EQ(hitbox.getWidth(), 10.0f);
-    EXPECT_FLOAT_EQ(hitbox.getHeight(), 20.0f);
-    EXPECT_EQ(comp.getType(), CollisionType::Bounce);
-}
-
 TEST(ColliderComponentTest, OffsetAndSizeGettersAndSetters) {
     ColliderComponent comp;
     math::Vector2f newOffset(5.0f, 5.0f);

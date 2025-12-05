@@ -15,7 +15,9 @@
         },
         "ColliderComponent": {
             "target": "both",
-            "size": { "x": 10.0, "y": 10.0 }
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 10.0, "y": 10.0 },
+            "type": "Trigger"
         }
     }
 }

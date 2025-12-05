@@ -9,7 +9,7 @@
 #define MAINMENUSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
-#include "../../../../../common/resourceManager/ResourceManager.hpp"
+#include "resourceManager/ResourceManager.hpp"
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../ui/elements/focusable/Button.hpp"
 #include "../../../../ui/manager/UIManager.hpp"

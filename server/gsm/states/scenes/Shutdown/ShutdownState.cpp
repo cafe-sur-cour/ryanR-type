@@ -6,24 +6,17 @@
 */
 
 #include "ShutdownState.hpp"
-
+#include <memory>
 namespace gsm {
 
-ShutdownState::ShutdownState(std::shared_ptr<IGameStateMachine> gsm)
-    : AGameState(gsm) {
+ShutdownState::ShutdownState(std::shared_ptr<IGameStateMachine> gsm,
+    std::shared_ptr<ResourceManager> resourceManager)
+    : AGameState(gsm, resourceManager) {
 }
 
 void ShutdownState::enter() {
     // TODO(anyone): Initialize server shutdown state
 }
 
-void ShutdownState::update(float deltaTime) {
-    (void)deltaTime;
-    // TODO(anyone): Update server shutdown state
-}
-
-void ShutdownState::exit() {
-    // TODO(anyone): Cleanup server shutdown state
-}
 
 }  // namespace gsm
