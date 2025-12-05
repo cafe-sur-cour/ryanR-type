@@ -30,6 +30,8 @@
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/components/permanent/ShootingStatsComponent.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
+#include "../../../../../common/systems/interactions/TriggerSystem.hpp"
+#include "../../../../../common/systems/interactions/InteractionSystem.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
 #include "../../../../systems/rendering/GameZoneRenderingSystem.hpp"
@@ -67,6 +69,8 @@ DevState::DevState(
     auto deathSystem = std::make_shared<ecs::DeathSystem>();
     auto scoreSystem = std::make_shared<ecs::ScoreSystem>();
     auto gameZoneViewSystem = std::make_shared<ecs::GameZoneViewSystem>();
+    auto triggerSystem = std::make_shared<ecs::TriggerSystem>();
+    auto interactionSystem = std::make_shared<ecs::InteractionSystem>();
 
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
 
@@ -88,6 +92,8 @@ DevState::DevState(
     _systemManager->addSystem(healthSystem);
     _systemManager->addSystem(deathSystem);
     _systemManager->addSystem(scoreSystem);
+    _systemManager->addSystem(triggerSystem);
+    _systemManager->addSystem(interactionSystem);
 
     _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
     _parser->parseAllEntities(constants::CONFIG_PATH);
