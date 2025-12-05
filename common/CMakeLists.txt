@@ -12,3 +12,16 @@ add_subdirectory(Prefab)
 add_subdirectory(resourceManager)
 add_subdirectory(InputMapping)
 add_subdirectory(Parser)
+
+set(DEBUG_LIB_NAME DEBUG)
+
+add_library(${DEBUG_LIB_NAME} STATIC)
+
+target_include_directories(${DEBUG_LIB_NAME}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_sources(${DEBUG_LIB_NAME} PUBLIC
+    debug.cpp
+    debug.hpp
+)
