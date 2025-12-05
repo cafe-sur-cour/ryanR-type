@@ -7,10 +7,13 @@
 
 #include "TriggerSystem.hpp"
 #include <memory>
+#include <string>
+#include <vector>
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/temporary/TriggerIntentComponent.hpp"
+#include "../../systems/interactions/TagRegistry.hpp"
 
 namespace ecs {
 
@@ -45,8 +48,11 @@ void TriggerSystem::update(
                 continue;
 
             auto otherCollider = registry->getComponent<ColliderComponent>(colliderEntity);
-            if (otherCollider && checkCollision(*triggerTransform, *triggerCollider,
-                    *colliderTransform, *otherCollider)) {
+            if (otherCollider && shouldCollide(registry, triggerEntity, *triggerCollider,
+                    colliderEntity, *otherCollider) &&
+                    checkCollision(*triggerTransform, *triggerCollider,
+                    *colliderTransform, *otherCollider)
+            ) {
                 registry->addComponent<TriggerIntentComponent>(triggerEntity,
                     std::make_shared<TriggerIntentComponent>(triggerEntity, colliderEntity));
             }
@@ -66,6 +72,68 @@ bool TriggerSystem::checkCollision(
         transformB.getScale());
 
     return hitboxA.intersects(hitboxB);
+}
+
+bool TriggerSystem::shouldCollide(
+    std::shared_ptr<Registry> registry,
+    size_t entityA,
+    const ColliderComponent& colliderA,
+    size_t entityB,
+    const ColliderComponent& colliderB
+) {
+    for (const auto& excludeCondition : colliderA.getExcludeTags()) {
+        if (entityMatchesCondition(registry, entityB, excludeCondition)) {
+            return false;
+        }
+    }
+
+    for (const auto& excludeCondition : colliderB.getExcludeTags()) {
+        if (entityMatchesCondition(registry, entityA, excludeCondition)) {
+            return false;
+        }
+    }
+
+    if (!colliderA.getIncludeTags().empty()) {
+        bool matchesAny = false;
+        for (const auto& includeCondition : colliderA.getIncludeTags()) {
+            if (entityMatchesCondition(registry, entityB, includeCondition)) {
+                matchesAny = true;
+                break;
+            }
+        }
+        if (!matchesAny) {
+            return false;
+        }
+    }
+
+    if (!colliderB.getIncludeTags().empty()) {
+        bool matchesAny = false;
+        for (const auto& includeCondition : colliderB.getIncludeTags()) {
+            if (entityMatchesCondition(registry, entityA, includeCondition)) {
+                matchesAny = true;
+                break;
+            }
+        }
+        if (!matchesAny) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool TriggerSystem::entityMatchesCondition(
+    std::shared_ptr<Registry> registry,
+    size_t entityId,
+    const std::vector<std::string>& condition
+) {
+    const TagRegistry& tagRegistry = TagRegistry::getInstance();
+    for (const auto& tag : condition) {
+        if (!tagRegistry.hasTag(registry, entityId, tag)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 }  // namespace ecs

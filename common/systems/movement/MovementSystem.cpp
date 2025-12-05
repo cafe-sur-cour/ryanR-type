@@ -9,6 +9,8 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <string>
+#include <vector>
 #include "MovementSystem.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
@@ -21,6 +23,7 @@
 #include "../../components/tags/GameZoneColliderTag.hpp"
 #include "../../components/tags/PlayerTag.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
+#include "../../systems/interactions/TagRegistry.hpp"
 
 namespace ecs {
 
@@ -107,6 +110,11 @@ bool MovementSystem::checkCollision(
             for (auto& otherCollider : otherColliders) {
                 if (otherCollider->getType() != CollisionType::Solid &&
                     otherCollider->getType() != CollisionType::Push) continue;
+
+                if (!shouldCollide(
+                    registry, entityId, *movingCollider, otherEntityId, *otherCollider)) {
+                    continue;
+                }
 
                 math::Vector2f otherScale = otherTransform->getScale();
                 math::FRect otherHitbox =
@@ -247,6 +255,11 @@ void MovementSystem::handlePushCollision(
             for (auto& otherCollider : otherColliders) {
                 if (otherCollider->getType() == CollisionType::None) continue;
 
+                if (!shouldCollide(
+                    registry, entityId, *pushCollider, otherEntityId, *otherCollider)) {
+                    continue;
+                }
+
                 math::Vector2f otherScale = otherTransform->getScale();
                 math::FRect otherHitbox =
                     otherCollider->getHitbox(otherTransform->getPosition(), otherScale);
@@ -269,6 +282,68 @@ void MovementSystem::handlePushCollision(
             }
         }
     }
+}
+
+bool MovementSystem::shouldCollide(
+    std::shared_ptr<Registry> registry,
+    size_t entityA,
+    const ColliderComponent& colliderA,
+    size_t entityB,
+    const ColliderComponent& colliderB
+) {
+    for (const auto& excludeCondition : colliderA.getExcludeTags()) {
+        if (entityMatchesCondition(registry, entityB, excludeCondition)) {
+            return false;
+        }
+    }
+
+    for (const auto& excludeCondition : colliderB.getExcludeTags()) {
+        if (entityMatchesCondition(registry, entityA, excludeCondition)) {
+            return false;
+        }
+    }
+
+    if (!colliderA.getIncludeTags().empty()) {
+        bool matchesAny = false;
+        for (const auto& includeCondition : colliderA.getIncludeTags()) {
+            if (entityMatchesCondition(registry, entityB, includeCondition)) {
+                matchesAny = true;
+                break;
+            }
+        }
+        if (!matchesAny) {
+            return false;
+        }
+    }
+
+    if (!colliderB.getIncludeTags().empty()) {
+        bool matchesAny = false;
+        for (const auto& includeCondition : colliderB.getIncludeTags()) {
+            if (entityMatchesCondition(registry, entityA, includeCondition)) {
+                matchesAny = true;
+                break;
+            }
+        }
+        if (!matchesAny) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool MovementSystem::entityMatchesCondition(
+    std::shared_ptr<Registry> registry,
+    size_t entityId,
+    const std::vector<std::string>& condition
+) {
+    const TagRegistry& tagRegistry = TagRegistry::getInstance();
+    for (const auto& tag : condition) {
+        if (!tagRegistry.hasTag(registry, entityId, tag)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 }  // namespace ecs
