@@ -8,61 +8,70 @@
 #include <vector>
 #include <iostream>
 #include "PacketManager.hpp"
+#include "../../common/debug.hpp"
 
 bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
     if (data.empty()) {
-        std::cerr <<
-            "[PACKET] Error: unpackPacket(): Empty packet data"
-            << std::endl;
+        debug::Debug::printDebug(true,
+            "[PACKET] Received empty data for unpacking",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
 
-    if (data.at(0) == this->_magicNumber)
-        return this->unpackHeader(data);
-    return this->unpackBody(data);
-}
-
-bool pm::PacketManager::unpackHeader(std::vector<uint8_t> data) {
-    if (data.empty() || data.size() != HEADER_SIZE) {
-        std::cerr <<
-            "[PACKET] Error: unpackPacket(): Invalid header data"
-            << std::endl;
+    if (data.at(0) != MAGIC_NUMBER) {
+        debug::Debug::printDebug(true,
+            "[PACKET] Invalid magic number in received data",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
 
-    this->_idClient = static_cast<uint8_t>(this->_serializer->deserializeUChar(
-        std::vector<uint8_t>(data.begin() + 1, data.begin() + 2)));
-    this->_sequenceNumber = static_cast<uint32_t>(
-        this->_serializer->deserializeUInt(
-        std::vector<uint8_t>(data.begin() + 2, data.begin() + 6)));
-    this->_type = static_cast<uint8_t>(this->_serializer->deserializeUChar(
-        std::vector<uint8_t>(data.begin() + 6, data.begin() + 7)));
-    this->_length = static_cast<uint32_t>(this->_serializer->deserializeUInt(
-        std::vector<uint8_t>(data.begin() + 7, data.begin() + 11)));
-    if (data.at(11) != (FIRST_EOP_CHAR) ||
-        data.at(12) != (SECOND_EOP_CHAR)) {
-        std::cerr <<
-            "[PACKET] Error: unpackPacket(): Invalid end of packet characters"
-            << std::endl;
+    uint64_t idClient = 0;
+    uint64_t sequenceNumber = 0;
+    uint64_t type = 0;
+    uint64_t length = 0;
+    idClient = this->_serializer->deserializeUChar(
+        std::vector<uint8_t>(data.begin() + 1, data.begin() + 2));
+    sequenceNumber = this->_serializer->deserializeUInt(
+        std::vector<uint8_t>(data.begin() + 2, data.begin() + 6));
+    type = this->_serializer->deserializeUChar(
+        std::vector<uint8_t>(data.begin() + 6, data.begin() + 7));
+    length = this->_serializer->deserializeUInt(
+        std::vector<uint8_t>(data.begin() + 7, data.begin() + 11));
+
+    if (data.size() - 11 != length) {
+        debug::Debug::printDebug(true,
+            "[PACKET] Mismatch between declared length and actual data size",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
-    return true;
-}
 
-bool pm::PacketManager::unpackBody(std::vector<uint8_t> data) {
-    if (this->_type == data.at(0)) {
-        for (auto &received : this->_packetReceived) {
-            if (received.first == this->_type) {
-                return received.second(data);
+    for (auto &handler : this->_packetReceived) {
+        if (handler.first == type) {
+            std::vector<uint8_t> payload(
+                data.begin() + 11, data.end());
+            bool result = handler.second(payload);
+            if (!result) {
+                debug::Debug::printDebug(true,
+                    "[PACKET] Failed to parse packet payload",
+                    debug::debugType::NETWORK, debug::debugLevel::ERROR);
+                return false;
             }
+            this->_idClient = static_cast<uint8_t>(idClient);
+            this->_sequenceNumber = static_cast<uint32_t>(sequenceNumber);
+            this->_type = static_cast<uint8_t>(type);
+            this->_length = static_cast<uint32_t>(length);
+            debug::Debug::printDebug(true,
+                "[PACKET] Successfully unpacked packet of type "
+                + std::to_string(static_cast<int>(type)),
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+            return true;
         }
-        std::cerr <<
-            "[PACKET] Error: unpackPacket(): Unknown packet type received"
-            << std::endl;
-        return false;
     }
-    std::cerr <<
-        "[PACKET] Error: unpackPacket(): Packet type mismatch"
-        << std::endl;
+
+    debug::Debug::printDebug(true,
+        "[PACKET] Unknown packet type "
+        + std::to_string(static_cast<int>(type))
+        + " for unpacking",
+        debug::debugType::NETWORK, debug::debugLevel::ERROR);
     return false;
 }
