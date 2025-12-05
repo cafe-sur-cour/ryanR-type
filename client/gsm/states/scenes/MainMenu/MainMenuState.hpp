@@ -30,6 +30,7 @@ private:
     void renderUI();
     void cycleColorBlindnessFilter();
     void toggleHighContrastFilter();
+    void cycleBrightnessFilter();
 
 private:
     std::shared_ptr<ResourceManager> _resourceManager;
@@ -38,8 +39,10 @@ private:
     std::shared_ptr<ui::Button> _quitButton;
     std::shared_ptr<ui::Button> _highContrastButton;
     std::shared_ptr<ui::Button> _colorBlindnessButton;
+    std::shared_ptr<ui::Button> _brightnessButton;
     std::unique_ptr<ui::UIManager> _uiManager;
     int _colorBlindnessState = 0;
+    int _brightnessState = 3;
 };
 
 }  // namespace gsm
