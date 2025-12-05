@@ -185,7 +185,6 @@ void rserv::Server::processIncomingPackets() {
     if (this->_packet->getType() == 0x01) {
         this->processConnections(received.first);
     } else if (this->_packet->getType() == 0x04) {
-        // Process event packet
         this->processEvents(this->_packet->getIdClient());
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -213,10 +212,8 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
         return false;
     }
 
-    std::vector<uint64_t> payload = {};
-    payload.push_back(static_cast<uint64_t>(this->_nextClientId));
-
-    std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber, 0x02, payload);
+    std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber, 0x02
+        , std::vector<uint64_t>{static_cast<uint64_t>(this->_nextClientId)});
     if (!this->_network->sendTo(id, packet)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER NETWORK] Failed to send connection acceptance header to "
