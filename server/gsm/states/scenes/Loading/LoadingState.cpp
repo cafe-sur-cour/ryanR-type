@@ -6,24 +6,17 @@
 */
 
 #include "LoadingState.hpp"
+#include <memory>
 
 namespace gsm {
 
-LoadingState::LoadingState(std::shared_ptr<IGameStateMachine> gsm)
-    : AGameState(gsm) {
+LoadingState::LoadingState(std::shared_ptr<IGameStateMachine> gsm,
+    std::shared_ptr<ResourceManager> resourceManager)
+    : AGameState(gsm, resourceManager) {
 }
 
 void LoadingState::enter() {
-    // TODO(anyone): Initialize server loading state
 }
 
-void LoadingState::update(float deltaTime) {
-    (void)deltaTime;
-    // TODO(anyone): Update server loading state
-}
-
-void LoadingState::exit() {
-    // TODO(anyone): Cleanup server loading state
-}
 
 }  // namespace gsm

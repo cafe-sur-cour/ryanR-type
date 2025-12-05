@@ -9,7 +9,7 @@
 #define SETTINGSSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
-#include "../../../../../common/resourceManager/ResourceManager.hpp"
+#include "resourceManager/ResourceManager.hpp"
 
 namespace gsm {
 
@@ -21,9 +21,6 @@ public:
     void enter() override;
     void update(float deltaTime) override;
     void exit() override;
-
-private:
-    std::shared_ptr<ResourceManager> _resourceManager;
 };
 
 }  // namespace gsm

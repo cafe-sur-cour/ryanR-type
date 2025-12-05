@@ -9,17 +9,21 @@
 #define SERVER_INGAMESTATE_HPP_
 
 #include "../../AGameState.hpp"
+#include "resourceManager/ResourceManager.hpp"
+#include "systems/base/ISystem.hpp"
 
 namespace gsm {
 
 class InGameState : public AGameState {
 public:
-    InGameState(std::shared_ptr<IGameStateMachine> gsm);
+    InGameState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
     ~InGameState() override = default;
 
     void enter() override;
-    void update(float deltaTime) override;
-    void exit() override;
+
+
+    private:
+
 };
 
 }  // namespace gsm
