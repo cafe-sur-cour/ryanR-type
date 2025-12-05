@@ -9,7 +9,7 @@
 #define MAINMENUSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
-#include "../../../../../common/resourceManager/ResourceManager.hpp"
+#include "resourceManager/ResourceManager.hpp"
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../ui/elements/focusable/Button.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
@@ -28,9 +28,6 @@ public:
 
 private:
     void renderUI();
-
-private:
-    std::shared_ptr<ResourceManager> _resourceManager;
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::shared_ptr<ui::Button> _playButton;
     std::shared_ptr<ui::Button> _quitButton;

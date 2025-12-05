@@ -5,4 +5,5 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     DamageIntentComponent.hpp
     DeathIntentComponent.hpp
     ScoreIntentComponent.hpp
+    TriggerIntentComponent.hpp
 )

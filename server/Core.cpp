@@ -13,12 +13,35 @@
 #include "Core.hpp"
 #include "../common/debug.hpp"
 #include "initResourcesManager/initResourcesManager.hpp"
+#include "gsm/states/scenes/Boot/BootState.hpp"
+#include "../../common/systems/systemManager/SystemManager.hpp"
+#include "../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 
 Core::Core() {
     this->_utils = std::make_shared<Utils>();
     this->_server = std::make_shared<rserv::Server>();
 
-    this->_resourceManager = std::make_shared<ResourceManager>();
+    this->_registry = std::make_shared<ecs::Registry>();
+    this->_systemsManager = std::make_shared<ecs::SystemManager>();
+    this->_gsm = std::make_shared<gsm::GameStateMachine>();
+
+    auto entityPrefabManager = std::make_shared<EntityPrefabManager>();
+    this->_parser = std::make_shared<Parser>(
+        entityPrefabManager,
+        ParsingType::SERVER,
+        this->_registry
+    );
+
+    this->_inputProvider = std::make_shared<ecs::ServerInputProvider>();
+
+    this->_resourceManager = initResourcesManager(
+        this->_server,
+        this->_registry,
+        this->_parser,
+        this->_systemsManager,
+        this->_gsm,
+        this->_inputProvider
+    );
 }
 
 Core::~Core() {
@@ -27,6 +50,18 @@ Core::~Core() {
             this->_server->stop();
         }
         this->_serverThread.join();
+    }
+    if (this->_gsm != nullptr) {
+        this->_gsm.reset();
+    }
+    if (this->_systemsManager != nullptr) {
+        this->_systemsManager.reset();
+    }
+    if (this->_parser != nullptr) {
+        this->_parser.reset();
+    }
+    if (this->_registry != nullptr) {
+        this->_registry.reset();
     }
     if (this->_resourceManager != nullptr) {
         this->_resourceManager.reset();
@@ -40,10 +75,11 @@ Core::~Core() {
 }
 
 void Core::init() {
-    this->_resourceManager = initResourcesManager();
-}
-
-void Core::loop() {
+    std::shared_ptr<gsm::BootState> bootState = std::make_shared<gsm::BootState>(
+        this->_gsm,
+        this->_resourceManager
+    );
+    this->_gsm->changeState(bootState);
     this->_serverThread = std::thread([this]() {
         this->_server->init();
         this->_server->start();
@@ -81,6 +117,17 @@ void Core::processServerEvents() {
     }
 }
 
+void Core::loop() {
+    auto previousTime = std::chrono::high_resolution_clock::now();
+
+    while (this->_server->getState() == 1) {
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        float deltaTime = std::chrono::duration<float>(currentTime - previousTime).count();
+        previousTime = currentTime;
+        this->_gsm->update(deltaTime);
+    }
+}
+
 std::shared_ptr<rserv::ServerConfig> Core::getConfig() const {
     return this->_server->getConfig();
 }
@@ -91,4 +138,20 @@ std::shared_ptr<rserv::Server> Core::getServer() const {
 
 std::shared_ptr<ResourceManager> Core::getResourceManager() const {
     return this->_resourceManager;
+}
+
+std::shared_ptr<ecs::Registry> Core::getRegistry() const {
+    return this->_registry;
+}
+
+std::shared_ptr<Parser> Core::getParser() const {
+    return this->_parser;
+}
+
+std::shared_ptr<ecs::ISystemManager> Core::getSystemsManager() const {
+    return this->_systemsManager;
+}
+
+std::shared_ptr<gsm::GameStateMachine> Core::getGameStateMachine() const {
+    return this->_gsm;
 }

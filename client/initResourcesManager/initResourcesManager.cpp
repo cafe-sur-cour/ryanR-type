@@ -18,6 +18,8 @@
 #include "../../libs/Multimedia/IAudio.hpp"
 #include "../../common/InputMapping/InputMappingManager.hpp"
 #include "initResourcesManager.hpp"
+#include "../../common/systems/systemManager/SystemManager.hpp"
+#include "../../common/systems/systemManager/ISystemManager.hpp"
 
 std::shared_ptr<ResourceManager> initResourcesManager(
     std::shared_ptr<DLLoader<gfx::createWindow_t>> windowLoader,
@@ -79,6 +81,7 @@ std::shared_ptr<ResourceManager> initResourcesManager(
         event,
         mappingManager->getMapping());
     resourceManager->add<ecs::IInputProvider>(inputProvider);
+    resourceManager->add<ecs::ISystemManager>(std::make_shared<ecs::SystemManager>());
 
     return resourceManager;
 }

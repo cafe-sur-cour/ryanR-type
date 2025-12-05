@@ -1,0 +1,57 @@
+name: 'Setup vcpkg'
+description: 'Install and configure vcpkg for Windows or Unix'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: CACHE VCPKG (Unix)
+      if: runner.os != 'Windows'
+      uses: actions/cache@v4
+      with:
+        path: |
+          vcpkg
+          build/unix/bin/vcpkg_installed
+          ~/.cache/vcpkg/archives
+        key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json', '**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-vcpkg-
+
+    - name: CACHE VCPKG (Windows)
+      if: runner.os == 'Windows'
+      uses: actions/cache@v4
+      with:
+        path: |
+          vcpkg
+          build/windows/bin/vcpkg_installed
+          C:\Users\runneradmin\AppData\Local\vcpkg\archives
+        key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json', '**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-vcpkg-
+
+    - name: INSTALL VCPKG (Unix)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        if [ ! -d "vcpkg" ]; then
+          git clone https://github.com/Microsoft/vcpkg.git
+        fi
+        cd vcpkg
+        if [ ! -f "vcpkg" ] || [ ! -f "scripts/buildsystems/vcpkg.cmake" ]; then
+          ./bootstrap-vcpkg.sh
+        fi
+        cd ..
+        echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
+
+    - name: INSTALL VCPKG (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        if (-not (Test-Path "vcpkg")) {
+          git clone https://github.com/Microsoft/vcpkg.git
+        }
+        cd vcpkg
+        if ((-not (Test-Path "vcpkg.exe")) -or (-not (Test-Path "scripts\buildsystems\vcpkg.cmake"))) {
+          .\bootstrap-vcpkg.bat
+        }
+        cd ..
+        echo "VCPKG_ROOT=$PWD\vcpkg" >> $env:GITHUB_ENV
