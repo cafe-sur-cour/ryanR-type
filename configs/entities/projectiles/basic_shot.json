@@ -17,7 +17,10 @@
             "target": "both",
             "offset": { "x": 0.0, "y": 0.0 },
             "size": { "x": 16.0, "y": 4.0 },
-            "type": "Trigger"
+            "type": "Trigger",
+            "exclude": [
+                ["ProjectilePassThroughTag"]
+            ]
         },
         "DamageComponent": {
             "target": "both",

@@ -61,6 +61,18 @@ class MovementSystem : public ASystem {
             math::Vector2f finalPos,
             float deltaTime
         );
+        bool shouldCollide(
+            std::shared_ptr<Registry> registry,
+            size_t entityA,
+            const ColliderComponent& colliderA,
+            size_t entityB,
+            const ColliderComponent& colliderB
+        );
+        bool entityMatchesCondition(
+            std::shared_ptr<Registry> registry,
+            size_t entityId,
+            const std::vector<std::string>& condition
+        );
 };
 
 }  // namespace ecs
