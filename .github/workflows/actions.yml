@@ -93,6 +93,15 @@ jobs:
       - name: SETUP VCPKG
         uses: ./.github/actions/setup-vcpkg
 
+      - name: CACHE CMAKE BUILD
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/unix/bin
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
+
       - name: RUN COMPILATION
         run: |
           chmod +x ./scripts/compile_project.sh
@@ -110,6 +119,15 @@ jobs:
 
       - name: SETUP VCPKG
         uses: ./.github/actions/setup-vcpkg
+
+      - name: CACHE CMAKE BUILD
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/windows/bin
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
 
       - name: RUN COMPILATION
         run: |
@@ -137,6 +155,15 @@ jobs:
 
       - name: SETUP VCPKG
         uses: ./.github/actions/setup-vcpkg
+
+      - name: CACHE CMAKE BUILD
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/unix/bin
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
 
       - name: RUN COMPILATION
         run: |
@@ -291,6 +318,15 @@ jobs:
       - name: SETUP VCPKG
         uses: ./.github/actions/setup-vcpkg
 
+      - name: CACHE CMAKE BUILD
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/windows/bin
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
+
       - name: BUILD PROJECT
         run: |
           .\scripts\compile_project.bat server
@@ -301,7 +337,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path "r-type-server-windows\libraries"
           Copy-Item -Path "r-type_server.exe" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
           Copy-Item -Path "build\windows\bin\server\Release\*.dll" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
-          Copy-Item -Path "build\windows\vcpkg_installed\x64-windows\bin\*.dll" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "build\windows\bin\vcpkg_installed\x64-windows\bin\*.dll" -Destination "r-type-server-windows\" -ErrorAction SilentlyContinue
           Copy-Item -Path "libraries\*.dll" -Destination "r-type-server-windows\libraries\" -ErrorAction SilentlyContinue
           Compress-Archive -Path "r-type-server-windows" -DestinationPath "r-type-server-windows-${{ needs.calculate_version.outputs.version }}.zip"
 
@@ -326,6 +362,15 @@ jobs:
       - name: SETUP VCPKG
         uses: ./.github/actions/setup-vcpkg
 
+      - name: CACHE CMAKE BUILD
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/windows/bin
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
+
       - name: BUILD PROJECT
         run: |
           .\scripts\compile_project.bat client
@@ -336,7 +381,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path "r-type-client-windows\libraries"
           Copy-Item -Path "r-type_client.exe" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
           Copy-Item -Path "build\windows\bin\client\Release\*.dll" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
-          Copy-Item -Path "build\windows\vcpkg_installed\x64-windows\bin\*.dll" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
+          Copy-Item -Path "build\windows\bin\vcpkg_installed\x64-windows\bin\*.dll" -Destination "r-type-client-windows\" -ErrorAction SilentlyContinue
           Copy-Item -Path "libraries\*.dll" -Destination "r-type-client-windows\libraries\" -ErrorAction SilentlyContinue
           Compress-Archive -Path "r-type-client-windows" -DestinationPath "r-type-client-windows-${{ needs.calculate_version.outputs.version }}.zip"
 
@@ -398,7 +443,7 @@ jobs:
             2. Extract: `tar -xzf r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz`
 
             if you do not have vcpkg setup already:
-            - Install dependdencies: `chmod +x scripts/install_dependencies.sh && ./scripts/install_dependencies.sh`
+            - Install dependencies: `chmod +x scripts/install_dependencies.sh && ./scripts/install_dependencies.sh`
 
             3. Compile: `chmod +x scripts/compile_project.sh && ./scripts/compile_project.sh`
           draft: false
