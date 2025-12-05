@@ -50,10 +50,7 @@ class IWindow {
         virtual math::Vector2f getViewCenter() = 0;
         virtual math::Vector2f mapPixelToCoords(int x, int y) = 0;
 
-        // Returns the logical resolution (always 1920x1080)
         virtual std::pair<int, int> getLogicalSize() const = 0;
-
-        // Returns the scale factor from window to logical coordinates
         virtual float getScaleFactor() const = 0;
 };
 
