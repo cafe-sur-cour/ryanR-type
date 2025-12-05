@@ -73,7 +73,7 @@ void ShootingSystem::update(
         float baseAngle = 0.0f;
 
         if (pattern.shotCount == 1) {
-            spawnProjectile(registry, prefab, spawnPos, baseAngle, 0.0f);
+            spawnProjectile(registry, prefab, spawnPos, baseAngle);
         } else {
             float totalSpread = pattern.angleSpread * static_cast<float>(
                 pattern.shotCount - 1
@@ -92,7 +92,7 @@ void ShootingSystem::update(
                     );
                 }
 
-                spawnProjectile(registry, prefab, offsetPosition, angle, 0.0f);
+                spawnProjectile(registry, prefab, offsetPosition, angle);
             }
         }
 
@@ -112,8 +112,7 @@ void ShootingSystem::spawnProjectile(
     std::shared_ptr<Registry> registry,
     std::shared_ptr<IPrefab> prefab,
     const math::Vector2f &position,
-    float angle,
-    float defaultSpeed
+    float angle
 ) {
     Entity projectileEntity;
 
@@ -143,7 +142,7 @@ void ShootingSystem::spawnProjectile(
         transform->setPosition(position);
     }
 
-    float speed = defaultSpeed;
+    float speed = 0.0f;
     auto projectileSpeedComp = registry->getComponent<SpeedComponent>(projectileEntity);
     if (projectileSpeedComp) {
         speed = projectileSpeedComp->getSpeed();
