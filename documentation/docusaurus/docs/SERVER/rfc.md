@@ -124,7 +124,7 @@ Server :
    - Player ID (4 bytes)
 
 4.1.3. EVENT (0x04) – Client notifies input
-
+   - ID player
    - Event type (1 byte, e.g., Up, Down, Left, Right, Space)
    - Depth of movement
    - Direction of shoot

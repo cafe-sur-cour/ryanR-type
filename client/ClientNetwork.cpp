@@ -11,12 +11,14 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <utility>
 #include <queue>
 #include <memory>
 
 #include "ClientNetwork.hpp"
 #include "../common/Error/ClientNetworkError.hpp"
 #include "../common/Signal/Signal.hpp"
+#include "../common/debug.hpp"
 
 ClientNetwork::ClientNetwork() {
     this->_port = 0;
@@ -25,16 +27,32 @@ ClientNetwork::ClientNetwork() {
     this->_idClient = 0;
     this->_eventQueue = std::queue<NetworkEvent>();
 
+    this->_isConnected = false;
     this->_network = nullptr;
-    this->_buffer = nullptr;
+    this->_receptionBuffer = nullptr;
+    this->_sendBuffer = nullptr;
     this->_packet = nullptr;
     this->_sequenceNumber = 0;
     this->_isConnected = false;
+    this->_isDebug = false;
+
+    // Initialize packet handlers
+    _packetHandlers[0x00] = &ClientNetwork::handleNoOp;
+    _packetHandlers[0x01] = &ClientNetwork::handleNoOp;  // Client sends this
+    _packetHandlers[0x02] = &ClientNetwork::handleConnectionAcceptation;
+    _packetHandlers[0x03] = &ClientNetwork::handleNoOp;  // Client sends this
+    _packetHandlers[0x04] = &ClientNetwork::handleNoOp;  // Client sends this
+    _packetHandlers[0x05] = &ClientNetwork::handleGameState;
+    _packetHandlers[0x06] = &ClientNetwork::handleMapSend;
+    _packetHandlers[0x07] = &ClientNetwork::handleEndMap;
+    _packetHandlers[0x08] = &ClientNetwork::handleEndGame;
+    _packetHandlers[0x09] = &ClientNetwork::handleCanStart;
 }
 
 ClientNetwork::~ClientNetwork() {
     this->stop();
 }
+
 
 void ClientNetwork::init() {
     if (this->_port == 0 || this->_ip == "") {
@@ -61,10 +79,14 @@ void ClientNetwork::stop() {
         this->_network.reset();
         this->_networloader.Close();
     }
-    if (this->_buffer != nullptr
-        && this->_bufferloader.getHandler() != nullptr) {
-            this->_buffer.reset();
-            this->_bufferloader.Close();
+    if (this->_receptionBuffer != nullptr) {
+            this->_receptionBuffer.reset();
+    }
+    if (this->_sendBuffer != nullptr) {
+            this->_sendBuffer.reset();
+    }
+    if (this->_bufferloader.getHandler() != nullptr) {
+        this->_bufferloader.Close();
     }
     if (this->_packet != nullptr
         && this->_packetloader.getHandler() != nullptr) {
@@ -72,28 +94,6 @@ void ClientNetwork::stop() {
         this->_packetloader.Close();
     }
 }
-
-/* Call this in a separate thread */
-void ClientNetwork::start() {
-    Signal::setupSignalHandlers();
-
-    while (!Signal::stopFlag) {
-        //   Hande the event queue
-        std::vector<uint8_t> receivedData = this->_network->receiveFrom(this->_idClient);
-        if (receivedData.size() > 0) {
-            /* Transform the vector to packet to handle it correctly */
-            std::cout << "[ClientNetwork] Received data of size: "
-                      << receivedData.size() << std::endl;
-            receivedData.clear();
-        }
-    }
-    if (Signal::stopFlag) {
-        this->disconnectionPacket();
-        std::cout << "[Client] Received signal, stopping client" << std::endl;
-        this->stop();
-    }
-}
-
 
 uint16_t ClientNetwork::getPort() const {
     return _port;
@@ -109,6 +109,18 @@ std::string ClientNetwork::getIp() const {
 
 void ClientNetwork::setIp(const std::string &ip) {
     _ip = ip;
+}
+
+void ClientNetwork::setDebugMode(bool isDebug) {
+    this->_isDebug = isDebug;
+}
+
+bool ClientNetwork::isDebugMode() const {
+    return this->_isDebug;
+}
+
+std::shared_ptr<net::INetwork> ClientNetwork::getNetwork() const {
+    return this->_network;
 }
 
 void ClientNetwork::sendConnectionData(std::vector<uint8_t> packet) {
@@ -143,86 +155,104 @@ net::ConnectionState ClientNetwork::getConnectionState() const {
     return this->_network->getConnectionState();
 }
 
+bool ClientNetwork::isConnected() const {
+    return this->_isConnected.load();
+}
+
+void ClientNetwork::handlePacketType(uint8_t type) {
+    if (this->_packet->getPayload().empty()) {
+        return;
+    }
+    if (type < 10) {
+        (this->*_packetHandlers[type])();
+    } else {
+        debug::Debug::printDebug(this->_isDebug,
+            "[Client] Unknown packet type: " + std::to_string(static_cast<int>(type)),
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
+    }
+}
+
+
+std::pair<int, std::chrono::steady_clock::time_point> ClientNetwork::tryConnection(
+    int maxRetries, int retryCount, std::chrono::steady_clock::time_point lastRetryTime) {
+    auto currentTime = std::chrono::steady_clock::now();
+
+    if (this->_network->getConnectionState() == net::ConnectionState::CONNECTING &&
+        retryCount < maxRetries &&
+        std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastRetryTime).count()
+            >= 2) {
+        debug::Debug::printDebug(this->_isDebug,
+            "Retrying connection (attempt " + std::to_string(retryCount + 1) + "/" +
+            std::to_string(maxRetries) + ")",
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
+        this->connectionPacket();
+        retryCount++;
+        lastRetryTime = currentTime;
+    }
+    return {retryCount, lastRetryTime};
+}
+
+void ClientNetwork::start() {
+    Signal::setupSignalHandlers();
+
+    const int maxRetries = constants::MAX_RETRY_CONNECTIONS;
+    int retryCount = 0;
+    auto lastRetryTime = std::chrono::steady_clock::now();
+
+    if (this->_network->getConnectionState() == net::ConnectionState::CONNECTING) {
+        debug::Debug::printDebug(this->_isDebug,
+            "Attempting initial connection (attempt 1/" + std::to_string(maxRetries) + ")",
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
+        this->connectionPacket();
+        retryCount++;
+        lastRetryTime = std::chrono::steady_clock::now();
+    }
+
+    while (!Signal::stopFlag) {
+        std::tie(retryCount, lastRetryTime) = tryConnection(maxRetries, retryCount,
+            lastRetryTime);
+        std::vector<uint8_t> receivedData = this->_network->receiveFrom(this->_idClient);
+        if (receivedData.size() > 0) {
+            this->_packet->unpack(receivedData);
+            handlePacketType(this->_packet->getType());
+            receivedData.clear();
+        }
+        if (!this->_eventQueue.empty()) {
+            std::lock_guard<std::mutex> lock(this->_queueMutex);
+            this->eventPacket(
+                this->_eventQueue.front().eventType,
+                this->_eventQueue.front().depth,
+                this->_eventQueue.front().direction
+            );
+            this->_eventQueue.pop();
+        }
+    }
+    if (this->_network->getConnectionState() != net::ConnectionState::CONNECTED
+        && retryCount >= maxRetries) {
+        debug::Debug::printDebug(this->_isDebug,
+            "Connection failed after " + std::to_string(maxRetries) +
+            " attempts. Setting to ERROR_STATE.",
+            debug::debugType::NETWORK,
+            debug::debugLevel::ERROR);
+        this->_network->setConnectionState(net::ConnectionState::ERROR_STATE);
+    }
+    if (Signal::stopFlag) {
+        this->disconnectionPacket();
+        debug::Debug::printDebug(this->_isDebug,
+            "[Client] Signal received, stopping client network",
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
+        this->stop();
+    }
+}
+
+
+
 void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
     std::lock_guard<std::mutex> lock(this->_queueMutex);
     this->_eventQueue.push(event);
     this->_queueCond.notify_one();
-}
-
-bool ClientNetwork::getEventFromQueue(NetworkEvent &event) {
-    std::unique_lock<std::mutex> lock(this->_queueMutex);
-    if (this->_eventQueue.empty()) {
-        return false;
-    }
-    event = this->_eventQueue.front();
-    this->_eventQueue.pop();
-    return true;
-}
-
-
-/* Packet Handling */
-void ClientNetwork::connectionPacket() {
-    if (!_network) {
-        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
-            err::ClientNetworkError::INTERNAL_ERROR);
-    }
-    std::vector<uint8_t> header = this->_packet->pack(this->_idClient,
-        this->_sequenceNumber, 0x01);
-    this->_network->sendTo(this->_serverEndpoint, header);
-    /* Replace this with name */
-    std::vector<uint64_t> payloadData = {0x01};
-    for (size_t i = 0; i < this->_packet->formatString(this->_name).size(); i++)
-        payloadData.push_back(this->_packet->formatString(this->_name)[i]);
-    std::vector<uint8_t> payload = this->_packet->pack(payloadData);
-    this->_network->sendTo(this->_serverEndpoint, payload);
-    this->_sequenceNumber++;
-}
-
-
-void ClientNetwork::eventPacket(const constants::EventType &eventType,
-    double depth, double direction) {
-    if (!_network) {
-        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
-            err::ClientNetworkError::INTERNAL_ERROR);
-    }
-    std::vector<uint8_t> header =
-        this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x02);
-    this->_network->sendTo(this->_serverEndpoint, header);
-
-    std::vector<uint64_t> payloadData;
-    payloadData.push_back(static_cast<uint64_t>(eventType));
-
-    uint64_t depthBits;
-    std::memcpy(&depthBits, &depth, sizeof(double));
-    payloadData.push_back(depthBits);
-
-    uint64_t dirBits;
-    std::memcpy(&dirBits, &direction, sizeof(double));
-    payloadData.push_back(dirBits);
-
-    std::vector<uint8_t> payload = this->_packet->pack(payloadData);
-    this->_network->sendTo(this->_serverEndpoint, payload);
-    this->_sequenceNumber++;
-}
-
-
-void ClientNetwork::disconnectionPacket() {
-    if (!_network) {
-        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
-            err::ClientNetworkError::INTERNAL_ERROR);
-    }
-    if (this->_idClient != 0) {
-        std::cerr << "[ClientNetwork] Warning: Client ID is not set"
-            << " cannot send disconnection packet" << std::endl;
-        return;
-    }
-    if (!this->_packet) {
-        std::cerr << "[ClientNetwork] Warning: Packet manager not initialized,"
-        << " cannot send disconnection packet" << std::endl;
-        return;
-    }
-    std::vector<uint8_t> header = this->_packet->pack(this->_idClient,
-        this->_sequenceNumber, 0x03);
-    this->_network->sendTo(this->_serverEndpoint, header);
-    this->_sequenceNumber++;
 }

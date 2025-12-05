@@ -57,3 +57,11 @@ std::string rserv::ServerConfig::getIp() const {
 void rserv::ServerConfig::setIp(std::string ip) {
     this->_ip = ip;
 }
+
+void rserv::ServerConfig::setIsDebug(bool isDebug) {
+    this->_isDebug = isDebug;
+}
+
+bool rserv::ServerConfig::getIsDebug() const {
+    return this->_isDebug;
+}

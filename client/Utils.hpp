@@ -16,6 +16,7 @@ class Utils {
 
         void helper();
         void parseCli(int ac, char **av, std::shared_ptr<ClientNetwork> clientNetwork);
+
     protected:
     private:
 };
