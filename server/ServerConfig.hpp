@@ -32,12 +32,15 @@ namespace rserv {
             std::string getIp() const;
             void setIp(std::string ip);
 
+            void setIsDebug(bool isDebug);
+            bool getIsDebug() const;
         private:
             int _state;
             int _fd;
             uint16_t _port;
             int _nbClients;
             std::string _ip;
+            bool _isDebug;
     };
 } // namespace rserv = r-type server
 

@@ -41,6 +41,10 @@ class ClientNetwork {
 
         std::string getIp() const;
         void setIp(const std::string &ip);
+        std::shared_ptr<net::INetwork> getNetwork() const;
+
+        void setDebugMode(bool isDebug);
+        bool isDebugMode() const;
 
         void loadNetworkLibrary();
         void loadBufferLibrary();
@@ -62,23 +66,39 @@ class ClientNetwork {
         void connectionPacket();
 
         void addToEventQueue(const NetworkEvent &event);
-        bool getEventFromQueue(NetworkEvent &event);
 
+        bool isConnected() const;
         std::atomic<bool> _isConnected;
     protected:
+        std::pair<int, std::chrono::steady_clock::time_point> tryConnection(const int maxRetries, int retryCount, std::chrono::steady_clock::time_point lastRetryTime);
+        void handlePacketType(uint8_t type);
     private:
+        typedef void (ClientNetwork::*PacketHandler)();
+        PacketHandler _packetHandlers[10];
+
+        void handleNoOp();
+        void handleConnectionAcceptation();
+        void handleGameState();
+        void handleMapSend();
+        void handleEndMap();
+        void handleEndGame();
+        void handleCanStart();
         DLLoader<createNetworkLib_t> _networloader;
         DLLoader<createBuffer_t> _bufferloader;
         DLLoader<createPacket_t> _packetloader;
 
         std::shared_ptr<net::INetwork> _network;
-        std::shared_ptr<IBuffer> _buffer;
+        std::shared_ptr<IBuffer> _receptionBuffer;
+        std::shared_ptr<IBuffer> _sendBuffer;
         std::shared_ptr<pm::IPacketManager> _packet;
 
         uint32_t _sequenceNumber;
         uint16_t _port;
         std::string  _ip;
         std::string _name;
+        bool _isDebug;
+
+
         uint8_t _idClient;
         asio::ip::udp::endpoint _serverEndpoint;
 

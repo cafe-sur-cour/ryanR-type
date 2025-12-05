@@ -5,27 +5,46 @@
         "TransformComponent": {
             "target": "both",
             "position": { "x": 0.0, "y": 0.0 },
-            "scale": { "x": 0.4, "y": 0.4 },
+            "scale": { "x": 3.0, "y": 3.0 },
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "both" },
         "SpriteComponent": {
             "target": "client",
-            "filePath": "assets/sprites/bullet.png"
+            "filePath": "assets/sprites/projectiles/player_basic.png"
         },
         "ColliderComponent": {
             "target": "both",
-            "size": { "x": 16.0, "y": 16.0 }
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 16.0, "y": 4.0 },
+            "type": "Trigger"
+        },
+        "DamageComponent": {
+            "target": "both",
+            "damage": 25.0
+        },
+        "SpeedComponent": {
+            "target": "both",
+            "speed": 1000.0
         },
         "LifetimeComponent": {
             "target": "both",
-            "lifetime": 1.0
+            "lifetime": 2.0
         },
-        "TextComponent": {
-            "target": "client",
-            "text": "abcd",
-            "fontPath": "assets/fonts/ARIAL.TTF",
-            "color": { "r": 55, "g": 34, "b": 145, "a": 255 }
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["MobTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDeath"]
+                },
+                {
+                    "tags": ["ObstacleTag"],
+                    "toEntity": ["DealDeath"],
+                    "toSelf": ["TakeDeath"]
+                }
+            ]
         }
     }
 }

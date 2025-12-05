@@ -11,11 +11,15 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <vector>
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ShootingStatsComponent.hpp"
 #include "../../components/permanent/ProjectilePrefabComponent.hpp"
 #include "../../components/tags/ProjectileTag.hpp"
+#include "../../components/permanent/ColliderComponent.hpp"
+#include "../../components/permanent/SpeedComponent.hpp"
+#include "../../constants.hpp"
 #include "../../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 namespace ecs {
@@ -56,14 +60,20 @@ void ShootingSystem::update(
         auto prefab = prefabManager->getPrefab(prefabName);
 
         auto pattern = shootingStats->getMultiShotPattern();
-        float speed = shootingStats->getProjectileSpeed();
 
         math::Vector2f spawnPos = transform->getPosition();
+
+        auto collider = registry->getComponent<ColliderComponent>(entityId);
+        if (collider) {
+            math::Vector2f colliderCenter =
+                collider->getOffset() + (collider->getSize() * 0.5f);
+            spawnPos = spawnPos + colliderCenter;
+        }
 
         float baseAngle = 0.0f;
 
         if (pattern.shotCount == 1) {
-            spawnProjectile(registry, prefab, spawnPos, baseAngle, speed);
+            spawnProjectile(registry, prefab, spawnPos, baseAngle);
         } else {
             float totalSpread = pattern.angleSpread * static_cast<float>(
                 pattern.shotCount - 1
@@ -82,7 +92,7 @@ void ShootingSystem::update(
                     );
                 }
 
-                spawnProjectile(registry, prefab, offsetPosition, angle, speed);
+                spawnProjectile(registry, prefab, offsetPosition, angle);
             }
         }
 
@@ -102,8 +112,7 @@ void ShootingSystem::spawnProjectile(
     std::shared_ptr<Registry> registry,
     std::shared_ptr<IPrefab> prefab,
     const math::Vector2f &position,
-    float angle,
-    float speed
+    float angle
 ) {
     Entity projectileEntity;
 
@@ -131,6 +140,12 @@ void ShootingSystem::spawnProjectile(
     auto transform = registry->getComponent<TransformComponent>(projectileEntity);
     if (transform) {
         transform->setPosition(position);
+    }
+
+    float speed = 0.0f;
+    auto projectileSpeedComp = registry->getComponent<SpeedComponent>(projectileEntity);
+    if (projectileSpeedComp) {
+        speed = projectileSpeedComp->getSpeed();
     }
 
     auto velocity = registry->getComponent<VelocityComponent>(projectileEntity);
