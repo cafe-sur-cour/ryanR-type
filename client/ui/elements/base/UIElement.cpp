@@ -36,19 +36,15 @@ math::Vector2f UIElement::getSize() const {
 }
 
 math::Vector2f UIElement::getAbsolutePosition() const {
-    auto windowSize = getWindowSize();
-    return math::Vector2f(
-        _position.getX() * static_cast<float>(windowSize.first),
-        _position.getY() * static_cast<float>(windowSize.second)
-    );
+    auto parent = _parent.lock();
+    if (parent) {
+        return parent->getAbsolutePosition() + _position;
+    }
+    return _position;
 }
 
 math::Vector2f UIElement::getAbsoluteSize() const {
-    auto windowSize = getWindowSize();
-    return math::Vector2f(
-        _size.getX() * static_cast<float>(windowSize.first),
-        _size.getY() * static_cast<float>(windowSize.second)
-    );
+    return _size;
 }
 
 void UIElement::addChild(std::shared_ptr<UIElement> child) {

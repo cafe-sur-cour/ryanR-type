@@ -13,6 +13,7 @@
 #include "IWindow.hpp"
 #include "TextureManager.hpp"
 #include "FontManager.hpp"
+#include "ShaderManager.hpp"
 #include "../../common/types/FRect.hpp"
 #include "AssetManager/AssetManager.hpp"
 
@@ -43,12 +44,29 @@ class SfmlWindow : public gfx::IWindow {
         math::Vector2f getViewCenter() override;
         math::Vector2f mapPixelToCoords(int x, int y) override;
 
+        std::pair<int, int> getLogicalSize() const;
+
+        float getScaleFactor() const;
+
+        void enableFilter(const std::string& filterName);
+        void addFilter(const std::string& filterName);
+        void removeFilter(const std::string& filterName);
+        void disableAllFilters();
+        bool isFilterActive(const std::string& filterName) const;
+        ShaderManager& getShaderManager();
+
     private:
         std::shared_ptr<sf::RenderWindow> _window;
         std::shared_ptr<assets::AssetManager> _assetManager;
         gfx::TextureManager _textureManager;
         gfx::FontManager _fontManager;
+        ShaderManager _shaderManager;
         sf::View _view;
+        sf::RenderTexture _renderTexture;
+        sf::Sprite _renderSprite;
+
+        sf::Vector2f _viewportOffset;
+        sf::Vector2f _viewportScale;
 };
 
 #endif /* !SFMLWINDOW_HPP_ */
