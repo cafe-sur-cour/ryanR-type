@@ -107,6 +107,12 @@ void Core::processServerEvents() {
         constants::EventType eventType = std::get<1>(event);
         double param1 = std::get<2>(event);
         double param2 = std::get<3>(event);
+
+        // Process the event (this is a placeholder, actual processing logic needed)
+        (void)clientId;
+        (void)eventType;
+        (void)param1;
+        (void)param2;
     }
 }
 
