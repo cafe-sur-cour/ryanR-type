@@ -49,6 +49,8 @@ class SfmlWindow : public gfx::IWindow {
         gfx::TextureManager _textureManager;
         gfx::FontManager _fontManager;
         sf::View _view;
+        sf::RenderTexture _renderTexture;
+        sf::Sprite _renderSprite;
 };
 
 #endif /* !SFMLWINDOW_HPP_ */

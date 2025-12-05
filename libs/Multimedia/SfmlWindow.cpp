@@ -21,7 +21,10 @@ SfmlWindow::SfmlWindow(std::string title, size_t width, size_t height)
     _textureManager(_assetManager),
     _fontManager(_assetManager),
     _view(sf::FloatRect(sf::Vector2f(0.f, 0.f),
-        sf::Vector2f(constants::MAX_WIDTH, constants::MAX_HEIGHT))) {
+        sf::Vector2f(constants::MAX_WIDTH, constants::MAX_HEIGHT))),
+    _renderTexture({static_cast<unsigned int>(constants::MAX_WIDTH),
+        static_cast<unsigned int>(constants::MAX_HEIGHT)}),
+    _renderSprite(_renderTexture.getTexture()) {
     init();
 }
 
@@ -34,6 +37,8 @@ void SfmlWindow::init() {
     bool isActive = false;
 
     _window->setFramerateLimit(60);
+    _renderTexture.setView(_view);
+
     updateView();
     _window->clear(sf::Color::Black);
     _window->clear();
@@ -43,6 +48,17 @@ void SfmlWindow::init() {
 }
 
 void SfmlWindow::display() {
+    _renderTexture.display();
+    _renderSprite.setTexture(_renderTexture.getTexture());
+
+    sf::Vector2u windowSize = _window->getSize();
+    sf::View defaultView(sf::FloatRect(sf::Vector2f(0.f, 0.f),
+        sf::Vector2f(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y))));
+    defaultView.setViewport(_view.getViewport());
+
+    _window->clear();
+    _window->setView(defaultView);
+    _window->draw(_renderSprite);
     _window->display();
 }
 
@@ -55,7 +71,7 @@ bool SfmlWindow::isOpen() {
 }
 
 void SfmlWindow::clear() {
-    _window->clear();
+    _renderTexture.clear();
 }
 
 void SfmlWindow::resizeWindow(size_t x, size_t y) {
@@ -73,7 +89,7 @@ void SfmlWindow::drawSprite(std::string asset, gfx::color_t color,
     sprite.setColor(sf::Color(color.r, color.g, color.b, color.a));
     sprite.setPosition(sf::Vector2f(static_cast<float>(position.first),
         static_cast<float>(position.second)));
-    _window->draw(sprite);
+    _renderTexture.draw(sprite);
 }
 
 void SfmlWindow::drawText(std::string text, gfx::color_t color,
@@ -88,7 +104,7 @@ void SfmlWindow::drawText(std::string text, gfx::color_t color,
     sfText.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
     sfText.setPosition(sf::Vector2f(static_cast<float>(position.first),
         static_cast<float>(position.second)));
-    _window->draw(sfText);
+    _renderTexture.draw(sfText);
 }
 
 void SfmlWindow::drawRectangleOutline(gfx::color_t color,
@@ -100,7 +116,7 @@ void SfmlWindow::drawRectangleOutline(gfx::color_t color,
     rectangle.setOutlineThickness(1.0f);
     rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first),
     static_cast<float>(position.second)));
-    _window->draw(rectangle);
+    _renderTexture.draw(rectangle);
 }
 
 void SfmlWindow::drawFilledRectangle(gfx::color_t color,
@@ -110,7 +126,7 @@ void SfmlWindow::drawFilledRectangle(gfx::color_t color,
     rectangle.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
     rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first),
     static_cast<float>(position.second)));
-    _window->draw(rectangle);
+    _renderTexture.draw(rectangle);
 }
 
 bool SfmlWindow::isMouseOver(std::pair<size_t, size_t> position,
@@ -142,7 +158,7 @@ void SfmlWindow::drawSprite(const std::string& texturePath,
     sf::Sprite sprite(*texture);
     sprite.setPosition(sf::Vector2f(x, y));
     sprite.setScale(sf::Vector2f(scaleX, scaleY));
-    _window->draw(sprite);
+    _renderTexture.draw(sprite);
 }
 
 void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y,
@@ -162,7 +178,7 @@ void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y,
     sprite.setTextureRect(textureRect);
     sprite.setPosition(sf::Vector2f(x, y));
     sprite.setScale(sf::Vector2f(scaleX, scaleY));
-    _window->draw(sprite);
+    _renderTexture.draw(sprite);
 }
 
 void SfmlWindow::updateView() {
@@ -186,12 +202,11 @@ void SfmlWindow::updateView() {
     }
 
     _view.setViewport(viewport);
-    _window->setView(_view);
 }
 
 void SfmlWindow::setViewCenter(float x, float y) {
     _view.setCenter(sf::Vector2f(x, y));
-    _window->setView(_view);
+    _renderTexture.setView(_view);
 }
 
 math::Vector2f SfmlWindow::getViewCenter() {
