@@ -14,7 +14,6 @@
 #include "serializer/BigEndianSerialization.hpp"
 #include "../../common/DLLoader/LoaderType.hpp"
 #include "../../common/Error/PacketError.hpp"
-#include "../../common/constants.hpp"
 
 pm::PacketManager::PacketManager(uint32_t seqNumber) {
     this->_idClient = 0;
