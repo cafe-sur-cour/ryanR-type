@@ -50,23 +50,21 @@ namespace constants {
     const std::string SPEEDCOMPONENT = "SpeedComponent";
     const std::string SPRITECOMPONENT = "SpriteComponent";
     const std::string ANIMATIONCOMPONENT = "AnimationComponent";
-    const std::string CONTROLLABLETAG = "ControllableTag";
-    const std::string PLAYERTAG = "PlayerTag";
-    const std::string COLLIDERCOMPONENT = "ColliderComponent";
-    const std::string SHOOTERTAG = "ShooterTag";
-    const std::string PROJECTILETAG = "ProjectileTag";
     const std::string SHOOTINGSTATSCOMPONENT = "ShootingStatsComponent";
     const std::string RECTANGLERENDERCOMPONENT = "RectangleRenderComponent";
     const std::string PROJECTILEPREFABCOMPONENT = "ProjectilePrefabComponent";
     const std::string TEXTCOMPONENT = "TextComponent";
-    const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
-    const std::string PARALLAXCOMPONENT = "ParallaxComponent";
 
-    const std::string SCORETAG = "ScoreTag";
     const std::string SCORECOMPONENT = "ScoreComponent";
+    const std::string DAMAGECOMPONENT = "DamageComponent";
+    const std::string HEALTHCOMPONENT = "HealthComponent";
+    const std::string INTERACTIONCONFIGCOMPONENT = "InteractionConfigComponent";
     const std::string SCORE_FIELD = "score";
+    const std::string DAMAGE_FIELD = "damage";
+    const std::string HEALTH_FIELD = "health";
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
+    const std::string OFFSET_FIELD = "offset";
     const std::string SCALE_FIELD = "scale";
     const std::string ROTATION_FIELD = "rotation";
     const std::string SPEED_FIELD = "speed";
@@ -79,7 +77,6 @@ namespace constants {
     const std::string STARTHEIGHT_FIELD = "startHeight";
     const std::string SIZE_FIELD = "size";
     const std::string FIRERATE_FIELD = "fireRate";
-    const std::string PROJECTILESPEED_FIELD = "projectileSpeed";
     const std::string SHOTCOUNT_FIELD = "shotCount";
     const std::string ANGLEOFFSET_FIELD = "angleOffset";
     const std::string SPREADANGLE_FIELD = "spreadAngle";
@@ -115,6 +112,11 @@ namespace constants {
     const std::string SCALEMODE_STRETCH = "STRETCH";
     const std::string SCALEMODE_MANUAL = "MANUAL";
 
+    const std::string COLLISION_TYPE_SOLID = "Solid";
+    const std::string COLLISION_TYPE_TRIGGER = "Trigger";
+    const std::string COLLISION_TYPE_PUSH = "Push";
+    const std::string COLLISION_TYPE_NONE = "None";
+
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";
 
@@ -124,6 +126,11 @@ namespace constants {
     const std::string BACKGROUNDMUSICTAG = "BackGroundMusicTag";
     const std::string TEXT_FIELD = "text";
     const std::string FONTPATH_FIELD = "fontPath";
+
+    const std::string MAPPINGS_FIELD = "mappings";
+    const std::string TAGS_FIELD = "tags";
+    const std::string TOENTITY_FIELD = "toEntity";
+    const std::string TOSELF_FIELD = "toSelf";
 
     const std::string MUSICCOMPONENT = "MusicComponent";
     const std::string MUSICFILE_FIELD = "musicFile";
@@ -160,6 +167,25 @@ namespace constants {
     /* Animation conditions */
     const std::string VELOCITY_UP_CONDITION = "isVelocityUp";
     const std::string VELOCITY_DOWN_CONDITION = "isVelocityDown";
+
+    /* Tags */
+    const std::string CONTROLLABLETAG = "ControllableTag";
+    const std::string PLAYERTAG = "PlayerTag";
+    const std::string COLLIDERCOMPONENT = "ColliderComponent";
+    const std::string MOBTAG = "MobTag";
+    const std::string SHOOTERTAG = "ShooterTag";
+    const std::string PROJECTILETAG = "ProjectileTag";
+    const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
+    const std::string PARALLAXCOMPONENT = "ParallaxComponent";
+    const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
+    const std::string OBSTACLETAG = "ObstacleTag";
+    const std::string SCORETAG = "ScoreTag";
+
+    /* Action constants */
+    const std::string DEALDEATH_ACTION = "DealDeath";
+    const std::string TAKEDEATH_ACTION = "TakeDeath";
+    const std::string DEALDAMAGE_ACTION = "DealDamage";
+    const std::string TAKEDAMAGE_ACTION = "TakeDamage";
 }
 
 #endif /* !CONSTANTS_HPP_ */

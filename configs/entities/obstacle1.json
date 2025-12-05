@@ -1,6 +1,7 @@
 {
     "name": "obstacle1",
     "components": {
+        "ObstacleTag": { "target": "both" },
         "TransformComponent": {
             "target": "both",
             "position": { "x": 0.0, "y": 0.0 },
@@ -13,7 +14,9 @@
         },
         "ColliderComponent": {
             "target": "both",
-            "size" : { "x": 370.0, "y": 370.0 }
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size" : { "x": 370.0, "y": 370.0 },
+            "type": "Solid"
         }
     }
 }
