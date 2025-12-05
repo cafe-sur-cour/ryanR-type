@@ -16,6 +16,8 @@
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../../common/InputMapping/IInputProvider.hpp"
 #include "../Dev/DevState.hpp"
+#include "../../../../ClientNetwork.hpp"
+#include "../../../../../common/debug.hpp"
 
 namespace gsm {
 
@@ -33,11 +35,30 @@ MainMenuState::MainMenuState(
     _playButton->setNormalColor({100, 150, 100});
     _playButton->setHoveredColor({150, 200, 150});
     _playButton->setFocusedColor({255, 215, 0});
+
     _playButton->setOnRelease([this]() {
-        _gsm->requestStateChange(std::make_shared<DevState>(_gsm, _resourceManager));
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            this->_gsm->requestStateChange(std::make_shared<DevState>(this->_gsm,
+                this->_resourceManager));
+        } else {
+            debug::Debug::printDebug(network ? network->isDebugMode() : false,
+                "[MainMenu] Cannot start game: Not connected to server.",
+                debug::debugType::NETWORK,
+                debug::debugLevel::WARNING);
+        }
     });
     _playButton->setOnActivated([this]() {
-        _gsm->requestStateChange(std::make_shared<DevState>(_gsm, _resourceManager));
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            this->_gsm->requestStateChange(std::make_shared<DevState>(this->_gsm,
+                this->_resourceManager));
+        } else {
+            debug::Debug::printDebug(network ? network->isDebugMode() : false,
+                "[MainMenu] Cannot start game: Not connected to server.",
+                debug::debugType::NETWORK,
+                debug::debugLevel::WARNING);
+        }
     });
     _uiManager->addElement(_playButton);
 

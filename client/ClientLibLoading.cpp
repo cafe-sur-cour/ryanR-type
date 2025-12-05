@@ -49,9 +49,15 @@ void ClientNetwork::loadBufferLibrary() {
         throw err::ClientNetworkError("[ClientNetwork] Loading buffer lib failed",
             err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
-    _buffer = std::shared_ptr<IBuffer>
+    this->_receptionBuffer = std::shared_ptr<IBuffer>
         (reinterpret_cast<IBuffer *>(createBuffer()));
-    if (!_buffer) {
+    if (!this->_receptionBuffer) {
+        throw err::ClientNetworkError("[ClientNetwork] Loading buffer lib failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
+    }
+    this->_sendBuffer = std::shared_ptr<IBuffer>
+        (reinterpret_cast<IBuffer *>(createBuffer()));
+    if (!this->_sendBuffer) {
         throw err::ClientNetworkError("[ClientNetwork] Loading buffer lib failed",
             err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }

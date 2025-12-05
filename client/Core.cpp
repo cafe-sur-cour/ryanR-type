@@ -12,6 +12,7 @@
 #include <string>
 #include "initResourcesManager/initResourcesManager.hpp"
 #include "gsm/states/scenes/MainMenu/MainMenuState.hpp"
+#include "../common/debug.hpp"
 #include "../../common/Signal/Signal.hpp"
 #include "../../libs/Multimedia/IWindow.hpp"
 #include "../../libs/Multimedia/IEvent.hpp"
@@ -46,7 +47,10 @@ Core::~Core() {
 }
 
 void Core::run() {
-    std::cout << "[Core] Entering main loop" << std::endl;
+    debug::Debug::printDebug(this->_clientNetwork->isDebugMode(),
+        "Entering main loop",
+        debug::debugType::CORE,
+        debug::debugLevel::INFO);
     auto previousTime = std::chrono::high_resolution_clock::now();
 
     while (this->_resourceManager->get<gfx::IWindow>()->isOpen()
@@ -118,17 +122,14 @@ void Core::networkLoop() {
 
     if (this->_clientNetwork->getConnectionState()
         == net::ConnectionState::CONNECTING) {
-        std::cout << "[Core] Sending connection packet to server" << std::endl;
+        debug::Debug::printDebug(this->_clientNetwork->isDebugMode(),
+        "Sending Connection request",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
         this->_clientNetwork->connectionPacket();
-        // sleep for five
-        // std::this_thread::sleep_for(std::chrono::seconds(5));
-        // if i still don't have id then failed
-        std::cout << " Stopped sleeping" << std::endl;
     }
-    // sleep for five if still "Connecting" then it failed
     this->_clientNetwork->start();
 }
-
 
 std::shared_ptr<ClientNetwork> Core::getNetwork() {
     return this->_clientNetwork;
