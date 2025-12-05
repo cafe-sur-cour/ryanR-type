@@ -45,7 +45,6 @@ std::shared_ptr<sf::Shader> ShaderManager::loadShader(const std::string& path) {
         return nullptr;
     }
 
-    // Load fragment shader from memory
     if (!shader->loadFromMemory(std::string(asset->data.begin(), asset->data.end()),
                                 sf::Shader::Type::Fragment)) {
         std::cerr << "[ShaderManager] Failed to load fragment shader from memory: "
@@ -71,7 +70,6 @@ bool ShaderManager::hasShader(const std::string& name) const {
 }
 
 void ShaderManager::enableFilter(const std::string& path) {
-    // Load shader if not already cached
     if (!hasShader(path)) {
         loadShader(path);
     }
@@ -82,7 +80,6 @@ void ShaderManager::enableFilter(const std::string& path) {
 }
 
 void ShaderManager::addFilter(const std::string& path) {
-    // Load shader if not already cached
     if (!hasShader(path)) {
         loadShader(path);
     }
@@ -114,6 +111,12 @@ std::vector<std::shared_ptr<sf::Shader>> ShaderManager::getActiveShaders() const
     for (const auto& filterName : _activeFilters) {
         auto shader = getShader(filterName);
         if (shader) {
+            auto it = _uniforms.find(filterName);
+            if (it != _uniforms.end()) {
+                for (const auto& uniform : it->second) {
+                    shader->setUniform(uniform.first, uniform.second);
+                }
+            }
             shaders.push_back(shader);
         }
     }
@@ -143,4 +146,24 @@ void ShaderManager::clearCache() {
     _failedShaders.clear();
     _activeFilters.clear();
     _combinedShader = nullptr;
+    _uniforms.clear();
+}
+
+void ShaderManager::setUniform(
+    const std::string& shaderName,
+    const std::string& uniformName,
+    float value
+) {
+    _uniforms[shaderName][uniformName] = value;
+
+    if (_combinedShader) {
+        rebuildCombinedShader();
+    }
+}
+
+void ShaderManager::clearUniforms(const std::string& shaderName) {
+    _uniforms.erase(shaderName);
+    if (_combinedShader) {
+        rebuildCombinedShader();
+    }
 }

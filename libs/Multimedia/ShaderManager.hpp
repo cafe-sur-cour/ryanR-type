@@ -39,6 +39,9 @@ class ShaderManager {
 
         void clearCache();
 
+        void setUniform(const std::string& shaderName, const std::string& uniformName, float value);
+        void clearUniforms(const std::string& shaderName);
+
     private:
         std::shared_ptr<assets::AssetManager> _assetManager;
         std::unordered_map<std::string, std::shared_ptr<sf::Shader>> _shaderCache;
@@ -46,6 +49,7 @@ class ShaderManager {
         std::set<std::string> _activeFilters;
         std::shared_ptr<sf::Shader> _combinedShader;
         std::vector<sf::RenderTexture> _intermediateTextures;
+        std::unordered_map<std::string, std::unordered_map<std::string, float>> _uniforms;
 
         void rebuildCombinedShader();
 };

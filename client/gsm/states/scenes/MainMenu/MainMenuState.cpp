@@ -7,6 +7,7 @@
 
 #include "MainMenuState.hpp"
 #include <memory>
+#include <string>
 #include <vector>
 #include <iostream>
 #include <optional>
@@ -109,6 +110,21 @@ MainMenuState::MainMenuState(
         cycleColorBlindnessFilter();
     });
     _uiManager->addElement(_colorBlindnessButton);
+
+    _brightnessButton = std::make_shared<ui::Button>(resourceManager);
+    _brightnessButton->setText("BR: 100%");
+    _brightnessButton->setPosition(math::Vector2f(1526.f, 22.f));
+    _brightnessButton->setSize(math::Vector2f(115.f, 65.f));
+    _brightnessButton->setNormalColor({100, 100, 150});
+    _brightnessButton->setHoveredColor({150, 150, 200});
+    _brightnessButton->setFocusedColor({100, 200, 255});
+    _brightnessButton->setOnRelease([this]() {
+        cycleBrightnessFilter();
+    });
+    _brightnessButton->setOnActivated([this]() {
+        cycleBrightnessFilter();
+    });
+    _uiManager->addElement(_brightnessButton);
 }
 
 void MainMenuState::enter() {
@@ -220,12 +236,60 @@ void MainMenuState::toggleHighContrastFilter() {
     }
 }
 
+void MainMenuState::cycleBrightnessFilter() {
+    auto window = _resourceManager->get<gfx::IWindow>();
+    auto sfmlWindow = std::dynamic_pointer_cast<SfmlWindow>(window);
+    if (!sfmlWindow) return;
+
+    _brightnessState = (_brightnessState + 1) % 6;
+
+    float brightnessValue;
+    std::string text;
+    switch (_brightnessState) {
+        case 0:
+            brightnessValue = 0.25f;
+            text = "BR: 25%";
+            break;
+        case 1:
+            brightnessValue = 0.5f;
+            text = "BR: 50%";
+            break;
+        case 2:
+            brightnessValue = 0.75f;
+            text = "BR: 75%";
+            break;
+        case 3:
+            brightnessValue = 1.0f;
+            text = "BR: 100%";
+            break;
+        case 4:
+            brightnessValue = 1.25f;
+            text = "BR: 125%";
+            break;
+        case 5:
+            brightnessValue = 1.5f;
+            text = "BR: 150%";
+            break;
+        default:
+            brightnessValue = 1.0f;
+            text = "BR: 100%";
+            break;
+    }
+
+    sfmlWindow->getShaderManager().addFilter(constants::FILTER_BRIGHTNESS_SHADER_PATH);
+    sfmlWindow->getShaderManager().setUniform(
+        constants::FILTER_BRIGHTNESS_SHADER_PATH, "brightness", brightnessValue);
+
+    _brightnessButton->setText(text);
+}
+
 void MainMenuState::exit() {
     _uiManager->clearElements();
     _playButton.reset();
     _quitButton.reset();
     _highContrastButton.reset();
     _colorBlindnessButton.reset();
+    _brightnessButton.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
