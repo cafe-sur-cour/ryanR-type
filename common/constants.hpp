@@ -158,6 +158,8 @@ namespace constants {
     const std::string POSX_FIELD = "posX";
     const std::string ENEMIES_FIELD = "enemies";
     const std::string TYPE_FIELD = "type";
+    const std::string INCLUDE_FIELD = "include";
+    const std::string EXCLUDE_FIELD = "exclude";
     const std::string COUNT_FIELD = "count";
     const std::string EMPTY_PREFAB = "empty";
     const math::Vector2f BACKGROUND_POSITION = math::Vector2f(0.0f, 0.0f);
