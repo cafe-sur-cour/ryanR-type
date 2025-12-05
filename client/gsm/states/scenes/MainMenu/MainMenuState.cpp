@@ -24,8 +24,8 @@ namespace gsm {
 MainMenuState::MainMenuState(
     std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager)
-    : AGameState(gsm), _resourceManager(resourceManager) {
-    _mouseHandler = std::make_unique<MouseInputHandler>(resourceManager);
+    : AGameState(gsm, resourceManager) {
+    _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
 
     _playButton = std::make_shared<ui::Button>(resourceManager);

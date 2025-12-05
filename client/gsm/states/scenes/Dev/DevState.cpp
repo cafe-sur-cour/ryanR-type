@@ -1,103 +1,90 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** DevState
+*/
+
 #include "DevState.hpp"
 #include <memory>
-#include <cmath>
 #include <iostream>
 #include "../../../../../common/ECS/entity/Entity.hpp"
-#include "../../../../../common/components/tags/PlayerTag.hpp"
-#include "../../../../../common/components/tags/ControllableTag.hpp"
 #include "../../../../../libs/Multimedia/IWindow.hpp"
 #include "../../../../../libs/Multimedia/IEvent.hpp"
 #include "../../../../../libs/Multimedia/IAudio.hpp"
-#include "../../../../components/rendering/SpriteComponent.hpp"
-#include "../../../../../common/components/permanent/TransformComponent.hpp"
-#include "../../../../../common/components/permanent/VelocityComponent.hpp"
-#include "../../../../../common/components/permanent/ColliderComponent.hpp"
-#include "../../../../components/temporary/SoundIntentComponent.hpp"
-#include "../../../../components/temporary/MusicIntentComponent.hpp"
-#include "../../../../systems/rendering/AnimationRenderingSystem.hpp"
 #include "../../../../components/rendering/HitboxRenderComponent.hpp"
-#include "../../../../components/rendering/RectangleRenderComponent.hpp"
+#include "../../../../systems/rendering/AnimationRenderingSystem.hpp"
 #include "../../../../systems/rendering/HitboxRenderingSystem.hpp"
 #include "../../../../systems/rendering/RectangleRenderingSystem.hpp"
 #include "../../../../systems/rendering/TextRenderingSystem.hpp"
 #include "../../../../systems/rendering/ParallaxRenderingSystem.hpp"
-#include "../../../../../common/components/tags/ObstacleTag.hpp"
-#include "../../../../../common/components/tags/ShooterTag.hpp"
+#include "../../../../systems/rendering/SpriteRenderingSystem.hpp"
+#include "../../../../systems/input/MovementInputSystem.hpp"
 #include "../../../../systems/input/ShootInputSystem.hpp"
+#include "../../../../systems/audio/SoundSystem.hpp"
+#include "../../../../../common/systems/movement/MovementSystem.hpp"
+#include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../../common/systems/shooting/ShootingSystem.hpp"
 #include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/health/HealthSystem.hpp"
-#include "../../../../../common/components/permanent/ShootingStatsComponent.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
 #include "../../../../../common/systems/interactions/InteractionSystem.hpp"
 #include "../../../../../common/constants.hpp"
-#include "../../../../../common/Parser/Parser.hpp"
-#include "../../../../systems/rendering/GameZoneRenderingSystem.hpp"
+#include "../../../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../../systems/rendering/GameZoneViewSystem.hpp"
+#include "../../../../systems/audio/MusicSystem.hpp"
+#include "../../../../components/temporary/MusicIntentComponent.hpp"
 
 namespace gsm {
 
 DevState::DevState(
     std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager
-) : AGameState(gsm), _resourceManager(resourceManager) {
+) : AGameState(gsm, resourceManager) {
     _registry = std::make_shared<ecs::Registry>();
-    _systemManager = std::make_shared<ecs::ASystemManager>();
-    _movementSystem = std::make_shared<ecs::MovementSystem>();
-    _inputToVelocitySystem = std::make_shared<ecs::InputToVelocitySystem>();
-    _inputSystem = std::make_shared<ecs::MovementInputSystem>();
-    _spriteRenderingSystem = std::make_shared<ecs::SpriteRenderingSystem>();
-    _soundSystem = std::make_shared<ecs::SoundSystem>();
-    _musicSystem = std::make_shared<ecs::MusicSystem>();
     _prefabManager = std::make_shared<EntityPrefabManager>();
-    auto animationRenderingSystem =
-        std::make_shared<ecs::AnimationRenderingSystem>();
-    auto hitboxRenderingSystem =
-        std::make_shared<ecs::HitboxRenderingSystem>();
-    auto rectangleRenderingSystem =
-        std::make_shared<ecs::RectangleRenderingSystem>();
-    auto textRenderingSystem =
-        std::make_shared<ecs::TextRenderingSystem>();
-    auto parallaxRenderingSystem =
-        std::make_shared<ecs::ParallaxRenderingSystem>();
-    auto shootInputSystem = std::make_shared<ecs::ShootInputSystem>();
-    auto shootingSystem = std::make_shared<ecs::ShootingSystem>();
-    auto lifetimeSystem = std::make_shared<ecs::LifetimeSystem>();
-    auto healthSystem = std::make_shared<ecs::HealthSystem>();
-    auto deathSystem = std::make_shared<ecs::DeathSystem>();
-    auto scoreSystem = std::make_shared<ecs::ScoreSystem>();
-    auto gameZoneViewSystem = std::make_shared<ecs::GameZoneViewSystem>();
-    auto triggerSystem = std::make_shared<ecs::TriggerSystem>();
-    auto interactionSystem = std::make_shared<ecs::InteractionSystem>();
+}
 
+void DevState::enter() {
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
-
-    _systemManager->addSystem(_inputToVelocitySystem);
-    _systemManager->addSystem(_movementSystem);
-    _systemManager->addSystem(_inputSystem);
-    _systemManager->addSystem(_soundSystem);
-    _systemManager->addSystem(_musicSystem);
-    _systemManager->addSystem(parallaxRenderingSystem);
-    _systemManager->addSystem(_spriteRenderingSystem);
-    _systemManager->addSystem(animationRenderingSystem);
-    _systemManager->addSystem(hitboxRenderingSystem);
-    _systemManager->addSystem(rectangleRenderingSystem);
-    _systemManager->addSystem(textRenderingSystem);
-    _systemManager->addSystem(gameZoneViewSystem);
-    _systemManager->addSystem(shootInputSystem);
-    _systemManager->addSystem(shootingSystem);
-    _systemManager->addSystem(lifetimeSystem);
-    _systemManager->addSystem(healthSystem);
-    _systemManager->addSystem(deathSystem);
-    _systemManager->addSystem(scoreSystem);
-    _systemManager->addSystem(triggerSystem);
-    _systemManager->addSystem(interactionSystem);
+    _resourceManager->add<ecs::Registry>(_registry);
 
     _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
     _parser->parseAllEntities(constants::CONFIG_PATH);
     _parser->parseMapFromFile("configs/map/map1.json");
+
+    addSystem(std::make_shared<ecs::InputToVelocitySystem>());
+    addSystem(std::make_shared<ecs::MovementSystem>());
+    addSystem(std::make_shared<ecs::MovementInputSystem>());
+    addSystem(std::make_shared<ecs::SoundSystem>());
+    addSystem(std::make_shared<ecs::ParallaxRenderingSystem>());
+    addSystem(std::make_shared<ecs::SpriteRenderingSystem>());
+    addSystem(std::make_shared<ecs::AnimationRenderingSystem>());
+    addSystem(std::make_shared<ecs::HitboxRenderingSystem>());
+    addSystem(std::make_shared<ecs::RectangleRenderingSystem>());
+    addSystem(std::make_shared<ecs::TextRenderingSystem>());
+    addSystem(std::make_shared<ecs::ShootInputSystem>());
+    addSystem(std::make_shared<ecs::ShootingSystem>());
+    addSystem(std::make_shared<ecs::LifetimeSystem>());
+    addSystem(std::make_shared<ecs::HealthSystem>());
+    addSystem(std::make_shared<ecs::DeathSystem>());
+    addSystem(std::make_shared<ecs::ScoreSystem>());
+    addSystem(std::make_shared<ecs::GameZoneViewSystem>());
+    addSystem(std::make_shared<ecs::MusicSystem>());
+    addSystem(std::make_shared<ecs::TriggerSystem>());
+
+    auto audio = _resourceManager->get<gfx::IAudio>();
+
+    ecs::Entity musicIntentEntity = _registry->createEntity();
+    _registry->addComponent<ecs::MusicIntentComponent>(musicIntentEntity,
+        std::make_shared<ecs::MusicIntentComponent>(ecs::PLAY, ""));
+
+    ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
+    _registry->addComponent<ecs::HitboxRenderComponent>(
+        playerEntity,
+        std::make_shared<ecs::HitboxRenderComponent>());
 
     auto colliderView = _registry->view<ecs::ColliderComponent>();
     for (auto entityId : colliderView) {
@@ -114,17 +101,6 @@ DevState::DevState(
     }
 }
 
-void DevState::enter() {
-    ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
-    _registry->addComponent<ecs::HitboxRenderComponent>(
-        playerEntity,
-        std::make_shared<ecs::HitboxRenderComponent>());
-
-    ecs::Entity musicIntentEntity = _registry->createEntity();
-    _registry->addComponent<ecs::MusicIntentComponent>(musicIntentEntity,
-        std::make_shared<ecs::MusicIntentComponent>(ecs::PLAY, ""));
-}
-
 void DevState::update(float deltaTime) {
     auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
     if (eventResult == gfx::EventType::CLOSE) {
@@ -132,7 +108,8 @@ void DevState::update(float deltaTime) {
         return;
     }
 
-    _systemManager->updateAllSystems(_resourceManager, _registry, deltaTime);
+    _resourceManager->get<ecs::ISystemManager>()->updateAllSystems
+        (_resourceManager, _registry, deltaTime);
 }
 
 void DevState::exit() {

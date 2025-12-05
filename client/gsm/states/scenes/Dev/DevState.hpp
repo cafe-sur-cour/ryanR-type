@@ -2,15 +2,8 @@
 #define DEVSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
-#include "../../../../../common/resourceManager/ResourceManager.hpp"
+#include "resourceManager/ResourceManager.hpp"
 #include "../../../../../common/ECS/entity/registry/Registry.hpp"
-#include "../../../../../common/systems/systemManager/ASystemManager.hpp"
-#include "../../../../../common/systems/movement/MovementSystem.hpp"
-#include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
-#include "../../../../systems/input/MovementInputSystem.hpp"
-#include "../../../../systems/rendering/SpriteRenderingSystem.hpp"
-#include "../../../../systems/audio/SoundSystem.hpp"
-#include "../../../../systems/audio/MusicSystem.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
 
@@ -26,15 +19,7 @@ public:
     void exit() override;
 
 private:
-    std::shared_ptr<ResourceManager> _resourceManager;
     std::shared_ptr<ecs::Registry> _registry;
-    std::shared_ptr<ecs::ASystemManager> _systemManager;
-    std::shared_ptr<ecs::MovementSystem> _movementSystem;
-    std::shared_ptr<ecs::InputToVelocitySystem> _inputToVelocitySystem;
-    std::shared_ptr<ecs::MovementInputSystem> _inputSystem;
-    std::shared_ptr<ecs::SpriteRenderingSystem> _spriteRenderingSystem;
-    std::shared_ptr<ecs::SoundSystem> _soundSystem;
-    std::shared_ptr<ecs::MusicSystem> _musicSystem;
     std::shared_ptr<EntityPrefabManager> _prefabManager;
     std::shared_ptr<Parser> _parser;
 };

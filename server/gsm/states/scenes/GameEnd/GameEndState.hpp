@@ -9,17 +9,16 @@
 #define SERVER_GAMEENDSTATE_HPP_
 
 #include "../../AGameState.hpp"
+#include "resourceManager/ResourceManager.hpp"
 
 namespace gsm {
 
 class GameEndState : public AGameState {
 public:
-    GameEndState(std::shared_ptr<IGameStateMachine> gsm);
+    GameEndState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
     ~GameEndState() override = default;
 
     void enter() override;
-    void update(float deltaTime) override;
-    void exit() override;
 };
 
 }  // namespace gsm
