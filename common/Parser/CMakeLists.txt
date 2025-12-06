@@ -30,5 +30,6 @@ target_link_libraries(${PARSER_LIB} PUBLIC
     MAP_PARSER
     ANIMATION
     ERROR
+    COLLISION_RULES
     nlohmann_json::nlohmann_json
 )
