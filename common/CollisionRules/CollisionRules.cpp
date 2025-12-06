@@ -22,6 +22,7 @@ void CollisionRules::initWithData(const CollisionRulesData& data) {
     instance._solidAllowRules = data.solidAllowRules;
     instance._solidDenyRules = data.solidDenyRules;
     instance._triggerAllowRules = data.triggerAllowRules;
+    instance._triggerDenyRules = data.triggerDenyRules;
     instance._pushAllowRules = data.pushAllowRules;
     instance._pushDenyRules = data.pushDenyRules;
 }
@@ -35,6 +36,8 @@ const std::vector<CollisionRule>& CollisionRules::getDenyRules(
     switch (type) {
         case CollisionType::Solid:
             return _solidDenyRules;
+        case CollisionType::Trigger:
+            return _triggerDenyRules;
         case CollisionType::Push:
             return _pushDenyRules;
         default:

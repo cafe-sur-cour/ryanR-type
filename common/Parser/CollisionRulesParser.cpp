@@ -66,6 +66,17 @@ CollisionRulesData CollisionRulesParser::parseFromJsonString(const std::string& 
                 }
             }
         }
+
+        if (trigger.contains(constants::COLLISION_DENY_KEY)) {
+            for (const auto& ruleJson : trigger[constants::COLLISION_DENY_KEY]) {
+                if (ruleJson.size() == 2) {
+                    CollisionRule rule;
+                    rule.groupA = ruleJson[0].get<std::vector<std::string>>();
+                    rule.groupB = ruleJson[1].get<std::vector<std::string>>();
+                    data.triggerDenyRules.push_back(rule);
+                }
+            }
+        }
     }
 
     if (json.contains(constants::COLLISION_PUSH_KEY)) {

@@ -15,6 +15,7 @@ struct CollisionRulesData {
     std::vector<CollisionRule> solidAllowRules;
     std::vector<CollisionRule> solidDenyRules;
     std::vector<CollisionRule> triggerAllowRules;
+    std::vector<CollisionRule> triggerDenyRules;
     std::vector<CollisionRule> pushAllowRules;
     std::vector<CollisionRule> pushDenyRules;
 };

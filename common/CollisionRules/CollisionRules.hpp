@@ -32,6 +32,7 @@ class CollisionRules {
         std::vector<CollisionRule> _solidAllowRules;
         std::vector<CollisionRule> _solidDenyRules;
         std::vector<CollisionRule> _triggerAllowRules;
+        std::vector<CollisionRule> _triggerDenyRules;
         std::vector<CollisionRule> _pushAllowRules;
         std::vector<CollisionRule> _pushDenyRules;
 
