@@ -24,10 +24,16 @@ class TriggerSystemTests : public ::testing::Test {
 
             // Initialize collision rules with rules allowing trigger collisions for tests
             CollisionRulesData testData;
+            testData.solidAllowRules = std::make_shared<std::vector<CollisionRule>>();
+            testData.solidDenyRules = std::make_shared<std::vector<CollisionRule>>();
+            testData.triggerAllowRules = std::make_shared<std::vector<CollisionRule>>();
+            testData.triggerDenyRules = std::make_shared<std::vector<CollisionRule>>();
+            testData.pushAllowRules = std::make_shared<std::vector<CollisionRule>>();
+            testData.pushDenyRules = std::make_shared<std::vector<CollisionRule>>();
             CollisionRule allowAllTrigger;
             allowAllTrigger.groupA = {};
             allowAllTrigger.groupB = {};
-            testData.triggerAllowRules.push_back(allowAllTrigger);
+            testData.triggerAllowRules->push_back(allowAllTrigger);
             CollisionRules::initWithData(testData);
         }
 
