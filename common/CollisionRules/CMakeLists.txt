@@ -11,8 +11,8 @@ set(COLLISION_RULES_HEADERS
 
 add_library(${COLLISION_RULES_LIB} STATIC ${COLLISION_RULES_SOURCES} ${COLLISION_RULES_HEADERS})
 
+set_target_properties(${COLLISION_RULES_LIB} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 target_include_directories(${COLLISION_RULES_LIB} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
-
-# No external dependencies here - data is provided via initWithData
