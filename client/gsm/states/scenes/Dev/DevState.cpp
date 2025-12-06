@@ -32,6 +32,8 @@
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
 #include "../../../../../common/systems/interactions/InteractionSystem.hpp"
 #include "../../../../../common/constants.hpp"
+#include "../../../../../common/Parser/CollisionRulesParser.hpp"
+#include "../../../../../common/CollisionRules/CollisionRules.hpp"
 #include "../../../../../common/components/tags/PlayerTag.hpp"
 #include "../../../../../common/components/tags/ObstacleTag.hpp"
 #include "../../../../../common/systems/systemManager/ISystemManager.hpp"
@@ -54,6 +56,9 @@ void DevState::enter() {
     _resourceManager->add<ecs::Registry>(_registry);
 
     _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
+    auto collisionData =
+        ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
+    ecs::CollisionRules::initWithData(collisionData);
     _parser->parseAllEntities(constants::CONFIG_PATH);
     _parser->parseMapFromFile("configs/map/map1.json");
 

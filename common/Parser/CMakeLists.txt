@@ -7,14 +7,14 @@ add_subdirectory(Animation)
 
 set(PARSER_SOURCES
     Parser.cpp
-    CollisionRules.cpp
+    CollisionRulesParser.cpp
 )
 
 set(PARSER_HEADERS
     Parser.hpp
     ParserParam.hpp
     ComponentParserCreators.cpp
-    CollisionRules.hpp
+    CollisionRulesParser.hpp
 )
 
 add_library(${PARSER_LIB} STATIC ${PARSER_SOURCES} ${PARSER_HEADERS})

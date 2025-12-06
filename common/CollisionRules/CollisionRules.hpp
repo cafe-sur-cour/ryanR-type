@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include <fstream>
+#include "CollisionRulesData.hpp"
 #include "../components/permanent/ColliderComponent.hpp"
 
 namespace ecs {
@@ -11,6 +11,8 @@ namespace ecs {
 class CollisionRules {
     public:
         static const CollisionRules& getInstance();
+
+        static void initWithData(const CollisionRulesData& data);
 
         bool canCollide(
             CollisionType type,
@@ -24,33 +26,26 @@ class CollisionRules {
         CollisionRules(const CollisionRules&) = delete;
         CollisionRules& operator=(const CollisionRules&) = delete;
 
-        struct Rule {
-            std::vector<std::string> groupA;
-            std::vector<std::string> groupB;
-        };
+        const std::vector<CollisionRule>& getDenyRules(CollisionType type) const;
+        const std::vector<CollisionRule>& getAllowRules(CollisionType type) const;
 
-        void loadFromJson(const std::string& jsonString);
-
-        const std::vector<Rule>& getDenyRules(CollisionType type) const;
-        const std::vector<Rule>& getAllowRules(CollisionType type) const;
-
-        std::vector<Rule> _solidAllowRules;
-        std::vector<Rule> _solidDenyRules;
-        std::vector<Rule> _triggerAllowRules;
-        std::vector<Rule> _pushAllowRules;
-        std::vector<Rule> _pushDenyRules;
+        std::vector<CollisionRule> _solidAllowRules;
+        std::vector<CollisionRule> _solidDenyRules;
+        std::vector<CollisionRule> _triggerAllowRules;
+        std::vector<CollisionRule> _pushAllowRules;
+        std::vector<CollisionRule> _pushDenyRules;
 
         bool entityMatchesGroup(
             const std::vector<std::string>& entityTags,
             const std::vector<std::string>& group
         ) const;
         bool ruleMatches(
-            const Rule& rule,
+            const CollisionRule& rule,
             const std::vector<std::string>& tagsA,
             const std::vector<std::string>& tagsB
         ) const;
 };
 
-} // namespace ecs
+}  // namespace ecs
 
-#endif /* !COLLISIONRULES_HPP_ */
+#endif // COLLISIONRULES_HPP_
