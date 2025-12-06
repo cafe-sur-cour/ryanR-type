@@ -25,9 +25,8 @@ enum class CollisionType {
 
 class ColliderComponent : public AComponent {
     public:
-        ColliderComponent(math::Vector2f offset = math::Vector2f(0.0f, 0.0f), math::Vector2f size = math::Vector2f(0.0f, 0.0f), CollisionType type = CollisionType::Solid,
-            std::vector<std::vector<std::string>> includeTags = {}, std::vector<std::vector<std::string>> excludeTags = {})
-            : _offset(offset), _size(size), _type(type), _includeTags(std::move(includeTags)), _excludeTags(std::move(excludeTags)) {};
+        ColliderComponent(math::Vector2f offset = math::Vector2f(0.0f, 0.0f), math::Vector2f size = math::Vector2f(0.0f, 0.0f), CollisionType type = CollisionType::Solid)
+            : _offset(offset), _size(size), _type(type) {};
         ~ColliderComponent() = default;
 
         math::Vector2f getOffset() const { return _offset; };
@@ -47,18 +46,10 @@ class ColliderComponent : public AComponent {
             return getHitbox(entityPosition, scale);
         };
 
-        const std::vector<std::vector<std::string>>& getIncludeTags() const { return _includeTags; };
-        void setIncludeTags(std::vector<std::vector<std::string>> includeTags) { _includeTags = std::move(includeTags); };
-
-        const std::vector<std::vector<std::string>>& getExcludeTags() const { return _excludeTags; };
-        void setExcludeTags(std::vector<std::vector<std::string>> excludeTags) { _excludeTags = std::move(excludeTags); };
-
     private:
         math::Vector2f _offset;
         math::Vector2f _size;
         CollisionType _type;
-        std::vector<std::vector<std::string>> _includeTags;
-        std::vector<std::vector<std::string>> _excludeTags;
 };
 
 }  // namespace ecs

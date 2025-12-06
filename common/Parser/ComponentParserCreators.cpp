@@ -348,7 +348,7 @@ void Parser::instanciateComponentCreators() {
         }
 
         return std::make_shared<ecs::ColliderComponent>(
-            offset, size, type, includeTags, excludeTags);
+            offset, size, type);
     });
 
     registerComponent<ecs::ShootingStatsComponent>([](const std::map<std::string,

@@ -127,16 +127,13 @@ void MapParser::createGameZoneEntity(float scrollSpeed) {
     _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
         std::make_shared<ecs::ColliderComponent>(
             math::Vector2f(constants::MAX_WIDTH, 0.0f),
-            math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT),
-            ecs::CollisionType::Solid,
-            std::vector<std::vector<std::string>>{{constants::PLAYERTAG}}));
+            math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT)));
 
     _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
         std::make_shared<ecs::ColliderComponent>(
             math::Vector2f(-constants::GAME_ZONE_BOUNDARY_THICKNESS, 0.0f),
             math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT),
-            ecs::CollisionType::Push,
-            std::vector<std::vector<std::string>>{{constants::PLAYERTAG}}));
+            ecs::CollisionType::Push));
 }
 
 void MapParser::parseMapGrid(const nlohmann::json& legend, const nlohmann::json& mapGrid,
