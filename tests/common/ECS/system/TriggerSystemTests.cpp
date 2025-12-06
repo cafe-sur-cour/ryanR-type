@@ -12,6 +12,7 @@
 #include "../../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../../common/components/permanent/ColliderComponent.hpp"
 #include "../../../../common/components/temporary/TriggerIntentComponent.hpp"
+#include "../../../../common/CollisionRules/CollisionRules.hpp"
 
 namespace ecs {
 
@@ -20,6 +21,14 @@ class TriggerSystemTests : public ::testing::Test {
         void SetUp() override {
             registry = std::make_shared<Registry>();
             triggerSystem = std::make_shared<TriggerSystem>();
+
+            // Initialize collision rules with rules allowing trigger collisions for tests
+            CollisionRulesData testData;
+            CollisionRule allowAllTrigger;
+            allowAllTrigger.groupA = {};
+            allowAllTrigger.groupB = {};
+            testData.triggerAllowRules.push_back(allowAllTrigger);
+            CollisionRules::initWithData(testData);
         }
 
         void TearDown() override {
