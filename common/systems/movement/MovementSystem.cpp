@@ -19,7 +19,6 @@
 #include "../../constants.hpp"
 #include "../../components/tags/ObstacleTag.hpp"
 #include "../../components/tags/ProjectileTag.hpp"
-#include "../../components/tags/PlayerTag.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../CollisionRules/CollisionRules.hpp"
 
@@ -245,10 +244,8 @@ void MovementSystem::handlePushCollision(
                     if (checkCollision(registry, otherEntityId, newOtherPos)) {
                         otherTransform->setPosition(newOtherPos);
                     } else {
-                        if (registry->hasComponent<PlayerTag>(otherEntityId)) {
-                            registry->addComponent<DeathIntentComponent>(otherEntityId,
-                                std::make_shared<DeathIntentComponent>());
-                        }
+                        registry->addComponent<DeathIntentComponent>(otherEntityId,
+                            std::make_shared<DeathIntentComponent>());
                     }
                 }
             }
