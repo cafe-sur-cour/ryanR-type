@@ -32,11 +32,7 @@
             "target": "both",
             "offset": { "x": 0.0, "y": 0.0 },
             "size" : { "x": 33.0, "y": 36.0 },
-            "type": "Solid",
-            "exclude": [
-                ["ObstacleTag"],
-                ["MobTag"]
-            ]
+            "type": "Solid"
         }
     }
 }
