@@ -19,10 +19,9 @@
 #include "../../constants.hpp"
 #include "../../components/tags/ObstacleTag.hpp"
 #include "../../components/tags/ProjectileTag.hpp"
-#include "../../components/tags/ProjectilePassThroughTag.hpp"
 #include "../../components/tags/PlayerTag.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
-#include "../../systems/interactions/TagRegistry.hpp"
+#include "../../Parser/CollisionRules.hpp"
 
 namespace ecs {
 
@@ -78,8 +77,6 @@ bool MovementSystem::checkCollision(
         return true;
     }
 
-    bool isProjectile = registry->hasComponent<ProjectileTag>(entityId);
-
     auto movingTransform = registry->getComponent<TransformComponent>(entityId);
     math::Vector2f movingScale = movingTransform->getScale();
 
@@ -93,14 +90,6 @@ bool MovementSystem::checkCollision(
         auto otherColliders = registry->getComponents<
             ColliderComponent>(otherEntityId);
 
-        bool otherIsProjectile = registry->hasComponent<ProjectileTag>(otherEntityId);
-
-        if ((isProjectile && registry->hasComponent<
-                ProjectilePassThroughTag>(otherEntityId)) ||
-            (otherIsProjectile && registry->hasComponent<
-                ProjectilePassThroughTag>(entityId)))
-            continue;
-
         for (auto& movingCollider : movingColliders) {
             if (movingCollider->getType() != CollisionType::Solid) continue;
 
@@ -111,7 +100,7 @@ bool MovementSystem::checkCollision(
                     otherCollider->getType() != CollisionType::Push) continue;
 
                 if (!shouldCollide(
-                    registry, entityId, *movingCollider, otherEntityId, *otherCollider)) {
+                    registry, entityId, *movingCollider, otherEntityId)) {
                     continue;
                 }
 
@@ -239,7 +228,7 @@ void MovementSystem::handlePushCollision(
                 if (otherCollider->getType() == CollisionType::None) continue;
 
                 if (!shouldCollide(
-                    registry, entityId, *pushCollider, otherEntityId, *otherCollider)) {
+                    registry, entityId, *pushCollider, otherEntityId)) {
                     continue;
                 }
 
@@ -271,62 +260,14 @@ bool MovementSystem::shouldCollide(
     std::shared_ptr<Registry> registry,
     size_t entityA,
     const ColliderComponent& colliderA,
-    size_t entityB,
-    const ColliderComponent& colliderB
-) {
-    for (const auto& excludeCondition : colliderA.getExcludeTags()) {
-        if (entityMatchesCondition(registry, entityB, excludeCondition)) {
-            return false;
-        }
-    }
-
-    for (const auto& excludeCondition : colliderB.getExcludeTags()) {
-        if (entityMatchesCondition(registry, entityA, excludeCondition)) {
-            return false;
-        }
-    }
-
-    if (!colliderA.getIncludeTags().empty()) {
-        bool matchesAny = false;
-        for (const auto& includeCondition : colliderA.getIncludeTags()) {
-            if (entityMatchesCondition(registry, entityB, includeCondition)) {
-                matchesAny = true;
-                break;
-            }
-        }
-        if (!matchesAny) {
-            return false;
-        }
-    }
-
-    if (!colliderB.getIncludeTags().empty()) {
-        bool matchesAny = false;
-        for (const auto& includeCondition : colliderB.getIncludeTags()) {
-            if (entityMatchesCondition(registry, entityA, includeCondition)) {
-                matchesAny = true;
-                break;
-            }
-        }
-        if (!matchesAny) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool MovementSystem::entityMatchesCondition(
-    std::shared_ptr<Registry> registry,
-    size_t entityId,
-    const std::vector<std::string>& condition
+    size_t entityB
 ) {
     const TagRegistry& tagRegistry = TagRegistry::getInstance();
-    for (const auto& tag : condition) {
-        if (!tagRegistry.hasTag(registry, entityId, tag)) {
-            return false;
-        }
-    }
-    return true;
+    const CollisionRules& collisionRules = CollisionRules::getInstance();
+    std::vector<std::string> tagsA = tagRegistry.getTags(registry, entityA);
+    std::vector<std::string> tagsB = tagRegistry.getTags(registry, entityB);
+
+    return collisionRules.canCollide(colliderA.getType(), tagsA, tagsB);
 }
 
 }  // namespace ecs

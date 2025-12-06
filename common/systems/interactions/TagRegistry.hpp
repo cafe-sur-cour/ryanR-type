@@ -27,6 +27,7 @@ class TagRegistry {
         }
 
         bool hasTag(std::shared_ptr<ecs::Registry> registry, ecs::Entity entity, const std::string& tagName) const;
+        std::vector<std::string> getTags(std::shared_ptr<ecs::Registry> registry, ecs::Entity entity) const;
 
     private:
         TagRegistry();

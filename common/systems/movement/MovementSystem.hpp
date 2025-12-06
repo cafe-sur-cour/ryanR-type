@@ -15,8 +15,8 @@
 #include "../../components/permanent/SpeedComponent.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
-#include "../../components/tags/ObstacleTag.hpp"
-#include "../../constants.hpp"
+#include "../../Parser/CollisionRules.hpp"
+#include "../../systems/interactions/TagRegistry.hpp"
 
 namespace ecs {
 
@@ -65,13 +65,7 @@ class MovementSystem : public ASystem {
             std::shared_ptr<Registry> registry,
             size_t entityA,
             const ColliderComponent& colliderA,
-            size_t entityB,
-            const ColliderComponent& colliderB
-        );
-        bool entityMatchesCondition(
-            std::shared_ptr<Registry> registry,
-            size_t entityId,
-            const std::vector<std::string>& condition
+            size_t entityB
         );
 };
 
