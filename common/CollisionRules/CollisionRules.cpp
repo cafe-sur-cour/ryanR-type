@@ -33,15 +33,15 @@ CollisionRules::CollisionRules() {
 const std::vector<CollisionRule>& CollisionRules::getDenyRules(
     CollisionType type
 ) const {
+    static const std::vector<CollisionRule> emptyRules;
     switch (type) {
         case CollisionType::Solid:
-            return _solidDenyRules;
+            return _solidDenyRules ? *_solidDenyRules : emptyRules;
         case CollisionType::Trigger:
-            return _triggerDenyRules;
+            return _triggerDenyRules ? *_triggerDenyRules : emptyRules;
         case CollisionType::Push:
-            return _pushDenyRules;
+            return _pushDenyRules ? *_pushDenyRules : emptyRules;
         default:
-            static const std::vector<CollisionRule> emptyRules;
             return emptyRules;
     }
 }
@@ -49,15 +49,15 @@ const std::vector<CollisionRule>& CollisionRules::getDenyRules(
 const std::vector<CollisionRule>& CollisionRules::getAllowRules(
     CollisionType type
 ) const {
+    static const std::vector<CollisionRule> emptyRules;
     switch (type) {
         case CollisionType::Solid:
-            return _solidAllowRules;
+            return _solidAllowRules ? *_solidAllowRules : emptyRules;
         case CollisionType::Trigger:
-            return _triggerAllowRules;
+            return _triggerAllowRules ? *_triggerAllowRules : emptyRules;
         case CollisionType::Push:
-            return _pushAllowRules;
+            return _pushAllowRules ? *_pushAllowRules : emptyRules;
         default:
-            static const std::vector<CollisionRule> emptyRules;
             return emptyRules;
     }
 }

@@ -29,12 +29,12 @@ class CollisionRules {
         const std::vector<CollisionRule>& getDenyRules(CollisionType type) const;
         const std::vector<CollisionRule>& getAllowRules(CollisionType type) const;
 
-        std::vector<CollisionRule> _solidAllowRules;
-        std::vector<CollisionRule> _solidDenyRules;
-        std::vector<CollisionRule> _triggerAllowRules;
-        std::vector<CollisionRule> _triggerDenyRules;
-        std::vector<CollisionRule> _pushAllowRules;
-        std::vector<CollisionRule> _pushDenyRules;
+        std::shared_ptr<std::vector<CollisionRule>> _solidAllowRules;
+        std::shared_ptr<std::vector<CollisionRule>> _solidDenyRules;
+        std::shared_ptr<std::vector<CollisionRule>> _triggerAllowRules;
+        std::shared_ptr<std::vector<CollisionRule>> _triggerDenyRules;
+        std::shared_ptr<std::vector<CollisionRule>> _pushAllowRules;
+        std::shared_ptr<std::vector<CollisionRule>> _pushDenyRules;
 
         bool entityMatchesGroup(
             const std::vector<std::string>& entityTags,
