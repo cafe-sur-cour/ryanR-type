@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
+#include "../constants.hpp"
 
 namespace ecs {
 
@@ -19,7 +20,7 @@ const CollisionRules& CollisionRules::getInstance() {
 }
 
 CollisionRules::CollisionRules() {
-    std::ifstream collisionFile("configs/collision_rules.json");
+    std::ifstream collisionFile(constants::COLLISION_RULES_PATH);
     if (collisionFile.is_open()) {
         std::string jsonString((std::istreambuf_iterator<char>(collisionFile)),
             std::istreambuf_iterator<char>());
@@ -39,11 +40,11 @@ void CollisionRules::loadFromJson(const std::string& jsonString) {
     _pushAllowRules.clear();
     _pushDenyRules.clear();
 
-    if (json.contains("solid")) {
-        const auto& solid = json["solid"];
+    if (json.contains(constants::COLLISION_SOLID_KEY)) {
+        const auto& solid = json[constants::COLLISION_SOLID_KEY];
 
-        if (solid.contains("allow")) {
-            for (const auto& ruleJson : solid["allow"]) {
+        if (solid.contains(constants::COLLISION_ALLOW_KEY)) {
+            for (const auto& ruleJson : solid[constants::COLLISION_ALLOW_KEY]) {
                 if (ruleJson.size() == 2) {
                     Rule rule;
                     rule.groupA = ruleJson[0].get<std::vector<std::string>>();
@@ -53,8 +54,8 @@ void CollisionRules::loadFromJson(const std::string& jsonString) {
             }
         }
 
-        if (solid.contains("deny")) {
-            for (const auto& ruleJson : solid["deny"]) {
+        if (solid.contains(constants::COLLISION_DENY_KEY)) {
+            for (const auto& ruleJson : solid[constants::COLLISION_DENY_KEY]) {
                 if (ruleJson.size() == 2) {
                     Rule rule;
                     rule.groupA = ruleJson[0].get<std::vector<std::string>>();
@@ -65,11 +66,11 @@ void CollisionRules::loadFromJson(const std::string& jsonString) {
         }
     }
 
-    if (json.contains("trigger")) {
-        const auto& trigger = json["trigger"];
+    if (json.contains(constants::COLLISION_TRIGGER_KEY)) {
+        const auto& trigger = json[constants::COLLISION_TRIGGER_KEY];
 
-        if (trigger.contains("allow")) {
-            for (const auto& ruleJson : trigger["allow"]) {
+        if (trigger.contains(constants::COLLISION_ALLOW_KEY)) {
+            for (const auto& ruleJson : trigger[constants::COLLISION_ALLOW_KEY]) {
                 if (ruleJson.size() == 2) {
                     Rule rule;
                     rule.groupA = ruleJson[0].get<std::vector<std::string>>();
@@ -80,11 +81,11 @@ void CollisionRules::loadFromJson(const std::string& jsonString) {
         }
     }
 
-    if (json.contains("push")) {
-        const auto& push = json["push"];
+    if (json.contains(constants::COLLISION_PUSH_KEY)) {
+        const auto& push = json[constants::COLLISION_PUSH_KEY];
 
-        if (push.contains("allow")) {
-            for (const auto& ruleJson : push["allow"]) {
+        if (push.contains(constants::COLLISION_ALLOW_KEY)) {
+            for (const auto& ruleJson : push[constants::COLLISION_ALLOW_KEY]) {
                 if (ruleJson.size() == 2) {
                     Rule rule;
                     rule.groupA = ruleJson[0].get<std::vector<std::string>>();
@@ -94,8 +95,8 @@ void CollisionRules::loadFromJson(const std::string& jsonString) {
             }
         }
 
-        if (push.contains("deny")) {
-            for (const auto& ruleJson : push["deny"]) {
+        if (push.contains(constants::COLLISION_DENY_KEY)) {
+            for (const auto& ruleJson : push[constants::COLLISION_DENY_KEY]) {
                 if (ruleJson.size() == 2) {
                     Rule rule;
                     rule.groupA = ruleJson[0].get<std::vector<std::string>>();

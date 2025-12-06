@@ -39,6 +39,14 @@ namespace constants {
     constexpr int MAX_RETRY_CONNECTIONS = 3;
     /* Paths */
     const std::string CONFIG_PATH = "configs/entities/";
+    const std::string COLLISION_RULES_PATH = "configs/rules/collision_rules.json";
+
+    /* Collision Rules JSON Keys */
+    const std::string COLLISION_SOLID_KEY = "solid";
+    const std::string COLLISION_TRIGGER_KEY = "trigger";
+    const std::string COLLISION_PUSH_KEY = "push";
+    const std::string COLLISION_ALLOW_KEY = "allow";
+    const std::string COLLISION_DENY_KEY = "deny";
 
     /* Parsing constants */
     const std::string SERVER_VALUE = "server";
