@@ -13,6 +13,7 @@
 #include "../../../../common/components/temporary/InputIntentComponent.hpp"
 #include "../../../../common/components/permanent/ColliderComponent.hpp"
 #include "../../../../common/components/tags/ObstacleTag.hpp"
+#include "../../../../common/CollisionRules/CollisionRules.hpp"
 
 using namespace ecs;
 
@@ -33,6 +34,14 @@ protected:
         registry->registerComponent<SpeedComponent>();
         registry->registerComponent<ColliderComponent>();
         registry->registerComponent<ObstacleTag>();
+
+        // Initialize collision rules with rules allowing solid collisions for tests
+        CollisionRulesData testData;
+        CollisionRule allowAllSolid;
+        allowAllSolid.groupA = {};
+        allowAllSolid.groupB = {};
+        testData.solidAllowRules.push_back(allowAllSolid);
+        CollisionRules::initWithData(testData);
     }
 
     std::shared_ptr<Registry> registry;
