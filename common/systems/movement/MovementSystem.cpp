@@ -20,7 +20,6 @@
 #include "../../components/tags/ObstacleTag.hpp"
 #include "../../components/tags/ProjectileTag.hpp"
 #include "../../components/tags/ProjectilePassThroughTag.hpp"
-#include "../../components/tags/GameZoneColliderTag.hpp"
 #include "../../components/tags/PlayerTag.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../systems/interactions/TagRegistry.hpp"
@@ -119,16 +118,6 @@ bool MovementSystem::checkCollision(
                 math::Vector2f otherScale = otherTransform->getScale();
                 math::FRect otherHitbox =
                     otherCollider->getHitbox(otherTransform->getPosition(), otherScale);
-
-                bool isGameZoneCollision = registry->hasComponent<
-                    GameZoneColliderTag>(otherEntityId) ||
-                    registry->hasComponent<GameZoneColliderTag>(entityId);
-                bool isPlayerInvolved = registry->hasComponent<PlayerTag>(entityId) ||
-                                       registry->hasComponent<PlayerTag>(otherEntityId);
-
-                if (isGameZoneCollision && !isPlayerInvolved) {
-                    continue;
-                }
 
                 if (movingHitbox.intersects(otherHitbox)) {
                     return false;
@@ -240,12 +229,6 @@ void MovementSystem::handlePushCollision(
 
         auto otherTransform = registry->getComponent<TransformComponent>(otherEntityId);
         auto otherColliders = registry->getComponents<ColliderComponent>(otherEntityId);
-
-        if (registry->hasComponent<GameZoneColliderTag>(entityId)) {
-            if (!registry->hasComponent<PlayerTag>(otherEntityId)) {
-                continue;
-            }
-        }
 
         for (auto& pushCollider : pushColliders) {
             if (pushCollider->getType() != CollisionType::Push) continue;
