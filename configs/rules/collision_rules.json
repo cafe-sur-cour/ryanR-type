@@ -36,7 +36,8 @@
 
             [["ProjectileTag"], ["ObstacleTag"]],
             [["ObstacleTag"], ["ProjectileTag"]]
-        ]
+        ],
+        "deny": []
     },
     "push": {
         "allow": [
