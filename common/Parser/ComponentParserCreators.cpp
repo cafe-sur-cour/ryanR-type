@@ -99,11 +99,7 @@ void Parser::instanciateComponentDefinitions() {
             {constants::OFFSET_FIELD, FieldType::VECTOR2F,
                 true, std::make_shared<FieldValue>(math::Vector2f(0.0f, 0.0f))},
             {constants::SIZE_FIELD, FieldType::VECTOR2F},
-            {constants::TYPE_FIELD, FieldType::STRING},
-            {constants::INCLUDE_FIELD, FieldType::JSON,
-                true, std::make_shared<FieldValue>(nlohmann::json::array())},
-            {constants::EXCLUDE_FIELD, FieldType::JSON,
-                true, std::make_shared<FieldValue>(nlohmann::json::array())}
+            {constants::TYPE_FIELD, FieldType::STRING}
         }}},
         {constants::SHOOTINGSTATSCOMPONENT,
             {std::type_index(typeid(ecs::ShootingStatsComponent)), {
@@ -322,30 +318,6 @@ void Parser::instanciateComponentCreators() {
 
         std::vector<std::vector<std::string>> includeTags;
         std::vector<std::vector<std::string>> excludeTags;
-
-        if (fields.count(constants::INCLUDE_FIELD)) {
-            auto includeJson =
-                std::get<nlohmann::json>(*fields.at(constants::INCLUDE_FIELD));
-            for (const auto& group : includeJson) {
-                std::vector<std::string> groupTags;
-                for (const auto& tag : group) {
-                    groupTags.push_back(tag.get<std::string>());
-                }
-                includeTags.push_back(groupTags);
-            }
-        }
-
-        if (fields.count(constants::EXCLUDE_FIELD)) {
-            auto excludeJson =
-                std::get<nlohmann::json>(*fields.at(constants::EXCLUDE_FIELD));
-            for (const auto& group : excludeJson) {
-                std::vector<std::string> groupTags;
-                for (const auto& tag : group) {
-                    groupTags.push_back(tag.get<std::string>());
-                }
-                excludeTags.push_back(groupTags);
-            }
-        }
 
         return std::make_shared<ecs::ColliderComponent>(
             offset, size, type);
