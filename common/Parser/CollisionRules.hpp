@@ -31,6 +31,9 @@ class CollisionRules {
 
         void loadFromJson(const std::string& jsonString);
 
+        const std::vector<Rule>& getDenyRules(CollisionType type) const;
+        const std::vector<Rule>& getAllowRules(CollisionType type) const;
+
         std::vector<Rule> _solidAllowRules;
         std::vector<Rule> _solidDenyRules;
         std::vector<Rule> _triggerAllowRules;

@@ -108,40 +108,52 @@ void CollisionRules::loadFromJson(const std::string& jsonString) {
     }
 }
 
+const std::vector<CollisionRules::Rule>& CollisionRules::getDenyRules(
+    CollisionType type
+) const {
+    switch (type) {
+        case CollisionType::Solid:
+            return _solidDenyRules;
+        case CollisionType::Push:
+            return _pushDenyRules;
+        default:
+            static const std::vector<Rule> emptyRules;
+            return emptyRules;
+    }
+}
+
+const std::vector<CollisionRules::Rule>& CollisionRules::getAllowRules(
+    CollisionType type
+) const {
+    switch (type) {
+        case CollisionType::Solid:
+            return _solidAllowRules;
+        case CollisionType::Trigger:
+            return _triggerAllowRules;
+        case CollisionType::Push:
+            return _pushAllowRules;
+        default:
+            static const std::vector<Rule> emptyRules;
+            return emptyRules;
+    }
+}
+
 bool CollisionRules::canCollide(
     CollisionType type,
     const std::vector<std::string>& tagsA,
     const std::vector<std::string>& tagsB
 ) const {
-    const std::vector<Rule>* denyRules = nullptr;
-    if (type == CollisionType::Solid) {
-        denyRules = &_solidDenyRules;
-    } else if (type == CollisionType::Push) {
-        denyRules = &_pushDenyRules;
-    }
-
-    if (denyRules) {
-        for (const auto& rule : *denyRules) {
-            if (ruleMatches(rule, tagsA, tagsB) || ruleMatches(rule, tagsB, tagsA)) {
-                return false;
-            }
+    const auto& denyRules = getDenyRules(type);
+    for (const auto& rule : denyRules) {
+        if (ruleMatches(rule, tagsA, tagsB) || ruleMatches(rule, tagsB, tagsA)) {
+            return false;
         }
     }
 
-    const std::vector<Rule>* allowRules = nullptr;
-    if (type == CollisionType::Solid) {
-        allowRules = &_solidAllowRules;
-    } else if (type == CollisionType::Trigger) {
-        allowRules = &_triggerAllowRules;
-    } else if (type == CollisionType::Push) {
-        allowRules = &_pushAllowRules;
-    }
-
-    if (allowRules) {
-        for (const auto& rule : *allowRules) {
-            if (ruleMatches(rule, tagsA, tagsB) || ruleMatches(rule, tagsB, tagsA)) {
-                return true;
-            }
+    const auto& allowRules = getAllowRules(type);
+    for (const auto& rule : allowRules) {
+        if (ruleMatches(rule, tagsA, tagsB) || ruleMatches(rule, tagsB, tagsA)) {
+            return true;
         }
     }
 
