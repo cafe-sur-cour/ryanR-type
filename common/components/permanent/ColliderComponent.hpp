@@ -11,8 +11,6 @@
 #include "../base/AComponent.hpp"
 #include "../../types/FRect.hpp"
 #include "../../types/Vector2f.hpp"
-#include <vector>
-#include <string>
 
 namespace ecs {
 
