@@ -21,7 +21,7 @@
 #include "../../components/tags/ProjectileTag.hpp"
 #include "../../components/tags/PlayerTag.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
-#include "../../Parser/CollisionRules.hpp"
+#include "../../CollisionRules/CollisionRules.hpp"
 
 namespace ecs {
 

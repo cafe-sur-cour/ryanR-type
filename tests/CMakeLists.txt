@@ -5,19 +5,19 @@ target_link_libraries(ServerConfigTests r-type_server_lib GTest::gtest GTest::gt
 add_test(NAME ServerConfigTests COMMAND ServerConfigTests)
 
 add_executable(ECSTests common/ECSTests.cpp)
-target_link_libraries(ECSTests ECS GTest::gtest GTest::gtest_main)
+target_link_libraries(ECSTests ECS PARSER GTest::gtest GTest::gtest_main)
 add_test(NAME ECSTests COMMAND ECSTests)
 
 add_executable(Vector2fTests common/types/Vector2fTests.cpp)
-target_link_libraries(Vector2fTests ECS GTest::gtest GTest::gtest_main)
+target_link_libraries(Vector2fTests ECS PARSER GTest::gtest GTest::gtest_main)
 add_test(NAME Vector2fTests COMMAND Vector2fTests)
 
 add_executable(FRectTests common/types/FRectTests.cpp)
-target_link_libraries(FRectTests ECS GTest::gtest GTest::gtest_main)
+target_link_libraries(FRectTests ECS PARSER GTest::gtest GTest::gtest_main)
 add_test(NAME FRectTests COMMAND FRectTests)
 
 add_executable(ChronoTests common/types/ChronoTests.cpp)
-target_link_libraries(ChronoTests ECS GTest::gtest GTest::gtest_main)
+target_link_libraries(ChronoTests ECS PARSER GTest::gtest GTest::gtest_main)
 add_test(NAME ChronoTests COMMAND ChronoTests)
 
 add_executable(VelocityComponentTests common/ECS/component/VelocityComponentTests.cpp)

@@ -15,7 +15,7 @@
 #include "../../components/permanent/SpeedComponent.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
-#include "../../Parser/CollisionRules.hpp"
+#include "../../CollisionRules/CollisionRules.hpp"
 #include "../../systems/interactions/TagRegistry.hpp"
 
 namespace ecs {

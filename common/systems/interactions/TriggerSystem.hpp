@@ -13,7 +13,7 @@
 #include "../../components/temporary/TriggerIntentComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
-#include "../../Parser/CollisionRules.hpp"
+#include "../../CollisionRules/CollisionRules.hpp"
 #include "TagRegistry.hpp"
 
 namespace ecs {

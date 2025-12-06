@@ -1,0 +1,18 @@
+set(COLLISION_RULES_LIB COLLISION_RULES)
+
+set(COLLISION_RULES_SOURCES
+    CollisionRules.cpp
+)
+
+set(COLLISION_RULES_HEADERS
+    CollisionRules.hpp
+    CollisionRulesData.hpp
+)
+
+add_library(${COLLISION_RULES_LIB} STATIC ${COLLISION_RULES_SOURCES} ${COLLISION_RULES_HEADERS})
+
+target_include_directories(${COLLISION_RULES_LIB} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
+
+# No external dependencies here - data is provided via initWithData
