@@ -12,6 +12,7 @@ add_subdirectory(Prefab)
 add_subdirectory(resourceManager)
 add_subdirectory(InputMapping)
 add_subdirectory(Parser)
+add_subdirectory(CollisionRules)
 
 set(DEBUG_LIB_NAME DEBUG)
 

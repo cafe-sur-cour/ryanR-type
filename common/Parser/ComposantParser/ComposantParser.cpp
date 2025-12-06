@@ -49,10 +49,15 @@ std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::pa
 
     for (const auto& field : fieldsDef) {
         if (componentData.find(field.name) == componentData.end()) {
-            throw err::ParserError("Missing field: " + field.name +
-                " in component " + componentName, err::ParserError::MISSING_FIELD);
+            if (!field.optional) {
+                throw err::ParserError("Missing field: " + field.name +
+                    " in component " + componentName, err::ParserError::MISSING_FIELD);
+            } else {
+                fields[field.name] = field.defaultValue;
+            }
+        } else {
+            fields[field.name] = parseFieldValue(componentData[field.name], field.type);
         }
-        fields[field.name] = parseFieldValue(componentData[field.name], field.type);
     }
 
     if (_shouldParseCallback && !_shouldParseCallback(fields)) {

@@ -8,6 +8,7 @@
 #include "TagRegistry.hpp"
 #include <memory>
 #include <string>
+#include <vector>
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../components/tags/MobTag.hpp"
 #include "../../components/tags/ProjectileTag.hpp"
@@ -40,6 +41,19 @@ bool TagRegistry::hasTag(
         return it->second(registry, entity);
     }
     return false;
+}
+
+std::vector<std::string> TagRegistry::getTags(
+    std::shared_ptr<ecs::Registry> registry,
+    ecs::Entity entity
+) const {
+    std::vector<std::string> tags;
+    for (const auto& pair : _tagCheckers) {
+        if (pair.second(registry, entity)) {
+            tags.push_back(pair.first);
+        }
+    }
+    return tags;
 }
 
 void TagRegistry::initializeTags() {

@@ -9,6 +9,8 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <string>
+#include <vector>
 #include "MovementSystem.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
@@ -17,10 +19,8 @@
 #include "../../constants.hpp"
 #include "../../components/tags/ObstacleTag.hpp"
 #include "../../components/tags/ProjectileTag.hpp"
-#include "../../components/tags/ProjectilePassThroughTag.hpp"
-#include "../../components/tags/GameZoneColliderTag.hpp"
-#include "../../components/tags/PlayerTag.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
+#include "../../CollisionRules/CollisionRules.hpp"
 
 namespace ecs {
 
@@ -76,8 +76,6 @@ bool MovementSystem::checkCollision(
         return true;
     }
 
-    bool isProjectile = registry->hasComponent<ProjectileTag>(entityId);
-
     auto movingTransform = registry->getComponent<TransformComponent>(entityId);
     math::Vector2f movingScale = movingTransform->getScale();
 
@@ -91,14 +89,6 @@ bool MovementSystem::checkCollision(
         auto otherColliders = registry->getComponents<
             ColliderComponent>(otherEntityId);
 
-        bool otherIsProjectile = registry->hasComponent<ProjectileTag>(otherEntityId);
-
-        if ((isProjectile && registry->hasComponent<
-                ProjectilePassThroughTag>(otherEntityId)) ||
-            (otherIsProjectile && registry->hasComponent<
-                ProjectilePassThroughTag>(entityId)))
-            continue;
-
         for (auto& movingCollider : movingColliders) {
             if (movingCollider->getType() != CollisionType::Solid) continue;
 
@@ -108,19 +98,14 @@ bool MovementSystem::checkCollision(
                 if (otherCollider->getType() != CollisionType::Solid &&
                     otherCollider->getType() != CollisionType::Push) continue;
 
+                if (!shouldCollide(
+                    registry, entityId, *movingCollider, otherEntityId)) {
+                    continue;
+                }
+
                 math::Vector2f otherScale = otherTransform->getScale();
                 math::FRect otherHitbox =
                     otherCollider->getHitbox(otherTransform->getPosition(), otherScale);
-
-                bool isGameZoneCollision = registry->hasComponent<
-                    GameZoneColliderTag>(otherEntityId) ||
-                    registry->hasComponent<GameZoneColliderTag>(entityId);
-                bool isPlayerInvolved = registry->hasComponent<PlayerTag>(entityId) ||
-                                       registry->hasComponent<PlayerTag>(otherEntityId);
-
-                if (isGameZoneCollision && !isPlayerInvolved) {
-                    continue;
-                }
 
                 if (movingHitbox.intersects(otherHitbox)) {
                     return false;
@@ -233,12 +218,6 @@ void MovementSystem::handlePushCollision(
         auto otherTransform = registry->getComponent<TransformComponent>(otherEntityId);
         auto otherColliders = registry->getComponents<ColliderComponent>(otherEntityId);
 
-        if (registry->hasComponent<GameZoneColliderTag>(entityId)) {
-            if (!registry->hasComponent<PlayerTag>(otherEntityId)) {
-                continue;
-            }
-        }
-
         for (auto& pushCollider : pushColliders) {
             if (pushCollider->getType() != CollisionType::Push) continue;
 
@@ -246,6 +225,11 @@ void MovementSystem::handlePushCollision(
 
             for (auto& otherCollider : otherColliders) {
                 if (otherCollider->getType() == CollisionType::None) continue;
+
+                if (!shouldCollide(
+                    registry, entityId, *pushCollider, otherEntityId)) {
+                    continue;
+                }
 
                 math::Vector2f otherScale = otherTransform->getScale();
                 math::FRect otherHitbox =
@@ -260,15 +244,27 @@ void MovementSystem::handlePushCollision(
                     if (checkCollision(registry, otherEntityId, newOtherPos)) {
                         otherTransform->setPosition(newOtherPos);
                     } else {
-                        if (registry->hasComponent<PlayerTag>(otherEntityId)) {
-                            registry->addComponent<DeathIntentComponent>(otherEntityId,
-                                std::make_shared<DeathIntentComponent>());
-                        }
+                        registry->addComponent<DeathIntentComponent>(otherEntityId,
+                            std::make_shared<DeathIntentComponent>());
                     }
                 }
             }
         }
     }
+}
+
+bool MovementSystem::shouldCollide(
+    std::shared_ptr<Registry> registry,
+    size_t entityA,
+    const ColliderComponent& colliderA,
+    size_t entityB
+) {
+    const TagRegistry& tagRegistry = TagRegistry::getInstance();
+    const CollisionRules& collisionRules = CollisionRules::getInstance();
+    std::vector<std::string> tagsA = tagRegistry.getTags(registry, entityA);
+    std::vector<std::string> tagsB = tagRegistry.getTags(registry, entityB);
+
+    return collisionRules.canCollide(colliderA.getType(), tagsA, tagsB);
 }
 
 }  // namespace ecs

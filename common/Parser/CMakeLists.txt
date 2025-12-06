@@ -7,12 +7,14 @@ add_subdirectory(Animation)
 
 set(PARSER_SOURCES
     Parser.cpp
+    CollisionRulesParser.cpp
 )
 
 set(PARSER_HEADERS
     Parser.hpp
     ParserParam.hpp
     ComponentParserCreators.cpp
+    CollisionRulesParser.hpp
 )
 
 add_library(${PARSER_LIB} STATIC ${PARSER_SOURCES} ${PARSER_HEADERS})
@@ -28,5 +30,6 @@ target_link_libraries(${PARSER_LIB} PUBLIC
     MAP_PARSER
     ANIMATION
     ERROR
+    COLLISION_RULES
     nlohmann_json::nlohmann_json
 )

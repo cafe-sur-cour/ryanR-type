@@ -45,8 +45,10 @@ void Parser::setPrefabManager(std::shared_ptr<EntityPrefabManager> prefabManager
 }
 
 void Parser::parseAllEntities(std::string directoryPath) {
-    for (const auto & entry : std::filesystem::directory_iterator(directoryPath)) {
-        parseEntity(entry.path().string());
+    for (const auto & entry : std::filesystem::recursive_directory_iterator(directoryPath)) {
+        if (entry.is_regular_file() && entry.path().extension() == ".json") {
+            parseEntity(entry.path().string());
+        }
     }
 }
 

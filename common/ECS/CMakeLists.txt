@@ -9,3 +9,8 @@ target_include_directories(${ECS_LIB_NAME}
 
 add_subdirectory(entity)
 add_subdirectory(view)
+
+target_include_directories(${ECS_LIB_NAME}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../
+)
