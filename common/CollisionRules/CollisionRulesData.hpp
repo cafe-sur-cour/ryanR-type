@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 namespace ecs {
 
@@ -12,12 +13,12 @@ struct CollisionRule {
 };
 
 struct CollisionRulesData {
-    std::vector<CollisionRule> solidAllowRules;
-    std::vector<CollisionRule> solidDenyRules;
-    std::vector<CollisionRule> triggerAllowRules;
-    std::vector<CollisionRule> triggerDenyRules;
-    std::vector<CollisionRule> pushAllowRules;
-    std::vector<CollisionRule> pushDenyRules;
+    std::shared_ptr<std::vector<CollisionRule>> solidAllowRules;
+    std::shared_ptr<std::vector<CollisionRule>> solidDenyRules;
+    std::shared_ptr<std::vector<CollisionRule>> triggerAllowRules;
+    std::shared_ptr<std::vector<CollisionRule>> triggerDenyRules;
+    std::shared_ptr<std::vector<CollisionRule>> pushAllowRules;
+    std::shared_ptr<std::vector<CollisionRule>> pushDenyRules;
 };
 
 }  // namespace ecs
