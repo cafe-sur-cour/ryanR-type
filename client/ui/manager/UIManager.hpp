@@ -46,6 +46,10 @@ class UIManager {
 
         std::shared_ptr<IFocusable> getFocusedElement() const;
 
+        void setGlobalScale(UIScale scale);
+        void cycleGlobalScale();
+        UIScale getGlobalScale() const;
+
     private:
         std::vector<std::shared_ptr<UIElement>> _elements;
         std::shared_ptr<UINavigationManager> _navigationManager;
@@ -53,6 +57,7 @@ class UIManager {
         bool _mouseMovementDetected;
 
         float _navigationCooldown = 0.0f;
+        UIScale _globalScale = UIScale::Normal;
 
         bool hasMouseMoved(const math::Vector2f& mousePos);
 

@@ -44,7 +44,7 @@ math::Vector2f UIElement::getAbsolutePosition() const {
 }
 
 math::Vector2f UIElement::getAbsoluteSize() const {
-    return _size;
+    return _size * getScaleFactor();
 }
 
 void UIElement::addChild(std::shared_ptr<UIElement> child) {
@@ -143,6 +143,20 @@ UIState UIElement::getState() const {
     return _state;
 }
 
+void UIElement::setScale(UIScale scale) {
+    _scale = scale;
+
+    for (auto& child : _children) {
+        if (child) {
+            child->setScale(scale);
+        }
+    }
+}
+
+UIScale UIElement::getScale() const {
+    return _scale;
+}
+
 void UIElement::setParent(std::weak_ptr<UIElement> parent) {
     _parent = parent;
 }
@@ -173,6 +187,19 @@ std::pair<int, int> UIElement::getWindowSize() const {
         return {constants::WINDOW_WIDTH, constants::WINDOW_HEIGHT};
     }
     return resourceManager->get<gfx::IWindow>()->getWindowSize();
+}
+
+float UIElement::getScaleFactor() const {
+    switch (_scale) {
+        case UIScale::Small:
+            return constants::UI_SCALE_SMALL;
+        case UIScale::Normal:
+            return constants::UI_SCALE_NORMAL;
+        case UIScale::Large:
+            return constants::UI_SCALE_LARGE;
+        default:
+            return constants::UI_SCALE_NORMAL;
+    }
 }
 
 }  // namespace ui
