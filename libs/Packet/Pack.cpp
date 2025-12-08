@@ -36,11 +36,6 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
     }
 
     if (length == 0) {
-        debug::Debug::printDebug(true,
-            "[PACKET] Error: Unknown packet type or NO_OP_PACKET "
-            + std::to_string(static_cast<int>(type))
-            + " for packing",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return {};
     }
 
