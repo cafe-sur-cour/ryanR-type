@@ -182,7 +182,6 @@ void rserv::Server::processIncomingPackets() {
     }
 
     this->_packet->unpack(received.second);
-
     if (this->_packet->getType() == constants::PACKET_CONNECTION) {
         this->processConnections(received.first);
     } else if (this->_packet->getType() == constants::PACKET_EVENT) {
@@ -246,6 +245,18 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
     return false;
 }
 
+bool rserv::Server::processEndOfGame(uint8_t idClient) {
+    std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber,
+        constants::PACKET_END_GAME, std::vector<uint64_t>{static_cast<uint64_t>(idClient)});
+    if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER NETWORK] Failed to broadcast end of game packet",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    return true;
+}
+
 bool rserv::Server::processEvents(uint8_t idClient) {
     constants::EventType eventType =
         static_cast<constants::EventType>(this->_packet->getPayload().at(0));
@@ -262,19 +273,21 @@ bool rserv::Server::processEvents(uint8_t idClient) {
     return true;
 }
 
-void rserv::Server::broadcastPacket() {
-    std::vector<uint8_t> packedData;
-    if (_network) {
-        _network->broadcast(packedData);
-    }
-}
-
-void rserv::Server::sendToClient(uint8_t idClient) {
-    (void)idClient;
-}
 
 std::vector<uint8_t> rserv::Server::getConnectedClients() const {
-    return {};
+    std::vector<uint8_t> clientIds;
+    for (const auto &client : this->_clients) {
+        clientIds.push_back(std::get<0>(client));
+    }
+    return clientIds;
+}
+
+std::vector<asio::ip::udp::endpoint> rserv::Server::getConnectedClientEndpoints() const {
+    std::vector<asio::ip::udp::endpoint> endpoints;
+    for (const auto &client : this->_clients) {
+        endpoints.push_back(std::get<1>(client));
+    }
+    return endpoints;
 }
 
 size_t rserv::Server::getClientCount() const {
