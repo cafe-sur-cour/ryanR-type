@@ -18,13 +18,11 @@ namespace rserv {
             ~ServerConfig();
 
             int getState() const;
-            int getFd() const;
 
             void setPort(uint16_t port);
             uint16_t getPort() const;
 
             void setState(int state);
-            void setFd(int fd);
 
             void setNbClients(int nbClients);
             int getNbClients() const;
