@@ -18,12 +18,6 @@
 
             [["PlayerTag"], ["GameZoneColliderTag"]],
             [["GameZoneColliderTag"], ["PlayerTag"]]
-        ],
-        "deny": [
-            [["ProjectileTag"], ["PlayerTag"]],
-            [["PlayerTag"], ["ProjectileTag"]],
-
-            [["ProjectileTag"], ["ProjectileTag"]]
         ]
     },
     "trigger": {
@@ -36,13 +30,11 @@
 
             [["ProjectileTag"], ["ObstacleTag"]],
             [["ObstacleTag"], ["ProjectileTag"]]
-        ],
-        "deny": []
+        ]
     },
     "push": {
         "allow": [
             [["GameZoneColliderTag"], ["PlayerTag"]]
-        ],
-        "deny": []
+        ]
     }
 }

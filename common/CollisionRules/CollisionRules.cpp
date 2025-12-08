@@ -20,30 +20,11 @@ const CollisionRules& CollisionRules::getInstance() {
 void CollisionRules::initWithData(const CollisionRulesData& data) {
     CollisionRules& instance = const_cast<CollisionRules&>(getInstance());
     instance._solidAllowRules = data.solidAllowRules;
-    instance._solidDenyRules = data.solidDenyRules;
     instance._triggerAllowRules = data.triggerAllowRules;
-    instance._triggerDenyRules = data.triggerDenyRules;
     instance._pushAllowRules = data.pushAllowRules;
-    instance._pushDenyRules = data.pushDenyRules;
 }
 
 CollisionRules::CollisionRules() {
-}
-
-const std::vector<CollisionRule>& CollisionRules::getDenyRules(
-    CollisionType type
-) const {
-    static const std::vector<CollisionRule> emptyRules;
-    switch (type) {
-        case CollisionType::Solid:
-            return _solidDenyRules ? *_solidDenyRules : emptyRules;
-        case CollisionType::Trigger:
-            return _triggerDenyRules ? *_triggerDenyRules : emptyRules;
-        case CollisionType::Push:
-            return _pushDenyRules ? *_pushDenyRules : emptyRules;
-        default:
-            return emptyRules;
-    }
 }
 
 const std::vector<CollisionRule>& CollisionRules::getAllowRules(
@@ -67,13 +48,6 @@ bool CollisionRules::canCollide(
     const std::vector<std::string>& tagsA,
     const std::vector<std::string>& tagsB
 ) const {
-    const auto& denyRules = getDenyRules(type);
-    for (const auto& rule : denyRules) {
-        if (ruleMatches(rule, tagsA, tagsB) || ruleMatches(rule, tagsB, tagsA)) {
-            return false;
-        }
-    }
-
     const auto& allowRules = getAllowRules(type);
     for (const auto& rule : allowRules) {
         if (ruleMatches(rule, tagsA, tagsB) || ruleMatches(rule, tagsB, tagsA)) {

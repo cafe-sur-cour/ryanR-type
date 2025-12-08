@@ -45,7 +45,6 @@ namespace constants {
     const std::string COLLISION_TRIGGER_KEY = "trigger";
     const std::string COLLISION_PUSH_KEY = "push";
     const std::string COLLISION_ALLOW_KEY = "allow";
-    const std::string COLLISION_DENY_KEY = "deny";
 
     /* Parsing constants */
     const std::string SERVER_VALUE = "server";

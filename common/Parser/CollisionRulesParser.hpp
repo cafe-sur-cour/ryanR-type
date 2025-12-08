@@ -17,8 +17,7 @@ class CollisionRulesParser {
     private:
         static void parseRulesForType(
             const nlohmann::json& typeJson,
-            std::shared_ptr<std::vector<CollisionRule>> allowRules,
-            std::shared_ptr<std::vector<CollisionRule>> denyRules
+            std::shared_ptr<std::vector<CollisionRule>> allowRules
         );
 };
 
