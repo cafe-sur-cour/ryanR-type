@@ -59,6 +59,7 @@ namespace constants {
     const std::string DAMAGECOMPONENT = "DamageComponent";
     const std::string HEALTHCOMPONENT = "HealthComponent";
     const std::string INTERACTIONCONFIGCOMPONENT = "InteractionConfigComponent";
+    const std::string AIMOVEMENTPATTERNCOMPONENT = "AIMovementPatternComponent";
     const std::string SCORE_FIELD = "score";
     const std::string DAMAGE_FIELD = "damage";
     const std::string HEALTH_FIELD = "health";
@@ -80,6 +81,14 @@ namespace constants {
     const std::string SHOTCOUNT_FIELD = "shotCount";
     const std::string ANGLEOFFSET_FIELD = "angleOffset";
     const std::string SPREADANGLE_FIELD = "spreadAngle";
+    const std::string DEFAULTBEHAVIOR_FIELD = "defaultBehavior";
+    const std::string ZIGZAGAMPLITUDE_FIELD = "zigzagAmplitude";
+    const std::string ZIGZAGFREQUENCY_FIELD = "zigzagFrequency";
+    const std::string DETECTIONRANGE_FIELD = "detectionRange";
+    const std::string VERTICALDEADZONE_FIELD = "verticalDeadzone";
+    const std::string STRAIGHT_LINE_VALUE = "StraightLine";
+    const std::string ZIGZAG_VALUE = "Zigzag";
+    const std::string VERTICAL_MIRROR_VALUE = "VerticalMirror";
     const std::string WIDTH_FIELD = "width";
     const std::string HEIGHT_FIELD = "height";
     const std::string COLOR_FIELD = "color";
@@ -180,6 +189,8 @@ namespace constants {
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
     const std::string OBSTACLETAG = "ObstacleTag";
     const std::string SCORETAG = "ScoreTag";
+    const std::string AIMOVERTAG = "AIMoverTag";
+    const std::string AISHOOTERTAG = "AIShooterTag";
 
     /* Action constants */
     const std::string DEALDEATH_ACTION = "DealDeath";

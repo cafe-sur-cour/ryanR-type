@@ -24,6 +24,9 @@
 #include "../components/tags/ProjectilePassThroughTag.hpp"
 #include "../components/permanent/ShootingStatsComponent.hpp"
 #include "../components/permanent/ProjectilePrefabComponent.hpp"
+#include "../components/permanent/AIMovementPatternComponent.hpp"
+#include "../components/tags/AIMoverTag.hpp"
+#include "../components/tags/AIShooterTag.hpp"
 #include "../components/permanent/VelocityComponent.hpp"
 #include "../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../client/components/rendering/TextComponent.hpp"
@@ -89,6 +92,12 @@ void Parser::instanciateComponentDefinitions() {
         }}},
         {constants::PROJECTILEPASSTHROUGHTAG,
             {std::type_index(typeid(ecs::ProjectilePassThroughTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::AIMOVERTAG, {std::type_index(typeid(ecs::AIMoverTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::AISHOOTERTAG, {std::type_index(typeid(ecs::AIShooterTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
         {constants::COLLIDERCOMPONENT, {std::type_index(typeid(ecs::ColliderComponent)), {
@@ -171,6 +180,15 @@ void Parser::instanciateComponentDefinitions() {
             std::type_index(typeid(ecs::InteractionConfigComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::MAPPINGS_FIELD, FieldType::JSON}
+        }}},
+        {constants::AIMOVEMENTPATTERNCOMPONENT, {
+            std::type_index(typeid(ecs::AIMovementPatternComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::DEFAULTBEHAVIOR_FIELD, FieldType::STRING},
+            {constants::ZIGZAGAMPLITUDE_FIELD, FieldType::FLOAT},
+            {constants::ZIGZAGFREQUENCY_FIELD, FieldType::FLOAT},
+            {constants::DETECTIONRANGE_FIELD, FieldType::FLOAT},
+            {constants::VERTICALDEADZONE_FIELD, FieldType::FLOAT}
         }}},
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
@@ -500,6 +518,40 @@ void Parser::instanciateComponentCreators() {
             mappings.push_back(mapping);
         }
         return std::make_shared<ecs::InteractionConfigComponent>(mappings);
+    });
+    registerComponent<ecs::AIMoverTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::AIMoverTag>();
+    });
+    registerComponent<ecs::AIShooterTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::AIShooterTag>();
+    });
+    registerComponent<ecs::AIMovementPatternComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto behaviorStr = std::get<std::string>(*fields.at(constants::DEFAULTBEHAVIOR_FIELD));
+        auto zigzagAmplitude = std::get<float>(*fields.at(constants::ZIGZAGAMPLITUDE_FIELD));
+        auto zigzagFrequency = std::get<float>(*fields.at(constants::ZIGZAGFREQUENCY_FIELD));
+        auto detectionRange = std::get<float>(*fields.at(constants::DETECTIONRANGE_FIELD));
+        auto verticalDeadzone = std::get<float>(*fields.at(constants::VERTICALDEADZONE_FIELD));
+
+        ecs::AIMovementPattern pattern = ecs::AIMovementPattern::STRAIGHT_LINE;
+        if (behaviorStr == constants::STRAIGHT_LINE_VALUE) {
+            pattern = ecs::AIMovementPattern::STRAIGHT_LINE;
+        } else if (behaviorStr == constants::ZIGZAG_VALUE) {
+            pattern = ecs::AIMovementPattern::ZIGZAG;
+        } else if (behaviorStr == constants::VERTICAL_MIRROR_VALUE) {
+            pattern = ecs::AIMovementPattern::VERTICAL_MIRROR;
+        }
+
+        auto component = std::make_shared<ecs::AIMovementPatternComponent>();
+        component->setPattern(pattern);
+        component->setZigzagAmplitude(zigzagAmplitude);
+        component->setZigzagFrequency(zigzagFrequency);
+        component->setDetectionRange(detectionRange);
+        component->setVerticalDeadzone(verticalDeadzone);
+        component->setTimer(0.0f);
+        return component;
     });
 }
 
