@@ -17,6 +17,7 @@
 #include "../../components/permanent/ShootingStatsComponent.hpp"
 #include "../../components/permanent/ProjectilePrefabComponent.hpp"
 #include "../../components/tags/ProjectileTag.hpp"
+#include "../../components/tags/AIShooterTag.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/permanent/SpeedComponent.hpp"
 #include "../../constants.hpp"
@@ -40,20 +41,21 @@ void ShootingSystem::update(
     >();
 
     for (auto entityId : view) {
-        auto hasShootIntent = registry->hasComponent<ShootIntentComponent>(entityId);
         auto shootingStats = registry->getComponent<ShootingStatsComponent>(entityId);
-        auto projectilePrefabComponent = registry->getComponent<ProjectilePrefabComponent>(
-            entityId
-        );
+        auto projectilePrefabComponent =
+            registry->getComponent<ProjectilePrefabComponent>(entityId);
         auto transform = registry->getComponent<TransformComponent>(entityId);
 
-        if (!hasShootIntent || !shootingStats || !projectilePrefabComponent || !transform)
+        if (!shootingStats || !projectilePrefabComponent || !transform) {
             continue;
-
-        registry->removeComponent<ShootIntentComponent>(entityId);
-
+        }
         if (!shootingStats->canShoot())
             continue;
+
+        auto intent = registry->getComponent<ShootIntentComponent>(entityId);
+        float baseAngle = intent ? intent->getAngle() : 0.0f;
+
+        registry->removeComponent<ShootIntentComponent>(entityId);
 
         auto prefabManager = resourceManager->get<EntityPrefabManager>();
         std::string prefabName = projectilePrefabComponent->getPrefabName();
@@ -69,8 +71,6 @@ void ShootingSystem::update(
                 collider->getOffset() + (collider->getSize() * 0.5f);
             spawnPos = spawnPos + colliderCenter;
         }
-
-        float baseAngle = 0.0f;
 
         if (pattern.shotCount == 1) {
             spawnProjectile(registry, prefab, spawnPos, baseAngle);
@@ -96,15 +96,13 @@ void ShootingSystem::update(
             }
         }
 
-        shootingStats->resetCooldown();
+            shootingStats->resetCooldown();
     }
 
     auto cooldownView = registry->view<ShootingStatsComponent>();
     for (auto entityId : cooldownView) {
         auto shootingStats = registry->getComponent<ShootingStatsComponent>(entityId);
-        if (shootingStats) {
-            shootingStats->updateCooldown(deltaTime);
-        }
+        shootingStats->updateCooldown(deltaTime);
     }
 }
 
