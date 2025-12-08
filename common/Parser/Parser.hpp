@@ -46,6 +46,9 @@ class Parser {
 
         void parseMapFromFile(const std::string& filePath);
 
+        std::shared_ptr<MapParser> getMapParser() const;
+        void setRegistry(std::shared_ptr<ecs::Registry> registry);
+
     private:
         std::shared_ptr<EntityParser> _entityParser;
         std::shared_ptr<MapParser> _mapParser;

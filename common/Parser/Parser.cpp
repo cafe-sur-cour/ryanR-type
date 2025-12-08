@@ -88,3 +88,15 @@ bool Parser::shouldParseComponent(std::map<std::string,
 void Parser::parseMapFromFile(const std::string& filePath) {
     _mapParser->parseMapFromFile(filePath);
 }
+
+std::shared_ptr<MapParser> Parser::getMapParser() const {
+    return _mapParser;
+}
+
+void Parser::setRegistry(std::shared_ptr<ecs::Registry> registry) {
+    nlohmann::json mapData = _mapParser->getMapJson();
+    _mapParser = std::make_shared<MapParser>(_prefabManager, registry);
+    if (!mapData.is_null()) {
+        _mapParser->setMapJson(mapData);
+    }
+}

@@ -17,8 +17,7 @@
 #include "../libs/Multimedia/IAudio.hpp"
 #include "gsm/machine/GameStateMachine.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
-
-
+#include "../common/Parser/Parser.hpp"
 
 class Core
 {
@@ -38,7 +37,9 @@ class Core
 
         std::shared_ptr<ResourceManager> _resourceManager;
         std::shared_ptr<gsm::GameStateMachine> _gsm;
+        std::shared_ptr<ecs::Registry> _registry;
         std::shared_ptr<ClientNetwork> _clientNetwork;
+        std::shared_ptr<Parser> _parser;
         std::thread _networkThread;
 
         void initNetwork();

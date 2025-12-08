@@ -16,15 +16,6 @@ rserv::ServerConfig::ServerConfig() :
 rserv::ServerConfig::~ServerConfig() {
 }
 
-
-int rserv::ServerConfig::getFd() const {
-    return this->_fd;
-}
-
-void rserv::ServerConfig::setFd(int fd) {
-    this->_fd = fd;
-}
-
 void rserv::ServerConfig::setState(int state) {
     this->_state = state;
 }

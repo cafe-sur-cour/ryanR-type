@@ -48,8 +48,6 @@ namespace rserv {
             int getState() const override;
             void setState(int state) override;
 
-            int getFd() const override;
-            void setFd(int fd) override;
             operator int() const noexcept override;
 
             std::shared_ptr<net::INetwork> getNetwork() const override;
@@ -59,12 +57,6 @@ namespace rserv {
             void onClientDisconnected(uint8_t idClient) override;
             void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet) override;
 
-            void processIncomingPackets() override;
-            bool processConnections(asio::ip::udp::endpoint id) override;
-            bool processDisconnections(uint8_t idClient) override;
-            bool processEvents(uint8_t idClient) override;
-            bool processEndOfGame(uint8_t idClient) override;
-
             std::vector<uint8_t> getConnectedClients() const override;
             std::vector<asio::ip::udp::endpoint> getConnectedClientEndpoints() const override;
             size_t getClientCount() const override;
@@ -72,6 +64,20 @@ namespace rserv {
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> getEventQueue() override;
             bool hasEvents() const override;
 
+            /* Received Packet Handling */
+            void processIncomingPackets() override;
+            bool processConnections(asio::ip::udp::endpoint endpoint) override;
+            bool processDisconnections(uint8_t idClient) override;
+            bool processEvents(uint8_t idClient) override;
+            bool processEndOfGame(uint8_t idClient) override;
+
+            /* Sent Packet Handling */
+            bool connectionPacket(asio::ip::udp::endpoint endpoint);
+            bool gameStatePacket();
+            bool mapPacket(std::vector<uint64_t> mapData, const asio::ip::udp::endpoint &endpoint);
+
+            void setCurrentMap(const std::vector<uint64_t> &map);
+            std::vector<uint64_t> getCurrentMap() const;
         private:
             void loadNetworkLibrary();
             void loadBufferLibrary();
@@ -89,6 +95,7 @@ namespace rserv {
             std::shared_ptr<pm::IPacketManager> _packet;
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> _eventQueue;
 
+            std::vector<uint64_t> _currentMap;
     };
 } // namespace rserv = r-type server
 
