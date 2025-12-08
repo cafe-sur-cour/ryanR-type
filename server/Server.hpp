@@ -63,10 +63,10 @@ namespace rserv {
             bool processConnections(asio::ip::udp::endpoint id) override;
             bool processDisconnections(uint8_t idClient) override;
             bool processEvents(uint8_t idClient) override;
+            bool processEndOfGame(uint8_t idClient) override;
 
-            void broadcastPacket() override;
-            void sendToClient(uint8_t idClient ) override;
             std::vector<uint8_t> getConnectedClients() const override;
+            std::vector<asio::ip::udp::endpoint> getConnectedClientEndpoints() const override;
             size_t getClientCount() const override;
 
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> getEventQueue() override;

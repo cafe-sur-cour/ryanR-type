@@ -50,10 +50,10 @@ public:
     virtual bool processDisconnections(uint8_t idClient) = 0;
     virtual bool processEvents(uint8_t idClient) = 0;
     virtual void processIncomingPackets() = 0;
+    virtual bool processEndOfGame(uint8_t idClient) = 0;
 
-    virtual void broadcastPacket() = 0;
-    virtual void sendToClient(uint8_t idClient) = 0;
     virtual std::vector<uint8_t> getConnectedClients() const = 0;
+    virtual std::vector<asio::ip::udp::endpoint> getConnectedClientEndpoints() const = 0;
     virtual size_t getClientCount() const = 0;
 
     virtual std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> getEventQueue() = 0;
