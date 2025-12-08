@@ -125,6 +125,21 @@ MainMenuState::MainMenuState(
         cycleBrightnessFilter();
     });
     _uiManager->addElement(_brightnessButton);
+
+    _scaleButton = std::make_shared<ui::Button>(resourceManager);
+    _scaleButton->setText("UI: Normal");
+    _scaleButton->setPosition(math::Vector2f(1406.f, 22.f));
+    _scaleButton->setSize(math::Vector2f(115.f, 65.f));
+    _scaleButton->setNormalColor({150, 100, 200});
+    _scaleButton->setHoveredColor({200, 150, 255});
+    _scaleButton->setFocusedColor({255, 200, 255});
+    _scaleButton->setOnRelease([this]() {
+        cycleUIScale();
+    });
+    _scaleButton->setOnActivated([this]() {
+        cycleUIScale();
+    });
+    _uiManager->addElement(_scaleButton);
 }
 
 void MainMenuState::enter() {
@@ -283,6 +298,28 @@ void MainMenuState::cycleBrightnessFilter() {
     _brightnessButton->setText(text);
 }
 
+void MainMenuState::cycleUIScale() {
+    _uiManager->cycleGlobalScale();
+
+    std::string text;
+    switch (_uiManager->getGlobalScale()) {
+        case ui::UIScale::Small:
+            text = "UI: Small";
+            break;
+        case ui::UIScale::Normal:
+            text = "UI: Normal";
+            break;
+        case ui::UIScale::Large:
+            text = "UI: Large";
+            break;
+        default:
+            text = "UI: Normal";
+            break;
+    }
+
+    _scaleButton->setText(text);
+}
+
 void MainMenuState::exit() {
     _uiManager->clearElements();
     _playButton.reset();
@@ -290,6 +327,7 @@ void MainMenuState::exit() {
     _highContrastButton.reset();
     _colorBlindnessButton.reset();
     _brightnessButton.reset();
+    _scaleButton.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }

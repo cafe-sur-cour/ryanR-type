@@ -44,7 +44,8 @@ void Button::render() {
     );
 
     if (!_text.empty()) {
-        auto textSize = resourceManager->get<gfx::IWindow>()->getTextSize(_text, _fontPath);
+        auto textSize = resourceManager->get<
+            gfx::IWindow>()->getTextSize(_text, _fontPath, getFontSize());
         float textX = absPos.getX() +
             (absSize.getX() - static_cast<float>(textSize.first)) / 2.0f;
         float textY = absPos.getY() +
@@ -54,7 +55,8 @@ void Button::render() {
             _text,
             _textColor,
             {static_cast<size_t>(textX), static_cast<size_t>(textY)},
-            _fontPath
+            _fontPath,
+            getFontSize()
         );
     }
 }
@@ -108,6 +110,11 @@ void Button::setDisabledColor(const gfx::color_t& color) {
 
 void Button::setFocusedColor(const gfx::color_t& color) {
     _focusedColor = color;
+}
+
+size_t Button::getFontSize() const {
+    float scale = getScaleFactor();
+    return static_cast<size_t>(24 * scale);
 }
 
 }  // namespace ui

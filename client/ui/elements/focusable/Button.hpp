@@ -44,6 +44,7 @@ class Button : public AFocusableElement {
         gfx::color_t _focusedColor = {255, 215, 0};
 
         gfx::color_t getCurrentColor() const;
+        size_t getFontSize() const;
 };
 
 }  // namespace ui

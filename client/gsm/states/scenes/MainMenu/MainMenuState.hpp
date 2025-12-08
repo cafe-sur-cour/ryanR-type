@@ -31,6 +31,7 @@ private:
     void cycleColorBlindnessFilter();
     void toggleHighContrastFilter();
     void cycleBrightnessFilter();
+    void cycleUIScale();
 
 private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
@@ -39,6 +40,7 @@ private:
     std::shared_ptr<ui::Button> _highContrastButton;
     std::shared_ptr<ui::Button> _colorBlindnessButton;
     std::shared_ptr<ui::Button> _brightnessButton;
+    std::shared_ptr<ui::Button> _scaleButton;
     std::unique_ptr<ui::UIManager> _uiManager;
     int _colorBlindnessState = 0;
     int _brightnessState = 3;

@@ -136,14 +136,14 @@ void SfmlWindow::drawSprite(std::string asset, gfx::color_t color,
 }
 
 void SfmlWindow::drawText(std::string text, gfx::color_t color,
-    std::pair<size_t, size_t> position, const std::string& fontPath) {
+    std::pair<size_t, size_t> position, const std::string& fontPath, size_t fontSize) {
     auto font = _fontManager.getFont(fontPath);
     if (!font) {
         std::cout << "Failed to load font: " << fontPath << std::endl;
         return;
     }
 
-    sf::Text sfText(*font, sf::String(text), 24);
+    sf::Text sfText(*font, sf::String(text), static_cast<unsigned int>(fontSize));
     sfText.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
     sfText.setPosition(sf::Vector2f(static_cast<float>(position.first),
         static_cast<float>(position.second)));
@@ -152,7 +152,8 @@ void SfmlWindow::drawText(std::string text, gfx::color_t color,
 
 std::pair<size_t, size_t> SfmlWindow::getTextSize(
     const std::string& text,
-    const std::string& fontPath
+    const std::string& fontPath,
+    size_t fontSize
 ) {
     auto font = _fontManager.getFont(fontPath);
     if (!font) {
@@ -160,7 +161,7 @@ std::pair<size_t, size_t> SfmlWindow::getTextSize(
         return {0, 0};
     }
 
-    sf::Text sfText(*font, sf::String(text), 24);
+    sf::Text sfText(*font, sf::String(text), static_cast<unsigned int>(fontSize));
     sf::Rect<float> bounds = sfText.getGlobalBounds();
     sf::Vector2f size = bounds.size;
     return {static_cast<size_t>(size.x), static_cast<size_t>(size.y)};
