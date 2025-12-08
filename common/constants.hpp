@@ -40,6 +40,12 @@ namespace constants {
     /* Paths */
     const std::string CONFIG_PATH = "configs/entities/";
 
+    /* Collision Rules JSON Keys */
+    const std::string COLLISION_SOLID_KEY = "solid";
+    const std::string COLLISION_TRIGGER_KEY = "trigger";
+    const std::string COLLISION_PUSH_KEY = "push";
+    const std::string COLLISION_ALLOW_KEY = "allow";
+
     /* Parsing constants */
     const std::string SERVER_VALUE = "server";
     const std::string CLIENT_VALUE = "client";
@@ -158,6 +164,8 @@ namespace constants {
     const std::string POSX_FIELD = "posX";
     const std::string ENEMIES_FIELD = "enemies";
     const std::string TYPE_FIELD = "type";
+    const std::string INCLUDE_FIELD = "include";
+    const std::string EXCLUDE_FIELD = "exclude";
     const std::string COUNT_FIELD = "count";
     const std::string EMPTY_PREFAB = "empty";
     const math::Vector2f BACKGROUND_POSITION = math::Vector2f(0.0f, 0.0f);
