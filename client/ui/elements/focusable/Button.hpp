@@ -11,6 +11,7 @@
 #include "../../core/AFocusableElement.hpp"
 #include <string>
 #include "../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../constants.hpp"
 
 namespace ui {
 
@@ -29,6 +30,8 @@ class Button : public AFocusableElement {
         void setPressedColor(const gfx::color_t& color);
         void setDisabledColor(const gfx::color_t& color);
         void setFocusedColor(const gfx::color_t& color);
+        void setBaseFontSize(size_t fontSize);
+        size_t getBaseFontSize() const;
 
         virtual void render() override;
 
@@ -42,6 +45,7 @@ class Button : public AFocusableElement {
         gfx::color_t _pressedColor = {200, 200, 200};
         gfx::color_t _disabledColor = {50, 50, 50};
         gfx::color_t _focusedColor = {255, 215, 0};
+        size_t _baseFontSize = constants::BUTTON_FONT_SIZE_BASE;
 
         gfx::color_t getCurrentColor() const;
         size_t getFontSize() const;
