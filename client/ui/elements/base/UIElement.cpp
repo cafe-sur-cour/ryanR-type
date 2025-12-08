@@ -192,13 +192,13 @@ std::pair<int, int> UIElement::getWindowSize() const {
 float UIElement::getScaleFactor() const {
     switch (_scale) {
         case UIScale::Small:
-            return 0.75f;
+            return constants::UI_SCALE_SMALL;
         case UIScale::Normal:
-            return 1.0f;
+            return constants::UI_SCALE_NORMAL;
         case UIScale::Large:
-            return 1.25f;
+            return constants::UI_SCALE_LARGE;
         default:
-            return 1.0f;
+            return constants::UI_SCALE_NORMAL;
     }
 }
 
