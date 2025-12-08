@@ -108,6 +108,15 @@ void Core::processServerEvents() {
         double param1 = std::get<2>(event);
         double param2 = std::get<3>(event);
 
+        auto inputMapping = this->_inputProvider->getInputMapping();
+        ecs::InputAction action = this->getInputActionFromEvent(eventType);
+        inputMapping.mappings.insert({
+            action,
+            {
+                {gfx::EventType::RIGHT, 1.0f},
+                {gfx::EventType::LEFT, -1.0f}
+            }
+        });
         // Process the event (this is a placeholder, actual processing logic needed)
         (void)clientId;
         (void)eventType;

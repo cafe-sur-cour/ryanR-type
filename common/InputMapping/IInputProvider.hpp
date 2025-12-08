@@ -11,6 +11,7 @@
 #include <utility>
 #include "../../libs/Multimedia/EventTypes.hpp"
 #include "InputAction.hpp"
+#include "InputMapping.hpp"
 
 namespace ecs {
 
@@ -22,6 +23,7 @@ class IInputProvider {
         virtual float getAxisValue(event_t axis) = 0;
         virtual bool isActionPressed(InputAction action) = 0;
         virtual float getActionAxis(InputAction action) = 0;
+        virtual InputMapping getInputMapping() const = 0;
 };
 
 }  // namespace ecs
