@@ -11,6 +11,7 @@ add_library(${SERVER_LIB_NAME}
     Core.cpp
     Core.hpp
     ServerLibsLoading.cpp
+    CoreInputConversions.cpp
 )
 
 find_package(asio CONFIG REQUIRED)

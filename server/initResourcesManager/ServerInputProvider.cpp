@@ -31,4 +31,8 @@ float ServerInputProvider::getActionAxis(InputAction action) {
     return 0.0f;
 }
 
+InputMapping ServerInputProvider::getInputMapping() const {
+    return _inputMapping;
+}
+
 }  // namespace ecs

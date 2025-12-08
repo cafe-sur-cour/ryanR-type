@@ -6,6 +6,7 @@
 */
 
 #include "../../common/InputMapping/IInputProvider.hpp"
+#include "../../common/InputMapping/InputMapping.hpp"
 
 namespace ecs {
 
@@ -18,6 +19,10 @@ class ServerInputProvider : public IInputProvider {
 
         bool isActionPressed(InputAction action) override;
         float getActionAxis(InputAction action) override;
+        InputMapping getInputMapping() const override;
+
+    private:
+        InputMapping _inputMapping;
 };
 
 } // namespace ecs

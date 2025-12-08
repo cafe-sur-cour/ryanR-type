@@ -28,6 +28,7 @@
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
 #include "../common/constants.hpp"
+#include "../common/InputMapping/InputAction.hpp"
 #include "Signal.hpp"
 
 namespace rserv {
@@ -88,7 +89,6 @@ namespace rserv {
             std::shared_ptr<IBuffer> _buffer;
             std::shared_ptr<pm::IPacketManager> _packet;
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> _eventQueue;
-
     };
 } // namespace rserv = r-type server
 
