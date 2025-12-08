@@ -94,8 +94,16 @@ bool UnixServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> 
     return true;
 }
 
-void UnixServerNetwork::broadcast(std::vector<uint8_t> data) {
-    (void)data;
+bool UnixServerNetwork::broadcast(std::vector<asio::ip::udp::endpoint> endpoints,
+    std::vector<uint8_t> data) {
+    for (auto &endpoint : endpoints) {
+        if (!this->sendTo(endpoint, data)) {
+            std::cerr << "[SERVER NETWORK] Broadcast error to endpoint: "
+                << endpoint.address().to_string() << ":" << endpoint.port() << std::endl;
+            return false;
+        }
+    }
+    return true;
 }
 
 bool UnixServerNetwork::hasIncomingData() const {
