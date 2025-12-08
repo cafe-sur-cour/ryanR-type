@@ -42,6 +42,9 @@ Core::Core() {
         this->_gsm,
         this->_inputProvider
     );
+    this->_parser->parseAllEntities(constants::CONFIG_PATH);
+    this->_parser->parseMapFromFile("configs/map/map1.json");
+    this->_server->setCurrentMap(this->_parser->getMapParser()->createPacketFromMap());
 }
 
 Core::~Core() {

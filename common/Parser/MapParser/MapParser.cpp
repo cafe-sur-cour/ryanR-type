@@ -12,6 +12,7 @@
 #include <random>
 #include <string>
 #include <memory>
+#include <vector>
 #include "../../Error/ParserError.hpp"
 #include "../../constants.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
@@ -34,7 +35,7 @@ MapParser::MapParser(std::shared_ptr<EntityPrefabManager> prefabManager,
 MapParser::~MapParser() {
 }
 
-void MapParser::parseMapFromFile(const std::string& filePath) {
+void MapParser::parseMapFromFile(const std::string &filePath) {
     std::ifstream file(filePath);
     if (!file.is_open())
         throw err::ParserError("Cannot open map file: " +
@@ -48,11 +49,13 @@ void MapParser::parseMapFromFile(const std::string& filePath) {
             filePath + " (" + e.what() + ")",
             err::ParserError::INVALID_FORMAT);
     }
-
+    if (!this->_mapJson.is_null())
+        this->_mapJson.clear();
+    this->_mapJson = mapJson;
     parseMap(mapJson);
 }
 
-void MapParser::parseMap(const nlohmann::json& mapJson) {
+void MapParser::parseMap(const nlohmann::json &mapJson) {
     if (mapJson.contains(constants::BACKGROUND_FIELD))
         createBackgroundEntity(mapJson[constants::BACKGROUND_FIELD]);
 
@@ -80,6 +83,56 @@ void MapParser::parseMap(const nlohmann::json& mapJson) {
     if (mapJson.contains(constants::WAVES_FIELD))
         parseWaves(mapJson[constants::WAVES_FIELD], tileWidth);
 }
+
+
+std::vector<std::uint64_t> MapParser::createPacketFromMap() {
+    std::string jsonStr = this->_mapJson.dump();
+
+    std::vector<std::uint64_t> data;
+    for (size_t i = 0; i < jsonStr.size(); i += 8) {
+        uint64_t value = 0;
+        for (size_t j = 0; j < 8 && (i + j) < jsonStr.size(); ++j) {
+            value |= static_cast<uint64_t>(static_cast<uint8_t>(jsonStr[i + j])) << (j * 8);
+        }
+        data.push_back(value);
+    }
+    return data;
+}
+
+
+void MapParser::parseMapFromPacket(std::vector<uint8_t> mapData) {
+    std::string jsonStr(mapData.begin(), mapData.end());
+
+    nlohmann::json mapJson;
+    try {
+        mapJson = nlohmann::json::parse(jsonStr);
+    } catch (const nlohmann::detail::exception& e) {
+        throw err::ParserError("Invalid JSON format in map data: "
+            + std::string(e.what()),
+            err::ParserError::INVALID_FORMAT);
+    }
+    if (!this->_mapJson.is_null())
+        this->_mapJson.clear();
+    this->_mapJson = mapJson;
+    parseMap(mapJson);
+}
+
+void MapParser::generateMapEntities() {
+    if (_mapJson.is_null()) {
+        std::cout << "[MapParser] No map data available to generate entities" << std::endl;
+        return;
+    }
+    parseMap(_mapJson);
+}
+
+nlohmann::json MapParser::getMapJson() const {
+    return _mapJson;
+}
+
+void MapParser::setMapJson(const nlohmann::json& mapJson) {
+    _mapJson = mapJson;
+}
+
 
 void MapParser::createBackgroundEntity(const std::string& entityName) {
     if (entityName.empty())

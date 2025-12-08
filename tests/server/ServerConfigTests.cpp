@@ -26,18 +26,9 @@ TEST_F(ServerConfigTest, InitialState) {
     EXPECT_EQ(config.getState(), -1);
 }
 
-TEST_F(ServerConfigTest, InitialFd) {
-    EXPECT_EQ(config.getFd(), -1);
-}
-
 TEST_F(ServerConfigTest, SetAndGetState) {
     config.setState(1);
     EXPECT_EQ(config.getState(), 1);
-}
-
-TEST_F(ServerConfigTest, SetAndGetFd) {
-    config.setFd(5);
-    EXPECT_EQ(config.getFd(), 5);
 }
 
 TEST_F(ServerConfigTest, SetAndGetPort) {

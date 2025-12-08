@@ -37,6 +37,7 @@ ClientNetwork::ClientNetwork() {
     this->_sequenceNumber = 0;
     this->_isConnected = false;
     this->_isDebug = false;
+    this->_resourceManager = nullptr;
 
     // Initialize packet handlers
     _packetHandlers[constants::PACKET_NO_OP] = &ClientNetwork::handleNoOp;
@@ -55,6 +56,9 @@ ClientNetwork::~ClientNetwork() {
     this->stop();
 }
 
+void ClientNetwork::setResourceManager(std::shared_ptr<ResourceManager> resourceManager) {
+    this->_resourceManager = resourceManager;
+}
 
 void ClientNetwork::init() {
     if (this->_port == 0 || this->_ip == "") {
@@ -218,7 +222,14 @@ void ClientNetwork::start() {
             lastRetryTime);
         std::vector<uint8_t> receivedData = this->_network->receiveFrom(this->_idClient);
         if (receivedData.size() > 0) {
-            this->_packet->unpack(receivedData);
+            if (this->_packet->unpack(receivedData)) {
+                handlePacketType(this->_packet->getType());
+            } else {
+                debug::Debug::printDebug(this->_isDebug,
+                    "[CLIENT] Failed to unpack received packet",
+                    debug::debugType::NETWORK,
+                    debug::debugLevel::ERROR);
+            }
             handlePacketType(this->_packet->getType());
             receivedData.clear();
         }

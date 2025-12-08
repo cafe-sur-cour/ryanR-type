@@ -24,10 +24,20 @@ class MapParser {
 
         void parseMapFromFile(const std::string& filePath);
         void parseMap(const nlohmann::json& mapJson);
+
+        std::vector<std::uint64_t> createPacketFromMap();
+        void parseMapFromPacket(std::vector<uint8_t> mapData);
+        void generateMapEntities();
+        
+        nlohmann::json getMapJson() const;
+        void setMapJson(const nlohmann::json& mapJson);
+
     protected:
     private:
         std::shared_ptr<EntityPrefabManager> _prefabManager;
         std::shared_ptr<ecs::Registry> _registry;
+
+        nlohmann::json _mapJson;
         void createBackgroundEntity(const std::string& entityName);
         void createMusicEntity(const std::string& prefabName);
         void createGameZoneEntity(float scrollSpeed);

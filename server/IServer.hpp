@@ -35,8 +35,6 @@ public:
     virtual int getState() const = 0;
     virtual void setState(int state) = 0;
 
-    virtual int getFd() const = 0;
-    virtual void setFd(int fd) = 0;
     virtual operator int() const noexcept = 0;
 
     virtual std::shared_ptr<net::INetwork> getNetwork() const = 0;

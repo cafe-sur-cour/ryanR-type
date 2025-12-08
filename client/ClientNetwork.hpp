@@ -20,6 +20,7 @@
 #include "../common/DLLoader/LoaderType.hpp"
 #include "../libs/Network/INetwork.hpp"
 #include "../common/constants.hpp"
+#include "../common/resourceManager/ResourceManager.hpp"
 
 struct NetworkEvent {
     constants::EventType eventType;
@@ -69,6 +70,7 @@ class ClientNetwork {
 
         bool isConnected() const;
         std::atomic<bool> _isConnected;
+        void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
     protected:
         std::pair<int, std::chrono::steady_clock::time_point> tryConnection(const int maxRetries, int retryCount, std::chrono::steady_clock::time_point lastRetryTime);
         void handlePacketType(uint8_t type);
@@ -91,6 +93,8 @@ class ClientNetwork {
         std::shared_ptr<IBuffer> _receptionBuffer;
         std::shared_ptr<IBuffer> _sendBuffer;
         std::shared_ptr<pm::IPacketManager> _packet;
+
+        std::shared_ptr<ResourceManager> _resourceManager;
 
         uint32_t _sequenceNumber;
         uint16_t _port;

@@ -139,7 +139,23 @@ Server :
 
 4.2.3. MAP_SEND (0x06) – Server sends the map to the clients
 
-   - Map Data (json)
+   - Player ID (4 bytes)
+   -Map Data [
+      - mapName
+      - background entity
+      - speed
+      - music entity
+      - legend [ name: value ; name ...]
+      - map [
+            element element ,
+            element element ,
+            ...
+         ]
+      - waves [
+         {spawnLenth: ; posX ; enemies { type : , count :}},
+         ...
+      ]
+   ]
 
 
 4.2.4. END_MAP (0x07) – Server notify the end of the map
