@@ -49,6 +49,9 @@ class IWindow {
         virtual void setViewCenter(float x, float y) = 0;
         virtual math::Vector2f getViewCenter() = 0;
         virtual math::Vector2f mapPixelToCoords(int x, int y) = 0;
+
+        virtual std::pair<int, int> getLogicalSize() const = 0;
+        virtual float getScaleFactor() const = 0;
 };
 
 typedef IWindow *(*createWindow_t)();

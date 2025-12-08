@@ -49,8 +49,10 @@ void Parser::instanciateComponentDefinitions() {
         {constants::TRANSFORMCOMPONENT, {std::type_index(typeid(ecs::TransformComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::POSITION_FIELD, FieldType::VECTOR2F},
-            {constants::SCALE_FIELD, FieldType::VECTOR2F},
-            {constants::ROTATION_FIELD, FieldType::FLOAT}
+            {constants::SCALE_FIELD, FieldType::VECTOR2F,
+                true, std::make_shared<FieldValue>(math::Vector2f(1.0f, 1.0f))},
+            {constants::ROTATION_FIELD, FieldType::FLOAT,
+                true, std::make_shared<FieldValue>(0.0f)}
         }}},
         {constants::VELOCITYCOMPONENT, {std::type_index(typeid(ecs::VelocityComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING}
@@ -67,7 +69,8 @@ void Parser::instanciateComponentDefinitions() {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::STATES_FIELD, FieldType::JSON},
             {constants::INITIALSTATE_FIELD, FieldType::STRING},
-            {constants::TRANSITIONS_FIELD, FieldType::JSON}
+            {constants::TRANSITIONS_FIELD, FieldType::JSON,
+                true, std::make_shared<FieldValue>(nlohmann::json::array())}
         }}},
         {constants::CONTROLLABLETAG, {std::type_index(typeid(ecs::ControllableTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
@@ -102,7 +105,8 @@ void Parser::instanciateComponentDefinitions() {
         }}},
         {constants::COLLIDERCOMPONENT, {std::type_index(typeid(ecs::ColliderComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
-            {constants::OFFSET_FIELD, FieldType::VECTOR2F},
+            {constants::OFFSET_FIELD, FieldType::VECTOR2F,
+                true, std::make_shared<FieldValue>(math::Vector2f(0.0f, 0.0f))},
             {constants::SIZE_FIELD, FieldType::VECTOR2F},
             {constants::TYPE_FIELD, FieldType::STRING}
         }}},
@@ -110,9 +114,12 @@ void Parser::instanciateComponentDefinitions() {
             {std::type_index(typeid(ecs::ShootingStatsComponent)), {
                 {constants::TARGET_FIELD, FieldType::STRING},
                 {constants::FIRERATE_FIELD, FieldType::FLOAT},
-                {constants::SHOTCOUNT_FIELD, FieldType::INT},
-                {constants::ANGLEOFFSET_FIELD, FieldType::FLOAT},
-                {constants::SPREADANGLE_FIELD, FieldType::FLOAT}
+                {constants::SHOTCOUNT_FIELD, FieldType::INT,
+                    true, std::make_shared<FieldValue>(1)},
+                {constants::ANGLEOFFSET_FIELD, FieldType::FLOAT,
+                    true, std::make_shared<FieldValue>(0.0f)},
+                {constants::SPREADANGLE_FIELD, FieldType::FLOAT,
+                    true, std::make_shared<FieldValue>(0.0f)}
             }
         }},
         {constants::RECTANGLERENDERCOMPONENT, {
@@ -327,7 +334,11 @@ void Parser::instanciateComponentCreators() {
             type = ecs::CollisionType::None;
         }
 
-        return std::make_shared<ecs::ColliderComponent>(offset, size, type);
+        std::vector<std::vector<std::string>> includeTags;
+        std::vector<std::vector<std::string>> excludeTags;
+
+        return std::make_shared<ecs::ColliderComponent>(
+            offset, size, type);
     });
 
     registerComponent<ecs::ShootingStatsComponent>([](const std::map<std::string,

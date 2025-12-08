@@ -40,6 +40,12 @@ namespace constants {
     /* Paths */
     const std::string CONFIG_PATH = "configs/entities/";
 
+    /* Collision Rules JSON Keys */
+    const std::string COLLISION_SOLID_KEY = "solid";
+    const std::string COLLISION_TRIGGER_KEY = "trigger";
+    const std::string COLLISION_PUSH_KEY = "push";
+    const std::string COLLISION_ALLOW_KEY = "allow";
+
     /* Parsing constants */
     const std::string SERVER_VALUE = "server";
     const std::string CLIENT_VALUE = "client";
@@ -167,6 +173,8 @@ namespace constants {
     const std::string POSX_FIELD = "posX";
     const std::string ENEMIES_FIELD = "enemies";
     const std::string TYPE_FIELD = "type";
+    const std::string INCLUDE_FIELD = "include";
+    const std::string EXCLUDE_FIELD = "exclude";
     const std::string COUNT_FIELD = "count";
     const std::string EMPTY_PREFAB = "empty";
     const math::Vector2f BACKGROUND_POSITION = math::Vector2f(0.0f, 0.0f);
@@ -197,6 +205,18 @@ namespace constants {
     const std::string TAKEDEATH_ACTION = "TakeDeath";
     const std::string DEALDAMAGE_ACTION = "DealDamage";
     const std::string TAKEDAMAGE_ACTION = "TakeDamage";
+
+    /* Packet constants */
+    constexpr std::uint8_t PACKET_NO_OP = 0x00;
+    constexpr std::uint8_t PACKET_CONNECTION = 0x01;
+    constexpr std::uint8_t PACKET_ACCEPT = 0x02;
+    constexpr std::uint8_t PACKET_DISC = 0x03;
+    constexpr std::uint8_t PACKET_EVENT = 0x04;
+    constexpr std::uint8_t PACKET_GAME_STATE = 0x05;
+    constexpr std::uint8_t PACKET_MAP = 0x06;
+    constexpr std::uint8_t PACKET_END_MAP = 0x07;
+    constexpr std::uint8_t PACKET_END_GAME = 0x08;
+    constexpr std::uint8_t PACKET_CAN_START = 0x09;
 }
 
 #endif /* !CONSTANTS_HPP_ */

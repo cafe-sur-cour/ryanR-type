@@ -12,7 +12,7 @@
 #include "ClientNetwork.hpp"
 #include "../common/Error/ClientNetworkError.hpp"
 #include "../common/debug.hpp"
-
+#include "../common/constants.hpp"
 
 /* Packet Handling */
 void ClientNetwork::connectionPacket() {
@@ -20,19 +20,17 @@ void ClientNetwork::connectionPacket() {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);
     }
-    std::vector<uint8_t> header = this->_packet->pack(this->_idClient,
-        this->_sequenceNumber, 0x01);
-    this->_network->sendTo(this->_serverEndpoint, header);
-    /* Replace this with name */
-    std::vector<uint64_t> payloadData = {0x01};
-    for (size_t i = 0; i < this->_packet->formatString(this->_name).size(); i++)
-        payloadData.push_back(this->_packet->formatString(this->_name)[i]);
-    std::vector<uint8_t> payload = this->_packet->pack(payloadData);
+
+    std::vector<uint64_t> payload = this->_packet->formatString(this->_name);
+    std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
+        this->_sequenceNumber, constants::PACKET_CONNECTION, payload);
+
     debug::Debug::printDebug(this->_isDebug,
-        "[Client] Sending connection packet with name: " + this->_name,
+        "[CLIENT] Sending connection packet with name: " + this->_name,
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
-    this->_network->sendTo(this->_serverEndpoint, payload);
+
+    this->_network->sendTo(this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
 
@@ -43,41 +41,22 @@ void ClientNetwork::eventPacket(const constants::EventType &eventType,
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);
     }
-    std::vector<uint8_t> header =
-        this->_packet->pack(this->_idClient, this->_sequenceNumber, 0x04);
-    this->_network->sendTo(this->_serverEndpoint, header);
-
-    std::vector<uint64_t> payloadData;
-    payloadData.push_back(0x04);
-    payloadData.push_back(static_cast<uint64_t>(eventType));
-
-    payloadData.push_back(this->_idClient);
 
     uint64_t depthBits;
-    std::memcpy(&depthBits, &depth, sizeof(double));
-    payloadData.push_back(depthBits);
-
     uint64_t dirBits;
+    std::memcpy(&depthBits, &depth, sizeof(double));
     std::memcpy(&dirBits, &direction, sizeof(double));
-    payloadData.push_back(dirBits);
 
+    std::vector<uint64_t> payload;
+    payload.push_back(static_cast<uint64_t>(eventType));
+    payload.push_back(depthBits);
+    payload.push_back(dirBits);
 
-    debug::Debug::printDebug(this->_isDebug,
-        "[Client] Preparing to send event packet: EventType="
-        + std::to_string(static_cast<int>(eventType))
-        + ", Depth=" + std::to_string(depth)
-        + ", Direction=" + std::to_string(direction),
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
-    if (payloadData.size() <= 3) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[Client] Event packet payload size is invalid, aborting send.",
-            debug::debugType::NETWORK,
-            debug::debugLevel::ERROR);
-        return;
-    }
-    std::vector<uint8_t> payload = this->_packet->pack(payloadData);
-    this->_network->sendTo(this->_serverEndpoint, payload);
+    std::vector<uint8_t> packet =
+        this->_packet->pack(this->_idClient, this->_sequenceNumber,
+        constants::PACKET_EVENT, payload);
+
+    this->_network->sendTo(this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
 
@@ -101,8 +80,12 @@ void ClientNetwork::disconnectionPacket() {
             debug::debugLevel::WARNING);
         return;
     }
+    std::vector<uint64_t> payload = {};
+    payload.push_back(static_cast<uint64_t>(this->_idClient));
+
     std::vector<uint8_t> header = this->_packet->pack(this->_idClient,
-        this->_sequenceNumber, 0x03);
+        this->_sequenceNumber, constants::PACKET_DISC, payload);
+
     this->_network->sendTo(this->_serverEndpoint, header);
     this->_sequenceNumber++;
 }

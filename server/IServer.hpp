@@ -10,11 +10,13 @@
 
 #include <memory>
 #include <vector>
+#include <queue>
 #include <asio.hpp>
 
 #include "ServerConfig.hpp"
 #include "../libs/Packet/IPacketManager.hpp"
 #include "../libs/Network/INetwork.hpp"
+#include "../common/constants.hpp"
 
 namespace rserv {
 class IServer {
@@ -53,6 +55,9 @@ public:
     virtual void sendToClient(uint8_t idClient) = 0;
     virtual std::vector<uint8_t> getConnectedClients() const = 0;
     virtual size_t getClientCount() const = 0;
+
+    virtual std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> getEventQueue() = 0;
+    virtual bool hasEvents() const = 0;
 };
 } // namespace rserv = r-type server
 #endif /* !ISERVER_HPP_ */

@@ -16,9 +16,11 @@
 #include <memory>
 
 #include "ClientNetwork.hpp"
+#include "constants.hpp"
 #include "../common/Error/ClientNetworkError.hpp"
 #include "../common/Signal/Signal.hpp"
 #include "../common/debug.hpp"
+#include "../common/constants.hpp"
 
 ClientNetwork::ClientNetwork() {
     this->_port = 0;
@@ -37,16 +39,16 @@ ClientNetwork::ClientNetwork() {
     this->_isDebug = false;
 
     // Initialize packet handlers
-    _packetHandlers[0x00] = &ClientNetwork::handleNoOp;
-    _packetHandlers[0x01] = &ClientNetwork::handleNoOp;  // Client sends this
-    _packetHandlers[0x02] = &ClientNetwork::handleConnectionAcceptation;
-    _packetHandlers[0x03] = &ClientNetwork::handleNoOp;  // Client sends this
-    _packetHandlers[0x04] = &ClientNetwork::handleNoOp;  // Client sends this
-    _packetHandlers[0x05] = &ClientNetwork::handleGameState;
-    _packetHandlers[0x06] = &ClientNetwork::handleMapSend;
-    _packetHandlers[0x07] = &ClientNetwork::handleEndMap;
-    _packetHandlers[0x08] = &ClientNetwork::handleEndGame;
-    _packetHandlers[0x09] = &ClientNetwork::handleCanStart;
+    _packetHandlers[constants::PACKET_NO_OP] = &ClientNetwork::handleNoOp;
+    _packetHandlers[constants::PACKET_CONNECTION] = &ClientNetwork::handleNoOp;
+    _packetHandlers[constants::PACKET_ACCEPT] = &ClientNetwork::handleConnectionAcceptation;
+    _packetHandlers[constants::PACKET_DISC] = &ClientNetwork::handleNoOp;
+    _packetHandlers[constants::PACKET_EVENT] = &ClientNetwork::handleNoOp;
+    _packetHandlers[constants::PACKET_GAME_STATE] = &ClientNetwork::handleGameState;
+    _packetHandlers[constants::PACKET_MAP] = &ClientNetwork::handleMapSend;
+    _packetHandlers[constants::PACKET_END_MAP] = &ClientNetwork::handleEndMap;
+    _packetHandlers[constants::PACKET_END_GAME] = &ClientNetwork::handleEndGame;
+    _packetHandlers[constants::PACKET_CAN_START] = &ClientNetwork::handleCanStart;
 }
 
 ClientNetwork::~ClientNetwork() {
@@ -167,7 +169,7 @@ void ClientNetwork::handlePacketType(uint8_t type) {
         (this->*_packetHandlers[type])();
     } else {
         debug::Debug::printDebug(this->_isDebug,
-            "[Client] Unknown packet type: " + std::to_string(static_cast<int>(type)),
+            "[CLIENT] Unknown packet type: " + std::to_string(static_cast<int>(type)),
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
     }
@@ -181,7 +183,7 @@ std::pair<int, std::chrono::steady_clock::time_point> ClientNetwork::tryConnecti
     if (this->_network->getConnectionState() == net::ConnectionState::CONNECTING &&
         retryCount < maxRetries &&
         std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastRetryTime).count()
-            >= 2) {
+            >= constants::NETWORK_TIMEOUT) {
         debug::Debug::printDebug(this->_isDebug,
             "Retrying connection (attempt " + std::to_string(retryCount + 1) + "/" +
             std::to_string(maxRetries) + ")",
@@ -242,7 +244,7 @@ void ClientNetwork::start() {
     if (Signal::stopFlag) {
         this->disconnectionPacket();
         debug::Debug::printDebug(this->_isDebug,
-            "[Client] Signal received, stopping client network",
+            "[CLIENT] Signal received, stopping client network",
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
         this->stop();

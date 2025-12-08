@@ -20,8 +20,14 @@ SfmlWindow::SfmlWindow(std::string title, size_t width, size_t height)
     _assetManager(std::make_shared<assets::AssetManager>()),
     _textureManager(_assetManager),
     _fontManager(_assetManager),
+    _shaderManager(_assetManager),
     _view(sf::FloatRect(sf::Vector2f(0.f, 0.f),
-        sf::Vector2f(constants::MAX_WIDTH, constants::MAX_HEIGHT))) {
+        sf::Vector2f(constants::MAX_WIDTH, constants::MAX_HEIGHT))),
+    _renderTexture({static_cast<unsigned int>(constants::MAX_WIDTH),
+        static_cast<unsigned int>(constants::MAX_HEIGHT)}),
+    _renderSprite(_renderTexture.getTexture()),
+    _viewportOffset(0.f, 0.f),
+    _viewportScale(1.f, 1.f) {
     init();
 }
 
@@ -34,6 +40,8 @@ void SfmlWindow::init() {
     bool isActive = false;
 
     _window->setFramerateLimit(60);
+    _renderTexture.setView(_view);
+
     updateView();
     _window->clear(sf::Color::Black);
     _window->clear();
@@ -43,6 +51,55 @@ void SfmlWindow::init() {
 }
 
 void SfmlWindow::display() {
+    _renderTexture.display();
+
+    sf::Vector2u windowSize = _window->getSize();
+    sf::View defaultView(sf::FloatRect(sf::Vector2f(0.f, 0.f),
+        sf::Vector2f(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y))));
+    defaultView.setViewport(_view.getViewport());
+
+    _window->clear();
+    _window->setView(defaultView);
+
+    auto activeShaders = _shaderManager.getActiveShaders();
+    if (activeShaders.empty()) {
+        _renderSprite.setTexture(_renderTexture.getTexture());
+        _renderSprite.setPosition(_viewportOffset);
+        _renderSprite.setScale(_viewportScale);
+        _window->draw(_renderSprite);
+    } else if (activeShaders.size() == 1) {
+        _renderSprite.setTexture(_renderTexture.getTexture());
+        _renderSprite.setPosition(_viewportOffset);
+        _renderSprite.setScale(_viewportScale);
+        _window->draw(_renderSprite, activeShaders[0].get());
+    } else {
+        sf::RenderTexture intermediate({static_cast<unsigned int>(constants::MAX_WIDTH),
+                                       static_cast<unsigned int>(constants::MAX_HEIGHT)});
+
+        sf::Sprite tempSprite(_renderTexture.getTexture());
+        intermediate.clear();
+        intermediate.draw(tempSprite, activeShaders[0].get());
+        intermediate.display();
+
+        for (size_t i = 1; i < activeShaders.size(); ++i) {
+            sf::RenderTexture nextIntermediate(
+                {static_cast<unsigned int>(constants::MAX_WIDTH),
+                static_cast<unsigned int>(constants::MAX_HEIGHT)});
+
+            sf::Sprite intermediateSprite(intermediate.getTexture());
+            nextIntermediate.clear();
+            nextIntermediate.draw(intermediateSprite, activeShaders[i].get());
+            nextIntermediate.display();
+
+            intermediate = std::move(nextIntermediate);
+        }
+
+        sf::Sprite finalSprite(intermediate.getTexture());
+        finalSprite.setPosition(_viewportOffset);
+        finalSprite.setScale(_viewportScale);
+        _window->draw(finalSprite);
+    }
+
     _window->display();
 }
 
@@ -55,6 +112,7 @@ bool SfmlWindow::isOpen() {
 }
 
 void SfmlWindow::clear() {
+    _renderTexture.clear();
     _window->clear();
 }
 
@@ -62,6 +120,7 @@ void SfmlWindow::resizeWindow(size_t x, size_t y) {
     _window->setSize(sf::Vector2u(
         static_cast<unsigned int>(x),
         static_cast<unsigned int>(y) ));
+    updateView();
 }
 void SfmlWindow::drawSprite(std::string asset, gfx::color_t color,
     std::pair<size_t, size_t> position) {
@@ -73,7 +132,7 @@ void SfmlWindow::drawSprite(std::string asset, gfx::color_t color,
     sprite.setColor(sf::Color(color.r, color.g, color.b, color.a));
     sprite.setPosition(sf::Vector2f(static_cast<float>(position.first),
         static_cast<float>(position.second)));
-    _window->draw(sprite);
+    _renderTexture.draw(sprite);
 }
 
 void SfmlWindow::drawText(std::string text, gfx::color_t color,
@@ -88,7 +147,7 @@ void SfmlWindow::drawText(std::string text, gfx::color_t color,
     sfText.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
     sfText.setPosition(sf::Vector2f(static_cast<float>(position.first),
         static_cast<float>(position.second)));
-    _window->draw(sfText);
+    _renderTexture.draw(sfText);
 }
 
 void SfmlWindow::drawRectangleOutline(gfx::color_t color,
@@ -100,7 +159,7 @@ void SfmlWindow::drawRectangleOutline(gfx::color_t color,
     rectangle.setOutlineThickness(1.0f);
     rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first),
     static_cast<float>(position.second)));
-    _window->draw(rectangle);
+    _renderTexture.draw(rectangle);
 }
 
 void SfmlWindow::drawFilledRectangle(gfx::color_t color,
@@ -110,7 +169,7 @@ void SfmlWindow::drawFilledRectangle(gfx::color_t color,
     rectangle.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
     rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first),
     static_cast<float>(position.second)));
-    _window->draw(rectangle);
+    _renderTexture.draw(rectangle);
 }
 
 bool SfmlWindow::isMouseOver(std::pair<size_t, size_t> position,
@@ -142,7 +201,7 @@ void SfmlWindow::drawSprite(const std::string& texturePath,
     sf::Sprite sprite(*texture);
     sprite.setPosition(sf::Vector2f(x, y));
     sprite.setScale(sf::Vector2f(scaleX, scaleY));
-    _window->draw(sprite);
+    _renderTexture.draw(sprite);
 }
 
 void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y,
@@ -162,36 +221,23 @@ void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y,
     sprite.setTextureRect(textureRect);
     sprite.setPosition(sf::Vector2f(x, y));
     sprite.setScale(sf::Vector2f(scaleX, scaleY));
-    _window->draw(sprite);
+    _renderTexture.draw(sprite);
 }
 
 void SfmlWindow::updateView() {
     sf::Vector2u windowSize = _window->getSize();
-    float windowRatio = static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y);
-    float viewRatio = constants::MAX_WIDTH / constants::MAX_HEIGHT;
 
-    sf::FloatRect viewport;
-    if (windowRatio > viewRatio) {
-        float scale = static_cast<float>(windowSize.y) / constants::MAX_HEIGHT;
-        float viewportWidth = (constants::MAX_WIDTH * scale) /
-            static_cast<float>(windowSize.x);
-        viewport = sf::FloatRect(sf::Vector2f((1.f - viewportWidth) / 2.f, 0.f),
-            sf::Vector2f(viewportWidth, 1.f));
-    } else {
-        float scale = static_cast<float>(windowSize.x) / constants::MAX_WIDTH;
-        float viewportHeight = (constants::MAX_HEIGHT * scale) /
-            static_cast<float>(windowSize.y);
-        viewport = sf::FloatRect(sf::Vector2f(0.f, (1.f - viewportHeight) / 2.f),
-            sf::Vector2f(1.f, viewportHeight));
-    }
+    float scaleX = static_cast<float>(windowSize.x) / constants::MAX_WIDTH;
+    float scaleY = static_cast<float>(windowSize.y) / constants::MAX_HEIGHT;
 
-    _view.setViewport(viewport);
-    _window->setView(_view);
+    _view.setViewport(sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(1.f, 1.f)));
+    _viewportOffset = sf::Vector2f(0.f, 0.f);
+    _viewportScale = sf::Vector2f(scaleX, scaleY);
 }
 
 void SfmlWindow::setViewCenter(float x, float y) {
     _view.setCenter(sf::Vector2f(x, y));
-    _window->setView(_view);
+    _renderTexture.setView(_view);
 }
 
 math::Vector2f SfmlWindow::getViewCenter() {
@@ -200,7 +246,49 @@ math::Vector2f SfmlWindow::getViewCenter() {
 }
 
 math::Vector2f SfmlWindow::mapPixelToCoords(int x, int y) {
-    sf::Vector2i pixelPos(x, y);
-    sf::Vector2f worldPos = _window->mapPixelToCoords(pixelPos);
-    return math::Vector2f(worldPos.x, worldPos.y);
+    sf::Vector2f pixelPos(static_cast<float>(x), static_cast<float>(y));
+
+    pixelPos -= _viewportOffset;
+
+    if (_viewportScale.x > 0.f && _viewportScale.y > 0.f) {
+        pixelPos.x *= (1.f / _viewportScale.x);
+        pixelPos.y *= (1.f / _viewportScale.y);
+    }
+
+    return math::Vector2f(pixelPos.x, pixelPos.y);
+}
+
+std::pair<int, int> SfmlWindow::getLogicalSize() const {
+    return {static_cast<int>(constants::MAX_WIDTH), static_cast<int>(constants::MAX_HEIGHT)};
+}
+
+float SfmlWindow::getScaleFactor() const {
+    if (_viewportScale.x > 0.f) {
+        return _viewportScale.x;
+    }
+    return 1.f;
+}
+
+void SfmlWindow::enableFilter(const std::string& filterName) {
+    _shaderManager.enableFilter(filterName);
+}
+
+void SfmlWindow::addFilter(const std::string& filterName) {
+    _shaderManager.addFilter(filterName);
+}
+
+void SfmlWindow::removeFilter(const std::string& filterName) {
+    _shaderManager.removeFilter(filterName);
+}
+
+void SfmlWindow::disableAllFilters() {
+    _shaderManager.disableAllFilters();
+}
+
+bool SfmlWindow::isFilterActive(const std::string& filterName) const {
+    return _shaderManager.isFilterActive(filterName);
+}
+
+ShaderManager& SfmlWindow::getShaderManager() {
+    return _shaderManager;
 }

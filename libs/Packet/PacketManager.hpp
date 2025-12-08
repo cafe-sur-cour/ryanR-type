@@ -25,7 +25,6 @@ class PacketManager : public IPacketManager {
         PacketManager(uint32_t seqNumber);
         ~PacketManager() override;
 
-        uint8_t getMagicNumber() const override;
         uint32_t getLength() const override;
         uint32_t getSequenceNumber() const override;
         uint8_t getType() const override;
@@ -39,27 +38,20 @@ class PacketManager : public IPacketManager {
         void setIdClient(uint8_t idClient) override;
 
         std::vector<uint64_t> formatString(const std::string str) override;
-        std::vector<uint8_t> pack(uint8_t idClient, uint32_t sequenceNumber, uint8_t type) override;
-        std::vector<uint8_t> pack(std::vector<uint64_t> payload) override;
+        std::vector<uint8_t> pack(uint8_t idClient, uint32_t sequenceNumber, uint8_t type, std::vector<uint64_t> payload) override;
         bool unpack(std::vector<uint8_t> data) override;
 
         void reset() override;
     private:
-        uint8_t _magicNumber;
         uint8_t _idClient;
         uint32_t _sequenceNumber;
         uint8_t _type;
         uint32_t _length;
-        uint8_t _firstEndOfPacket;
-        uint8_t _secondEndOfPacket;
         std::vector<uint64_t> _payload;
         std::shared_ptr<ISerializer> _serializer;
         std::map<uint8_t, std::function<std::vector<uint8_t>(std::vector<uint64_t>)>> _packetHandlers;
         std::map<uint8_t, std::function<bool(const std::vector<uint8_t>)>> _packetReceived;
         std::map<uint8_t, uint32_t> _packetLengths;
-
-        bool unpackHeader(const std::vector<uint8_t> data);
-        bool unpackBody(const std::vector<uint8_t> data);
 
         std::vector<uint8_t> buildConnectionPacket(std::vector<uint64_t> payload);
         bool parseConnectionPacket(const std::vector<uint8_t> payload);

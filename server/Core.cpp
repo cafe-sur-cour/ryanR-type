@@ -11,6 +11,7 @@
 #include <thread>
 
 #include "Core.hpp"
+#include "../common/debug.hpp"
 #include "initResourcesManager/initResourcesManager.hpp"
 #include "gsm/states/scenes/Boot/BootState.hpp"
 #include "../../common/systems/systemManager/SystemManager.hpp"
@@ -45,7 +46,7 @@ Core::Core() {
 
 Core::~Core() {
     if (this->_serverThread.joinable()) {
-        if (this->_server != nullptr && this->_server->getState() == 1) {
+        if (this->_server != nullptr && this->_server->getState() == SERVER_UP) {
             this->_server->stop();
         }
         this->_serverThread.join();
@@ -85,13 +86,48 @@ void Core::init() {
     });
 }
 
+void Core::processServerEvents() {
+    if (this->_server == nullptr) {
+        return;
+    }
+
+    if (!this->_server->hasEvents()) {
+        return;
+    }
+
+    auto eventQueue = this->_server->getEventQueue();
+    if (!eventQueue) {
+        return;
+    }
+
+    while (!eventQueue->empty()) {
+        auto event = eventQueue->front();
+        eventQueue->pop();
+        uint8_t clientId = std::get<0>(event);
+        constants::EventType eventType = std::get<1>(event);
+        double param1 = std::get<2>(event);
+        double param2 = std::get<3>(event);
+
+        // Process the event (this is a placeholder, actual processing logic needed)
+        (void)clientId;
+        (void)eventType;
+        (void)param1;
+        (void)param2;
+    }
+}
+
 void Core::loop() {
     auto previousTime = std::chrono::high_resolution_clock::now();
 
-    while (this->_server->getState() == 1) {
+    while (this->_server->getState() < SERVER_UP) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_THREAD_SLEEP_MS));
+    }
+
+    while (this->_server->getState() == SERVER_UP) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float>(currentTime - previousTime).count();
         previousTime = currentTime;
+        processServerEvents();
         this->_gsm->update(deltaTime);
     }
 }
