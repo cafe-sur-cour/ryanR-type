@@ -5,6 +5,9 @@
 ** ServerReceivePacket
 */
 
+#include <vector>
+#include <iostream>
+
 #include "Server.hpp"
 #include "../common/debug.hpp"
 
@@ -15,19 +18,18 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint endpoint) {
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
-
     if (this->_nextClientId > this->getConfig()->getNbClients()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Maximum clients reached",
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
-    if (!this->connectionPacket(endpoint))
-        return false;
+    this->connectionPacket(endpoint);
     this->_clients.push_back(std::make_tuple(this->_nextClientId, endpoint, ""));
     this->_nextClientId++;
     return true;
 }
+
 
 bool rserv::Server::processDisconnections(uint8_t idClient) {
     for (auto &client : this->_clients) {
@@ -44,6 +46,18 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
         }
     }
     return false;
+}
+
+bool rserv::Server::processEndOfGame(uint8_t idClient) {
+    std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber,
+        constants::PACKET_END_GAME, std::vector<uint64_t>{static_cast<uint64_t>(idClient)});
+    if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER NETWORK] Failed to broadcast end of game packet",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    return true;
 }
 
 

@@ -21,6 +21,10 @@ namespace constants {
     /* UI */
     constexpr float INVALID_MOUSE_POSITION = -1.0f;
     constexpr float NAVIGATION_COOLDOWN_TIME = 0.2f;
+    constexpr float UI_SCALE_SMALL = 0.75f;
+    constexpr float UI_SCALE_NORMAL = 1.0f;
+    constexpr float UI_SCALE_LARGE = 1.25f;
+    constexpr size_t BUTTON_FONT_SIZE_BASE = 24;
 
     /* View */
     constexpr float VIEW_SMOOTHING_SPEED = 15.0f;

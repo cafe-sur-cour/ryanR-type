@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include <memory>
+#include <functional>
 
 namespace ui {
 
@@ -27,6 +28,7 @@ void UIManager::addElement(std::shared_ptr<UIElement> element) {
 
     auto it = std::find(_elements.begin(), _elements.end(), element);
     if (it == _elements.end()) {
+        element->setScale(_globalScale);
         _elements.push_back(element);
         if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
             _navigationManager->addFocusableElement(focusable);
@@ -179,13 +181,57 @@ bool UIManager::hasMouseMoved(const math::Vector2f& mousePos) {
 void UIManager::refreshNavigationElements() {
     _navigationManager->clearFocusableElements();
 
-    for (auto& element : _elements) {
-        if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
-            if (focusable->canBeFocused()) {
-                _navigationManager->addFocusableElement(focusable);
+    std::function<void(const std::shared_ptr<UIElement>&)> collectFocusables =
+        [this, &collectFocusables](const std::shared_ptr<UIElement>& element) {
+            if (!element) return;
+
+            if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
+                if (focusable->canBeFocused()) {
+                    _navigationManager->addFocusableElement(focusable);
+                }
             }
+
+            const auto& children = element->getChildren();
+            for (const auto& child : children) {
+                collectFocusables(child);
+            }
+        };
+
+    for (auto& element : _elements) {
+        collectFocusables(element);
+    }
+}
+
+void UIManager::setGlobalScale(UIScale scale) {
+    _globalScale = scale;
+    for (auto& element : _elements) {
+        if (element) {
+            element->setScale(scale);
         }
     }
+}
+
+void UIManager::cycleGlobalScale() {
+    UIScale nextScale;
+    switch (_globalScale) {
+        case UIScale::Normal:
+            nextScale = UIScale::Large;
+            break;
+        case UIScale::Large:
+            nextScale = UIScale::Small;
+            break;
+        case UIScale::Small:
+            nextScale = UIScale::Normal;
+            break;
+        default:
+            nextScale = UIScale::Normal;
+            break;
+    }
+    setGlobalScale(nextScale);
+}
+
+UIScale UIManager::getGlobalScale() const {
+    return _globalScale;
 }
 
 }  // namespace ui

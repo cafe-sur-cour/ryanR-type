@@ -89,6 +89,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cmake --build --preset "$preset" -j4
+cmake --build --preset "$preset" -j8
 
 exit $?

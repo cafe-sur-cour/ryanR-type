@@ -184,7 +184,6 @@ void rserv::Server::processIncomingPackets() {
     }
 
     this->_packet->unpack(received.second);
-
     if (this->_packet->getType() == constants::PACKET_CONNECTION) {
         this->processConnections(received.first);
     } else if (this->_packet->getType() == constants::PACKET_EVENT) {
@@ -200,21 +199,20 @@ void rserv::Server::processIncomingPackets() {
     this->_packet->reset();
 }
 
-
-
-void rserv::Server::broadcastPacket() {
-    std::vector<uint8_t> packedData;
-    if (_network) {
-        _network->broadcast(packedData);
-    }
-}
-
-void rserv::Server::sendToClient(uint8_t idClient) {
-    (void)idClient;
-}
-
 std::vector<uint8_t> rserv::Server::getConnectedClients() const {
-    return {};
+    std::vector<uint8_t> clientIds;
+    for (const auto &client : this->_clients) {
+        clientIds.push_back(std::get<0>(client));
+    }
+    return clientIds;
+}
+
+std::vector<asio::ip::udp::endpoint> rserv::Server::getConnectedClientEndpoints() const {
+    std::vector<asio::ip::udp::endpoint> endpoints;
+    for (const auto &client : this->_clients) {
+        endpoints.push_back(std::get<1>(client));
+    }
+    return endpoints;
 }
 
 size_t rserv::Server::getClientCount() const {

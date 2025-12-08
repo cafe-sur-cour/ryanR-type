@@ -6,6 +6,7 @@
 */
 
 #include <vector>
+#include <iostream>
 
 #include "Server.hpp"
 #include "../common/debug.hpp"
@@ -34,6 +35,9 @@ bool rserv::Server::gameStatePacket() {
 
 bool rserv::Server::mapPacket(std::vector<uint64_t> mapData,
     const asio::ip::udp::endpoint &endpoint) {
+        std::cout << "[SERVER] Sending map packet to "
+            << endpoint.address().to_string() << ":"
+            << endpoint.port() << std::endl;
     std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber,
         constants::PACKET_MAP, mapData);
 

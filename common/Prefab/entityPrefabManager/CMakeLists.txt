@@ -14,6 +14,9 @@ target_include_directories(${ENTITY_PREFAB_MANAGER_LIB} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../..
 )
 
+set_target_properties(${ENTITY_PREFAB_MANAGER_LIB} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 target_link_libraries(${ENTITY_PREFAB_MANAGER_LIB} PUBLIC
     ECS
+    ERROR
 )
