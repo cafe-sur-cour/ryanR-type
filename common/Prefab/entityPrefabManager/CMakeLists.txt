@@ -18,4 +18,5 @@ set_target_properties(${ENTITY_PREFAB_MANAGER_LIB} PROPERTIES POSITION_INDEPENDE
 
 target_link_libraries(${ENTITY_PREFAB_MANAGER_LIB} PUBLIC
     ECS
+    ERROR
 )
