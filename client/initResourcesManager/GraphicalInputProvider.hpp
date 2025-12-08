@@ -21,6 +21,7 @@ class GraphicalInputProvider : public IInputProvider {
 
         bool isActionPressed(InputAction action) override;
         float getActionAxis(InputAction action) override;
+        InputMapping getInputMapping() const override;
 
     private:
         std::shared_ptr<gfx::IEvent> _eventSystem;
