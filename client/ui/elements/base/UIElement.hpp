@@ -49,7 +49,7 @@ class UIElement : public std::enable_shared_from_this<UIElement> {
         void setState(UIState state);
         UIState getState() const;
 
-        void setScale(UIScale scale);
+        virtual void setScale(UIScale scale);
         UIScale getScale() const;
 
         void setParent(std::weak_ptr<UIElement> parent);

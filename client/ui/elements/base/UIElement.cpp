@@ -145,6 +145,12 @@ UIState UIElement::getState() const {
 
 void UIElement::setScale(UIScale scale) {
     _scale = scale;
+
+    for (auto& child : _children) {
+        if (child) {
+            child->setScale(scale);
+        }
+    }
 }
 
 UIScale UIElement::getScale() const {
@@ -186,11 +192,11 @@ std::pair<int, int> UIElement::getWindowSize() const {
 float UIElement::getScaleFactor() const {
     switch (_scale) {
         case UIScale::Small:
-            return 0.8f;
+            return 0.75f;
         case UIScale::Normal:
             return 1.0f;
         case UIScale::Large:
-            return 1.2f;
+            return 1.25f;
         default:
             return 1.0f;
     }
