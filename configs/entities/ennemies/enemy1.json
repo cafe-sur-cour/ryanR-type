@@ -14,9 +14,6 @@
         "AIMovementPatternComponent": {
             "target": "both",
             "defaultBehavior": "VerticalMirror",
-            "zigzagAmplitude": 30.0,
-            "zigzagFrequency": 1.0,
-            "detectionRange": 800.0,
             "verticalDeadzone": 10.0
         },
         "ProjectilePrefabComponent": {

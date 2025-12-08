@@ -8,6 +8,7 @@
 #include "AIMovementSystem.hpp"
 #include <cmath>
 #include <memory>
+#include "../../constants.hpp"
 #include "../../components/temporary/InputIntentComponent.hpp"
 #include "../../components/tags/PlayerTag.hpp"
 #include "../../components/tags/AIMoverTag.hpp"
@@ -63,7 +64,7 @@ void AIMovementSystem::executeZigzag(
     math::Vector2f direction(-1.0f, verticalDirection);
     float length = std::sqrt(direction.getX() * direction.getX() +
                             direction.getY() * direction.getY());
-    if (length > 0.001f) {
+    if (length > constants::EPSILON) {
         direction = math::Vector2f(direction.getX() / length, direction.getY() / length);
     }
     inputIntent->setDirection(direction);
@@ -97,7 +98,7 @@ void AIMovementSystem::executeVerticalMirror(
     math::Vector2f direction(-1.0f, verticalDir);
     float length = std::sqrt(direction.getX() * direction.getX() +
                             direction.getY() * direction.getY());
-    if (length > 0.001f) {
+    if (length > constants::EPSILON) {
         direction = math::Vector2f(direction.getX() / length, direction.getY() / length);
     }
     inputIntent->setDirection(direction);

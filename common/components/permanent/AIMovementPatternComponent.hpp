@@ -9,6 +9,7 @@
 #define AIMOVEMENTPATTERNCOMPONENT_HPP
 
 #include "../base/AComponent.hpp"
+#include "../../constants.hpp"
 
 namespace ecs {
 
@@ -41,11 +42,11 @@ class AIMovementPatternComponent : public AComponent {
 
     public:
         AIMovementPattern pattern;
-        float zigzagAmplitude = 80.0f;
-        float zigzagFrequency = 2.0f;
-        float detectionRange = 800.0f;
-        float verticalDeadzone = 10.0f;
-        float timer = 0.0f;
+        float zigzagAmplitude = constants::DEFAULT_ZIGZAG_AMPLITUDE;
+        float zigzagFrequency = constants::DEFAULT_ZIGZAG_FREQUENCY;
+        float detectionRange = constants::DEFAULT_DETECTION_RANGE;
+        float verticalDeadzone = constants::DEFAULT_VERTICAL_DEADZONE;
+        float timer = constants::DEFAULT_TIMER;
 };
 
 } // namespace ecs

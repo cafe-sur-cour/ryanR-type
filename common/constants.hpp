@@ -206,6 +206,14 @@ namespace constants {
     const std::string DEALDAMAGE_ACTION = "DealDamage";
     const std::string TAKEDAMAGE_ACTION = "TakeDamage";
 
+    /* AI Movement Pattern defaults */
+    constexpr float DEFAULT_ZIGZAG_AMPLITUDE = 80.0f;
+    constexpr float DEFAULT_ZIGZAG_FREQUENCY = 2.0f;
+    constexpr float DEFAULT_DETECTION_RANGE = 800.0f;
+    constexpr float DEFAULT_VERTICAL_DEADZONE = 10.0f;
+    constexpr float DEFAULT_TIMER = 0.0f;
+    constexpr float EPSILON = 0.001f;
+
     /* Packet constants */
     constexpr std::uint8_t PACKET_NO_OP = 0x00;
     constexpr std::uint8_t PACKET_CONNECTION = 0x01;
@@ -217,6 +225,7 @@ namespace constants {
     constexpr std::uint8_t PACKET_END_MAP = 0x07;
     constexpr std::uint8_t PACKET_END_GAME = 0x08;
     constexpr std::uint8_t PACKET_CAN_START = 0x09;
+
 }
 
 #endif /* !CONSTANTS_HPP_ */
