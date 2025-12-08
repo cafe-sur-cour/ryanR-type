@@ -11,4 +11,5 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     DamageComponent.hpp
     GameZoneComponent.hpp
     InteractionConfigComponent.hpp
+    AIMovementPatternComponent.hpp
 )
