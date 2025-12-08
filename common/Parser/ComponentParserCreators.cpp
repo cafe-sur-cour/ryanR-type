@@ -192,10 +192,14 @@ void Parser::instanciateComponentDefinitions() {
             std::type_index(typeid(ecs::AIMovementPatternComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::DEFAULTBEHAVIOR_FIELD, FieldType::STRING},
-            {constants::ZIGZAGAMPLITUDE_FIELD, FieldType::FLOAT},
-            {constants::ZIGZAGFREQUENCY_FIELD, FieldType::FLOAT},
-            {constants::DETECTIONRANGE_FIELD, FieldType::FLOAT},
-            {constants::VERTICALDEADZONE_FIELD, FieldType::FLOAT}
+            {constants::ZIGZAGAMPLITUDE_FIELD, FieldType::FLOAT,
+                true, std::make_shared<FieldValue>(80.0f)},
+            {constants::ZIGZAGFREQUENCY_FIELD, FieldType::FLOAT,
+                true, std::make_shared<FieldValue>(2.0f)},
+            {constants::DETECTIONRANGE_FIELD, FieldType::FLOAT,
+                true, std::make_shared<FieldValue>(800.0f)},
+            {constants::VERTICALDEADZONE_FIELD, FieldType::FLOAT,
+                true, std::make_shared<FieldValue>(10.0f)},
         }}},
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
