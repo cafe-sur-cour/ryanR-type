@@ -57,9 +57,9 @@ You can also download it in pdf format [here](../../static/pdfs/rfc-r-type.pdf)
 ```    0                   1                   2
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   | Magic | ID | Sequence |  Length               |
+   | Magic | ID | Sequence |  Type  |    Length    |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |              Paylaod               | End Flag |
+   |                    Payload                    |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ```
    Fields:
@@ -68,7 +68,6 @@ You can also download it in pdf format [here](../../static/pdfs/rfc-r-type.pdf)
    - Sequence Number
    - Length of Paylaod
    - Paylod
-   - End flag (/r/n)
 
    Header:
    - Magic Number
@@ -78,7 +77,6 @@ You can also download it in pdf format [here](../../static/pdfs/rfc-r-type.pdf)
 
    Body:
    - Payload
-   - End flag
 
 
 **3. Packet Types**
@@ -116,15 +114,14 @@ Server :
 
 4.1.1 CONNECTION (0x01) – Sent from client to server
 
-   - Player name (UTF-8, max 7 chars + null terminator)
+   - Player name (UTF-8, max 8 chars + null terminator)
 
 
 4.1.2. DISCONECTION (0x03) – Client requests to disconnect to server
 
-   - Player ID (4 bytes)
+   - Player ID (1 bytes)
 
 4.1.3. EVENT (0x04) – Client notifies input
-   - ID player
    - Event type (1 byte, e.g., Up, Down, Left, Right, Space)
    - Depth of movement
    - Direction of shoot
@@ -134,33 +131,25 @@ Server :
 
 4.2.1 CONNECTIONS_ACC   (0x02) – Sent from Server to Client
 
-   - Player ID (4 bytes)
+   - Player ID (1 bytes)
 
 4.2.2. GAME_STATE (0x05) – Server sends games state to clients
 
-   - Player ID (4 bytes)
    - State (position, velocity, state...)
 
 4.2.3. MAP_SEND (0x06) – Server sends the map to the clients
 
-   - Player ID (4 bytes)
-   -Map Data (json)
+   - Map Data (json)
 
 
 4.2.4. END_MAP (0x07) – Server notify the end of the map
 
-   - Player ID (4 bytes)
-
 4.2.5. END_GAME (0x08) – Server notify end of game and who won
 
-   - Player ID (4 bytes)
-   - Player ID who won (4 bytes)
+   - Player ID who won (1 bytes)
 
 
 4.2.6. CAN_START (0x09) – Server tells client game can start
-
-   - Player ID (4 bytes)
-
 
 
 **5. Communication Example**
