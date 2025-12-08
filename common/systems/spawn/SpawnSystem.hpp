@@ -14,7 +14,7 @@ namespace ecs {
 
 class SpawnSystem : public ASystem {
     public:
-        SpawnSystem() = default;
+        SpawnSystem();
         ~SpawnSystem() = default;
 
         void update(
