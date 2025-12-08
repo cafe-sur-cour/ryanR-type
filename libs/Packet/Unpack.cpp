@@ -12,16 +12,10 @@
 
 bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
     if (data.empty()) {
-        debug::Debug::printDebug(true,
-            "[PACKET] Received empty data for unpacking",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
 
     if (data.at(0) != MAGIC_NUMBER) {
-        debug::Debug::printDebug(true,
-            "[PACKET] Invalid magic number in received data",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
 
@@ -39,38 +33,24 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
         std::vector<uint8_t>(data.begin() + 7, data.begin() + 11));
 
     if (data.size() - HEADER_SIZE != length) {
-        debug::Debug::printDebug(true,
-            "[PACKET] Mismatch between declared length and actual data size",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
+    if (length == 0)
+        return true;
 
     for (auto &handler : this->_packetReceived) {
         if (handler.first == type) {
             std::vector<uint8_t> payload(data.begin() + 11, data.end());
             bool result = handler.second(payload);
             if (!result) {
-                debug::Debug::printDebug(true,
-                    "[PACKET] Failed to parse packet payload",
-                    debug::debugType::NETWORK, debug::debugLevel::ERROR);
                 return false;
             }
             this->_idClient = static_cast<uint8_t>(idClient);
             this->_sequenceNumber = static_cast<uint32_t>(sequenceNumber);
             this->_type = static_cast<uint8_t>(type);
             this->_length = static_cast<uint32_t>(length);
-            debug::Debug::printDebug(true,
-                "[PACKET] Successfully unpacked packet of type "
-                + std::to_string(static_cast<int>(type)),
-                debug::debugType::NETWORK, debug::debugLevel::INFO);
             return true;
         }
     }
-
-    debug::Debug::printDebug(true,
-        "[PACKET] Unknown packet type "
-        + std::to_string(static_cast<int>(type))
-        + " for unpacking",
-        debug::debugType::NETWORK, debug::debugLevel::ERROR);
     return false;
 }
