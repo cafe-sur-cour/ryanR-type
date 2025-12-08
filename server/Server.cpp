@@ -225,6 +225,20 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
 
     this->_clients.push_back(std::make_tuple(this->_nextClientId, id, ""));
     this->_nextClientId++;
+
+    if (this->_nextClientId > this->getConfig()->getNbClients()) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] All clients are connected after sending starting packet",
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+        std::vector<uint8_t> packetStart = this->_packet->pack(0, this->_sequenceNumber,
+            constants::PACKET_CAN_START, {});
+        if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packetStart)) {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER NETWORK] Failed to broadcast can start packet",
+                debug::debugType::NETWORK, debug::debugLevel::ERROR);
+            return false;
+        }
+    }
     return true;
 }
 

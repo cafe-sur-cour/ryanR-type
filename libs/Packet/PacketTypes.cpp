@@ -112,3 +112,26 @@ bool pm::PacketManager::parseEventPacket(const std::vector<uint8_t> payload) {
     this->_payload.push_back(result4);
     return true;
 }
+
+std::vector<uint8_t> pm::PacketManager::buildEndGamePacket(
+    std::vector<uint64_t> payload) {
+    std::vector<uint8_t> body;
+    std::vector<uint8_t> temp;
+
+    temp = this->_serializer->serializeUChar(payload.at(0));
+    body.insert(body.end(), temp.begin(), temp.end());
+    return body;
+}
+
+bool pm::PacketManager::parseEndGamePacket(
+    const std::vector<std::uint8_t> payload) {
+    if (payload.size() != LENGTH_END_GAME_PACKET) {
+        return false;
+    }
+
+    std::vector<std::uint8_t> charBytes(
+        payload.begin() + 0, payload.begin() + 1);
+    uint64_t result = this->_serializer->deserializeUChar(charBytes);
+    this->_payload.push_back(result);
+    return true;
+}
