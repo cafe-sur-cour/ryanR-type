@@ -192,7 +192,9 @@ void UIManager::refreshNavigationElements() {
 void UIManager::setGlobalScale(UIScale scale) {
     _globalScale = scale;
     for (auto& element : _elements) {
-        element->setScale(scale);
+        if (element) {
+            element->setScale(scale);
+        }
     }
 }
 
