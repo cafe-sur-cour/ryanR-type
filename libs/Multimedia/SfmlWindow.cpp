@@ -150,6 +150,22 @@ void SfmlWindow::drawText(std::string text, gfx::color_t color,
     _renderTexture.draw(sfText);
 }
 
+std::pair<size_t, size_t> SfmlWindow::getTextSize(
+    const std::string& text,
+    const std::string& fontPath
+) {
+    auto font = _fontManager.getFont(fontPath);
+    if (!font) {
+        std::cout << "Failed to load font: " << fontPath << std::endl;
+        return {0, 0};
+    }
+
+    sf::Text sfText(*font, sf::String(text), 24);
+    sf::Rect<float> bounds = sfText.getGlobalBounds();
+    sf::Vector2f size = bounds.size;
+    return {static_cast<size_t>(size.x), static_cast<size_t>(size.y)};
+}
+
 void SfmlWindow::drawRectangleOutline(gfx::color_t color,
     std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) {
     sf::RectangleShape rectangle(sf::Vector2f(static_cast<float>(size.first),
