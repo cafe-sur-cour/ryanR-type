@@ -226,7 +226,6 @@ bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
     this->_clients.push_back(std::make_tuple(this->_nextClientId, id, ""));
     this->_nextClientId++;
 
-
     if (this->_nextClientId > this->getConfig()->getNbClients()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] All clients are connected after sending starting packet",
