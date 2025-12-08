@@ -108,21 +108,16 @@ bool UnixClientNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> 
     }
 }
 
-void UnixClientNetwork::broadcast(std::vector<uint8_t> data) {
-    try {
-        if (!_socket || !_socket->is_open()) {
-            std::cerr << "[CLIENT NETWORK] Socket is not open for broadcasting." << std::endl;
-            return;
+bool UnixClientNetwork::broadcast(std::vector<asio::ip::udp::endpoint> endpoints,
+    std::vector<uint8_t> data) {
+    for (auto &endpoint : endpoints) {
+        if (!this->sendTo(endpoint, data)) {
+            std::cerr << "[CLIENT NETWORK] Broadcast error to endpoint: "
+                << endpoint.address().to_string() << ":" << endpoint.port() << std::endl;
+            return false;
         }
-        if (data.empty()) {
-            std::cerr << "[CLIENT NETWORK] No data to broadcast." << std::endl;
-            return;
-        }
-        _socket->send_to(asio::buffer(data), this->_serverEndpoint);
-        std::cout << "[CLIENT NETWORK] Broadcasted " << data.size() << " bytes." << std::endl;
-    } catch (const std::exception& e) {
-        std::cerr << "[CLIENT NETWORK] Broadcast error: " << e.what() << std::endl;
     }
+    return true;
 }
 
 bool UnixClientNetwork::hasIncomingData() const {
