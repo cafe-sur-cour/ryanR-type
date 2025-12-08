@@ -14,11 +14,8 @@ struct CollisionRule {
 
 struct CollisionRulesData {
     std::shared_ptr<std::vector<CollisionRule>> solidAllowRules;
-    std::shared_ptr<std::vector<CollisionRule>> solidDenyRules;
     std::shared_ptr<std::vector<CollisionRule>> triggerAllowRules;
-    std::shared_ptr<std::vector<CollisionRule>> triggerDenyRules;
     std::shared_ptr<std::vector<CollisionRule>> pushAllowRules;
-    std::shared_ptr<std::vector<CollisionRule>> pushDenyRules;
 };
 
 }  // namespace ecs

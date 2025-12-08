@@ -38,11 +38,8 @@ protected:
         // Initialize collision rules with rules allowing solid collisions for tests
         CollisionRulesData testData;
         testData.solidAllowRules = std::make_shared<std::vector<CollisionRule>>();
-        testData.solidDenyRules = std::make_shared<std::vector<CollisionRule>>();
         testData.triggerAllowRules = std::make_shared<std::vector<CollisionRule>>();
-        testData.triggerDenyRules = std::make_shared<std::vector<CollisionRule>>();
         testData.pushAllowRules = std::make_shared<std::vector<CollisionRule>>();
-        testData.pushDenyRules = std::make_shared<std::vector<CollisionRule>>();
         CollisionRule allowAllSolid;
         allowAllSolid.groupA = {};
         allowAllSolid.groupB = {};
