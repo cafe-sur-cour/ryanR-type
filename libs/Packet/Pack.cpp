@@ -36,16 +36,16 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
     }
 
     if (length == 0) {
-        debug::Debug::printDebug(true,
-            "[PACKET] Error: Unknown packet type or NO_OP_PACKET "
-            + std::to_string(static_cast<int>(type))
-            + " for packing",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
-        return {};
+        if (type != CAN_START_PACKET) {
+            return {};
+        }
+        temp = this->_serializer->serializeUInt(length);
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        return packet;
+    } else {
+        temp = this->_serializer->serializeUInt(length);
+        packet.insert(packet.end(), temp.begin(), temp.end());
     }
-
-    temp = this->_serializer->serializeUInt(length);
-    packet.insert(packet.end(), temp.begin(), temp.end());
 
     for (auto &handler : this->_packetHandlers) {
         if (handler.first == type) {
