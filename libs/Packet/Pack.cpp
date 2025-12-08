@@ -36,12 +36,19 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
     }
 
     if (length == 0) {
-        debug::Debug::printDebug(true,
-            "[PACKET] Error: Unknown packet type or NO_OP_PACKET "
-            + std::to_string(static_cast<int>(type))
-            + " for packing",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
-        return {};
+        if (type == MAP_SEND_PACKET || type == GAME_STATE_PACKET) {
+            debug::Debug::printDebug(true,
+                "[PACKET] Warning: Packet size not fixed "
+                + std::to_string(static_cast<int>(type))
+                + " for packing",
+                debug::debugType::NETWORK, debug::debugLevel::WARNING);
+            length = static_cast<uint32_t>(payload.size()) * sizeof(uint64_t);
+        } else {
+            std::cerr << "[PACKET] Error: Unknown packet type "
+                      << static_cast<int>(type)
+                      << " for packing" << std::endl;
+            return std::vector<uint8_t>();
+        }
     }
 
     temp = this->_serializer->serializeUInt(length);
