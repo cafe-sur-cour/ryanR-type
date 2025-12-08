@@ -64,7 +64,7 @@ void AIMovementSystem::executeZigzag(
     math::Vector2f direction(-1.0f, verticalDirection);
     float length = std::sqrt(direction.getX() * direction.getX() +
                             direction.getY() * direction.getY());
-    if (length > constants::EPSILON) {
+    if (length > constants::EPS) {
         direction = math::Vector2f(direction.getX() / length, direction.getY() / length);
     }
     inputIntent->setDirection(direction);
@@ -98,7 +98,7 @@ void AIMovementSystem::executeVerticalMirror(
     math::Vector2f direction(-1.0f, verticalDir);
     float length = std::sqrt(direction.getX() * direction.getX() +
                             direction.getY() * direction.getY());
-    if (length > constants::EPSILON) {
+    if (length > constants::EPS) {
         direction = math::Vector2f(direction.getX() / length, direction.getY() / length);
     }
     inputIntent->setDirection(direction);
