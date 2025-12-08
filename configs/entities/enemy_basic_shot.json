@@ -1,0 +1,50 @@
+{
+    "name": "enemy_basic_shot",
+    "components": {
+        "ProjectileTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 2.5, "y": 2.5 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpriteComponent": {
+            "target": "client",
+            "filePath": "assets/sprites/projectiles/player_basic.png"
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 16.0, "y": 4.0 },
+            "type": "Trigger"
+        },
+        "DamageComponent": {
+            "target": "both",
+            "damage": 10.0
+        },
+        "SpeedComponent": {
+            "target": "both",
+            "speed": 600.0
+        },
+        "LifetimeComponent": {
+            "target": "both",
+            "lifetime": 1.0
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerTag"],
+                    "toEntity": ["TakeDeath"],
+                    "toSelf": ["TakeDeath"]
+                },
+                {
+                    "tags": ["ObstacleTag"],
+                    "toEntity": ["DealDeath"],
+                    "toSelf": ["TakeDeath"]
+                }
+            ]
+        }
+    }
+}
