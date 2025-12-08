@@ -44,8 +44,11 @@ void Button::render() {
     );
 
     if (!_text.empty()) {
-        float textX = absPos.getX() + absSize.getX() / 2.0f;
-        float textY = absPos.getY() + absSize.getY() / 2.0f;
+        auto textSize = resourceManager->get<gfx::IWindow>()->getTextSize(_text, _fontPath);
+        float textX = absPos.getX() +
+            (absSize.getX() - static_cast<float>(textSize.first)) / 2.0f;
+        float textY = absPos.getY() +
+            (absSize.getY() - static_cast<float>(textSize.second)) / 2.0f;
 
         resourceManager->get<gfx::IWindow>()->drawText(
             _text,
