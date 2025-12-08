@@ -8,6 +8,7 @@
 #include <memory>
 #include "HealthBarRenderingSystem.hpp"
 #include "../../constants.hpp"
+#include "../../components/rendering/HealthBarComponent.hpp"
 #include "../../../common/components/permanent/HealthComponent.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/components/permanent/ColliderComponent.hpp"
@@ -24,7 +25,8 @@ void HealthBarRenderingSystem::update(std::shared_ptr<ResourceManager>
     resourceManager, std::shared_ptr<Registry> registry, float deltaTime) {
     (void)deltaTime;
 
-    View<HealthComponent, TransformComponent, ColliderComponent> view(registry);
+    View<HealthBarComponent, HealthComponent, TransformComponent,
+        ColliderComponent> view(registry);
 
     for (auto entityId : view) {
         auto health = registry->getComponent<HealthComponent>(entityId);
