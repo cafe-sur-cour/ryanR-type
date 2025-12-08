@@ -55,4 +55,8 @@ float GraphicalInputProvider::getActionAxis(InputAction action) {
     return value;
 }
 
+InputMapping GraphicalInputProvider::getInputMapping() const {
+    return _mapping;
+}
+
 }  // namespace ecs
