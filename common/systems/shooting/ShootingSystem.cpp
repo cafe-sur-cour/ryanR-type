@@ -96,7 +96,7 @@ void ShootingSystem::update(
             }
         }
 
-            shootingStats->resetCooldown();
+        shootingStats->resetCooldown();
     }
 
     auto cooldownView = registry->view<ShootingStatsComponent>();
