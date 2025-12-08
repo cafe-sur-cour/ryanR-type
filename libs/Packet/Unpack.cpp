@@ -12,16 +12,12 @@
 
 bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
     if (data.empty()) {
-        debug::Debug::printDebug(true,
-            "[PACKET] Received empty data for unpacking",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        std::cerr << "[PACKET] Received empty data for unpacking" << std::endl;
         return false;
     }
 
     if (data.at(0) != MAGIC_NUMBER) {
-        debug::Debug::printDebug(true,
-            "[PACKET] Invalid magic number in received data",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        std::cerr << "[PACKET] Invalid magic number in received data" << std::endl;
         return false;
     }
 
@@ -39,9 +35,7 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
         std::vector<uint8_t>(data.begin() + 7, data.begin() + 11));
 
     if (data.size() - HEADER_SIZE != length) {
-        debug::Debug::printDebug(true,
-            "[PACKET] Mismatch between declared length and actual data size",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        std::cerr << "[PACKET] Mismatch between declared length and actual size" << std::endl;
         return false;
     }
 
@@ -59,18 +53,10 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
             this->_sequenceNumber = static_cast<uint32_t>(sequenceNumber);
             this->_type = static_cast<uint8_t>(type);
             this->_length = static_cast<uint32_t>(length);
-            debug::Debug::printDebug(true,
-                "[PACKET] Successfully unpacked packet of type "
-                + std::to_string(static_cast<int>(type)),
-                debug::debugType::NETWORK, debug::debugLevel::INFO);
             return true;
         }
     }
-
-    debug::Debug::printDebug(true,
-        "[PACKET] Unknown packet type "
-        + std::to_string(static_cast<int>(type))
-        + " for unpacking",
-        debug::debugType::NETWORK, debug::debugLevel::ERROR);
+    std::cerr << "[PACKET] No handler found for packet type: "
+              << static_cast<int>(type) << std::endl;
     return false;
 }

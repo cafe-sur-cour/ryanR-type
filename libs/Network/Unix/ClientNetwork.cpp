@@ -119,7 +119,6 @@ void UnixClientNetwork::broadcast(std::vector<uint8_t> data) {
             return;
         }
         _socket->send_to(asio::buffer(data), this->_serverEndpoint);
-        std::cout << "[CLIENT NETWORK] Broadcasted " << data.size() << " bytes." << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "[CLIENT NETWORK] Broadcast error: " << e.what() << std::endl;
     }
@@ -153,10 +152,9 @@ std::vector<uint8_t> UnixClientNetwork::receiveFrom(
         return std::vector<uint8_t>();
     }
     std::vector<uint8_t> buffer(available);
-    asio::ip::udp::endpoint senderEndpoint;
 
     std::size_t bytesReceived = _socket->receive_from(
-        asio::buffer(buffer), senderEndpoint, 0, ec);
+        asio::buffer(buffer), this->_serverEndpoint, 0, ec);
 
     if (ec) {
         if (ec == asio::error::would_block || ec == asio::error::try_again) {
