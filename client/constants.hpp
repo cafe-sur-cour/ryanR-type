@@ -41,6 +41,11 @@ namespace constants {
     const std::string FILTER_DEUTERANOPIA_SHADER_PATH = "assets/shaders/deuteranopia.frag";
     const std::string FILTER_TRITANOPIA_SHADER_PATH = "assets/shaders/tritanopia.frag";
     const std::string FILTER_BRIGHTNESS_SHADER_PATH = "assets/shaders/brightness.frag";
+
+    /* Health Bar */
+    constexpr float HEALTH_BAR_OFFSET_Y = -10.0f;
+    constexpr float HEALTH_BAR_HEIGHT = 5.0f;
+    constexpr float HEALTH_BAR_OUTLINE_THICKNESS = 2.0f;
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */

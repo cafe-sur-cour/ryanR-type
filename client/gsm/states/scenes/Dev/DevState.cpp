@@ -19,6 +19,7 @@
 #include "../../../../systems/rendering/TextRenderingSystem.hpp"
 #include "../../../../systems/rendering/ParallaxRenderingSystem.hpp"
 #include "../../../../systems/rendering/SpriteRenderingSystem.hpp"
+#include "../../../../systems/rendering/HealthBarRenderingSystem.hpp"
 #include "../../../../systems/input/MovementInputSystem.hpp"
 #include "../../../../systems/input/ShootInputSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
@@ -77,6 +78,7 @@ void DevState::enter() {
     addSystem(std::make_shared<ecs::HitboxRenderingSystem>());
     addSystem(std::make_shared<ecs::RectangleRenderingSystem>());
     addSystem(std::make_shared<ecs::TextRenderingSystem>());
+    addSystem(std::make_shared<ecs::HealthBarRenderingSystem>());
     addSystem(std::make_shared<ecs::ShootInputSystem>());
     addSystem(std::make_shared<ecs::ShootingSystem>());
     addSystem(std::make_shared<ecs::LifetimeSystem>());
