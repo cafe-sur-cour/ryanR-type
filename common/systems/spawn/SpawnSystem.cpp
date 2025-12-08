@@ -14,6 +14,9 @@
 
 namespace ecs {
 
+SpawnSystem::SpawnSystem() {
+}
+
 void SpawnSystem::update(
     std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<Registry> registry,
