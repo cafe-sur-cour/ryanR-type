@@ -29,7 +29,8 @@ class SfmlWindow : public gfx::IWindow {
         void resizeWindow(size_t x, size_t y) override;
 
         void drawSprite(std::string asset, gfx::color_t color, std::pair<size_t, size_t> position) override;
-        void drawText(std::string text, gfx::color_t color, std::pair<size_t, size_t> position, const std::string& fontPath) override;
+        void drawText(std::string text, gfx::color_t color, std::pair<size_t, size_t> position, const std::string& fontPath, size_t fontSize) override;
+        std::pair<size_t, size_t> getTextSize(const std::string& text, const std::string& fontPath, size_t fontSize) override;
         void drawRectangleOutline(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
         void drawFilledRectangle(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
 
@@ -44,9 +45,9 @@ class SfmlWindow : public gfx::IWindow {
         math::Vector2f getViewCenter() override;
         math::Vector2f mapPixelToCoords(int x, int y) override;
 
-        std::pair<int, int> getLogicalSize() const;
+        std::pair<int, int> getLogicalSize() const override;
 
-        float getScaleFactor() const;
+        float getScaleFactor() const override;
 
         void enableFilter(const std::string& filterName);
         void addFilter(const std::string& filterName);

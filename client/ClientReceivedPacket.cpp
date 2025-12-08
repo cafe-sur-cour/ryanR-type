@@ -43,6 +43,10 @@ void ClientNetwork::handleGameState() {
 }
 
 void ClientNetwork::handleMapSend() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received map packet, starting parsing...",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
     auto payload = _packet->getPayload();
     std::vector<uint8_t> payloadBytes;
 

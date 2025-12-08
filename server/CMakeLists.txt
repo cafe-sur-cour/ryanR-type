@@ -20,6 +20,7 @@ find_package(asio CONFIG REQUIRED)
 target_link_libraries(${SERVER_LIB_NAME}
     PUBLIC
         ECS
+        COLLISION_RULES
         ERROR
         SIGNAL
         DLLoader

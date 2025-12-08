@@ -57,9 +57,8 @@ namespace rserv {
             void onClientDisconnected(uint8_t idClient) override;
             void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet) override;
 
-            void broadcastPacket() override;
-            void sendToClient(uint8_t idClient) override;
             std::vector<uint8_t> getConnectedClients() const override;
+            std::vector<asio::ip::udp::endpoint> getConnectedClientEndpoints() const override;
             size_t getClientCount() const override;
 
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> getEventQueue() override;
@@ -70,6 +69,7 @@ namespace rserv {
             bool processConnections(asio::ip::udp::endpoint endpoint) override;
             bool processDisconnections(uint8_t idClient) override;
             bool processEvents(uint8_t idClient) override;
+            bool processEndOfGame(uint8_t idClient) override;
 
             /* Sent Packet Handling */
             bool connectionPacket(asio::ip::udp::endpoint endpoint);

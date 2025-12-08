@@ -32,10 +32,16 @@
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
 #include "../../../../../common/systems/interactions/InteractionSystem.hpp"
 #include "../../../../../common/constants.hpp"
+#include "../../../../../common/Parser/CollisionRulesParser.hpp"
+#include "../../../../../common/CollisionRules/CollisionRules.hpp"
+#include "../../../../../common/components/tags/PlayerTag.hpp"
+#include "../../../../../common/components/tags/ObstacleTag.hpp"
 #include "../../../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../../systems/rendering/GameZoneViewSystem.hpp"
 #include "../../../../systems/audio/MusicSystem.hpp"
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
+#include "../../../../../common/systems/ai/AIMovementSystem.hpp"
+#include "../../../../../common/systems/ai/AIShootingSystem.hpp"
 
 namespace gsm {
 
@@ -51,7 +57,9 @@ void DevState::enter() {
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
     _resourceManager->add<ecs::Registry>(_registry);
 
-
+    auto collisionData =
+        ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
+    ecs::CollisionRules::initWithData(collisionData);
     auto existingParser = _resourceManager->get<Parser>();
     if (existingParser) {
         _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
@@ -67,9 +75,12 @@ void DevState::enter() {
         _parser->parseAllEntities(constants::CONFIG_PATH);
     }
 
+    addSystem(std::make_shared<ecs::AIMovementSystem>());
+    addSystem(std::make_shared<ecs::AIShootingSystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::MovementSystem>());
     addSystem(std::make_shared<ecs::MovementInputSystem>());
+    addSystem(std::make_shared<ecs::InteractionSystem>());
     addSystem(std::make_shared<ecs::SoundSystem>());
     addSystem(std::make_shared<ecs::ParallaxRenderingSystem>());
     addSystem(std::make_shared<ecs::SpriteRenderingSystem>());

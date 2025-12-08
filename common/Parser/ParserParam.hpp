@@ -42,19 +42,25 @@ enum class FieldType {
     JSON,
 };
 
-struct Field {
-    std::string name;
-    FieldType type;
-};
-
-struct FieldValue;
-
-using FieldValueMap = std::map<std::string, std::shared_ptr<FieldValue>>;
+using FieldValueMap = std::map<std::string, std::shared_ptr<struct FieldValue>>;
 using FieldValueVariant = std::variant<math::Vector2f, float, std::string, int, bool, FieldValueMap, nlohmann::json>;
 
 struct FieldValue : FieldValueVariant {
     using FieldValueVariant::FieldValueVariant;
     using FieldValueVariant::operator=;
+
+    template<typename T>
+    FieldValue(T&& value) : FieldValueVariant(std::forward<T>(value)) {}
+};
+
+struct Field {
+    std::string name;
+    FieldType type;
+    bool optional = false;
+    std::shared_ptr<FieldValue> defaultValue = nullptr;
+
+    Field(std::string n, FieldType t, bool opt = false, std::shared_ptr<FieldValue> def = nullptr)
+        : name(std::move(n)), type(t), optional(opt), defaultValue(std::move(def)) {}
 };
 
 #include <typeindex>

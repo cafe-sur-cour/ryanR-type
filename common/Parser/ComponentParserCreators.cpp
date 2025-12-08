@@ -24,6 +24,9 @@
 #include "../components/tags/ProjectilePassThroughTag.hpp"
 #include "../components/permanent/ShootingStatsComponent.hpp"
 #include "../components/permanent/ProjectilePrefabComponent.hpp"
+#include "../components/permanent/AIMovementPatternComponent.hpp"
+#include "../components/tags/AIMoverTag.hpp"
+#include "../components/tags/AIShooterTag.hpp"
 #include "../components/permanent/VelocityComponent.hpp"
 #include "../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../client/components/rendering/TextComponent.hpp"
@@ -46,8 +49,10 @@ void Parser::instanciateComponentDefinitions() {
         {constants::TRANSFORMCOMPONENT, {std::type_index(typeid(ecs::TransformComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::POSITION_FIELD, FieldType::VECTOR2F},
-            {constants::SCALE_FIELD, FieldType::VECTOR2F},
-            {constants::ROTATION_FIELD, FieldType::FLOAT}
+            {constants::SCALE_FIELD, FieldType::VECTOR2F,
+                true, std::make_shared<FieldValue>(math::Vector2f(1.0f, 1.0f))},
+            {constants::ROTATION_FIELD, FieldType::FLOAT,
+                true, std::make_shared<FieldValue>(0.0f)}
         }}},
         {constants::VELOCITYCOMPONENT, {std::type_index(typeid(ecs::VelocityComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING}
@@ -64,7 +69,8 @@ void Parser::instanciateComponentDefinitions() {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::STATES_FIELD, FieldType::JSON},
             {constants::INITIALSTATE_FIELD, FieldType::STRING},
-            {constants::TRANSITIONS_FIELD, FieldType::JSON}
+            {constants::TRANSITIONS_FIELD, FieldType::JSON,
+                true, std::make_shared<FieldValue>(nlohmann::json::array())}
         }}},
         {constants::CONTROLLABLETAG, {std::type_index(typeid(ecs::ControllableTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
@@ -91,9 +97,16 @@ void Parser::instanciateComponentDefinitions() {
             {std::type_index(typeid(ecs::ProjectilePassThroughTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
+        {constants::AIMOVERTAG, {std::type_index(typeid(ecs::AIMoverTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::AISHOOTERTAG, {std::type_index(typeid(ecs::AIShooterTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
         {constants::COLLIDERCOMPONENT, {std::type_index(typeid(ecs::ColliderComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
-            {constants::OFFSET_FIELD, FieldType::VECTOR2F},
+            {constants::OFFSET_FIELD, FieldType::VECTOR2F,
+                true, std::make_shared<FieldValue>(math::Vector2f(0.0f, 0.0f))},
             {constants::SIZE_FIELD, FieldType::VECTOR2F},
             {constants::TYPE_FIELD, FieldType::STRING}
         }}},
@@ -101,9 +114,12 @@ void Parser::instanciateComponentDefinitions() {
             {std::type_index(typeid(ecs::ShootingStatsComponent)), {
                 {constants::TARGET_FIELD, FieldType::STRING},
                 {constants::FIRERATE_FIELD, FieldType::FLOAT},
-                {constants::SHOTCOUNT_FIELD, FieldType::INT},
-                {constants::ANGLEOFFSET_FIELD, FieldType::FLOAT},
-                {constants::SPREADANGLE_FIELD, FieldType::FLOAT}
+                {constants::SHOTCOUNT_FIELD, FieldType::INT,
+                    true, std::make_shared<FieldValue>(1)},
+                {constants::ANGLEOFFSET_FIELD, FieldType::FLOAT,
+                    true, std::make_shared<FieldValue>(0.0f)},
+                {constants::SPREADANGLE_FIELD, FieldType::FLOAT,
+                    true, std::make_shared<FieldValue>(0.0f)}
             }
         }},
         {constants::RECTANGLERENDERCOMPONENT, {
@@ -171,6 +187,19 @@ void Parser::instanciateComponentDefinitions() {
             std::type_index(typeid(ecs::InteractionConfigComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::MAPPINGS_FIELD, FieldType::JSON}
+        }}},
+        {constants::AIMOVEMENTPATTERNCOMPONENT, {
+            std::type_index(typeid(ecs::AIMovementPatternComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::DEFAULTBEHAVIOR_FIELD, FieldType::STRING},
+            {constants::ZIGZAGAMPLITUDE_FIELD, FieldType::FLOAT,
+                true, std::make_shared<FieldValue>(constants::DEFAULT_ZIGZAG_AMPLITUDE)},
+            {constants::ZIGZAGFREQUENCY_FIELD, FieldType::FLOAT,
+                true, std::make_shared<FieldValue>(constants::DEFAULT_ZIGZAG_FREQUENCY)},
+            {constants::DETECTIONRANGE_FIELD, FieldType::FLOAT,
+                true, std::make_shared<FieldValue>(constants::DEFAULT_DETECTION_RANGE)},
+            {constants::VERTICALDEADZONE_FIELD, FieldType::FLOAT,
+                true, std::make_shared<FieldValue>(constants::DEFAULT_VERTICAL_DEADZONE)},
         }}},
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
@@ -309,7 +338,11 @@ void Parser::instanciateComponentCreators() {
             type = ecs::CollisionType::None;
         }
 
-        return std::make_shared<ecs::ColliderComponent>(offset, size, type);
+        std::vector<std::vector<std::string>> includeTags;
+        std::vector<std::vector<std::string>> excludeTags;
+
+        return std::make_shared<ecs::ColliderComponent>(
+            offset, size, type);
     });
 
     registerComponent<ecs::ShootingStatsComponent>([](const std::map<std::string,
@@ -500,6 +533,40 @@ void Parser::instanciateComponentCreators() {
             mappings.push_back(mapping);
         }
         return std::make_shared<ecs::InteractionConfigComponent>(mappings);
+    });
+    registerComponent<ecs::AIMoverTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::AIMoverTag>();
+    });
+    registerComponent<ecs::AIShooterTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::AIShooterTag>();
+    });
+    registerComponent<ecs::AIMovementPatternComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto behaviorStr = std::get<std::string>(*fields.at(constants::DEFAULTBEHAVIOR_FIELD));
+        auto zigzagAmplitude = std::get<float>(*fields.at(constants::ZIGZAGAMPLITUDE_FIELD));
+        auto zigzagFrequency = std::get<float>(*fields.at(constants::ZIGZAGFREQUENCY_FIELD));
+        auto detectionRange = std::get<float>(*fields.at(constants::DETECTIONRANGE_FIELD));
+        auto verticalDeadzone = std::get<float>(*fields.at(constants::VERTICALDEADZONE_FIELD));
+
+        ecs::AIMovementPattern pattern = ecs::AIMovementPattern::STRAIGHT_LINE;
+        if (behaviorStr == constants::STRAIGHT_LINE_VALUE) {
+            pattern = ecs::AIMovementPattern::STRAIGHT_LINE;
+        } else if (behaviorStr == constants::ZIGZAG_VALUE) {
+            pattern = ecs::AIMovementPattern::ZIGZAG;
+        } else if (behaviorStr == constants::VERTICAL_MIRROR_VALUE) {
+            pattern = ecs::AIMovementPattern::VERTICAL_MIRROR;
+        }
+
+        auto component = std::make_shared<ecs::AIMovementPatternComponent>();
+        component->setPattern(pattern);
+        component->setZigzagAmplitude(zigzagAmplitude);
+        component->setZigzagFrequency(zigzagFrequency);
+        component->setDetectionRange(detectionRange);
+        component->setVerticalDeadzone(verticalDeadzone);
+        component->setTimer(0.0f);
+        return component;
     });
 }
 

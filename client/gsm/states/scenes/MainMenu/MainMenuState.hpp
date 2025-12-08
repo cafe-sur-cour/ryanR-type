@@ -13,6 +13,7 @@
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../ui/elements/focusable/Button.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
+#include "../../../../ui/core/UILayout.hpp"
 
 
 namespace gsm {
@@ -31,6 +32,7 @@ private:
     void cycleColorBlindnessFilter();
     void toggleHighContrastFilter();
     void cycleBrightnessFilter();
+    void cycleUIScale();
 
 private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
@@ -39,7 +41,11 @@ private:
     std::shared_ptr<ui::Button> _highContrastButton;
     std::shared_ptr<ui::Button> _colorBlindnessButton;
     std::shared_ptr<ui::Button> _brightnessButton;
+    std::shared_ptr<ui::Button> _scaleButton;
     std::unique_ptr<ui::UIManager> _uiManager;
+    std::shared_ptr<ui::UILayout> _mainMenuLayout;
+    std::shared_ptr<ui::UILayout> _scaleLayout;
+    std::shared_ptr<ui::UILayout> _toolbarLayout;
     int _colorBlindnessState = 0;
     int _brightnessState = 3;
 };

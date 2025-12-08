@@ -7,10 +7,13 @@
 
 #include "TriggerSystem.hpp"
 #include <memory>
+#include <string>
+#include <vector>
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/temporary/TriggerIntentComponent.hpp"
+#include "../../CollisionRules/CollisionRules.hpp"
 
 namespace ecs {
 
@@ -45,8 +48,11 @@ void TriggerSystem::update(
                 continue;
 
             auto otherCollider = registry->getComponent<ColliderComponent>(colliderEntity);
-            if (otherCollider && checkCollision(*triggerTransform, *triggerCollider,
-                    *colliderTransform, *otherCollider)) {
+            if (otherCollider && shouldCollide(registry, triggerEntity, *triggerCollider,
+                    colliderEntity) &&
+                    checkCollision(*triggerTransform, *triggerCollider,
+                    *colliderTransform, *otherCollider)
+            ) {
                 registry->addComponent<TriggerIntentComponent>(triggerEntity,
                     std::make_shared<TriggerIntentComponent>(triggerEntity, colliderEntity));
             }
@@ -66,6 +72,20 @@ bool TriggerSystem::checkCollision(
         transformB.getScale());
 
     return hitboxA.intersects(hitboxB);
+}
+
+bool TriggerSystem::shouldCollide(
+    std::shared_ptr<Registry> registry,
+    size_t entityA,
+    const ColliderComponent& colliderA,
+    size_t entityB
+) {
+    const TagRegistry& tagRegistry = TagRegistry::getInstance();
+    const CollisionRules& collisionRules = CollisionRules::getInstance();
+    std::vector<std::string> tagsA = tagRegistry.getTags(registry, entityA);
+    std::vector<std::string> tagsB = tagRegistry.getTags(registry, entityB);
+
+    return collisionRules.canCollide(colliderA.getType(), tagsA, tagsB);
 }
 
 }  // namespace ecs

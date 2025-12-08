@@ -8,4 +8,6 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     ShooterTag.hpp
     ScoreTag.hpp
     GameZoneColliderTag.hpp
+    AIMoverTag.hpp
+    AIShooterTag.hpp
 )

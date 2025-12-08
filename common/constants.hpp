@@ -40,6 +40,12 @@ namespace constants {
     /* Paths */
     const std::string CONFIG_PATH = "configs/entities/";
 
+    /* Collision Rules JSON Keys */
+    const std::string COLLISION_SOLID_KEY = "solid";
+    const std::string COLLISION_TRIGGER_KEY = "trigger";
+    const std::string COLLISION_PUSH_KEY = "push";
+    const std::string COLLISION_ALLOW_KEY = "allow";
+
     /* Parsing constants */
     const std::string SERVER_VALUE = "server";
     const std::string CLIENT_VALUE = "client";
@@ -59,6 +65,7 @@ namespace constants {
     const std::string DAMAGECOMPONENT = "DamageComponent";
     const std::string HEALTHCOMPONENT = "HealthComponent";
     const std::string INTERACTIONCONFIGCOMPONENT = "InteractionConfigComponent";
+    const std::string AIMOVEMENTPATTERNCOMPONENT = "AIMovementPatternComponent";
     const std::string SCORE_FIELD = "score";
     const std::string DAMAGE_FIELD = "damage";
     const std::string HEALTH_FIELD = "health";
@@ -80,6 +87,14 @@ namespace constants {
     const std::string SHOTCOUNT_FIELD = "shotCount";
     const std::string ANGLEOFFSET_FIELD = "angleOffset";
     const std::string SPREADANGLE_FIELD = "spreadAngle";
+    const std::string DEFAULTBEHAVIOR_FIELD = "defaultBehavior";
+    const std::string ZIGZAGAMPLITUDE_FIELD = "zigzagAmplitude";
+    const std::string ZIGZAGFREQUENCY_FIELD = "zigzagFrequency";
+    const std::string DETECTIONRANGE_FIELD = "detectionRange";
+    const std::string VERTICALDEADZONE_FIELD = "verticalDeadzone";
+    const std::string STRAIGHT_LINE_VALUE = "StraightLine";
+    const std::string ZIGZAG_VALUE = "Zigzag";
+    const std::string VERTICAL_MIRROR_VALUE = "VerticalMirror";
     const std::string WIDTH_FIELD = "width";
     const std::string HEIGHT_FIELD = "height";
     const std::string COLOR_FIELD = "color";
@@ -158,6 +173,8 @@ namespace constants {
     const std::string POSX_FIELD = "posX";
     const std::string ENEMIES_FIELD = "enemies";
     const std::string TYPE_FIELD = "type";
+    const std::string INCLUDE_FIELD = "include";
+    const std::string EXCLUDE_FIELD = "exclude";
     const std::string COUNT_FIELD = "count";
     const std::string EMPTY_PREFAB = "empty";
     const math::Vector2f BACKGROUND_POSITION = math::Vector2f(0.0f, 0.0f);
@@ -180,12 +197,21 @@ namespace constants {
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
     const std::string OBSTACLETAG = "ObstacleTag";
     const std::string SCORETAG = "ScoreTag";
+    const std::string AIMOVERTAG = "AIMoverTag";
+    const std::string AISHOOTERTAG = "AIShooterTag";
 
     /* Action constants */
     const std::string DEALDEATH_ACTION = "DealDeath";
     const std::string TAKEDEATH_ACTION = "TakeDeath";
     const std::string DEALDAMAGE_ACTION = "DealDamage";
     const std::string TAKEDAMAGE_ACTION = "TakeDamage";
+
+    /* AI Movement Pattern defaults */
+    constexpr float DEFAULT_ZIGZAG_AMPLITUDE = 80.0f;
+    constexpr float DEFAULT_ZIGZAG_FREQUENCY = 2.0f;
+    constexpr float DEFAULT_DETECTION_RANGE = 800.0f;
+    constexpr float DEFAULT_VERTICAL_DEADZONE = 10.0f;
+    constexpr float DEFAULT_TIMER = 0.0f;
 
     /* Packet constants */
     constexpr std::uint8_t PACKET_NO_OP = 0x00;
@@ -198,6 +224,7 @@ namespace constants {
     constexpr std::uint8_t PACKET_END_MAP = 0x07;
     constexpr std::uint8_t PACKET_END_GAME = 0x08;
     constexpr std::uint8_t PACKET_CAN_START = 0x09;
+
 }
 
 #endif /* !CONSTANTS_HPP_ */

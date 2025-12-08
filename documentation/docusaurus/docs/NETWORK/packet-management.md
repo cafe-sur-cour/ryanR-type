@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 # Packet Management
@@ -38,19 +38,19 @@ The library is automatically copied to the `librairies/` folder after compilatio
 
 Each packet consists of two main parts:
 
-1. **Header** - 13 bytes
-2. **Body** - Variable size depending on packet type
+1. **Header** - 11 bytes
+2. **Payload** - Variable size depending on packet type
 
-### Header Format
+### Packet Format
 
 ```
-+---------------+---------------+---------------+---------------+
-|  Magic Number |   Client ID   |      Sequence Number (4 bytes) |
++---------------+---------------+---------------+----------------+
+|  Magic Number |   Client ID   |    Sequence Number (4 bytes)   |
 |   (1 byte)    |   (1 byte)    |                                |
-+---------------+---------------+---------------+---------------+
-|     Type      |        Length (4 bytes)       |   End Marker  |
-|   (1 byte)    |                               |   (2 bytes)   |
-+---------------+---------------+---------------+---------------+
++---------------+---------------+---------------+----------------+
+|     Type      |        Length (4 bytes)       |    Payload     |
+|   (1 byte)    |                               | (Length bytes) |
++---------------+---------------+---------------+----------------+
 ```
 
 | Field | Size | Description |
@@ -60,11 +60,7 @@ Each packet consists of two main parts:
 | Sequence Number | 4 bytes | Packet sequence number |
 | Type | 1 byte | Packet type (see Packet Types) |
 | Length | 4 bytes | Total body length |
-| End Marker | 2 bytes | End marker (`\r\n`) |
-
-### Body Format
-
-The body format varies depending on the packet type. Each body ends with the `\r\n` marker (2 bytes).
+| Payload | Length bytes | Information to communicate |
 
 ## Interface IPacketManager
 
@@ -282,7 +278,6 @@ dlclose(handle);
 
 The system automatically validates:
 - **Magic Number**: Must be 0x93
-- **End Marker**: Must be `\r\n`
 - **Packet size**: Must match the type
 - **Packet type**: Must be recognized
 
@@ -309,26 +304,26 @@ bool unpack(std::vector<uint8_t> data);
 
 ### CONNECTION_CLIENT_PACKET (0x01)
 
-**Body size**: 11 bytes
+**Body size**: 8 bytes
 
 **Format**:
 ```
-+------+------+------+------+------+------+------+------+------+------+------+
-| Type | Data | Data | Data | Data | Data | Data | Data | Data | \r   | \n   |
-+------+------+------+------+------+------+------+------+------+------+------+
++------+------+------+------+------+------+------+------+
+| Data | Data | Data | Data | Data | Data | Data | Data |
++------+------+------+------+------+------+------+------+
 ```
 
 **Usage**: Connection request sent by the client to the server.
 
 ### ACCEPTATION_PACKET (0x02)
 
-**Body size**: 4 bytes
+**Body size**: 1 bytes
 
 **Format**:
 ```
-+------+------+------+------+
-| Type | Data | \r   | \n   |
-+------+------+------+------+
++------+
+| Data |
++------+
 ```
 
 **Usage**: Connection confirmation sent by the server to the client.
@@ -339,9 +334,9 @@ bool unpack(std::vector<uint8_t> data);
 
 **Format**:
 ```
-+------+------+------+------+
-| Type | Data | \r   | \n   |
-+------+------+------+------+
++------+
+| Data |
++------+
 ```
 
 **Usage**: Disconnection notification (client or server).
@@ -352,9 +347,9 @@ bool unpack(std::vector<uint8_t> data);
 
 **Format**:
 ```
-+------+------+------+------+------+
-| Type | Evt1 | Evt2 | \r   | \n   |
-+------+------+------+------+------+
++------+------+------+
+| Type | Dep. | Dir. |
++------+------+------+
 ```
 
 **Usage**: Game events (keys, actions, etc.).
@@ -386,10 +381,10 @@ for (auto& message : messages) {
 
 The library includes a comprehensive unit test suite covering:
 
-- ✅ Sérialisation/Désérialisation (Big-Endian et Little-Endian)
-- ✅ Pack/Unpack de tous les types de paquets
-- ✅ Validation des données
-- ✅ Gestion d'erreurs
+- ✅ Serialization/Deserialization (Big-Endian and Little-Endian)
+- ✅ Pack/Unpack of all packet types
+- ✅ Data validation
+- ✅ Error handling
 - ✅ Round-trip tests
 - ✅ Edge cases
 
@@ -397,50 +392,50 @@ The library includes a comprehensive unit test suite covering:
 ./scripts/run_unit_tests.sh
 ```
 
-## Exemple Complet
+## Complete Example
 
 ```cpp
 #include "PacketManager.hpp"
 
 void sendConnectionRequest() {
-    // 1. Créer le packet manager
+    // 1. Create packet manager
     pm::PacketManager packet(1);
 
-    // 2. Préparer le payload de connexion
+    // 2. Prepare connection payload
     std::vector<uint64_t> connectionData = {
         CONNECTION_CLIENT_PACKET,
         0x01, 0x02, 0x03, 0x04,
         0x05, 0x06, 0x07, 0x08
     };
 
-    // 3. Créer le header
+    // 3. Create header
     std::vector<uint8_t> header = packet.pack(42, 1, CONNECTION_CLIENT_PACKET);
 
-    // 4. Créer le body
+    // 4. Create body
     std::vector<uint8_t> body = packet.pack(connectionData);
 
-    // 5. Combiner header + body
+    // 5. Combine header + body
     std::vector<uint8_t> fullPacket;
     fullPacket.insert(fullPacket.end(), header.begin(), header.end());
     fullPacket.insert(fullPacket.end(), body.begin(), body.end());
 
-    // 6. Envoyer sur le réseau
+    // 6. Send over network
     sendToServer(fullPacket);
 }
 
 void receiveConnectionResponse(std::vector<uint8_t> data) {
     pm::PacketManager packet(0);
 
-    // Décoder le header
+    // Decode header
     std::vector<uint8_t> header(data.begin(), data.begin() + HEADER_SIZE);
     if (!packet.unpack(header)) {
         std::cerr << "Invalid header" << std::endl;
         return;
     }
 
-    // Vérifier le type
+    // Check type
     if (packet.getType() == ACCEPTATION_PACKET) {
-        // Décoder le body
+        // Decode body
         std::vector<uint8_t> body(data.begin() + HEADER_SIZE, data.end());
         if (packet.unpack(body)) {
             auto payload = packet.getPayload();
@@ -451,35 +446,35 @@ void receiveConnectionResponse(std::vector<uint8_t> data) {
 }
 ```
 
-## Bonnes Pratiques
+## Best Practices
 
-1. **Toujours valider** les données reçues du réseau
-2. **Réutiliser** les instances de PacketManager avec `reset()`
-3. **Vérifier les codes de retour** de `unpack()`
-4. **Utiliser le bon endianness** selon la plateforme
-5. **Logger les erreurs** pour faciliter le débogage
-6. **Tester les edge cases** (paquets vides, données corrompues, etc.)
+1. **Always validate** data received from network
+2. **Reuse** PacketManager instances with `reset()`
+3. **Check return codes** from `unpack()`
+4. **Use correct endianness** based on platform
+5. **Log errors** to facilitate debugging
+6. **Test edge cases** (empty packets, corrupted data, etc.)
 
-## Dépendances
+## Dependencies
 
-- **ERROR** : Bibliothèque de gestion d'erreurs (pour `PacketError`)
-- **Standard Library** : `<vector>`, `<memory>`, `<map>`, `<functional>`
+- **ERROR**: Error handling library (for `PacketError`)
+- **Standard Library**: `<vector>`, `<memory>`, `<map>`, `<functional>`
 
 ## Compilation
 
 ```bash
-# Via le script de compilation
+# Via compilation script
 ./scripts/compile_project.sh
 
-# Manuellement avec CMake
+# Manually with CMake
 cd build
 cmake ..
 make Packet
 
-# La bibliothèque sera générée dans build/libs/Packet/
-# Et copiée automatiquement dans librairies/
+# Library will be generated in build/libs/Packet/
+# And automatically copied to librairies/
 ```
 
 ## Conclusion
 
-Le système de Packet Management fournit une solution robuste et flexible pour la communication réseau dans R-Type. L'utilisation d'une bibliothèque partagée permet une maintenance facile et une cohérence garantie entre le client et le serveur.
+The Packet Management system provides a robust and flexible solution for network communication in R-Type. Using a shared library allows for easy maintenance and guaranteed consistency between client and server.
