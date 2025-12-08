@@ -77,7 +77,6 @@ target_link_libraries(${MULTIMEDIA_LIB_NAME}
     PUBLIC SFML::Graphics SFML::Window SFML::System SFML::Audio
     PUBLIC ECS
     PUBLIC COLLISION_RULES
-    PUBLIC ENTITY_PREFAB_MANAGER
 )
 
 add_custom_command(TARGET ${MULTIMEDIA_LIB_NAME} POST_BUILD
