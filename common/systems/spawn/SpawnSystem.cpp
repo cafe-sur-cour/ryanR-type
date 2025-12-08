@@ -30,7 +30,7 @@ void SpawnSystem::update(
         const math::Vector2f position = spawnRequest->getPosition();
 
         auto prefabManager = resourceManager->get<EntityPrefabManager>();
-        prefabManager->createEntityFromPrefab(prefabName, registry);
+        auto newEntity = prefabManager->createEntityFromPrefab(prefabName, registry);
 
         auto transform = registry->getComponent<TransformComponent>(newEntity);
         transform->setPosition(position);
