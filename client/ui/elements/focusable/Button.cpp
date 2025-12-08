@@ -8,6 +8,7 @@
 #include "Button.hpp"
 #include <string>
 #include "../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../constants.hpp"
 
 namespace ui {
 
@@ -44,14 +45,19 @@ void Button::render() {
     );
 
     if (!_text.empty()) {
-        float textX = absPos.getX() + absSize.getX() / 2.0f;
-        float textY = absPos.getY() + absSize.getY() / 2.0f;
+        auto textSize = resourceManager->get<
+            gfx::IWindow>()->getTextSize(_text, _fontPath, getFontSize());
+        float textX = absPos.getX() +
+            (absSize.getX() - static_cast<float>(textSize.first)) / 2.0f;
+        float textY = absPos.getY() +
+            (absSize.getY() - static_cast<float>(textSize.second)) / 2.0f;
 
         resourceManager->get<gfx::IWindow>()->drawText(
             _text,
             _textColor,
             {static_cast<size_t>(textX), static_cast<size_t>(textY)},
-            _fontPath
+            _fontPath,
+            getFontSize()
         );
     }
 }
@@ -105,6 +111,19 @@ void Button::setDisabledColor(const gfx::color_t& color) {
 
 void Button::setFocusedColor(const gfx::color_t& color) {
     _focusedColor = color;
+}
+
+void Button::setBaseFontSize(size_t fontSize) {
+    _baseFontSize = fontSize;
+}
+
+size_t Button::getBaseFontSize() const {
+    return _baseFontSize;
+}
+
+size_t Button::getFontSize() const {
+    float scale = getScaleFactor();
+    return static_cast<size_t>(static_cast<float>(_baseFontSize) * scale);
 }
 
 }  // namespace ui

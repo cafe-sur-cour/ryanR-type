@@ -32,9 +32,19 @@ MainMenuState::MainMenuState(
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
 
+    ui::LayoutConfig menuConfig;
+    menuConfig.direction = ui::LayoutDirection::Vertical;
+    menuConfig.alignment = ui::LayoutAlignment::Center;
+    menuConfig.spacing = 54.0f;
+    menuConfig.padding = math::Vector2f(0.0f, 0.0f);
+    menuConfig.anchorX = ui::AnchorX::Center;
+    menuConfig.anchorY = ui::AnchorY::Center;
+    menuConfig.offset = math::Vector2f(0.0f, 0.0f);
+
+    _mainMenuLayout = std::make_shared<ui::UILayout>(resourceManager, menuConfig);
+    _mainMenuLayout->setSize(math::Vector2f(576.f, 300.f));
     _playButton = std::make_shared<ui::Button>(resourceManager);
     _playButton->setText("Play Game");
-    _playButton->setPosition(math::Vector2f(672.f, 378.f));
     _playButton->setSize(math::Vector2f(576.f, 108.f));
     _playButton->setNormalColor({0, 200, 0});
     _playButton->setHoveredColor({0, 255, 0});
@@ -64,11 +74,9 @@ MainMenuState::MainMenuState(
                 debug::debugLevel::WARNING);
         }
     });
-    _uiManager->addElement(_playButton);
 
     _quitButton = std::make_shared<ui::Button>(resourceManager);
     _quitButton->setText("Quit");
-    _quitButton->setPosition(math::Vector2f(672.f, 540.f));
     _quitButton->setSize(math::Vector2f(576.f, 108.f));
     _quitButton->setNormalColor({200, 0, 0});
     _quitButton->setHoveredColor({255, 0, 0});
@@ -79,41 +87,53 @@ MainMenuState::MainMenuState(
     _quitButton->setOnActivated([this]() {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
     });
-    _uiManager->addElement(_quitButton);
 
-    _highContrastButton = std::make_shared<ui::Button>(resourceManager);
-    _highContrastButton->setText("HC");
-    _highContrastButton->setPosition(math::Vector2f(1766.f, 22.f));
-    _highContrastButton->setSize(math::Vector2f(115.f, 65.f));
-    _highContrastButton->setNormalColor({200, 0, 0});
-    _highContrastButton->setHoveredColor({150, 150, 200});
-    _highContrastButton->setFocusedColor({100, 200, 255});
-    _highContrastButton->setOnRelease([this]() {
-        toggleHighContrastFilter();
-    });
-    _highContrastButton->setOnActivated([this]() {
-        toggleHighContrastFilter();
-    });
-    _uiManager->addElement(_highContrastButton);
+    _mainMenuLayout->addElement(_playButton);
+    _mainMenuLayout->addElement(_quitButton);
+    _uiManager->addElement(_mainMenuLayout);
 
-    _colorBlindnessButton = std::make_shared<ui::Button>(resourceManager);
-    _colorBlindnessButton->setText("CB: None");
-    _colorBlindnessButton->setPosition(math::Vector2f(1646.f, 22.f));
-    _colorBlindnessButton->setSize(math::Vector2f(115.f, 65.f));
-    _colorBlindnessButton->setNormalColor({100, 100, 150});
-    _colorBlindnessButton->setHoveredColor({150, 150, 200});
-    _colorBlindnessButton->setFocusedColor({100, 200, 255});
-    _colorBlindnessButton->setOnRelease([this]() {
-        cycleColorBlindnessFilter();
+    ui::LayoutConfig scaleConfig;
+    scaleConfig.direction = ui::LayoutDirection::Horizontal;
+    scaleConfig.alignment = ui::LayoutAlignment::Start;
+    scaleConfig.spacing = 5.0f;
+    scaleConfig.padding = math::Vector2f(0.0f, 0.0f);
+    scaleConfig.anchorX = ui::AnchorX::Left;
+    scaleConfig.anchorY = ui::AnchorY::Top;
+    scaleConfig.offset = math::Vector2f(15.0f, 22.0f);
+
+    _scaleLayout = std::make_shared<ui::UILayout>(resourceManager, scaleConfig);
+    _scaleLayout->setSize(math::Vector2f(115.f, 65.f));
+
+    _scaleButton = std::make_shared<ui::Button>(resourceManager);
+    _scaleButton->setText("UI: Normal");
+    _scaleButton->setSize(math::Vector2f(115.f, 65.f));
+    _scaleButton->setNormalColor({150, 100, 200});
+    _scaleButton->setHoveredColor({200, 150, 255});
+    _scaleButton->setFocusedColor({255, 200, 255});
+    _scaleButton->setOnRelease([this]() {
+        cycleUIScale();
     });
-    _colorBlindnessButton->setOnActivated([this]() {
-        cycleColorBlindnessFilter();
+    _scaleButton->setOnActivated([this]() {
+        cycleUIScale();
     });
-    _uiManager->addElement(_colorBlindnessButton);
+
+    _scaleLayout->addElement(_scaleButton);
+    _uiManager->addElement(_scaleLayout);
+
+    ui::LayoutConfig toolbarConfig;
+    toolbarConfig.direction = ui::LayoutDirection::Horizontal;
+    toolbarConfig.alignment = ui::LayoutAlignment::Start;
+    toolbarConfig.spacing = 5.0f;
+    toolbarConfig.padding = math::Vector2f(0.0f, 0.0f);
+    toolbarConfig.anchorX = ui::AnchorX::Right;
+    toolbarConfig.anchorY = ui::AnchorY::Top;
+    toolbarConfig.offset = math::Vector2f(-15.0f, 22.0f);
+
+    _toolbarLayout = std::make_shared<ui::UILayout>(resourceManager, toolbarConfig);
+    _toolbarLayout->setSize(math::Vector2f(400.f, 65.f));
 
     _brightnessButton = std::make_shared<ui::Button>(resourceManager);
     _brightnessButton->setText("BR: 100%");
-    _brightnessButton->setPosition(math::Vector2f(1526.f, 22.f));
     _brightnessButton->setSize(math::Vector2f(115.f, 65.f));
     _brightnessButton->setNormalColor({100, 100, 150});
     _brightnessButton->setHoveredColor({150, 150, 200});
@@ -124,7 +144,37 @@ MainMenuState::MainMenuState(
     _brightnessButton->setOnActivated([this]() {
         cycleBrightnessFilter();
     });
-    _uiManager->addElement(_brightnessButton);
+
+    _colorBlindnessButton = std::make_shared<ui::Button>(resourceManager);
+    _colorBlindnessButton->setText("CB: None");
+    _colorBlindnessButton->setSize(math::Vector2f(115.f, 65.f));
+    _colorBlindnessButton->setNormalColor({100, 100, 150});
+    _colorBlindnessButton->setHoveredColor({150, 150, 200});
+    _colorBlindnessButton->setFocusedColor({100, 200, 255});
+    _colorBlindnessButton->setOnRelease([this]() {
+        cycleColorBlindnessFilter();
+    });
+    _colorBlindnessButton->setOnActivated([this]() {
+        cycleColorBlindnessFilter();
+    });
+
+    _highContrastButton = std::make_shared<ui::Button>(resourceManager);
+    _highContrastButton->setText("HC");
+    _highContrastButton->setSize(math::Vector2f(115.f, 65.f));
+    _highContrastButton->setNormalColor({200, 0, 0});
+    _highContrastButton->setHoveredColor({150, 150, 200});
+    _highContrastButton->setFocusedColor({100, 200, 255});
+    _highContrastButton->setOnRelease([this]() {
+        toggleHighContrastFilter();
+    });
+    _highContrastButton->setOnActivated([this]() {
+        toggleHighContrastFilter();
+    });
+
+    _toolbarLayout->addElement(_brightnessButton);
+    _toolbarLayout->addElement(_colorBlindnessButton);
+    _toolbarLayout->addElement(_highContrastButton);
+    _uiManager->addElement(_toolbarLayout);
 }
 
 void MainMenuState::enter() {
@@ -283,6 +333,28 @@ void MainMenuState::cycleBrightnessFilter() {
     _brightnessButton->setText(text);
 }
 
+void MainMenuState::cycleUIScale() {
+    _uiManager->cycleGlobalScale();
+
+    std::string text;
+    switch (_uiManager->getGlobalScale()) {
+        case ui::UIScale::Small:
+            text = "UI: Small";
+            break;
+        case ui::UIScale::Normal:
+            text = "UI: Normal";
+            break;
+        case ui::UIScale::Large:
+            text = "UI: Large";
+            break;
+        default:
+            text = "UI: Normal";
+            break;
+    }
+
+    _scaleButton->setText(text);
+}
+
 void MainMenuState::exit() {
     _uiManager->clearElements();
     _playButton.reset();
@@ -290,6 +362,8 @@ void MainMenuState::exit() {
     _highContrastButton.reset();
     _colorBlindnessButton.reset();
     _brightnessButton.reset();
+    _scaleButton.reset();
+    _scaleLayout.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }

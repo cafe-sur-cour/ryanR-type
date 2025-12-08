@@ -27,18 +27,21 @@ function HomepageHeader() {
             🏗️ Client Architecture
           </Link>
           <Link className="button button--secondary button--lg" to="docs/category/server-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
-            📲 Server Architecture
+            🖥️ Server Architecture
           </Link>
           </div>
           <div style={{ marginTop: '3rem' }}>
             <Link className="button button--secondary button--lg" to="docs/category/ecs-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
-              📲 ECS Communication
+              🗣️ ECS Communication
             </Link>
             <Link className="button button--secondary button--lg" to="docs/category/pocs-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
-              📲 POCS and librairy choices
+              🧪 POCS and library choices
+            </Link>
+            <Link className="button button--secondary button--lg" to="docs/category/network-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
+              🌐 Network
             </Link>
             <Link className="button button--secondary button--lg" to="docs/category/security-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
-              🪪 Security
+              🔒️ Security
             </Link>
             <Link className="button button--secondary button--lg" to="docs/category/cicd" style={{ margin: '1rem', fontSize: '1.2rem' }}>
               👷 CI/CD

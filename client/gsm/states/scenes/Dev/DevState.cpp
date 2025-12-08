@@ -40,6 +40,8 @@
 #include "../../../../systems/rendering/GameZoneViewSystem.hpp"
 #include "../../../../systems/audio/MusicSystem.hpp"
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
+#include "../../../../../common/systems/ai/AIMovementSystem.hpp"
+#include "../../../../../common/systems/ai/AIShootingSystem.hpp"
 
 namespace gsm {
 
@@ -62,9 +64,12 @@ void DevState::enter() {
     _parser->parseAllEntities(constants::CONFIG_PATH);
     _parser->parseMapFromFile("configs/map/map1.json");
 
+    addSystem(std::make_shared<ecs::AIMovementSystem>());
+    addSystem(std::make_shared<ecs::AIShootingSystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::MovementSystem>());
     addSystem(std::make_shared<ecs::MovementInputSystem>());
+    addSystem(std::make_shared<ecs::InteractionSystem>());
     addSystem(std::make_shared<ecs::SoundSystem>());
     addSystem(std::make_shared<ecs::ParallaxRenderingSystem>());
     addSystem(std::make_shared<ecs::SpriteRenderingSystem>());
