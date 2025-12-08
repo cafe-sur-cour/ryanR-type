@@ -35,8 +35,8 @@ class IWindow {
         virtual void resizeWindow(size_t x, size_t y) = 0;
 
         virtual void drawSprite(std::string asset, color_t color, std::pair<size_t, size_t> position) = 0;
-        virtual void drawText(std::string text, color_t color, std::pair<size_t, size_t> position, const std::string& fontPath) = 0;
-        virtual std::pair<size_t, size_t> getTextSize(const std::string& text, const std::string& fontPath) = 0;
+        virtual void drawText(std::string text, color_t color, std::pair<size_t, size_t> position, const std::string& fontPath, size_t fontSize = 24) = 0;
+        virtual std::pair<size_t, size_t> getTextSize(const std::string& text, const std::string& fontPath, size_t fontSize = 24) = 0;
         virtual void drawRectangleOutline(color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
         virtual void drawFilledRectangle(color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
 

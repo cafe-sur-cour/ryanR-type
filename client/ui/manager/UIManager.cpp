@@ -27,6 +27,7 @@ void UIManager::addElement(std::shared_ptr<UIElement> element) {
 
     auto it = std::find(_elements.begin(), _elements.end(), element);
     if (it == _elements.end()) {
+        element->setScale(_globalScale);
         _elements.push_back(element);
         if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
             _navigationManager->addFocusableElement(focusable);
@@ -186,6 +187,36 @@ void UIManager::refreshNavigationElements() {
             }
         }
     }
+}
+
+void UIManager::setGlobalScale(UIScale scale) {
+    _globalScale = scale;
+    for (auto& element : _elements) {
+        element->setScale(scale);
+    }
+}
+
+void UIManager::cycleGlobalScale() {
+    UIScale nextScale;
+    switch (_globalScale) {
+        case UIScale::Normal:
+            nextScale = UIScale::Large;
+            break;
+        case UIScale::Large:
+            nextScale = UIScale::Small;
+            break;
+        case UIScale::Small:
+            nextScale = UIScale::Normal;
+            break;
+        default:
+            nextScale = UIScale::Normal;
+            break;
+    }
+    setGlobalScale(nextScale);
+}
+
+UIScale UIManager::getGlobalScale() const {
+    return _globalScale;
 }
 
 }  // namespace ui
