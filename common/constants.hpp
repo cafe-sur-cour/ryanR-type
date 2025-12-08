@@ -60,6 +60,7 @@ namespace constants {
     const std::string RECTANGLERENDERCOMPONENT = "RectangleRenderComponent";
     const std::string PROJECTILEPREFABCOMPONENT = "ProjectilePrefabComponent";
     const std::string TEXTCOMPONENT = "TextComponent";
+    const std::string HEALTHBARCOMPONENT = "HealthBarComponent";
 
     const std::string SCORECOMPONENT = "ScoreComponent";
     const std::string DAMAGECOMPONENT = "DamageComponent";
