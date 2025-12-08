@@ -45,9 +45,9 @@ class SfmlWindow : public gfx::IWindow {
         math::Vector2f getViewCenter() override;
         math::Vector2f mapPixelToCoords(int x, int y) override;
 
-        std::pair<int, int> getLogicalSize() const;
+        std::pair<int, int> getLogicalSize() const override;
 
-        float getScaleFactor() const;
+        float getScaleFactor() const override;
 
         void enableFilter(const std::string& filterName);
         void addFilter(const std::string& filterName);
