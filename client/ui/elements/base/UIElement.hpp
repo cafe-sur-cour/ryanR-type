@@ -24,6 +24,12 @@ enum class UIState {
     Focused
 };
 
+enum class UIScale {
+    Small,
+    Normal,
+    Large
+};
+
 class UIElement : public std::enable_shared_from_this<UIElement> {
     public:
         UIElement(std::shared_ptr<ResourceManager> resourceManager);
@@ -42,6 +48,9 @@ class UIElement : public std::enable_shared_from_this<UIElement> {
 
         void setState(UIState state);
         UIState getState() const;
+
+        virtual void setScale(UIScale scale);
+        UIScale getScale() const;
 
         void setParent(std::weak_ptr<UIElement> parent);
         std::shared_ptr<UIElement> getParent() const;
@@ -66,6 +75,7 @@ class UIElement : public std::enable_shared_from_this<UIElement> {
         math::Vector2f _size;
         bool _visible = true;
         UIState _state = UIState::Normal;
+        UIScale _scale = UIScale::Normal;
         std::weak_ptr<UIElement> _parent;
         std::vector<std::shared_ptr<UIElement>> _children;
 
@@ -74,6 +84,8 @@ class UIElement : public std::enable_shared_from_this<UIElement> {
         std::function<void()> _onRelease;
 
         std::pair<int, int> getWindowSize() const;
+
+        float getScaleFactor() const;
 };
 
 } // namespace ui
