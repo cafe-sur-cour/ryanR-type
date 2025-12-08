@@ -212,7 +212,6 @@ namespace constants {
     constexpr float DEFAULT_DETECTION_RANGE = 800.0f;
     constexpr float DEFAULT_VERTICAL_DEADZONE = 10.0f;
     constexpr float DEFAULT_TIMER = 0.0f;
-    constexpr float EPSILON = 0.001f;
 
     /* Packet constants */
     constexpr std::uint8_t PACKET_NO_OP = 0x00;
