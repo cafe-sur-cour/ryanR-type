@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** AIShootingSystem - R-Type style AI shooting with cadence
+** AIShootingSystem
 */
 
 #ifndef AISHOOTINGSYSTEM_HPP

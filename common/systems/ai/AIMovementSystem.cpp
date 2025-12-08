@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** AIMovementSystem - Simple R-Type style AI movement
+** AIMovementSystem
 */
 
 #include "AIMovementSystem.hpp"
