@@ -38,6 +38,7 @@ bool rserv::Server::mapPacket(std::vector<uint64_t> mapData,
         std::cout << "[SERVER] Sending map packet to "
             << endpoint.address().to_string() << ":"
             << endpoint.port() << std::endl;
+
     std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber,
         constants::PACKET_MAP, mapData);
 
