@@ -178,3 +178,11 @@ add_test(NAME ParserTests COMMAND ParserTests)
 add_executable(MapParserTests common/Parser/MapParserTests.cpp)
 target_link_libraries(MapParserTests MAP_PARSER PREFAB ECS COLLISION_RULES ERROR GTest::gtest GTest::gtest_main)
 add_test(NAME MapParserTests COMMAND MapParserTests)
+
+add_executable(SpawnIntentComponentTests common/ECS/component/SpawnIntentComponentTests.cpp)
+target_link_libraries(SpawnIntentComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME SpawnIntentComponentTests COMMAND SpawnIntentComponentTests)
+
+add_executable(SpawnSystemTests common/ECS/system/SpawnSystemTests.cpp)
+target_link_libraries(SpawnSystemTests ECS PREFAB COLLISION_RULES ERROR GTest::gtest GTest::gtest_main)
+add_test(NAME SpawnSystemTests COMMAND SpawnSystemTests)
