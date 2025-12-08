@@ -8,6 +8,7 @@
 #include "Button.hpp"
 #include <string>
 #include "../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../constants.hpp"
 
 namespace ui {
 
@@ -112,9 +113,17 @@ void Button::setFocusedColor(const gfx::color_t& color) {
     _focusedColor = color;
 }
 
+void Button::setBaseFontSize(size_t fontSize) {
+    _baseFontSize = fontSize;
+}
+
+size_t Button::getBaseFontSize() const {
+    return _baseFontSize;
+}
+
 size_t Button::getFontSize() const {
     float scale = getScaleFactor();
-    return static_cast<size_t>(24 * scale);
+    return static_cast<size_t>(static_cast<float>(_baseFontSize) * scale);
 }
 
 }  // namespace ui
