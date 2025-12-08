@@ -63,7 +63,8 @@ bool ServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> pack
     return false;
 }
 
-bool ServerNetwork::broadcast(std::vector<asio::ip::udp::endpoint> clients, std::vector<uint8_t> data) {
+bool ServerNetwork::broadcast(std::vector<asio::ip::udp::endpoint> clients,
+    std::vector<uint8_t> data) {
     (void)clients;
     (void)data;
     return false;
