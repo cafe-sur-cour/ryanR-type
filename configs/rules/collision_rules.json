@@ -1,0 +1,40 @@
+{
+    "solid": {
+        "allow": [
+            [["PlayerTag"], ["MobTag"]],
+            [["MobTag"], ["PlayerTag"]],
+
+            [["PlayerTag"], ["ObstacleTag"]],
+            [["ObstacleTag"], ["PlayerTag"]],
+
+            [["MobTag"], ["ObstacleTag"]],
+            [["ObstacleTag"], ["MobTag"]],
+
+            [["ProjectileTag"], ["MobTag"]],
+            [["MobTag"], ["ProjectileTag"]],
+
+            [["ProjectileTag"], ["ObstacleTag"]],
+            [["ObstacleTag"], ["ProjectileTag"]],
+
+            [["PlayerTag"], ["GameZoneColliderTag"]],
+            [["GameZoneColliderTag"], ["PlayerTag"]]
+        ]
+    },
+    "trigger": {
+        "allow": [
+            [["PlayerTag"], ["ScoreTag"]],
+            [["ScoreTag"], ["PlayerTag"]],
+
+            [["ProjectileTag"], ["MobTag"]],
+            [["MobTag"], ["ProjectileTag"]],
+
+            [["ProjectileTag"], ["ObstacleTag"]],
+            [["ObstacleTag"], ["ProjectileTag"]]
+        ]
+    },
+    "push": {
+        "allow": [
+            [["GameZoneColliderTag"], ["PlayerTag"]]
+        ]
+    }
+}

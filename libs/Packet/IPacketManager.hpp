@@ -14,15 +14,12 @@
 #include "../Buffer/IBuffer.hpp"
 
 #define MAGIC_NUMBER 0x93
-#define FIRST_EOP_CHAR '\r'
-#define SECOND_EOP_CHAR '\n'
-#define HEADER_SIZE 13
+#define HEADER_SIZE 11
 
-#define LENGTH_CONNECTION_PACKET 11
-#define LENGTH_ACCEPTATION_PACKET 4
-#define LENGTH_DISCONNECTION_PACKET 4
-#define LENGTH_EVENT_PACKET 5
-#define LENGTH_EOP 2
+#define LENGTH_CONNECTION_PACKET 8
+#define LENGTH_ACCEPTATION_PACKET 1
+#define LENGTH_DISCONNECTION_PACKET 1
+#define LENGTH_EVENT_PACKET 17
 
 #define NO_OP_PACKET 0x00
 #define CONNECTION_CLIENT_PACKET 0x01
@@ -41,7 +38,6 @@ namespace pm {
     public:
         virtual ~IPacketManager() = default;
 
-        virtual uint8_t getMagicNumber() const = 0;
         virtual uint32_t getLength() const = 0;
         virtual uint32_t getSequenceNumber() const = 0;
         virtual uint8_t getType() const = 0;
@@ -55,8 +51,7 @@ namespace pm {
         virtual void setIdClient(uint8_t idClient) = 0;
 
         virtual std::vector<uint64_t> formatString(const std::string str) = 0;
-        virtual std::vector<uint8_t> pack(uint8_t idClient, uint32_t sequenceNumber, uint8_t type) = 0;
-        virtual std::vector<uint8_t> pack(std::vector<uint64_t> payload) = 0;
+        virtual std::vector<uint8_t> pack(uint8_t idClient, uint32_t sequenceNumber, uint8_t type, std::vector<uint64_t> payload) = 0;
         virtual bool unpack(std::vector<uint8_t> data) = 0;
 
         virtual void reset() = 0;

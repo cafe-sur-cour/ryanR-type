@@ -12,11 +12,14 @@
 #include <chrono>
 #include <vector>
 #include <utility>
+#include <cstring>
+#include <queue>
 
 #include "Server.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../common/Error/ServerErrror.hpp"
 #include "../common/debug.hpp"
+#include "../common/constants.hpp"
 #include "Signal.hpp"
 
 rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
@@ -25,6 +28,8 @@ rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
     this->_network = nullptr;
     this->_buffer = nullptr;
     this->_packet = nullptr;
+    this->_eventQueue = std::make_shared<std::queue<std::tuple<uint8_t,
+        constants::EventType, double, double>>>();
     this->_config = std::make_shared<rserv::ServerConfig>();
 }
 
@@ -81,7 +86,7 @@ void rserv::Server::start() {
 
     Signal::setupSignalHandlers();
     while (this->getState() == 1 && !Signal::stopFlag) {
-        processIncomingPackets();
+        this->processIncomingPackets();
         if (std::cin.eof()) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "EOF received (Ctrl+D pressed)",
@@ -175,21 +180,18 @@ void rserv::Server::processIncomingPackets() {
         std::cerr << "[SERVER] Warning: Packet manager not initialized" << std::endl;
         return;
     }
-    if (received.second.at(0) == 0x93) {
-        this->_packet->unpack(received.second);
-        if (this->_packet->getType() == 0x03) {
-            this->processDisconnections(this->_packet->getIdClient());
-        }
-        return;
-    }
 
     this->_packet->unpack(received.second);
-    if (this->_packet->getType() == 0x01) {
+
+    if (this->_packet->getType() == constants::PACKET_CONNECTION) {
         this->processConnections(received.first);
+    } else if (this->_packet->getType() == constants::PACKET_EVENT) {
+        this->processEvents(this->_packet->getIdClient());
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "
-            + std::to_string(static_cast<int>(this->_packet->getType())),
+            + std::to_string(static_cast<int>(this->_packet->getType()))
+            + " from client: " + std::to_string(this->_packet->getIdClient()),
             debug::debugType::NETWORK, debug::debugLevel::INFO);
     }
 
@@ -198,29 +200,30 @@ void rserv::Server::processIncomingPackets() {
 
 bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
     if (!_network) {
-        std::cerr << "[SERVER] Warning: Network not initialized" << std::endl;
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
 
     if (this->_nextClientId > this->getConfig()->getNbClients()) {
-        std::cerr << "[SERVER] Warning: Maximum clients reached" << std::endl;
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Maximum clients reached",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
 
-    std::vector<uint8_t> header =
-        this->_packet->pack(0, this->_sequenceNumber, 0x02);
-    if (!this->_network->sendTo(id, header)) {
-        std::cerr << "[SERVER NETWORK] Failed to send connection acceptance header to "
-            << id.address().to_string() << ":" << id.port() << std::endl;
+    std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber,
+        constants::PACKET_ACCEPT, std::vector<uint64_t>{
+        static_cast<uint64_t>(this->_nextClientId)});
+    if (!this->_network->sendTo(id, packet)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER NETWORK] Failed to send connection acceptance header to "
+            + id.address().to_string() + ":" + std::to_string(id.port()),
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
-    std::vector<uint8_t> payload =
-        this->_packet->pack({0x02, static_cast<uint64_t>(this->_nextClientId)});
-    if (!this->_network->sendTo(id, payload)) {
-        std::cerr << "[SERVER NETWORK] Failed to send acceptation paylo0x02ad to "
-            << id.address().to_string() << ":" << id.port() << std::endl;
-        return false;
-    }
+
     this->_clients.push_back(std::make_tuple(this->_nextClientId, id, ""));
     this->_nextClientId++;
     return true;
@@ -244,9 +247,18 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
 }
 
 bool rserv::Server::processEvents(uint8_t idClient) {
-    constants::EventType event = static_cast<constants::EventType>(
-        this->_packet->getPayload().at(1));
-    this->_eventQueue.push(std::make_pair(idClient, event));
+    constants::EventType eventType =
+        static_cast<constants::EventType>(this->_packet->getPayload().at(0));
+
+    uint64_t param1Bits = this->_packet->getPayload().at(1);
+    uint64_t param2Bits = this->_packet->getPayload().at(2);
+
+    double param1;
+    double param2;
+    std::memcpy(&param1, &param1Bits, sizeof(double));
+    std::memcpy(&param2, &param2Bits, sizeof(double));
+
+    this->_eventQueue->push(std::tuple(idClient, eventType, param1, param2));
     return true;
 }
 
@@ -267,6 +279,15 @@ std::vector<uint8_t> rserv::Server::getConnectedClients() const {
 
 size_t rserv::Server::getClientCount() const {
     return this->_clients.size();
+}
+
+std::shared_ptr<std::queue<std::tuple<uint8_t,
+    constants::EventType, double, double>>> rserv::Server::getEventQueue() {
+    return this->_eventQueue;
+}
+
+bool rserv::Server::hasEvents() const {
+    return !this->_eventQueue->empty();
 }
 
 void rserv::Server::onClientConnected(uint8_t idClient) {

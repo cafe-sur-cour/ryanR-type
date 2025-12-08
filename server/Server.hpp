@@ -69,6 +69,9 @@ namespace rserv {
             std::vector<uint8_t> getConnectedClients() const override;
             size_t getClientCount() const override;
 
+            std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> getEventQueue() override;
+            bool hasEvents() const override;
+
         private:
             void loadNetworkLibrary();
             void loadBufferLibrary();
@@ -84,7 +87,7 @@ namespace rserv {
             std::shared_ptr<net::INetwork> _network;
             std::shared_ptr<IBuffer> _buffer;
             std::shared_ptr<pm::IPacketManager> _packet;
-            std::queue<std::pair<uint8_t, constants::EventType>> _eventQueue;
+            std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> _eventQueue;
 
     };
 } // namespace rserv = r-type server

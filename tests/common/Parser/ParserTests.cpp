@@ -143,8 +143,8 @@ TEST_F(ParserTest, ParseEntityMissingField) {
         "components": {
             "TransformComponent": {
                 "target": "client",
-                "position": {"x": 10.0, "y": 20.0},
-                "scale": {"x": 1.0, "y": 1.0}
+                "scale": {"x": 1.0, "y": 1.0},
+                "rotation": 0.0
             }
         }
     })";
@@ -161,6 +161,26 @@ TEST_F(ParserTest, ParseEntityMissingField) {
         EXPECT_EQ(e.getCode(), static_cast<int>(err::ParserError::MISSING_FIELD));
         EXPECT_NE(std::string(e.what()).find("Missing field"), std::string::npos);
     }
+}
+
+// Test parsing entity with missing optional field (should succeed)
+TEST_F(ParserTest, ParseEntityMissingOptionalField) {
+    std::string jsonContent = R"(
+    {
+        "name": "TestEntity",
+        "components": {
+            "TransformComponent": {
+                "target": "client",
+                "position": {"x": 10.0, "y": 20.0},
+                "scale": {"x": 1.0, "y": 1.0}
+            }
+        }
+    })";
+
+    createTestFile("missing_optional_field.json", jsonContent);
+
+    parser->parseEntity((testDir / "missing_optional_field.json").string());
+    SUCCEED();
 }
 
 // Test parsing entity with invalid field type
