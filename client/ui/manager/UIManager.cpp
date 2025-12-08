@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include <memory>
+#include <functional>
 
 namespace ui {
 
@@ -180,12 +181,24 @@ bool UIManager::hasMouseMoved(const math::Vector2f& mousePos) {
 void UIManager::refreshNavigationElements() {
     _navigationManager->clearFocusableElements();
 
-    for (auto& element : _elements) {
-        if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
-            if (focusable->canBeFocused()) {
-                _navigationManager->addFocusableElement(focusable);
+    std::function<void(const std::shared_ptr<UIElement>&)> collectFocusables =
+        [this, &collectFocusables](const std::shared_ptr<UIElement>& element) {
+            if (!element) return;
+
+            if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
+                if (focusable->canBeFocused()) {
+                    _navigationManager->addFocusableElement(focusable);
+                }
             }
-        }
+
+            const auto& children = element->getChildren();
+            for (const auto& child : children) {
+                collectFocusables(child);
+            }
+        };
+
+    for (auto& element : _elements) {
+        collectFocusables(element);
     }
 }
 
