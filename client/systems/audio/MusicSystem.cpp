@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <iostream>
+#include <cmath>
 #include "MusicSystem.hpp"
 #include "../../components/temporary/MusicIntentComponent.hpp"
 #include "../../components/rendering/MusicComponent.hpp"
@@ -14,6 +15,8 @@
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IAudio.hpp"
+#include "../../../common/constants.hpp"
+#include "../../SettingsConfig.hpp"
 
 
 namespace ecs {
@@ -41,6 +44,20 @@ void MusicSystem::update(std::shared_ptr<ResourceManager>
     size_t musicEntityId = *musicIt;
     auto musicComp = registry->getComponent<MusicComponent>(musicEntityId);
 
+    if (
+        resourceManager->has<gfx::IAudio>() &&
+        resourceManager->has<SettingsConfig>() &&
+        musicComp
+    ) {
+        auto audio = resourceManager->get<gfx::IAudio>();
+        float settingsVolume = resourceManager->get<SettingsConfig>()->getMusicVolume();
+        float baseVolume = musicComp->getVolume();
+        float effectiveVolume = (baseVolume / 100.0f) * settingsVolume;
+        if (std::abs(audio->getMusicVolume() - effectiveVolume) > constants::EPS) {
+            audio->setMusicVolume(effectiveVolume);
+        }
+    }
+
     for (auto entityId : intentView) {
         auto intent = registry->getComponent<MusicIntentComponent>(entityId);
 
@@ -49,9 +66,15 @@ void MusicSystem::update(std::shared_ptr<ResourceManager>
 
         if (resourceManager->has<gfx::IAudio>()) {
             auto audio = resourceManager->get<gfx::IAudio>();
+            float baseVolume = musicComp->getVolume();
+            float settingsVolume = 100.0f;
+            if (resourceManager->has<SettingsConfig>()) {
+                settingsVolume = resourceManager->get<SettingsConfig>()->getMusicVolume();
+            }
+            float effectiveVolume = (baseVolume / 100.0f) * settingsVolume;
             switch (intent->getAction()) {
                 case PLAY:
-                    audio->setMusicVolume(intent->getVolume());
+                    audio->setMusicVolume(effectiveVolume);
                     audio->playMusic(musicComp->getCurrentMusic(),
                         musicComp->isLooping());
                     musicComp->playMusic();
@@ -63,7 +86,7 @@ void MusicSystem::update(std::shared_ptr<ResourceManager>
                 case CHANGE:
                     audio->playMusic(intent->getMusicPath(),
                         musicComp->isLooping());
-                    audio->setMusicVolume(intent->getVolume());
+                    audio->setMusicVolume(effectiveVolume);
                     musicComp->playNewMusic(intent->getMusicPath());
                     break;
             }
