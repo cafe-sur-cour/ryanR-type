@@ -27,11 +27,19 @@ public:
     ui::UIScale getUIScale() const { return _uiScale; }
     void setUIScale(ui::UIScale scale) { _uiScale = scale; }
 
+    float getMusicVolume() const { return _musicVolume; }
+    void setMusicVolume(float volume) { _musicVolume = volume; }
+
+    float getSoundVolume() const { return _soundVolume; }
+    void setSoundVolume(float volume) { _soundVolume = volume; }
+
 private:
     int _colorBlindnessState = 0;
-    float _brightnessValue = 1.0f;
+    float _brightnessValue = 100.0f;
     bool _highContrastEnabled = false;
     ui::UIScale _uiScale = ui::UIScale::Normal;
+    float _musicVolume = 100.0f;
+    float _soundVolume = 100.0f;
 };
 
 #endif  // SETTINGSCONFIG_HPP_
