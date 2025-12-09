@@ -33,6 +33,8 @@ private:
     void toggleHighContrastFilter();
     void updateBrightnessFilter(float value);
     void cycleUIScale();
+    void updateMusicVolume(float value);
+    void updateSoundVolume(float value);
 
 private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
@@ -40,6 +42,8 @@ private:
     std::shared_ptr<ui::Button> _highContrastButton;
     std::shared_ptr<ui::Button> _colorBlindnessButton;
     std::shared_ptr<ui::Slider> _brightnessSlider;
+    std::shared_ptr<ui::Slider> _musicVolumeSlider;
+    std::shared_ptr<ui::Slider> _soundVolumeSlider;
     std::shared_ptr<ui::Button> _scaleButton;
     std::unique_ptr<ui::UIManager> _uiManager;
     std::shared_ptr<ui::UILayout> _settingsLayout;
