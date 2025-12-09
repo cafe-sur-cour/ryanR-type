@@ -32,6 +32,8 @@ class MovementInputSystem : public ASystem {
         void updateInputIntent(std::shared_ptr<Registry> registry, Entity entityId, const math::Vector2f &direction);
         math::Vector2f getAnalogStickInput(std::shared_ptr<IInputProvider> inputProvider) const;
         std::pair<int, double> formatDirection(const math::Vector2f &direction) const;
+        void sendAxisEvents(std::shared_ptr<ResourceManager> resourceManager, const math::Vector2f &direction);
+        bool _wasMovingLastFrame = false;
 };
 
 } // namespace ecs
