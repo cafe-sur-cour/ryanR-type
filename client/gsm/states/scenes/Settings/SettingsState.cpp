@@ -17,6 +17,7 @@
 #include "../../../../constants.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../../common/InputMapping/IInputProvider.hpp"
+#include "../../../../../common/InputMapping/InputMappingManager.hpp"
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../../libs/Multimedia/IAudio.hpp"
 
@@ -37,21 +38,34 @@ SettingsState::SettingsState(
     auto config = _resourceManager->get<SettingsConfig>();
     _uiManager->setGlobalScale(config->getUIScale());
 
+    // Main horizontal layout to contain two columns
     ui::LayoutConfig settingsConfig;
-    settingsConfig.direction = ui::LayoutDirection::Vertical;
+    settingsConfig.direction = ui::LayoutDirection::Horizontal;
     settingsConfig.alignment = ui::LayoutAlignment::Center;
-    settingsConfig.spacing = 20.0f;
+    settingsConfig.spacing = 40.0f;
     settingsConfig.padding = math::Vector2f(0.0f, 0.0f);
     settingsConfig.anchorX = ui::AnchorX::Center;
     settingsConfig.anchorY = ui::AnchorY::Center;
     settingsConfig.offset = math::Vector2f(0.0f, 0.0f);
 
     _settingsLayout = std::make_shared<ui::UILayout>(resourceManager, settingsConfig);
-    _settingsLayout->setSize(math::Vector2f(576.f, 500.f));
+    _settingsLayout->setSize(math::Vector2f(900.f, 600.f));
+
+    ui::LayoutConfig columnConfig;
+    columnConfig.direction = ui::LayoutDirection::Vertical;
+    columnConfig.alignment = ui::LayoutAlignment::Center;
+    columnConfig.spacing = 15.0f;
+    columnConfig.padding = math::Vector2f(0.0f, 0.0f);
+
+    _leftColumnLayout = std::make_shared<ui::UILayout>(resourceManager, columnConfig);
+    _leftColumnLayout->setSize(math::Vector2f(420.f, 600.f));
+
+    _rightColumnLayout = std::make_shared<ui::UILayout>(resourceManager, columnConfig);
+    _rightColumnLayout->setSize(math::Vector2f(420.f, 600.f));
 
     _scaleButton = std::make_shared<ui::Button>(resourceManager);
     _scaleButton->setText(getUIScaleText(config->getUIScale()));
-    _scaleButton->setSize(math::Vector2f(400.f, 65.f));
+    _scaleButton->setSize(math::Vector2f(380.f, 55.f));
     _scaleButton->setNormalColor({150, 100, 200});
     _scaleButton->setHoveredColor({200, 150, 255});
     _scaleButton->setFocusedColor({255, 200, 255});
@@ -68,7 +82,7 @@ SettingsState::SettingsState(
     _brightnessSlider->setMaxValue(150.0f);
     _brightnessSlider->setValue(config->getBrightnessValue());
     _brightnessSlider->setStep(5.0f);
-    _brightnessSlider->setSize(math::Vector2f(400.f, 65.f));
+    _brightnessSlider->setSize(math::Vector2f(380.f, 55.f));
     _brightnessSlider->setTrackColor({80, 80, 80});
     _brightnessSlider->setFillColor({100, 150, 200});
     _brightnessSlider->setHandleColor({150, 150, 150});
@@ -84,7 +98,7 @@ SettingsState::SettingsState(
     _musicVolumeSlider->setMaxValue(100.0f);
     _musicVolumeSlider->setValue(config->getMusicVolume());
     _musicVolumeSlider->setStep(5.0f);
-    _musicVolumeSlider->setSize(math::Vector2f(400.f, 65.f));
+    _musicVolumeSlider->setSize(math::Vector2f(380.f, 55.f));
     _musicVolumeSlider->setTrackColor({80, 80, 80});
     _musicVolumeSlider->setFillColor({100, 200, 100});
     _musicVolumeSlider->setHandleColor({150, 150, 150});
@@ -100,7 +114,7 @@ SettingsState::SettingsState(
     _soundVolumeSlider->setMaxValue(100.0f);
     _soundVolumeSlider->setValue(config->getSoundVolume());
     _soundVolumeSlider->setStep(5.0f);
-    _soundVolumeSlider->setSize(math::Vector2f(400.f, 65.f));
+    _soundVolumeSlider->setSize(math::Vector2f(380.f, 55.f));
     _soundVolumeSlider->setTrackColor({80, 80, 80});
     _soundVolumeSlider->setFillColor({200, 100, 100});
     _soundVolumeSlider->setHandleColor({150, 150, 150});
@@ -112,7 +126,7 @@ SettingsState::SettingsState(
 
     _colorBlindnessButton = std::make_shared<ui::Button>(resourceManager);
     _colorBlindnessButton->setText(getColorBlindnessText(config->getColorBlindnessState()));
-    _colorBlindnessButton->setSize(math::Vector2f(400.f, 65.f));
+    _colorBlindnessButton->setSize(math::Vector2f(380.f, 55.f));
     _colorBlindnessButton->setNormalColor({100, 100, 150});
     _colorBlindnessButton->setHoveredColor({150, 150, 200});
     _colorBlindnessButton->setFocusedColor({100, 200, 255});
@@ -127,7 +141,7 @@ SettingsState::SettingsState(
     _highContrastButton->setText(
         config->isHighContrastEnabled() ? "High Contrast: ON" : "High Contrast: OFF"
     );
-    _highContrastButton->setSize(math::Vector2f(400.f, 65.f));
+    _highContrastButton->setSize(math::Vector2f(380.f, 55.f));
     _highContrastButton->setNormalColor(
         config->isHighContrastEnabled() ? gfx::color_t{0, 200, 0} : gfx::color_t{200, 0, 0}
     );
@@ -142,7 +156,7 @@ SettingsState::SettingsState(
 
     _backButton = std::make_shared<ui::Button>(resourceManager);
     _backButton->setText("Back");
-    _backButton->setSize(math::Vector2f(400.f, 65.f));
+    _backButton->setSize(math::Vector2f(380.f, 55.f));
     _backButton->setNormalColor({200, 100, 0});
     _backButton->setHoveredColor({255, 150, 50});
     _backButton->setFocusedColor({255, 200, 100});
@@ -153,13 +167,87 @@ SettingsState::SettingsState(
         this->_gsm->requestStatePop();
     });
 
-    _settingsLayout->addElement(_musicVolumeSlider);
-    _settingsLayout->addElement(_soundVolumeSlider);
-    _settingsLayout->addElement(_scaleButton);
-    _settingsLayout->addElement(_brightnessSlider);
-    _settingsLayout->addElement(_colorBlindnessButton);
-    _settingsLayout->addElement(_highContrastButton);
-    _settingsLayout->addElement(_backButton);
+    _moveUpKeyButton = std::make_shared<ui::Button>(resourceManager);
+    _moveUpKeyButton->setSize(math::Vector2f(380.f, 55.f));
+    _moveUpKeyButton->setNormalColor({80, 120, 160});
+    _moveUpKeyButton->setHoveredColor({100, 150, 200});
+    _moveUpKeyButton->setFocusedColor({120, 180, 240});
+    updateKeyBindingButtonText(_moveUpKeyButton, ecs::InputAction::MOVE_Y, -1.0f, "Move Up");
+    _moveUpKeyButton->setOnRelease([this]() {
+        startKeyRebind(ecs::InputAction::MOVE_Y, -1.0f, _moveUpKeyButton);
+    });
+    _moveUpKeyButton->setOnActivated([this]() {
+        startKeyRebind(ecs::InputAction::MOVE_Y, -1.0f, _moveUpKeyButton);
+    });
+
+    _moveDownKeyButton = std::make_shared<ui::Button>(resourceManager);
+    _moveDownKeyButton->setSize(math::Vector2f(380.f, 55.f));
+    _moveDownKeyButton->setNormalColor({80, 120, 160});
+    _moveDownKeyButton->setHoveredColor({100, 150, 200});
+    _moveDownKeyButton->setFocusedColor({120, 180, 240});
+    updateKeyBindingButtonText(_moveDownKeyButton, ecs::InputAction::MOVE_Y, 1.0f, "Move Down");
+    _moveDownKeyButton->setOnRelease([this]() {
+        startKeyRebind(ecs::InputAction::MOVE_Y, 1.0f, _moveDownKeyButton);
+    });
+    _moveDownKeyButton->setOnActivated([this]() {
+        startKeyRebind(ecs::InputAction::MOVE_Y, 1.0f, _moveDownKeyButton);
+    });
+
+    _moveLeftKeyButton = std::make_shared<ui::Button>(resourceManager);
+    _moveLeftKeyButton->setSize(math::Vector2f(380.f, 55.f));
+    _moveLeftKeyButton->setNormalColor({80, 120, 160});
+    _moveLeftKeyButton->setHoveredColor({100, 150, 200});
+    _moveLeftKeyButton->setFocusedColor({120, 180, 240});
+    updateKeyBindingButtonText(_moveLeftKeyButton, ecs::InputAction::MOVE_X, -1.0f, "Move Left");
+    _moveLeftKeyButton->setOnRelease([this]() {
+        startKeyRebind(ecs::InputAction::MOVE_X, -1.0f, _moveLeftKeyButton);
+    });
+    _moveLeftKeyButton->setOnActivated([this]() {
+        startKeyRebind(ecs::InputAction::MOVE_X, -1.0f, _moveLeftKeyButton);
+    });
+
+    _moveRightKeyButton = std::make_shared<ui::Button>(resourceManager);
+    _moveRightKeyButton->setSize(math::Vector2f(380.f, 55.f));
+    _moveRightKeyButton->setNormalColor({80, 120, 160});
+    _moveRightKeyButton->setHoveredColor({100, 150, 200});
+    _moveRightKeyButton->setFocusedColor({120, 180, 240});
+    updateKeyBindingButtonText(_moveRightKeyButton, ecs::InputAction::MOVE_X, 1.0f, "Move Right");
+    _moveRightKeyButton->setOnRelease([this]() {
+        startKeyRebind(ecs::InputAction::MOVE_X, 1.0f, _moveRightKeyButton);
+    });
+    _moveRightKeyButton->setOnActivated([this]() {
+        startKeyRebind(ecs::InputAction::MOVE_X, 1.0f, _moveRightKeyButton);
+    });
+
+    _shootKeyButton = std::make_shared<ui::Button>(resourceManager);
+    _shootKeyButton->setSize(math::Vector2f(380.f, 55.f));
+    _shootKeyButton->setNormalColor({80, 120, 160});
+    _shootKeyButton->setHoveredColor({100, 150, 200});
+    _shootKeyButton->setFocusedColor({120, 180, 240});
+    updateKeyBindingButtonText(_shootKeyButton, ecs::InputAction::SHOOT, 1.0f, "Shoot");
+    _shootKeyButton->setOnRelease([this]() {
+        startKeyRebind(ecs::InputAction::SHOOT, 1.0f, _shootKeyButton);
+    });
+    _shootKeyButton->setOnActivated([this]() {
+        startKeyRebind(ecs::InputAction::SHOOT, 1.0f, _shootKeyButton);
+    });
+
+    _leftColumnLayout->addElement(_musicVolumeSlider);
+    _leftColumnLayout->addElement(_soundVolumeSlider);
+    _leftColumnLayout->addElement(_brightnessSlider);
+    _leftColumnLayout->addElement(_scaleButton);
+    _leftColumnLayout->addElement(_colorBlindnessButton);
+    _leftColumnLayout->addElement(_highContrastButton);
+    _leftColumnLayout->addElement(_backButton);
+
+    _rightColumnLayout->addElement(_moveUpKeyButton);
+    _rightColumnLayout->addElement(_moveDownKeyButton);
+    _rightColumnLayout->addElement(_moveLeftKeyButton);
+    _rightColumnLayout->addElement(_moveRightKeyButton);
+    _rightColumnLayout->addElement(_shootKeyButton);
+
+    _settingsLayout->addElement(_leftColumnLayout);
+    _settingsLayout->addElement(_rightColumnLayout);
     _uiManager->addElement(_settingsLayout);
 }
 
@@ -177,6 +265,29 @@ void SettingsState::update(float deltaTime) {
     auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
     if (eventResult == gfx::EventType::CLOSE) {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
+        return;
+    }
+
+    if (_isWaitingForKey) {
+        if (eventResult == gfx::EventType::ESCAPE) {
+            _isWaitingForKey = false;
+            if (_buttonToUpdate && _actionToRebind.has_value()) {
+                updateKeyBindingButtonText(
+                    _buttonToUpdate,
+                    _actionToRebind.value(), 
+                    _rebindDirection,
+                    _rebindLabel
+                );
+            }
+            _actionToRebind.reset();
+            _buttonToUpdate.reset();
+            _rebindLabel.clear();
+        } else if (eventResult != gfx::EventType::NOTHING &&
+            ecs::InputMappingManager::isKeyboardKey(eventResult)) {
+            handleKeyRebind(eventResult);
+        }
+        _uiManager->update(deltaTime);
+        renderUI();
         return;
     }
 
@@ -352,9 +463,91 @@ void SettingsState::exit() {
     _musicVolumeSlider.reset();
     _soundVolumeSlider.reset();
     _scaleButton.reset();
+    _moveUpKeyButton.reset();
+    _moveDownKeyButton.reset();
+    _moveLeftKeyButton.reset();
+    _moveRightKeyButton.reset();
+    _shootKeyButton.reset();
+    _leftColumnLayout.reset();
+    _rightColumnLayout.reset();
     _settingsLayout.reset();
     _mouseHandler.reset();
     _uiManager.reset();
+}
+
+void SettingsState::startKeyRebind(
+    ecs::InputAction action, float direction, 
+    std::shared_ptr<ui::Button> button
+) {
+    _isWaitingForKey = true;
+    _actionToRebind = action;
+    _rebindDirection = direction;
+    _buttonToUpdate = button;
+
+    std::string currentText = button->getText();
+    size_t colonPos = currentText.find(':');
+    if (colonPos != std::string::npos) {
+        _rebindLabel = currentText.substr(0, colonPos);
+    }
+
+    if (_resourceManager->has<ecs::InputMappingManager>()) {
+        auto mappingManager = _resourceManager->get<ecs::InputMappingManager>();
+        _originalKey = mappingManager->getKeyboardKeyForActionDirection(action, direction);
+    }
+
+    button->setText("Press a key...");
+}
+
+void SettingsState::handleKeyRebind(gfx::EventType newKey) {
+    if (!_actionToRebind.has_value() || !_buttonToUpdate)
+        return;
+
+    if (_resourceManager->has<ecs::InputMappingManager>()) {
+        auto mappingManager = _resourceManager->get<ecs::InputMappingManager>();
+        mappingManager->remapKeyboardKey(_actionToRebind.value(), _originalKey, newKey);
+    }
+
+    updateKeyBindingButtonText(_buttonToUpdate, _actionToRebind.value(), _rebindDirection, _rebindLabel);
+
+    _isWaitingForKey = false;
+    _actionToRebind.reset();
+    _buttonToUpdate.reset();
+    _originalKey = gfx::EventType::NOTHING;
+    _rebindLabel.clear();
+}
+
+void SettingsState::updateKeyBindingButtonText(
+    std::shared_ptr<ui::Button> button, 
+    ecs::InputAction action, float direction,
+    const std::string& label
+) {
+    std::string keyName = "None";
+
+    if (_resourceManager->has<ecs::InputMappingManager>()) {
+        auto mappingManager = _resourceManager->get<ecs::InputMappingManager>();
+        gfx::EventType key = mappingManager->getKeyboardKeyForActionDirection(action, direction);
+        if (key != gfx::EventType::NOTHING) {
+            keyName = ecs::InputMappingManager::eventTypeToString(key);
+        }
+    }
+
+    button->setText(label + ": " + keyName);
+}
+
+std::string SettingsState::getActionName(ecs::InputAction action) const {
+    switch (action) {
+        case ecs::InputAction::MOVE_X: return "Move Horizontal";
+        case ecs::InputAction::MOVE_Y: return "Move Vertical";
+        case ecs::InputAction::SHOOT: return "Shoot";
+        case ecs::InputAction::PAUSE: return "Pause";
+        case ecs::InputAction::MENU_UP: return "Menu Up";
+        case ecs::InputAction::MENU_DOWN: return "Menu Down";
+        case ecs::InputAction::MENU_LEFT: return "Menu Left";
+        case ecs::InputAction::MENU_RIGHT: return "Menu Right";
+        case ecs::InputAction::MENU_SELECT: return "Menu Select";
+        case ecs::InputAction::MENU_BACK: return "Menu Back";
+        default: return "Unknown";
+    }
 }
 
 }  // namespace gsm
