@@ -339,7 +339,8 @@ ecs::Entity MapParser::createEntityFromPrefab(const std::string& prefabName,
 void MapParser::createMusicEntity(const std::string& prefabName) {
     if (_prefabManager->hasPrefab(prefabName)) {
         try {
-            ecs::EntityCreationContext musicContext = ecs::EntityCreationContext::forLocalClient();
+            ecs::EntityCreationContext musicContext =
+                ecs::EntityCreationContext::forLocalClient();
             _prefabManager->createEntityFromPrefab(prefabName, _registry, musicContext);
         } catch (const std::exception& e) {
             std::cerr << "Error creating music entity: " << e.what() << std::endl;
