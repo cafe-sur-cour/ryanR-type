@@ -25,6 +25,7 @@ target_link_libraries(${CLIENT_BIN_NAME}
         PARSER
         UI
         DEBUG
+        InputNormalizer
         asio::asio
         nlohmann_json::nlohmann_json
 )
