@@ -36,23 +36,17 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
     }
 
     if (length == 0) {
-        if (type == CAN_START_PACKET) {
-            temp = this->_serializer->serializeUInt(length);
-            packet.insert(packet.end(), temp.begin(), temp.end());
-            return packet;
-        } else if (type != MAP_SEND_PACKET && type != GAME_STATE_PACKET) {
+        if (type != MAP_SEND_PACKET && type != GAME_STATE_PACKET && type != CAN_START_PACKET) {
             std::cerr << "[PACKET] Error: Unknown packet type "
-                      << static_cast<int>(type)
-                      << " for packing" << std::endl;
+                << static_cast<int>(type) << " for packing" << std::endl;
             return std::vector<uint8_t>();
         }
-        debug::Debug::printDebug(true,
-            "[PACKET] Warning: Packet size not fixed "
-            + std::to_string(static_cast<int>(type))
-            + " for packing",
+        debug::Debug::printDebug(true, "[PACKET] Warning: Packet size not fixed " +
+            std::to_string(static_cast<int>(type)) + " for packing",
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         length = static_cast<uint32_t>(payload.size()) * sizeof(uint64_t);
     }
+
     temp = this->_serializer->serializeUInt(length);
     packet.insert(packet.end(), temp.begin(), temp.end());
     for (auto &handler : this->_packetHandlers) {

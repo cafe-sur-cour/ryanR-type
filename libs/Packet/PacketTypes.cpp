@@ -164,3 +164,32 @@ bool pm::PacketManager::parseEndGamePacket(
     this->_payload.push_back(result);
     return true;
 }
+
+std::vector<uint8_t> pm::PacketManager::buildCanStartPacket(std::vector<uint64_t> payload) {
+    std::vector<uint8_t> body;
+    std::vector<uint64_t> namesPayload(payload.begin() + 1, payload.end());
+    for (auto val : namesPayload) {
+        auto temp = this->_serializer->serializeULong(val);
+        body.insert(body.end(), temp.begin(), temp.end());
+    }
+    return body;
+}
+
+bool pm::PacketManager::parseCanStartPacket(const std::vector<uint8_t> payload) {
+    if (payload.size() < 8 || payload.size() % 8 != 0) {
+        std::cerr << "[PACKET] CAN_START packet payload size invalid: "
+            << payload.size() << std::endl;
+        return false;
+    }
+
+    this->_payload.clear();
+    for (size_t i = 0; i < payload.size(); i += 8) {
+        auto startIt = payload.begin() + static_cast<std::ptrdiff_t>(i);
+        auto endIt = payload.begin() + static_cast<std::ptrdiff_t>(i + 8);
+        std::vector<uint8_t> longBytes(startIt, endIt);
+
+        uint64_t value = this->_serializer->deserializeULong(longBytes);
+        this->_payload.push_back(value);
+    }
+    return true;
+}
