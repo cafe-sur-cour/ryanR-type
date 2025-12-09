@@ -1,0 +1,37 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** SettingsConfig
+*/
+
+#ifndef SETTINGSCONFIG_HPP_
+#define SETTINGSCONFIG_HPP_
+
+#include "ui/elements/base/UIElement.hpp"
+
+class SettingsConfig {
+public:
+    SettingsConfig() = default;
+    ~SettingsConfig() = default;
+
+    int getColorBlindnessState() const { return _colorBlindnessState; }
+    void setColorBlindnessState(int state) { _colorBlindnessState = state; }
+
+    float getBrightnessValue() const { return _brightnessValue; }
+    void setBrightnessValue(float value) { _brightnessValue = value; }
+
+    bool isHighContrastEnabled() const { return _highContrastEnabled; }
+    void setHighContrastEnabled(bool enabled) { _highContrastEnabled = enabled; }
+
+    ui::UIScale getUIScale() const { return _uiScale; }
+    void setUIScale(ui::UIScale scale) { _uiScale = scale; }
+
+private:
+    int _colorBlindnessState = 0;
+    float _brightnessValue = 1.0f;
+    bool _highContrastEnabled = false;
+    ui::UIScale _uiScale = ui::UIScale::Normal;
+};
+
+#endif  // SETTINGSCONFIG_HPP_
