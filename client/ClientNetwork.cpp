@@ -38,6 +38,7 @@ ClientNetwork::ClientNetwork() {
     this->_isConnected = false;
     this->_isDebug = false;
     this->_resourceManager = nullptr;
+    this->_gsm = nullptr;
     this->_clientNames = {};
 
     // Initialize packet handlers
@@ -59,6 +60,14 @@ ClientNetwork::~ClientNetwork() {
 
 void ClientNetwork::setResourceManager(std::shared_ptr<ResourceManager> resourceManager) {
     this->_resourceManager = resourceManager;
+}
+
+void ClientNetwork::setGameStateMachine(std::shared_ptr<gsm::IGameStateMachine> gsm) {
+    this->_gsm = gsm;
+}
+
+std::shared_ptr<gsm::IGameStateMachine> ClientNetwork::getGameStateMachine() const {
+    return this->_gsm;
 }
 
 void ClientNetwork::init() {
