@@ -62,12 +62,13 @@
                     "toSelf": []
                 },
                 {
-                    "tags": ["ProjectileTag"],
+                    "tags": ["PlayerProjectileTag"],
                     "toEntity": ["DealDamage"],
                     "toSelf": ["TakeDamage"]
                 }
             ]
         },
-        "ShooterTag": { "target": "both" }
+        "ShooterTag": { "target": "both" },
+        "HealthBarComponent": { "target": "client" }
     }
 }

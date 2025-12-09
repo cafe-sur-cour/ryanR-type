@@ -17,7 +17,8 @@
 #include "../components/tags/ControllableTag.hpp"
 #include "../components/tags/PlayerTag.hpp"
 #include "../components/tags/ShooterTag.hpp"
-#include "../components/tags/ProjectileTag.hpp"
+#include "../components/tags/PlayerProjectileTag.hpp"
+#include "../components/tags/EnnemyProjectileTag.hpp"
 #include "../components/tags/MobTag.hpp"
 #include "../components/tags/ObstacleTag.hpp"
 #include "../components/tags/GameZoneColliderTag.hpp"
@@ -30,10 +31,12 @@
 #include "../components/permanent/VelocityComponent.hpp"
 #include "../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../client/components/rendering/TextComponent.hpp"
+#include "../../client/components/rendering/HealthBarComponent.hpp"
 #include "../components/permanent/LifetimeComponent.hpp"
 #include "../../client/components/rendering/AnimationComponent.hpp"
 #include "../../client/components/rendering/MusicComponent.hpp"
 #include "../../client/components/rendering/ParallaxComponent.hpp"
+#include "../../client/components/temporary/SoundIntentComponent.hpp"
 #include "../components/permanent/InteractionConfigComponent.hpp"
 #include "../components/permanent/HealthComponent.hpp"
 #include "../ECS/entity/Entity.hpp"
@@ -72,6 +75,13 @@ void Parser::instanciateComponentDefinitions() {
             {constants::TRANSITIONS_FIELD, FieldType::JSON,
                 true, std::make_shared<FieldValue>(nlohmann::json::array())}
         }}},
+        {constants::SOUNDINTENTCOMPONENT,
+            {std::type_index(typeid(ecs::SoundIntentComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::SOUND_FILE_FIELD, FieldType::STRING},
+            {constants::VOLUME_FIELD, FieldType::FLOAT,
+                true, std::make_shared<FieldValue>(100.0f)}
+        }}},
         {constants::CONTROLLABLETAG, {std::type_index(typeid(ecs::ControllableTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
@@ -81,7 +91,10 @@ void Parser::instanciateComponentDefinitions() {
         {constants::SHOOTERTAG, {std::type_index(typeid(ecs::ShooterTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
-        {constants::PROJECTILETAG, {std::type_index(typeid(ecs::ProjectileTag)), {
+        {constants::PLAYERPROJECTILETAG, {std::type_index(typeid(ecs::PlayerProjectileTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::ENNEMYPROJECTILETAG, {std::type_index(typeid(ecs::EnnemyProjectileTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
         {constants::MOBTAG, {std::type_index(typeid(ecs::MobTag)), {
@@ -135,6 +148,9 @@ void Parser::instanciateComponentDefinitions() {
             {constants::FONTPATH_FIELD, FieldType::STRING},
             {constants::COLOR_FIELD, FieldType::OBJECT}
         }}},
+        {constants::HEALTHBARCOMPONENT, {std::type_index(typeid(ecs::HealthBarComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
         {constants::PROJECTILEPREFABCOMPONENT, {
             std::type_index(typeid(ecs::ProjectilePrefabComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
@@ -144,6 +160,11 @@ void Parser::instanciateComponentDefinitions() {
             std::type_index(typeid(ecs::LifetimeComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::LIFETIME_FIELD, FieldType::FLOAT}
+        }}},
+        {constants::LIFESPANCOMPONENT, {
+            std::type_index(typeid(ecs::LifetimeComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::LIFESPAN_FIELD, FieldType::FLOAT}
         }}},
         {constants::PARALLAXCOMPONENT, {
             std::type_index(typeid(ecs::ParallaxComponent)), {
@@ -280,6 +301,13 @@ void Parser::instanciateComponentCreators() {
         return anim;
     });
 
+    registerComponent<ecs::SoundIntentComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto soundFile = std::get<std::string>(*fields.at(constants::SOUND_FILE_FIELD));
+        auto volume = std::get<float>(*fields.at(constants::VOLUME_FIELD));
+        return std::make_shared<ecs::SoundIntentComponent>(soundFile, volume);
+    });
+
     registerComponent<ecs::ControllableTag>([]([[maybe_unused]] const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::ControllableTag>();
@@ -295,9 +323,14 @@ void Parser::instanciateComponentCreators() {
         return std::make_shared<ecs::ShooterTag>();
     });
 
-    registerComponent<ecs::ProjectileTag>([]([[maybe_unused]] const std::map<std::string,
+    registerComponent<ecs::PlayerProjectileTag>([]([[maybe_unused]] const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-        return std::make_shared<ecs::ProjectileTag>();
+        return std::make_shared<ecs::PlayerProjectileTag>();
+    });
+
+    registerComponent<ecs::EnnemyProjectileTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::EnnemyProjectileTag>();
     });
 
     registerComponent<ecs::MobTag>([]([[maybe_unused]] const std::map<std::string,
@@ -383,6 +416,11 @@ void Parser::instanciateComponentCreators() {
         return std::make_shared<ecs::TextComponent>(text, fontPath, color);
     });
 
+    registerComponent<ecs::HealthBarComponent>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::HealthBarComponent>();
+    });
+
     registerComponent<ecs::ProjectilePrefabComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto prefabName = std::get<std::string>(*fields.at(constants::PREFABNAME_FIELD));
@@ -391,7 +429,12 @@ void Parser::instanciateComponentCreators() {
 
     registerComponent<ecs::LifetimeComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-        auto lifetime = std::get<float>(*fields.at(constants::LIFETIME_FIELD));
+        float lifetime = 0.0f;
+        if (fields.find(constants::LIFETIME_FIELD) != fields.end()) {
+            lifetime = std::get<float>(*fields.at(constants::LIFETIME_FIELD));
+        } else if (fields.find(constants::LIFESPAN_FIELD) != fields.end()) {
+            lifetime = std::get<float>(*fields.at(constants::LIFESPAN_FIELD));
+        }
         return std::make_shared<ecs::LifetimeComponent>(lifetime);
     });
     registerComponent<ecs::ScoreTag>([]([[maybe_unused]] const std::map<std::string,

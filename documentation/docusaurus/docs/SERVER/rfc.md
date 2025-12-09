@@ -124,7 +124,6 @@ Server :
 4.1.3. EVENT (0x04) – Client notifies input
    - Event type (1 byte, e.g., Up, Down, Left, Right, Space)
    - Depth of movement
-   - Direction of shoot
 
 
 **4.2 Server Details**
@@ -140,22 +139,25 @@ Server :
 4.2.3. MAP_SEND (0x06) – Server sends the map to the clients
 
    - Player ID (4 bytes)
-   -Map Data [
-      - mapName
-      - background entity
-      - speed
-      - music entity
-      - legend [ name: value ; name ...]
-      - map [
-            element element ,
-            element element ,
-            ...
-         ]
-      - waves [
-         {spawnLenth: ; posX ; enemies { type : , count :}},
-         ...
-      ]
-   ]
+   - Map Data:
+     ```
+     [
+        - mapName
+        - background entity
+        - speed
+        - music entity
+        - legend [ name: value ; name ...]
+        - map [
+              element element ,
+              element element ,
+              ...
+           ]
+        - waves [
+           {spawnLenth: ; posX ; enemies { type : , count :}},
+           ...
+        ]
+     ]
+     ```
 
 
 4.2.4. END_MAP (0x07) – Server notify the end of the map
@@ -177,7 +179,7 @@ Server :
    |                  |                      |                  |
    +------------------+                      +------------------+
            |                                          |
-           |            CONNECTION                     |
+           |            CONNECTION                    |
            |----------------------------------------->|
            |                                          |
            |            CONNECTIONS                   |

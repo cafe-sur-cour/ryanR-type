@@ -16,7 +16,6 @@
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ShootingStatsComponent.hpp"
 #include "../../components/permanent/ProjectilePrefabComponent.hpp"
-#include "../../components/tags/ProjectileTag.hpp"
 #include "../../components/tags/AIShooterTag.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/permanent/SpeedComponent.hpp"
@@ -49,13 +48,13 @@ void ShootingSystem::update(
         if (!shootingStats || !projectilePrefabComponent || !transform) {
             continue;
         }
-        if (!shootingStats->canShoot())
-            continue;
-
         auto intent = registry->getComponent<ShootIntentComponent>(entityId);
         float baseAngle = intent ? intent->getAngle() : 0.0f;
 
         registry->removeComponent<ShootIntentComponent>(entityId);
+
+        if (!shootingStats->canShoot())
+            continue;
 
         auto prefabManager = resourceManager->get<EntityPrefabManager>();
         std::string prefabName = projectilePrefabComponent->getPrefabName();
@@ -112,28 +111,10 @@ void ShootingSystem::spawnProjectile(
     const math::Vector2f &position,
     float angle
 ) {
-    Entity projectileEntity;
+    if (!prefab)
+        return;
 
-    if (prefab) {
-        projectileEntity = prefab->instantiate(registry);
-    } else {
-        projectileEntity = registry->createEntity();
-
-        auto transform = std::make_shared<TransformComponent>();
-        registry->addComponent(projectileEntity, transform);
-
-        auto velocity = std::make_shared<VelocityComponent>();
-        registry->addComponent(projectileEntity, velocity);
-
-        auto render = std::make_shared<RectangleRenderComponent>(
-            gfx::color_t{255, 215, 0},
-            10.0f,
-            10.0f
-        );
-        registry->addComponent(projectileEntity, render);
-    }
-
-    registry->addComponent(projectileEntity, std::make_shared<ProjectileTag>());
+    Entity projectileEntity = prefab->instantiate(registry);
 
     auto transform = registry->getComponent<TransformComponent>(projectileEntity);
     if (transform) {

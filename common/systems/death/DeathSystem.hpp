@@ -10,6 +10,7 @@
 
 #include "../base/ASystem.hpp"
 #include <memory>
+#include "../../types/Vector2f.hpp"
 
 namespace ecs {
 
@@ -23,6 +24,18 @@ class DeathSystem : public ASystem {
             std::shared_ptr<Registry> registry,
             float deltaTime
         ) override;
+
+    private:
+        math::Vector2f getFirstHitboxCenter(
+            std::shared_ptr<Registry> registry,
+            ecs::Entity entity
+        );
+        void spawnExplosionAtMobCenter(
+            std::shared_ptr<ResourceManager> resourceManager,
+            std::shared_ptr<Registry> registry,
+            ecs::Entity mobEntity,
+            const std::string& prefabName
+        );
 };
 
 }

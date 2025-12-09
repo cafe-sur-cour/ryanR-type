@@ -62,7 +62,7 @@ namespace rserv {
             std::vector<asio::ip::udp::endpoint> getConnectedClientEndpoints() const override;
             size_t getClientCount() const override;
 
-            std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> getEventQueue() override;
+            std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> getEventQueue() override;
             bool hasEvents() const override;
 
             /* Received Packet Handling */
@@ -76,6 +76,7 @@ namespace rserv {
             bool connectionPacket(asio::ip::udp::endpoint endpoint);
             bool gameStatePacket();
             bool mapPacket(std::vector<uint64_t> mapData, const asio::ip::udp::endpoint &endpoint);
+            bool canStartPacket();
 
             void setCurrentMap(const std::vector<uint64_t> &map);
             std::vector<uint64_t> getCurrentMap() const;
@@ -94,7 +95,7 @@ namespace rserv {
             std::shared_ptr<net::INetwork> _network;
             std::shared_ptr<IBuffer> _buffer;
             std::shared_ptr<pm::IPacketManager> _packet;
-            std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double, double>>> _eventQueue;
+            std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> _eventQueue;
 
             std::vector<uint64_t> _currentMap;
     };

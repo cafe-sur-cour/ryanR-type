@@ -61,6 +61,7 @@ namespace constants {
     const std::string RECTANGLERENDERCOMPONENT = "RectangleRenderComponent";
     const std::string PROJECTILEPREFABCOMPONENT = "ProjectilePrefabComponent";
     const std::string TEXTCOMPONENT = "TextComponent";
+    const std::string HEALTHBARCOMPONENT = "HealthBarComponent";
 
     const std::string SCORECOMPONENT = "ScoreComponent";
     const std::string DAMAGECOMPONENT = "DamageComponent";
@@ -139,9 +140,13 @@ namespace constants {
     const std::string PREFABNAME_FIELD = "prefabName";
     const std::string LIFETIMECOMPONENT = "LifetimeComponent";
     const std::string LIFETIME_FIELD = "lifetime";
+    const std::string LIFESPANCOMPONENT = "LifeSpanComponent";
+    const std::string LIFESPAN_FIELD = "lifespan";
     const std::string BACKGROUNDMUSICTAG = "BackGroundMusicTag";
     const std::string TEXT_FIELD = "text";
     const std::string FONTPATH_FIELD = "fontPath";
+    const std::string SOUNDINTENTCOMPONENT = "SoundIntentComponent";
+    const std::string SOUND_FILE_FIELD = "soundFile";
 
     const std::string MAPPINGS_FIELD = "mappings";
     const std::string TAGS_FIELD = "tags";
@@ -192,7 +197,8 @@ namespace constants {
     const std::string COLLIDERCOMPONENT = "ColliderComponent";
     const std::string MOBTAG = "MobTag";
     const std::string SHOOTERTAG = "ShooterTag";
-    const std::string PROJECTILETAG = "ProjectileTag";
+    const std::string PLAYERPROJECTILETAG = "PlayerProjectileTag";
+    const std::string ENNEMYPROJECTILETAG = "EnnemyProjectileTag";
     const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
     const std::string PARALLAXCOMPONENT = "ParallaxComponent";
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
@@ -206,6 +212,10 @@ namespace constants {
     const std::string TAKEDEATH_ACTION = "TakeDeath";
     const std::string DEALDAMAGE_ACTION = "DealDamage";
     const std::string TAKEDAMAGE_ACTION = "TakeDamage";
+
+    /* Prefabs */
+    const std::string SMALL_EXPLOSION = "small_explosion";
+    const std::string BIG_EXPLOSION = "big_explosion";
 
     /* AI Movement Pattern defaults */
     constexpr float DEFAULT_ZIGZAG_AMPLITUDE = 80.0f;
