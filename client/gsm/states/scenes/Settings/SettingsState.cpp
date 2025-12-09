@@ -164,6 +164,11 @@ SettingsState::SettingsState(
 }
 
 void SettingsState::enter() {
+    auto window = _resourceManager->get<gfx::IWindow>();
+    _savedViewCenter = window->getViewCenter();
+    auto logicalSize = window->getLogicalSize();
+    window->setViewCenter(static_cast<float>(logicalSize.first) / 2.0f,
+                          static_cast<float>(logicalSize.second) / 2.0f);
 }
 
 void SettingsState::update(float deltaTime) {
@@ -337,6 +342,8 @@ std::string SettingsState::getUIScaleText(ui::UIScale scale) {
 }
 
 void SettingsState::exit() {
+    auto window = _resourceManager->get<gfx::IWindow>();
+    window->setViewCenter(_savedViewCenter.getX(), _savedViewCenter.getY());
     _uiManager->clearElements();
     _backButton.reset();
     _highContrastButton.reset();
