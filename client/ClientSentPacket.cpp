@@ -36,21 +36,18 @@ void ClientNetwork::connectionPacket() {
 
 
 void ClientNetwork::eventPacket(const constants::EventType &eventType,
-    double depth, double direction) {
+    double depth) {
     if (!_network) {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);
     }
 
     uint64_t depthBits;
-    uint64_t dirBits;
     std::memcpy(&depthBits, &depth, sizeof(double));
-    std::memcpy(&dirBits, &direction, sizeof(double));
 
     std::vector<uint64_t> payload;
     payload.push_back(static_cast<uint64_t>(eventType));
     payload.push_back(depthBits);
-    payload.push_back(dirBits);
 
     std::vector<uint8_t> packet =
         this->_packet->pack(this->_idClient, this->_sequenceNumber,
@@ -59,8 +56,7 @@ void ClientNetwork::eventPacket(const constants::EventType &eventType,
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Preparing to send event packet: EventType="
         + std::to_string(static_cast<int>(eventType))
-        + ", Depth=" + std::to_string(depth)
-        + ", Direction=" + std::to_string(direction),
+        + ", Depth=" + std::to_string(depth),
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
     this->_network->sendTo(this->_serverEndpoint, packet);

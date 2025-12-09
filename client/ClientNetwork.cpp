@@ -237,8 +237,7 @@ void ClientNetwork::start() {
             std::lock_guard<std::mutex> lock(this->_queueMutex);
             this->eventPacket(
                 this->_eventQueue.front().eventType,
-                this->_eventQueue.front().depth,
-                this->_eventQueue.front().direction
+                this->_eventQueue.front().depth
             );
             this->_eventQueue.pop();
         }
