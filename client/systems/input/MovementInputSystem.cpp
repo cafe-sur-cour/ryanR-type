@@ -69,9 +69,10 @@ void MovementInputSystem::update(
             sendAxisEvents(resourceManager, movementDirection);
             _wasMovingLastFrame = true;
         } else if (_wasMovingLastFrame) {
-            resourceManager->get<ClientNetwork>()->addToEventQueue({
-                constants::EventType::STOP, 0.0, 0.0
-            });
+            NetworkEvent stopEvent;
+            stopEvent.eventType = constants::EventType::STOP;
+            stopEvent.depth = 0.0;
+            resourceManager->get<ClientNetwork>()->addToEventQueue(stopEvent);
             _wasMovingLastFrame = false;
         }
     }
@@ -143,11 +144,10 @@ void MovementInputSystem::sendAxisEvents(
         } else {
             xEventType = constants::EventType::LEFT;
         }
-        clientNetwork->addToEventQueue({
-            xEventType,
-            static_cast<double>(std::fabs(direction.getX())),
-            0.0
-        });
+        NetworkEvent xEvent;
+        xEvent.eventType = xEventType;
+        xEvent.depth = static_cast<double>(std::fabs(direction.getX()));
+        clientNetwork->addToEventQueue(xEvent);
     }
     if (std::fabs(direction.getY()) > constants::EPS) {
         constants::EventType yEventType;
@@ -156,11 +156,10 @@ void MovementInputSystem::sendAxisEvents(
         } else {
             yEventType = constants::EventType::DOWN;
         }
-        clientNetwork->addToEventQueue({
-            yEventType,
-            static_cast<double>(std::fabs(direction.getY())),
-            0.0
-        });
+        NetworkEvent yEvent;
+        yEvent.eventType = yEventType;
+        yEvent.depth = static_cast<double>(std::fabs(direction.getY()));
+        clientNetwork->addToEventQueue(yEvent);
     }
 }
 
