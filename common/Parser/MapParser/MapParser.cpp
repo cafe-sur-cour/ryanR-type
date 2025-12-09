@@ -155,7 +155,6 @@ void MapParser::createBackgroundEntity(const std::string& entityName) {
 }
 
 void MapParser::createGameZoneEntity(float scrollSpeed) {
-    // GameZone entity uses the factory to get proper NetworkId if needed
     auto factory = _prefabManager->getEntityFactory();
     ecs::Entity gameZoneEntity = factory->createEntity(_registry, _creationContext);
 
@@ -340,7 +339,6 @@ ecs::Entity MapParser::createEntityFromPrefab(const std::string& prefabName,
 void MapParser::createMusicEntity(const std::string& prefabName) {
     if (_prefabManager->hasPrefab(prefabName)) {
         try {
-            // Music entities are local client entities, no NetworkId needed
             ecs::EntityCreationContext musicContext = ecs::EntityCreationContext::forLocalClient();
             _prefabManager->createEntityFromPrefab(prefabName, _registry, musicContext);
         } catch (const std::exception& e) {
