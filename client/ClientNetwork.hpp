@@ -26,7 +26,6 @@
 struct NetworkEvent {
     constants::EventType eventType;
     double depth;
-    double direction;
 };
 
 class ClientNetwork {
@@ -63,7 +62,7 @@ class ClientNetwork {
         net::ConnectionState getConnectionState() const;
 
         /* Packet Handling */
-        void eventPacket(const constants::EventType &eventType, double depth, double direction);
+        void eventPacket(const constants::EventType &eventType, double depth);
         void disconnectionPacket();
         void connectionPacket();
 
