@@ -49,6 +49,11 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
             static_cast<uint8_t>(EVENT_PACKET), std::bind(
             &pm::PacketManager::buildEventPacket,
             this, std::placeholders::_1)
+        },
+        {
+            static_cast<uint8_t>(MAP_SEND_PACKET), std::bind(
+            &pm::PacketManager::buildMapPacket,
+            this, std::placeholders::_1)
         }
     };
 
@@ -72,6 +77,11 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
             static_cast<uint8_t>(EVENT_PACKET), std::bind(
                 &pm::PacketManager::parseEventPacket,
                 this, std::placeholders::_1)
+        },
+        {
+            static_cast<uint8_t>(MAP_SEND_PACKET), std::bind(
+            &pm::PacketManager::parseMapPacket,
+            this, std::placeholders::_1)
         }
     };
 

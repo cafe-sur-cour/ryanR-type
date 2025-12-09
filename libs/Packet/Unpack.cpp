@@ -35,6 +35,8 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
     if (data.size() - HEADER_SIZE != length) {
         return false;
     }
+    if (length == 0)
+        return true;
 
     for (auto &handler : this->_packetReceived) {
         if (handler.first == type) {

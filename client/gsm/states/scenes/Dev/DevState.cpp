@@ -57,12 +57,23 @@ void DevState::enter() {
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
     _resourceManager->add<ecs::Registry>(_registry);
 
-    _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
     auto collisionData =
         ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
     ecs::CollisionRules::initWithData(collisionData);
-    _parser->parseAllEntities(constants::CONFIG_PATH);
-    _parser->parseMapFromFile("configs/map/map1.json");
+    auto existingParser = _resourceManager->get<Parser>();
+    if (existingParser) {
+        _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
+        _parser->parseAllEntities(constants::CONFIG_PATH);
+
+        auto mapData = existingParser->getMapParser()->getMapJson();
+        if (!mapData.is_null()) {
+            _parser->getMapParser()->setMapJson(mapData);
+            _parser->getMapParser()->generateMapEntities();
+        }
+    } else {
+        _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
+        _parser->parseAllEntities(constants::CONFIG_PATH);
+    }
 
     addSystem(std::make_shared<ecs::AIMovementSystem>());
     addSystem(std::make_shared<ecs::AIShootingSystem>());
