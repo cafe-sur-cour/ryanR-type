@@ -23,11 +23,13 @@ GraphicalInputProvider::GraphicalInputProvider(
     : _eventSystem(eventSystem), _mapping(mapping) {
 }
 
-float GraphicalInputProvider::getAxisValue(event_t axis) {
+float GraphicalInputProvider::getAxisValue(event_t axis, size_t clientID) {
+    (void)clientID;
     return _eventSystem->getAxisValue(axis);
 }
 
-bool GraphicalInputProvider::isActionPressed(InputAction action) {
+bool GraphicalInputProvider::isActionPressed(InputAction action, size_t clientID) {
+    (void)clientID;
     auto it = _mapping.mappings.find(action);
     if (it == _mapping.mappings.end()) return false;
     for (auto& pair : it->second) {
@@ -37,7 +39,8 @@ bool GraphicalInputProvider::isActionPressed(InputAction action) {
     return false;
 }
 
-float GraphicalInputProvider::getActionAxis(InputAction action) {
+float GraphicalInputProvider::getActionAxis(InputAction action, size_t clientID) {
+    (void)clientID;
     auto it = _mapping.mappings.find(action);
     if (it == _mapping.mappings.end()) return 0.0f;
     float value = 0.0f;
@@ -55,7 +58,8 @@ float GraphicalInputProvider::getActionAxis(InputAction action) {
     return value;
 }
 
-InputMapping GraphicalInputProvider::getInputMapping() const {
+InputMapping GraphicalInputProvider::getInputMapping(size_t clientID) const {
+    (void)clientID;
     return _mapping;
 }
 
