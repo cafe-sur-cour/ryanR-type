@@ -31,12 +31,15 @@ void SpawnSystem::update(
 
         const std::string prefabName = spawnRequest->getPrefabName();
         const math::Vector2f position = spawnRequest->getPosition();
+        const EntityCreationContext context = spawnRequest->getCreationContext();
 
         auto prefabManager = resourceManager->get<EntityPrefabManager>();
-        auto newEntity = prefabManager->createEntityFromPrefab(prefabName, registry);
+        auto newEntity = prefabManager->createEntityFromPrefab(prefabName, registry, context);
 
         auto transform = registry->getComponent<TransformComponent>(newEntity);
-        transform->setPosition(position);
+        if (transform) {
+            transform->setPosition(position);
+        }
 
         registry->removeComponent<SpawnIntentComponent>(entityId);
     }
