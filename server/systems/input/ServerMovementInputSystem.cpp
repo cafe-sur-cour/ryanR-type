@@ -45,14 +45,16 @@ void ServerMovementInputSystem::update(
     if (connectedClients.empty())
         return;
 
-    for (size_t clientID : connectedClients) {
-        for (auto entityId : view) {
-            float axisX = serverInputProvider->getActionAxis(InputAction::MOVE_X, clientID);
-            float axisY = serverInputProvider->getActionAxis(InputAction::MOVE_Y, clientID);
-            math::Vector2f movementDirection(axisX, axisY);
-            movementDirection = normalizeDirection(movementDirection);
-            updateInputIntent(registry, entityId, movementDirection);
-        }
+    size_t clientIndex = 0;
+    for (auto entityId : view) {
+        if (clientIndex >= connectedClients.size())
+            break;
+        size_t clientID = connectedClients[clientIndex];
+        float axisX = serverInputProvider->getActionAxis(InputAction::MOVE_X, clientID);
+        float axisY = serverInputProvider->getActionAxis(InputAction::MOVE_Y, clientID);
+        math::Vector2f movementDirection(axisX, axisY);
+        updateInputIntent(registry, entityId, movementDirection);
+        clientIndex++;
     }
 }
 
