@@ -196,7 +196,8 @@ namespace constants {
     const std::string COLLIDERCOMPONENT = "ColliderComponent";
     const std::string MOBTAG = "MobTag";
     const std::string SHOOTERTAG = "ShooterTag";
-    const std::string PROJECTILETAG = "ProjectileTag";
+    const std::string PLAYERPROJECTILETAG = "PlayerProjectileTag";
+    const std::string ENNEMYPROJECTILETAG = "EnnemyProjectileTag";
     const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
     const std::string PARALLAXCOMPONENT = "ParallaxComponent";
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
