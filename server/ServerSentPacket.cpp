@@ -26,6 +26,7 @@ bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
     }
     this->_sequenceNumber++;
     this->mapPacket(this->_currentMap, endpoint);
+    this->canStartPacket();
     return true;
 }
 
@@ -51,4 +52,29 @@ bool rserv::Server::mapPacket(std::vector<uint64_t> mapData,
     }
     this->_sequenceNumber++;
     return true;
+}
+
+bool rserv::Server::canStartPacket() {
+    if (this->_nextClientId > this->getConfig()->getNbClients()) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] All clients are connected after sending starting packet",
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+        std::vector<uint64_t> payload = {static_cast<uint64_t>(this->getClientCount() * 8)};
+        for (auto &client : this->_clients) {
+            std::vector<uint64_t> name = this->_packet->formatString(std::get<2>(client));
+            payload.insert(payload.end(), name.begin(), name.end());
+        }
+        std::vector<uint8_t> packetStart = this->_packet->pack(0, this->_sequenceNumber,
+            constants::PACKET_CAN_START, payload);
+
+        if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packetStart)) {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER NETWORK] Failed to broadcast can start packet",
+                debug::debugType::NETWORK, debug::debugLevel::ERROR);
+            return false;
+        }
+        return true;
+    }
+    return false;
 }
