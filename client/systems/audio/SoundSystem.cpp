@@ -27,9 +27,9 @@ void SoundSystem::update(std::shared_ptr<ResourceManager>
 
     if (resourceManager->has<gfx::IAudio>() && resourceManager->has<SettingsConfig>()) {
         auto audio = resourceManager->get<gfx::IAudio>();
-        float settingsVolume = resourceManager->get<SettingsConfig>()->getSoundVolume();
-        if (std::abs(audio->getSoundVolume() - settingsVolume) > constants::EPS) {
-            audio->setSoundVolume(settingsVolume);
+        float settingsVol = resourceManager->get<SettingsConfig>()->getSoundVolume();
+        if (std::abs(audio->getSoundVolume() - settingsVol) > constants::EPS) {
+            audio->setSoundVolume(settingsVol);
         }
     }
 
@@ -45,8 +45,8 @@ void SoundSystem::update(std::shared_ptr<ResourceManager>
             auto audio = resourceManager->get<gfx::IAudio>();
             float volume = soundIntent->getVolume();
             if (resourceManager->has<SettingsConfig>()) {
-                float settingsVolume = resourceManager->get<SettingsConfig>()->getSoundVolume();
-                volume = (volume / 100.0f) * settingsVolume;
+                float settingsVol = resourceManager->get<SettingsConfig>()->getSoundVolume();
+                volume = (volume / 100.0f) * settingsVol;
             }
             audio->playSound(soundIntent->getSoundPath(), volume);
         }

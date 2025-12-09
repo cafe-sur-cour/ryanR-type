@@ -8,6 +8,8 @@
 #include "InputMappingManager.hpp"
 #include <algorithm>
 #include <cmath>
+#include <string>
+#include <vector>
 #include "../constants.hpp"
 
 namespace ecs {
@@ -99,7 +101,9 @@ gfx::EventType InputMappingManager::getKeyboardKeyForAction(InputAction action) 
     return gfx::EventType::NOTHING;
 }
 
-gfx::EventType InputMappingManager::getKeyboardKeyForActionDirection(InputAction action, float direction) const {
+gfx::EventType InputMappingManager::getKeyboardKeyForActionDirection(
+    InputAction action, float direction
+) const {
     auto it = _mapping.mappings.find(action);
     if (it == _mapping.mappings.end())
         return gfx::EventType::NOTHING;
@@ -113,7 +117,9 @@ gfx::EventType InputMappingManager::getKeyboardKeyForActionDirection(InputAction
     return gfx::EventType::NOTHING;
 }
 
-std::vector<gfx::EventType> InputMappingManager::getKeyboardKeysForAction(InputAction action) const {
+std::vector<gfx::EventType> InputMappingManager::getKeyboardKeysForAction(
+    InputAction action
+) const {
     std::vector<gfx::EventType> keys;
     auto it = _mapping.mappings.find(action);
     if (it == _mapping.mappings.end())
@@ -126,7 +132,9 @@ std::vector<gfx::EventType> InputMappingManager::getKeyboardKeysForAction(InputA
     return keys;
 }
 
-void InputMappingManager::remapKeyboardKey(InputAction action, gfx::EventType oldKey, gfx::EventType newKey) {
+void InputMappingManager::remapKeyboardKey(
+    InputAction action, gfx::EventType oldKey, gfx::EventType newKey
+) {
     auto it = _mapping.mappings.find(action);
     if (it == _mapping.mappings.end())
         return;
