@@ -12,6 +12,7 @@
 #include <memory>
 #include <nlohmann/json.hpp>
 #include "../../ECS/entity/registry/Registry.hpp"
+#include "../../ECS/entity/EntityCreationContext.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../constants.hpp"
 #include "../../types/Vector2f.hpp"
@@ -28,14 +29,18 @@ class MapParser {
         std::vector<std::uint64_t> createPacketFromMap();
         void parseMapFromPacket(std::vector<uint8_t> mapData);
         void generateMapEntities();
-        
+
         nlohmann::json getMapJson() const;
         void setMapJson(const nlohmann::json& mapJson);
+
+        void setCreationContext(const ecs::EntityCreationContext& context);
+        ecs::EntityCreationContext getCreationContext() const;
 
     protected:
     private:
         std::shared_ptr<EntityPrefabManager> _prefabManager;
         std::shared_ptr<ecs::Registry> _registry;
+        ecs::EntityCreationContext _creationContext;
 
         nlohmann::json _mapJson;
         void createBackgroundEntity(const std::string& entityName);

@@ -17,6 +17,8 @@
 #include <functional>
 #include "../components/base/IComponent.hpp"
 #include "../ECS/entity/registry/Registry.hpp"
+#include "../ECS/entity/EntityCreationContext.hpp"
+#include "../ECS/entity/factory/IEntityFactory.hpp"
 #include "../Parser/ParserParam.hpp"
 
 class ParsedEntityPrefab : public IPrefab {
@@ -28,12 +30,23 @@ class ParsedEntityPrefab : public IPrefab {
         const std::vector<std::shared_ptr<ecs::IComponent>>& getComponents() const;
         std::string getName() const;
 
+        ecs::Entity instantiate(
+            const std::shared_ptr<ecs::Registry>& registry,
+            const std::shared_ptr<ecs::IEntityFactory>& factory,
+            const ecs::EntityCreationContext& context = ecs::EntityCreationContext::forLocalClient()
+        ) override;
+
         ecs::Entity instantiate(const std::shared_ptr<ecs::Registry>& registry) override;
 
     private:
         std::string _name;
         std::vector<std::pair<std::shared_ptr<ecs::IComponent>, std::type_index>> _components;
         const std::map<std::type_index, ComponentAdder>& _componentAdders;
+
+        void addParsedComponents(
+            const std::shared_ptr<ecs::Registry>& registry,
+            ecs::Entity entity
+        );
 };
 
 #endif /* !PARSEDENTITYPREFAB_HPP_ */
