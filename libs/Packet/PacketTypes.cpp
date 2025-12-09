@@ -86,8 +86,6 @@ std::vector<uint8_t> pm::PacketManager::buildEventPacket(
     body.insert(body.end(), temp.begin(), temp.end());
     temp = this->_serializer->serializeULong(payload.at(1));
     body.insert(body.end(), temp.begin(), temp.end());
-    temp = this->_serializer->serializeULong(payload.at(2));
-    body.insert(body.end(), temp.begin(), temp.end());
     return body;
 }
 
