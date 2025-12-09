@@ -17,11 +17,11 @@ class GraphicalInputProvider : public IInputProvider {
         GraphicalInputProvider(std::shared_ptr<gfx::IEvent> eventSystem, const InputMapping& mapping);
         ~GraphicalInputProvider() override = default;
 
-        float getAxisValue(event_t axis) override;
+        float getAxisValue(event_t axis, size_t clientID = 0) override;
 
-        bool isActionPressed(InputAction action) override;
-        float getActionAxis(InputAction action) override;
-        InputMapping getInputMapping() const override;
+        bool isActionPressed(InputAction action, size_t clientID = 0) override;
+        float getActionAxis(InputAction action, size_t clientID = 0) override;
+        InputMapping getInputMapping(size_t clientID = 0) const override;
 
     private:
         std::shared_ptr<gfx::IEvent> _eventSystem;
