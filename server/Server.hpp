@@ -75,6 +75,7 @@ namespace rserv {
             bool connectionPacket(asio::ip::udp::endpoint endpoint);
             bool gameStatePacket();
             bool mapPacket(std::vector<uint64_t> mapData, const asio::ip::udp::endpoint &endpoint);
+            bool canStartPacket();
 
             void setCurrentMap(const std::vector<uint64_t> &map);
             std::vector<uint64_t> getCurrentMap() const;
