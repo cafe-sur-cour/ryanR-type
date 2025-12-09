@@ -74,6 +74,7 @@ To run the documentation travel to the `/documentation` folder than run the foll
 
 ``` bash
 cd documentation/docusaurus/
+npm install
 npm start
 ```
 Then you can find the documentation at http://localhost:3000/
