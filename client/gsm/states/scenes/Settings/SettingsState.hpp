@@ -15,6 +15,7 @@
 #include "../../../../ui/elements/focusable/Slider.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
+#include "../../../../../common/types/Vector2f.hpp"
 
 namespace gsm {
 
@@ -48,6 +49,7 @@ private:
     std::unique_ptr<ui::UIManager> _uiManager;
     std::shared_ptr<ui::UILayout> _settingsLayout;
     std::shared_ptr<ui::UILayout> _titleLayout;
+    math::Vector2f _savedViewCenter;
 
     std::string getColorBlindnessText(int state);
     std::string getUIScaleText(ui::UIScale scale);
