@@ -35,6 +35,7 @@
 #include "../../client/components/rendering/AnimationComponent.hpp"
 #include "../../client/components/rendering/MusicComponent.hpp"
 #include "../../client/components/rendering/ParallaxComponent.hpp"
+#include "../../client/components/temporary/SoundIntentComponent.hpp"
 #include "../components/permanent/InteractionConfigComponent.hpp"
 #include "../components/permanent/HealthComponent.hpp"
 #include "../ECS/entity/Entity.hpp"
@@ -72,6 +73,13 @@ void Parser::instanciateComponentDefinitions() {
             {constants::INITIALSTATE_FIELD, FieldType::STRING},
             {constants::TRANSITIONS_FIELD, FieldType::JSON,
                 true, std::make_shared<FieldValue>(nlohmann::json::array())}
+        }}},
+        {constants::SOUNDINTENTCOMPONENT,
+            {std::type_index(typeid(ecs::SoundIntentComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::SOUND_FILE_FIELD, FieldType::STRING},
+            {constants::VOLUME_FIELD, FieldType::FLOAT,
+                true, std::make_shared<FieldValue>(100.0f)}
         }}},
         {constants::CONTROLLABLETAG, {std::type_index(typeid(ecs::ControllableTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
@@ -148,6 +156,11 @@ void Parser::instanciateComponentDefinitions() {
             std::type_index(typeid(ecs::LifetimeComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::LIFETIME_FIELD, FieldType::FLOAT}
+        }}},
+        {constants::LIFESPANCOMPONENT, {
+            std::type_index(typeid(ecs::LifetimeComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::LIFESPAN_FIELD, FieldType::FLOAT}
         }}},
         {constants::PARALLAXCOMPONENT, {
             std::type_index(typeid(ecs::ParallaxComponent)), {
@@ -284,6 +297,13 @@ void Parser::instanciateComponentCreators() {
         return anim;
     });
 
+    registerComponent<ecs::SoundIntentComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto soundFile = std::get<std::string>(*fields.at(constants::SOUND_FILE_FIELD));
+        auto volume = std::get<float>(*fields.at(constants::VOLUME_FIELD));
+        return std::make_shared<ecs::SoundIntentComponent>(soundFile, volume);
+    });
+
     registerComponent<ecs::ControllableTag>([]([[maybe_unused]] const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::ControllableTag>();
@@ -400,7 +420,12 @@ void Parser::instanciateComponentCreators() {
 
     registerComponent<ecs::LifetimeComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-        auto lifetime = std::get<float>(*fields.at(constants::LIFETIME_FIELD));
+        float lifetime = 0.0f;
+        if (fields.find(constants::LIFETIME_FIELD) != fields.end()) {
+            lifetime = std::get<float>(*fields.at(constants::LIFETIME_FIELD));
+        } else if (fields.find(constants::LIFESPAN_FIELD) != fields.end()) {
+            lifetime = std::get<float>(*fields.at(constants::LIFESPAN_FIELD));
+        }
         return std::make_shared<ecs::LifetimeComponent>(lifetime);
     });
     registerComponent<ecs::ScoreTag>([]([[maybe_unused]] const std::map<std::string,
