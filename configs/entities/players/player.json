@@ -9,6 +9,7 @@
         },
         "VelocityComponent": { "target": "both" },
         "SpeedComponent": { "target": "both", "speed": 500.0 },
+        "HealthComponent": {"target": "both", "health": 50},
         "AnimationComponent": {
             "target": "client",
             "states": {
@@ -97,13 +98,13 @@
             "spreadAngle": 0.0
         },
         "PlayerTag": { "target": "both" },
-        "ProjectilePassThroughTag": { "target": "both" },
         "ControllableTag": { "target": "both" },
         "ShooterTag": { "target": "both" },
         "ScoreComponent": {
             "target": "both",
             "score": 0
         },
-        "ScoreTag": { "target": "both" }
+        "ScoreTag": { "target": "both" },
+        "HealthBarComponent": { "target": "client" }
     }
 }

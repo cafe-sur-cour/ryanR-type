@@ -70,13 +70,9 @@ bool rserv::Server::processEvents(uint8_t idClient) {
         static_cast<constants::EventType>(this->_packet->getPayload().at(0));
 
     uint64_t param1Bits = this->_packet->getPayload().at(1);
-    uint64_t param2Bits = this->_packet->getPayload().at(2);
-
     double param1;
-    double param2;
     std::memcpy(&param1, &param1Bits, sizeof(double));
-    std::memcpy(&param2, &param2Bits, sizeof(double));
 
-    this->_eventQueue->push(std::tuple(idClient, eventType, param1, param2));
+    this->_eventQueue->push(std::tuple(idClient, eventType, param1));
     return true;
 }

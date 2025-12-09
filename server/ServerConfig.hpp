@@ -34,7 +34,6 @@ namespace rserv {
             bool getIsDebug() const;
         private:
             int _state;
-            int _fd;
             uint16_t _port;
             int _nbClients;
             std::string _ip;
