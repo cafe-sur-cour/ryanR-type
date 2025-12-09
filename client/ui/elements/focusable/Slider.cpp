@@ -207,7 +207,7 @@ void Slider::render() {
 
     if (!_label.empty()) {
         std::ostringstream oss;
-        oss << _label << ": " << std::fixed << std::setprecision(0) << (_value * 100.0f) << "%";
+        oss << _label << ": " << std::fixed << std::setprecision(0) << (_value) << "%";
         std::string displayText = oss.str();
 
         auto textSize = resourceManager->get<gfx::IWindow>()->getTextSize(
