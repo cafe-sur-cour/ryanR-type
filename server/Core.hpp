@@ -53,8 +53,6 @@ class Core {
         std::shared_ptr<ecs::ISystemManager> _systemsManager;
         std::shared_ptr<gsm::GameStateMachine> _gsm;
         std::shared_ptr<ecs::ServerInputProvider> _inputProvider;
-
-        ecs::InputAction getInputActionFromEvent(constants::EventType eventType) const;
 };
 
 #endif /* !CORE_HPP_ */
