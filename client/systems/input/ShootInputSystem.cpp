@@ -13,6 +13,8 @@
 #include "../../../common/components/tags/PlayerTag.hpp"
 #include "../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../common/components/temporary/ShootIntentComponent.hpp"
+#include "../../ClientNetwork.hpp"
+#include "../../constants.hpp"
 
 namespace ecs {
 
@@ -41,6 +43,13 @@ void ShootInputSystem::update(
 
         auto shootIntentComponent = std::make_shared<ShootIntentComponent>();
         registry->addComponent<ShootIntentComponent>(playerId, shootIntentComponent);
+                auto clientNetwork = resourceManager->get<ClientNetwork>();
+        if (clientNetwork) {
+            NetworkEvent shootEvent;
+            shootEvent.eventType = constants::EventType::SHOOT;
+            shootEvent.depth = static_cast<double>(1);
+            clientNetwork->addToEventQueue(shootEvent);
+        }
     }
 }
 
