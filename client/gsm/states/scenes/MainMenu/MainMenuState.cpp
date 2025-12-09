@@ -29,13 +29,12 @@ namespace gsm {
 
 MainMenuState::MainMenuState(
     std::shared_ptr<IGameStateMachine> gsm,
-    std::shared_ptr<ResourceManager> resourceManager)
-    : AGameState(gsm, resourceManager) {
-    
+    std::shared_ptr<ResourceManager> resourceManager
+) : AGameState(gsm, resourceManager) {
     if (!_resourceManager->has<SettingsConfig>()) {
         _resourceManager->add(std::make_shared<SettingsConfig>());
     }
-    
+
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
 

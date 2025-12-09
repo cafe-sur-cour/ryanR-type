@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include <sstream>
+#include <string>
 #include <iomanip>
 #include "../../../../libs/Multimedia/IWindow.hpp"
 #include "../../../constants.hpp"
@@ -170,7 +171,8 @@ void Slider::render() {
     float trackHeight = getTrackHeight();
     float handleRadius = getHandleRadius();
 
-    float trackY = absPos.getY() + labelHeight + (absSize.getY() - labelHeight) / 2.0f - trackHeight / 2.0f;
+    float trackY = absPos.getY() +
+        labelHeight + (absSize.getY() - labelHeight) / 2.0f - trackHeight / 2.0f;
     float trackX = absPos.getX() + handleRadius;
     float trackWidth = absSize.getX() - 2.0f * handleRadius;
 
@@ -191,18 +193,30 @@ void Slider::render() {
 
     float handleX = trackX + fillWidth;
     float handleY = trackY + trackHeight / 2.0f;
-    
+
     gfx::color_t handleColor = getCurrentHandleColor();
     resourceManager->get<gfx::IWindow>()->drawFilledRectangle(
         handleColor,
-        {static_cast<size_t>(handleX - handleRadius), static_cast<size_t>(handleY - handleRadius)},
-        {static_cast<size_t>(handleRadius * 2.0f), static_cast<size_t>(handleRadius * 2.0f)}
+        {
+            static_cast<size_t>(handleX - handleRadius),
+            static_cast<size_t>(handleY - handleRadius)
+        },
+        {
+            static_cast<size_t>(handleRadius * 2.0f),
+            static_cast<size_t>(handleRadius * 2.0f)
+        }
     );
 
     resourceManager->get<gfx::IWindow>()->drawRectangleOutline(
         {0, 0, 0},
-        {static_cast<size_t>(handleX - handleRadius), static_cast<size_t>(handleY - handleRadius)},
-        {static_cast<size_t>(handleRadius * 2.0f), static_cast<size_t>(handleRadius * 2.0f)}
+        {
+            static_cast<size_t>(handleX - handleRadius),
+            static_cast<size_t>(handleY - handleRadius)
+        },
+        {
+            static_cast<size_t>(handleRadius * 2.0f),
+            static_cast<size_t>(handleRadius * 2.0f)
+        }
     );
 
     if (!_label.empty()) {
@@ -212,8 +226,10 @@ void Slider::render() {
 
         auto textSize = resourceManager->get<gfx::IWindow>()->getTextSize(
             displayText, _fontPath, getFontSize());
-        float textX = absPos.getX() + (absSize.getX() - static_cast<float>(textSize.first)) / 2.0f;
-        float textY = absPos.getY() + (labelHeight - static_cast<float>(textSize.second)) / 2.0f;
+        float textX = absPos.getX() +
+            (absSize.getX() - static_cast<float>(textSize.first)) / 2.0f;
+        float textY = absPos.getY() +
+            (labelHeight - static_cast<float>(textSize.second)) / 2.0f;
 
         resourceManager->get<gfx::IWindow>()->drawText(
             displayText,

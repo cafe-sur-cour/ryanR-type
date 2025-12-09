@@ -25,13 +25,12 @@ namespace gsm {
 
 SettingsState::SettingsState(
     std::shared_ptr<IGameStateMachine> gsm,
-    std::shared_ptr<ResourceManager> resourceManager)
-    : AGameState(gsm, resourceManager) {
-    
+    std::shared_ptr<ResourceManager> resourceManager
+) : AGameState(gsm, resourceManager) {
     if (!_resourceManager->has<SettingsConfig>()) {
         _resourceManager->add(std::make_shared<SettingsConfig>());
     }
-    
+
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
 
@@ -185,7 +184,9 @@ SettingsState::SettingsState(
     _moveDownKeyButton->setNormalColor({80, 120, 160});
     _moveDownKeyButton->setHoveredColor({100, 150, 200});
     _moveDownKeyButton->setFocusedColor({120, 180, 240});
-    updateKeyBindingButtonText(_moveDownKeyButton, ecs::InputAction::MOVE_Y, 1.0f, "Move Down");
+    updateKeyBindingButtonText(
+        _moveDownKeyButton, ecs::InputAction::MOVE_Y, 1.0f, "Move Down"
+    );
     _moveDownKeyButton->setOnRelease([this]() {
         startKeyRebind(ecs::InputAction::MOVE_Y, 1.0f, _moveDownKeyButton);
     });
@@ -198,7 +199,9 @@ SettingsState::SettingsState(
     _moveLeftKeyButton->setNormalColor({80, 120, 160});
     _moveLeftKeyButton->setHoveredColor({100, 150, 200});
     _moveLeftKeyButton->setFocusedColor({120, 180, 240});
-    updateKeyBindingButtonText(_moveLeftKeyButton, ecs::InputAction::MOVE_X, -1.0f, "Move Left");
+    updateKeyBindingButtonText(
+        _moveLeftKeyButton, ecs::InputAction::MOVE_X, -1.0f, "Move Left"
+    );
     _moveLeftKeyButton->setOnRelease([this]() {
         startKeyRebind(ecs::InputAction::MOVE_X, -1.0f, _moveLeftKeyButton);
     });
@@ -211,7 +214,9 @@ SettingsState::SettingsState(
     _moveRightKeyButton->setNormalColor({80, 120, 160});
     _moveRightKeyButton->setHoveredColor({100, 150, 200});
     _moveRightKeyButton->setFocusedColor({120, 180, 240});
-    updateKeyBindingButtonText(_moveRightKeyButton, ecs::InputAction::MOVE_X, 1.0f, "Move Right");
+    updateKeyBindingButtonText(
+        _moveRightKeyButton, ecs::InputAction::MOVE_X, 1.0f, "Move Right"
+    );
     _moveRightKeyButton->setOnRelease([this]() {
         startKeyRebind(ecs::InputAction::MOVE_X, 1.0f, _moveRightKeyButton);
     });
@@ -255,8 +260,10 @@ void SettingsState::enter() {
     auto window = _resourceManager->get<gfx::IWindow>();
     _savedViewCenter = window->getViewCenter();
     auto logicalSize = window->getLogicalSize();
-    window->setViewCenter(static_cast<float>(logicalSize.first) / 2.0f,
-                          static_cast<float>(logicalSize.second) / 2.0f);
+    window->setViewCenter(
+        static_cast<float>(logicalSize.first) / 2.0f,
+        static_cast<float>(logicalSize.second) / 2.0f
+    );
 }
 
 void SettingsState::update(float deltaTime) {
@@ -274,7 +281,7 @@ void SettingsState::update(float deltaTime) {
             if (_buttonToUpdate && _actionToRebind.has_value()) {
                 updateKeyBindingButtonText(
                     _buttonToUpdate,
-                    _actionToRebind.value(), 
+                    _actionToRebind.value(),
                     _rebindDirection,
                     _rebindLabel
                 );
@@ -476,7 +483,7 @@ void SettingsState::exit() {
 }
 
 void SettingsState::startKeyRebind(
-    ecs::InputAction action, float direction, 
+    ecs::InputAction action, float direction,
     std::shared_ptr<ui::Button> button
 ) {
     _isWaitingForKey = true;
@@ -507,7 +514,9 @@ void SettingsState::handleKeyRebind(gfx::EventType newKey) {
         mappingManager->remapKeyboardKey(_actionToRebind.value(), _originalKey, newKey);
     }
 
-    updateKeyBindingButtonText(_buttonToUpdate, _actionToRebind.value(), _rebindDirection, _rebindLabel);
+    updateKeyBindingButtonText(
+        _buttonToUpdate, _actionToRebind.value(), _rebindDirection, _rebindLabel
+    );
 
     _isWaitingForKey = false;
     _actionToRebind.reset();
@@ -517,7 +526,7 @@ void SettingsState::handleKeyRebind(gfx::EventType newKey) {
 }
 
 void SettingsState::updateKeyBindingButtonText(
-    std::shared_ptr<ui::Button> button, 
+    std::shared_ptr<ui::Button> button,
     ecs::InputAction action, float direction,
     const std::string& label
 ) {
@@ -525,7 +534,9 @@ void SettingsState::updateKeyBindingButtonText(
 
     if (_resourceManager->has<ecs::InputMappingManager>()) {
         auto mappingManager = _resourceManager->get<ecs::InputMappingManager>();
-        gfx::EventType key = mappingManager->getKeyboardKeyForActionDirection(action, direction);
+        gfx::EventType key = mappingManager->getKeyboardKeyForActionDirection(
+            action, direction
+        );
         if (key != gfx::EventType::NOTHING) {
             keyName = ecs::InputMappingManager::eventTypeToString(key);
         }
