@@ -5,9 +5,9 @@
 ** InputNormalizer
 */
 
+#include <cmath>
 #include "InputNormalizer.hpp"
 #include "../../constants.hpp"
-#include <cmath>
 
 namespace ecs {
 
@@ -53,4 +53,4 @@ math::Vector2f InputNormalizer::normalizeAnalogInput(float rawX, float rawY) {
     return result;
 }
 
-} // namespace ecs
+}  // namespace ecs
