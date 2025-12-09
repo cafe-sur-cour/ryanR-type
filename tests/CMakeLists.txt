@@ -36,9 +36,13 @@ add_executable(MobTagTests common/ECS/component/MobTagTests.cpp)
 target_link_libraries(MobTagTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
 add_test(NAME MobTagTests COMMAND MobTagTests)
 
-add_executable(ProjectileTagTests common/ECS/component/ProjectileTagTests.cpp)
-target_link_libraries(ProjectileTagTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
-add_test(NAME ProjectileTagTests COMMAND ProjectileTagTests)
+add_executable(PlayerProjectileTagTests common/ECS/component/PlayerProjectileTagTests.cpp)
+target_link_libraries(PlayerProjectileTagTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME PlayerProjectileTagTests COMMAND PlayerProjectileTagTests)
+
+add_executable(EnnemyProjectileTagTests common/ECS/component/EnnemyProjectileTagTests.cpp)
+target_link_libraries(EnnemyProjectileTagTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME EnnemyProjectileTagTests COMMAND EnnemyProjectileTagTests)
 
 add_executable(ObstacleTagTests common/ECS/component/ObstacleTagTests.cpp)
 target_link_libraries(ObstacleTagTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
