@@ -22,109 +22,47 @@ If you want to install our project by cloning it, you will need to follow these 
 .\scripts\compile_project.sh
 ```
 
-## Prerequisites to Contribute
+### Running the Program
 
-Before participating in the Ryan R-Type project, ensure you have the following installed on your system:
+After compiling the project, you can run the server and client executables.
 
-- **CMake**: Version 3.16 or higher
-- **g++**: Version 9 or higher
-- **Make**: Version 4.1 or higher
-- **git**: Version 2.20 or higher
-- **vcpkg**: Latest version
-
-### Installation of Prerequisites
-
-#### On Ubuntu/Debian-based systems:
-
+#### Running the Server
 ```bash
-sudo apt install cmake g++ make git build-essential cmake ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
-git clone https://github.com/Microsoft/vcpkg.git
-cd vcpkg
-./bootstrap-vcpkg.sh
-export VCPKG_ROOT=$(pwd)    # add this to bashrc
+./r-type_server -p <port> -i <ip_address> -n <nb_clients>
 ```
 
-#### On Fedora-based systems:
+Arguments:
+- `-p <port>`: Specify the port number (required)
+- `-i <ip_address>`: Specify the IP address to bind to (required)
+- `-n <nb_clients>`: Specify the maximum number of clients (1-4, default: 1) (required)
+- `-d`: Enable debug mode (optional)
+- `-h`: Display help message (optional)
 
+Example:
 ```bash
-sudo dnf install cmake gcc-c++ make ninja-build libX11-devel libXi-devel libXrandr-devel libXcursor-devel systemd-devel mesa-libGL-devel
-git clone https://github.com/Microsoft/vcpkg.git
-cd vcpkg
-./bootstrap-vcpkg.sh
-export VCPKG_ROOT=$(pwd)    # add this to bashrc
+./r-type_server -p 4242 -i 127.0.0.1 -n 4
 ```
 
-#### On macOS-based systems:
-
+#### Running the Client
 ```bash
-brew install cmake gcc make
-git clone https://github.com/Microsoft/vcpkg.git
-cd vcpkg
-./bootstrap-vcpkg.sh
-export VCPKG_ROOT=$(pwd)
+./r-type_client [options]
 ```
 
-## Compiling the Project
+Arguments:
+- `-p <port>`: Specify the port of the server (default: 4242) (optional)
+- `-i <ip_address>`: Specify the IP address of the server (default: 127.0.0.1) (optional)
+- `-n <name>`: Specify the name of the client (optional)
+- `-d`: Enable debug mode (optional)
+- `-h`: Display help message (optional)
 
-Assuming you have all the prerequisites installed, and that you are on a Unix-based system, you can just run the premade script to compile the project.
+Example:
 ```bash
-./scripts/compile_project.sh [<target>]
-```
-Where optional `<target>` can be:
-- `all` (default): Compiles both server and client (and tests)
-- `server`: Compiles only the server
-- `client`: Compiles only the client
-- `tests`: Compiles only the tests
-
-## Commit Guidelines
-
-This project follows the **Conventional Commit Message Guidelines**, which help maintain a clear and consistent Git history. The format is:
-
-```
-<type>(<scope>): <content>
+./r-type_client -p 4242 -i 127.0.0.1 -n Player1
 ```
 
-### Common Types
+## Contributing
 
-- feat: A new feature
-- fix: A bug fix
-- docs: Documentation only changes
-- style: Changes that do not affect the meaning of the code (white-space, formatting, etc.)
-- refactor: Code changes that neither fix a bug nor add a feature
-- test: Adding or correcting tests
-- perf: A performance improvement
-- upt: Updating an element that is not a refactor
-- rm: Remove a line of code or a file from the repo
-- memo: Add a new documentation element
-
-## 🛠️ Git Commands Reference
-
-### 🔄 Commit Management
-
-**Modify commit message (before push):**
-```bash
-git commit --amend -m "New commit message"
-```
-
-**Modify commit message (after push):**
-```bash
-git commit --amend -m "New commit message"
-git push --force
-```
-
-### 📂 File Management
-
-**Unstage accidentally added file (not yet pushed):**
-```bash
-git restore --staged <file>
-```
-
-**Remove file from commit (after commit):**
-```bash
-git reset --soft HEAD~1
-git restore --staged file-to-remove.txt
-git commit -m "New commit message (without the file)"
-```
+For contribution guidelines, including prerequisites and commit conventions, please refer to [HOWTOCONTRIBUTE.md](HOWTOCONTRIBUTE.md).
 
 ## Documentation
 
