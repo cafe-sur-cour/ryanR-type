@@ -65,6 +65,8 @@ class PacketManager : public IPacketManager {
         bool parseMapPacket(const std::vector<uint8_t> payload);
         std::vector<uint8_t> buildEndGamePacket(std::vector<uint64_t> payload);
         bool parseEndGamePacket(const std::vector<uint8_t> payload);
+        std::vector<uint8_t> buildCanStartPacket(std::vector<uint64_t> payload);
+        bool parseCanStartPacket(const std::vector<uint8_t> payload);
 };
 } // namespace pm
 

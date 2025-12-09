@@ -11,6 +11,7 @@
 #include "ClientNetwork.hpp"
 #include "../common/debug.hpp"
 #include "../common/Parser/Parser.hpp"
+#include "gsm/states/scenes/InGame/InGameState.hpp"
 
 /* Packet Handlers */
 void ClientNetwork::handleNoOp() {
@@ -86,4 +87,23 @@ void ClientNetwork::handleEndGame() {
 }
 
 void ClientNetwork::handleCanStart() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received can start packet, starting parsing...",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+    std::vector<uint64_t> payload = _packet->getPayload();
+    for (const auto &val : payload) {
+        std::string temp;
+        for (int j = 0; j < 8; j++) {
+            temp.insert(temp.begin(), static_cast<char>((val >> (j * 8)) & 0xFF));
+        }
+        this->_clientNames.push_back(temp);
+    }
+
+    for (const auto &name : this->_clientNames) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Player name: " + name,
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
+    }
 }
