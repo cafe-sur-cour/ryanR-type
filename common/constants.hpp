@@ -35,6 +35,7 @@ namespace constants {
         LEFT = 2,
         RIGHT = 3,
         SHOOT = 4,
+        STOP = 5,
     };
     constexpr int MAX_RETRY_CONNECTIONS = 3;
     /* Paths */
