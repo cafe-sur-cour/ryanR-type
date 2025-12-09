@@ -29,7 +29,7 @@ rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
     this->_buffer = nullptr;
     this->_packet = nullptr;
     this->_eventQueue = std::make_shared<std::queue<std::tuple<uint8_t,
-        constants::EventType, double, double>>>();
+        constants::EventType, double>>>();
     this->_config = std::make_shared<rserv::ServerConfig>();
 }
 
@@ -220,7 +220,7 @@ size_t rserv::Server::getClientCount() const {
 }
 
 std::shared_ptr<std::queue<std::tuple<uint8_t,
-    constants::EventType, double, double>>> rserv::Server::getEventQueue() {
+    constants::EventType, double>>> rserv::Server::getEventQueue() {
     return this->_eventQueue;
 }
 
