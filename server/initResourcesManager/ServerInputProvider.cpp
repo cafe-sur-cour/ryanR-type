@@ -10,6 +10,7 @@
 #include <map>
 #include <iostream>
 #include <algorithm>
+#include <vector>
 #include "../../common/constants.hpp"
 
 namespace ecs {
@@ -58,7 +59,8 @@ void ServerInputProvider::setAxisValue(ecs::InputAction action, float value, siz
 
 
 
-void ServerInputProvider::updateInputFromEvent(size_t clientID, constants::EventType eventType, float value) {
+void ServerInputProvider::updateInputFromEvent
+(size_t clientID, constants::EventType eventType, float value) {
     switch (eventType) {
         case constants::EventType::UP:
             setAxisValue(ecs::InputAction::MOVE_Y, -value, clientID);
@@ -89,7 +91,8 @@ std::vector<size_t> ServerInputProvider::getConnectedClients() const {
     return clients;
 }
 
-void ServerInputProvider::addClientInputMapping(size_t clientID, size_t identity, const InputMapping& mapping) {
+void ServerInputProvider::addClientInputMapping
+(size_t clientID, size_t identity, const InputMapping& mapping) {
     _inputMapping.emplace_back(clientID, identity, mapping);
 }
 }  // namespace ecs

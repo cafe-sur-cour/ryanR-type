@@ -32,7 +32,8 @@ std::shared_ptr<ResourceManager> initResourcesManager(
 
     resourceManager->add<ecs::IInputProvider>(inputProvider);
 
-    auto serverInputProvider = std::dynamic_pointer_cast<ecs::ServerInputProvider>(inputProvider);
+    auto serverInputProvider = std::dynamic_pointer_cast
+        <ecs::ServerInputProvider>(inputProvider);
     if (serverInputProvider) {
         resourceManager->add<ecs::ServerInputProvider>(serverInputProvider);
     }

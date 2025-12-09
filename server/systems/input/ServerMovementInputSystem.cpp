@@ -8,7 +8,7 @@
 #include <cmath>
 #include <iostream>
 #include <memory>
-
+#include <vector>
 #include "ServerMovementInputSystem.hpp"
 #include "../../../common/types/Vector2f.hpp"
 #include "../../../common/constants.hpp"
@@ -22,7 +22,8 @@ namespace ecs {
 ServerMovementInputSystem::ServerMovementInputSystem() {
 }
 
-math::Vector2f ServerMovementInputSystem::normalizeDirection(const math::Vector2f &direction) const {
+math::Vector2f ServerMovementInputSystem::normalizeDirection
+(const math::Vector2f &direction) const {
     return InputNormalizer::normalizeDirection(direction);
 }
 

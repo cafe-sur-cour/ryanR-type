@@ -21,8 +21,6 @@
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/ECS/entity/registry/Registry.hpp"
-#include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
-#include "../../../../../common/Parser/Parser.hpp"
 #include "../../../../../common/systems/ai/AIMovementSystem.hpp"
 #include "../../../../../common/systems/ai/AIShootingSystem.hpp"
 #include "../../../../../common/systems/interactions/InteractionSystem.hpp"
@@ -57,7 +55,8 @@ void InGameState::enter() {
     auto registry = _resourceManager->get<ecs::Registry>();
     if (_resourceManager->has<EntityPrefabManager>()) {
         auto prefabManager = _resourceManager->get<EntityPrefabManager>();
-        prefabManager->createEntityFromPrefab("player", _resourceManager->get<ecs::Registry>());
+        prefabManager->createEntityFromPrefab("player",
+            _resourceManager->get<ecs::Registry>());
     } else {
         throw std::runtime_error("EntityPrefabManager not found in ResourceManager");
     }
