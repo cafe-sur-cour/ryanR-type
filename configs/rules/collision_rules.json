@@ -10,11 +10,20 @@
             [["MobTag"], ["ObstacleTag"]],
             [["ObstacleTag"], ["MobTag"]],
 
-            [["ProjectileTag"], ["MobTag"]],
-            [["MobTag"], ["ProjectileTag"]],
+            [["PlayerProjectileTag"], ["MobTag"]],
+            [["MobTag"], ["PlayerProjectileTag"]],
 
-            [["ProjectileTag"], ["ObstacleTag"]],
-            [["ObstacleTag"], ["ProjectileTag"]],
+            [["PlayerProjectileTag"], ["ObstacleTag"]],
+            [["ObstacleTag"], ["PlayerProjectileTag"]],
+
+            [["EnnemyProjectileTag"], ["PlayerTag"]],
+            [["PlayerTag"], ["EnnemyProjectileTag"]],
+
+            [["EnnemyProjectileTag"], ["ObstacleTag"]],
+            [["ObstacleTag"], ["EnnemyProjectileTag"]],
+
+            [["PlayerProjectileTag"], ["EnnemyProjectileTag"]],
+            [["EnnemyProjectileTag"], ["PlayerProjectileTag"]],
 
             [["PlayerTag"], ["GameZoneColliderTag"]],
             [["GameZoneColliderTag"], ["PlayerTag"]]
@@ -25,11 +34,20 @@
             [["PlayerTag"], ["ScoreTag"]],
             [["ScoreTag"], ["PlayerTag"]],
 
-            [["ProjectileTag"], ["MobTag"]],
-            [["MobTag"], ["ProjectileTag"]],
+            [["PlayerProjectileTag"], ["MobTag"]],
+            [["MobTag"], ["PlayerProjectileTag"]],
 
-            [["ProjectileTag"], ["ObstacleTag"]],
-            [["ObstacleTag"], ["ProjectileTag"]]
+            [["PlayerProjectileTag"], ["ObstacleTag"]],
+            [["ObstacleTag"], ["PlayerProjectileTag"]],
+
+            [["EnnemyProjectileTag"], ["PlayerTag"]],
+            [["PlayerTag"], ["EnnemyProjectileTag"]],
+
+            [["EnnemyProjectileTag"], ["ObstacleTag"]],
+            [["ObstacleTag"], ["EnnemyProjectileTag"]],
+
+            [["PlayerProjectileTag"], ["EnnemyProjectileTag"]],
+            [["EnnemyProjectileTag"], ["PlayerProjectileTag"]]
         ]
     },
     "push": {

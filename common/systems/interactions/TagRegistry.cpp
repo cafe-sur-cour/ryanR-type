@@ -11,7 +11,8 @@
 #include <vector>
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../components/tags/MobTag.hpp"
-#include "../../components/tags/ProjectileTag.hpp"
+#include "../../components/tags/PlayerProjectileTag.hpp"
+#include "../../components/tags/EnnemyProjectileTag.hpp"
 #include "../../components/tags/PlayerTag.hpp"
 #include "../../components/tags/ControllableTag.hpp"
 #include "../../components/tags/GameZoneColliderTag.hpp"
@@ -58,7 +59,8 @@ std::vector<std::string> TagRegistry::getTags(
 
 void TagRegistry::initializeTags() {
     registerTag<ecs::MobTag>(constants::MOBTAG);
-    registerTag<ecs::ProjectileTag>(constants::PROJECTILETAG);
+    registerTag<ecs::PlayerProjectileTag>(constants::PLAYERPROJECTILETAG);
+    registerTag<ecs::EnnemyProjectileTag>(constants::ENNEMYPROJECTILETAG);
     registerTag<ecs::PlayerTag>(constants::PLAYERTAG);
     registerTag<ecs::ControllableTag>(constants::CONTROLLABLETAG);
     registerTag<ecs::GameZoneColliderTag>(constants::GAMEZONECOLLIDERTAG);

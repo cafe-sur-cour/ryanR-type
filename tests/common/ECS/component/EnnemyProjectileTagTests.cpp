@@ -2,18 +2,18 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** ProjectileTag Tests
+** EnnemyProjectileTag Tests
 */
 
 #include <gtest/gtest.h>
-#include "../../../../common/components/tags/ProjectileTag.hpp"
+#include "../../../../common/components/tags/EnnemyProjectileTag.hpp"
 
 using namespace ecs;
 
-/* ProjectileTag Tests */
+/* EnnemyProjectileTag Tests */
 
-TEST(ProjectileTagTest, DefaultConstructor) {
-    ProjectileTag tag;
+TEST(EnnemyProjectileTagTest, DefaultConstructor) {
+    EnnemyProjectileTag tag;
     SUCCEED();
 }
 
