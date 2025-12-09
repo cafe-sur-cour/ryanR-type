@@ -1,0 +1,43 @@
+{
+    "name": "small_explosion",
+    "components": {
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 3.0, "y": 3.0 },
+            "rotation": 0.0
+        },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "death": {
+                    "texturePath": "assets/sprites/effects/small_explosion.png",
+                    "frameWidth": 32.5,
+                    "frameHeight": 32.0,
+                    "frameCount": 6,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                }
+            },
+            "initialState": "death",
+            "transitions": []
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size" : { "x": 32.5, "y": 32.0 },
+            "type": "None"
+        },
+        "LifeSpanComponent": {
+            "target": "both",
+            "lifespan": 0.6
+        },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "assets/sounds/effects/small_explosion.wav",
+            "volume": 100.0
+        }
+    }
+}
