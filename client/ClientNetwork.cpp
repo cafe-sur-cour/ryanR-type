@@ -38,6 +38,7 @@ ClientNetwork::ClientNetwork() {
     this->_isConnected = false;
     this->_isDebug = false;
     this->_resourceManager = nullptr;
+    this->_clientNames = {};
 
     // Initialize packet handlers
     _packetHandlers[constants::PACKET_NO_OP] = &ClientNetwork::handleNoOp;
