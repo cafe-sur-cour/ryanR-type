@@ -7,14 +7,15 @@
 
 #include "../../common/InputMapping/IInputProvider.hpp"
 #include "../../libs/Multimedia/IEvent.hpp"
-#include "../../common/InputMapping/InputMapping.hpp"
+#include "../../common/InputMapping/InputMappingManager.hpp"
 #include <memory>
 
 namespace ecs {
 
 class GraphicalInputProvider : public IInputProvider {
     public:
-        GraphicalInputProvider(std::shared_ptr<gfx::IEvent> eventSystem, const InputMapping& mapping);
+        GraphicalInputProvider(std::shared_ptr<gfx::IEvent> eventSystem,
+            std::shared_ptr<InputMappingManager> mappingManager);
         ~GraphicalInputProvider() override = default;
 
         float getAxisValue(event_t axis) override;
@@ -24,7 +25,7 @@ class GraphicalInputProvider : public IInputProvider {
 
     private:
         std::shared_ptr<gfx::IEvent> _eventSystem;
-        InputMapping _mapping;
+        std::shared_ptr<InputMappingManager> _mappingManager;
 };
 
 } // namespace ecs
