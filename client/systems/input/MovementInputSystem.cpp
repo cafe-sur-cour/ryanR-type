@@ -67,8 +67,7 @@ void MovementInputSystem::update(
             formatDirection(movementDirection);
         resourceManager->get<ClientNetwork>()->addToEventQueue({
             static_cast<constants::EventType>(formatted.first),
-            formatted.second,
-            0.0
+            formatted.second
         });
     }
     for (auto entityId : view) {

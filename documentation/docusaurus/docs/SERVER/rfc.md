@@ -124,7 +124,6 @@ Server :
 4.1.3. EVENT (0x04) – Client notifies input
    - Event type (1 byte, e.g., Up, Down, Left, Right, Space)
    - Depth of movement
-   - Direction of shoot
 
 
 **4.2 Server Details**
