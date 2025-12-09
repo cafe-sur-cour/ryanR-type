@@ -83,13 +83,6 @@ void DevState::enter() {
     addSystem(std::make_shared<ecs::MovementInputSystem>());
     addSystem(std::make_shared<ecs::InteractionSystem>());
     addSystem(std::make_shared<ecs::SoundSystem>());
-    addSystem(std::make_shared<ecs::ParallaxRenderingSystem>());
-    addSystem(std::make_shared<ecs::SpriteRenderingSystem>());
-    addSystem(std::make_shared<ecs::AnimationRenderingSystem>());
-    addSystem(std::make_shared<ecs::HitboxRenderingSystem>());
-    addSystem(std::make_shared<ecs::RectangleRenderingSystem>());
-    addSystem(std::make_shared<ecs::TextRenderingSystem>());
-    addSystem(std::make_shared<ecs::HealthBarRenderingSystem>());
     addSystem(std::make_shared<ecs::ShootInputSystem>());
     addSystem(std::make_shared<ecs::ShootingSystem>());
     addSystem(std::make_shared<ecs::LifetimeSystem>());
@@ -100,6 +93,13 @@ void DevState::enter() {
     addSystem(std::make_shared<ecs::MusicSystem>());
     addSystem(std::make_shared<ecs::TriggerSystem>());
     addSystem(std::make_shared<ecs::InteractionSystem>());
+    addSystem(std::make_shared<ecs::ParallaxRenderingSystem>());
+    addSystem(std::make_shared<ecs::SpriteRenderingSystem>());
+    addSystem(std::make_shared<ecs::RectangleRenderingSystem>());
+    addSystem(std::make_shared<ecs::AnimationRenderingSystem>());
+    addSystem(std::make_shared<ecs::HitboxRenderingSystem>());
+    addSystem(std::make_shared<ecs::HealthBarRenderingSystem>());
+    addSystem(std::make_shared<ecs::TextRenderingSystem>());
 
     auto audio = _resourceManager->get<gfx::IAudio>();
 
