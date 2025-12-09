@@ -1,5 +1,5 @@
-add_library(EntityFactory INTERFACE)
-
-target_include_directories(EntityFactory INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+target_sources(${ECS_LIB_NAME} PUBLIC
+    EntityFactory.hpp
+    EntityFactory.cpp
+    IEntityFactory.hpp
 )
