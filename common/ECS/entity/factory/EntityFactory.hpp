@@ -9,54 +9,25 @@
 #define ENTITYFACTORY_HPP_
 
 #include "IEntityFactory.hpp"
-#include "../../../components/permanent/NetworkIdComponent.hpp"
 #include <atomic>
 
 namespace ecs {
 
 class EntityFactory : public IEntityFactory {
     public:
-        explicit EntityFactory(size_t startingNetworkId = 1)
-            : _nextNetworkId(startingNetworkId) {}
-
-        ~EntityFactory() = default;
+        explicit EntityFactory(size_t startingNetworkId = 1);
+        ~EntityFactory() override;
 
         Entity createEntity(
             const std::shared_ptr<Registry>& registry,
             const EntityCreationContext& context = EntityCreationContext::forLocalClient()
-        ) override {
-            Entity entity = registry->createEntity();
+        ) override;
 
-            if (context.shouldHaveNetworkId()) {
-                size_t networkId = resolveNetworkId(context);
-                auto networkIdComponent = std::make_shared<NetworkIdComponent>(networkId);
-                registry->addComponent<NetworkIdComponent>(entity, networkIdComponent);
-            }
-
-            return entity;
-        }
-
-        size_t getNextNetworkId() const override {
-            return _nextNetworkId.load();
-        }
-
-        void setNextNetworkId(size_t nextId) override {
-            _nextNetworkId.store(nextId);
-        }
+        size_t getNextNetworkId() const override;
+        void setNextNetworkId(size_t nextId) override;
 
     private:
-        size_t resolveNetworkId(const EntityCreationContext& context) {
-            if (context.networkId.has_value()) {
-                return context.networkId.value();
-            }
-
-            if (context.origin == EntityCreationOrigin::SERVER) {
-                return _nextNetworkId.fetch_add(1);
-            }
-
-            return 0;
-        }
-
+        size_t resolveNetworkId(const EntityCreationContext& context);
         std::atomic<size_t> _nextNetworkId;
 };
 
