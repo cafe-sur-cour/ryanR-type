@@ -62,7 +62,7 @@
                     "toSelf": []
                 },
                 {
-                    "tags": ["ProjectileTag"],
+                    "tags": ["PlayerProjectileTag"],
                     "toEntity": ["DealDamage"],
                     "toSelf": ["TakeDamage"]
                 }
