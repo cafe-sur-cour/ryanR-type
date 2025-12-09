@@ -22,7 +22,7 @@ class ServerInputProvider : public IInputProvider {
         InputMapping getInputMapping() const override;
 
     private:
-        InputMapping _inputMapping;
+        std::pair<size_t, InputMapping> _inputMapping;
 };
 
 } // namespace ecs
