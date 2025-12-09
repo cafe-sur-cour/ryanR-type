@@ -18,6 +18,7 @@
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../../SettingsConfig.hpp"
+#include "../../../../../libs/Multimedia/IAudio.hpp"
 
 namespace gsm {
 
@@ -63,10 +64,10 @@ SettingsState::SettingsState(
 
     _brightnessSlider = std::make_shared<ui::Slider>(resourceManager);
     _brightnessSlider->setLabel("Brightness");
-    _brightnessSlider->setMinValue(0.25f);
-    _brightnessSlider->setMaxValue(1.5f);
+    _brightnessSlider->setMinValue(25.0f);
+    _brightnessSlider->setMaxValue(150.0f);
     _brightnessSlider->setValue(config->getBrightnessValue());
-    _brightnessSlider->setStep(0.05f);
+    _brightnessSlider->setStep(5.0f);
     _brightnessSlider->setSize(math::Vector2f(400.f, 65.f));
     _brightnessSlider->setTrackColor({80, 80, 80});
     _brightnessSlider->setFillColor({100, 150, 200});
@@ -75,6 +76,38 @@ SettingsState::SettingsState(
     _brightnessSlider->setHandleFocusedColor({255, 200, 100});
     _brightnessSlider->setOnValueChanged([this](float value) {
         updateBrightnessFilter(value);
+    });
+
+    _musicVolumeSlider = std::make_shared<ui::Slider>(resourceManager);
+    _musicVolumeSlider->setLabel("Music Volume");
+    _musicVolumeSlider->setMinValue(0.0f);
+    _musicVolumeSlider->setMaxValue(100.0f);
+    _musicVolumeSlider->setValue(config->getMusicVolume());
+    _musicVolumeSlider->setStep(5.0f);
+    _musicVolumeSlider->setSize(math::Vector2f(400.f, 65.f));
+    _musicVolumeSlider->setTrackColor({80, 80, 80});
+    _musicVolumeSlider->setFillColor({100, 200, 100});
+    _musicVolumeSlider->setHandleColor({150, 150, 150});
+    _musicVolumeSlider->setHandleHoveredColor({200, 200, 200});
+    _musicVolumeSlider->setHandleFocusedColor({255, 200, 100});
+    _musicVolumeSlider->setOnValueChanged([this](float value) {
+        updateMusicVolume(value);
+    });
+
+    _soundVolumeSlider = std::make_shared<ui::Slider>(resourceManager);
+    _soundVolumeSlider->setLabel("Sound Volume");
+    _soundVolumeSlider->setMinValue(0.0f);
+    _soundVolumeSlider->setMaxValue(100.0f);
+    _soundVolumeSlider->setValue(config->getSoundVolume());
+    _soundVolumeSlider->setStep(5.0f);
+    _soundVolumeSlider->setSize(math::Vector2f(400.f, 65.f));
+    _soundVolumeSlider->setTrackColor({80, 80, 80});
+    _soundVolumeSlider->setFillColor({200, 100, 100});
+    _soundVolumeSlider->setHandleColor({150, 150, 150});
+    _soundVolumeSlider->setHandleHoveredColor({200, 200, 200});
+    _soundVolumeSlider->setHandleFocusedColor({255, 200, 100});
+    _soundVolumeSlider->setOnValueChanged([this](float value) {
+        updateSoundVolume(value);
     });
 
     _colorBlindnessButton = std::make_shared<ui::Button>(resourceManager);
@@ -120,6 +153,8 @@ SettingsState::SettingsState(
         this->_gsm->requestStatePop();
     });
 
+    _settingsLayout->addElement(_musicVolumeSlider);
+    _settingsLayout->addElement(_soundVolumeSlider);
     _settingsLayout->addElement(_scaleButton);
     _settingsLayout->addElement(_brightnessSlider);
     _settingsLayout->addElement(_colorBlindnessButton);
@@ -245,6 +280,7 @@ void SettingsState::updateBrightnessFilter(float value) {
     auto sfmlWindow = std::dynamic_pointer_cast<SfmlWindow>(window);
     if (!sfmlWindow) return;
 
+    value /= 100.0f;
     auto config = _resourceManager->get<SettingsConfig>();
     config->setBrightnessValue(value);
 
@@ -260,6 +296,26 @@ void SettingsState::cycleUIScale() {
     config->setUIScale(_uiManager->getGlobalScale());
 
     _scaleButton->setText(getUIScaleText(config->getUIScale()));
+}
+
+void SettingsState::updateMusicVolume(float value) {
+    auto config = _resourceManager->get<SettingsConfig>();
+    config->setMusicVolume(value);
+
+    if (_resourceManager->has<gfx::IAudio>()) {
+        auto audio = _resourceManager->get<gfx::IAudio>();
+        audio->setMusicVolume(value);
+    }
+}
+
+void SettingsState::updateSoundVolume(float value) {
+    auto config = _resourceManager->get<SettingsConfig>();
+    config->setSoundVolume(value);
+
+    if (_resourceManager->has<gfx::IAudio>()) {
+        auto audio = _resourceManager->get<gfx::IAudio>();
+        audio->setSoundVolume(value);
+    }
 }
 
 std::string SettingsState::getColorBlindnessText(int state) {
@@ -286,6 +342,8 @@ void SettingsState::exit() {
     _highContrastButton.reset();
     _colorBlindnessButton.reset();
     _brightnessSlider.reset();
+    _musicVolumeSlider.reset();
+    _soundVolumeSlider.reset();
     _scaleButton.reset();
     _settingsLayout.reset();
     _mouseHandler.reset();
