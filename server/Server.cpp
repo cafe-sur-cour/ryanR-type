@@ -149,20 +149,22 @@ void rserv::Server::setState(int state) {
     this->_config->setState(state);
 }
 
-int rserv::Server::getFd() const {
-    return this->_config->getFd();
-}
-
-void rserv::Server::setFd(int fd) {
-    this->_config->setFd(fd);
-}
-
 std::shared_ptr<net::INetwork> rserv::Server::getNetwork() const {
     return _network;
 }
 
 void rserv::Server::setNetwork(std::shared_ptr<net::INetwork> network) {
     _network = network;
+}
+
+void rserv::Server::setCurrentMap(const std::vector<uint64_t> &map) {
+    if (!this->_currentMap.empty())
+        this->_currentMap.clear();
+    this->_currentMap = map;
+}
+
+std::vector<uint64_t> rserv::Server::getCurrentMap() const {
+    return this->_currentMap;
 }
 
 void rserv::Server::processIncomingPackets() {
@@ -182,7 +184,6 @@ void rserv::Server::processIncomingPackets() {
     }
 
     this->_packet->unpack(received.second);
-
     if (this->_packet->getType() == constants::PACKET_CONNECTION) {
         this->processConnections(received.first);
     } else if (this->_packet->getType() == constants::PACKET_EVENT) {
@@ -198,83 +199,20 @@ void rserv::Server::processIncomingPackets() {
     this->_packet->reset();
 }
 
-bool rserv::Server::processConnections(asio::ip::udp::endpoint id) {
-    if (!_network) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Warning: Network not initialized",
-            debug::debugType::NETWORK, debug::debugLevel::WARNING);
-        return false;
-    }
-
-    if (this->_nextClientId > this->getConfig()->getNbClients()) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Warning: Maximum clients reached",
-            debug::debugType::NETWORK, debug::debugLevel::WARNING);
-        return false;
-    }
-
-    std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber,
-        constants::PACKET_ACCEPT, std::vector<uint64_t>{
-        static_cast<uint64_t>(this->_nextClientId)});
-    if (!this->_network->sendTo(id, packet)) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER NETWORK] Failed to send connection acceptance header to "
-            + id.address().to_string() + ":" + std::to_string(id.port()),
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
-        return false;
-    }
-
-    this->_clients.push_back(std::make_tuple(this->_nextClientId, id, ""));
-    this->_nextClientId++;
-    return true;
-}
-
-bool rserv::Server::processDisconnections(uint8_t idClient) {
-    for (auto &client : this->_clients) {
-        if (std::get<0>(client) == idClient) {
-            this->_clients.erase(
-                std::remove(this->_clients.begin(), this->_clients.end(), client),
-                this->_clients.end());
-            this->_nextClientId--;
-            debug::Debug::printDebug(this->_config->getIsDebug(),
-                "Client " + std::to_string(idClient)
-                + " disconnected and removed from the lobby",
-                debug::debugType::NETWORK, debug::debugLevel::INFO);
-            return true;
-        }
-    }
-    return false;
-}
-
-bool rserv::Server::processEvents(uint8_t idClient) {
-    constants::EventType eventType =
-        static_cast<constants::EventType>(this->_packet->getPayload().at(0));
-
-    uint64_t param1Bits = this->_packet->getPayload().at(1);
-    uint64_t param2Bits = this->_packet->getPayload().at(2);
-
-    double param1;
-    double param2;
-    std::memcpy(&param1, &param1Bits, sizeof(double));
-    std::memcpy(&param2, &param2Bits, sizeof(double));
-
-    this->_eventQueue->push(std::tuple(idClient, eventType, param1, param2));
-    return true;
-}
-
-void rserv::Server::broadcastPacket() {
-    std::vector<uint8_t> packedData;
-    if (_network) {
-        _network->broadcast(packedData);
-    }
-}
-
-void rserv::Server::sendToClient(uint8_t idClient) {
-    (void)idClient;
-}
-
 std::vector<uint8_t> rserv::Server::getConnectedClients() const {
-    return {};
+    std::vector<uint8_t> clientIds;
+    for (const auto &client : this->_clients) {
+        clientIds.push_back(std::get<0>(client));
+    }
+    return clientIds;
+}
+
+std::vector<asio::ip::udp::endpoint> rserv::Server::getConnectedClientEndpoints() const {
+    std::vector<asio::ip::udp::endpoint> endpoints;
+    for (const auto &client : this->_clients) {
+        endpoints.push_back(std::get<1>(client));
+    }
+    return endpoints;
 }
 
 size_t rserv::Server::getClientCount() const {

@@ -51,7 +51,6 @@ void Utils::parsCli(int ac, char **av,
         this->helper();
         exit(84);
     }
-    config->setFd(-1);
     if (nbClients < 1 || nbClients > 4) {
         helper();
         exit(84);

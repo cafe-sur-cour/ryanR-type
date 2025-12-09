@@ -51,16 +51,16 @@ MainMenuState::MainMenuState(
     _playButton->setFocusedColor({255, 255, 0});
 
     _playButton->setOnRelease([this]() {
-        // auto network = this->_resourceManager->get<ClientNetwork>();
-        // if (network && network->isConnected()) {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
             this->_gsm->requestStateChange(std::make_shared<DevState>(this->_gsm,
                 this->_resourceManager));
-        // } else {
-        //     debug::Debug::printDebug(network ? network->isDebugMode() : false,
-        //         "[MainMenu] Cannot start game: Not connected to server.",
-        //         debug::debugType::NETWORK,
-        //         debug::debugLevel::WARNING);
-        // }
+        } else {
+            debug::Debug::printDebug(network ? network->isDebugMode() : false,
+                "[MainMenu] Cannot start game: Not connected to server.",
+                debug::debugType::NETWORK,
+                debug::debugLevel::WARNING);
+        }
     });
     _playButton->setOnActivated([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();

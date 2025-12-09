@@ -25,7 +25,8 @@ std::shared_ptr<ResourceManager> initResourcesManager(
     std::shared_ptr<DLLoader<gfx::createWindow_t>> windowLoader,
     std::shared_ptr<DLLoader<gfx::createEvent_t>> eventLoader,
     std::shared_ptr<DLLoader<gfx::createAudio_t>> audioLoader,
-    std::shared_ptr<ClientNetwork> clientNetwork
+    std::shared_ptr<ClientNetwork> clientNetwork,
+    std::shared_ptr<Parser> parser
 ) {
     std::shared_ptr<ResourceManager> resourceManager =
         std::make_shared<ResourceManager>();
@@ -74,6 +75,7 @@ std::shared_ptr<ResourceManager> initResourcesManager(
     resourceManager->add<gfx::IEvent>(event);
     resourceManager->add<gfx::IAudio>(audio);
     resourceManager->add<ClientNetwork>(clientNetwork);
+    resourceManager->add<Parser>(parser);
 
     auto mappingManager = std::make_shared<ecs::InputMappingManager>();
     mappingManager->loadDefault();

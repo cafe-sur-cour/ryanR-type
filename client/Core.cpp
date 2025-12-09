@@ -23,14 +23,24 @@ Core::Core() {
 
     initLibraries();
     initNetwork();
+    this->_registry = std::make_shared<ecs::Registry>();
+    this->_gsm = std::make_shared<gsm::GameStateMachine>();
+    auto entityPrefabManager = std::make_shared<EntityPrefabManager>();
+    this->_parser = std::make_shared<Parser>(
+        entityPrefabManager,
+        ParsingType::CLIENT,
+        this->_registry
+    );
+    _parser->parseAllEntities(constants::CONFIG_PATH);
     this->_resourceManager = initResourcesManager(
         this->_windowLoader,
         this->_eventLoader,
         this->_audioLoader,
-        this->_clientNetwork
+        this->_clientNetwork,
+        this->_parser
     );
+    this->_clientNetwork->setResourceManager(this->_resourceManager);
 
-    this->_gsm = std::make_shared<gsm::GameStateMachine>();
     std::shared_ptr<gsm::MainMenuState> mainMenuState =
         std::make_shared<gsm::MainMenuState>(this->_gsm, this->_resourceManager);
     this->_gsm->changeState(mainMenuState);

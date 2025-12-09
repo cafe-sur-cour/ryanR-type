@@ -6,6 +6,9 @@ add_library(${SERVER_LIB_NAME}
     ServerConfig.cpp
     Server.hpp
     Server.cpp
+    ServerLibsLoading.cpp
+    ServerReceivePacket.cpp
+    ServerSentPacket.cpp
     Utils.cpp
     Utils.hpp
     Core.cpp
