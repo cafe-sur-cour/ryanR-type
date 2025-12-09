@@ -139,9 +139,13 @@ namespace constants {
     const std::string PREFABNAME_FIELD = "prefabName";
     const std::string LIFETIMECOMPONENT = "LifetimeComponent";
     const std::string LIFETIME_FIELD = "lifetime";
+    const std::string LIFESPANCOMPONENT = "LifeSpanComponent";
+    const std::string LIFESPAN_FIELD = "lifespan";
     const std::string BACKGROUNDMUSICTAG = "BackGroundMusicTag";
     const std::string TEXT_FIELD = "text";
     const std::string FONTPATH_FIELD = "fontPath";
+    const std::string SOUNDINTENTCOMPONENT = "SoundIntentComponent";
+    const std::string SOUND_FILE_FIELD = "soundFile";
 
     const std::string MAPPINGS_FIELD = "mappings";
     const std::string TAGS_FIELD = "tags";
@@ -206,6 +210,10 @@ namespace constants {
     const std::string TAKEDEATH_ACTION = "TakeDeath";
     const std::string DEALDAMAGE_ACTION = "DealDamage";
     const std::string TAKEDAMAGE_ACTION = "TakeDamage";
+
+    /* Prefabs */
+    const std::string SMALL_EXPLOSION = "small_explosion";
+    const std::string BIG_EXPLOSION = "big_explosion";
 
     /* AI Movement Pattern defaults */
     constexpr float DEFAULT_ZIGZAG_AMPLITUDE = 80.0f;

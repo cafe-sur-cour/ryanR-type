@@ -18,7 +18,13 @@ SfmlAudio::SfmlAudio()
 }
 
 void SfmlAudio::playMusic(const std::string& musicPath, bool loop) {
-    auto assetData = _assetManager.getAsset(musicPath);
+    std::string normalizedPath = musicPath;
+    if (normalizedPath.find("./assets/") == 0)
+        normalizedPath = normalizedPath.substr(9);
+    if (normalizedPath.find("assets/") == 0)
+        normalizedPath = normalizedPath.substr(7);
+
+    auto assetData = _assetManager.getAsset(normalizedPath);
     if (!assetData) {
         std::cerr << "Failed to load music from embedded assets: " << musicPath << std::endl;
         return;
@@ -65,7 +71,13 @@ void SfmlAudio::loadSoundBuffer(const std::string& soundPath) {
         return;
     }
 
-    auto assetData = _assetManager.getAsset(soundPath);
+    std::string normalizedPath = soundPath;
+    if (normalizedPath.find("./assets/") == 0)
+        normalizedPath = normalizedPath.substr(9);
+    if (normalizedPath.find("assets/") == 0)
+        normalizedPath = normalizedPath.substr(7);
+
+    auto assetData = _assetManager.getAsset(normalizedPath);
     if (!assetData) {
         std::cerr << "Failed to load sound from embedded assets: " << soundPath << std::endl;
         return;
