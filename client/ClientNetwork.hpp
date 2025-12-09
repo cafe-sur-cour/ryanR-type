@@ -21,6 +21,7 @@
 #include "../libs/Network/INetwork.hpp"
 #include "../common/constants.hpp"
 #include "../common/resourceManager/ResourceManager.hpp"
+#include "../common/gsm/IGameStateMachine.hpp"
 
 struct NetworkEvent {
     constants::EventType eventType;
@@ -70,6 +71,8 @@ class ClientNetwork {
         bool isConnected() const;
         std::atomic<bool> _isConnected;
         void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
+        void setGameStateMachine(std::shared_ptr<gsm::IGameStateMachine> gsm);
+        std::shared_ptr<gsm::IGameStateMachine> getGameStateMachine() const;
     protected:
         std::pair<int, std::chrono::steady_clock::time_point> tryConnection(const int maxRetries, int retryCount, std::chrono::steady_clock::time_point lastRetryTime);
         void handlePacketType(uint8_t type);
@@ -94,11 +97,13 @@ class ClientNetwork {
         std::shared_ptr<pm::IPacketManager> _packet;
 
         std::shared_ptr<ResourceManager> _resourceManager;
+        std::shared_ptr<gsm::IGameStateMachine> _gsm;
 
         uint32_t _sequenceNumber;
         uint16_t _port;
         std::string  _ip;
         std::string _name;
+        std::vector<std::string> _clientNames;
         bool _isDebug;
 
 
