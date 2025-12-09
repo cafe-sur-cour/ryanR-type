@@ -49,13 +49,13 @@ void ShootingSystem::update(
         if (!shootingStats || !projectilePrefabComponent || !transform) {
             continue;
         }
-        if (!shootingStats->canShoot())
-            continue;
-
         auto intent = registry->getComponent<ShootIntentComponent>(entityId);
         float baseAngle = intent ? intent->getAngle() : 0.0f;
 
         registry->removeComponent<ShootIntentComponent>(entityId);
+
+        if (!shootingStats->canShoot())
+            continue;
 
         auto prefabManager = resourceManager->get<EntityPrefabManager>();
         std::string prefabName = projectilePrefabComponent->getPrefabName();

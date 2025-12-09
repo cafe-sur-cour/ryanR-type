@@ -68,6 +68,7 @@
                 }
             ]
         },
-        "ShooterTag": { "target": "both" }
+        "ShooterTag": { "target": "both" },
+        "HealthBarComponent": { "target": "client" }
     }
 }
