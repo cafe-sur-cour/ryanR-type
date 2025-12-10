@@ -10,15 +10,14 @@
 
 enum componentType {
     TRANSFORM = 0x01,
-    VELOCITY = 0x02,
-    SPEED = 0x03,
-    HEALTH = 0x04,
-    COLLIDER = 0x05,
-    SHOOTING_STATS = 0x06,
-    SCORE = 0x07,
-    AI_MOVEMENT_PATTERN = 0x08,
-    DAMAGE = 0x09,
-    LIFETIME = 0x0A
+    SPEED = 0x02,
+    HEALTH = 0x03,
+    COLLIDER = 0x04,
+    SHOOTING_STATS = 0x05,
+    SCORE = 0x06,
+    AI_MOVEMENT_PATTERN = 0x07,
+    DAMAGE = 0x08,
+    LIFETIME = 0x09
 };
 
 #endif /* !TRASLATION_TO_ECS_HPP_ */
