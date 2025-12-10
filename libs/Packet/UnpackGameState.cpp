@@ -118,6 +118,34 @@ unsigned int pm::PacketManager::unpackCollider(std::vector<uint8_t> payload, uns
     return 0;
 }
 
+unsigned int pm::PacketManager::unpackShootingStats(std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == SHOOTING_STATS) {
+        this->_payload.push_back(static_cast<uint64_t>(SHOOTING_STATS));
+        uint64_t fireRate = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin() + i + 1,
+            payload.begin() + i + 9));
+        uint64_t cooldownTimer = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin() + i + 9,
+            payload.begin() + i + 17));
+        uint64_t shotCount = this->_serializer->deserializeUInt(
+            std::vector<uint8_t>(payload.begin() + i + 17,
+            payload.begin() + i + 21));
+        uint64_t angleSpread = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin() + i + 21,
+            payload.begin() + i + 29));
+        uint64_t offsetDistance = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin() + i + 29,
+            payload.begin() + i + 37));
+        this->_payload.push_back(fireRate);
+        this->_payload.push_back(cooldownTimer);
+        this->_payload.push_back(shotCount);
+        this->_payload.push_back(angleSpread);
+        this->_payload.push_back(offsetDistance);
+        return 37;
+    }
+    return 0;
+}
+
 unsigned int pm::PacketManager::unpackAIMovementPattern(std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == AI_MOVEMENT_PATTERN) {
         this->_payload.push_back(static_cast<uint64_t>(AI_MOVEMENT_PATTERN));

@@ -112,6 +112,7 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::make_tuple(SPEED, 9, 2),
         std::make_tuple(HEALTH, 17, 3),
         std::make_tuple(COLLIDER, 34, 6),
+        std::make_tuple(SHOOTING_STATS, 37, 6),
         std::make_tuple(AI_MOVEMENT_PATTERN, 42, 7)
     };
 
@@ -127,6 +128,8 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::bind(&pm::PacketManager::packHealth,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::packCollider,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packShootingStats,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::packAIMovementPattern,
         this, std::placeholders::_1, std::placeholders::_2)
@@ -144,6 +147,8 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::bind(&pm::PacketManager::unpackHealth,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::unpackCollider,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackShootingStats,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::unpackAIMovementPattern,
         this, std::placeholders::_1, std::placeholders::_2)

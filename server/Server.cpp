@@ -46,6 +46,10 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
         std::bind(&rserv::Server::convertHealthComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertColliderComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertShootStatComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertAIMovementPatternComponent, this,
             std::placeholders::_1, std::placeholders::_2)
     };
 }
