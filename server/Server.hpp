@@ -67,7 +67,7 @@ namespace rserv {
 
             /* Received Packet Handling */
             void processIncomingPackets() override;
-            bool processConnections(asio::ip::udp::endpoint endpoint) override;
+            bool processConnections(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> client) override;
             bool processDisconnections(uint8_t idClient) override;
             bool processEvents(uint8_t idClient) override;
             bool processEndOfGame(uint8_t idClient) override;
