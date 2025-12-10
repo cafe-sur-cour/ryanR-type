@@ -18,7 +18,7 @@
 std::vector<uint64_t> rserv::Server::convertTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::PlayerTag>(i)) {
-        data.push_back(static_cast<uint64_t>(TAG));
+        data.push_back(static_cast<uint64_t>(PLAYER_TAG));
     }
     return data;
 }
