@@ -70,8 +70,14 @@ class MovementSystem : public ASystem {
             const ColliderComponent& colliderA,
             size_t entityB
         );
+        bool checkCollisionWithBoundaries(
+            std::shared_ptr<Registry> registry,
+            size_t entityId,
+            math::Vector2f newPos
+        );
 
         SpatialGrid _spatialGrid;
+        std::vector<Entity> _boundaryEntities;
 };
 
 }
