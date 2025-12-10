@@ -10,6 +10,10 @@
 #include <chrono>
 #include <memory>
 #include <string>
+#include <fstream>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include "initResourcesManager/initResourcesManager.hpp"
 #include "gsm/states/scenes/MainMenu/MainMenuState.hpp"
 #include "../common/debug.hpp"
@@ -88,6 +92,33 @@ void Core::startNetwork() {
 
 void Core::initLibraries() {
     std::string multimediaPath = std::string(pathLoad) + "/" + multimediaLib sharedLibExt;
+    
+    // Debug: Print the path being constructed
+    std::cout << "[DEBUG] Attempting to load library from: " << multimediaPath << std::endl;
+    std::cout << "[DEBUG] pathLoad: " << pathLoad << std::endl;
+    std::cout << "[DEBUG] multimediaLib: " << multimediaLib << std::endl;
+    std::cout << "[DEBUG] sharedLibExt: " << sharedLibExt << std::endl;
+
+#ifdef _WIN32
+    // Windows-specific: Try to get absolute path and check if file exists
+    char currentDir[MAX_PATH];
+    GetCurrentDirectory(MAX_PATH, currentDir);
+    std::cout << "[DEBUG] Current working directory: " << currentDir << std::endl;
+
+    // Check if the library file actually exists
+    std::ifstream libFile(multimediaPath);
+    if (!libFile.good()) {
+        std::cout << "[ERROR] Library file does not exist: " << multimediaPath << std::endl;
+        // Try with current directory prefix
+        std::string alternativePath = std::string(currentDir) + "\\" + pathLoad + "\\" + multimediaLib + sharedLibExt;
+        std::cout << "[DEBUG] Trying alternative path: " << alternativePath << std::endl;
+        std::ifstream altLibFile(alternativePath);
+        if (altLibFile.good()) {
+            multimediaPath = alternativePath;
+            std::cout << "[DEBUG] Using alternative path: " << multimediaPath << std::endl;
+        }
+    }
+#endif
 
     _windowLoader = std::make_shared<DLLoader<gfx::createWindow_t>>(
         DLLoader<gfx::createWindow_t>()
@@ -106,6 +137,7 @@ void Core::initLibraries() {
         if (!error.empty()) {
             errorMsg += " - Error: " + error;
         }
+        std::cout << "[ERROR] " << errorMsg << std::endl;
         throw std::runtime_error(errorMsg);
     }
     if (!this->_eventLoader->Open(multimediaPath.c_str())) {
@@ -115,6 +147,7 @@ void Core::initLibraries() {
         if (!error.empty()) {
             errorMsg += " - Error: " + error;
         }
+        std::cout << "[ERROR] " << errorMsg << std::endl;
         throw std::runtime_error(errorMsg);
     }
     if (!this->_audioLoader->Open(multimediaPath.c_str())) {
@@ -124,6 +157,7 @@ void Core::initLibraries() {
         if (!error.empty()) {
             errorMsg += " - Error: " + error;
         }
+        std::cout << "[ERROR] " << errorMsg << std::endl;
         throw std::runtime_error(errorMsg);
     }
 }
