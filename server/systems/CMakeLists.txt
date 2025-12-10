@@ -5,6 +5,7 @@ add_library(ServerMovementInputSystem STATIC
 target_link_libraries(ServerMovementInputSystem
     InputNormalizer
     ECS
+    ${SERVER_LIB_NAME}
 )
 
 target_include_directories(ServerMovementInputSystem PRIVATE
