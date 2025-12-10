@@ -29,12 +29,14 @@
 #include "../common/DLLoader/LoaderType.hpp"
 #include "../common/constants.hpp"
 #include "../common/InputMapping/InputAction.hpp"
+#include "../common/resourceManager/ResourceManager.hpp"
+#include "../common/ECS/entity/registry/Registry.hpp"
 #include "Signal.hpp"
 
 namespace rserv {
     class Server : public IServer {
         public:
-            Server();
+            Server(std::shared_ptr<ResourceManager> resourceManager);
             ~Server();
 
             void init() override;
@@ -98,6 +100,15 @@ namespace rserv {
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> _eventQueue;
 
             std::vector<uint64_t> _currentMap;
+            std::shared_ptr<ResourceManager> _resourceManager;
+
+            /* Functions to build game state packets */
+            std::vector<std::function<std::vector<uint64_t>(std::shared_ptr<ecs::Registry>, ecs::Entity)>> _convertFunctions;
+            std::vector<uint64_t> convertTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertTransformComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertVelocityComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertSpeedComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertHealthComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
     };
 } // namespace rserv = r-type server
 
