@@ -16,16 +16,19 @@
 #include "../../Error/ParserError.hpp"
 #include "../../constants.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
+#include "../../components/permanent/NetworkIdComponent.hpp"
 #include "../../types/Vector2f.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../../client/components/rendering/MusicComponent.hpp"
 #include "../../components/permanent/GameZoneComponent.hpp"
 #include "../../components/tags/GameZoneColliderTag.hpp"
+#include "../../ECS/entity/factory/EntityFactory.hpp"
 
 MapParser::MapParser(std::shared_ptr<EntityPrefabManager> prefabManager,
     std::shared_ptr<ecs::Registry> registry)
-    : _prefabManager(prefabManager), _registry(registry) {
+    : _prefabManager(prefabManager), _registry(registry),
+      _creationContext(ecs::EntityCreationContext::forServer()) {
     if (!_prefabManager)
         throw err::ParserError("PrefabManager cannot be null", err::ParserError::UNKNOWN);
     if (!_registry)
@@ -152,7 +155,8 @@ void MapParser::createBackgroundEntity(const std::string& entityName) {
 }
 
 void MapParser::createGameZoneEntity(float scrollSpeed) {
-    ecs::Entity gameZoneEntity = _registry->createEntity();
+    auto factory = _prefabManager->getEntityFactory();
+    ecs::Entity gameZoneEntity = factory->createEntity(_registry, _creationContext);
 
     math::FRect zoneRect(0.0f, 0.0f,
         constants::MAX_WIDTH, constants::MAX_HEIGHT);
@@ -320,7 +324,8 @@ void MapParser::parseWaves(const nlohmann::json& waves, float tileWidth) {
 
 ecs::Entity MapParser::createEntityFromPrefab(const std::string& prefabName,
     float x, float y) {
-    ecs::Entity entity = _prefabManager->createEntityFromPrefab(prefabName, _registry);
+    ecs::Entity entity = _prefabManager->createEntityFromPrefab(
+        prefabName, _registry, _creationContext);
 
     if (_registry->hasComponent<ecs::TransformComponent>(entity)) {
         auto comp = _registry->getComponent<ecs::TransformComponent>(entity);
@@ -334,11 +339,21 @@ ecs::Entity MapParser::createEntityFromPrefab(const std::string& prefabName,
 void MapParser::createMusicEntity(const std::string& prefabName) {
     if (_prefabManager->hasPrefab(prefabName)) {
         try {
-            _prefabManager->createEntityFromPrefab(prefabName, _registry);
+            ecs::EntityCreationContext musicContext =
+                ecs::EntityCreationContext::forLocalClient();
+            _prefabManager->createEntityFromPrefab(prefabName, _registry, musicContext);
         } catch (const std::exception& e) {
             std::cerr << "Error creating music entity: " << e.what() << std::endl;
         }
     } else {
         std::cerr << "Warning: 'music' prefab not found" << std::endl;
     }
+}
+
+void MapParser::setCreationContext(const ecs::EntityCreationContext& context) {
+    _creationContext = context;
+}
+
+ecs::EntityCreationContext MapParser::getCreationContext() const {
+    return _creationContext;
 }

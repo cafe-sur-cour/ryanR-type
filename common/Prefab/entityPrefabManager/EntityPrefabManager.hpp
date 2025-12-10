@@ -13,6 +13,9 @@
 #include <map>
 #include <memory>
 #include "../../ECS/entity/Entity.hpp"
+#include "../../ECS/entity/EntityCreationContext.hpp"
+#include "../../ECS/entity/factory/IEntityFactory.hpp"
+#include "../../ECS/entity/factory/EntityFactory.hpp"
 #include "../IPrefab.hpp"
 
 class EntityPrefabManager
@@ -23,12 +26,28 @@ class EntityPrefabManager
 
         void registerPrefab(const std::string &name, const std::shared_ptr<IPrefab> &prefab);
         std::shared_ptr<IPrefab> getPrefab(const std::string &name) const;
-        ecs::Entity createEntityFromPrefab(const std::string &prefabName, const std::shared_ptr<ecs::Registry> &registry);
+
+        ecs::Entity createEntityFromPrefab(
+            const std::string &prefabName,
+            const std::shared_ptr<ecs::Registry> &registry,
+            const ecs::EntityCreationContext &context
+        );
+
+        ecs::Entity createEntityFromPrefab(
+            const std::string &prefabName,
+            const std::shared_ptr<ecs::Registry> &registry
+        );
+
         bool hasPrefab(const std::string &name) const;
         void deletePrefab(const std::string &name);
         void clearPrefabs();
+
+        std::shared_ptr<ecs::IEntityFactory> getEntityFactory() const;
+        void setEntityFactory(std::shared_ptr<ecs::IEntityFactory> factory);
+
     private:
         std::map<std::string, std::shared_ptr<IPrefab>> _prefabs;
+        std::shared_ptr<ecs::IEntityFactory> _entityFactory;
 };
 
 #endif /* !ENTITYPREFABMANAGER_HPP_ */
