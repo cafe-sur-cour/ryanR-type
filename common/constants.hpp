@@ -169,6 +169,7 @@ namespace constants {
 
     const float SPATIAL_GRID_CELL_SIZE = 128.0f;
     const float SPATIAL_GRID_PADDING = 200.0f;
+    const float OUT_OF_BOUNDS_MARGIN = 500.0f;
 
     /* Map parsing constants */
     const std::string MUSIC_FIELD = "music";
