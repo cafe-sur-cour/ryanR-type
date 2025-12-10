@@ -148,6 +148,19 @@ std::vector<uint8_t> pm::PacketManager::packAIMovementPattern(std::vector<uint64
     return packet;
 }
 
+std::vector<uint8_t> pm::PacketManager::packDamage(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+    std::vector<uint8_t> temp = {};
+    std::vector<uint8_t> packet = {};
+    if (payload.at(*i) == DAMAGE) {
+        temp = this->_serializer->serializeUChar(payload.at(*i));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeULong(payload.at(*i + 1));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        *i += 2;
+    }
+    return packet;
+}
+
 std::vector<uint8_t> pm::PacketManager::packVelocity(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};

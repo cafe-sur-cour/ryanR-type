@@ -174,6 +174,18 @@ unsigned int pm::PacketManager::unpackAIMovementPattern(std::vector<uint8_t> pay
     return 0;
 }
 
+unsigned int pm::PacketManager::unpackDamage(std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == DAMAGE) {
+        this->_payload.push_back(static_cast<uint64_t>(DAMAGE));
+        uint64_t damage = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin() + i + 1,
+            payload.begin() + i + 9));
+        this->_payload.push_back(damage);
+        return 9;
+    }
+    return 0;
+}
+
 unsigned int pm::PacketManager::unpackVelocity(std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == VELOCITY) {
         this->_payload.push_back(static_cast<uint64_t>(VELOCITY));
