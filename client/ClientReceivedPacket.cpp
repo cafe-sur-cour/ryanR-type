@@ -87,19 +87,31 @@ void ClientNetwork::handleEndGame() {
 }
 
 void ClientNetwork::handleCanStart() {
+    if (this->_ready) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Can start packet already processed, ignoring duplicate",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return;
+    }
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Received can start packet, starting parsing...",
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
     std::vector<uint64_t> payload = _packet->getPayload();
-    for (const auto &val : payload) {
-        std::string temp;
-        for (int j = 0; j < 8; j++) {
-            temp.insert(temp.begin(), static_cast<char>((val >> (j * 8)) & 0xFF));
+    std::vector<std::string> names;
+
+    for (size_t i = 0; i < payload.size(); i += 8) {
+        std::string name;
+        for (size_t j = 0; j < 8 && i + j < payload.size(); ++j) {
+            char c = static_cast<char>(payload[i + j] & 0xFF);
+            name += c;
         }
-        this->_clientNames.push_back(temp);
+        name.erase(name.find_last_not_of(' ') + 1);
+        names.push_back(name);
     }
 
+    this->_clientNames = names;
+    this->_ready = true;
     for (const auto &name : this->_clientNames) {
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Player name: " + name,
