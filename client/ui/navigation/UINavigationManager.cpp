@@ -65,9 +65,21 @@ bool UINavigationManager::handleNavigationInput(ecs::InputAction action) {
         case ecs::InputAction::MENU_DOWN:
             return navigateInDirection(NavigationDirection::Down);
         case ecs::InputAction::MENU_LEFT:
-            return navigateInDirection(NavigationDirection::Left);
+            {
+                auto focused = _currentFocused.lock();
+                if (focused && focused->onNavigateLeft()) {
+                    return true;
+                }
+                return navigateInDirection(NavigationDirection::Left);
+            }
         case ecs::InputAction::MENU_RIGHT:
-            return navigateInDirection(NavigationDirection::Right);
+            {
+                auto focused = _currentFocused.lock();
+                if (focused && focused->onNavigateRight()) {
+                    return true;
+                }
+                return navigateInDirection(NavigationDirection::Right);
+            }
         case ecs::InputAction::MENU_SELECT:
             {
                 auto focused = _currentFocused.lock();

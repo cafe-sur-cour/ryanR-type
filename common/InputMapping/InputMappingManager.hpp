@@ -9,6 +9,7 @@
 #define INPUTMAPPINGMANAGER_HPP_
 
 #include <string>
+#include <vector>
 #include "InputMapping.hpp"
 
 namespace ecs {
@@ -22,6 +23,19 @@ public:
 
     void setMapping(const InputMapping& mapping);
     const InputMapping& getMapping() const;
+    InputMapping& getMutableMapping();
+
+    gfx::EventType getKeyboardKeyForAction(InputAction action) const;
+
+    gfx::EventType getKeyboardKeyForActionDirection(InputAction action, float direction) const;
+
+    void remapKeyboardKey(InputAction action, gfx::EventType oldKey, gfx::EventType newKey);
+
+    std::vector<gfx::EventType> getKeyboardKeysForAction(InputAction action) const;
+
+    static std::string eventTypeToString(gfx::EventType eventType);
+
+    static bool isKeyboardKey(gfx::EventType eventType);
 
 private:
     InputMapping _mapping;

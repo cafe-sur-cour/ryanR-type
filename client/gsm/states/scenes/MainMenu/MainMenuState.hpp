@@ -29,25 +29,14 @@ public:
 
 private:
     void renderUI();
-    void cycleColorBlindnessFilter();
-    void toggleHighContrastFilter();
-    void cycleBrightnessFilter();
-    void cycleUIScale();
 
 private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::shared_ptr<ui::Button> _playButton;
+    std::shared_ptr<ui::Button> _settingsButton;
     std::shared_ptr<ui::Button> _quitButton;
-    std::shared_ptr<ui::Button> _highContrastButton;
-    std::shared_ptr<ui::Button> _colorBlindnessButton;
-    std::shared_ptr<ui::Button> _brightnessButton;
-    std::shared_ptr<ui::Button> _scaleButton;
     std::unique_ptr<ui::UIManager> _uiManager;
     std::shared_ptr<ui::UILayout> _mainMenuLayout;
-    std::shared_ptr<ui::UILayout> _scaleLayout;
-    std::shared_ptr<ui::UILayout> _toolbarLayout;
-    int _colorBlindnessState = 0;
-    int _brightnessState = 3;
 };
 
 }  // namespace gsm
