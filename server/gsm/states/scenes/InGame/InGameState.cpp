@@ -17,6 +17,7 @@
 #include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
 #include "../../../../systems/input/ServerMovementInputSystem.hpp"
+#include "../../../../systems/input/ServerShootInputSystem.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/constants.hpp"
@@ -26,7 +27,6 @@
 #include "../../../../../common/systems/interactions/InteractionSystem.hpp"
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
 #include "../../../../../common/Parser/CollisionRulesParser.hpp"
-
 namespace gsm {
 
 InGameState::InGameState(std::shared_ptr<IGameStateMachine> gsm,
@@ -45,9 +45,10 @@ void InGameState::enter() {
     ecs::CollisionRules::initWithData(collisionData);
     addSystem(std::make_shared<ecs::AIMovementSystem>());
     addSystem(std::make_shared<ecs::AIShootingSystem>());
-    addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::ServerMovementInputSystem>());
+    addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::MovementSystem>());
+    addSystem(std::make_shared<ecs::ServerShootInputSystem>());
     addSystem(std::make_shared<ecs::ShootingSystem>());
     addSystem(std::make_shared<ecs::LifetimeSystem>());
     addSystem(std::make_shared<ecs::HealthSystem>());

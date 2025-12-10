@@ -78,6 +78,9 @@ void ServerInputProvider::updateInputFromEvent
             setAxisValue(ecs::InputAction::MOVE_X, 0.0f, clientID);
             setAxisValue(ecs::InputAction::MOVE_Y, 0.0f, clientID);
             break;
+        case constants::EventType::SHOOT:
+            setAxisValue(ecs::InputAction::SHOOT, value, clientID);
+            break;
         default:
             break;
     }
