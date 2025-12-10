@@ -36,6 +36,7 @@ ClientNetwork::ClientNetwork() {
     this->_packet = nullptr;
     this->_sequenceNumber = 0;
     this->_isConnected = false;
+    this->_ready = false;
     this->_isDebug = false;
     this->_resourceManager = nullptr;
     this->_gsm = nullptr;
@@ -173,6 +174,10 @@ net::ConnectionState ClientNetwork::getConnectionState() const {
 
 bool ClientNetwork::isConnected() const {
     return this->_isConnected.load();
+}
+
+bool ClientNetwork::isReady() const {
+    return this->_ready.load();
 }
 
 void ClientNetwork::handlePacketType(uint8_t type) {
