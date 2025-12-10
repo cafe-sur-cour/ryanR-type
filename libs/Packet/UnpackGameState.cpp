@@ -46,22 +46,6 @@ unsigned int pm::PacketManager::unpackTransform(std::vector<uint8_t> payload, un
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackVelocity(std::vector<uint8_t> payload, unsigned int i) {
-    if (payload.at(i) == VELOCITY) {
-        this->_payload.push_back(static_cast<uint64_t>(VELOCITY));
-        uint64_t velX = this->_serializer->deserializeULong(
-            std::vector<uint8_t>(payload.begin() + i + 1,
-            payload.begin() + i + 9));
-        uint64_t velY = this->_serializer->deserializeULong(
-            std::vector<uint8_t>(payload.begin() + i + 9,
-            payload.begin() + i + 17));
-        this->_payload.push_back(velX);
-        this->_payload.push_back(velY);
-        return 17;
-    }
-    return 0;
-}
-
 unsigned int pm::PacketManager::unpackSpeed(std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == SPEED) {
         this->_payload.push_back(static_cast<uint64_t>(SPEED));
@@ -146,6 +130,18 @@ unsigned int pm::PacketManager::unpackShootingStats(std::vector<uint8_t> payload
     return 0;
 }
 
+unsigned int pm::PacketManager::unpackScore(std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == SCORE) {
+        this->_payload.push_back(static_cast<uint64_t>(SCORE));
+        uint64_t score = this->_serializer->deserializeUInt(
+            std::vector<uint8_t>(payload.begin() + i + 1,
+            payload.begin() + i + 5));
+        this->_payload.push_back(score);
+        return 5;
+    }
+    return 0;
+}
+
 unsigned int pm::PacketManager::unpackAIMovementPattern(std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == AI_MOVEMENT_PATTERN) {
         this->_payload.push_back(static_cast<uint64_t>(AI_MOVEMENT_PATTERN));
@@ -174,6 +170,22 @@ unsigned int pm::PacketManager::unpackAIMovementPattern(std::vector<uint8_t> pay
             payload.begin() + i + 42));
         this->_payload.push_back(timer);
         return 42;
+    }
+    return 0;
+}
+
+unsigned int pm::PacketManager::unpackVelocity(std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == VELOCITY) {
+        this->_payload.push_back(static_cast<uint64_t>(VELOCITY));
+        uint64_t velX = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin() + i + 1,
+            payload.begin() + i + 9));
+        uint64_t velY = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin() + i + 9,
+            payload.begin() + i + 17));
+        this->_payload.push_back(velX);
+        this->_payload.push_back(velY);
+        return 17;
     }
     return 0;
 }

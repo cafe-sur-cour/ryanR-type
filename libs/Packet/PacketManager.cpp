@@ -108,20 +108,19 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
     this->_lengthComb = {
         std::make_tuple(PLAYER_TAG, 1, 1),
         std::make_tuple(TRANSFORM, 41, 6),
-        std::make_tuple(VELOCITY, 17, 3),
         std::make_tuple(SPEED, 9, 2),
         std::make_tuple(HEALTH, 17, 3),
         std::make_tuple(COLLIDER, 34, 6),
         std::make_tuple(SHOOTING_STATS, 37, 6),
-        std::make_tuple(AI_MOVEMENT_PATTERN, 42, 7)
+        std::make_tuple(SCORE, 5, 2),
+        std::make_tuple(AI_MOVEMENT_PATTERN, 42, 7),
+        std::make_tuple(VELOCITY, 17, 3),
     };
 
     this->_packGSFunction = {
         std::bind(&pm::PacketManager::packPlayerTag,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::packTransformation,
-        this, std::placeholders::_1, std::placeholders::_2),
-        std::bind(&pm::PacketManager::packVelocity,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::packSpeed,
         this, std::placeholders::_1, std::placeholders::_2),
@@ -131,7 +130,11 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::packShootingStats,
         this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packScore,
+        this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::packAIMovementPattern,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packVelocity,
         this, std::placeholders::_1, std::placeholders::_2)
     };
 
@@ -139,8 +142,6 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::bind(&pm::PacketManager::unpackPlayerTag,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::unpackTransform,
-        this, std::placeholders::_1, std::placeholders::_2),
-        std::bind(&pm::PacketManager::unpackVelocity,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::unpackSpeed,
         this, std::placeholders::_1, std::placeholders::_2),
@@ -150,8 +151,12 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::unpackShootingStats,
         this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackScore,
+        this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::unpackAIMovementPattern,
-        this, std::placeholders::_1, std::placeholders::_2)
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackVelocity,
+        this, std::placeholders::_1, std::placeholders::_2),
     };
 }
 
