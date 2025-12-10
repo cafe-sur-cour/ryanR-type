@@ -123,6 +123,19 @@ SettingsState::SettingsState(
         updateSoundVolume(value);
     });
 
+    _toggleSwitch = std::make_shared<ui::ToggleSwitch>(resourceManager);
+    _toggleSwitch->setValue(false);
+    _toggleSwitch->setSize(math::Vector2f(380.f, 55.f));
+    _toggleSwitch->setTrackColor({80, 80, 80});
+    _toggleSwitch->setHandleColor({150, 150, 150});
+    _toggleSwitch->setHandleHoveredColor({200, 200, 200});
+    _toggleSwitch->setHandleFocusedColor({255, 200, 100});
+    _toggleSwitch->setOnColor({0, 200, 0});
+    _toggleSwitch->setOffColor({200, 0, 0});
+    _toggleSwitch->setOnValueChanged([this](bool value) {
+        updateToggleValue(value);
+    });
+
     _colorBlindnessButton = std::make_shared<ui::Button>(resourceManager);
     _colorBlindnessButton->setText(getColorBlindnessText(config->getColorBlindnessState()));
     _colorBlindnessButton->setSize(math::Vector2f(380.f, 55.f));
@@ -250,6 +263,8 @@ SettingsState::SettingsState(
     _rightColumnLayout->addElement(_moveLeftKeyButton);
     _rightColumnLayout->addElement(_moveRightKeyButton);
     _rightColumnLayout->addElement(_shootKeyButton);
+    // Add some spacing before the toggle switch
+    _rightColumnLayout->addElement(_toggleSwitch);
 
     _settingsLayout->addElement(_leftColumnLayout);
     _settingsLayout->addElement(_rightColumnLayout);
@@ -439,6 +454,11 @@ void SettingsState::updateSoundVolume(float value) {
         auto audio = _resourceManager->get<gfx::IAudio>();
         audio->setSoundVolume(value);
     }
+}
+
+void SettingsState::updateToggleValue(bool value) {
+    // Placeholder for toggle functionality
+    (void)value;
 }
 
 std::string SettingsState::getColorBlindnessText(int state) {

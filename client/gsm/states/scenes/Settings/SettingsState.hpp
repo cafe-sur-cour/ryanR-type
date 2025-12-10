@@ -13,6 +13,7 @@
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../ui/elements/focusable/Button.hpp"
 #include "../../../../ui/elements/focusable/Slider.hpp"
+#include "../../../../ui/elements/focusable/ToggleSwitch.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../../common/types/Vector2f.hpp"
@@ -39,11 +40,12 @@ private:
     void cycleUIScale();
     void updateMusicVolume(float value);
     void updateSoundVolume(float value);
+    void updateToggleValue(bool value);
 
     void startKeyRebind(ecs::InputAction action, float direction, std::shared_ptr<ui::Button> button);
     void handleKeyRebind(gfx::EventType newKey);
     void updateKeyBindingButtonText(
-        std::shared_ptr<ui::Button> button, 
+        std::shared_ptr<ui::Button> button,
         ecs::InputAction action, float direction,
         const std::string& label
     );
@@ -57,6 +59,7 @@ private:
     std::shared_ptr<ui::Slider> _brightnessSlider;
     std::shared_ptr<ui::Slider> _musicVolumeSlider;
     std::shared_ptr<ui::Slider> _soundVolumeSlider;
+    std::shared_ptr<ui::ToggleSwitch> _toggleSwitch;
     std::shared_ptr<ui::Button> _scaleButton;
     std::unique_ptr<ui::UIManager> _uiManager;
     std::shared_ptr<ui::UILayout> _settingsLayout;
