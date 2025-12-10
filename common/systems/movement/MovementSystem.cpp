@@ -18,6 +18,7 @@
 #include "../../types/FRect.hpp"
 #include "../../constants.hpp"
 #include "../../components/tags/ObstacleTag.hpp"
+#include "../../components/tags/GameZoneColliderTag.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../CollisionRules/CollisionRules.hpp"
 
@@ -33,6 +34,7 @@ MovementSystem::MovementSystem() : _spatialGrid(
 
 void MovementSystem::buildSpatialGrid(std::shared_ptr<Registry> registry) {
     _spatialGrid.clear();
+    _boundaryEntities.clear();
 
     auto colliderView = registry->view<TransformComponent, ColliderComponent>();
     for (auto entityId : colliderView) {
@@ -41,6 +43,12 @@ void MovementSystem::buildSpatialGrid(std::shared_ptr<Registry> registry) {
 
         if (!transform || colliders.empty())
             continue;
+
+        bool isBoundary = registry->hasComponent<GameZoneColliderTag>(entityId);
+        if (isBoundary) {
+            _boundaryEntities.push_back(entityId);
+            continue;
+        }
 
         for (auto& collider : colliders) {
             if (collider->getType() == CollisionType::Solid ||
@@ -90,10 +98,63 @@ void MovementSystem::update(
     }
 }
 
+bool MovementSystem::checkCollisionWithBoundaries(
+    std::shared_ptr<Registry> registry,
+    size_t entityId,
+    math::Vector2f newPos) {
+
+    auto movingColliders = registry->getComponents<ColliderComponent>(entityId);
+    if (movingColliders.empty()) {
+        return true;
+    }
+
+    auto movingTransform = registry->getComponent<TransformComponent>(entityId);
+    math::Vector2f movingScale = movingTransform->getScale();
+
+    for (auto& movingCollider : movingColliders) {
+        if (movingCollider->getType() != CollisionType::Solid) continue;
+
+        math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale);
+
+        for (auto boundaryEntityId : _boundaryEntities) {
+            if (boundaryEntityId == entityId) continue;
+
+            auto otherTransform = registry->getComponent<TransformComponent>(boundaryEntityId);
+            auto otherColliders = registry->getComponents<ColliderComponent>(boundaryEntityId);
+
+            if (!otherTransform || otherColliders.empty())
+                continue;
+
+            for (auto& otherCollider : otherColliders) {
+                if (otherCollider->getType() != CollisionType::Solid &&
+                    otherCollider->getType() != CollisionType::Push) continue;
+
+                if (!shouldCollide(
+                    registry, entityId, *movingCollider, boundaryEntityId)) {
+                    continue;
+                }
+
+                math::Vector2f otherScale = otherTransform->getScale();
+                math::FRect otherHitbox =
+                    otherCollider->getHitbox(otherTransform->getPosition(), otherScale);
+
+                if (movingHitbox.intersects(otherHitbox)) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
 bool MovementSystem::checkCollision(
     std::shared_ptr<Registry> registry,
     size_t entityId,
     math::Vector2f newPos) {
+
+    if (!checkCollisionWithBoundaries(registry, entityId, newPos)) {
+        return false;
+    }
 
     auto movingColliders = registry->getComponents<ColliderComponent>(entityId);
     if (movingColliders.empty()) {
