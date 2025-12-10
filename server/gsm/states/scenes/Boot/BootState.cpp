@@ -8,6 +8,7 @@
 #include "BootState.hpp"
 #include <memory>
 #include "../Lobby/LobbyState.hpp"
+#include "../InGame/InGameState.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 
 namespace gsm {
@@ -18,7 +19,7 @@ BootState::BootState(std::shared_ptr<IGameStateMachine> gsm,
 }
 
 void BootState::enter() {
-    _gsm->requestStateChange(std::make_shared<LobbyState>(_gsm, _resourceManager));
+    _gsm->requestStateChange(std::make_shared<InGameState>(_gsm, _resourceManager));
 }
 
 }  // namespace gsm

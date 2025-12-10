@@ -109,10 +109,8 @@ void Core::processServerEvents() {
         uint8_t clientId = std::get<0>(event);
         constants::EventType eventType = std::get<1>(event);
         double param1 = std::get<2>(event);
-
-        (void)clientId;
-        (void)eventType;
-        (void)param1;
+        this->_inputProvider->updateInputFromEvent
+            (clientId, eventType, static_cast<float>(param1));
     }
 }
 

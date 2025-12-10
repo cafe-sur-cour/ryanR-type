@@ -28,6 +28,7 @@
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
 #include "../common/constants.hpp"
+#include "../common/InputMapping/InputAction.hpp"
 #include "Signal.hpp"
 
 namespace rserv {
