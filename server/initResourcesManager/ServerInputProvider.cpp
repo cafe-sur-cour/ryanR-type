@@ -16,6 +16,14 @@
 namespace ecs {
 
 ServerInputProvider::ServerInputProvider() {
+    _inputHandlers = {
+        &ServerInputProvider::handleUp,
+        &ServerInputProvider::handleDown,
+        &ServerInputProvider::handleLeft,
+        &ServerInputProvider::handleRight,
+        &ServerInputProvider::handleShoot,
+        &ServerInputProvider::handleStop
+    };
 }
 
 float ServerInputProvider::getAxisValue(event_t axis, size_t clientID) {
@@ -57,29 +65,39 @@ void ServerInputProvider::setAxisValue(ecs::InputAction action, float value, siz
     _clientAxisValues[clientID][action] = value;
 }
 
+void ServerInputProvider::handleUp(size_t clientID, float value) {
+    setAxisValue(ecs::InputAction::MOVE_Y, -value, clientID);
+}
+
+void ServerInputProvider::handleDown(size_t clientID, float value) {
+    setAxisValue(ecs::InputAction::MOVE_Y, value, clientID);
+}
+
+void ServerInputProvider::handleLeft(size_t clientID, float value) {
+    setAxisValue(ecs::InputAction::MOVE_X, -value, clientID);
+}
+
+void ServerInputProvider::handleRight(size_t clientID, float value) {
+    setAxisValue(ecs::InputAction::MOVE_X, value, clientID);
+}
+
+void ServerInputProvider::handleStop(size_t clientID, float value) {
+    (void)value;
+    setAxisValue(ecs::InputAction::MOVE_X, 0.0f, clientID);
+    setAxisValue(ecs::InputAction::MOVE_Y, 0.0f, clientID);
+}
+
+void ServerInputProvider::handleShoot(size_t clientID, float value) {
+    setAxisValue(ecs::InputAction::SHOOT, value, clientID);
+}
+
 
 
 void ServerInputProvider::updateInputFromEvent
 (size_t clientID, constants::EventType eventType, float value) {
-    switch (eventType) {
-        case constants::EventType::UP:
-            setAxisValue(ecs::InputAction::MOVE_Y, -value, clientID);
-            break;
-        case constants::EventType::DOWN:
-            setAxisValue(ecs::InputAction::MOVE_Y, value, clientID);
-            break;
-        case constants::EventType::LEFT:
-            setAxisValue(ecs::InputAction::MOVE_X, -value, clientID);
-            break;
-        case constants::EventType::RIGHT:
-            setAxisValue(ecs::InputAction::MOVE_X, value, clientID);
-            break;
-        case constants::EventType::STOP:
-            setAxisValue(ecs::InputAction::MOVE_X, 0.0f, clientID);
-            setAxisValue(ecs::InputAction::MOVE_Y, 0.0f, clientID);
-            break;
-        default:
-            break;
+    size_t index = static_cast<size_t>(eventType);
+    if (index < _inputHandlers.size()) {
+        (this->*_inputHandlers[index])(clientID, value);
     }
 }
 
