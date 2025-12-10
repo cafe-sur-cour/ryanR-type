@@ -25,16 +25,10 @@ public:
     const InputMapping& getMapping() const;
     InputMapping& getMutableMapping();
 
-    gfx::EventType getKeyboardKeyForAction(InputAction action) const;
-
-    gfx::EventType getKeyboardKeyForActionDirection(InputAction action, float direction) const;
-
-    void remapKeyboardKey(InputAction action, gfx::EventType oldKey, gfx::EventType newKey);
-
-    std::vector<gfx::EventType> getKeyboardKeysForAction(InputAction action) const;
+    gfx::EventType getKeyForRemappableAction(RemappableAction action, bool getPrimary = true) const;
+    void remapKey(RemappableAction action, gfx::EventType newKey, bool setPrimary);
 
     static std::string eventTypeToString(gfx::EventType eventType);
-
     static bool isKeyboardKey(gfx::EventType eventType);
 
 private:
