@@ -17,6 +17,8 @@ public:
     ~GameStateMachine() override = default;
 
     void requestStateChange(std::shared_ptr<IGameState> newState) override;
+    void requestStatePush(std::shared_ptr<IGameState> newState) override;
+    void requestStatePop() override;
 };
 
 }  // namespace gsm
