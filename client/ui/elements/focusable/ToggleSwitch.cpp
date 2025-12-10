@@ -123,7 +123,8 @@ void ToggleSwitch::render() {
         {static_cast<size_t>(handleX), static_cast<size_t>(handleY)},
         {static_cast<size_t>(handleWidth), static_cast<size_t>(handleHeight)});
 
-    size_t smallFontSize = static_cast<size_t>(static_cast<double>(_baseFontSize) * 0.6);
+    size_t smallFontSize = static_cast<size_t>(static_cast<double>(_baseFontSize) *
+        constants::SMALL_FONT_SIZE_MULTIPLIER);
 
     auto offTextSize = window->getTextSize(_offText, _fontPath, smallFontSize);
     size_t offTextX = static_cast<size_t>
