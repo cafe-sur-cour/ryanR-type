@@ -18,9 +18,9 @@ static bool isAxis(gfx::EventType et) {
 
 GraphicalInputProvider::GraphicalInputProvider(
     std::shared_ptr<gfx::IEvent> eventSystem,
-    const InputMapping& mapping
+    std::shared_ptr<InputMappingManager> mappingManager
 )
-    : _eventSystem(eventSystem), _mapping(mapping) {
+    : _eventSystem(eventSystem), _mappingManager(mappingManager) {
 }
 
 float GraphicalInputProvider::getAxisValue(event_t axis, size_t clientID) {
@@ -30,8 +30,9 @@ float GraphicalInputProvider::getAxisValue(event_t axis, size_t clientID) {
 
 bool GraphicalInputProvider::isActionPressed(InputAction action, size_t clientID) {
     (void)clientID;
-    auto it = _mapping.mappings.find(action);
-    if (it == _mapping.mappings.end()) return false;
+    const auto& mapping = _mappingManager->getMapping();
+    auto it = mapping.mappings.find(action);
+    if (it == mapping.mappings.end()) return false;
     for (auto& pair : it->second) {
         auto et = pair.first;
         if (_eventSystem->isKeyPressed(et)) return true;
@@ -41,8 +42,9 @@ bool GraphicalInputProvider::isActionPressed(InputAction action, size_t clientID
 
 float GraphicalInputProvider::getActionAxis(InputAction action, size_t clientID) {
     (void)clientID;
-    auto it = _mapping.mappings.find(action);
-    if (it == _mapping.mappings.end()) return 0.0f;
+    const auto& mapping = _mappingManager->getMapping();
+    auto it = mapping.mappings.find(action);
+    if (it == mapping.mappings.end()) return 0.0f;
     float value = 0.0f;
     for (auto& pair : it->second) {
         auto et = pair.first;
@@ -60,7 +62,7 @@ float GraphicalInputProvider::getActionAxis(InputAction action, size_t clientID)
 
 InputMapping GraphicalInputProvider::getInputMapping(size_t clientID) const {
     (void)clientID;
-    return _mapping;
+    return _mappingManager->getMapping();
 }
 
 }  // namespace ecs

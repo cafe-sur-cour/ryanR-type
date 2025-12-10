@@ -23,6 +23,9 @@ class IFocusable {
         virtual void onFocusGained() = 0;
         virtual void onFocusLost() = 0;
         virtual void onActivated() = 0;
+
+        virtual bool onNavigateLeft() { return false; }
+        virtual bool onNavigateRight() { return false; }
 };
 
 }  // namespace ui

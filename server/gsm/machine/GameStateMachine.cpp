@@ -16,4 +16,12 @@ void GameStateMachine::requestStateChange(std::shared_ptr<IGameState> newState) 
     changeState(newState);
 }
 
+void GameStateMachine::requestStatePush(std::shared_ptr<IGameState> newState) {
+    pushState(newState);
+}
+
+void GameStateMachine::requestStatePop() {
+    popState();
+}
+
 }  // namespace gsm

@@ -9,6 +9,8 @@
 #include <memory>
 #include <iostream>
 #include "../../../../../common/ECS/entity/Entity.hpp"
+#include "../../../../../common/gsm/IGameStateMachine.hpp"
+#include "../Settings/SettingsState.hpp"
 #include "../../../../../libs/Multimedia/IWindow.hpp"
 #include "../../../../../libs/Multimedia/IEvent.hpp"
 #include "../../../../../libs/Multimedia/IAudio.hpp"
@@ -131,6 +133,12 @@ void DevState::update(float deltaTime) {
     auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
     if (eventResult == gfx::EventType::CLOSE) {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
+        return;
+    }
+
+    auto event = _resourceManager->get<gfx::IEvent>();
+    if (event->isKeyPressed(gfx::EventType::ESCAPE)) {
+        _gsm->requestStatePush(std::make_shared<SettingsState>(_gsm, _resourceManager));
         return;
     }
 
