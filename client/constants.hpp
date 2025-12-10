@@ -46,6 +46,27 @@ namespace constants {
     constexpr float HEALTH_BAR_OFFSET_Y = -10.0f;
     constexpr float HEALTH_BAR_HEIGHT = 5.0f;
     constexpr float HEALTH_BAR_OUTLINE_THICKNESS = 2.0f;
+
+    /* Settings Parsing Constants */
+    namespace settings {
+        const std::string COLOR_BLINDNESS_STATE = "colorBlindnessState";
+        const std::string BRIGHTNESS_VALUE = "brightnessValue";
+        const std::string HIGH_CONTRAST_ENABLED = "highContrastEnabled";
+        const std::string UI_SCALE = "uiScale";
+        const std::string MUSIC_VOLUME = "musicVolume";
+        const std::string SOUND_VOLUME = "soundVolume";
+        const std::string PRIMARY = "primary";
+        const std::string SECONDARY = "secondary";
+        const std::string TOGGLE_MODE = "toggle_mode";
+    }
+
+    /* Paths */
+    namespace paths {
+        const std::string SAVES_DIR = "saves";
+        const std::string KEYBINDS = "saves/keybinds.json";
+        const std::string ACCESSIBILITY = "saves/accessibility.json";
+        const std::string SETTINGS = "saves/settings.json";
+    }
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
