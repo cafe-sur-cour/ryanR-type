@@ -140,6 +140,10 @@ add_executable(DeathSystemTests common/ECS/system/DeathSystemTests.cpp)
 target_link_libraries(DeathSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
 add_test(NAME DeathSystemTests COMMAND DeathSystemTests)
 
+add_executable(OutOfBoundsSystemTests common/ECS/system/OutOfBoundsSystemTests.cpp)
+target_link_libraries(OutOfBoundsSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME OutOfBoundsSystemTests COMMAND OutOfBoundsSystemTests)
+
 add_executable(ScoreSystemTests common/ECS/system/ScoreSystemTests.cpp)
 target_link_libraries(ScoreSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
 add_test(NAME ScoreSystemTests COMMAND ScoreSystemTests)
