@@ -13,6 +13,7 @@
 #include "../common/components/permanent/VelocityComponent.hpp"
 #include "../common/components/permanent/SpeedComponent.hpp"
 #include "../common/components/permanent/HealthComponent.hpp"
+#include "../common/components/permanent/ColliderComponent.hpp"
 
 std::vector<uint64_t> rserv::Server::convertTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
@@ -63,6 +64,21 @@ std::vector<uint64_t> rserv::Server::convertHealthComponent(std::shared_ptr<ecs:
         auto health = registry->getComponent<ecs::HealthComponent>(i);
         data.push_back(static_cast<uint64_t>(HEALTH));
         data.push_back(static_cast<uint64_t>(health->getHealth()));
+        data.push_back(static_cast<uint64_t>(health->getBaseHealth()));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertColliderComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::ColliderComponent>(i)) {
+        auto collider = registry->getComponent<ecs::ColliderComponent>(i);
+        data.push_back(static_cast<uint64_t>(COLLIDER));
+        data.push_back(static_cast<uint64_t>(collider->getOffset().getX()));
+        data.push_back(static_cast<uint64_t>(collider->getOffset().getY()));
+        data.push_back(static_cast<uint64_t>(collider->getSize().getX()));
+        data.push_back(static_cast<uint64_t>(collider->getSize().getY()));
+        data.push_back(static_cast<uint64_t>(collider->getType()));
     }
     return data;
 }
