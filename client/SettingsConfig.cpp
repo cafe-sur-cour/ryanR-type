@@ -11,12 +11,13 @@
 #include <memory>
 #include <string>
 #include <nlohmann/json.hpp>
+#include "constants.hpp"
 
 void SettingsConfig::saveAccessibility(const std::string& filepath) {
     nlohmann::json j;
-    j["colorBlindnessState"] = _colorBlindnessState;
-    j["brightnessValue"] = _brightnessValue;
-    j["highContrastEnabled"] = _highContrastEnabled;
+    j[constants::settings::COLOR_BLINDNESS_STATE] = _colorBlindnessState;
+    j[constants::settings::BRIGHTNESS_VALUE] = _brightnessValue;
+    j[constants::settings::HIGH_CONTRAST_ENABLED] = _highContrastEnabled;
     std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
     std::ofstream file(filepath);
     file << j.dump(4);
@@ -31,16 +32,16 @@ void SettingsConfig::loadAccessibility(const std::string& filepath) {
     if (!file.is_open()) return;
     nlohmann::json j;
     file >> j;
-    if (j.contains("colorBlindnessState")) _colorBlindnessState = j["colorBlindnessState"];
-    if (j.contains("brightnessValue")) _brightnessValue = j["brightnessValue"];
-    if (j.contains("highContrastEnabled")) _highContrastEnabled = j["highContrastEnabled"];
+    if (j.contains(constants::settings::COLOR_BLINDNESS_STATE)) _colorBlindnessState = j[constants::settings::COLOR_BLINDNESS_STATE];
+    if (j.contains(constants::settings::BRIGHTNESS_VALUE)) _brightnessValue = j[constants::settings::BRIGHTNESS_VALUE];
+    if (j.contains(constants::settings::HIGH_CONTRAST_ENABLED)) _highContrastEnabled = j[constants::settings::HIGH_CONTRAST_ENABLED];
 }
 
 void SettingsConfig::saveSettings(const std::string& filepath) {
     nlohmann::json j;
-    j["uiScale"] = static_cast<int>(_uiScale);
-    j["musicVolume"] = _musicVolume;
-    j["soundVolume"] = _soundVolume;
+    j[constants::settings::UI_SCALE] = static_cast<int>(_uiScale);
+    j[constants::settings::MUSIC_VOLUME] = _musicVolume;
+    j[constants::settings::SOUND_VOLUME] = _soundVolume;
     std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
     std::ofstream file(filepath);
     file << j.dump(4);
@@ -55,7 +56,7 @@ void SettingsConfig::loadSettings(const std::string& filepath) {
     if (!file.is_open()) return;
     nlohmann::json j;
     file >> j;
-    if (j.contains("uiScale")) _uiScale = static_cast<ui::UIScale>(j["uiScale"]);
-    if (j.contains("musicVolume")) _musicVolume = j["musicVolume"];
-    if (j.contains("soundVolume")) _soundVolume = j["soundVolume"];
+    if (j.contains(constants::settings::UI_SCALE)) _uiScale = static_cast<ui::UIScale>(j[constants::settings::UI_SCALE]);
+    if (j.contains(constants::settings::MUSIC_VOLUME)) _musicVolume = j[constants::settings::MUSIC_VOLUME];
+    if (j.contains(constants::settings::SOUND_VOLUME)) _soundVolume = j[constants::settings::SOUND_VOLUME];
 }

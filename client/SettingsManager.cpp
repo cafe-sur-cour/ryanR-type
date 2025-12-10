@@ -11,6 +11,7 @@
 #include <memory>
 #include <nlohmann/json.hpp>
 #include "initResourcesManager/GraphicalInputProvider.hpp"
+#include "constants.hpp"
 
 SettingsManager::SettingsManager(std::shared_ptr<ecs::InputMappingManager> mappingManager,
     std::shared_ptr<ecs::IInputProvider> inputProvider,
@@ -36,22 +37,24 @@ void SettingsManager::saveKeybinds() {
     nlohmann::json j;
     for (const auto& [action, binding] : _mappingManager->getMapping().remappableKeys) {
         j[ecs::InputMappingManager::remappableActionToString(action)] = {
-            {"primary", ecs::InputMappingManager::eventTypeToString(binding.primary)},
-            {"secondary", ecs::InputMappingManager::eventTypeToString(binding.secondary)}
+            {constants::settings::PRIMARY,
+                ecs::InputMappingManager::eventTypeToString(binding.primary)},
+            {constants::settings::SECONDARY,
+                ecs::InputMappingManager::eventTypeToString(binding.secondary)}
         };
     }
     auto graphicalProvider =
         std::dynamic_pointer_cast<ecs::GraphicalInputProvider>(_inputProvider);
     if (graphicalProvider) {
-        j["toggle_mode"] = graphicalProvider->isToggleMode();
+        j[constants::settings::TOGGLE_MODE] = graphicalProvider->isToggleMode();
     }
-    std::filesystem::create_directories("saves");
-    std::ofstream file("saves/keybinds.json");
+    std::filesystem::create_directories(constants::paths::SAVES_DIR);
+    std::ofstream file(constants::paths::KEYBINDS);
     file << j.dump(4);
 }
 
 void SettingsManager::loadKeybinds() {
-    std::filesystem::path filepath("saves/keybinds.json");
+    std::filesystem::path filepath(constants::paths::KEYBINDS);
     if (!std::filesystem::exists(filepath)) {
         saveKeybinds();
         return;
@@ -61,7 +64,7 @@ void SettingsManager::loadKeybinds() {
     nlohmann::json j;
     file >> j;
     for (const auto& [key, value] : j.items()) {
-        if (key == "toggle_mode") {
+        if (key == constants::settings::TOGGLE_MODE) {
             auto graphicalProvider =
                 std::dynamic_pointer_cast<ecs::GraphicalInputProvider>(_inputProvider);
             if (graphicalProvider && value.is_boolean()) {
@@ -70,13 +73,15 @@ void SettingsManager::loadKeybinds() {
         } else {
             ecs::RemappableAction action =
                 ecs::InputMappingManager::stringToRemappableAction(key);
-            if (value.contains("primary")) {
+            if (value.contains(constants::settings::PRIMARY)) {
                 _mappingManager->getMutableMapping().remappableKeys[action].primary =
-                    ecs::InputMappingManager::stringToEventType(value["primary"]);
+                    ecs::InputMappingManager::stringToEventType(
+                        value[constants::settings::PRIMARY]);
             }
-            if (value.contains("secondary")) {
+            if (value.contains(constants::settings::SECONDARY)) {
                 _mappingManager->getMutableMapping().remappableKeys[action].secondary =
-                    ecs::InputMappingManager::stringToEventType(value["secondary"]);
+                    ecs::InputMappingManager::stringToEventType(
+                        value[constants::settings::SECONDARY]);
             }
         }
     }
