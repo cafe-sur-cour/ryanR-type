@@ -1,7 +1,7 @@
 {
     "name": "enemy_basic_shot",
     "components": {
-        "ProjectileTag": { "target": "both" },
+        "EnnemyProjectileTag": { "target": "both" },
         "TransformComponent": {
             "target": "both",
             "position": { "x": 0.0, "y": 0.0 },
@@ -36,12 +36,17 @@
             "mappings": [
                 {
                     "tags": ["PlayerTag"],
-                    "toEntity": ["TakeDeath"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDeath"]
+                },
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": ["DealDeath"],
                     "toSelf": ["TakeDeath"]
                 },
                 {
                     "tags": ["ObstacleTag"],
-                    "toEntity": ["DealDeath"],
+                    "toEntity": [],
                     "toSelf": ["TakeDeath"]
                 }
             ]

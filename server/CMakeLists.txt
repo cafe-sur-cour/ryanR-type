@@ -14,6 +14,7 @@ add_library(${SERVER_LIB_NAME}
     Utils.hpp
     Core.cpp
     Core.hpp
+    ServerLibsLoading.cpp
 )
 
 find_package(asio CONFIG REQUIRED)
@@ -33,12 +34,15 @@ target_link_libraries(${SERVER_LIB_NAME}
         nlohmann_json::nlohmann_json
         PARSER
         PREFAB
+        InputNormalizer
+        ServerMovementInputSystem
 )
 
 target_include_directories(${SERVER_LIB_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/common)
 
 add_subdirectory(gsm)
 add_subdirectory(initResourcesManager)
+add_subdirectory(systems)
 
 set(SERVER_BIN_NAME r-type_server)
 

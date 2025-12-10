@@ -35,6 +35,7 @@ namespace constants {
         LEFT = 2,
         RIGHT = 3,
         SHOOT = 4,
+        STOP = 5,
     };
     constexpr int MAX_RETRY_CONNECTIONS = 3;
     /* Paths */
@@ -196,7 +197,8 @@ namespace constants {
     const std::string COLLIDERCOMPONENT = "ColliderComponent";
     const std::string MOBTAG = "MobTag";
     const std::string SHOOTERTAG = "ShooterTag";
-    const std::string PROJECTILETAG = "ProjectileTag";
+    const std::string PLAYERPROJECTILETAG = "PlayerProjectileTag";
+    const std::string ENNEMYPROJECTILETAG = "EnnemyProjectileTag";
     const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
     const std::string PARALLAXCOMPONENT = "ParallaxComponent";
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
