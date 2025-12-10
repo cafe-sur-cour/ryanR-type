@@ -152,7 +152,7 @@ TEST(SpatialGridTest, GetPotentialPairsMultipleCells) {
 
     auto pairs = grid.getPotentialPairs();
     EXPECT_EQ(pairs.size(), 1); // Only one pair in the overlapping cell
-    EXPECT_EQ(pairs[0], std::make_pair(1, 2));
+    EXPECT_EQ(pairs[0], std::make_pair(static_cast<size_t>(1), static_cast<size_t>(2)));
 }
 
 TEST(SpatialGridTest, SetCellSize) {
