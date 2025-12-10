@@ -61,7 +61,7 @@ void InGameState::enter() {
     if (_resourceManager->has<EntityPrefabManager>()) {
         auto prefabManager = _resourceManager->get<EntityPrefabManager>();
         prefabManager->createEntityFromPrefab("player",
-            _resourceManager->get<ecs::Registry>());
+            _resourceManager->get<ecs::Registry>(), ecs::EntityCreationContext::forServer());
     } else {
         throw std::runtime_error("EntityPrefabManager not found in ResourceManager");
     }
