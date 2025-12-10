@@ -25,6 +25,7 @@
 #include "../../../../../common/systems/ai/AIShootingSystem.hpp"
 #include "../../../../../common/systems/interactions/InteractionSystem.hpp"
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
+#include "../../../../../common/Parser/CollisionRulesParser.hpp"
 namespace gsm {
 
 InGameState::InGameState(std::shared_ptr<IGameStateMachine> gsm,
@@ -38,6 +39,9 @@ void InGameState::enter() {
         parser->parseAllEntities(constants::CONFIG_PATH);
     }
 
+    auto collisionData =
+        ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
+    ecs::CollisionRules::initWithData(collisionData);
     addSystem(std::make_shared<ecs::AIMovementSystem>());
     addSystem(std::make_shared<ecs::AIShootingSystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
