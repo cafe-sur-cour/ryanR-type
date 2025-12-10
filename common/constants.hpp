@@ -167,6 +167,8 @@ namespace constants {
     const float MAX_WIDTH = 1920.0f;
     const float GAME_ZONE_BOUNDARY_THICKNESS = 100.0f;
 
+    const float SPATIAL_GRID_CELL_SIZE = 128.0f;
+
     /* Map parsing constants */
     const std::string MUSIC_FIELD = "music";
     const std::string BACKGROUND_FIELD = "background";
