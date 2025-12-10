@@ -13,6 +13,7 @@
 #include "ParsedEntityPrefab.hpp"
 #include "../Parser/ParserParam.hpp"
 #include "../Error/ParserError.hpp"
+#include "../ECS/entity/factory/EntityFactory.hpp"
 
 ParsedEntityPrefab::ParsedEntityPrefab(const std::string& name, const std::map<std::type_index,
     ComponentAdder>& adders)
@@ -41,10 +42,10 @@ std::string ParsedEntityPrefab::getName() const {
     return _name;
 }
 
-ecs::Entity ParsedEntityPrefab::instantiate(
-    const std::shared_ptr<ecs::Registry>& registry) {
-    ecs::Entity entity = registry->createEntity();
-
+void ParsedEntityPrefab::addParsedComponents(
+    const std::shared_ptr<ecs::Registry>& registry,
+    ecs::Entity entity
+) {
     for (const auto& [component, typeIndex] : _components) {
         auto it = _componentAdders.find(typeIndex);
         if (it != _componentAdders.end()) {
@@ -54,5 +55,21 @@ ecs::Entity ParsedEntityPrefab::instantiate(
             typeIndex.name(), err::ParserError::UNKNOWN);
         }
     }
+}
+
+ecs::Entity ParsedEntityPrefab::instantiate(
+    const std::shared_ptr<ecs::Registry>& registry,
+    const std::shared_ptr<ecs::IEntityFactory>& factory,
+    const ecs::EntityCreationContext& context
+) {
+    ecs::Entity entity = factory->createEntity(registry, context);
+    addParsedComponents(registry, entity);
+    return entity;
+}
+
+ecs::Entity ParsedEntityPrefab::instantiate(
+    const std::shared_ptr<ecs::Registry>& registry) {
+    ecs::Entity entity = registry->createEntity();
+    addParsedComponents(registry, entity);
     return entity;
 }

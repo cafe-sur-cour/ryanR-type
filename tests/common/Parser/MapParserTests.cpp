@@ -13,6 +13,9 @@
 #include "../../common/Parser/MapParser/MapParser.hpp"
 #include "../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../common/ECS/entity/registry/Registry.hpp"
+#include "../../common/ECS/entity/factory/IEntityFactory.hpp"
+#include "../../common/ECS/entity/factory/EntityFactory.hpp"
+#include "../../common/ECS/entity/EntityCreationContext.hpp"
 #include "../../common/Error/ParserError.hpp"
 #include "../../common/Prefab/IPrefab.hpp"
 #include "../../common/constants.hpp"
@@ -26,6 +29,20 @@ public:
 
     ecs::Entity instantiate(const std::shared_ptr<ecs::Registry>& registry) override {
         ecs::Entity entity = registry->createEntity();
+        // Register component type
+        registry->registerComponent<ecs::TransformComponent>();
+        // Add a basic transform component for testing
+        auto transform = std::make_shared<ecs::TransformComponent>();
+        registry->addComponent(entity, transform);
+        return entity;
+    }
+
+    ecs::Entity instantiate(
+        const std::shared_ptr<ecs::Registry>& registry,
+        const std::shared_ptr<ecs::IEntityFactory>& factory,
+        const ecs::EntityCreationContext& context
+    ) override {
+        ecs::Entity entity = factory->createEntity(registry, context);
         // Register component type
         registry->registerComponent<ecs::TransformComponent>();
         // Add a basic transform component for testing

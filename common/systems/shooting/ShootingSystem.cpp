@@ -22,6 +22,7 @@
 #include "../../constants.hpp"
 #include "../../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
+#include "../../ECS/entity/EntityCreationContext.hpp"
 namespace ecs {
 
 ShootingSystem::ShootingSystem() {
@@ -72,7 +73,7 @@ void ShootingSystem::update(
         }
 
         if (pattern.shotCount == 1) {
-            spawnProjectile(registry, prefab, spawnPos, baseAngle);
+            spawnProjectile(registry, resourceManager, prefabName, spawnPos, baseAngle);
         } else {
             float totalSpread = pattern.angleSpread * static_cast<float>(
                 pattern.shotCount - 1
@@ -91,7 +92,7 @@ void ShootingSystem::update(
                     );
                 }
 
-                spawnProjectile(registry, prefab, offsetPosition, angle);
+                spawnProjectile(registry, resourceManager, prefabName, offsetPosition, angle);
             }
         }
 
@@ -107,14 +108,15 @@ void ShootingSystem::update(
 
 void ShootingSystem::spawnProjectile(
     std::shared_ptr<Registry> registry,
-    std::shared_ptr<IPrefab> prefab,
+    std::shared_ptr<ResourceManager> resourceManager,
+    const std::string& prefabName,
     const math::Vector2f &position,
     float angle
 ) {
-    if (!prefab)
-        return;
-
-    Entity projectileEntity = prefab->instantiate(registry);
+    auto prefabManager = resourceManager->get<EntityPrefabManager>();
+    Entity projectileEntity = prefabManager->createEntityFromPrefab(
+        prefabName, registry, ecs::EntityCreationContext::forServer()
+    );
 
     auto transform = registry->getComponent<TransformComponent>(projectileEntity);
     if (transform) {

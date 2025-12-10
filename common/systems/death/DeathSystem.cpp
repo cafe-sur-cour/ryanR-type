@@ -17,6 +17,7 @@
 #include "../../types/Vector2f.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../constants.hpp"
+#include "../../ECS/entity/EntityCreationContext.hpp"
 #include "../../../client/components/temporary/SoundIntentComponent.hpp"
 
 namespace ecs {
@@ -78,7 +79,8 @@ void DeathSystem::spawnExplosionAtMobCenter(
 
     try {
         ecs::Entity explosionEntity =
-            prefabManager->createEntityFromPrefab(prefabName, registry);
+            prefabManager->createEntityFromPrefab(prefabName, registry,
+                ecs::EntityCreationContext::forLocalClient());
 
         auto explosionTransform =
             registry->getComponent<TransformComponent>(explosionEntity);

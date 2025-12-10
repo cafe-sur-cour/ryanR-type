@@ -13,6 +13,7 @@
 #include "../../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../common/Prefab/IPrefab.hpp"
+#include "../../../../common/ECS/entity/factory/EntityFactory.hpp"
 
 using namespace ecs;
 
@@ -21,6 +22,17 @@ class MockPrefab : public IPrefab {
 public:
     MockPrefab() = default;
     ~MockPrefab() = default;
+
+    ecs::Entity instantiate(
+        const std::shared_ptr<ecs::Registry>& registry,
+        const std::shared_ptr<ecs::IEntityFactory>& factory,
+        const ecs::EntityCreationContext& context = ecs::EntityCreationContext::forLocalClient()
+    ) override {
+        ecs::Entity newEntity = factory->createEntity(registry, context);
+        auto transform = std::make_shared<TransformComponent>();
+        registry->addComponent<TransformComponent>(newEntity, transform);
+        return newEntity;
+    }
 
     ecs::Entity instantiate(const std::shared_ptr<ecs::Registry> &registry) override {
         ecs::Entity newEntity = registry->createEntity();

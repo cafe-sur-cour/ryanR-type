@@ -79,9 +79,10 @@ std::shared_ptr<ResourceManager> initResourcesManager(
 
     auto mappingManager = std::make_shared<ecs::InputMappingManager>();
     mappingManager->loadDefault();
+    resourceManager->add<ecs::InputMappingManager>(mappingManager);
     auto inputProvider = std::make_shared<ecs::GraphicalInputProvider>(
         event,
-        mappingManager->getMapping());
+        mappingManager);
     resourceManager->add<ecs::IInputProvider>(inputProvider);
     resourceManager->add<ecs::ISystemManager>(std::make_shared<ecs::SystemManager>());
 
