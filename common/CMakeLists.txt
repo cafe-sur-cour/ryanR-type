@@ -13,6 +13,7 @@ add_subdirectory(resourceManager)
 add_subdirectory(InputMapping)
 add_subdirectory(Parser)
 add_subdirectory(CollisionRules)
+add_subdirectory(SpatialGrid)
 
 set(DEBUG_LIB_NAME DEBUG)
 
