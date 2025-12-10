@@ -17,6 +17,7 @@
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../CollisionRules/CollisionRules.hpp"
 #include "../../systems/interactions/TagRegistry.hpp"
+#include "../../SpatialGrid/SpatialGrid.hpp"
 
 namespace ecs {
 
@@ -32,6 +33,8 @@ class MovementSystem : public ASystem {
         ) override;
 
     private:
+        void buildSpatialGrid(std::shared_ptr<Registry> registry);
+
         bool checkCollision(
             std::shared_ptr<Registry> registry,
             size_t entityId,
@@ -67,8 +70,10 @@ class MovementSystem : public ASystem {
             const ColliderComponent& colliderA,
             size_t entityB
         );
+
+        SpatialGrid _spatialGrid;
 };
 
-}  // namespace ecs
+}
 
 #endif /* !MOVEMENTSYSTEM_HPP_ */

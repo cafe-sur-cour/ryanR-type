@@ -23,13 +23,41 @@
 
 namespace ecs {
 
-MovementSystem::MovementSystem() {
+MovementSystem::MovementSystem() : _spatialGrid(
+    constants::MAX_WIDTH,
+    constants::MAX_HEIGHT,
+    constants::SPATIAL_GRID_CELL_SIZE
+) {
+}
+
+void MovementSystem::buildSpatialGrid(std::shared_ptr<Registry> registry) {
+    _spatialGrid.clear();
+
+    auto colliderView = registry->view<TransformComponent, ColliderComponent>();
+    for (auto entityId : colliderView) {
+        auto transform = registry->getComponent<TransformComponent>(entityId);
+        auto colliders = registry->getComponents<ColliderComponent>(entityId);
+
+        if (!transform || colliders.empty())
+            continue;
+
+        for (auto& collider : colliders) {
+            if (collider->getType() == CollisionType::Solid ||
+                collider->getType() == CollisionType::Push) {
+                math::FRect hitbox = collider->getHitbox(
+                    transform->getPosition(), transform->getScale());
+                _spatialGrid.insert(entityId, hitbox);
+            }
+        }
+    }
 }
 
 void MovementSystem::update(std::shared_ptr<ResourceManager> resourceManager,
                              std::shared_ptr<Registry> registry,
                              float deltaTime) {
     (void)resourceManager;
+
+    buildSpatialGrid(registry);
 
     auto view = registry->view<VelocityComponent, TransformComponent>();
 
@@ -72,20 +100,20 @@ bool MovementSystem::checkCollision(
     auto movingTransform = registry->getComponent<TransformComponent>(entityId);
     math::Vector2f movingScale = movingTransform->getScale();
 
-    auto allEntitiesView = registry->view<
-        TransformComponent, ColliderComponent>();
-    for (auto otherEntityId : allEntitiesView) {
-        if (otherEntityId == entityId) continue;
+    for (auto& movingCollider : movingColliders) {
+        if (movingCollider->getType() != CollisionType::Solid) continue;
 
-        auto otherTransform = registry->getComponent<
-            TransformComponent>(otherEntityId);
-        auto otherColliders = registry->getComponents<
-            ColliderComponent>(otherEntityId);
+        math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale);
+        auto nearbyEntities = _spatialGrid.query(movingHitbox);
 
-        for (auto& movingCollider : movingColliders) {
-            if (movingCollider->getType() != CollisionType::Solid) continue;
+        for (auto otherEntityId : nearbyEntities) {
+            if (otherEntityId == entityId) continue;
 
-            math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale);
+            auto otherTransform = registry->getComponent<TransformComponent>(otherEntityId);
+            auto otherColliders = registry->getComponents<ColliderComponent>(otherEntityId);
+
+            if (!otherTransform || otherColliders.empty())
+                continue;
 
             for (auto& otherCollider : otherColliders) {
                 if (otherCollider->getType() != CollisionType::Solid &&
@@ -203,18 +231,20 @@ void MovementSystem::handlePushCollision(
     auto entityTransform = registry->getComponent<TransformComponent>(entityId);
     math::Vector2f entityScale = entityTransform->getScale();
 
-    auto allEntitiesView = registry->view<TransformComponent, ColliderComponent>();
+    for (auto& pushCollider : pushColliders) {
+        if (pushCollider->getType() != CollisionType::Push) continue;
 
-    for (auto otherEntityId : allEntitiesView) {
-        if (otherEntityId == entityId) continue;
+        math::FRect pushHitbox = pushCollider->getHitbox(finalPos, entityScale);
+        auto nearbyEntities = _spatialGrid.query(pushHitbox);
 
-        auto otherTransform = registry->getComponent<TransformComponent>(otherEntityId);
-        auto otherColliders = registry->getComponents<ColliderComponent>(otherEntityId);
+        for (auto otherEntityId : nearbyEntities) {
+            if (otherEntityId == entityId) continue;
 
-        for (auto& pushCollider : pushColliders) {
-            if (pushCollider->getType() != CollisionType::Push) continue;
+            auto otherTransform = registry->getComponent<TransformComponent>(otherEntityId);
+            auto otherColliders = registry->getComponents<ColliderComponent>(otherEntityId);
 
-            math::FRect pushHitbox = pushCollider->getHitbox(finalPos, entityScale);
+            if (!otherTransform || otherColliders.empty())
+                continue;
 
             for (auto& otherCollider : otherColliders) {
                 if (otherCollider->getType() == CollisionType::None) continue;
@@ -260,4 +290,4 @@ bool MovementSystem::shouldCollide(
     return collisionRules.canCollide(colliderA.getType(), tagsA, tagsB);
 }
 
-}  // namespace ecs
+}
