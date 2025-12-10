@@ -156,15 +156,6 @@ jobs:
       - name: SETUP VCPKG
         uses: ./.github/actions/setup-vcpkg
 
-      - name: CACHE CMAKE BUILD
-        uses: actions/cache@v4
-        with:
-          path: |
-            build/unix/bin
-          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
-
       - name: RUN COMPILATION
         run: |
           chmod +x ./scripts/compile_project.sh
