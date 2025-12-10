@@ -21,3 +21,5 @@ r-type_server
 r-type_client.exe
 r-type_server.exe
 vcpkg/
+vgcore*
+saves/
