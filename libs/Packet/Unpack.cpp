@@ -148,7 +148,16 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
                 this->_payload.push_back(tag);
                 i += 2;
                 continue;
+            } else if (payload.at(i) == AI_MOVEMENT_PATTERN) {
+                this->_payload.push_back(static_cast<uint64_t>(AI_MOVEMENT_PATTERN));
+                uint64_t iaMouvement = this->_serializer->deserializeULong(
+                    std::vector<uint8_t>(payload.begin() + i + 1,
+                    payload.begin() + i + 2));
+                this->_payload.push_back(iaMouvement);
+                i += 2;
+                continue;
             }
+            std::cout << "Unknown component in GAME_STATE_PACKET unpacking: " << static_cast<int>(payload.at(i)) << std::endl;
         }
         return true;
     }
