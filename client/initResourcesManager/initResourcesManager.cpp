@@ -20,6 +20,8 @@
 #include "initResourcesManager.hpp"
 #include "../../common/systems/systemManager/SystemManager.hpp"
 #include "../../common/systems/systemManager/ISystemManager.hpp"
+#include "../SettingsConfig.hpp"
+#include "../SettingsManager.hpp"
 
 std::shared_ptr<ResourceManager> initResourcesManager(
     std::shared_ptr<DLLoader<gfx::createWindow_t>> windowLoader,
@@ -85,6 +87,14 @@ std::shared_ptr<ResourceManager> initResourcesManager(
         mappingManager);
     resourceManager->add<ecs::IInputProvider>(inputProvider);
     resourceManager->add<ecs::ISystemManager>(std::make_shared<ecs::SystemManager>());
+
+    auto settingsConfig = std::make_shared<SettingsConfig>();
+    resourceManager->add<SettingsConfig>(settingsConfig);
+
+    auto settingsManager =
+        std::make_shared<SettingsManager>(mappingManager, inputProvider, settingsConfig);
+    settingsManager->loadAll();
+    resourceManager->add<SettingsManager>(settingsManager);
 
     return resourceManager;
 }

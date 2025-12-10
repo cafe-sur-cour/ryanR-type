@@ -29,7 +29,10 @@ public:
     void remapKey(RemappableAction action, gfx::EventType newKey, bool setPrimary);
 
     static std::string eventTypeToString(gfx::EventType eventType);
-    static bool isKeyboardKey(gfx::EventType eventType);
+    bool isKeyboardKey(gfx::EventType eventType);
+    static gfx::EventType stringToEventType(const std::string& str);
+    static std::string remappableActionToString(RemappableAction action);
+    static RemappableAction stringToRemappableAction(const std::string& str);
 
 private:
     InputMapping _mapping;
