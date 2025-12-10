@@ -22,7 +22,8 @@ using Entity = size_t;
 
 class SpatialGrid {
     public:
-        SpatialGrid(float worldWidth = 1920.0f, float worldHeight = 1080.0f, float cellSize = 128.0f);
+        SpatialGrid(float worldWidth = 1920.0f, float worldHeight = 1080.0f,
+                    float cellSize = 128.0f, float padding = 200.0f);
         ~SpatialGrid() = default;
 
         void clear();
@@ -42,6 +43,7 @@ class SpatialGrid {
         float _worldWidth;
         float _worldHeight;
         float _cellSize;
+        float _padding;
         size_t _numCols;
         size_t _numRows;
         std::vector<std::vector<Entity>> _cells;
