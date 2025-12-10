@@ -38,6 +38,8 @@ SettingsState::SettingsState(
     auto config = _resourceManager->get<SettingsConfig>();
     _uiManager->setGlobalScale(config->getUIScale());
 
+    auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
+
     // Main horizontal layout to contain two columns
     ui::LayoutConfig settingsConfig;
     settingsConfig.direction = ui::LayoutDirection::Horizontal;
@@ -127,10 +129,10 @@ SettingsState::SettingsState(
     _toggleSwitch = std::make_shared<ui::ToggleSwitch>(resourceManager);
     _toggleSwitch->setOnText("TOGGLE");
     _toggleSwitch->setOffText("HOLD");
-    auto inputProvider = std::dynamic_pointer_cast<ecs::GraphicalInputProvider>(
-        _resourceManager->get<ecs::IInputProvider>());
-    if (inputProvider) {
-        _toggleSwitch->setValue(inputProvider->isToggleMode());
+    auto graphicalProvider =
+        std::dynamic_pointer_cast<ecs::GraphicalInputProvider>(inputProvider);
+    if (graphicalProvider) {
+        _toggleSwitch->setValue(graphicalProvider->isToggleMode());
     } else {
         _toggleSwitch->setValue(false);
     }
@@ -463,6 +465,8 @@ SettingsState::SettingsState(
     _settingsLayout->addElement(_leftColumnLayout);
     _settingsLayout->addElement(_rightColumnLayout);
     _uiManager->addElement(_settingsLayout);
+
+    _settingsManager = _resourceManager->get<SettingsManager>();
 }
 
 void SettingsState::enter() {
@@ -490,6 +494,8 @@ void SettingsState::update(float deltaTime) {
         return;
     }
 
+    auto mappingManager = _resourceManager->get<ecs::InputMappingManager>();
+
     if (_isWaitingForKey) {
         if (eventResult == gfx::EventType::ESCAPE) {
             _isWaitingForKey = false;
@@ -504,7 +510,7 @@ void SettingsState::update(float deltaTime) {
             _buttonToUpdate.reset();
             _rebindLabel.clear();
         } else if (eventResult != gfx::EventType::NOTHING &&
-            ecs::InputMappingManager::isKeyboardKey(eventResult)) {
+            mappingManager && mappingManager->isKeyboardKey(eventResult)) {
             handleKeyRebind(eventResult);
         }
         _uiManager->update(deltaTime);
@@ -588,6 +594,7 @@ void SettingsState::cycleColorBlindnessFilter() {
             constants::FILTER_TRITANOPIA_SHADER_PATH);
     }
     _colorBlindnessButton->setText(getColorBlindnessText(newState));
+    _settingsManager->saveAccessibility();
 }
 
 void SettingsState::toggleHighContrastFilter() {
@@ -610,6 +617,7 @@ void SettingsState::toggleHighContrastFilter() {
         _highContrastButton->setNormalColor({200, 0, 0});
         _highContrastButton->setText("High Contrast: OFF");
     }
+    _settingsManager->saveAccessibility();
 }
 
 void SettingsState::updateBrightnessFilter(float value) {
@@ -624,6 +632,7 @@ void SettingsState::updateBrightnessFilter(float value) {
     sfmlWindow->getShaderManager().addFilter(constants::FILTER_BRIGHTNESS_SHADER_PATH);
     sfmlWindow->getShaderManager().setUniform(
         constants::FILTER_BRIGHTNESS_SHADER_PATH, "brightness", value);
+    _settingsManager->saveAccessibility();
 }
 
 void SettingsState::cycleUIScale() {
@@ -633,6 +642,7 @@ void SettingsState::cycleUIScale() {
     config->setUIScale(_uiManager->getGlobalScale());
 
     _scaleButton->setText(getUIScaleText(config->getUIScale()));
+    _settingsManager->saveSettings();
 }
 
 void SettingsState::updateMusicVolume(float value) {
@@ -643,6 +653,7 @@ void SettingsState::updateMusicVolume(float value) {
         auto audio = _resourceManager->get<gfx::IAudio>();
         audio->setMusicVolume(value);
     }
+    _settingsManager->saveSettings();
 }
 
 void SettingsState::updateSoundVolume(float value) {
@@ -653,6 +664,7 @@ void SettingsState::updateSoundVolume(float value) {
         auto audio = _resourceManager->get<gfx::IAudio>();
         audio->setSoundVolume(value);
     }
+    _settingsManager->saveSettings();
 }
 
 void SettingsState::updateToggleValue(bool value) {
@@ -661,6 +673,7 @@ void SettingsState::updateToggleValue(bool value) {
     if (inputProvider) {
         inputProvider->setToggleMode(value);
     }
+    _settingsManager->saveKeybinds();
 }
 
 std::string SettingsState::getColorBlindnessText(int state) {
@@ -760,6 +773,7 @@ void SettingsState::handleKeyRebind(gfx::EventType newKey) {
     }
 
     updateKeyBindingButtonText(_buttonToUpdate, _actionToRebind.value(), _rebindingPrimary);
+    _settingsManager->saveKeybinds();
 
     _isWaitingForKey = false;
     _actionToRebind.reset();
@@ -784,6 +798,8 @@ void SettingsState::handleKeyRebind(gfx::EventType newKey) {
     std::string displayText = isPrimary ? "1" : "2";
     if (!keyName.empty()) {
         displayText += ": " + keyName;
+    } else {
+        displayText += ": Unassigned";
     }
     button->setText(displayText);
 }

@@ -21,6 +21,7 @@
 #include "../../../../../common/InputMapping/InputAction.hpp"
 #include "../../../../../libs/Multimedia/EventTypes.hpp"
 #include <optional>
+#include "../../../../SettingsManager.hpp"
 
 namespace gsm {
 
@@ -64,6 +65,8 @@ private:
     std::shared_ptr<ui::UILayout> _rightColumnLayout;
     std::shared_ptr<ui::UILayout> _titleLayout;
     math::Vector2f _savedViewCenter;
+
+    std::shared_ptr<SettingsManager> _settingsManager;
 
     std::shared_ptr<ui::UILayout> _moveUpLayout;
     std::shared_ptr<ui::Text> _moveUpLabel;
