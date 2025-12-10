@@ -15,6 +15,96 @@
 
 namespace ecs {
 
+const std::map<std::string, gfx::EventType> stringToEventMap = {
+    {"Up Arrow", gfx::EventType::UP},
+    {"Down Arrow", gfx::EventType::DOWN},
+    {"Left Arrow", gfx::EventType::LEFT},
+    {"Right Arrow", gfx::EventType::RIGHT},
+    {"A", gfx::EventType::A},
+    {"B", gfx::EventType::B},
+    {"C", gfx::EventType::C},
+    {"D", gfx::EventType::D},
+    {"E", gfx::EventType::E},
+    {"F", gfx::EventType::F},
+    {"G", gfx::EventType::G},
+    {"H", gfx::EventType::H},
+    {"I", gfx::EventType::I},
+    {"J", gfx::EventType::J},
+    {"K", gfx::EventType::K},
+    {"L", gfx::EventType::L},
+    {"M", gfx::EventType::M},
+    {"N", gfx::EventType::N},
+    {"O", gfx::EventType::O},
+    {"P", gfx::EventType::P},
+    {"Q", gfx::EventType::Q},
+    {"R", gfx::EventType::R},
+    {"S", gfx::EventType::S},
+    {"T", gfx::EventType::T},
+    {"U", gfx::EventType::U},
+    {"V", gfx::EventType::V},
+    {"W", gfx::EventType::W},
+    {"X", gfx::EventType::X},
+    {"Y", gfx::EventType::Y},
+    {"Z", gfx::EventType::Z},
+    {"0", gfx::EventType::NUM0},
+    {"1", gfx::EventType::NUM1},
+    {"2", gfx::EventType::NUM2},
+    {"3", gfx::EventType::NUM3},
+    {"4", gfx::EventType::NUM4},
+    {"5", gfx::EventType::NUM5},
+    {"6", gfx::EventType::NUM6},
+    {"7", gfx::EventType::NUM7},
+    {"8", gfx::EventType::NUM8},
+    {"9", gfx::EventType::NUM9},
+    {"Space", gfx::EventType::SPACE},
+    {"Enter", gfx::EventType::ENTER},
+    {"Escape", gfx::EventType::ESCAPE},
+    {"Tab", gfx::EventType::TAB},
+    {"Backspace", gfx::EventType::BACKSPACE},
+    {"Delete", gfx::EventType::DELETE_KEY},
+    {"Insert", gfx::EventType::INSERT},
+    {"Home", gfx::EventType::HOME},
+    {"End", gfx::EventType::END},
+    {"Page Up", gfx::EventType::PAGEUP},
+    {"Page Down", gfx::EventType::PAGEDOWN},
+    {"F1", gfx::EventType::F1},
+    {"F2", gfx::EventType::F2},
+    {"F3", gfx::EventType::F3},
+    {"F4", gfx::EventType::F4},
+    {"F5", gfx::EventType::F5},
+    {"F6", gfx::EventType::F6},
+    {"F7", gfx::EventType::F7},
+    {"F8", gfx::EventType::F8},
+    {"F9", gfx::EventType::F9},
+    {"F10", gfx::EventType::F10},
+    {"F11", gfx::EventType::F11},
+    {"F12", gfx::EventType::F12},
+    {"Left Shift", gfx::EventType::LSHIFT},
+    {"Right Shift", gfx::EventType::RSHIFT},
+    {"Left Ctrl", gfx::EventType::LCTRL},
+    {"Right Ctrl", gfx::EventType::RCTRL},
+    {"Left Alt", gfx::EventType::LALT},
+    {"Right Alt", gfx::EventType::RALT},
+    {"Numpad 0", gfx::EventType::NUMPAD0},
+    {"Numpad 1", gfx::EventType::NUMPAD1},
+    {"Numpad 2", gfx::EventType::NUMPAD2},
+    {"Numpad 3", gfx::EventType::NUMPAD3},
+    {"Numpad 4", gfx::EventType::NUMPAD4},
+    {"Numpad 5", gfx::EventType::NUMPAD5},
+    {"Numpad 6", gfx::EventType::NUMPAD6},
+    {"Numpad 7", gfx::EventType::NUMPAD7},
+    {"Numpad 8", gfx::EventType::NUMPAD8},
+    {"Numpad 9", gfx::EventType::NUMPAD9}
+};
+
+const std::map<std::string, RemappableAction> stringToActionMap = {
+    {"MOVE_LEFT", RemappableAction::MOVE_LEFT},
+    {"MOVE_RIGHT", RemappableAction::MOVE_RIGHT},
+    {"MOVE_UP", RemappableAction::MOVE_UP},
+    {"MOVE_DOWN", RemappableAction::MOVE_DOWN},
+    {"SHOOT", RemappableAction::SHOOT}
+};
+
 InputMappingManager::InputMappingManager() {
     loadDefault();
 }
@@ -125,194 +215,31 @@ bool InputMappingManager::isKeyboardKey(gfx::EventType eventType) {
 }
 
 std::string InputMappingManager::eventTypeToString(gfx::EventType eventType) {
-    switch (eventType) {
-        case gfx::EventType::UP: return "Up Arrow";
-        case gfx::EventType::DOWN: return "Down Arrow";
-        case gfx::EventType::LEFT: return "Left Arrow";
-        case gfx::EventType::RIGHT: return "Right Arrow";
-        case gfx::EventType::A: return "A";
-        case gfx::EventType::B: return "B";
-        case gfx::EventType::C: return "C";
-        case gfx::EventType::D: return "D";
-        case gfx::EventType::E: return "E";
-        case gfx::EventType::F: return "F";
-        case gfx::EventType::G: return "G";
-        case gfx::EventType::H: return "H";
-        case gfx::EventType::I: return "I";
-        case gfx::EventType::J: return "J";
-        case gfx::EventType::K: return "K";
-        case gfx::EventType::L: return "L";
-        case gfx::EventType::M: return "M";
-        case gfx::EventType::N: return "N";
-        case gfx::EventType::O: return "O";
-        case gfx::EventType::P: return "P";
-        case gfx::EventType::Q: return "Q";
-        case gfx::EventType::R: return "R";
-        case gfx::EventType::S: return "S";
-        case gfx::EventType::T: return "T";
-        case gfx::EventType::U: return "U";
-        case gfx::EventType::V: return "V";
-        case gfx::EventType::W: return "W";
-        case gfx::EventType::X: return "X";
-        case gfx::EventType::Y: return "Y";
-        case gfx::EventType::Z: return "Z";
-        case gfx::EventType::NUM0: return "0";
-        case gfx::EventType::NUM1: return "1";
-        case gfx::EventType::NUM2: return "2";
-        case gfx::EventType::NUM3: return "3";
-        case gfx::EventType::NUM4: return "4";
-        case gfx::EventType::NUM5: return "5";
-        case gfx::EventType::NUM6: return "6";
-        case gfx::EventType::NUM7: return "7";
-        case gfx::EventType::NUM8: return "8";
-        case gfx::EventType::NUM9: return "9";
-        case gfx::EventType::SPACE: return "Space";
-        case gfx::EventType::ENTER: return "Enter";
-        case gfx::EventType::ESCAPE: return "Escape";
-        case gfx::EventType::TAB: return "Tab";
-        case gfx::EventType::BACKSPACE: return "Backspace";
-        case gfx::EventType::DELETE_KEY: return "Delete";
-        case gfx::EventType::INSERT: return "Insert";
-        case gfx::EventType::HOME: return "Home";
-        case gfx::EventType::END: return "End";
-        case gfx::EventType::PAGEUP: return "Page Up";
-        case gfx::EventType::PAGEDOWN: return "Page Down";
-        case gfx::EventType::F1: return "F1";
-        case gfx::EventType::F2: return "F2";
-        case gfx::EventType::F3: return "F3";
-        case gfx::EventType::F4: return "F4";
-        case gfx::EventType::F5: return "F5";
-        case gfx::EventType::F6: return "F6";
-        case gfx::EventType::F7: return "F7";
-        case gfx::EventType::F8: return "F8";
-        case gfx::EventType::F9: return "F9";
-        case gfx::EventType::F10: return "F10";
-        case gfx::EventType::F11: return "F11";
-        case gfx::EventType::F12: return "F12";
-        case gfx::EventType::LSHIFT: return "Left Shift";
-        case gfx::EventType::RSHIFT: return "Right Shift";
-        case gfx::EventType::LCTRL: return "Left Ctrl";
-        case gfx::EventType::RCTRL: return "Right Ctrl";
-        case gfx::EventType::LALT: return "Left Alt";
-        case gfx::EventType::RALT: return "Right Alt";
-        case gfx::EventType::NUMPAD0: return "Numpad 0";
-        case gfx::EventType::NUMPAD1: return "Numpad 1";
-        case gfx::EventType::NUMPAD2: return "Numpad 2";
-        case gfx::EventType::NUMPAD3: return "Numpad 3";
-        case gfx::EventType::NUMPAD4: return "Numpad 4";
-        case gfx::EventType::NUMPAD5: return "Numpad 5";
-        case gfx::EventType::NUMPAD6: return "Numpad 6";
-        case gfx::EventType::NUMPAD7: return "Numpad 7";
-        case gfx::EventType::NUMPAD8: return "Numpad 8";
-        case gfx::EventType::NUMPAD9: return "Numpad 9";
-        default: return "Unknown";
+    for (const auto& pair : stringToEventMap) {
+        if (pair.second == eventType) {
+            return pair.first;
+        }
     }
+    return "Unknown";
 }
 
 gfx::EventType InputMappingManager::stringToEventType(const std::string& str) {
-    static std::map<std::string, gfx::EventType> stringToEvent = {
-        {"Up Arrow", gfx::EventType::UP},
-        {"Down Arrow", gfx::EventType::DOWN},
-        {"Left Arrow", gfx::EventType::LEFT},
-        {"Right Arrow", gfx::EventType::RIGHT},
-        {"A", gfx::EventType::A},
-        {"B", gfx::EventType::B},
-        {"C", gfx::EventType::C},
-        {"D", gfx::EventType::D},
-        {"E", gfx::EventType::E},
-        {"F", gfx::EventType::F},
-        {"G", gfx::EventType::G},
-        {"H", gfx::EventType::H},
-        {"I", gfx::EventType::I},
-        {"J", gfx::EventType::J},
-        {"K", gfx::EventType::K},
-        {"L", gfx::EventType::L},
-        {"M", gfx::EventType::M},
-        {"N", gfx::EventType::N},
-        {"O", gfx::EventType::O},
-        {"P", gfx::EventType::P},
-        {"Q", gfx::EventType::Q},
-        {"R", gfx::EventType::R},
-        {"S", gfx::EventType::S},
-        {"T", gfx::EventType::T},
-        {"U", gfx::EventType::U},
-        {"V", gfx::EventType::V},
-        {"W", gfx::EventType::W},
-        {"X", gfx::EventType::X},
-        {"Y", gfx::EventType::Y},
-        {"Z", gfx::EventType::Z},
-        {"0", gfx::EventType::NUM0},
-        {"1", gfx::EventType::NUM1},
-        {"2", gfx::EventType::NUM2},
-        {"3", gfx::EventType::NUM3},
-        {"4", gfx::EventType::NUM4},
-        {"5", gfx::EventType::NUM5},
-        {"6", gfx::EventType::NUM6},
-        {"7", gfx::EventType::NUM7},
-        {"8", gfx::EventType::NUM8},
-        {"9", gfx::EventType::NUM9},
-        {"Space", gfx::EventType::SPACE},
-        {"Enter", gfx::EventType::ENTER},
-        {"Escape", gfx::EventType::ESCAPE},
-        {"Tab", gfx::EventType::TAB},
-        {"Backspace", gfx::EventType::BACKSPACE},
-        {"Delete", gfx::EventType::DELETE_KEY},
-        {"Insert", gfx::EventType::INSERT},
-        {"Home", gfx::EventType::HOME},
-        {"End", gfx::EventType::END},
-        {"Page Up", gfx::EventType::PAGEUP},
-        {"Page Down", gfx::EventType::PAGEDOWN},
-        {"F1", gfx::EventType::F1},
-        {"F2", gfx::EventType::F2},
-        {"F3", gfx::EventType::F3},
-        {"F4", gfx::EventType::F4},
-        {"F5", gfx::EventType::F5},
-        {"F6", gfx::EventType::F6},
-        {"F7", gfx::EventType::F7},
-        {"F8", gfx::EventType::F8},
-        {"F9", gfx::EventType::F9},
-        {"F10", gfx::EventType::F10},
-        {"F11", gfx::EventType::F11},
-        {"F12", gfx::EventType::F12},
-        {"Left Shift", gfx::EventType::LSHIFT},
-        {"Right Shift", gfx::EventType::RSHIFT},
-        {"Left Ctrl", gfx::EventType::LCTRL},
-        {"Right Ctrl", gfx::EventType::RCTRL},
-        {"Left Alt", gfx::EventType::LALT},
-        {"Right Alt", gfx::EventType::RALT},
-        {"Numpad 0", gfx::EventType::NUMPAD0},
-        {"Numpad 1", gfx::EventType::NUMPAD1},
-        {"Numpad 2", gfx::EventType::NUMPAD2},
-        {"Numpad 3", gfx::EventType::NUMPAD3},
-        {"Numpad 4", gfx::EventType::NUMPAD4},
-        {"Numpad 5", gfx::EventType::NUMPAD5},
-        {"Numpad 6", gfx::EventType::NUMPAD6},
-        {"Numpad 7", gfx::EventType::NUMPAD7},
-        {"Numpad 8", gfx::EventType::NUMPAD8},
-        {"Numpad 9", gfx::EventType::NUMPAD9}
-    };
-    auto it = stringToEvent.find(str);
-    return it != stringToEvent.end() ? it->second : gfx::EventType::NOTHING;
+    auto it = stringToEventMap.find(str);
+    return it != stringToEventMap.end() ? it->second : gfx::EventType::NOTHING;
 }
 
 std::string InputMappingManager::remappableActionToString(RemappableAction action) {
-    switch (action) {
-        case RemappableAction::MOVE_LEFT: return "MOVE_LEFT";
-        case RemappableAction::MOVE_RIGHT: return "MOVE_RIGHT";
-        case RemappableAction::MOVE_UP: return "MOVE_UP";
-        case RemappableAction::MOVE_DOWN: return "MOVE_DOWN";
-        case RemappableAction::SHOOT: return "SHOOT";
-        default: return "UNKNOWN";
+    for (const auto& pair : stringToActionMap) {
+        if (pair.second == action) {
+            return pair.first;
+        }
     }
+    return "UNKNOWN";
 }
 
 RemappableAction InputMappingManager::stringToRemappableAction(const std::string& str) {
-    if (str == "MOVE_LEFT") return RemappableAction::MOVE_LEFT;
-    if (str == "MOVE_RIGHT") return RemappableAction::MOVE_RIGHT;
-    if (str == "MOVE_UP") return RemappableAction::MOVE_UP;
-    if (str == "MOVE_DOWN") return RemappableAction::MOVE_DOWN;
-    if (str == "SHOOT") return RemappableAction::SHOOT;
-    return RemappableAction::SHOOT;
+    auto it = stringToActionMap.find(str);
+    return it != stringToActionMap.end() ? it->second : RemappableAction::SHOOT;
 }
 
 }  // namespace ecs
