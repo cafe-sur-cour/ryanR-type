@@ -14,6 +14,7 @@
 #include "serializer/BigEndianSerialization.hpp"
 #include "../../common/DLLoader/LoaderType.hpp"
 #include "../../common/Error/PacketError.hpp"
+#include "../../common/translationToECS.hpp"
 
 pm::PacketManager::PacketManager(uint32_t seqNumber) {
     this->_idClient = 0;
@@ -102,6 +103,50 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
             static_cast<uint8_t>(EVENT_PACKET),
             LENGTH_EVENT_PACKET
         }
+    };
+
+    this->_lengthComb = {
+        std::make_tuple(PLAYER_TAG, 1, 1),
+        std::make_tuple(TRANSFORM, 41, 6),
+        std::make_tuple(VELOCITY, 17, 3),
+        std::make_tuple(SPEED, 9, 2),
+        std::make_tuple(HEALTH, 17, 3),
+        std::make_tuple(COLLIDER, 34, 6),
+        std::make_tuple(AI_MOVEMENT_PATTERN, 42, 7)
+    };
+
+    this->_packGSFunction = {
+        std::bind(&pm::PacketManager::packPlayerTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packTransformation,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packVelocity,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packSpeed,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packHealth,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packCollider,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packAIMovementPattern,
+        this, std::placeholders::_1, std::placeholders::_2)
+    };
+
+    this->_unpackGSFunction = {
+        std::bind(&pm::PacketManager::unpackPlayerTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackTransform,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackVelocity,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackSpeed,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackHealth,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackCollider,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackAIMovementPattern,
+        this, std::placeholders::_1, std::placeholders::_2)
     };
 }
 
