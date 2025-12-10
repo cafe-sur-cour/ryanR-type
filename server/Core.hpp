@@ -39,6 +39,7 @@ class Core {
         std::shared_ptr<Parser> getParser() const;
         std::shared_ptr<ecs::ISystemManager> getSystemsManager() const;
         std::shared_ptr<gsm::GameStateMachine> getGameStateMachine() const;
+        void processServerEvents();
 
     protected:
     private:
