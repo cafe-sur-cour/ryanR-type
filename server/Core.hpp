@@ -31,7 +31,6 @@ class Core {
 
         void init();
         void loop();
-        void processServerEvents();
 
         std::shared_ptr<rserv::Server> getServer() const;
         std::shared_ptr<rserv::ServerConfig> getConfig() const;
