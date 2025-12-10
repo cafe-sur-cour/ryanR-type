@@ -33,6 +33,12 @@ public:
     float getSoundVolume() const { return _soundVolume; }
     void setSoundVolume(float volume) { _soundVolume = volume; }
 
+    void saveAccessibility(const std::string& filepath = "saves/accessibility.json");
+    void loadAccessibility(const std::string& filepath = "saves/accessibility.json");
+
+    void saveSettings(const std::string& filepath = "saves/settings.json");
+    void loadSettings(const std::string& filepath = "saves/settings.json");
+
 private:
     int _colorBlindnessState = 0;
     float _brightnessValue = 100.0f;
