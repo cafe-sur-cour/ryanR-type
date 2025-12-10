@@ -165,11 +165,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
 
-      - name: RUN COMPILATION
-        run: |
-          chmod +x ./scripts/compile_project.sh
-          ./scripts/compile_project.sh --with-tests
-
       - name: RUN UNIT TESTS
         run: |
           chmod +x ./scripts/run_unit_tests.sh
