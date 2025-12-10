@@ -49,6 +49,10 @@ class SfmlWindow : public gfx::IWindow {
 
         float getScaleFactor() const override;
 
+        void addShaderFilter(const std::string& path) override;
+        void removeShaderFilter(const std::string& path) override;
+        void setShaderUniform(const std::string& filterPath, const std::string& name, float value) override;
+
         void enableFilter(const std::string& filterName);
         void addFilter(const std::string& filterName);
         void removeFilter(const std::string& filterName);

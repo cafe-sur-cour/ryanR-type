@@ -9,6 +9,7 @@
 #define SETTINGSCONFIG_HPP_
 
 #include "ui/elements/base/UIElement.hpp"
+#include "constants.hpp"
 
 class SettingsConfig {
 public:
@@ -33,11 +34,11 @@ public:
     float getSoundVolume() const { return _soundVolume; }
     void setSoundVolume(float volume) { _soundVolume = volume; }
 
-    void saveAccessibility(const std::string& filepath = constants::paths::ACCESSIBILITY);
-    void loadAccessibility(const std::string& filepath = constants::paths::ACCESSIBILITY);
+    void saveAccessibility(const std::string& filepath = constants::ACCESSIBILITY_FILE_PATH);
+    void loadAccessibility(const std::string& filepath = constants::ACCESSIBILITY_FILE_PATH);
 
-    void saveSettings(const std::string& filepath = constants::paths::SETTINGS);
-    void loadSettings(const std::string& filepath = constants::paths::SETTINGS);
+    void saveSettings(const std::string& filepath = constants::SETTINGS_FILE_PATH);
+    void loadSettings(const std::string& filepath = constants::SETTINGS_FILE_PATH);
 
 private:
     int _colorBlindnessState = 0;

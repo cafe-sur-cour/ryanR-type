@@ -37,24 +37,24 @@ void SettingsManager::saveKeybinds() {
     nlohmann::json j;
     for (const auto& [action, binding] : _mappingManager->getMapping().remappableKeys) {
         j[ecs::InputMappingManager::remappableActionToString(action)] = {
-            {constants::settings::PRIMARY,
+            {constants::KEYBIND_PRIMARY,
                 ecs::InputMappingManager::eventTypeToString(binding.primary)},
-            {constants::settings::SECONDARY,
+            {constants::KEYBIND_SECONDARY,
                 ecs::InputMappingManager::eventTypeToString(binding.secondary)}
         };
     }
     auto graphicalProvider =
         std::dynamic_pointer_cast<ecs::GraphicalInputProvider>(_inputProvider);
     if (graphicalProvider) {
-        j[constants::settings::TOGGLE_MODE] = graphicalProvider->isToggleMode();
+        j[constants::KEYBIND_TOGGLE_MODE] = graphicalProvider->isToggleMode();
     }
-    std::filesystem::create_directories(constants::paths::SAVES_DIR);
-    std::ofstream file(constants::paths::KEYBINDS);
+    std::filesystem::create_directories(constants::SAVES_DIRECTORY);
+    std::ofstream file(constants::KEYBINDS_FILE_PATH);
     file << j.dump(4);
 }
 
 void SettingsManager::loadKeybinds() {
-    std::filesystem::path filepath(constants::paths::KEYBINDS);
+    std::filesystem::path filepath(constants::KEYBINDS_FILE_PATH);
     if (!std::filesystem::exists(filepath)) {
         saveKeybinds();
         return;
@@ -64,7 +64,7 @@ void SettingsManager::loadKeybinds() {
     nlohmann::json j;
     file >> j;
     for (const auto& [key, value] : j.items()) {
-        if (key == constants::settings::TOGGLE_MODE) {
+        if (key == constants::KEYBIND_TOGGLE_MODE) {
             auto graphicalProvider =
                 std::dynamic_pointer_cast<ecs::GraphicalInputProvider>(_inputProvider);
             if (graphicalProvider && value.is_boolean()) {
@@ -73,15 +73,15 @@ void SettingsManager::loadKeybinds() {
         } else {
             ecs::RemappableAction action =
                 ecs::InputMappingManager::stringToRemappableAction(key);
-            if (value.contains(constants::settings::PRIMARY)) {
+            if (value.contains(constants::KEYBIND_PRIMARY)) {
                 _mappingManager->getMutableMapping().remappableKeys[action].primary =
                     ecs::InputMappingManager::stringToEventType(
-                        value[constants::settings::PRIMARY]);
+                        value[constants::KEYBIND_PRIMARY]);
             }
-            if (value.contains(constants::settings::SECONDARY)) {
+            if (value.contains(constants::KEYBIND_SECONDARY)) {
                 _mappingManager->getMutableMapping().remappableKeys[action].secondary =
                     ecs::InputMappingManager::stringToEventType(
-                        value[constants::settings::SECONDARY]);
+                        value[constants::KEYBIND_SECONDARY]);
             }
         }
     }
@@ -101,4 +101,29 @@ void SettingsManager::saveSettings() {
 
 void SettingsManager::loadSettings() {
     _settingsConfig->loadSettings();
+}
+
+void SettingsManager::applyAccessibilityToWindow(std::shared_ptr<gfx::IWindow> window) {
+    int colorBlindnessState = _settingsConfig->getColorBlindnessState();
+    window->removeShaderFilter(constants::FILTER_PROTANOPIA_SHADER_PATH);
+    window->removeShaderFilter(constants::FILTER_DEUTERANOPIA_SHADER_PATH);
+    window->removeShaderFilter(constants::FILTER_TRITANOPIA_SHADER_PATH);
+    if (colorBlindnessState == 1) {
+        window->addShaderFilter(constants::FILTER_PROTANOPIA_SHADER_PATH);
+    } else if (colorBlindnessState == 2) {
+        window->addShaderFilter(constants::FILTER_DEUTERANOPIA_SHADER_PATH);
+    } else if (colorBlindnessState == 3) {
+        window->addShaderFilter(constants::FILTER_TRITANOPIA_SHADER_PATH);
+    }
+
+    if (_settingsConfig->isHighContrastEnabled()) {
+        window->addShaderFilter(constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
+    } else {
+        window->removeShaderFilter(constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
+    }
+
+    float brightness = _settingsConfig->getBrightnessValue();
+    window->addShaderFilter(constants::FILTER_BRIGHTNESS_SHADER_PATH);
+    window->setShaderUniform(constants::FILTER_BRIGHTNESS_SHADER_PATH,
+        constants::FILTER_BRIGHTNESS_UNIFORM_NAME, brightness);
 }

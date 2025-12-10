@@ -22,6 +22,7 @@
 #include "../../common/systems/systemManager/ISystemManager.hpp"
 #include "../SettingsConfig.hpp"
 #include "../SettingsManager.hpp"
+#include "../constants.hpp"
 
 std::shared_ptr<ResourceManager> initResourcesManager(
     std::shared_ptr<DLLoader<gfx::createWindow_t>> windowLoader,
@@ -95,6 +96,9 @@ std::shared_ptr<ResourceManager> initResourcesManager(
         std::make_shared<SettingsManager>(mappingManager, inputProvider, settingsConfig);
     settingsManager->loadAll();
     resourceManager->add<SettingsManager>(settingsManager);
+
+    // Apply loaded accessibility settings to the window
+    settingsManager->applyAccessibilityToWindow(window);
 
     return resourceManager;
 }

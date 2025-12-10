@@ -39,6 +39,8 @@ private:
     void cycleColorBlindnessFilter();
     void toggleHighContrastFilter();
     void updateBrightnessFilter(float value);
+    void applyColorBlindnessFilter(int state);
+    void applyHighContrastFilter(bool enabled);
     void cycleUIScale();
     void updateMusicVolume(float value);
     void updateSoundVolume(float value);
