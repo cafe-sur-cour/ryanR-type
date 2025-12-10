@@ -32,9 +32,12 @@ void SettingsConfig::loadAccessibility(const std::string& filepath) {
     if (!file.is_open()) return;
     nlohmann::json j;
     file >> j;
-    if (j.contains(constants::settings::COLOR_BLINDNESS_STATE)) _colorBlindnessState = j[constants::settings::COLOR_BLINDNESS_STATE];
-    if (j.contains(constants::settings::BRIGHTNESS_VALUE)) _brightnessValue = j[constants::settings::BRIGHTNESS_VALUE];
-    if (j.contains(constants::settings::HIGH_CONTRAST_ENABLED)) _highContrastEnabled = j[constants::settings::HIGH_CONTRAST_ENABLED];
+    if (j.contains(constants::settings::COLOR_BLINDNESS_STATE)) _colorBlindnessState =
+        j[constants::settings::COLOR_BLINDNESS_STATE];
+    if (j.contains(constants::settings::BRIGHTNESS_VALUE)) _brightnessValue =
+        j[constants::settings::BRIGHTNESS_VALUE];
+    if (j.contains(constants::settings::HIGH_CONTRAST_ENABLED)) _highContrastEnabled =
+        j[constants::settings::HIGH_CONTRAST_ENABLED];
 }
 
 void SettingsConfig::saveSettings(const std::string& filepath) {
@@ -56,7 +59,10 @@ void SettingsConfig::loadSettings(const std::string& filepath) {
     if (!file.is_open()) return;
     nlohmann::json j;
     file >> j;
-    if (j.contains(constants::settings::UI_SCALE)) _uiScale = static_cast<ui::UIScale>(j[constants::settings::UI_SCALE]);
-    if (j.contains(constants::settings::MUSIC_VOLUME)) _musicVolume = j[constants::settings::MUSIC_VOLUME];
-    if (j.contains(constants::settings::SOUND_VOLUME)) _soundVolume = j[constants::settings::SOUND_VOLUME];
+    if (j.contains(constants::settings::UI_SCALE)) _uiScale =
+        static_cast<ui::UIScale>(j[constants::settings::UI_SCALE]);
+    if (j.contains(constants::settings::MUSIC_VOLUME)) _musicVolume =
+        j[constants::settings::MUSIC_VOLUME];
+    if (j.contains(constants::settings::SOUND_VOLUME)) _soundVolume =
+        j[constants::settings::SOUND_VOLUME];
 }
