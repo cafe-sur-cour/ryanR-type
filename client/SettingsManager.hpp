@@ -12,6 +12,7 @@
 #include "../../common/InputMapping/InputMappingManager.hpp"
 #include "../../common/InputMapping/IInputProvider.hpp"
 #include "SettingsConfig.hpp"
+#include "../../libs/Multimedia/IWindow.hpp"
 
 class SettingsManager {
 public:
@@ -31,6 +32,8 @@ public:
 
     void saveSettings();
     void loadSettings();
+
+    void applyAccessibilityToWindow(std::shared_ptr<gfx::IWindow> window);
 
 private:
     std::shared_ptr<ecs::InputMappingManager> _mappingManager;

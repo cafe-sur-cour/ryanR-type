@@ -10,7 +10,6 @@
 #include <string>
 #include <vector>
 #include "../../../../../libs/Multimedia/IWindow.hpp"
-#include "../../../../../libs/Multimedia/SfmlWindow.hpp"
 #include "../../../../../libs/Multimedia/IEvent.hpp"
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../../common/constants.hpp"
@@ -81,7 +80,7 @@ SettingsState::SettingsState(
     _brightnessSlider->setLabel("Brightness");
     _brightnessSlider->setMinValue(25.0f);
     _brightnessSlider->setMaxValue(150.0f);
-    _brightnessSlider->setValue(config->getBrightnessValue());
+    _brightnessSlider->setValue(config->getBrightnessValue() * 100.0f);
     _brightnessSlider->setStep(5.0f);
     _brightnessSlider->setSize(math::Vector2f(380.f, 55.f));
     _brightnessSlider->setTrackColor({80, 80, 80});
@@ -536,8 +535,7 @@ void SettingsState::renderUI() {
     _uiManager->render();
 
     auto window = _resourceManager->get<gfx::IWindow>();
-    auto sfmlWindow = std::dynamic_pointer_cast<SfmlWindow>(window);
-    if (sfmlWindow) {
+    if (window) {
         std::vector<gfx::color_t> spectrumColors = {
             {255, 0, 0, 255},
             {255, 165, 0, 255},
@@ -554,83 +552,78 @@ void SettingsState::renderUI() {
 
         for (size_t i = 0; i < spectrumColors.size(); ++i) {
             size_t xPos = i * barWidth;
-            sfmlWindow->drawFilledRectangle(
+            window->drawFilledRectangle(
                 spectrumColors[i], {xPos, yPos}, {barWidth, barHeight});
         }
     }
 }
 
 void SettingsState::cycleColorBlindnessFilter() {
-    auto window = _resourceManager->get<gfx::IWindow>();
-    auto sfmlWindow = std::dynamic_pointer_cast<SfmlWindow>(window);
-    if (!sfmlWindow) return;
-
     auto config = _resourceManager->get<SettingsConfig>();
     int currentState = config->getColorBlindnessState();
-
-    if (currentState == 1) {
-        sfmlWindow->getShaderManager().removeFilter(
-            constants::FILTER_PROTANOPIA_SHADER_PATH);
-    } else if (currentState == 2) {
-        sfmlWindow->getShaderManager().removeFilter(
-            constants::FILTER_DEUTERANOPIA_SHADER_PATH);
-    } else if (currentState == 3) {
-        sfmlWindow->getShaderManager().removeFilter(
-            constants::FILTER_TRITANOPIA_SHADER_PATH);
-    }
-
     int newState = (currentState + 1) % 4;
     config->setColorBlindnessState(newState);
-
-    if (newState == 1) {
-        sfmlWindow->getShaderManager().addFilter(
-            constants::FILTER_PROTANOPIA_SHADER_PATH);
-    } else if (newState == 2) {
-        sfmlWindow->getShaderManager().addFilter(
-            constants::FILTER_DEUTERANOPIA_SHADER_PATH);
-    } else if (newState == 3) {
-        sfmlWindow->getShaderManager().addFilter(
-            constants::FILTER_TRITANOPIA_SHADER_PATH);
-    }
+    applyColorBlindnessFilter(newState);
     _colorBlindnessButton->setText(getColorBlindnessText(newState));
     _settingsManager->saveAccessibility();
 }
 
-void SettingsState::toggleHighContrastFilter() {
+void SettingsState::applyColorBlindnessFilter(int state) {
+    if (!_resourceManager->has<gfx::IWindow>()) return;
     auto window = _resourceManager->get<gfx::IWindow>();
-    auto sfmlWindow = std::dynamic_pointer_cast<SfmlWindow>(window);
-    if (!sfmlWindow) return;
+    if (!window) return;
 
+    // Remove all
+    window->removeShaderFilter(constants::FILTER_PROTANOPIA_SHADER_PATH);
+    window->removeShaderFilter(constants::FILTER_DEUTERANOPIA_SHADER_PATH);
+    window->removeShaderFilter(constants::FILTER_TRITANOPIA_SHADER_PATH);
+
+    // Add the current
+    if (state == 1) {
+        window->addShaderFilter(constants::FILTER_PROTANOPIA_SHADER_PATH);
+    } else if (state == 2) {
+        window->addShaderFilter(constants::FILTER_DEUTERANOPIA_SHADER_PATH);
+    } else if (state == 3) {
+        window->addShaderFilter(constants::FILTER_TRITANOPIA_SHADER_PATH);
+    }
+}
+
+void SettingsState::toggleHighContrastFilter() {
     auto config = _resourceManager->get<SettingsConfig>();
     bool newState = !config->isHighContrastEnabled();
     config->setHighContrastEnabled(newState);
-
-    if (newState) {
-        sfmlWindow->getShaderManager().addFilter(
-            constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
-        _highContrastButton->setNormalColor({0, 200, 0});
-        _highContrastButton->setText("High Contrast: ON");
-    } else {
-        sfmlWindow->getShaderManager().removeFilter(
-            constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
-        _highContrastButton->setNormalColor({200, 0, 0});
-        _highContrastButton->setText("High Contrast: OFF");
-    }
+    applyHighContrastFilter(newState);
     _settingsManager->saveAccessibility();
 }
 
-void SettingsState::updateBrightnessFilter(float value) {
+void SettingsState::applyHighContrastFilter(bool enabled) {
+    if (!_resourceManager->has<gfx::IWindow>()) return;
     auto window = _resourceManager->get<gfx::IWindow>();
-    auto sfmlWindow = std::dynamic_pointer_cast<SfmlWindow>(window);
-    if (!sfmlWindow) return;
+    if (!window) return;
+
+    if (enabled) {
+        window->addShaderFilter(constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
+        _highContrastButton->setNormalColor({0, 200, 0});
+        _highContrastButton->setText("High Contrast: ON");
+    } else {
+        window->removeShaderFilter(constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
+        _highContrastButton->setNormalColor({200, 0, 0});
+        _highContrastButton->setText("High Contrast: OFF");
+    }
+}
+
+void SettingsState::updateBrightnessFilter(float value) {
+    if (!_resourceManager->has<gfx::IWindow>()) return;
+    auto window = _resourceManager->get<gfx::IWindow>();
+    if (!window) return;
 
     value /= 100.0f;
     auto config = _resourceManager->get<SettingsConfig>();
     config->setBrightnessValue(value);
 
-    sfmlWindow->getShaderManager().addFilter(constants::FILTER_BRIGHTNESS_SHADER_PATH);
-    sfmlWindow->getShaderManager().setUniform(
-        constants::FILTER_BRIGHTNESS_SHADER_PATH, "brightness", value);
+    window->addShaderFilter(constants::FILTER_BRIGHTNESS_SHADER_PATH);
+    window->setShaderUniform(constants::FILTER_BRIGHTNESS_SHADER_PATH,
+        constants::FILTER_BRIGHTNESS_UNIFORM_NAME, value);
     _settingsManager->saveAccessibility();
 }
 
