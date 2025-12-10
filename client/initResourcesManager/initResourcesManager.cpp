@@ -97,8 +97,6 @@ std::shared_ptr<ResourceManager> initResourcesManager(
     settingsManager->loadAll();
     resourceManager->add<SettingsManager>(settingsManager);
 
-    // Apply loaded accessibility settings to the window
     settingsManager->applyAccessibilityToWindow(window);
-
     return resourceManager;
 }
