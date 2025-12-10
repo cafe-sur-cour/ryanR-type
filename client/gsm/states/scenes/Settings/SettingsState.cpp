@@ -18,6 +18,7 @@
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../../../common/InputMapping/InputMappingManager.hpp"
+#include "../../../../initResourcesManager/GraphicalInputProvider.hpp"
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../../libs/Multimedia/IAudio.hpp"
 
@@ -124,7 +125,15 @@ SettingsState::SettingsState(
     });
 
     _toggleSwitch = std::make_shared<ui::ToggleSwitch>(resourceManager);
-    _toggleSwitch->setValue(false);
+    _toggleSwitch->setOnText("TOGGLE");
+    _toggleSwitch->setOffText("HOLD");
+    auto inputProvider = std::dynamic_pointer_cast<ecs::GraphicalInputProvider>(
+        _resourceManager->get<ecs::IInputProvider>());
+    if (inputProvider) {
+        _toggleSwitch->setValue(inputProvider->isToggleMode());
+    } else {
+        _toggleSwitch->setValue(false);
+    }
     _toggleSwitch->setSize(math::Vector2f(380.f, 55.f));
     _toggleSwitch->setTrackColor({80, 80, 80});
     _toggleSwitch->setHandleColor({150, 150, 150});
@@ -457,8 +466,11 @@ void SettingsState::updateSoundVolume(float value) {
 }
 
 void SettingsState::updateToggleValue(bool value) {
-    // Placeholder for toggle functionality
-    (void)value;
+    auto inputProvider = std::dynamic_pointer_cast<ecs::GraphicalInputProvider>(
+        _resourceManager->get<ecs::IInputProvider>());
+    if (inputProvider) {
+        inputProvider->setToggleMode(value);
+    }
 }
 
 std::string SettingsState::getColorBlindnessText(int state) {

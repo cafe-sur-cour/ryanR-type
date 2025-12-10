@@ -24,9 +24,19 @@ class GraphicalInputProvider : public IInputProvider {
         float getActionAxis(InputAction action, size_t clientID = 0) override;
         InputMapping getInputMapping(size_t clientID = 0) const override;
 
+        void setToggleMode(bool enabled);
+        bool isToggleMode() const;
+
     private:
         std::shared_ptr<gfx::IEvent> _eventSystem;
         std::shared_ptr<InputMappingManager> _mappingManager;
+        bool _toggleMode = false;
+        std::map<InputAction, bool> _toggledStates;
+        std::map<InputAction, bool> _lastKeyState;
+        std::map<std::pair<InputAction, gfx::EventType>, bool> _keyPressedState;
+        std::map<std::pair<InputAction, gfx::EventType>, bool> _toggledKeyStates;
+        std::map<std::pair<InputAction, gfx::EventType>, int> _lastToggleFrame;
+        int _currentFrame = 0;
 };
 
 } // namespace ecs
