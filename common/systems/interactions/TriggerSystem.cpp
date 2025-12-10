@@ -21,7 +21,8 @@ namespace ecs {
 TriggerSystem::TriggerSystem() : _spatialGrid(
     constants::MAX_WIDTH,
     constants::MAX_HEIGHT,
-    constants::SPATIAL_GRID_CELL_SIZE
+    constants::SPATIAL_GRID_CELL_SIZE,
+    constants::SPATIAL_GRID_PADDING
 ) {
 }
 
