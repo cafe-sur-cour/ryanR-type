@@ -22,8 +22,8 @@ bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
         return false;
     }
     std::string name = "";
-    if (client.second.size() > 11)
-        name = std::string(client.second.begin() + 11, client.second.end());
+    if (client.second.size() > HEADER_SIZE)
+        name = std::string(client.second.begin() + HEADER_SIZE, client.second.end());
 
     if (this->_nextClientId > this->getConfig()->getNbClients()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
