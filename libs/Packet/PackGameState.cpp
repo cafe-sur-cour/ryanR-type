@@ -106,13 +106,34 @@ std::vector<uint8_t> pm::PacketManager::packCollider(std::vector<uint64_t> paylo
     return packet;
 }
 
+std::vector<uint8_t> pm::PacketManager::packShootingStats(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+    std::vector<uint8_t> temp = {};
+    std::vector<uint8_t> packet = {};
+    if (payload.at(*i) == SHOOTING_STATS) {
+        temp = this->_serializer->serializeUChar(payload.at(*i));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeULong(payload.at(*i + 1));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeULong(payload.at(*i + 2));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeUInt(payload.at(*i + 3));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeULong(payload.at(*i + 4));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeULong(payload.at(*i + 5));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        *i += 6;
+    }
+    return packet;
+}
+
 std::vector<uint8_t> pm::PacketManager::packAIMovementPattern(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
     if (payload.at(*i) == AI_MOVEMENT_PATTERN) {
         temp = this->_serializer->serializeUChar(payload.at(*i));
         packet.insert(packet.end(), temp.begin(), temp.end());
-        temp = this->_serializer->serializeULong(payload.at(*i + 1));
+        temp = this->_serializer->serializeUChar(payload.at(*i + 1));
         packet.insert(packet.end(), temp.begin(), temp.end());
         temp = this->_serializer->serializeULong(payload.at(*i + 2));
         packet.insert(packet.end(), temp.begin(), temp.end());

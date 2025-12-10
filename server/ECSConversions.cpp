@@ -14,6 +14,8 @@
 #include "../common/components/permanent/SpeedComponent.hpp"
 #include "../common/components/permanent/HealthComponent.hpp"
 #include "../common/components/permanent/ColliderComponent.hpp"
+#include "../common/components/permanent/ShootingStatsComponent.hpp"
+#include "../common/components/permanent/AIMovementPatternComponent.hpp"
 
 std::vector<uint64_t> rserv::Server::convertTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
@@ -79,6 +81,35 @@ std::vector<uint64_t> rserv::Server::convertColliderComponent(std::shared_ptr<ec
         data.push_back(static_cast<uint64_t>(collider->getSize().getX()));
         data.push_back(static_cast<uint64_t>(collider->getSize().getY()));
         data.push_back(static_cast<uint64_t>(collider->getType()));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertShootStatComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::ShootingStatsComponent>(i)) {
+        auto shootStats = registry->getComponent<ecs::ShootingStatsComponent>(i);
+        data.push_back(static_cast<uint64_t>(SHOOTING_STATS));
+        data.push_back(static_cast<uint64_t>(shootStats->getFireRate()));
+        data.push_back(static_cast<uint64_t>(shootStats->getCooldownTimer()));
+        data.push_back(static_cast<uint64_t>(shootStats->getMultiShotPattern().shotCount));
+        data.push_back(static_cast<uint64_t>(shootStats->getMultiShotPattern().angleSpread));
+        data.push_back(static_cast<uint64_t>(shootStats->getMultiShotPattern().offsetDistance));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertAIMovementPatternComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+   if (registry->hasComponent<ecs::AIMovementPatternComponent>(i)) {
+        auto pattern = registry->getComponent<ecs::AIMovementPatternComponent>(i);
+        data.push_back(static_cast<uint64_t>(AI_MOVEMENT_PATTERN));
+        data.push_back(static_cast<uint64_t>(pattern->getPattern()));
+        data.push_back(static_cast<uint64_t>(pattern->getZigzagAmplitude()));
+        data.push_back(static_cast<uint64_t>(pattern->getZigzagFrequency()));
+        data.push_back(static_cast<uint64_t>(pattern->getDetectionRange()));
+        data.push_back(static_cast<uint64_t>(pattern->getVerticalDeadzone()));
+        data.push_back(static_cast<uint64_t>(pattern->getTimer()));
     }
     return data;
 }

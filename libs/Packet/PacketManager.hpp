@@ -77,6 +77,7 @@ class PacketManager : public IPacketManager {
         std::vector<uint8_t> packSpeed(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
         std::vector<uint8_t> packHealth(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
         std::vector<uint8_t> packCollider(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packShootingStats(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
         std::vector<uint8_t> packAIMovementPattern(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
 
         /* Unpack Game State */
@@ -87,6 +88,7 @@ class PacketManager : public IPacketManager {
         unsigned int unpackSpeed(std::vector<uint8_t> payload, unsigned int i);
         unsigned int unpackHealth(std::vector<uint8_t> payload, unsigned int i);
         unsigned int unpackCollider(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackShootingStats(std::vector<uint8_t> payload, unsigned int i);
         unsigned int unpackAIMovementPattern(std::vector<uint8_t> payload, unsigned int i);
 };
 } // namespace pm
