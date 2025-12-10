@@ -23,11 +23,13 @@ GraphicalInputProvider::GraphicalInputProvider(
     : _eventSystem(eventSystem), _mappingManager(mappingManager) {
 }
 
-float GraphicalInputProvider::getAxisValue(event_t axis) {
+float GraphicalInputProvider::getAxisValue(event_t axis, size_t clientID) {
+    (void)clientID;
     return _eventSystem->getAxisValue(axis);
 }
 
-bool GraphicalInputProvider::isActionPressed(InputAction action) {
+bool GraphicalInputProvider::isActionPressed(InputAction action, size_t clientID) {
+    (void)clientID;
     const auto& mapping = _mappingManager->getMapping();
     auto it = mapping.mappings.find(action);
     if (it == mapping.mappings.end()) return false;
@@ -38,7 +40,8 @@ bool GraphicalInputProvider::isActionPressed(InputAction action) {
     return false;
 }
 
-float GraphicalInputProvider::getActionAxis(InputAction action) {
+float GraphicalInputProvider::getActionAxis(InputAction action, size_t clientID) {
+    (void)clientID;
     const auto& mapping = _mappingManager->getMapping();
     auto it = mapping.mappings.find(action);
     if (it == mapping.mappings.end()) return 0.0f;
@@ -55,6 +58,11 @@ float GraphicalInputProvider::getActionAxis(InputAction action) {
         }
     }
     return value;
+}
+
+InputMapping GraphicalInputProvider::getInputMapping(size_t clientID) const {
+    (void)clientID;
+    return _mapping;
 }
 
 }  // namespace ecs
