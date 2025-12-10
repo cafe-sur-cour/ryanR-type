@@ -40,7 +40,6 @@ SettingsState::SettingsState(
 
     auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
 
-    // Main horizontal layout to contain two columns
     ui::LayoutConfig settingsConfig;
     settingsConfig.direction = ui::LayoutDirection::Horizontal;
     settingsConfig.alignment = ui::LayoutAlignment::Center;
