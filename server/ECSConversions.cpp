@@ -16,6 +16,7 @@
 #include "../common/components/permanent/ShootingStatsComponent.hpp"
 #include "../common/components/permanent/ScoreComponent.hpp"
 #include "../common/components/permanent/AIMovementPatternComponent.hpp"
+#include "../common/components/permanent/DamageComponent.hpp"
 #include "../common/components/permanent/VelocityComponent.hpp"
 
 std::vector<uint64_t> rserv::Server::convertTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
@@ -110,6 +111,16 @@ std::vector<uint64_t> rserv::Server::convertAIMovementPatternComponent(std::shar
         data.push_back(static_cast<uint64_t>(pattern->getDetectionRange()));
         data.push_back(static_cast<uint64_t>(pattern->getVerticalDeadzone()));
         data.push_back(static_cast<uint64_t>(pattern->getTimer()));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertDamageComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::DamageComponent>(i)) {
+        auto damageComp = registry->getComponent<ecs::DamageComponent>(i);
+        data.push_back(static_cast<uint64_t>(DAMAGE));
+        data.push_back(static_cast<uint64_t>(damageComp->getDamage()));
     }
     return data;
 }

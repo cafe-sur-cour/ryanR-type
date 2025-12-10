@@ -51,6 +51,8 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertAIMovementPatternComponent, this,
             std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertDamageComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertVelocityComponent, this,
             std::placeholders::_1, std::placeholders::_2)
     };

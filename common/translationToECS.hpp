@@ -17,7 +17,7 @@ enum componentType {
     SHOOTING_STATS = 0x05,
     SCORE = 0x06,
     AI_MOVEMENT_PATTERN = 0x07,
-    // DAMAGE = 0x08,
+    DAMAGE = 0x08,
     // LIFETIME = 0x09,
     VELOCITY = 0x0A
 };
