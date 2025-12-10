@@ -188,76 +188,262 @@ SettingsState::SettingsState(
         this->_gsm->requestStatePop();
     });
 
-    _moveUpKeyButton = std::make_shared<ui::Button>(resourceManager);
-    _moveUpKeyButton->setSize(math::Vector2f(380.f, 55.f));
-    _moveUpKeyButton->setNormalColor({80, 120, 160});
-    _moveUpKeyButton->setHoveredColor({100, 150, 200});
-    _moveUpKeyButton->setFocusedColor({120, 180, 240});
-    updateKeyBindingButtonText(_moveUpKeyButton, ecs::InputAction::MOVE_Y, -1.0f, "Move Up");
-    _moveUpKeyButton->setOnRelease([this]() {
-        startKeyRebind(ecs::InputAction::MOVE_Y, -1.0f, _moveUpKeyButton);
+    ui::LayoutConfig verticalConfig;
+    verticalConfig.direction = ui::LayoutDirection::Vertical;
+    verticalConfig.alignment = ui::LayoutAlignment::Center;
+    verticalConfig.spacing = 1.0f;
+    verticalConfig.padding = math::Vector2f(0.0f, 0.0f);
+
+    ui::LayoutConfig mappingVerticalConfig;
+    mappingVerticalConfig.direction = ui::LayoutDirection::Vertical;
+    mappingVerticalConfig.alignment = ui::LayoutAlignment::Center;
+    mappingVerticalConfig.spacing = 3.0f;
+    mappingVerticalConfig.padding = math::Vector2f(0.0f, 0.0f);
+
+    ui::LayoutConfig horizontalConfig;
+    horizontalConfig.direction = ui::LayoutDirection::Horizontal;
+    horizontalConfig.alignment = ui::LayoutAlignment::Center;
+    horizontalConfig.spacing = 20.0f;
+    horizontalConfig.padding = math::Vector2f(0.0f, 0.0f);
+
+    _moveUpLayout = std::make_shared<ui::UILayout>(resourceManager, mappingVerticalConfig);
+    _moveUpLayout->setSize(math::Vector2f(380.f, 85.f));
+
+    _moveUpLabel = std::make_shared<ui::Text>(resourceManager);
+    _moveUpLabel->setText("Move Up");
+    _moveUpLabel->setTextColor({255, 255, 255});
+    _moveUpLabel->setFontSize(20);
+    _moveUpLabel->setSize(math::Vector2f(380.f, 30.f));
+
+    auto moveUpButtonsLayout =
+        std::make_shared<ui::UILayout>(resourceManager, horizontalConfig);
+    moveUpButtonsLayout->setSize(math::Vector2f(380.f, 55.f));
+
+    _moveUpPrimaryButton = std::make_shared<ui::Button>(resourceManager);
+    _moveUpPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
+    _moveUpPrimaryButton->setNormalColor({80, 120, 160});
+    _moveUpPrimaryButton->setHoveredColor({100, 150, 200});
+    _moveUpPrimaryButton->setFocusedColor({120, 180, 240});
+    _moveUpPrimaryButton->setText("1");
+    updateKeyBindingButtonText(_moveUpPrimaryButton, ecs::RemappableAction::MOVE_UP, true);
+    _moveUpPrimaryButton->setOnRelease([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_UP, true, _moveUpPrimaryButton);
     });
-    _moveUpKeyButton->setOnActivated([this]() {
-        startKeyRebind(ecs::InputAction::MOVE_Y, -1.0f, _moveUpKeyButton);
+    _moveUpPrimaryButton->setOnActivated([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_UP, true, _moveUpPrimaryButton);
     });
 
-    _moveDownKeyButton = std::make_shared<ui::Button>(resourceManager);
-    _moveDownKeyButton->setSize(math::Vector2f(380.f, 55.f));
-    _moveDownKeyButton->setNormalColor({80, 120, 160});
-    _moveDownKeyButton->setHoveredColor({100, 150, 200});
-    _moveDownKeyButton->setFocusedColor({120, 180, 240});
-    updateKeyBindingButtonText(
-        _moveDownKeyButton, ecs::InputAction::MOVE_Y, 1.0f, "Move Down"
-    );
-    _moveDownKeyButton->setOnRelease([this]() {
-        startKeyRebind(ecs::InputAction::MOVE_Y, 1.0f, _moveDownKeyButton);
+    _moveUpSecondaryButton = std::make_shared<ui::Button>(resourceManager);
+    _moveUpSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
+    _moveUpSecondaryButton->setNormalColor({60, 100, 140});
+    _moveUpSecondaryButton->setHoveredColor({80, 120, 180});
+    _moveUpSecondaryButton->setFocusedColor({100, 140, 220});
+    _moveUpSecondaryButton->setText("2");
+    updateKeyBindingButtonText(_moveUpSecondaryButton, ecs::RemappableAction::MOVE_UP, false);
+    _moveUpSecondaryButton->setOnRelease([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_UP, false, _moveUpSecondaryButton);
     });
-    _moveDownKeyButton->setOnActivated([this]() {
-        startKeyRebind(ecs::InputAction::MOVE_Y, 1.0f, _moveDownKeyButton);
-    });
-
-    _moveLeftKeyButton = std::make_shared<ui::Button>(resourceManager);
-    _moveLeftKeyButton->setSize(math::Vector2f(380.f, 55.f));
-    _moveLeftKeyButton->setNormalColor({80, 120, 160});
-    _moveLeftKeyButton->setHoveredColor({100, 150, 200});
-    _moveLeftKeyButton->setFocusedColor({120, 180, 240});
-    updateKeyBindingButtonText(
-        _moveLeftKeyButton, ecs::InputAction::MOVE_X, -1.0f, "Move Left"
-    );
-    _moveLeftKeyButton->setOnRelease([this]() {
-        startKeyRebind(ecs::InputAction::MOVE_X, -1.0f, _moveLeftKeyButton);
-    });
-    _moveLeftKeyButton->setOnActivated([this]() {
-        startKeyRebind(ecs::InputAction::MOVE_X, -1.0f, _moveLeftKeyButton);
+    _moveUpSecondaryButton->setOnActivated([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_UP, false, _moveUpSecondaryButton);
     });
 
-    _moveRightKeyButton = std::make_shared<ui::Button>(resourceManager);
-    _moveRightKeyButton->setSize(math::Vector2f(380.f, 55.f));
-    _moveRightKeyButton->setNormalColor({80, 120, 160});
-    _moveRightKeyButton->setHoveredColor({100, 150, 200});
-    _moveRightKeyButton->setFocusedColor({120, 180, 240});
-    updateKeyBindingButtonText(
-        _moveRightKeyButton, ecs::InputAction::MOVE_X, 1.0f, "Move Right"
-    );
-    _moveRightKeyButton->setOnRelease([this]() {
-        startKeyRebind(ecs::InputAction::MOVE_X, 1.0f, _moveRightKeyButton);
+    moveUpButtonsLayout->addElement(_moveUpPrimaryButton);
+    moveUpButtonsLayout->addElement(_moveUpSecondaryButton);
+
+    _moveUpLayout->addElement(_moveUpLabel);
+    _moveUpLayout->addElement(moveUpButtonsLayout);
+
+    _moveDownLayout = std::make_shared<ui::UILayout>(resourceManager, mappingVerticalConfig);
+    _moveDownLayout->setSize(math::Vector2f(380.f, 85.f));
+
+    _moveDownLabel = std::make_shared<ui::Text>(resourceManager);
+    _moveDownLabel->setText("Move Down");
+    _moveDownLabel->setTextColor({255, 255, 255});
+    _moveDownLabel->setFontSize(20);
+    _moveDownLabel->setSize(math::Vector2f(380.f, 30.f));
+
+    auto moveDownButtonsLayout =
+        std::make_shared<ui::UILayout>(resourceManager, horizontalConfig);
+    moveDownButtonsLayout->setSize(math::Vector2f(380.f, 55.f));
+
+    _moveDownPrimaryButton = std::make_shared<ui::Button>(resourceManager);
+    _moveDownPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
+    _moveDownPrimaryButton->setNormalColor({80, 120, 160});
+    _moveDownPrimaryButton->setHoveredColor({100, 150, 200});
+    _moveDownPrimaryButton->setFocusedColor({120, 180, 240});
+    _moveDownPrimaryButton->setText("1");
+    updateKeyBindingButtonText(_moveDownPrimaryButton, ecs::RemappableAction::MOVE_DOWN, true);
+    _moveDownPrimaryButton->setOnRelease([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_DOWN, true, _moveDownPrimaryButton);
     });
-    _moveRightKeyButton->setOnActivated([this]() {
-        startKeyRebind(ecs::InputAction::MOVE_X, 1.0f, _moveRightKeyButton);
+    _moveDownPrimaryButton->setOnActivated([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_DOWN, true, _moveDownPrimaryButton);
     });
 
-    _shootKeyButton = std::make_shared<ui::Button>(resourceManager);
-    _shootKeyButton->setSize(math::Vector2f(380.f, 55.f));
-    _shootKeyButton->setNormalColor({80, 120, 160});
-    _shootKeyButton->setHoveredColor({100, 150, 200});
-    _shootKeyButton->setFocusedColor({120, 180, 240});
-    updateKeyBindingButtonText(_shootKeyButton, ecs::InputAction::SHOOT, 1.0f, "Shoot");
-    _shootKeyButton->setOnRelease([this]() {
-        startKeyRebind(ecs::InputAction::SHOOT, 1.0f, _shootKeyButton);
+    _moveDownSecondaryButton = std::make_shared<ui::Button>(resourceManager);
+    _moveDownSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
+    _moveDownSecondaryButton->setNormalColor({60, 100, 140});
+    _moveDownSecondaryButton->setHoveredColor({80, 120, 180});
+    _moveDownSecondaryButton->setFocusedColor({100, 140, 220});
+    _moveDownSecondaryButton->setText("2");
+    updateKeyBindingButtonText(_moveDownSecondaryButton,
+        ecs::RemappableAction::MOVE_DOWN, false);
+    _moveDownSecondaryButton->setOnRelease([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_DOWN, false, _moveDownSecondaryButton);
     });
-    _shootKeyButton->setOnActivated([this]() {
-        startKeyRebind(ecs::InputAction::SHOOT, 1.0f, _shootKeyButton);
+    _moveDownSecondaryButton->setOnActivated([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_DOWN, false, _moveDownSecondaryButton);
     });
+
+    moveDownButtonsLayout->addElement(_moveDownPrimaryButton);
+    moveDownButtonsLayout->addElement(_moveDownSecondaryButton);
+
+    _moveDownLayout->addElement(_moveDownLabel);
+    _moveDownLayout->addElement(moveDownButtonsLayout);
+
+    _moveLeftLayout = std::make_shared<ui::UILayout>(resourceManager, mappingVerticalConfig);
+    _moveLeftLayout->setSize(math::Vector2f(380.f, 85.f));
+
+    _moveLeftLabel = std::make_shared<ui::Text>(resourceManager);
+    _moveLeftLabel->setText("Move Left");
+    _moveLeftLabel->setTextColor({255, 255, 255});
+    _moveLeftLabel->setFontSize(20);
+    _moveLeftLabel->setSize(math::Vector2f(380.f, 30.f));
+
+    auto moveLeftButtonsLayout =
+        std::make_shared<ui::UILayout>(resourceManager, horizontalConfig);
+    moveLeftButtonsLayout->setSize(math::Vector2f(380.f, 55.f));
+
+    _moveLeftPrimaryButton = std::make_shared<ui::Button>(resourceManager);
+    _moveLeftPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
+    _moveLeftPrimaryButton->setNormalColor({80, 120, 160});
+    _moveLeftPrimaryButton->setHoveredColor({100, 150, 200});
+    _moveLeftPrimaryButton->setFocusedColor({120, 180, 240});
+    _moveLeftPrimaryButton->setText("1");
+    updateKeyBindingButtonText(_moveLeftPrimaryButton, ecs::RemappableAction::MOVE_LEFT, true);
+    _moveLeftPrimaryButton->setOnRelease([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_LEFT, true, _moveLeftPrimaryButton);
+    });
+    _moveLeftPrimaryButton->setOnActivated([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_LEFT, true, _moveLeftPrimaryButton);
+    });
+
+    _moveLeftSecondaryButton = std::make_shared<ui::Button>(resourceManager);
+    _moveLeftSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
+    _moveLeftSecondaryButton->setNormalColor({60, 100, 140});
+    _moveLeftSecondaryButton->setHoveredColor({80, 120, 180});
+    _moveLeftSecondaryButton->setFocusedColor({100, 140, 220});
+    _moveLeftSecondaryButton->setText("2");
+    updateKeyBindingButtonText(_moveLeftSecondaryButton,
+        ecs::RemappableAction::MOVE_LEFT, false);
+    _moveLeftSecondaryButton->setOnRelease([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_LEFT, false, _moveLeftSecondaryButton);
+    });
+    _moveLeftSecondaryButton->setOnActivated([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_LEFT, false, _moveLeftSecondaryButton);
+    });
+
+    moveLeftButtonsLayout->addElement(_moveLeftPrimaryButton);
+    moveLeftButtonsLayout->addElement(_moveLeftSecondaryButton);
+
+    _moveLeftLayout->addElement(_moveLeftLabel);
+    _moveLeftLayout->addElement(moveLeftButtonsLayout);
+
+    _moveRightLayout = std::make_shared<ui::UILayout>(resourceManager, mappingVerticalConfig);
+    _moveRightLayout->setSize(math::Vector2f(380.f, 85.f));
+
+    _moveRightLabel = std::make_shared<ui::Text>(resourceManager);
+    _moveRightLabel->setText("Move Right");
+    _moveRightLabel->setTextColor({255, 255, 255});
+    _moveRightLabel->setFontSize(20);
+    _moveRightLabel->setSize(math::Vector2f(380.f, 30.f));
+
+    auto moveRightButtonsLayout =
+        std::make_shared<ui::UILayout>(resourceManager, horizontalConfig);
+    moveRightButtonsLayout->setSize(math::Vector2f(380.f, 55.f));
+
+    _moveRightPrimaryButton = std::make_shared<ui::Button>(resourceManager);
+    _moveRightPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
+    _moveRightPrimaryButton->setNormalColor({80, 120, 160});
+    _moveRightPrimaryButton->setHoveredColor({100, 150, 200});
+    _moveRightPrimaryButton->setFocusedColor({120, 180, 240});
+    _moveRightPrimaryButton->setText("1");
+    updateKeyBindingButtonText(_moveRightPrimaryButton,
+        ecs::RemappableAction::MOVE_RIGHT, true);
+    _moveRightPrimaryButton->setOnRelease([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_RIGHT, true, _moveRightPrimaryButton);
+    });
+    _moveRightPrimaryButton->setOnActivated([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_RIGHT, true, _moveRightPrimaryButton);
+    });
+
+    _moveRightSecondaryButton = std::make_shared<ui::Button>(resourceManager);
+    _moveRightSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
+    _moveRightSecondaryButton->setNormalColor({60, 100, 140});
+    _moveRightSecondaryButton->setHoveredColor({80, 120, 180});
+    _moveRightSecondaryButton->setFocusedColor({100, 140, 220});
+    _moveRightSecondaryButton->setText("2");
+    updateKeyBindingButtonText(_moveRightSecondaryButton,
+        ecs::RemappableAction::MOVE_RIGHT, false);
+    _moveRightSecondaryButton->setOnRelease([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_RIGHT, false, _moveRightSecondaryButton);
+    });
+    _moveRightSecondaryButton->setOnActivated([this]() {
+        startKeyRebind(ecs::RemappableAction::MOVE_RIGHT, false, _moveRightSecondaryButton);
+    });
+
+    moveRightButtonsLayout->addElement(_moveRightPrimaryButton);
+    moveRightButtonsLayout->addElement(_moveRightSecondaryButton);
+
+    _moveRightLayout->addElement(_moveRightLabel);
+    _moveRightLayout->addElement(moveRightButtonsLayout);
+
+    _shootLayout = std::make_shared<ui::UILayout>(resourceManager, mappingVerticalConfig);
+    _shootLayout->setSize(math::Vector2f(380.f, 85.f));
+
+    _shootLabel = std::make_shared<ui::Text>(resourceManager);
+    _shootLabel->setText("Shoot");
+    _shootLabel->setTextColor({255, 255, 255});
+    _shootLabel->setFontSize(20);
+    _shootLabel->setSize(math::Vector2f(380.f, 30.f));
+
+    auto shootButtonsLayout =
+        std::make_shared<ui::UILayout>(resourceManager, horizontalConfig);
+    shootButtonsLayout->setSize(math::Vector2f(380.f, 55.f));
+
+    _shootPrimaryButton = std::make_shared<ui::Button>(resourceManager);
+    _shootPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
+    _shootPrimaryButton->setNormalColor({80, 120, 160});
+    _shootPrimaryButton->setHoveredColor({100, 150, 200});
+    _shootPrimaryButton->setFocusedColor({120, 180, 240});
+    _shootPrimaryButton->setText("1");
+    updateKeyBindingButtonText(_shootPrimaryButton, ecs::RemappableAction::SHOOT, true);
+    _shootPrimaryButton->setOnRelease([this]() {
+        startKeyRebind(ecs::RemappableAction::SHOOT, true, _shootPrimaryButton);
+    });
+    _shootPrimaryButton->setOnActivated([this]() {
+        startKeyRebind(ecs::RemappableAction::SHOOT, true, _shootPrimaryButton);
+    });
+
+    _shootSecondaryButton = std::make_shared<ui::Button>(resourceManager);
+    _shootSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
+    _shootSecondaryButton->setNormalColor({60, 100, 140});
+    _shootSecondaryButton->setHoveredColor({80, 120, 180});
+    _shootSecondaryButton->setFocusedColor({100, 140, 220});
+    _shootSecondaryButton->setText("2");
+    updateKeyBindingButtonText(_shootSecondaryButton, ecs::RemappableAction::SHOOT, false);
+    _shootSecondaryButton->setOnRelease([this]() {
+        startKeyRebind(ecs::RemappableAction::SHOOT, false, _shootSecondaryButton);
+    });
+    _shootSecondaryButton->setOnActivated([this]() {
+        startKeyRebind(ecs::RemappableAction::SHOOT, false, _shootSecondaryButton);
+    });
+
+    shootButtonsLayout->addElement(_shootPrimaryButton);
+    shootButtonsLayout->addElement(_shootSecondaryButton);
+
+    _shootLayout->addElement(_shootLabel);
+    _shootLayout->addElement(shootButtonsLayout);
 
     _leftColumnLayout->addElement(_musicVolumeSlider);
     _leftColumnLayout->addElement(_soundVolumeSlider);
@@ -267,12 +453,11 @@ SettingsState::SettingsState(
     _leftColumnLayout->addElement(_highContrastButton);
     _leftColumnLayout->addElement(_backButton);
 
-    _rightColumnLayout->addElement(_moveUpKeyButton);
-    _rightColumnLayout->addElement(_moveDownKeyButton);
-    _rightColumnLayout->addElement(_moveLeftKeyButton);
-    _rightColumnLayout->addElement(_moveRightKeyButton);
-    _rightColumnLayout->addElement(_shootKeyButton);
-    // Add some spacing before the toggle switch
+    _rightColumnLayout->addElement(_moveUpLayout);
+    _rightColumnLayout->addElement(_moveDownLayout);
+    _rightColumnLayout->addElement(_moveLeftLayout);
+    _rightColumnLayout->addElement(_moveRightLayout);
+    _rightColumnLayout->addElement(_shootLayout);
     _rightColumnLayout->addElement(_toggleSwitch);
 
     _settingsLayout->addElement(_leftColumnLayout);
@@ -312,8 +497,7 @@ void SettingsState::update(float deltaTime) {
                 updateKeyBindingButtonText(
                     _buttonToUpdate,
                     _actionToRebind.value(),
-                    _rebindDirection,
-                    _rebindLabel
+                    _rebindingPrimary
                 );
             }
             _actionToRebind.reset();
@@ -508,11 +692,33 @@ void SettingsState::exit() {
     _musicVolumeSlider.reset();
     _soundVolumeSlider.reset();
     _scaleButton.reset();
-    _moveUpKeyButton.reset();
-    _moveDownKeyButton.reset();
-    _moveLeftKeyButton.reset();
-    _moveRightKeyButton.reset();
-    _shootKeyButton.reset();
+    _toggleSwitch.reset();
+
+    _moveUpLayout.reset();
+    _moveUpLabel.reset();
+    _moveUpPrimaryButton.reset();
+    _moveUpSecondaryButton.reset();
+
+    _moveDownLayout.reset();
+    _moveDownLabel.reset();
+    _moveDownPrimaryButton.reset();
+    _moveDownSecondaryButton.reset();
+
+    _moveLeftLayout.reset();
+    _moveLeftLabel.reset();
+    _moveLeftPrimaryButton.reset();
+    _moveLeftSecondaryButton.reset();
+
+    _moveRightLayout.reset();
+    _moveRightLabel.reset();
+    _moveRightPrimaryButton.reset();
+    _moveRightSecondaryButton.reset();
+
+    _shootLayout.reset();
+    _shootLabel.reset();
+    _shootPrimaryButton.reset();
+    _shootSecondaryButton.reset();
+
     _leftColumnLayout.reset();
     _rightColumnLayout.reset();
     _settingsLayout.reset();
@@ -521,12 +727,12 @@ void SettingsState::exit() {
 }
 
 void SettingsState::startKeyRebind(
-    ecs::InputAction action, float direction,
+    ecs::RemappableAction action, bool rebindPrimary,
     std::shared_ptr<ui::Button> button
 ) {
     _isWaitingForKey = true;
     _actionToRebind = action;
-    _rebindDirection = direction;
+    _rebindingPrimary = rebindPrimary;
     _buttonToUpdate = button;
 
     std::string currentText = button->getText();
@@ -537,10 +743,11 @@ void SettingsState::startKeyRebind(
 
     if (_resourceManager->has<ecs::InputMappingManager>()) {
         auto mappingManager = _resourceManager->get<ecs::InputMappingManager>();
-        _originalKey = mappingManager->getKeyboardKeyForActionDirection(action, direction);
+        _originalKey = mappingManager->getKeyForRemappableAction(action, rebindPrimary);
     }
 
-    button->setText("Press a key...");
+    std::string keyType = rebindPrimary ? "1" : "2";
+    button->setText(keyType + ": Press key...");
 }
 
 void SettingsState::handleKeyRebind(gfx::EventType newKey) {
@@ -549,52 +756,45 @@ void SettingsState::handleKeyRebind(gfx::EventType newKey) {
 
     if (_resourceManager->has<ecs::InputMappingManager>()) {
         auto mappingManager = _resourceManager->get<ecs::InputMappingManager>();
-        mappingManager->remapKeyboardKey(_actionToRebind.value(), _originalKey, newKey);
+        mappingManager->remapKey(_actionToRebind.value(), newKey, _rebindingPrimary);
     }
 
-    updateKeyBindingButtonText(
-        _buttonToUpdate, _actionToRebind.value(), _rebindDirection, _rebindLabel
-    );
+    updateKeyBindingButtonText(_buttonToUpdate, _actionToRebind.value(), _rebindingPrimary);
 
     _isWaitingForKey = false;
     _actionToRebind.reset();
     _buttonToUpdate.reset();
     _originalKey = gfx::EventType::NOTHING;
     _rebindLabel.clear();
-}
-
-void SettingsState::updateKeyBindingButtonText(
+}void SettingsState::updateKeyBindingButtonText(
     std::shared_ptr<ui::Button> button,
-    ecs::InputAction action, float direction,
-    const std::string& label
+    ecs::RemappableAction action,
+    bool isPrimary
 ) {
-    std::string keyName = "None";
+    std::string keyName = "";
 
     if (_resourceManager->has<ecs::InputMappingManager>()) {
         auto mappingManager = _resourceManager->get<ecs::InputMappingManager>();
-        gfx::EventType key = mappingManager->getKeyboardKeyForActionDirection(
-            action, direction
-        );
+        gfx::EventType key = mappingManager->getKeyForRemappableAction(action, isPrimary);
         if (key != gfx::EventType::NOTHING) {
             keyName = ecs::InputMappingManager::eventTypeToString(key);
         }
     }
 
-    button->setText(label + ": " + keyName);
+    std::string displayText = isPrimary ? "1" : "2";
+    if (!keyName.empty()) {
+        displayText += ": " + keyName;
+    }
+    button->setText(displayText);
 }
 
-std::string SettingsState::getActionName(ecs::InputAction action) const {
+std::string SettingsState::getRemappableActionName(ecs::RemappableAction action) const {
     switch (action) {
-        case ecs::InputAction::MOVE_X: return "Move Horizontal";
-        case ecs::InputAction::MOVE_Y: return "Move Vertical";
-        case ecs::InputAction::SHOOT: return "Shoot";
-        case ecs::InputAction::PAUSE: return "Pause";
-        case ecs::InputAction::MENU_UP: return "Menu Up";
-        case ecs::InputAction::MENU_DOWN: return "Menu Down";
-        case ecs::InputAction::MENU_LEFT: return "Menu Left";
-        case ecs::InputAction::MENU_RIGHT: return "Menu Right";
-        case ecs::InputAction::MENU_SELECT: return "Menu Select";
-        case ecs::InputAction::MENU_BACK: return "Menu Back";
+        case ecs::RemappableAction::MOVE_LEFT: return "Move Left";
+        case ecs::RemappableAction::MOVE_RIGHT: return "Move Right";
+        case ecs::RemappableAction::MOVE_UP: return "Move Up";
+        case ecs::RemappableAction::MOVE_DOWN: return "Move Down";
+        case ecs::RemappableAction::SHOOT: return "Shoot";
         default: return "Unknown";
     }
 }

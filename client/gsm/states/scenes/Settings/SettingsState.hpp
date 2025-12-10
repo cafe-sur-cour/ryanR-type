@@ -14,6 +14,7 @@
 #include "../../../../ui/elements/focusable/Button.hpp"
 #include "../../../../ui/elements/focusable/Slider.hpp"
 #include "../../../../ui/elements/focusable/ToggleSwitch.hpp"
+#include "../../../../ui/elements/Text.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../../common/types/Vector2f.hpp"
@@ -42,14 +43,10 @@ private:
     void updateSoundVolume(float value);
     void updateToggleValue(bool value);
 
-    void startKeyRebind(ecs::InputAction action, float direction, std::shared_ptr<ui::Button> button);
+    void startKeyRebind(ecs::RemappableAction action, bool rebindPrimary, std::shared_ptr<ui::Button> button);
     void handleKeyRebind(gfx::EventType newKey);
-    void updateKeyBindingButtonText(
-        std::shared_ptr<ui::Button> button,
-        ecs::InputAction action, float direction,
-        const std::string& label
-    );
-    std::string getActionName(ecs::InputAction action) const;
+    void updateKeyBindingButtonText(std::shared_ptr<ui::Button> button, ecs::RemappableAction action, bool isPrimary);
+    std::string getRemappableActionName(ecs::RemappableAction action) const;
 
 private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
@@ -68,15 +65,34 @@ private:
     std::shared_ptr<ui::UILayout> _titleLayout;
     math::Vector2f _savedViewCenter;
 
-    std::shared_ptr<ui::Button> _moveUpKeyButton;
-    std::shared_ptr<ui::Button> _moveDownKeyButton;
-    std::shared_ptr<ui::Button> _moveLeftKeyButton;
-    std::shared_ptr<ui::Button> _moveRightKeyButton;
-    std::shared_ptr<ui::Button> _shootKeyButton;
+    std::shared_ptr<ui::UILayout> _moveUpLayout;
+    std::shared_ptr<ui::Text> _moveUpLabel;
+    std::shared_ptr<ui::Button> _moveUpPrimaryButton;
+    std::shared_ptr<ui::Button> _moveUpSecondaryButton;
+
+    std::shared_ptr<ui::UILayout> _moveDownLayout;
+    std::shared_ptr<ui::Text> _moveDownLabel;
+    std::shared_ptr<ui::Button> _moveDownPrimaryButton;
+    std::shared_ptr<ui::Button> _moveDownSecondaryButton;
+
+    std::shared_ptr<ui::UILayout> _moveLeftLayout;
+    std::shared_ptr<ui::Text> _moveLeftLabel;
+    std::shared_ptr<ui::Button> _moveLeftPrimaryButton;
+    std::shared_ptr<ui::Button> _moveLeftSecondaryButton;
+
+    std::shared_ptr<ui::UILayout> _moveRightLayout;
+    std::shared_ptr<ui::Text> _moveRightLabel;
+    std::shared_ptr<ui::Button> _moveRightPrimaryButton;
+    std::shared_ptr<ui::Button> _moveRightSecondaryButton;
+
+    std::shared_ptr<ui::UILayout> _shootLayout;
+    std::shared_ptr<ui::Text> _shootLabel;
+    std::shared_ptr<ui::Button> _shootPrimaryButton;
+    std::shared_ptr<ui::Button> _shootSecondaryButton;
 
     bool _isWaitingForKey = false;
-    std::optional<ecs::InputAction> _actionToRebind;
-    float _rebindDirection = 1.0f;
+    std::optional<ecs::RemappableAction> _actionToRebind;
+    bool _rebindingPrimary = true;
     std::string _rebindLabel;
     std::shared_ptr<ui::Button> _buttonToUpdate;
     gfx::EventType _originalKey = gfx::EventType::NOTHING;
