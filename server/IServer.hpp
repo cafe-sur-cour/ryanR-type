@@ -44,10 +44,10 @@ public:
     virtual void onClientDisconnected(uint8_t idClient) = 0;
     virtual void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet) = 0;
 
+    virtual void processIncomingPackets() = 0;
     virtual bool processConnections(asio::ip::udp::endpoint id) = 0;
     virtual bool processDisconnections(uint8_t idClient) = 0;
     virtual bool processEvents(uint8_t idClient) = 0;
-    virtual void processIncomingPackets() = 0;
     virtual bool processEndOfGame(uint8_t idClient) = 0;
 
     virtual std::vector<uint8_t> getConnectedClients() const = 0;
