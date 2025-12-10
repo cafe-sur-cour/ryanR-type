@@ -186,6 +186,18 @@ unsigned int pm::PacketManager::unpackDamage(std::vector<uint8_t> payload, unsig
     return 0;
 }
 
+unsigned int pm::PacketManager::unpackLifetime(std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == LIFETIME) {
+        this->_payload.push_back(static_cast<uint64_t>(LIFETIME));
+        uint64_t lifetime = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin() + i + 1,
+            payload.begin() + i + 9));
+        this->_payload.push_back(lifetime);
+        return 9;
+    }
+    return 0;
+}
+
 unsigned int pm::PacketManager::unpackVelocity(std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == VELOCITY) {
         this->_payload.push_back(static_cast<uint64_t>(VELOCITY));

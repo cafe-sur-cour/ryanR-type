@@ -17,6 +17,7 @@
 #include "../common/components/permanent/ScoreComponent.hpp"
 #include "../common/components/permanent/AIMovementPatternComponent.hpp"
 #include "../common/components/permanent/DamageComponent.hpp"
+#include "../common/components/permanent/LifetimeComponent.hpp"
 #include "../common/components/permanent/VelocityComponent.hpp"
 
 std::vector<uint64_t> rserv::Server::convertTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
@@ -121,6 +122,16 @@ std::vector<uint64_t> rserv::Server::convertDamageComponent(std::shared_ptr<ecs:
         auto damageComp = registry->getComponent<ecs::DamageComponent>(i);
         data.push_back(static_cast<uint64_t>(DAMAGE));
         data.push_back(static_cast<uint64_t>(damageComp->getDamage()));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertLifetimeComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::LifetimeComponent>(i)) {
+        auto lifetimeComp = registry->getComponent<ecs::LifetimeComponent>(i);
+        data.push_back(static_cast<uint64_t>(LIFETIME));
+        data.push_back(static_cast<uint64_t>(lifetimeComp->getLifetime()));
     }
     return data;
 }
