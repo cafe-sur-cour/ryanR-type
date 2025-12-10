@@ -19,6 +19,7 @@ int main(int ac, char **av) {
     Utils utils;
 
     try {
+        core.init();  // Initialize libraries and resources
         utils.parseCli(ac, av, core.getNetwork());
         core.startNetwork();
         core.run();

@@ -251,6 +251,8 @@ void ClientNetwork::start() {
             );
             this->_eventQueue.pop();
         }
+        // Add small delay to prevent busy waiting and allow other threads to run
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     if (this->_network->getConnectionState() != net::ConnectionState::CONNECTED
         && retryCount >= maxRetries) {

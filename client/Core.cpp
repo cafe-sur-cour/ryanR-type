@@ -52,11 +52,35 @@ void Core::run() {
         debug::debugLevel::INFO);
     auto previousTime = std::chrono::high_resolution_clock::now();
 
+    // Debug: Check if window is created
+    auto window = this->_resourceManager->get<gfx::IWindow>();
+    if (!window) {
+        debug::Debug::printDebug(this->_clientNetwork->isDebugMode(),
+            "ERROR: Window is null!",
+            debug::debugType::CORE,
+            debug::debugLevel::ERROR);
+        return;
+    }
+    debug::Debug::printDebug(this->_clientNetwork->isDebugMode(),
+        "Window created successfully",
+        debug::debugType::CORE,
+        debug::debugLevel::INFO);
+
+    int frameCount = 0;
     while (this->_resourceManager->get<gfx::IWindow>()->isOpen()
         && !Signal::stopFlag) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<float> deltaTime = currentTime - previousTime;
         previousTime = currentTime;
+
+        // Debug: Print frame info occasionally
+        frameCount++;
+        if (frameCount % 60 == 0) {  // Every ~1 second at 60 FPS
+            debug::Debug::printDebug(this->_clientNetwork->isDebugMode(),
+                "Main loop running - Frame: " + std::to_string(frameCount),
+                debug::debugType::CORE,
+                debug::debugLevel::INFO);
+        }
 
         this->_resourceManager->get<gfx::IWindow>()->clear();
         this->_gsm->update(deltaTime.count());
