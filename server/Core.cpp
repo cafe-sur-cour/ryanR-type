@@ -89,6 +89,31 @@ void Core::init() {
     });
 }
 
+void Core::processServerEvents() {
+    if (this->_server == nullptr) {
+        return;
+    }
+
+    if (!this->_server->hasEvents()) {
+        return;
+    }
+
+    auto eventQueue = this->_server->getEventQueue();
+    if (!eventQueue) {
+        return;
+    }
+
+    while (!eventQueue->empty()) {
+        auto event = eventQueue->front();
+        eventQueue->pop();
+        uint8_t clientId = std::get<0>(event);
+        constants::EventType eventType = std::get<1>(event);
+        double param1 = std::get<2>(event);
+        this->_inputProvider->updateInputFromEvent
+            (clientId, eventType, static_cast<float>(param1));
+    }
+}
+
 void Core::loop() {
     auto previousTime = std::chrono::high_resolution_clock::now();
 

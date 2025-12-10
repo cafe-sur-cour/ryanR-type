@@ -17,37 +17,12 @@
 #include "../../../common/components/temporary/InputIntentComponent.hpp"
 #include "../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../common/InputMapping/InputAction.hpp"
+#include "../../../common/systems/input/InputNormalizer.hpp"
 #include "../../ClientNetwork.hpp"
 
 namespace ecs {
 
 MovementInputSystem::MovementInputSystem() {
-}
-
-std::pair<int, double> MovementInputSystem::formatDirection(const math::Vector2f
-    &direction) const {
-    float absX = std::abs(direction.getX());
-    float absY = std::abs(direction.getY());
-
-    int eventType;
-    double depth;
-    if (absY >= absX) {
-        if (direction.getY() < 0) {
-            eventType = static_cast<int>(constants::EventType::UP);
-        } else {
-            eventType = static_cast<int>(constants::EventType::DOWN);
-        }
-        depth = static_cast<double>(absY);
-    } else {
-        if (direction.getX() > 0) {
-            eventType = static_cast<int>(constants::EventType::RIGHT);
-        } else {
-            eventType = static_cast<int>(constants::EventType::LEFT);
-        }
-        depth = static_cast<double>(absX);
-    }
-    depth = std::clamp(depth, 0.000, 1.0);
-    return {eventType, depth};
 }
 
 void MovementInputSystem::update(
@@ -60,15 +35,20 @@ void MovementInputSystem::update(
     auto view = registry->view<ControllableTag>();
     math::Vector2f movementDirection = getMovementDirection(resourceManager);
 
-    if (resourceManager->has<ClientNetwork>() &&
-        !(std::fabs(movementDirection.getX()) <= constants::EPS &&
-        std::fabs(movementDirection.getY()) <= constants::EPS)) {
-        std::pair<int, double> formatted =
-            formatDirection(movementDirection);
-        resourceManager->get<ClientNetwork>()->addToEventQueue({
-            static_cast<constants::EventType>(formatted.first),
-            formatted.second
-        });
+    bool isMovingThisFrame = !(std::fabs(movementDirection.getX()) <= constants::EPS &&
+        std::fabs(movementDirection.getY()) <= constants::EPS);
+
+    if (resourceManager->has<ClientNetwork>()) {
+        if (isMovingThisFrame) {
+            sendAxisEvents(resourceManager, movementDirection);
+            _wasMovingLastFrame = true;
+        } else if (_wasMovingLastFrame) {
+            NetworkEvent stopEvent;
+            stopEvent.eventType = constants::EventType::STOP;
+            stopEvent.depth = 0.0;
+            resourceManager->get<ClientNetwork>()->addToEventQueue(stopEvent);
+            _wasMovingLastFrame = false;
+        }
     }
     for (auto entityId : view) {
         updateInputIntent(registry, entityId, movementDirection);
@@ -88,14 +68,7 @@ math::Vector2f MovementInputSystem::getMovementDirection(
 
     direction.setX(inputProvider->getActionAxis(InputAction::MOVE_X));
     direction.setY(inputProvider->getActionAxis(InputAction::MOVE_Y));
-
-    /* Normalize keyboard/dpad input */
-    float magnitude = std::sqrt(direction.getX() *
-                    direction.getX() + direction.getY() * direction.getY());
-    if (magnitude > 1.0f) {
-        direction.setX(direction.getX() / magnitude);
-        direction.setY(direction.getY() / magnitude);
-    }
+    direction = InputNormalizer::normalizeDirection(direction);
 
     /* Gamepad input */
     math::Vector2f analogInput = getAnalogStickInput(inputProvider);
@@ -114,34 +87,7 @@ math::Vector2f MovementInputSystem::getAnalogStickInput(
     float rawY =
         inputProvider->getAxisValue(gfx::EventType::GAMEPAD_LEFT_STICK_DOWN);
 
-    const float deadzone = constants::GAMEPAD_DEADZONE * 100.0f;
-    const float maxValue = constants::AXIS_MAX_VALUE;
-    const float range = maxValue - deadzone;
-
-    if (std::abs(rawX) < deadzone) {
-        rawX = 0.0f;
-    } else {
-        float sign = rawX > 0 ? 1.0f : -1.0f;
-        rawX = (std::abs(rawX) - deadzone) / range * sign;
-    }
-
-    if (std::abs(rawY) < deadzone) {
-        rawY = 0.0f;
-    } else {
-        float sign = rawY > 0 ? 1.0f : -1.0f;
-        rawY = (std::abs(rawY) - deadzone) / range * sign;
-    }
-
-    math::Vector2f normalized(rawX, rawY);
-
-    float magnitude = std::sqrt(normalized.getX() *
-                    normalized.getX() + normalized.getY() * normalized.getY());
-    if (magnitude > 1.0f) {
-        normalized.setX(normalized.getX() / magnitude);
-        normalized.setY(normalized.getY() / magnitude);
-    }
-
-    return normalized;
+    return InputNormalizer::normalizeAnalogInput(rawX, rawY);
 }
 
 void MovementInputSystem::updateInputIntent(
@@ -158,6 +104,36 @@ void MovementInputSystem::updateInputIntent(
         existingIntent->setDirection(direction);
     } else {
         registry->addComponent(entityId, inputIntent);
+    }
+}
+
+void MovementInputSystem::sendAxisEvents(
+    std::shared_ptr<ResourceManager> resourceManager,
+    const math::Vector2f &direction) {
+    auto clientNetwork = resourceManager->get<ClientNetwork>();
+    if (std::fabs(direction.getX()) > constants::EPS) {
+        constants::EventType xEventType;
+        if (direction.getX() > 0) {
+            xEventType = constants::EventType::RIGHT;
+        } else {
+            xEventType = constants::EventType::LEFT;
+        }
+        NetworkEvent xEvent;
+        xEvent.eventType = xEventType;
+        xEvent.depth = static_cast<double>(std::fabs(direction.getX()));
+        clientNetwork->addToEventQueue(xEvent);
+    }
+    if (std::fabs(direction.getY()) > constants::EPS) {
+        constants::EventType yEventType;
+        if (direction.getY() < 0) {
+            yEventType = constants::EventType::UP;
+        } else {
+            yEventType = constants::EventType::DOWN;
+        }
+        NetworkEvent yEvent;
+        yEvent.eventType = yEventType;
+        yEvent.depth = static_cast<double>(std::fabs(direction.getY()));
+        clientNetwork->addToEventQueue(yEvent);
     }
 }
 

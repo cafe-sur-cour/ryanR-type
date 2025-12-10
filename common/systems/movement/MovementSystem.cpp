@@ -18,7 +18,6 @@
 #include "../../types/FRect.hpp"
 #include "../../constants.hpp"
 #include "../../components/tags/ObstacleTag.hpp"
-#include "../../components/tags/ProjectileTag.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../CollisionRules/CollisionRules.hpp"
 
@@ -53,12 +52,6 @@ void MovementSystem::update(std::shared_ptr<ResourceManager> resourceManager,
         math::Vector2f finalPos = calculateSmoothSlidingPosition(
             registry, entityId, currentPos, desiredPos);
         transform->setPosition(finalPos);
-
-        if (registry->hasComponent<ProjectileTag>(entityId) &&
-            (std::abs(finalPos.getX() - desiredPos.getX()) > constants::EPS ||
-             std::abs(finalPos.getY() - desiredPos.getY()) > constants::EPS)) {
-            velocityComp->setVelocity(math::Vector2f(0.0f, 0.0f));
-        }
 
         if (hasPushCollider) {
             handlePushCollision(registry, entityId, finalPos, deltaTime);

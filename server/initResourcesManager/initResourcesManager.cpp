@@ -32,7 +32,13 @@ std::shared_ptr<ResourceManager> initResourcesManager(
 
     resourceManager->add<ecs::IInputProvider>(inputProvider);
 
-    auto entityPrefabManager = std::make_shared<EntityPrefabManager>();
+    auto serverInputProvider = std::dynamic_pointer_cast
+        <ecs::ServerInputProvider>(inputProvider);
+    if (serverInputProvider) {
+        resourceManager->add<ecs::ServerInputProvider>(serverInputProvider);
+    }
+
+    auto entityPrefabManager = parser->getPrefabManager();
     resourceManager->add<EntityPrefabManager>(entityPrefabManager);
 
     resourceManager->add<rserv::Server>(server);
