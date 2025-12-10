@@ -112,6 +112,13 @@ bool UIManager::handleNavigationInputs(
     if (_navigationCooldown > 0.0f)
         return false;
 
+    if (inputProvider->isActionPressed(ecs::InputAction::MENU_BACK)) {
+        if (_onBack) {
+            _onBack();
+        }
+        return true;
+    }
+
     bool navigationTriggered = false;
 
     if (inputProvider->isActionPressed(ecs::InputAction::MENU_UP)) {
@@ -228,6 +235,10 @@ void UIManager::cycleGlobalScale() {
 
 UIScale UIManager::getGlobalScale() const {
     return _globalScale;
+}
+
+void UIManager::setOnBack(std::function<void()> callback) {
+    _onBack = callback;
 }
 
 }  // namespace ui
