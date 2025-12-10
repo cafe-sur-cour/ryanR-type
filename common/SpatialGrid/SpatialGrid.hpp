@@ -15,6 +15,7 @@
 #include <cstddef>
 #include "../types/FRect.hpp"
 #include "../types/Vector2f.hpp"
+#include "../constants.hpp"
 
 namespace ecs {
 
@@ -22,8 +23,12 @@ using Entity = size_t;
 
 class SpatialGrid {
     public:
-        SpatialGrid(float worldWidth = 1920.0f, float worldHeight = 1080.0f,
-                    float cellSize = 128.0f, float padding = 200.0f);
+        SpatialGrid(
+            float worldWidth = constants::MAX_WIDTH,
+            float worldHeight = constants::MAX_HEIGHT,
+            float cellSize = constants::SPATIAL_GRID_CELL_SIZE,
+            float padding = constants::SPATIAL_GRID_PADDING
+        );
         ~SpatialGrid() = default;
 
         void clear();
