@@ -104,7 +104,10 @@ void rserv::Server::start() {
     Signal::setupSignalHandlers();
     while (this->getState() == 1 && !Signal::stopFlag) {
         this->processIncomingPackets();
-        this->gameStatePacket();
+        if (this->_clients.size() > 0) {
+            this->gameStatePacket();
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
         if (std::cin.eof()) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "EOF received (Ctrl+D pressed)",
