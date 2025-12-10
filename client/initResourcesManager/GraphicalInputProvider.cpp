@@ -59,6 +59,20 @@ bool GraphicalInputProvider::isActionPressed(InputAction action, size_t clientID
         }
 
         return _toggledStates[action];
+    } else if (isMenuAction) {
+        bool keyPressed = false;
+        for (auto& pair : it->second) {
+            auto et = pair.first;
+            if (_eventSystem->isKeyPressed(et)) {
+                keyPressed = true;
+                break;
+            }
+        }
+
+        bool wasPressed = _lastKeyState[action];
+        _lastKeyState[action] = keyPressed;
+
+        return keyPressed && !wasPressed;
     } else {
         for (auto& pair : it->second) {
             auto et = pair.first;

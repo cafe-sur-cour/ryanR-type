@@ -288,6 +288,12 @@ void SettingsState::enter() {
         static_cast<float>(logicalSize.first) / 2.0f,
         static_cast<float>(logicalSize.second) / 2.0f
     );
+
+    _uiManager->setOnBack([this]() {
+        if (!_isWaitingForKey) {
+            this->_gsm->requestStatePop();
+        }
+    });
 }
 
 void SettingsState::update(float deltaTime) {

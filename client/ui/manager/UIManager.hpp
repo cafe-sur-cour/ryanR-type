@@ -50,6 +50,8 @@ class UIManager {
         void cycleGlobalScale();
         UIScale getGlobalScale() const;
 
+        void setOnBack(std::function<void()> callback);
+
     private:
         std::vector<std::shared_ptr<UIElement>> _elements;
         std::shared_ptr<UINavigationManager> _navigationManager;

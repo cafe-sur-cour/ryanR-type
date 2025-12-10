@@ -119,6 +119,8 @@ MainMenuState::MainMenuState(
 }
 
 void MainMenuState::enter() {
+    _uiManager->setOnBack([]() {
+    });
 }
 
 void MainMenuState::update(float deltaTime) {
