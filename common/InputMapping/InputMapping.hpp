@@ -16,7 +16,21 @@
 namespace ecs {
 
 struct InputMapping {
-    std::map<InputAction, std::map<gfx::EventType, float>> mappings;
+    std::map<InputAction, std::pair<gfx::EventType, gfx::EventType>> remappableKeys;
+    std::map<InputAction, std::map<gfx::EventType, float>> fixedMappings;
+
+    std::map<InputAction, std::map<gfx::EventType, float>> getAllMappings() const {
+        std::map<InputAction, std::map<gfx::EventType, float>> all = fixedMappings;
+        for (const auto& [action, pair] : remappableKeys) {
+            if (pair.first != gfx::EventType::NOTHING) {
+                all[action][pair.first] = 1.0f;
+            }
+            if (pair.second != gfx::EventType::NOTHING) {
+                all[action][pair.second] = 1.0f;
+            }
+        }
+        return all;
+    }
 };
 
 }  // namespace ecs

@@ -31,8 +31,9 @@ float GraphicalInputProvider::getAxisValue(event_t axis, size_t clientID) {
 bool GraphicalInputProvider::isActionPressed(InputAction action, size_t clientID) {
     (void)clientID;
     const auto& mapping = _mappingManager->getMapping();
-    auto it = mapping.mappings.find(action);
-    if (it == mapping.mappings.end()) return false;
+    const auto& allMappings = mapping.getAllMappings();
+    auto it = allMappings.find(action);
+    if (it == allMappings.end()) return false;
 
     bool isMenuAction = (action == InputAction::MENU_UP ||
                         action == InputAction::MENU_DOWN ||
@@ -85,8 +86,9 @@ bool GraphicalInputProvider::isActionPressed(InputAction action, size_t clientID
 float GraphicalInputProvider::getActionAxis(InputAction action, size_t clientID) {
     (void)clientID;
     const auto& mapping = _mappingManager->getMapping();
-    auto it = mapping.mappings.find(action);
-    if (it == mapping.mappings.end()) return 0.0f;
+    const auto& allMappings = mapping.getAllMappings();
+    auto it = allMappings.find(action);
+    if (it == allMappings.end()) return 0.0f;
 
     bool isMenuAction = (action == InputAction::MENU_UP ||
                         action == InputAction::MENU_DOWN ||

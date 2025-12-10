@@ -19,62 +19,73 @@ InputMappingManager::InputMappingManager() {
 }
 
 void InputMappingManager::loadDefault() {
+    /* Remappable keys */
+    _mapping.remappableKeys[InputAction::SHOOT] =
+        {gfx::EventType::SPACE, gfx::EventType::NOTHING};
+    _mapping.remappableKeys[InputAction::MENU_UP] =
+        {gfx::EventType::UP, gfx::EventType::Z};
+    _mapping.remappableKeys[InputAction::MENU_DOWN] =
+        {gfx::EventType::DOWN, gfx::EventType::S};
+    _mapping.remappableKeys[InputAction::MENU_LEFT] =
+        {gfx::EventType::LEFT, gfx::EventType::Q};
+    _mapping.remappableKeys[InputAction::MENU_RIGHT] =
+        {gfx::EventType::RIGHT, gfx::EventType::D};
+
+    /* Fixed mappings */
     /* MOVE_X */
-    _mapping.mappings[InputAction::MOVE_X][gfx::EventType::LEFT] = -1.0f;
-    _mapping.mappings[InputAction::MOVE_X][gfx::EventType::RIGHT] = 1.0f;
-    _mapping.mappings[InputAction::MOVE_X][gfx::EventType::Q] = -1.0f;
-    _mapping.mappings[InputAction::MOVE_X][gfx::EventType::D] = 1.0f;
-    _mapping.mappings[InputAction::MOVE_X][gfx::EventType::GAMEPAD_DPAD_LEFT] = -1.0f;
-    _mapping.mappings[InputAction::MOVE_X][gfx::EventType::GAMEPAD_DPAD_RIGHT] = 1.0f;
-    _mapping.mappings[InputAction::MOVE_X][gfx::EventType::GAMEPAD_LEFT_STICK_LEFT] = -1.0f;
-    _mapping.mappings[InputAction::MOVE_X][gfx::EventType::GAMEPAD_LEFT_STICK_RIGHT] = 1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_X][gfx::EventType::LEFT] = -1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_X][gfx::EventType::RIGHT] = 1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_X][gfx::EventType::Q] = -1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_X][gfx::EventType::D] = 1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_X]
+        [gfx::EventType::GAMEPAD_DPAD_LEFT] = -1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_X]
+        [gfx::EventType::GAMEPAD_DPAD_RIGHT] = 1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_X]
+        [gfx::EventType::GAMEPAD_LEFT_STICK_LEFT] = -1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_X]
+        [gfx::EventType::GAMEPAD_LEFT_STICK_RIGHT] = 1.0f;
 
     /* MOVE_Y */
-    _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::UP] = -1.0f;
-    _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::DOWN] = 1.0f;
-    _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::Z] = -1.0f;
-    _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::S] = 1.0f;
-    _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::GAMEPAD_DPAD_UP] = -1.0f;
-    _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::GAMEPAD_DPAD_DOWN] = 1.0f;
-    _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::GAMEPAD_LEFT_STICK_UP] = -1.0f;
-    _mapping.mappings[InputAction::MOVE_Y][gfx::EventType::GAMEPAD_LEFT_STICK_DOWN] = 1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_Y][gfx::EventType::UP] = -1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_Y][gfx::EventType::DOWN] = 1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_Y][gfx::EventType::Z] = -1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_Y][gfx::EventType::S] = 1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_Y]
+        [gfx::EventType::GAMEPAD_DPAD_UP] = -1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_Y]
+        [gfx::EventType::GAMEPAD_DPAD_DOWN] = 1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_Y]
+        [gfx::EventType::GAMEPAD_LEFT_STICK_UP] = -1.0f;
+    _mapping.fixedMappings[InputAction::MOVE_Y]
+        [gfx::EventType::GAMEPAD_LEFT_STICK_DOWN] = 1.0f;
 
     /* SHOOT */
-    _mapping.mappings[InputAction::SHOOT][gfx::EventType::SPACE] = 1.0f;
-    _mapping.mappings[InputAction::SHOOT][gfx::EventType::MOUSELEFTCLICK] = 1.0f;
-    _mapping.mappings[InputAction::SHOOT][gfx::EventType::GAMEPAD_A] = 1.0f;
+    _mapping.fixedMappings[InputAction::SHOOT][gfx::EventType::GAMEPAD_A] = 1.0f;
 
     /* PAUSE */
-    _mapping.mappings[InputAction::PAUSE][gfx::EventType::ESCAPE] = 1.0f;
-    _mapping.mappings[InputAction::PAUSE][gfx::EventType::GAMEPAD_START] = 1.0f;
+    _mapping.fixedMappings[InputAction::PAUSE][gfx::EventType::ESCAPE] = 1.0f;
+    _mapping.fixedMappings[InputAction::PAUSE][gfx::EventType::GAMEPAD_START] = 1.0f;
 
     /* MENU_UP */
-    _mapping.mappings[InputAction::MENU_UP][gfx::EventType::UP] = 1.0f;
-    _mapping.mappings[InputAction::MENU_UP][gfx::EventType::Z] = 1.0f;
-    _mapping.mappings[InputAction::MENU_UP][gfx::EventType::GAMEPAD_DPAD_UP] = 1.0f;
+    _mapping.fixedMappings[InputAction::MENU_UP][gfx::EventType::GAMEPAD_DPAD_UP] = 1.0f;
 
     /* MENU_DOWN */
-    _mapping.mappings[InputAction::MENU_DOWN][gfx::EventType::DOWN] = 1.0f;
-    _mapping.mappings[InputAction::MENU_DOWN][gfx::EventType::S] = 1.0f;
-    _mapping.mappings[InputAction::MENU_DOWN][gfx::EventType::GAMEPAD_DPAD_DOWN] = 1.0f;
+    _mapping.fixedMappings[InputAction::MENU_DOWN][gfx::EventType::GAMEPAD_DPAD_DOWN] = 1.0f;
 
     /* MENU_LEFT */
-    _mapping.mappings[InputAction::MENU_LEFT][gfx::EventType::LEFT] = 1.0f;
-    _mapping.mappings[InputAction::MENU_LEFT][gfx::EventType::Q] = 1.0f;
-    _mapping.mappings[InputAction::MENU_LEFT][gfx::EventType::GAMEPAD_DPAD_LEFT] = 1.0f;
+    _mapping.fixedMappings[InputAction::MENU_LEFT][gfx::EventType::GAMEPAD_DPAD_LEFT] = 1.0f;
 
     /* MENU_RIGHT */
-    _mapping.mappings[InputAction::MENU_RIGHT][gfx::EventType::RIGHT] = 1.0f;
-    _mapping.mappings[InputAction::MENU_RIGHT][gfx::EventType::D] = 1.0f;
-    _mapping.mappings[InputAction::MENU_RIGHT][gfx::EventType::GAMEPAD_DPAD_RIGHT] = 1.0f;
+    _mapping.fixedMappings[InputAction::MENU_RIGHT][gfx::EventType::GAMEPAD_DPAD_RIGHT] = 1.0f;
 
     /* MENU_SELECT */
-    _mapping.mappings[InputAction::MENU_SELECT][gfx::EventType::ENTER] = 1.0f;
-    _mapping.mappings[InputAction::MENU_SELECT][gfx::EventType::GAMEPAD_A] = 1.0f;
+    _mapping.fixedMappings[InputAction::MENU_SELECT][gfx::EventType::ENTER] = 1.0f;
+    _mapping.fixedMappings[InputAction::MENU_SELECT][gfx::EventType::GAMEPAD_A] = 1.0f;
 
     /* MENU_BACK */
-    _mapping.mappings[InputAction::MENU_BACK][gfx::EventType::ESCAPE] = 1.0f;
-    _mapping.mappings[InputAction::MENU_BACK][gfx::EventType::GAMEPAD_B] = 1.0f;
+    _mapping.fixedMappings[InputAction::MENU_BACK][gfx::EventType::ESCAPE] = 1.0f;
+    _mapping.fixedMappings[InputAction::MENU_BACK][gfx::EventType::GAMEPAD_B] = 1.0f;
 }
 
 void InputMappingManager::setMapping(const InputMapping& mapping) {
@@ -90,13 +101,17 @@ InputMapping& InputMappingManager::getMutableMapping() {
 }
 
 gfx::EventType InputMappingManager::getKeyboardKeyForAction(InputAction action) const {
-    auto it = _mapping.mappings.find(action);
-    if (it == _mapping.mappings.end())
-        return gfx::EventType::NOTHING;
+    auto it = _mapping.remappableKeys.find(action);
+    if (it != _mapping.remappableKeys.end()) {
+        return it->second.first;
+    }
 
-    for (const auto& pair : it->second) {
-        if (isKeyboardKey(pair.first))
-            return pair.first;
+    auto it2 = _mapping.fixedMappings.find(action);
+    if (it2 != _mapping.fixedMappings.end()) {
+        for (const auto& pair : it2->second) {
+            if (isKeyboardKey(pair.first))
+                return pair.first;
+        }
     }
     return gfx::EventType::NOTHING;
 }
@@ -104,8 +119,8 @@ gfx::EventType InputMappingManager::getKeyboardKeyForAction(InputAction action) 
 gfx::EventType InputMappingManager::getKeyboardKeyForActionDirection(
     InputAction action, float direction
 ) const {
-    auto it = _mapping.mappings.find(action);
-    if (it == _mapping.mappings.end())
+    auto it = _mapping.fixedMappings.find(action);
+    if (it == _mapping.fixedMappings.end())
         return gfx::EventType::NOTHING;
 
     for (const auto& pair : it->second) {
@@ -121,13 +136,18 @@ std::vector<gfx::EventType> InputMappingManager::getKeyboardKeysForAction(
     InputAction action
 ) const {
     std::vector<gfx::EventType> keys;
-    auto it = _mapping.mappings.find(action);
-    if (it == _mapping.mappings.end())
-        return keys;
+    auto it = _mapping.remappableKeys.find(action);
+    if (it != _mapping.remappableKeys.end()) {
+        if (it->second.first != gfx::EventType::NOTHING) keys.push_back(it->second.first);
+        if (it->second.second != gfx::EventType::NOTHING) keys.push_back(it->second.second);
+    }
 
-    for (const auto& pair : it->second) {
-        if (isKeyboardKey(pair.first))
-            keys.push_back(pair.first);
+    auto it2 = _mapping.fixedMappings.find(action);
+    if (it2 != _mapping.fixedMappings.end()) {
+        for (const auto& pair : it2->second) {
+            if (isKeyboardKey(pair.first))
+                keys.push_back(pair.first);
+        }
     }
     return keys;
 }
@@ -135,27 +155,37 @@ std::vector<gfx::EventType> InputMappingManager::getKeyboardKeysForAction(
 void InputMappingManager::remapKeyboardKey(
     InputAction action, gfx::EventType oldKey, gfx::EventType newKey
 ) {
-    auto it = _mapping.mappings.find(action);
-    if (it == _mapping.mappings.end())
+    auto it = _mapping.remappableKeys.find(action);
+    if (it != _mapping.remappableKeys.end()) {
+        if (it->second.first == oldKey) {
+            it->second.first = newKey;
+        } else if (it->second.second == oldKey) {
+            it->second.second = newKey;
+        }
+        return;
+    }
+
+    auto it2 = _mapping.fixedMappings.find(action);
+    if (it2 == _mapping.fixedMappings.end())
         return;
 
-    auto keyIt = it->second.find(oldKey);
-    if (keyIt == it->second.end())
+    auto keyIt = it2->second.find(oldKey);
+    if (keyIt == it2->second.end())
         return;
 
     float value = keyIt->second;
 
     std::vector<gfx::EventType> keysToRemove;
-    for (const auto& pair : it->second) {
+    for (const auto& pair : it2->second) {
         if (isKeyboardKey(pair.first) && std::fabs(pair.second - value) < constants::EPS) {
             keysToRemove.push_back(pair.first);
         }
     }
     for (const auto& key : keysToRemove) {
-        it->second.erase(key);
+        it2->second.erase(key);
     }
 
-    it->second[newKey] = value;
+    it2->second[newKey] = value;
 }
 
 bool InputMappingManager::isKeyboardKey(gfx::EventType eventType) {
