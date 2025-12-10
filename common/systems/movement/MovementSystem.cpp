@@ -299,9 +299,9 @@ void MovementSystem::handlePushCollision(
         if (pushCollider->getType() != CollisionType::Push) continue;
 
         math::FRect pushHitbox = pushCollider->getHitbox(finalPos, entityScale);
-        auto nearbyEntities = _spatialGrid.query(pushHitbox);
 
-        for (auto otherEntityId : nearbyEntities) {
+        auto allEntities = registry->view<TransformComponent, ColliderComponent>();
+        for (auto otherEntityId : allEntities) {
             if (otherEntityId == entityId) continue;
 
             auto otherTransform = registry->getComponent<TransformComponent>(otherEntityId);
@@ -319,20 +319,24 @@ void MovementSystem::handlePushCollision(
                 }
 
                 math::Vector2f otherScale = otherTransform->getScale();
+                math::Vector2f currentOtherPos = otherTransform->getPosition();
                 math::FRect otherHitbox =
-                    otherCollider->getHitbox(otherTransform->getPosition(), otherScale);
+                    otherCollider->getHitbox(currentOtherPos, otherScale);
 
                 if (pushHitbox.intersects(otherHitbox)) {
                     auto pusherVelocity = registry->getComponent<VelocityComponent>(entityId);
                     math::Vector2f pushVelocity = pusherVelocity->getVelocity();
                     math::Vector2f pushAmount = pushVelocity * deltaTime;
-                    math::Vector2f newOtherPos = otherTransform->getPosition() + pushAmount;
+                    math::Vector2f newOtherPos = currentOtherPos + pushAmount;
 
                     if (checkCollision(registry, otherEntityId, newOtherPos)) {
                         otherTransform->setPosition(newOtherPos);
                     } else {
-                        registry->addComponent<DeathIntentComponent>(otherEntityId,
-                            std::make_shared<DeathIntentComponent>());
+                        float pushRight = pushHitbox.getLeft() + pushHitbox.getWidth();
+                        float offsetX = otherCollider->getOffset().getX() * otherScale.getX();
+                        float correctedX = pushRight - offsetX;
+                        math::Vector2f correctedPos(correctedX, currentOtherPos.getY());
+                        otherTransform->setPosition(correctedPos);
                     }
                 }
             }
