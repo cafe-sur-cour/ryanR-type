@@ -53,9 +53,11 @@ void MovementSystem::buildSpatialGrid(std::shared_ptr<Registry> registry) {
     }
 }
 
-void MovementSystem::update(std::shared_ptr<ResourceManager> resourceManager,
-                             std::shared_ptr<Registry> registry,
-                             float deltaTime) {
+void MovementSystem::update(
+    std::shared_ptr<ResourceManager> resourceManager,
+    std::shared_ptr<Registry> registry,
+    float deltaTime
+) {
     (void)resourceManager;
 
     buildSpatialGrid(registry);
