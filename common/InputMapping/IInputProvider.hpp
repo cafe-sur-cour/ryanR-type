@@ -11,6 +11,7 @@
 #include <utility>
 #include "../../libs/Multimedia/EventTypes.hpp"
 #include "InputAction.hpp"
+#include "InputMapping.hpp"
 
 namespace ecs {
 
@@ -19,9 +20,10 @@ class IInputProvider {
         using event_t = gfx::EventType;
         virtual ~IInputProvider() = default;
 
-        virtual float getAxisValue(event_t axis) = 0;
-        virtual bool isActionPressed(InputAction action) = 0;
-        virtual float getActionAxis(InputAction action) = 0;
+        virtual float getAxisValue(event_t axis, size_t clientID = 0) = 0;
+        virtual bool isActionPressed(InputAction action, size_t clientID = 0) = 0;
+        virtual float getActionAxis(InputAction action, size_t clientID = 0) = 0;
+        virtual InputMapping getInputMapping(size_t clientID = 0) const = 0;
 };
 
 }  // namespace ecs

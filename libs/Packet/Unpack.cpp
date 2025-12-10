@@ -61,7 +61,6 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
             return true;
         }
     }
-
     debug::Debug::printDebug(true,
         "[PACKET] Unknown packet type "
         + std::to_string(static_cast<int>(type))
