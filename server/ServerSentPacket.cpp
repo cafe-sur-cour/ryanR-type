@@ -13,10 +13,6 @@
 #include "../common/translationToECS.hpp"
 #include "../common/ECS/entity/Entity.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
-#include "../common/components/tags/PlayerTag.hpp"
-#include "../common/components/permanent/TransformComponent.hpp"
-#include "../common/components/permanent/VelocityComponent.hpp"
-
 
 bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber,
@@ -38,11 +34,9 @@ bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
 
 bool rserv::Server::gameStatePacket() {
     std::vector<uint64_t> payload;
-    std::cout << "[SERVER] Preparing game state packet" << std::endl;
     if (!this->_resourceManager->has<ecs::Registry>()) {
         return false;
     }
-    std::cout << "[SERVER] Fetching registry from ResourceManager" << std::endl;
     auto registry = this->_resourceManager->get<ecs::Registry>();
     for (ecs::Entity i = 0; i < registry->getMaxEntityId(); i++) {
         payload.push_back(static_cast<uint64_t>(i));
@@ -59,6 +53,7 @@ bool rserv::Server::gameStatePacket() {
                 debug::debugType::NETWORK, debug::debugLevel::ERROR);
             return false;
         }
+        payload.clear();
     }
     return true;
 }
