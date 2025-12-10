@@ -20,6 +20,10 @@ add_executable(ChronoTests common/types/ChronoTests.cpp)
 target_link_libraries(ChronoTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main)
 add_test(NAME ChronoTests COMMAND ChronoTests)
 
+add_executable(SpatialGridTests common/SpatialGridTests.cpp)
+target_link_libraries(SpatialGridTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main)
+add_test(NAME SpatialGridTests COMMAND SpatialGridTests)
+
 add_executable(VelocityComponentTests common/ECS/component/VelocityComponentTests.cpp)
 target_link_libraries(VelocityComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
 add_test(NAME VelocityComponentTests COMMAND VelocityComponentTests)
