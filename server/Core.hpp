@@ -31,7 +31,6 @@ class Core {
 
         void init();
         void loop();
-        void processServerEvents();
 
         std::shared_ptr<rserv::Server> getServer() const;
         std::shared_ptr<rserv::ServerConfig> getConfig() const;
@@ -40,6 +39,7 @@ class Core {
         std::shared_ptr<Parser> getParser() const;
         std::shared_ptr<ecs::ISystemManager> getSystemsManager() const;
         std::shared_ptr<gsm::GameStateMachine> getGameStateMachine() const;
+        void processServerEvents();
 
     protected:
     private:

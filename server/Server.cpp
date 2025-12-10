@@ -22,7 +22,8 @@
 #include "../common/constants.hpp"
 #include "Signal.hpp"
 
-rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
+rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
+    _nextClientId(1), _sequenceNumber(1) {
     this->_clients = {};
     this->_config = nullptr;
     this->_network = nullptr;
@@ -31,6 +32,20 @@ rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
     this->_eventQueue = std::make_shared<std::queue<std::tuple<uint8_t,
         constants::EventType, double>>>();
     this->_config = std::make_shared<rserv::ServerConfig>();
+    this->_resourceManager = resourceManager;
+
+    this->_convertFunctions = {
+        std::bind(&rserv::Server::convertTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertTransformComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertVelocityComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertSpeedComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertHealthComponent, this,
+            std::placeholders::_1, std::placeholders::_2)
+    };
 }
 
 rserv::Server::~Server() {
@@ -87,6 +102,7 @@ void rserv::Server::start() {
     Signal::setupSignalHandlers();
     while (this->getState() == 1 && !Signal::stopFlag) {
         this->processIncomingPackets();
+        this->gameStatePacket();
         if (std::cin.eof()) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "EOF received (Ctrl+D pressed)",

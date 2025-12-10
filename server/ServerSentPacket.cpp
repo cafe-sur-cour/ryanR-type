@@ -10,6 +10,12 @@
 
 #include "Server.hpp"
 #include "../common/debug.hpp"
+#include "../common/translationToECS.hpp"
+#include "../common/ECS/entity/Entity.hpp"
+#include "../common/ECS/entity/registry/Registry.hpp"
+#include "../common/components/tags/PlayerTag.hpp"
+#include "../common/components/permanent/TransformComponent.hpp"
+#include "../common/components/permanent/VelocityComponent.hpp"
 
 
 bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
@@ -31,6 +37,29 @@ bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
 }
 
 bool rserv::Server::gameStatePacket() {
+    std::vector<uint64_t> payload;
+    std::cout << "[SERVER] Preparing game state packet" << std::endl;
+    if (!this->_resourceManager->has<ecs::Registry>()) {
+        return false;
+    }
+    std::cout << "[SERVER] Fetching registry from ResourceManager" << std::endl;
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+    for (ecs::Entity i = 0; i < registry->getMaxEntityId(); i++) {
+        payload.push_back(static_cast<uint64_t>(i));
+        for (const auto& func : this->_convertFunctions) {
+            std::vector<uint64_t> componentData = func(registry, i);
+            payload.insert(payload.end(), componentData.begin(), componentData.end());
+        }
+
+        if (this->_network->broadcast(this->getConnectedClientEndpoints(),
+            this->_packet->pack(0, this->_sequenceNumber,
+            constants::PACKET_GAME_STATE, payload)) == false) {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER NETWORK] Failed to broadcast game state packet",
+                debug::debugType::NETWORK, debug::debugLevel::ERROR);
+            return false;
+        }
+    }
     return true;
 }
 
