@@ -42,21 +42,6 @@ std::vector<uint8_t> pm::PacketManager::packTransformation(std::vector<uint64_t>
     return packet;
 }
 
-std::vector<uint8_t> pm::PacketManager::packVelocity(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
-    std::vector<uint8_t> temp = {};
-    std::vector<uint8_t> packet = {};
-    if (payload.at(*i) == VELOCITY) {
-        temp = this->_serializer->serializeUChar(payload.at(*i));
-        packet.insert(packet.end(), temp.begin(), temp.end());
-        temp = this->_serializer->serializeULong(payload.at(*i + 1));
-        packet.insert(packet.end(), temp.begin(), temp.end());
-        temp = this->_serializer->serializeULong(payload.at(*i + 2));
-        packet.insert(packet.end(), temp.begin(), temp.end());
-        *i += 3;
-    }
-    return packet;
-}
-
 std::vector<uint8_t> pm::PacketManager::packSpeed(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
@@ -127,6 +112,19 @@ std::vector<uint8_t> pm::PacketManager::packShootingStats(std::vector<uint64_t> 
     return packet;
 }
 
+std::vector<uint8_t> pm::PacketManager::packScore(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+    std::vector<uint8_t> temp = {};
+    std::vector<uint8_t> packet = {};
+    if (payload.at(*i) == SCORE) {
+        temp = this->_serializer->serializeUChar(payload.at(*i));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeUInt(payload.at(*i + 1));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        *i += 2;
+    }
+    return packet;
+}
+
 std::vector<uint8_t> pm::PacketManager::packAIMovementPattern(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
@@ -146,6 +144,21 @@ std::vector<uint8_t> pm::PacketManager::packAIMovementPattern(std::vector<uint64
         temp = this->_serializer->serializeULong(payload.at(*i + 6));
         packet.insert(packet.end(), temp.begin(), temp.end());
         *i += 7;
+    }
+    return packet;
+}
+
+std::vector<uint8_t> pm::PacketManager::packVelocity(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+    std::vector<uint8_t> temp = {};
+    std::vector<uint8_t> packet = {};
+    if (payload.at(*i) == VELOCITY) {
+        temp = this->_serializer->serializeUChar(payload.at(*i));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeULong(payload.at(*i + 1));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeULong(payload.at(*i + 2));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        *i += 3;
     }
     return packet;
 }

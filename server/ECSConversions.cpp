@@ -10,12 +10,13 @@
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
 #include "../common/components/permanent/TransformComponent.hpp"
-#include "../common/components/permanent/VelocityComponent.hpp"
 #include "../common/components/permanent/SpeedComponent.hpp"
 #include "../common/components/permanent/HealthComponent.hpp"
 #include "../common/components/permanent/ColliderComponent.hpp"
 #include "../common/components/permanent/ShootingStatsComponent.hpp"
+#include "../common/components/permanent/ScoreComponent.hpp"
 #include "../common/components/permanent/AIMovementPatternComponent.hpp"
+#include "../common/components/permanent/VelocityComponent.hpp"
 
 std::vector<uint64_t> rserv::Server::convertTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
@@ -35,17 +36,6 @@ std::vector<uint64_t> rserv::Server::convertTransformComponent(std::shared_ptr<e
         data.push_back(static_cast<uint64_t>(transform->getRotation()));
         data.push_back(static_cast<uint64_t>(transform->getScale().getX()));
         data.push_back(static_cast<uint64_t>(transform->getScale().getY()));
-    }
-    return data;
-}
-
-std::vector<uint64_t> rserv::Server::convertVelocityComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
-    std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::VelocityComponent>(i)) {
-        auto velocity = registry->getComponent<ecs::VelocityComponent>(i);
-        data.push_back(static_cast<uint64_t>(VELOCITY));
-        data.push_back(static_cast<uint64_t>(velocity->getVelocity().getX()));
-        data.push_back(static_cast<uint64_t>(velocity->getVelocity().getY()));
     }
     return data;
 }
@@ -99,6 +89,16 @@ std::vector<uint64_t> rserv::Server::convertShootStatComponent(std::shared_ptr<e
     return data;
 }
 
+std::vector<uint64_t> rserv::Server::convertScoreComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::ScoreComponent>(i)) {
+        auto scoreComp = registry->getComponent<ecs::ScoreComponent>(i);
+        data.push_back(static_cast<uint64_t>(SCORE));
+        data.push_back(static_cast<uint64_t>(scoreComp->getScore()));
+    }
+    return data;
+}
+
 std::vector<uint64_t> rserv::Server::convertAIMovementPatternComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
    if (registry->hasComponent<ecs::AIMovementPatternComponent>(i)) {
@@ -110,6 +110,17 @@ std::vector<uint64_t> rserv::Server::convertAIMovementPatternComponent(std::shar
         data.push_back(static_cast<uint64_t>(pattern->getDetectionRange()));
         data.push_back(static_cast<uint64_t>(pattern->getVerticalDeadzone()));
         data.push_back(static_cast<uint64_t>(pattern->getTimer()));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertVelocityComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::VelocityComponent>(i)) {
+        auto velocity = registry->getComponent<ecs::VelocityComponent>(i);
+        data.push_back(static_cast<uint64_t>(VELOCITY));
+        data.push_back(static_cast<uint64_t>(velocity->getVelocity().getX()));
+        data.push_back(static_cast<uint64_t>(velocity->getVelocity().getY()));
     }
     return data;
 }

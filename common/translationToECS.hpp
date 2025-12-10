@@ -15,7 +15,7 @@ enum componentType {
     HEALTH = 0x03,
     COLLIDER = 0x04,
     SHOOTING_STATS = 0x05,
-    // SCORE = 0x06,
+    SCORE = 0x06,
     AI_MOVEMENT_PATTERN = 0x07,
     // DAMAGE = 0x08,
     // LIFETIME = 0x09,
