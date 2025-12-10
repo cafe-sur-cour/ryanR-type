@@ -104,7 +104,7 @@ void ToggleSwitch::render() {
     float trackX = pos.getX() + (size.getX() - trackWidth) / 2.0f;
     float trackY = pos.getY() + (size.getY() - trackHeight) / 2.0f;
     window->drawFilledRectangle(_trackColor,
-        {static_cast<size_t>(trackX),static_cast<size_t>(trackY)},
+        {static_cast<size_t>(trackX), static_cast<size_t>(trackY)},
         {static_cast<size_t>(trackWidth), static_cast<size_t>(trackHeight)});
 
     float handleWidth = trackWidth / 2.0f;
@@ -147,7 +147,8 @@ void ToggleSwitch::handleInput(const math::Vector2f& mousePos, bool mousePressed
     math::Vector2f pos = getAbsolutePosition();
     math::Vector2f size = getAbsoluteSize();
 
-    _isHovered = mousePos.getX() >= pos.getX() && mousePos.getX() <= pos.getX() + size.getX() &&
+    _isHovered = mousePos.getX() >= pos.getX() &&
+                 mousePos.getX() <= pos.getX() + size.getX() &&
                  mousePos.getY() >= pos.getY() && mousePos.getY() <= pos.getY() + size.getY();
 
     AFocusableElement::handleInput(mousePos, mousePressed);
