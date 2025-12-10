@@ -18,47 +18,160 @@
 
 namespace net {
 
-WindowsNetwork::WindowsNetwork() {
+WindowsNetwork::WindowsNetwork() : _connected(false) {
+    _ioContext = std::make_shared<asio::io_context>();
+    _isRunning = false;
 }
 
 WindowsNetwork::~WindowsNetwork() {
+    if (_connected) {
+        disconnect();
+    }
 }
 
 void WindowsNetwork::init(uint16_t port, const std::string host) {
-    (void)port;
-    (void)host;
+    std::error_code ec;
+
+    if (!this->_socket) {
+        this->_socket = std::make_shared<asio::ip::udp::socket>(*_ioContext);
+    }
+
+    if (!this->_socket->is_open()) {
+        this->_socket->open(asio::ip::udp::v4(), ec);
+        if (ec) {
+            throw std::runtime_error(
+                std::string("[CLIENT NETWORK] Failed to open socket: ") + ec.message());
+        }
+    }
+    try {
+        asio::ip::udp::resolver resolver(*_ioContext);
+        asio::ip::udp::resolver::results_type endpoints =
+            resolver.resolve(asio::ip::udp::v4(), host, std::to_string(port));
+        if (endpoints.empty()) {
+            throw std::runtime_error(
+                "[CLIENT NETWORK] Failed to resolve host '" + host + "': no results");
+        }
+        this->_serverEndpoint = *endpoints.begin();
+        this->_socket->non_blocking(true, ec);
+        if (ec) {
+            throw std::runtime_error(
+                std::string("[CLIENT NETWORK] Failed to set non-blocking mode: ") +
+                ec.message());
+        }
+        this->setConnectionState(ConnectionState::CONNECTING);
+    } catch (const std::exception& e) {
+        this->_connected = false;
+        throw std::runtime_error(
+            std::string("[CLIENT NETWORK] Connection failed: ") + e.what());
+    }
 }
 
 void WindowsNetwork::stop() {
+    if (_socket && _socket->is_open()) {
+        _socket->close();
+    }
+    _connected = false;
+    _isRunning = false;
 }
 
 void WindowsNetwork::disconnect() {
+    if (_socket && _socket->is_open()) {
+        _socket->close();
+    }
+    _connected = false;
+    this->setConnectionState(ConnectionState::DISCONNECTED);
+    if (this->_onDisconnectCallback) {
+        this->_onDisconnectCallback(0);
+    }
 }
 
 bool WindowsNetwork::isConnected() const {
-    return _connected;
+    return this->_connected;
 }
 
 bool WindowsNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
     (void)id;
-    (void)packet;
-    return false;
+    try {
+        if (!this->_socket || !this->_socket->is_open()) {
+            std::cerr << "[CLIENT NETWORK] Socket is not open for sending." << std::endl;
+            return false;
+        }
+        if (packet.empty()) {
+            std::cerr << "[CLIENT NETWORK] No data to send." << std::endl;
+            return false;
+        }
+        _socket->send_to(asio::buffer(packet), this->_serverEndpoint);
+        return true;
+    } catch (const std::exception& e) {
+        std::cerr << "[CLIENT NETWORK] Send error: " << e.what() << std::endl;
+        return false;
+    }
 }
 
-bool WindowsNetwork::broadcast(std::vector<asio::ip::udp::endpoint> clients,
+bool WindowsNetwork::broadcast(std::vector<asio::ip::udp::endpoint> endpoints,
     std::vector<uint8_t> data) {
-    (void)clients;
-    (void)data;
-    return false;
+    try {
+        for (auto &endpoint : endpoints) {
+            if (!this->sendTo(endpoint, data)) {
+                std::cerr << "[CLIENT NETWORK] Broadcast error to endpoint: "
+                    << endpoint.address().to_string() << ":" << endpoint.port() << std::endl;
+                return false;
+            }
+            if (data.empty()) {
+                std::cerr << "[CLIENT NETWORK] No data to broadcast." << std::endl;
+                return false;
+            }
+            _socket->send_to(asio::buffer(data), this->_serverEndpoint);
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "[CLIENT NETWORK] Broadcast error: " << e.what() << std::endl;
+    }
+    return true;
 }
 
 bool WindowsNetwork::hasIncomingData() const {
-    return false;
+    if (!_socket || !_socket->is_open()) {
+        return false;
+    }
+
+    std::error_code ec;
+    size_t available = _socket->available(ec);
+    return !ec && available > 0;
 }
 
 std::vector<uint8_t> WindowsNetwork::receiveFrom(
     const uint8_t &connectionId) {
     (void)connectionId;
+
+    asio::error_code ec;
+    std::size_t available = _socket->available(ec);
+
+    if (ec) {
+        std::cerr << "[CLIENT NETWORK] Error checking available data: "
+                  << ec.message() << std::endl;
+        return std::vector<uint8_t>();
+    }
+
+    if (available == 0) {
+        return std::vector<uint8_t>();
+    }
+    std::vector<uint8_t> buffer(available);
+
+    std::size_t bytesReceived = _socket->receive_from(
+        asio::buffer(buffer), this->_serverEndpoint, 0, ec);
+
+    if (ec) {
+        if (ec == asio::error::would_block || ec == asio::error::try_again) {
+            return std::vector<uint8_t>();
+        }
+        std::cerr << "[CLIENT NETWORK] Receive error: " << ec.message() << std::endl;
+        return std::vector<uint8_t>();
+    }
+
+    if (bytesReceived > 0) {
+        buffer.resize(bytesReceived);
+        return buffer;
+    }
     return std::vector<uint8_t>();
 }
 
