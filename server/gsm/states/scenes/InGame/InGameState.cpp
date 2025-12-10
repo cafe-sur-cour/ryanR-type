@@ -26,6 +26,7 @@
 #include "../../../../../common/systems/interactions/InteractionSystem.hpp"
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
 #include "../../../../../common/Parser/CollisionRulesParser.hpp"
+
 namespace gsm {
 
 InGameState::InGameState(std::shared_ptr<IGameStateMachine> gsm,
