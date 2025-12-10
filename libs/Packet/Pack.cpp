@@ -38,19 +38,27 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
 
     if (type == GAME_STATE_PACKET) {
         length += 8;
-        for (uint64_t i = 1; i < payload.size(); i++) {
+        for (uint64_t i = 1; i < payload.size();) {
             if (payload.at(i) == TRANSFORM) {
                 length += 41;
+                i += 6;
             } else if (payload.at(i) == VELOCITY) {
                 length += 17;
+                i += 3;
             } else if (payload.at(i) == SPEED) {
                 length += 9;
+                i += 2;
             } else if (payload.at(i) == HEALTH) {
-                length += 16;
+                length += 17;
+                i += 3;
             } else if (payload.at(i) == COLLIDER) {
-                length += 33;
+                length += 34;
+                i += 6;
             } else if (payload.at(i) == PLAYER_TAG) {
-                length += 8;
+                length += 1;
+                i += 1;
+            } else {
+                i++;
             }
         }
     }
