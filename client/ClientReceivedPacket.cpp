@@ -11,6 +11,7 @@
 #include "ClientNetwork.hpp"
 #include "../common/debug.hpp"
 #include "../common/Parser/Parser.hpp"
+#include "../common/ECS/entity/EntityCreationContext.hpp"
 #include "gsm/states/scenes/InGame/InGameState.hpp"
 
 /* Packet Handlers */
@@ -70,6 +71,8 @@ void ClientNetwork::handleMapSend() {
         return;
     }
     try {
+        parser->getMapParser()->setCreationContext(
+            ecs::EntityCreationContext::forNetworkSync(0));
         parser->getMapParser()->parseMapFromPacket(payloadBytes);
     } catch (const std::exception& e) {
         debug::Debug::printDebug(this->_isDebug,

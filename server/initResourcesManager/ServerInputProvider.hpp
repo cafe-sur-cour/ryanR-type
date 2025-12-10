@@ -38,6 +38,16 @@ class ServerInputProvider : public IInputProvider {
     private:
         std::vector<std::tuple<size_t, size_t, InputMapping>> _inputMapping;
         std::map<size_t, std::map<ecs::InputAction, float>> _clientAxisValues;
+
+        using InputHandler = void (ServerInputProvider::*)(size_t, float);
+        std::vector<InputHandler> _inputHandlers;
+
+        void handleUp(size_t clientID, float value);
+        void handleDown(size_t clientID, float value);
+        void handleLeft(size_t clientID, float value);
+        void handleRight(size_t clientID, float value);
+        void handleStop(size_t clientID, float value);
+        void handleShoot(size_t clientID, float value);
 };
 
 } // namespace ecs

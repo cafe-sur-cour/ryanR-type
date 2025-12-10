@@ -36,6 +36,7 @@ target_link_libraries(${SERVER_LIB_NAME}
         PREFAB
         InputNormalizer
         ServerMovementInputSystem
+        ServerShootInputSystem
 )
 
 target_include_directories(${SERVER_LIB_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/common)

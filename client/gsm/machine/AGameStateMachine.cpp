@@ -18,9 +18,6 @@ void AGameStateMachine::changeState(std::shared_ptr<IGameState> newState) {
 }
 
 void AGameStateMachine::pushState(std::shared_ptr<IGameState> newState) {
-    if (!_states.empty()) {
-        _states.top()->exit();
-    }
     _states.push(newState);
     _states.top()->enter();
 }
@@ -30,13 +27,18 @@ void AGameStateMachine::popState() {
         _states.top()->exit();
         _states.pop();
     }
-    if (!_states.empty()) {
-        _states.top()->enter();
-    }
 }
 
 void AGameStateMachine::requestStateChange(std::shared_ptr<IGameState> newState) {
-    _pendingState = newState;
+    _pendingChangeState = newState;
+}
+
+void AGameStateMachine::requestStatePush(std::shared_ptr<IGameState> newState) {
+    _pendingPushState = newState;
+}
+
+void AGameStateMachine::requestStatePop() {
+    _pendingPopState = true;
 }
 
 void AGameStateMachine::update(float deltaTime) {
@@ -44,21 +46,21 @@ void AGameStateMachine::update(float deltaTime) {
         return;
     }
 
-    std::vector<std::shared_ptr<IGameState>> statesToUpdate;
-    std::stack<std::shared_ptr<IGameState>> tempStack = _states;
+    auto currentState = _states.top();
 
-    while (!tempStack.empty()) {
-        statesToUpdate.push_back(tempStack.top());
-        tempStack.pop();
+    currentState->update(deltaTime);
+
+    if (_pendingChangeState) {
+        changeState(_pendingChangeState);
+        _pendingChangeState.reset();
     }
-
-    for (auto it = statesToUpdate.rbegin(); it != statesToUpdate.rend(); ++it) {
-        (*it)->update(deltaTime);
+    if (_pendingPushState) {
+        pushState(_pendingPushState);
+        _pendingPushState.reset();
     }
-
-    if (_pendingState) {
-        changeState(_pendingState);
-        _pendingState.reset();
+    if (_pendingPopState) {
+        popState();
+        _pendingPopState = false;
     }
 }
 
