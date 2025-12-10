@@ -25,32 +25,6 @@ namespace ecs {
 MovementInputSystem::MovementInputSystem() {
 }
 
-std::pair<int, double> MovementInputSystem::formatDirection(const math::Vector2f
-    &direction) const {
-    float absX = std::abs(direction.getX());
-    float absY = std::abs(direction.getY());
-
-    int eventType;
-    double depth;
-    if (absY >= absX) {
-        if (direction.getY() < 0) {
-            eventType = static_cast<int>(constants::EventType::UP);
-        } else {
-            eventType = static_cast<int>(constants::EventType::DOWN);
-        }
-        depth = static_cast<double>(absY);
-    } else {
-        if (direction.getX() > 0) {
-            eventType = static_cast<int>(constants::EventType::RIGHT);
-        } else {
-            eventType = static_cast<int>(constants::EventType::LEFT);
-        }
-        depth = static_cast<double>(absX);
-    }
-    depth = std::clamp(depth, 0.000, 1.0);
-    return {eventType, depth};
-}
-
 void MovementInputSystem::update(
     std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<Registry> registry,
