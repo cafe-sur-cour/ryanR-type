@@ -62,7 +62,7 @@ float GraphicalInputProvider::getActionAxis(InputAction action, size_t clientID)
 
 InputMapping GraphicalInputProvider::getInputMapping(size_t clientID) const {
     (void)clientID;
-    return _mapping;
+    return _mappingManager->getMapping();
 }
 
 }  // namespace ecs
