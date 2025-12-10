@@ -185,7 +185,7 @@ void rserv::Server::processIncomingPackets() {
 
     this->_packet->unpack(received.second);
     if (this->_packet->getType() == constants::PACKET_CONNECTION) {
-        this->processConnections(received.first);
+            this->processConnections(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_EVENT) {
         this->processEvents(this->_packet->getIdClient());
     } else {

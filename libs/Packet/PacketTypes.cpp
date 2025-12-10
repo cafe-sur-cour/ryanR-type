@@ -163,10 +163,10 @@ bool pm::PacketManager::parseEndGamePacket(
     return true;
 }
 
+
 std::vector<uint8_t> pm::PacketManager::buildCanStartPacket(std::vector<uint64_t> payload) {
     std::vector<uint8_t> body;
-    std::vector<uint64_t> namesPayload(payload.begin() + 1, payload.end());
-    for (auto val : namesPayload) {
+    for (auto val : payload) {
         auto temp = this->_serializer->serializeULong(val);
         body.insert(body.end(), temp.begin(), temp.end());
     }
