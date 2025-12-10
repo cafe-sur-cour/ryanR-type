@@ -134,10 +134,6 @@ bool UIManager::handleNavigationInputs(
         handleNavigationInput(ecs::InputAction::MENU_SELECT);
         navigationTriggered = true;
     }
-    if (inputProvider->isActionPressed(ecs::InputAction::MENU_BACK)) {
-        handleNavigationInput(ecs::InputAction::MENU_BACK);
-        navigationTriggered = true;
-    }
 
     if (navigationTriggered)
         _navigationCooldown = constants::NAVIGATION_COOLDOWN_TIME;
