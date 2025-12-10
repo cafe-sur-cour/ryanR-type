@@ -52,7 +52,7 @@ MainMenuState::MainMenuState(
 
     _playButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
-        if (network && network->isConnected()) {
+        if (network && network->isReady()) {
             this->_gsm->requestStateChange(std::make_shared<DevState>(this->_gsm,
                 this->_resourceManager));
         } else {
@@ -64,7 +64,7 @@ MainMenuState::MainMenuState(
     });
     _playButton->setOnActivated([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
-        if (network && network->isConnected()) {
+        if (network && network->isReady()) {
             this->_gsm->requestStateChange(std::make_shared<DevState>(this->_gsm,
                 this->_resourceManager));
         } else {
