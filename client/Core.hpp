@@ -25,6 +25,7 @@ class Core
         Core();
         ~Core();
 
+        void init();
         void run();
         void startNetwork();
 
