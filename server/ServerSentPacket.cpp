@@ -13,6 +13,7 @@
 #include "../common/translationToECS.hpp"
 #include "../common/ECS/entity/Entity.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
+#include "../common/Parser/Parser.hpp"
 
 bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber,
@@ -27,7 +28,6 @@ bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
         return false;
     }
     this->_sequenceNumber++;
-    this->mapPacket(this->_currentMap, endpoint);
     return true;
 }
 
@@ -101,7 +101,38 @@ bool rserv::Server::canStartPacket() {
         }
         this->_sequenceNumber++;
         this->_gameStarted = true;
+        std::string playerString = "player";
+        for (int i = 0; i < this->getConfig()->getNbClients(); i++) {
+            ecs::Entity playerEntity = _resourceManager->get<EntityPrefabManager>()->
+            createEntityFromPrefab(
+                playerString,
+                _resourceManager->get<ecs::Registry>()
+            );
+            std::vector<uint64_t> spawnData = this->spawnPacket(playerEntity, playerString);
+            std::vector<uint8_t> spawnPacket = this->_packet->pack(0, this->_sequenceNumber,
+                constants::PACKET_SPAWN, spawnData);
+            if (!this->_network->broadcast(this->getConnectedClientEndpoints(), spawnPacket)) {
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER NETWORK] Failed to broadcast spawn packet",
+                    debug::debugType::NETWORK, debug::debugLevel::ERROR);
+                return false;
+            }
+            this->_sequenceNumber++;
+        }
         return true;
     }
     return false;
+}
+
+std::vector<uint64_t> rserv::Server::spawnPacket(size_t entity, const std::string prefabName) {
+    std::vector<uint64_t> payload;
+
+    payload.push_back(static_cast<uint64_t>(entity));
+    for (const auto &c : prefabName) {
+        payload.push_back(static_cast<uint64_t>(c));
+    }
+    payload.push_back(static_cast<uint64_t>('\r'));
+    payload.push_back(static_cast<uint64_t>('\n'));
+    payload.push_back(static_cast<uint64_t>('\0'));
+    return payload;
 }
