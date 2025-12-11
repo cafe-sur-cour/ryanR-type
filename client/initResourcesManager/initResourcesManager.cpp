@@ -98,5 +98,6 @@ std::shared_ptr<ResourceManager> initResourcesManager(
     resourceManager->add<SettingsManager>(settingsManager);
 
     settingsManager->applyAccessibilityToWindow(window);
+    window->setFramerateLimit(static_cast<unsigned int>(settingsConfig->getTargetFPS()));
     return resourceManager;
 }

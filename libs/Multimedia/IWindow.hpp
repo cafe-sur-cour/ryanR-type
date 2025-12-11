@@ -59,6 +59,7 @@ class IWindow {
         virtual void addShaderFilter(const std::string& path) = 0;
         virtual void removeShaderFilter(const std::string& path) = 0;
         virtual void setShaderUniform(const std::string& filterPath, const std::string& name, float value) = 0;
+        virtual void setFramerateLimit(unsigned int fps) = 0;
 };
 
 typedef IWindow *(*createWindow_t)();
