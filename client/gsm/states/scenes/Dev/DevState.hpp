@@ -19,6 +19,9 @@ public:
     void exit() override;
 
 private:
+    void renderHUD();
+
+private:
     std::shared_ptr<ecs::Registry> _registry;
     std::shared_ptr<EntityPrefabManager> _prefabManager;
     std::shared_ptr<Parser> _parser;
