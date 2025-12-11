@@ -53,6 +53,7 @@
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
 #include "../../../../../common/systems/ai/AIMovementSystem.hpp"
 #include "../../../../../common/systems/ai/AIShootingSystem.hpp"
+#include "../../../../interpolation/NetworkStateComponent.hpp"
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../../common/components/permanent/HealthComponent.hpp"
 

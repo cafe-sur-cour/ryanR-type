@@ -78,7 +78,8 @@ namespace rserv {
             bool connectionPacket(asio::ip::udp::endpoint endpoint);
             bool gameStatePacket();
             bool canStartPacket();
-
+            std::vector<uint64_t> spawnPacket(size_t entity, const std::string prefabName);
+            std::vector<uint64_t> deathPacket(size_t entity);
             void setCurrentMap(const std::vector<uint64_t> &map);
             std::vector<uint64_t> getCurrentMap() const;
             bool isGameStarted() const;
@@ -126,7 +127,6 @@ namespace rserv {
             std::vector<uint64_t> convertMobTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertObstacleTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertPlayerProjectileTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertScoreTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertShooterTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertProjectilePassThroughTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertProjectilePrefabComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);

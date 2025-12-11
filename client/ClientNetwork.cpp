@@ -56,6 +56,8 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_END_MAP] = &ClientNetwork::handleEndMap;
     _packetHandlers[constants::PACKET_END_GAME] = &ClientNetwork::handleEndGame;
     _packetHandlers[constants::PACKET_CAN_START] = &ClientNetwork::handleCanStart;
+    _packetHandlers[constants::PACKET_SPAWN] = &ClientNetwork::handleEntitySpawn;
+    _packetHandlers[constants::PACKET_DEATH] = &ClientNetwork::handleEntityDeath;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
@@ -210,7 +212,7 @@ void ClientNetwork::handlePacketType(uint8_t type) {
     if (this->_packet->getPayload().empty()) {
         return;
     }
-    if (type < 10) {
+    if (type < 13) {
         (this->*_packetHandlers[type])();
     } else {
         debug::Debug::printDebug(this->_isDebug,

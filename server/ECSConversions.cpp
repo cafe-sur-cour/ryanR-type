@@ -30,7 +30,6 @@
 #include "../common/components/tags/MobTag.hpp"
 #include "../common/components/tags/ObstacleTag.hpp"
 #include "../common/components/tags/PlayerProjectileTag.hpp"
-#include "../common/components/tags/ScoreTag.hpp"
 #include "../common/components/tags/ShooterTag.hpp"
 #include "../common/components/tags/ProjectilePassThroughTag.hpp"
 #include "../common/components/permanent/ProjectilePrefabComponent.hpp"
@@ -244,15 +243,6 @@ std::vector<uint64_t> rserv::Server::convertPlayerProjectileTagComponent(
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::PlayerProjectileTag>(i)) {
         data.push_back(static_cast<uint64_t>(PLAYER_PROJECTILE_TAG));
-    }
-    return data;
-}
-
-std::vector<uint64_t> rserv::Server::convertScoreTagComponent(
-    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
-    std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::ScoreTag>(i)) {
-        data.push_back(static_cast<uint64_t>(SCORE_TAG));
     }
     return data;
 }
