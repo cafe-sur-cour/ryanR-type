@@ -34,6 +34,8 @@ class AFocusableElement : public UIElement, public IFocusable {
 
     protected:
         bool _focused = false;
+        bool _pressedInside = false;
+        bool _wasPressed = false;
         std::function<void()> _onFocusGained;
         std::function<void()> _onFocusLost;
         std::function<void()> _onActivated;
