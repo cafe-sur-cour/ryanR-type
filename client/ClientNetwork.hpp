@@ -65,6 +65,7 @@ class ClientNetwork {
         void eventPacket(const constants::EventType &eventType, double depth);
         void disconnectionPacket();
         void connectionPacket();
+        void sendReady();
 
         void addToEventQueue(const NetworkEvent &event);
 

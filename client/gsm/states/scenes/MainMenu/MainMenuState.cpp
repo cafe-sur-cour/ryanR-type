@@ -53,7 +53,7 @@ MainMenuState::MainMenuState(
     _mainMenuLayout = std::make_shared<ui::UILayout>(resourceManager, menuConfig);
     _mainMenuLayout->setSize(math::Vector2f(576.f, 400.f));
     _playButton = std::make_shared<ui::Button>(resourceManager);
-    _playButton->setText("Play Game");
+    _playButton->setText("Ready");
     _playButton->setSize(math::Vector2f(576.f, 108.f));
     _playButton->setNormalColor({0, 200, 0});
     _playButton->setHoveredColor({0, 255, 0});
@@ -61,24 +61,30 @@ MainMenuState::MainMenuState(
 
     _playButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
-        if (network && network->isReady()) {
-            this->_gsm->requestStateChange(std::make_shared<DevState>(this->_gsm,
-                this->_resourceManager));
+        if (network && network->isConnected()) {
+            network->sendReady();
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[MainMenu] Sent ready signal to server.",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
         } else {
             debug::Debug::printDebug(network ? network->isDebugMode() : false,
-                "[MainMenu] Cannot start game: Not connected to server.",
+                "[MainMenu] Cannot send ready: Not connected to server.",
                 debug::debugType::NETWORK,
                 debug::debugLevel::WARNING);
         }
     });
     _playButton->setOnActivated([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
-        if (network && network->isReady()) {
-            this->_gsm->requestStateChange(std::make_shared<DevState>(this->_gsm,
-                this->_resourceManager));
+        if (network && network->isConnected()) {
+            network->sendReady();
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[MainMenu] Sent ready signal to server.",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
         } else {
             debug::Debug::printDebug(network ? network->isDebugMode() : false,
-                "[MainMenu] Cannot start game: Not connected to server.",
+                "[MainMenu] Cannot send ready: Not connected to server.",
                 debug::debugType::NETWORK,
                 debug::debugLevel::WARNING);
         }
