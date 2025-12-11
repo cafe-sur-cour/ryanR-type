@@ -35,6 +35,7 @@
 #include "../common/components/tags/ProjectilePassThroughTag.hpp"
 #include "../common/components/permanent/ProjectilePrefabComponent.hpp"
 #include "../common/components/permanent/NetworkIdComponent.hpp"
+#include "../common/components/permanent/GameZoneComponent.hpp"
 
 std::vector<uint64_t> rserv::Server::convertTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
@@ -298,6 +299,20 @@ std::vector<uint64_t> rserv::Server::convertNetworkIdComponent(
         auto networkIdComp = registry->getComponent<ecs::NetworkIdComponent>(i);
         data.push_back(static_cast<uint64_t>(NETWORK_ID));
         data.push_back(static_cast<uint64_t>(networkIdComp->getNetworkId()));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertGameZoneComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::GameZoneComponent>(i)) {
+        auto gameZoneComp = registry->getComponent<ecs::GameZoneComponent>(i);
+        data.push_back(static_cast<uint64_t>(GAME_ZONE));
+        data.push_back(static_cast<uint64_t>(gameZoneComp->getZone().getHeight()));
+        data.push_back(static_cast<uint64_t>(gameZoneComp->getZone().getWidth()));
+        data.push_back(static_cast<uint64_t>(gameZoneComp->getZone().getLeft()));
+        data.push_back(static_cast<uint64_t>(gameZoneComp->getZone().getTop()));
     }
     return data;
 }
