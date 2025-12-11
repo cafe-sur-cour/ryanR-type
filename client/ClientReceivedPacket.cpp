@@ -206,4 +206,26 @@ void ClientNetwork::handleEntitySpawn() {
         }
         prefabName += static_cast<char>(*it);
     }
+
+    (void)clientId;  // Currently unused, but may be used for further logic
+    (void)prefabName;  // Currently unused, but may be used for further logic
+}
+
+void ClientNetwork::handleEntityDeath() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received entity death packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    if (payload.size() < 1) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Entity death packet is invalid",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    size_t entityId = static_cast<size_t>(payload.at(0));
+    (void)entityId;  // Currently unused, but may be used for further logic
 }

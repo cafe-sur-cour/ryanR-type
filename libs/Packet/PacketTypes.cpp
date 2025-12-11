@@ -230,3 +230,30 @@ bool pm::PacketManager::parseSpawnPlayerPacket(
     }
     return true;
 }
+
+std::vector<uint8_t> pm::PacketManager::buildDeathPacket(
+    std::vector<uint64_t> payload) {
+    std::vector<uint8_t> body;
+    std::vector<uint8_t> temp;
+
+    temp = this->_serializer->serializeULong(payload.at(0));
+    body.insert(body.end(), temp.begin(), temp.end());
+    return body;
+}
+
+bool pm::PacketManager::parseDeathPacket(
+    const std::vector<uint8_t> payload) {
+    if (payload.size() != LENGTH_DEATH_PACKET) {
+        std::cerr << "[PACKET] DEATH packet payload size invalid: "
+            << payload.size() << std::endl;
+        return false;
+    }
+
+    this->_payload.clear();
+    auto startIt = payload.begin();
+    auto endIt = payload.begin() + 8;
+    std::vector<uint8_t> longBytes(startIt, endIt);
+    uint64_t value = this->_serializer->deserializeULong(longBytes);
+    this->_payload.push_back(value);
+    return true;
+}
