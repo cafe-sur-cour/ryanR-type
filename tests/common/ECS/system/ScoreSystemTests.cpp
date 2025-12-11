@@ -11,7 +11,6 @@
 #include "../../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../common/components/temporary/ScoreIntentComponent.hpp"
-#include "../../../../common/components/tags/ScoreTag.hpp"
 
 using namespace ecs;
 
@@ -27,7 +26,6 @@ protected:
         // Register components
         registry->registerComponent<ScoreComponent>();
         registry->registerComponent<ScoreIntentComponent>();
-        registry->registerComponent<ScoreTag>();
     }
 
     std::shared_ptr<Registry> registry;
@@ -44,9 +42,7 @@ TEST_F(ScoreSystemTest, EntityWithScoreTagAndScore_NoIntent_NoChange) {
     // Create entity with ScoreTag and ScoreComponent, no intent
     ecs::Entity entityId = 0;
     auto score = std::make_shared<ScoreComponent>(50);
-    auto tag = std::make_shared<ScoreTag>();
 
-    registry->addComponent<ScoreTag>(entityId, tag);
     registry->addComponent<ScoreComponent>(entityId, score);
 
     // Update
@@ -66,10 +62,8 @@ TEST_F(ScoreSystemTest, EntityWithScoreTagScoreAndIntent_ScoreUpdatedIntentRemov
     // Create entity with ScoreTag, ScoreComponent, and ScoreIntent
     ecs::Entity entityId = 0;
     auto score = std::make_shared<ScoreComponent>(50);
-    auto tag = std::make_shared<ScoreTag>();
     auto intent = std::make_shared<ScoreIntentComponent>(25);
 
-    registry->addComponent<ScoreTag>(entityId, tag);
     registry->addComponent<ScoreComponent>(entityId, score);
     registry->addComponent<ScoreIntentComponent>(entityId, intent);
 
@@ -113,9 +107,7 @@ TEST_F(ScoreSystemTest, MultipleEntities_OnlyTaggedProcessed) {
     // Entity 0: with tag, score, intent
     ecs::Entity entity0 = 0;
     auto score0 = std::make_shared<ScoreComponent>(10);
-    auto tag0 = std::make_shared<ScoreTag>();
     auto intent0 = std::make_shared<ScoreIntentComponent>(5);
-    registry->addComponent<ScoreTag>(entity0, tag0);
     registry->addComponent<ScoreComponent>(entity0, score0);
     registry->addComponent<ScoreIntentComponent>(entity0, intent0);
 
@@ -149,10 +141,8 @@ TEST_F(ScoreSystemTest, NegativeScoreIntent_ScoreDecreased) {
     // Create entity with ScoreTag, ScoreComponent, and negative ScoreIntent
     ecs::Entity entityId = 0;
     auto score = std::make_shared<ScoreComponent>(50);
-    auto tag = std::make_shared<ScoreTag>();
     auto intent = std::make_shared<ScoreIntentComponent>(-10);
 
-    registry->addComponent<ScoreTag>(entityId, tag);
     registry->addComponent<ScoreComponent>(entityId, score);
     registry->addComponent<ScoreIntentComponent>(entityId, intent);
 
