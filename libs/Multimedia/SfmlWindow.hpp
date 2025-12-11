@@ -55,6 +55,7 @@ class SfmlWindow : public gfx::IWindow {
         void addShaderFilter(const std::string& path) override;
         void removeShaderFilter(const std::string& path) override;
         void setShaderUniform(const std::string& filterPath, const std::string& name, float value) override;
+        void setFramerateLimit(unsigned int fps) override;
 
         void enableFilter(const std::string& filterName);
         void addFilter(const std::string& filterName);

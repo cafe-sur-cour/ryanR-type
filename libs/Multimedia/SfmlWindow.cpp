@@ -39,7 +39,6 @@ SfmlWindow::~SfmlWindow() {
 void SfmlWindow::init() {
     bool isActive = false;
 
-    _window->setFramerateLimit(60);
     _renderTexture.setView(_view);
 
     updateView();
@@ -354,4 +353,8 @@ void SfmlWindow::setShaderUniform(
     float value
 ) {
     _shaderManager.setUniform(filterPath, name, value);
+}
+
+void SfmlWindow::setFramerateLimit(unsigned int fps) {
+    _window->setFramerateLimit(fps);
 }
