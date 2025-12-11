@@ -76,6 +76,7 @@ void DevState::enter() {
     if (existingParser) {
         _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
         _parser->parseAllEntities(constants::CONFIG_PATH);
+        this->_parser->parseMapFromFile("configs/map/map1.json");
 
         auto mapData = existingParser->getMapParser()->getMapJson();
         if (!mapData.is_null()) {
