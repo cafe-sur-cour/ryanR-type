@@ -104,7 +104,6 @@
             "target": "both",
             "score": 0
         },
-        "ScoreTag": { "target": "both" },
         "HealthBarComponent": { "target": "client" }
     }
 }

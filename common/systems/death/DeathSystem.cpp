@@ -14,6 +14,10 @@
 #include "../../components/tags/PlayerTag.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
+#include "../../components/permanent/OwnerComponent.hpp"
+#include "../../components/permanent/ScoreValueComponent.hpp"
+#include "../../components/permanent/ScoreComponent.hpp"
+#include "../../components/temporary/ScoreIntentComponent.hpp"
 #include "../../types/Vector2f.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../constants.hpp"
@@ -35,6 +39,29 @@ void DeathSystem::update(
     auto view = registry->view<DeathIntentComponent>();
 
     for (auto entityId : view) {
+        auto deathIntent = registry->getComponent<DeathIntentComponent>(entityId);
+        if (!deathIntent) continue;
+
+        if (registry->hasComponent<ScoreValueComponent>(entityId)) {
+            ecs::Entity source = deathIntent->getSource();
+            if (source != 0) {
+                auto ownerComp = registry->getComponent<ecs::OwnerComponent>(source);
+                if (ownerComp) {
+                    ecs::Entity owner = ownerComp->getOwner();
+                    auto scoreComp = registry->getComponent<ecs::ScoreComponent>(owner);
+                    if (scoreComp) {
+                        auto scoreValueComp =
+                            registry->getComponent<ecs::ScoreValueComponent>(entityId);
+                        if (scoreValueComp) {
+                            int score = scoreValueComp->getScoreValue();
+                            registry->addComponent(owner,
+                                std::make_shared<ScoreIntentComponent>(score));
+                        }
+                    }
+                }
+            }
+        }
+
         std::string explosionPrefab = "";
         if (registry->hasComponent<MobTag>(entityId)) {
             explosionPrefab = constants::SMALL_EXPLOSION;

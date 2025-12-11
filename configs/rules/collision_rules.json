@@ -31,9 +31,6 @@
     },
     "trigger": {
         "allow": [
-            [["PlayerTag"], ["ScoreTag"]],
-            [["ScoreTag"], ["PlayerTag"]],
-
             [["PlayerProjectileTag"], ["MobTag"]],
             [["MobTag"], ["PlayerProjectileTag"]],
 
