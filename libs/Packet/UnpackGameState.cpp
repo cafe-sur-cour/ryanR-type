@@ -102,7 +102,8 @@ unsigned int pm::PacketManager::unpackCollider(std::vector<uint8_t> payload, uns
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackShootingStats(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackShootingStats(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == SHOOTING_STATS) {
         this->_payload.push_back(static_cast<uint64_t>(SHOOTING_STATS));
         uint64_t fireRate = this->_serializer->deserializeULong(
@@ -142,7 +143,8 @@ unsigned int pm::PacketManager::unpackScore(std::vector<uint8_t> payload, unsign
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackAIMovementPattern(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackAIMovementPattern(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == AI_MOVEMENT_PATTERN) {
         this->_payload.push_back(static_cast<uint64_t>(AI_MOVEMENT_PATTERN));
         uint64_t iaMovement = this->_serializer->deserializeUChar(
