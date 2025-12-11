@@ -123,6 +123,7 @@ void ClientNetwork::handleCanStart() {
     }
 
     if (this->_gsm) {
-        this->_gsm->requestStateChange(std::make_shared<gsm::DevState>(this->_gsm, this->_resourceManager));
+        this->_gsm->requestStateChange(
+            std::make_shared<gsm::DevState>(this->_gsm, this->_resourceManager));
     }
 }
