@@ -235,3 +235,27 @@ std::vector<uint8_t> pm::PacketManager::packControllableTag(
     }
     return packet;
 }
+
+std::vector<uint8_t> pm::PacketManager::packEnemyProjectileTag(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+    std::vector<uint8_t> temp = {};
+    std::vector<uint8_t> packet = {};
+    if (payload.at(*i) == ENEMY_PROJECTILE_TAG) {
+        temp = this->_serializer->serializeUChar(payload.at(*i));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        *i += 1;
+    }
+    return packet;
+}
+
+std::vector<uint8_t> pm::PacketManager::packGameZoneColliderTag(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+    std::vector<uint8_t> temp = {};
+    std::vector<uint8_t> packet = {};
+    if (payload.at(*i) == GAME_ZONE_COLLIDER_TAG) {
+        temp = this->_serializer->serializeUChar(payload.at(*i));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        *i += 1;
+    }
+    return packet;
+}

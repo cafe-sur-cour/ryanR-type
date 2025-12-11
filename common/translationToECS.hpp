@@ -22,7 +22,9 @@ enum componentType {
     VELOCITY = 0x0A,
     AI_MOVER_TAG = 0x0B,
     AI_SHOOTER_TAG = 0x0C,
-    CONTROLLABLE_TAG = 0x0D
+    CONTROLLABLE_TAG = 0x0D,
+    ENEMY_PROJECTILE_TAG = 0x0E,
+    GAME_ZONE_COLLIDER_TAG = 0x0F
 };
 
 #endif /* !TRASLATION_TO_ECS_HPP_ */

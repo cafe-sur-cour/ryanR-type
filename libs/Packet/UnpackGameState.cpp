@@ -239,3 +239,19 @@ unsigned int pm::PacketManager::unpackControllableTag(std::vector<uint8_t> paylo
     }
     return 0;
 }
+
+unsigned int pm::PacketManager::unpackEnemyProjectileTag(std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == ENEMY_PROJECTILE_TAG) {
+        this->_payload.push_back(static_cast<uint64_t>(ENEMY_PROJECTILE_TAG));
+        return 1;
+    }
+    return 0;
+}
+
+unsigned int pm::PacketManager::unpackGameZoneColliderTag(std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == GAME_ZONE_COLLIDER_TAG) {
+        this->_payload.push_back(static_cast<uint64_t>(GAME_ZONE_COLLIDER_TAG));
+        return 1;
+    }
+    return 0;
+}

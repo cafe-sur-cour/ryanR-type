@@ -24,6 +24,8 @@
 #include "../common/components/tags/AIMoverTag.hpp"
 #include "../common/components/tags/AIShooterTag.hpp"
 #include "../common/components/tags/ControllableTag.hpp"
+#include "../common/components/tags/EnnemyProjectileTag.hpp"
+#include "../common/components/tags/GameZoneColliderTag.hpp"
 
 std::vector<uint64_t> rserv::Server::convertTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
@@ -187,6 +189,24 @@ std::vector<uint64_t> rserv::Server::convertControllableTagComponent(
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::ControllableTag>(i)) {
         data.push_back(static_cast<uint64_t>(CONTROLLABLE_TAG));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertEnemyProjectileTagComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::EnnemyProjectileTag>(i)) {
+        data.push_back(static_cast<uint64_t>(ENEMY_PROJECTILE_TAG));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertGameZoneColliderTagComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::GameZoneColliderTag>(i)) {
+        data.push_back(static_cast<uint64_t>(GAME_ZONE_COLLIDER_TAG));
     }
     return data;
 }
