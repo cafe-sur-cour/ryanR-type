@@ -2,6 +2,7 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     PlayerTag.hpp
     MobTag.hpp
     PlayerProjectileTag.hpp
+    LocalPlayerTag.hpp
     EnnemyProjectileTag.hpp
     ProjectilePassThroughTag.hpp
     ObstacleTag.hpp

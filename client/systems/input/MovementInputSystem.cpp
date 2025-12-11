@@ -14,6 +14,7 @@
 #include "../../../common/types/Vector2f.hpp"
 #include "../../../common/constants.hpp"
 #include "../../../common/components/tags/ControllableTag.hpp"
+#include "../../../common/components/tags/LocalPlayerTag.hpp"
 #include "../../../common/components/temporary/InputIntentComponent.hpp"
 #include "../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../common/InputMapping/InputAction.hpp"
@@ -32,7 +33,7 @@ void MovementInputSystem::update(
     (void)resourceManager;
     (void)deltaTime;
 
-    auto view = registry->view<ControllableTag>();
+    auto view = registry->view<ControllableTag, LocalPlayerTag>();
     math::Vector2f movementDirection = getMovementDirection(resourceManager);
 
     bool isMovingThisFrame = !(std::fabs(movementDirection.getX()) <= constants::EPS &&
