@@ -8,16 +8,10 @@
 #ifndef TRASLATION_TO_ECS_HPP_
 #define TRASLATION_TO_ECS_HPP_
 
-#ifdef _WIN32
-    #ifdef SPEED
-        #undef SPEED
-    #endif
-#endif
-
 enum componentType {
     PLAYER_TAG = 0x00,
     TRANSFORM = 0x01,
-    SPEED = 0x02,
+    SPEED_COMP = 0x02,
     HEALTH = 0x03,
     COLLIDER = 0x04,
     SHOOTING_STATS = 0x05,

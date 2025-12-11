@@ -120,7 +120,7 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         static_cast<uint32_t>(1), static_cast<uint64_t>(1)),
         std::make_tuple(static_cast<uint8_t>(TRANSFORM),
         static_cast<uint32_t>(41), static_cast<uint64_t>(6)),
-        std::make_tuple(static_cast<uint8_t>(SPEED),
+        std::make_tuple(static_cast<uint8_t>(SPEED_COMP),
         static_cast<uint32_t>(9), static_cast<uint64_t>(2)),
         std::make_tuple(static_cast<uint8_t>(HEALTH),
         static_cast<uint32_t>(17), static_cast<uint64_t>(3)),

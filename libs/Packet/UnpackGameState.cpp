@@ -51,8 +51,8 @@ unsigned int pm::PacketManager::unpackTransform(
 
 unsigned int pm::PacketManager::unpackSpeed(
     std::vector<uint8_t> payload, unsigned int i) {
-    if (payload.at(i) == SPEED) {
-        this->_payload.push_back(static_cast<uint64_t>(SPEED));
+    if (payload.at(i) == SPEED_COMP) {
+        this->_payload.push_back(static_cast<uint64_t>(SPEED_COMP));
         uint64_t speed = this->_serializer->deserializeULong(
             std::vector<uint8_t>(payload.begin() + i + 1,
             payload.begin() + i + 9));

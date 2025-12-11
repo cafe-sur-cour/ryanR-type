@@ -66,7 +66,7 @@ std::vector<uint64_t> rserv::Server::convertSpeedComponent(
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::SpeedComponent>(i)) {
         auto speed = registry->getComponent<ecs::SpeedComponent>(i);
-        data.push_back(static_cast<uint64_t>(SPEED));
+        data.push_back(static_cast<uint64_t>(SPEED_COMP));
         data.push_back(static_cast<uint64_t>(speed->getSpeed()));
     }
     return data;
