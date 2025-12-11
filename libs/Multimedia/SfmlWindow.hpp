@@ -82,6 +82,8 @@ class SfmlWindow : public gfx::IWindow {
         float _renderQuality;
         unsigned int _renderWidth;
         unsigned int _renderHeight;
+        sf::Cursor _cursorArrow;
+        sf::Cursor _cursorHand;
 };
 
 #endif /* !SFMLWINDOW_HPP_ */
