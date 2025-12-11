@@ -36,6 +36,7 @@ class ClientNetwork {
         void init();
         void start();
         void stop();
+        void connect();
 
         uint16_t getPort() const;
         void setPort(int port);
@@ -117,6 +118,8 @@ class ClientNetwork {
         std::queue<NetworkEvent> _eventQueue;
         std::mutex _queueMutex;
         std::condition_variable _queueCond;
+
+        bool _shouldConnect;
 };
 
 #endif /* !CLIENTNETWORK_HPP_ */
