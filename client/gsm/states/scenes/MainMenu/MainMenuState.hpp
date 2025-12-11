@@ -39,6 +39,10 @@ private:
     std::unique_ptr<ui::UIManager> _uiManager;
     std::shared_ptr<ui::UILayout> _leftLayout;
     std::shared_ptr<ui::UILayout> _mainMenuLayout;
+
+    std::shared_ptr<ui::UILayout> _rightLayout;
+    std::shared_ptr<ui::Button> _devButton;
+
 };
 
 }  // namespace gsm
