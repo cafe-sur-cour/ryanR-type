@@ -127,7 +127,8 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::make_tuple(PLAYER_PROJECTILE_TAG, 1, 1),
         std::make_tuple(SCORE_TAG, 1, 1),
         std::make_tuple(SHOOTER_TAG, 1, 1),
-        std::make_tuple(PROJECTILE_PASS_THROUGH_TAG, 1, 1)
+        std::make_tuple(PROJECTILE_PASS_THROUGH_TAG, 1, 1),
+        std::make_tuple(PROJECTILE_PREFAB, 0, 2)
     };
 
     this->_packGSFunction = {
@@ -174,6 +175,8 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::bind(&pm::PacketManager::packShooterTag,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::packProjectilePassThroughTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packProjectilePrefabComponent,
         this, std::placeholders::_1, std::placeholders::_2)
     };
 
@@ -221,6 +224,8 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::bind(&pm::PacketManager::unpackShooterTag,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::unpackProjectilePassThroughTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackProjectilePrefabComponent,
         this, std::placeholders::_1, std::placeholders::_2)
     };
 }

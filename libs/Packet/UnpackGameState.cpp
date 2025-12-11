@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 #include "PacketManager.hpp"
 #include "../../common/translationToECS.hpp"
 
@@ -320,6 +321,42 @@ unsigned int pm::PacketManager::unpackProjectilePassThroughTag(
     if (payload.at(i) == PROJECTILE_PASS_THROUGH_TAG) {
         this->_payload.push_back(static_cast<uint64_t>(PROJECTILE_PASS_THROUGH_TAG));
         return 1;
+    }
+    return 0;
+}
+
+unsigned int pm::PacketManager::unpackProjectilePrefabComponent(
+    std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == PROJECTILE_PREFAB) {
+        this->_payload.push_back(static_cast<uint64_t>(PROJECTILE_PREFAB));
+        std::string prefabName = "";
+        unsigned int j = i + 1;
+        while (j < payload.size()) {
+            char c = static_cast<char>(this->_serializer->deserializeUChar(
+                std::vector<uint8_t>(payload.begin() + j,
+                payload.begin() + j + 1)));
+            if (c == '\r') {
+                if (j + 2 < payload.size() &&
+                    static_cast<char>(this->_serializer->deserializeUChar(
+                        std::vector<uint8_t>(payload.begin() + j + 1,
+                        payload.begin() + j + 2))) == '\n' &&
+                    static_cast<char>(this->_serializer->deserializeUChar(
+                        std::vector<uint8_t>(payload.begin() + j + 2,
+                        payload.begin() + j + 3))) == '\0') {
+                    j += 3;
+                    break;
+                }
+            }
+            prefabName += c;
+            j += 1;
+        }
+        for (char c : prefabName) {
+            this->_payload.push_back(static_cast<uint64_t>(c));
+        }
+        this->_payload.push_back(static_cast<uint64_t>('\r'));
+        this->_payload.push_back(static_cast<uint64_t>('\n'));
+        this->_payload.push_back(static_cast<uint64_t>('\0'));
+        return j - i;
     }
     return 0;
 }

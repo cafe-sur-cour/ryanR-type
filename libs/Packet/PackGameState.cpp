@@ -331,3 +331,30 @@ std::vector<uint8_t> pm::PacketManager::packProjectilePassThroughTag(
     }
     return packet;
 }
+
+std::vector<uint8_t> pm::PacketManager::packProjectilePrefabComponent(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+    std::vector<uint8_t> temp = {};
+    std::vector<uint8_t> packet = {};
+    if (payload.at(*i) == PROJECTILE_PREFAB) {
+        temp = this->_serializer->serializeUChar(payload.at(*i));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        *i += 1;
+        while (*i + 2 < payload.size() &&
+            !(payload.at(*i)     == static_cast<uint64_t>('\r') &&
+            payload.at(*i + 1) == static_cast<uint64_t>('\n') &&
+            payload.at(*i + 2) == static_cast<uint64_t>('\0'))) {
+            temp = this->_serializer->serializeUChar(payload.at(*i));
+            packet.insert(packet.end(), temp.begin(), temp.end());
+            *i += 1;
+        }
+        temp = this->_serializer->serializeUChar(payload.at(*i));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeUChar(payload.at(*i + 1));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeUChar(payload.at(*i + 2));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        *i += 3;
+    }
+    return packet;
+}
