@@ -9,6 +9,8 @@
         },
         "VelocityComponent": { "target": "both" },
         "SpeedComponent": { "target": "both", "speed": 10.0 },
+        "HealthComponent": { "target": "both", "health": 50.0 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 100 },
         "AnimationComponent": {
             "target": "client",
             "states": {

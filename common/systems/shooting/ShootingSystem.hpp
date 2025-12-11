@@ -37,7 +37,8 @@ class ShootingSystem : public ASystem {
             std::shared_ptr<ResourceManager> resourceManager,
             const std::string& prefabName,
             const math::Vector2f &position,
-            float angle
+            float angle,
+            ecs::Entity shooterEntity
         );
 
         math::Vector2f calculateProjectileVelocity(
