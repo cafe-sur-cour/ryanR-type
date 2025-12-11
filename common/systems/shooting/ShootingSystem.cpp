@@ -19,6 +19,7 @@
 #include "../../components/tags/AIShooterTag.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/permanent/SpeedComponent.hpp"
+#include "../../components/permanent/OwnerComponent.hpp"
 #include "../../constants.hpp"
 #include "../../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
@@ -73,7 +74,8 @@ void ShootingSystem::update(
         }
 
         if (pattern.shotCount == 1) {
-            spawnProjectile(registry, resourceManager, prefabName, spawnPos, baseAngle);
+            spawnProjectile(registry, resourceManager, prefabName, spawnPos,
+                baseAngle, entityId);
         } else {
             float totalSpread = pattern.angleSpread * static_cast<float>(
                 pattern.shotCount - 1
@@ -92,7 +94,8 @@ void ShootingSystem::update(
                     );
                 }
 
-                spawnProjectile(registry, resourceManager, prefabName, offsetPosition, angle);
+                spawnProjectile(registry, resourceManager,
+                    prefabName, offsetPosition, angle, entityId);
             }
         }
 
@@ -111,12 +114,15 @@ void ShootingSystem::spawnProjectile(
     std::shared_ptr<ResourceManager> resourceManager,
     const std::string& prefabName,
     const math::Vector2f &position,
-    float angle
+    float angle,
+    ecs::Entity shooterEntity
 ) {
     auto prefabManager = resourceManager->get<EntityPrefabManager>();
     Entity projectileEntity = prefabManager->createEntityFromPrefab(
         prefabName, registry, ecs::EntityCreationContext::forServer()
     );
+
+    registry->addComponent(projectileEntity, std::make_shared<OwnerComponent>(shooterEntity));
 
     auto transform = registry->getComponent<TransformComponent>(projectileEntity);
     if (transform) {
