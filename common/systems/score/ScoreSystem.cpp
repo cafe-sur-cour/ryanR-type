@@ -12,7 +12,6 @@
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../ECS/view/View.hpp"
 #include "../../components/temporary/ScoreIntentComponent.hpp"
-#include "../../components/tags/ScoreTag.hpp"
 
 namespace ecs {
 
@@ -29,7 +28,7 @@ void ScoreSystem::update(
 ) {
     (void)resourceManager;
     (void)deltaTime;
-    auto view = registry->view<ScoreTag>();
+    auto view = registry->view<ScoreComponent>();
 
     for (auto entityId : view) {
         auto scoreComp = registry->getComponent<ScoreComponent>(entityId);

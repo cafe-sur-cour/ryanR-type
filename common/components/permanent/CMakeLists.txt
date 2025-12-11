@@ -8,6 +8,8 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     LifetimeComponent.hpp
     HealthComponent.hpp
     ScoreComponent.hpp
+    ScoreValueComponent.hpp
+    OwnerComponent.hpp
     DamageComponent.hpp
     GameZoneComponent.hpp
     InteractionConfigComponent.hpp
