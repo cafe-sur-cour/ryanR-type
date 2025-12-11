@@ -39,6 +39,8 @@ class IWindow {
         virtual std::pair<size_t, size_t> getTextSize(const std::string& text, const std::string& fontPath, size_t fontSize = 24) = 0;
         virtual void drawRectangleOutline(color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
         virtual void drawFilledRectangle(color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
+        virtual void drawRoundedRectangleFilled(color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, float radius) = 0;
+        virtual void drawRoundedRectangleOutline(color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, float radius) = 0;
 
         virtual bool isMouseOver(std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
         virtual std::pair<int, int> getWindowSize() = 0;

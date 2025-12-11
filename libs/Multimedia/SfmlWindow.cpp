@@ -173,7 +173,7 @@ void SfmlWindow::drawRectangleOutline(gfx::color_t color,
     static_cast<float>(size.second)));
     rectangle.setFillColor(sf::Color::Transparent);
     rectangle.setOutlineColor(sf::Color(color.r, color.g, color.b, color.a));
-    rectangle.setOutlineThickness(4.0f);
+    rectangle.setOutlineThickness(5.0f);
     rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first),
     static_cast<float>(position.second)));
     _renderTexture.draw(rectangle);
@@ -184,6 +184,28 @@ void SfmlWindow::drawFilledRectangle(gfx::color_t color,
     sf::RectangleShape rectangle(sf::Vector2f(static_cast<float>(size.first),
     static_cast<float>(size.second)));
     rectangle.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+    rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first),
+    static_cast<float>(position.second)));
+    _renderTexture.draw(rectangle);
+}
+
+void SfmlWindow::drawRoundedRectangleFilled(gfx::color_t color,
+    std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, float radius) {
+    sf::RoundedRectangleShape rectangle(sf::Vector2f(static_cast<float>(size.first),
+    static_cast<float>(size.second)), radius);
+    rectangle.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+    rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first),
+    static_cast<float>(position.second)));
+    _renderTexture.draw(rectangle);
+}
+
+void SfmlWindow::drawRoundedRectangleOutline(gfx::color_t color,
+    std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, float radius) {
+    sf::RoundedRectangleShape rectangle(sf::Vector2f(static_cast<float>(size.first),
+    static_cast<float>(size.second)), radius);
+    rectangle.setFillColor(sf::Color::Transparent);
+    rectangle.setOutlineColor(sf::Color(color.r, color.g, color.b, color.a));
+    rectangle.setOutlineThickness(5.0f);
     rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first),
     static_cast<float>(position.second)));
     _renderTexture.draw(rectangle);
