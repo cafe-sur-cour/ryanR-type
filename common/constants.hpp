@@ -64,11 +64,13 @@ namespace constants {
     const std::string HEALTHBARCOMPONENT = "HealthBarComponent";
 
     const std::string SCORECOMPONENT = "ScoreComponent";
+    const std::string SCOREVALUECOMPONENT = "ScoreValueComponent";
     const std::string DAMAGECOMPONENT = "DamageComponent";
     const std::string HEALTHCOMPONENT = "HealthComponent";
     const std::string INTERACTIONCONFIGCOMPONENT = "InteractionConfigComponent";
     const std::string AIMOVEMENTPATTERNCOMPONENT = "AIMovementPatternComponent";
     const std::string SCORE_FIELD = "score";
+    const std::string SCOREVALUE_FIELD = "scoreValue";
     const std::string DAMAGE_FIELD = "damage";
     const std::string HEALTH_FIELD = "health";
     const std::string TARGET_FIELD = "target";
@@ -207,7 +209,6 @@ namespace constants {
     const std::string PARALLAXCOMPONENT = "ParallaxComponent";
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
     const std::string OBSTACLETAG = "ObstacleTag";
-    const std::string SCORETAG = "ScoreTag";
     const std::string AIMOVERTAG = "AIMoverTag";
     const std::string AISHOOTERTAG = "AIShooterTag";
 
@@ -241,6 +242,7 @@ namespace constants {
     constexpr std::uint8_t PACKET_CAN_START = 0x09;
     constexpr std::uint8_t PACKET_CLIENT_READY = 0x0A;
     constexpr std::uint8_t PACKET_SPAWN = 0x0B;
+    constexpr std::uint8_t PACKET_DEATH = 0x0C;
 
 }
 

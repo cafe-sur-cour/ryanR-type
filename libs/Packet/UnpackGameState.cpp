@@ -298,15 +298,6 @@ unsigned int pm::PacketManager::unpackPlayerProjectileTag(
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackScoreTag(
-    std::vector<uint8_t> payload, unsigned int i) {
-    if (payload.at(i) == SCORE_TAG) {
-        this->_payload.push_back(static_cast<uint64_t>(SCORE_TAG));
-        return 1;
-    }
-    return 0;
-}
-
 unsigned int pm::PacketManager::unpackShooterTag(
     std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == SHOOTER_TAG) {

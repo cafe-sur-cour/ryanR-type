@@ -89,7 +89,7 @@ class ClientNetwork {
         void handlePacketType(uint8_t type);
     private:
         typedef void (ClientNetwork::*PacketHandler)();
-        PacketHandler _packetHandlers[12];
+        PacketHandler _packetHandlers[13];
 
         void handleNoOp();
         void handleConnectionAcceptation();
@@ -99,7 +99,7 @@ class ClientNetwork {
         void handleEndGame();
         void handleCanStart();
         void handleEntitySpawn();
-        // void handleEntityDeath();
+        void handleEntityDeath();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;
