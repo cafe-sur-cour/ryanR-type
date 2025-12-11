@@ -41,6 +41,11 @@ MainMenuState::MainMenuState(
     auto config = _resourceManager->get<SettingsConfig>();
     _uiManager->setGlobalScale(config->getUIScale());
 
+    _background = std::make_shared<ui::Background>(_resourceManager);
+    _background->setSize(math::Vector2f(constants::MAX_WIDTH, constants::MAX_HEIGHT));
+    _background->addLayer("assets/ui/earth.jpg", 0.0f, 0.0f, math::Vector2f(5376.0f, 3584.0f));
+    _uiManager->addElement(_background);
+
     ui::LayoutConfig leftConfig;
     leftConfig.direction = ui::LayoutDirection::Vertical;
     leftConfig.alignment = ui::LayoutAlignment::Center;
@@ -166,8 +171,6 @@ void MainMenuState::enter() {
 }
 
 void MainMenuState::update(float deltaTime) {
-    (void)deltaTime;
-
     auto config = _resourceManager->get<SettingsConfig>();
     if (_uiManager->getGlobalScale() != config->getUIScale()) {
         _uiManager->setGlobalScale(config->getUIScale());
@@ -203,7 +206,10 @@ void MainMenuState::exit() {
     _playButton.reset();
     _settingsButton.reset();
     _quitButton.reset();
+    _connectButton.reset();
     _mainMenuLayout.reset();
+    _leftLayout.reset();
+    _background.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
