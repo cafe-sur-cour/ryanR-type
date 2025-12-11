@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include <string>
 #include "PacketManager.hpp"
 #include "../../common/debug.hpp"
 #include "../../common/translationToECS.hpp"
@@ -40,17 +41,27 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
     if (type == GAME_STATE_PACKET) {
         length += 8;
         for (uint64_t i = 1; i < payload.size();) {
-            bool found = false;
             for (const auto &[compType, compLength, compSize] : this->_lengthComb) {
                 if (payload.at(i) == compType) {
+                    if (compType == PROJECTILE_PREFAB) {
+                        std::string prefabName;
+                        uint64_t j = i + 1;
+                        while (j + 2 < payload.size() &&
+                               !(payload.at(j)     == static_cast<uint64_t>('\r') &&
+                                 payload.at(j + 1) == static_cast<uint64_t>('\n') &&
+                                 payload.at(j + 2) == static_cast<uint64_t>('\0'))) {
+                            prefabName += static_cast<char>(payload.at(j));
+                            j++;
+                        }
+                        uint32_t nameLength = static_cast<uint32_t>(prefabName.size() + 4);
+                        length += nameLength;
+                        i = j + 3;
+                        break;
+                    }
                     length += compLength;
                     i += compSize;
-                    found = true;
                     break;
                 }
-            }
-            if (!found) {
-                i++;
             }
         }
 

@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 #include "Server.hpp"
 #include "../common/translationToECS.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
@@ -32,6 +33,7 @@
 #include "../common/components/tags/ScoreTag.hpp"
 #include "../common/components/tags/ShooterTag.hpp"
 #include "../common/components/tags/ProjectilePassThroughTag.hpp"
+#include "../common/components/permanent/ProjectilePrefabComponent.hpp"
 
 std::vector<uint64_t> rserv::Server::convertTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
@@ -267,6 +269,23 @@ std::vector<uint64_t> rserv::Server::convertProjectilePassThroughTagComponent(
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::ProjectilePassThroughTag>(i)) {
         data.push_back(static_cast<uint64_t>(PROJECTILE_PASS_THROUGH_TAG));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertProjectilePrefabComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::ProjectilePrefabComponent>(i)) {
+        data.push_back(static_cast<uint64_t>(PROJECTILE_PREFAB));
+        std::string prefabName =
+            registry->getComponent<ecs::ProjectilePrefabComponent>(i)->getPrefabName();
+        for (char c : prefabName) {
+            data.push_back(static_cast<uint64_t>(c));
+        }
+        data.push_back(static_cast<uint64_t>('\r'));
+        data.push_back(static_cast<uint64_t>('\n'));
+        data.push_back(static_cast<uint64_t>('\0'));
     }
     return data;
 }
