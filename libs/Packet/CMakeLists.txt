@@ -7,6 +7,8 @@ add_library(${PACKET_LIB_NAME} SHARED
     Pack.cpp
     Unpack.cpp
     PacketTypes.cpp
+    PackGameState.cpp
+    UnpackGameState.cpp
 )
 
 if(WIN32)

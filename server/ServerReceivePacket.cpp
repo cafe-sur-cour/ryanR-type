@@ -10,8 +10,8 @@
 #include <string>
 
 #include "Server.hpp"
+#include "Constants.hpp"
 #include "../common/debug.hpp"
-
 
 bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
     std::vector<uint8_t>> client) {
@@ -33,6 +33,10 @@ bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
     }
     this->connectionPacket(client.first);
     this->_clients.push_back(std::make_tuple(this->_nextClientId, client.first, name));
+    this->_clientsReady[this->_nextClientId] = false;
+    debug::Debug::printDebug(this->_config->getIsDebug(), "[SERVER] Set client " +
+        std::to_string(this->_nextClientId) + " ready to false",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
     this->canStartPacket();
     this->_nextClientId++;
     return true;
@@ -57,8 +61,9 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
 }
 
 bool rserv::Server::processEndOfGame(uint8_t idClient) {
-    std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber,
-        constants::PACKET_END_GAME, std::vector<uint64_t>{static_cast<uint64_t>(idClient)});
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_END_GAME,
+        std::vector<uint64_t>{static_cast<uint64_t>(idClient)});
     if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER NETWORK] Failed to broadcast end of game packet",

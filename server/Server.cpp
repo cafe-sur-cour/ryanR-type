@@ -16,13 +16,15 @@
 #include <queue>
 
 #include "Server.hpp"
+#include "Constants.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../common/Error/ServerErrror.hpp"
 #include "../common/debug.hpp"
 #include "../common/constants.hpp"
 #include "Signal.hpp"
 
-rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
+rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
+    _nextClientId(1), _sequenceNumber(1) {
     this->_clients = {};
     this->_config = nullptr;
     this->_network = nullptr;
@@ -31,6 +33,62 @@ rserv::Server::Server() : _nextClientId(1), _sequenceNumber(1) {
     this->_eventQueue = std::make_shared<std::queue<std::tuple<uint8_t,
         constants::EventType, double>>>();
     this->_config = std::make_shared<rserv::ServerConfig>();
+    this->_gameStarted = false;
+    this->_resourceManager = resourceManager;
+    this->_lastGameStateTime = std::chrono::steady_clock::now();
+
+    this->_convertFunctions = {
+        std::bind(&rserv::Server::convertTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertTransformComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertSpeedComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertHealthComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertColliderComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertShootStatComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertScoreComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertAIMovementPatternComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertDamageComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertLifetimeComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertVelocityComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertAIMoverTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertAIShooterTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertControllableTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertEnemyProjectileTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertGameZoneColliderTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertMobTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertObstacleTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertPlayerProjectileTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertScoreTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertShooterTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertProjectilePassThroughTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertProjectilePrefabComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertNetworkIdComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertGameZoneComponent, this,
+            std::placeholders::_1, std::placeholders::_2)
+    };
 }
 
 rserv::Server::~Server() {
@@ -87,6 +145,16 @@ void rserv::Server::start() {
     Signal::setupSignalHandlers();
     while (this->getState() == 1 && !Signal::stopFlag) {
         this->processIncomingPackets();
+        if (this->_clients.size() > 0) {
+            auto now = std::chrono::steady_clock::now();
+            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+                now - this->_lastGameStateTime).count();
+            if (elapsed >= constants::CD_TPS) {
+                this->gameStatePacket();
+                this->_lastGameStateTime = now;
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
         if (std::cin.eof()) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "EOF received (Ctrl+D pressed)",
@@ -188,6 +256,8 @@ void rserv::Server::processIncomingPackets() {
             this->processConnections(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_EVENT) {
         this->processEvents(this->_packet->getIdClient());
+    } else if (this->_packet->getType() == constants::PACKET_CLIENT_READY) {
+        this->onPacketReceived(this->_packet->getIdClient(), *this->_packet);
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "
@@ -248,6 +318,32 @@ void rserv::Server::onPacketReceived(
         "Packet received from client " + std::to_string(idClient)
         + " of type " + std::to_string(static_cast<int>(packet.getType())),
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    (void)packet;
-    // Add game-specific packet processing logic here
+
+    switch (packet.getType()) {
+        case constants::PACKET_CLIENT_READY:
+            this->_clientsReady[idClient] = true;
+            this->canStartPacket();
+            break;
+        default:
+            break;
+    }
+}
+
+bool rserv::Server::isGameStarted() const {
+    return this->_gameStarted;
+}
+
+bool rserv::Server::allClientsReady() const {
+    debug::Debug::printDebug(true, "[SERVER] allClientsReady: checking " +
+        std::to_string(this->_clientsReady.size()) + " clients",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+    for (const auto &ready : this->_clientsReady) {
+        debug::Debug::printDebug(true, "[SERVER] Client " +
+            std::to_string(ready.first) + " ready: " +
+            std::to_string(ready.second), debug::debugType::NETWORK, debug::debugLevel::INFO);
+        if (!ready.second) {
+            return false;
+        }
+    }
+    return true;
 }
