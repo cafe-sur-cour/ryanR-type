@@ -67,8 +67,6 @@ class PacketManager : public IPacketManager {
         bool parseEndGamePacket(const std::vector<uint8_t> payload);
         std::vector<uint8_t> buildCanStartPacket(std::vector<uint64_t> payload);
         bool parseCanStartPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildClientReadyPacket(std::vector<uint64_t> payload);
-        bool parseClientReadyPacket(const std::vector<uint8_t> payload);
 
         /* Pack Game State */
         std::vector<std::tuple<uint8_t, uint32_t, uint64_t>> _lengthComb;
