@@ -163,8 +163,37 @@ MainMenuState::MainMenuState(
     _mainMenuLayout->addElement(_settingsButton);
     _mainMenuLayout->addElement(_quitButton);
 
+    ui::LayoutConfig rightConfig;
+    rightConfig.direction = ui::LayoutDirection::Vertical;
+    rightConfig.alignment = ui::LayoutAlignment::Center;
+    rightConfig.spacing = 50.0f;
+    rightConfig.padding = math::Vector2f(0.0f, 0.0f);
+    rightConfig.anchorX = ui::AnchorX::Right;
+    rightConfig.anchorY = ui::AnchorY::Center;
+    rightConfig.offset = math::Vector2f(-50.0f, 0.0f);
+
+    _rightLayout = std::make_shared<ui::UILayout>(_resourceManager, rightConfig);
+    _rightLayout->setSize(math::Vector2f(400.f, 108.f));
+
+    _devButton = std::make_shared<ui::Button>(_resourceManager);
+    _devButton->setText("Go to dev scene\n(no need to connect to server)");
+    _devButton->setSize(math::Vector2f(400.f, 108.f));
+    _devButton->setNormalColor({255, 100, 200});
+    _devButton->setHoveredColor({255, 80, 150});
+    _devButton->setFocusedColor({255, 200, 255});
+    _devButton->setOnRelease([this]() {
+        this->_gsm->requestStatePush(std::make_shared<DevState>(this->_gsm,
+            this->_resourceManager));
+    });
+    _devButton->setOnActivated([this]() {
+        this->_gsm->requestStatePush(std::make_shared<DevState>(this->_gsm,
+            this->_resourceManager));
+    });
+    _rightLayout->addElement(_devButton);
+
     _uiManager->addElement(_leftLayout);
     _uiManager->addElement(_mainMenuLayout);
+    _uiManager->addElement(_rightLayout);
 }
 
 void MainMenuState::enter() {
@@ -208,6 +237,7 @@ void MainMenuState::exit() {
     _quitButton.reset();
     _connectButton.reset();
     _mainMenuLayout.reset();
+    _rightLayout.reset();
     _leftLayout.reset();
     _background.reset();
     _mouseHandler.reset();
