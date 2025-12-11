@@ -571,6 +571,9 @@ void SettingsState::update(float deltaTime) {
 
     _uiManager->handleMouseInput(mousePos, mousePressed);
 
+    bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
+    _resourceManager->get<gfx::IWindow>()->setCursor(isHoveringUI);
+
     if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
