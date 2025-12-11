@@ -41,8 +41,10 @@ std::shared_ptr<ResourceManager> initResourcesManager(
     auto entityPrefabManager = parser->getPrefabManager();
     resourceManager->add<EntityPrefabManager>(entityPrefabManager);
 
-    resourceManager->add<rserv::Server>(server);
-    resourceManager->add<rserv::ServerConfig>(server->getConfig());
+    if (server != nullptr) {
+        resourceManager->add<rserv::Server>(server);
+        resourceManager->add<rserv::ServerConfig>(server->getConfig());
+    }
 
     resourceManager->add<ecs::Registry>(registry);
     resourceManager->add<Parser>(parser);
