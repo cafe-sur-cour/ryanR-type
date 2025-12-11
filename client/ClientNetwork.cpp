@@ -264,7 +264,6 @@ void ClientNetwork::start() {
                     debug::debugType::NETWORK,
                     debug::debugLevel::ERROR);
             }
-            handlePacketType(this->_packet->getType());
             receivedData.clear();
         }
         if (!this->_eventQueue.empty()) {
