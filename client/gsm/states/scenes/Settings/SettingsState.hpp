@@ -46,11 +46,17 @@ private:
     void updateMusicVolume(float value);
     void updateSoundVolume(float value);
     void updateToggleValue(bool value);
+    void cycleScreenResolution();
+    void updateTargetFPS(int fps);
+    void setScreenResolution(SettingsConfig::ScreenResolution resolution);
+    void updateResolutionButtonColors(SettingsConfig::ScreenResolution current);
 
     void startKeyRebind(ecs::RemappableAction action, bool rebindPrimary, std::shared_ptr<ui::Button> button);
     void handleKeyRebind(gfx::EventType newKey);
     void updateKeyBindingButtonText(std::shared_ptr<ui::Button> button, ecs::RemappableAction action, bool isPrimary);
     std::string getRemappableActionName(ecs::RemappableAction action) const;
+
+    std::string getScreenResolutionText(SettingsConfig::ScreenResolution resolution);
 
 private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
@@ -63,11 +69,14 @@ private:
     std::shared_ptr<ui::ToggleSwitch> _toggleSwitch;
     std::shared_ptr<ui::Text> _toggleLabel;
     std::shared_ptr<ui::UILayout> _toggleLayout;
+    std::vector<std::shared_ptr<ui::Button>> _resolutionButtons;
+    std::shared_ptr<ui::Slider> _fpsSlider;
     std::shared_ptr<ui::Button> _scaleButton;
     std::unique_ptr<ui::UIManager> _uiManager;
     std::shared_ptr<ui::UILayout> _settingsLayout;
     std::shared_ptr<ui::UILayout> _leftColumnLayout;
     std::shared_ptr<ui::UILayout> _rightColumnLayout;
+    std::shared_ptr<ui::UILayout> _centerColumnLayout;
     std::shared_ptr<ui::UILayout> _titleLayout;
     std::shared_ptr<ui::Background> _background;
     math::Vector2f _savedViewCenter;

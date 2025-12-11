@@ -42,16 +42,25 @@ SettingsState::SettingsState(
     auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
 
     ui::LayoutConfig settingsConfig;
-    settingsConfig.direction = ui::LayoutDirection::Horizontal;
+    settingsConfig.direction = ui::LayoutDirection::Vertical;
     settingsConfig.alignment = ui::LayoutAlignment::Center;
-    settingsConfig.spacing = 40.0f;
+    settingsConfig.spacing = 20.0f;
     settingsConfig.padding = math::Vector2f(0.0f, 0.0f);
     settingsConfig.anchorX = ui::AnchorX::Center;
     settingsConfig.anchorY = ui::AnchorY::Center;
     settingsConfig.offset = math::Vector2f(0.0f, 0.0f);
 
     _settingsLayout = std::make_shared<ui::UILayout>(resourceManager, settingsConfig);
-    _settingsLayout->setSize(math::Vector2f(900.f, 600.f));
+    _settingsLayout->setSize(math::Vector2f(1300.f, 650.f));
+
+    ui::LayoutConfig columnsConfig;
+    columnsConfig.direction = ui::LayoutDirection::Horizontal;
+    columnsConfig.alignment = ui::LayoutAlignment::Center;
+    columnsConfig.spacing = 100.0f;
+    columnsConfig.padding = math::Vector2f(0.0f, 0.0f);
+
+    auto columnsLayout = std::make_shared<ui::UILayout>(resourceManager, columnsConfig);
+    columnsLayout->setSize(math::Vector2f(1300.f, 600.f));
 
     ui::LayoutConfig columnConfig;
     columnConfig.direction = ui::LayoutDirection::Vertical;
@@ -60,10 +69,13 @@ SettingsState::SettingsState(
     columnConfig.padding = math::Vector2f(0.0f, 0.0f);
 
     _leftColumnLayout = std::make_shared<ui::UILayout>(resourceManager, columnConfig);
-    _leftColumnLayout->setSize(math::Vector2f(420.f, 600.f));
+    _leftColumnLayout->setSize(math::Vector2f(400.f, 600.f));
 
     _rightColumnLayout = std::make_shared<ui::UILayout>(resourceManager, columnConfig);
-    _rightColumnLayout->setSize(math::Vector2f(420.f, 600.f));
+    _rightColumnLayout->setSize(math::Vector2f(400.f, 600.f));
+
+    _centerColumnLayout = std::make_shared<ui::UILayout>(resourceManager, columnConfig);
+    _centerColumnLayout->setSize(math::Vector2f(250.f, 600.f));
 
     _scaleButton = std::make_shared<ui::Button>(resourceManager);
     _scaleButton->setText(getUIScaleText(config->getUIScale()));
@@ -127,6 +139,45 @@ SettingsState::SettingsState(
     _toggleLabel->setText("Control Mode");
     _toggleLabel->setFontSize(20);
     _toggleLabel->setSize(math::Vector2f(380.f, 30.f));
+
+    std::vector<SettingsConfig::ScreenResolution> resolutions = {
+        SettingsConfig::ScreenResolution::FULLSCREEN,
+        SettingsConfig::ScreenResolution::RES_1920x1080,
+        SettingsConfig::ScreenResolution::RES_1280x720,
+        SettingsConfig::ScreenResolution::RES_1024x768,
+        SettingsConfig::ScreenResolution::RES_800x600
+    };
+
+    for (auto res : resolutions) {
+        auto button = std::make_shared<ui::Button>(resourceManager);
+        button->setText(getScreenResolutionText(res));
+        button->setSize(math::Vector2f(250.f, 55.f));
+        button->setOnRelease([this, res]() {
+            setScreenResolution(res);
+        });
+        button->setOnActivated([this, res]() {
+            setScreenResolution(res);
+        });
+        _resolutionButtons.push_back(button);
+    }
+
+    updateResolutionButtonColors(config->getScreenResolution());
+
+    auto spacer = std::make_shared<ui::Text>(resourceManager);
+    spacer->setText("");
+    spacer->setSize(math::Vector2f(250.f, 60.f));
+
+    _fpsSlider = std::make_shared<ui::Slider>(resourceManager);
+    _fpsSlider->setLabel("FPS Limit");
+    _fpsSlider->setMinValue(15.0f);
+    _fpsSlider->setMaxValue(160.0f);
+    _fpsSlider->setValue(static_cast<float>(config->getTargetFPS()));
+    _fpsSlider->setStep(10.0f);
+    _fpsSlider->setSize(math::Vector2f(250.f, 55.f));
+    _fpsSlider->setShowPercentage(false);
+    _fpsSlider->setOnValueChanged([this](float value) {
+        updateTargetFPS(static_cast<int>(value));
+    });
 
     _colorBlindnessButton = std::make_shared<ui::Button>(resourceManager);
     _colorBlindnessButton->setText(getColorBlindnessText(config->getColorBlindnessState()));
@@ -435,8 +486,18 @@ SettingsState::SettingsState(
     _rightColumnLayout->addElement(_shootLayout);
     _rightColumnLayout->addElement(_toggleLayout);
 
-    _settingsLayout->addElement(_leftColumnLayout);
-    _settingsLayout->addElement(_rightColumnLayout);
+    _centerColumnLayout->addElement(spacer);
+    _centerColumnLayout->addElement(_fpsSlider);
+    for (auto& button : _resolutionButtons) {
+        _centerColumnLayout->addElement(button);
+    }
+
+    columnsLayout->addElement(_leftColumnLayout);
+    columnsLayout->addElement(_centerColumnLayout);
+    columnsLayout->addElement(_rightColumnLayout);
+
+    _settingsLayout->addElement(_titleLayout);
+    _settingsLayout->addElement(columnsLayout);
     _uiManager->addElement(_settingsLayout);
 
     _settingsManager = _resourceManager->get<SettingsManager>();
@@ -663,6 +724,46 @@ std::string SettingsState::getUIScaleText(ui::UIScale scale) {
     }
 }
 
+void SettingsState::setScreenResolution(SettingsConfig::ScreenResolution resolution) {
+    auto config = _resourceManager->get<SettingsConfig>();
+    config->setScreenResolution(resolution);
+    _settingsManager->saveSettings();
+    updateResolutionButtonColors(resolution);
+}
+
+void SettingsState::updateResolutionButtonColors(SettingsConfig::ScreenResolution current) {
+    std::vector<SettingsConfig::ScreenResolution> resolutions = {
+        SettingsConfig::ScreenResolution::FULLSCREEN,
+        SettingsConfig::ScreenResolution::RES_1920x1080,
+        SettingsConfig::ScreenResolution::RES_1280x720,
+        SettingsConfig::ScreenResolution::RES_1024x768,
+        SettingsConfig::ScreenResolution::RES_800x600
+    };
+
+    for (size_t i = 0; i < _resolutionButtons.size(); ++i) {
+        if (resolutions[i] == current) {
+            _resolutionButtons[i]->setNormalColor(colors::BUTTON_SECONDARY);
+            _resolutionButtons[i]->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+            _resolutionButtons[i]->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+        } else {
+            _resolutionButtons[i]->setNormalColor(colors::BUTTON_PRIMARY);
+            _resolutionButtons[i]->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+            _resolutionButtons[i]->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+        }
+    }
+}
+
+void SettingsState::updateTargetFPS(int fps) {
+    auto config = _resourceManager->get<SettingsConfig>();
+    config->setTargetFPS(fps);
+    _settingsManager->saveSettings();
+}
+
+std::string SettingsState::getScreenResolutionText(SettingsConfig::ScreenResolution resolution) {
+    SettingsConfig tempConfig;
+    return tempConfig.getScreenResolutionName(resolution);
+}
+
 void SettingsState::exit() {
     auto window = _resourceManager->get<gfx::IWindow>();
     window->setViewCenter(_savedViewCenter.getX(), _savedViewCenter.getY());
@@ -677,6 +778,11 @@ void SettingsState::exit() {
     _toggleSwitch.reset();
     _toggleLabel.reset();
     _toggleLayout.reset();
+    for (auto& button : _resolutionButtons) {
+        button.reset();
+    }
+    _resolutionButtons.clear();
+    _fpsSlider.reset();
 
     _moveUpLayout.reset();
     _moveUpLabel.reset();
@@ -702,6 +808,8 @@ void SettingsState::exit() {
     _shootLabel.reset();
     _shootPrimaryButton.reset();
     _shootSecondaryButton.reset();
+
+    _centerColumnLayout.reset();
 
     _leftColumnLayout.reset();
     _rightColumnLayout.reset();

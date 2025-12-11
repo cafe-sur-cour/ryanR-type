@@ -10,6 +10,7 @@
 #include <filesystem>  // NOLINT(build/c++17)
 #include <memory>
 #include <string>
+#include <utility>
 #include <nlohmann/json.hpp>
 #include "constants.hpp"
 
@@ -45,6 +46,8 @@ void SettingsConfig::saveSettings(const std::string& filepath) {
     j[constants::SETTINGS_UI_SCALE] = static_cast<int>(_uiScale);
     j[constants::SETTINGS_MUSIC_VOLUME] = _musicVolume;
     j[constants::SETTINGS_SOUND_VOLUME] = _soundVolume;
+    j[constants::SETTINGS_SCREEN_RESOLUTION] = static_cast<int>(_screenResolution);
+    j[constants::SETTINGS_TARGET_FPS] = _targetFPS;
     std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
     std::ofstream file(filepath);
     file << j.dump(4);
@@ -65,4 +68,36 @@ void SettingsConfig::loadSettings(const std::string& filepath) {
         j[constants::SETTINGS_MUSIC_VOLUME];
     if (j.contains(constants::SETTINGS_SOUND_VOLUME)) _soundVolume =
         j[constants::SETTINGS_SOUND_VOLUME];
+    if (j.contains(constants::SETTINGS_SCREEN_RESOLUTION)) _screenResolution =
+        static_cast<ScreenResolution>(j[constants::SETTINGS_SCREEN_RESOLUTION]);
+    if (j.contains(constants::SETTINGS_TARGET_FPS)) _targetFPS =
+        j[constants::SETTINGS_TARGET_FPS];
+}
+
+std::string SettingsConfig::getScreenResolutionName(ScreenResolution resolution) const {
+    switch (resolution) {
+        case ScreenResolution::RES_800x600: return "800x600";
+        case ScreenResolution::RES_1024x768: return "1024x768";
+        case ScreenResolution::RES_1280x720: return "1280x720";
+        case ScreenResolution::RES_1920x1080: return "1920x1080";
+        case ScreenResolution::FULLSCREEN: return "FULLSCREEN";
+        default: return "1280x720";
+    }
+}
+
+std::pair<int, int> SettingsConfig::getScreenResolutionSize(
+    ScreenResolution resolution
+) const {
+    switch (resolution) {
+        case ScreenResolution::RES_800x600: return {800, 600};
+        case ScreenResolution::RES_1024x768: return {1024, 768};
+        case ScreenResolution::RES_1280x720: return {1280, 720};
+        case ScreenResolution::RES_1920x1080: return {1920, 1080};
+        case ScreenResolution::FULLSCREEN: return {1920, 1080};
+        default: return {1280, 720};
+    }
+}
+
+bool SettingsConfig::isFullscreen(ScreenResolution resolution) const {
+    return resolution == ScreenResolution::FULLSCREEN;
 }

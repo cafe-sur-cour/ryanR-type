@@ -38,6 +38,7 @@ class Slider : public AFocusableElement {
         void setFontPath(const std::string& fontPath);
         void setBaseFontSize(size_t fontSize);
         size_t getBaseFontSize() const;
+        void setShowPercentage(bool show);
 
         void setTrackColor(const gfx::color_t& color);
         void setFillColor(const gfx::color_t& color);
@@ -66,6 +67,8 @@ class Slider : public AFocusableElement {
         gfx::color_t _labelColor = colors::SLIDER_LABEL;
         std::string _fontPath = "assets/fonts/ARIAL.TTF";
         size_t _baseFontSize = constants::BUTTON_FONT_SIZE_BASE;
+        float _outlineThickness = 2.0f;
+        bool _showPercentage = true;
 
         gfx::color_t _trackColor = colors::SLIDER_TRACK;
         gfx::color_t _fillColor = colors::SLIDER_FILL;

@@ -56,6 +56,8 @@ namespace constants {
     const std::string SETTINGS_UI_SCALE = "uiScale";
     const std::string SETTINGS_MUSIC_VOLUME = "musicVolume";
     const std::string SETTINGS_SOUND_VOLUME = "soundVolume";
+    const std::string SETTINGS_SCREEN_RESOLUTION = "screenResolution";
+    const std::string SETTINGS_TARGET_FPS = "targetFPS";
     const std::string KEYBIND_PRIMARY = "primary";
     const std::string KEYBIND_SECONDARY = "secondary";
     const std::string KEYBIND_TOGGLE_MODE = "toggle_mode";
