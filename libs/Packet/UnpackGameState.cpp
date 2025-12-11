@@ -10,7 +10,8 @@
 #include "PacketManager.hpp"
 #include "../../common/translationToECS.hpp"
 
-unsigned int pm::PacketManager::unpackPlayerTag(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackPlayerTag(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == PLAYER_TAG) {
         this->_payload.push_back(static_cast<uint64_t>(PLAYER_TAG));
         return 1;
@@ -18,7 +19,8 @@ unsigned int pm::PacketManager::unpackPlayerTag(std::vector<uint8_t> payload, un
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackTransform(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackTransform(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == TRANSFORM) {
         this->_payload.push_back(static_cast<uint64_t>(TRANSFORM));
         uint64_t posX = this->_serializer->deserializeULong(
@@ -46,7 +48,8 @@ unsigned int pm::PacketManager::unpackTransform(std::vector<uint8_t> payload, un
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackSpeed(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackSpeed(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == SPEED) {
         this->_payload.push_back(static_cast<uint64_t>(SPEED));
         uint64_t speed = this->_serializer->deserializeULong(
@@ -58,7 +61,8 @@ unsigned int pm::PacketManager::unpackSpeed(std::vector<uint8_t> payload, unsign
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackHealth(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackHealth(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == HEALTH) {
         this->_payload.push_back(static_cast<uint64_t>(HEALTH));
         uint64_t health = this->_serializer->deserializeULong(
@@ -74,7 +78,8 @@ unsigned int pm::PacketManager::unpackHealth(std::vector<uint8_t> payload, unsig
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackCollider(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackCollider(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == COLLIDER) {
         this->_payload.push_back(static_cast<uint64_t>(COLLIDER));
         uint64_t offsetX = this->_serializer->deserializeULong(
@@ -131,7 +136,8 @@ unsigned int pm::PacketManager::unpackShootingStats(
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackScore(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackScore(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == SCORE) {
         this->_payload.push_back(static_cast<uint64_t>(SCORE));
         uint64_t score = this->_serializer->deserializeUInt(
@@ -176,7 +182,8 @@ unsigned int pm::PacketManager::unpackAIMovementPattern(
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackDamage(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackDamage(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == DAMAGE) {
         this->_payload.push_back(static_cast<uint64_t>(DAMAGE));
         uint64_t damage = this->_serializer->deserializeULong(
@@ -188,7 +195,8 @@ unsigned int pm::PacketManager::unpackDamage(std::vector<uint8_t> payload, unsig
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackLifetime(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackLifetime(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == LIFETIME) {
         this->_payload.push_back(static_cast<uint64_t>(LIFETIME));
         uint64_t lifetime = this->_serializer->deserializeULong(
@@ -200,7 +208,8 @@ unsigned int pm::PacketManager::unpackLifetime(std::vector<uint8_t> payload, uns
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackVelocity(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackVelocity(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == VELOCITY) {
         this->_payload.push_back(static_cast<uint64_t>(VELOCITY));
         uint64_t velX = this->_serializer->deserializeULong(
@@ -216,7 +225,8 @@ unsigned int pm::PacketManager::unpackVelocity(std::vector<uint8_t> payload, uns
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackAIMoverTag(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackAIMoverTag(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == AI_MOVER_TAG) {
         this->_payload.push_back(static_cast<uint64_t>(AI_MOVER_TAG));
         return 1;
@@ -224,7 +234,8 @@ unsigned int pm::PacketManager::unpackAIMoverTag(std::vector<uint8_t> payload, u
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackAIShooterTag(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackAIShooterTag(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == AI_SHOOTER_TAG) {
         this->_payload.push_back(static_cast<uint64_t>(AI_SHOOTER_TAG));
         return 1;
@@ -232,7 +243,8 @@ unsigned int pm::PacketManager::unpackAIShooterTag(std::vector<uint8_t> payload,
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackControllableTag(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackControllableTag(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == CONTROLLABLE_TAG) {
         this->_payload.push_back(static_cast<uint64_t>(CONTROLLABLE_TAG));
         return 1;
@@ -240,7 +252,8 @@ unsigned int pm::PacketManager::unpackControllableTag(std::vector<uint8_t> paylo
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackEnemyProjectileTag(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackEnemyProjectileTag(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == ENEMY_PROJECTILE_TAG) {
         this->_payload.push_back(static_cast<uint64_t>(ENEMY_PROJECTILE_TAG));
         return 1;
@@ -248,9 +261,64 @@ unsigned int pm::PacketManager::unpackEnemyProjectileTag(std::vector<uint8_t> pa
     return 0;
 }
 
-unsigned int pm::PacketManager::unpackGameZoneColliderTag(std::vector<uint8_t> payload, unsigned int i) {
+unsigned int pm::PacketManager::unpackGameZoneColliderTag(
+    std::vector<uint8_t> payload, unsigned int i) {
     if (payload.at(i) == GAME_ZONE_COLLIDER_TAG) {
         this->_payload.push_back(static_cast<uint64_t>(GAME_ZONE_COLLIDER_TAG));
+        return 1;
+    }
+    return 0;
+}
+
+unsigned int pm::PacketManager::unpackMobTag(
+    std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == MOB_TAG) {
+        this->_payload.push_back(static_cast<uint64_t>(MOB_TAG));
+        return 1;
+    }
+    return 0;
+}
+
+unsigned int pm::PacketManager::unpackObstacleTag(
+    std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == OBSTACLE_TAG) {
+        this->_payload.push_back(static_cast<uint64_t>(OBSTACLE_TAG));
+        return 1;
+    }
+    return 0;
+}
+
+unsigned int pm::PacketManager::unpackPlayerProjectileTag(
+    std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == PLAYER_PROJECTILE_TAG) {
+        this->_payload.push_back(static_cast<uint64_t>(PLAYER_PROJECTILE_TAG));
+        return 1;
+    }
+    return 0;
+}
+
+unsigned int pm::PacketManager::unpackScoreTag(
+    std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == SCORE_TAG) {
+        this->_payload.push_back(static_cast<uint64_t>(SCORE_TAG));
+        return 1;
+    }
+    return 0;
+}
+
+unsigned int pm::PacketManager::unpackShooterTag(
+    std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == SHOOTER_TAG) {
+        this->_payload.push_back(static_cast<uint64_t>(SHOOTER_TAG));
+        return 1;
+    }
+    return 0;
+}
+
+unsigned int pm::PacketManager::unpackProjectilePassThroughTag(
+    std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == PROJECTILE_PASS_THROUGH_TAG) {
+        this->_payload.push_back(static_cast<uint64_t>(PROJECTILE_PASS_THROUGH_TAG));
         return 1;
     }
     return 0;

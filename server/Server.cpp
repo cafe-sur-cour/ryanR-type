@@ -66,6 +66,18 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
         std::bind(&rserv::Server::convertEnemyProjectileTagComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertGameZoneColliderTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertMobTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertObstacleTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertPlayerProjectileTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertScoreTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertShooterTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertProjectilePassThroughTagComponent, this,
             std::placeholders::_1, std::placeholders::_2)
     };
 }

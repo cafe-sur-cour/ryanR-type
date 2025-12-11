@@ -26,6 +26,12 @@
 #include "../common/components/tags/ControllableTag.hpp"
 #include "../common/components/tags/EnnemyProjectileTag.hpp"
 #include "../common/components/tags/GameZoneColliderTag.hpp"
+#include "../common/components/tags/MobTag.hpp"
+#include "../common/components/tags/ObstacleTag.hpp"
+#include "../common/components/tags/PlayerProjectileTag.hpp"
+#include "../common/components/tags/ScoreTag.hpp"
+#include "../common/components/tags/ShooterTag.hpp"
+#include "../common/components/tags/ProjectilePassThroughTag.hpp"
 
 std::vector<uint64_t> rserv::Server::convertTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
@@ -207,6 +213,60 @@ std::vector<uint64_t> rserv::Server::convertGameZoneColliderTagComponent(
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::GameZoneColliderTag>(i)) {
         data.push_back(static_cast<uint64_t>(GAME_ZONE_COLLIDER_TAG));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertMobTagComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::MobTag>(i)) {
+        data.push_back(static_cast<uint64_t>(MOB_TAG));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertObstacleTagComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::ObstacleTag>(i)) {
+        data.push_back(static_cast<uint64_t>(OBSTACLE_TAG));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertPlayerProjectileTagComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::PlayerProjectileTag>(i)) {
+        data.push_back(static_cast<uint64_t>(PLAYER_PROJECTILE_TAG));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertScoreTagComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::ScoreTag>(i)) {
+        data.push_back(static_cast<uint64_t>(SCORE_TAG));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertShooterTagComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::ShooterTag>(i)) {
+        data.push_back(static_cast<uint64_t>(SHOOTER_TAG));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertProjectilePassThroughTagComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::ProjectilePassThroughTag>(i)) {
+        data.push_back(static_cast<uint64_t>(PROJECTILE_PASS_THROUGH_TAG));
     }
     return data;
 }
