@@ -34,16 +34,18 @@ Core::Core() {
 
     this->_inputProvider = std::make_shared<ecs::ServerInputProvider>();
 
+    auto tempResourceManager = std::make_shared<ResourceManager>();
+    this->_server = std::make_shared<rserv::Server>(tempResourceManager);
+
     this->_resourceManager = initResourcesManager(
-        nullptr,
+        this->_server,
         this->_registry,
         this->_parser,
         this->_systemsManager,
         this->_gsm,
         this->_inputProvider
-    );
-
-    this->_server = std::make_shared<rserv::Server>(this->_resourceManager);
+    );    // Update the server with the real resource manager
+    this->_server->setResourceManager(this->_resourceManager);
 
     this->_resourceManager->add<rserv::Server>(this->_server);
     this->_resourceManager->add<rserv::ServerConfig>(this->_server->getConfig());

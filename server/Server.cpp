@@ -325,12 +325,11 @@ bool rserv::Server::allClientsReady() const {
     debug::Debug::printDebug(true, "[SERVER] allClientsReady: checking " +
         std::to_string(this->_clientsReady.size()) + " clients",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    
-    // Must have at least the expected number of clients
+
     if (static_cast<int>(this->_clientsReady.size()) < this->getConfig()->getNbClients()) {
         return false;
     }
-    
+
     for (const auto &ready : this->_clientsReady) {
         debug::Debug::printDebug(true, "[SERVER] Client " +
             std::to_string(ready.first) + " ready: " +
@@ -340,4 +339,20 @@ bool rserv::Server::allClientsReady() const {
         }
     }
     return true;
+}
+
+uint32_t rserv::Server::getSequenceNumber() const {
+    return this->_sequenceNumber;
+}
+
+std::shared_ptr<pm::IPacketManager> rserv::Server::getPacketManager() const {
+    return this->_packet;
+}
+
+void rserv::Server::incrementSequenceNumber() {
+    this->_sequenceNumber++;
+}
+
+void rserv::Server::setResourceManager(std::shared_ptr<ResourceManager> resourceManager) {
+    this->_resourceManager = resourceManager;
 }

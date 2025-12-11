@@ -61,8 +61,8 @@ InGameState::InGameState(
     std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager)
     : AGameState(gsm, resourceManager) {
-    _registry = std::make_shared<ecs::Registry>();
-    _prefabManager = std::make_shared<EntityPrefabManager>();
+    _registry = resourceManager->get<ecs::Registry>(); // std::make_shared<ecs::Registry>();
+    _prefabManager = resourceManager->get<EntityPrefabManager>(); // std::make_shared<EntityPrefabManager>();
 }
 
 void InGameState::enter() {
@@ -72,39 +72,34 @@ void InGameState::enter() {
     auto collisionData =
         ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
     ecs::CollisionRules::initWithData(collisionData);
-    auto existingParser = _resourceManager->get<Parser>();
-    if (existingParser) {
-        _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
-        _parser->parseAllEntities(constants::CONFIG_PATH);
-
-        auto mapData = existingParser->getMapParser()->getMapJson();
-        if (!mapData.is_null()) {
-            _parser->getMapParser()->setMapJson(mapData);
-            _parser->getMapParser()->generateMapEntities();
-        }
+    if (_resourceManager->has<Parser>()) {
+        _parser = _resourceManager->get<Parser>();
     } else {
         _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
+    }
+
+    if (_parser) {
         _parser->parseAllEntities(constants::CONFIG_PATH);
     }
 
-    addSystem(std::make_shared<ecs::AIMovementSystem>());
-    addSystem(std::make_shared<ecs::AIShootingSystem>());
+    // addSystem(std::make_shared<ecs::AIMovementSystem>());
+    // addSystem(std::make_shared<ecs::AIShootingSystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
-    addSystem(std::make_shared<ecs::MovementSystem>());
+    // addSystem(std::make_shared<ecs::MovementSystem>());
     addSystem(std::make_shared<ecs::MovementInputSystem>());
-    addSystem(std::make_shared<ecs::InteractionSystem>());
+    // addSystem(std::make_shared<ecs::InteractionSystem>());
     addSystem(std::make_shared<ecs::SoundSystem>());
     addSystem(std::make_shared<ecs::ShootInputSystem>());
-    addSystem(std::make_shared<ecs::ShootingSystem>());
-    addSystem(std::make_shared<ecs::LifetimeSystem>());
-    addSystem(std::make_shared<ecs::HealthSystem>());
+    // addSystem(std::make_shared<ecs::ShootingSystem>());
+    // addSystem(std::make_shared<ecs::LifetimeSystem>());
+    // addSystem(std::make_shared<ecs::HealthSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
-    addSystem(std::make_shared<ecs::DeathSystem>());
-    addSystem(std::make_shared<ecs::ScoreSystem>());
+    // addSystem(std::make_shared<ecs::DeathSystem>());
+    // addSystem(std::make_shared<ecs::ScoreSystem>());
     addSystem(std::make_shared<ecs::GameZoneViewSystem>());
     addSystem(std::make_shared<ecs::MusicSystem>());
-    addSystem(std::make_shared<ecs::TriggerSystem>());
-    addSystem(std::make_shared<ecs::InteractionSystem>());
+    // addSystem(std::make_shared<ecs::TriggerSystem>());
+    // addSystem(std::make_shared<ecs::InteractionSystem>());
     addSystem(std::make_shared<ecs::ParallaxRenderingSystem>());
     addSystem(std::make_shared<ecs::SpriteRenderingSystem>());
     addSystem(std::make_shared<ecs::RectangleRenderingSystem>());
@@ -119,26 +114,26 @@ void InGameState::enter() {
     _registry->addComponent<ecs::MusicIntentComponent>(musicIntentEntity,
         std::make_shared<ecs::MusicIntentComponent>(ecs::PLAY, ""));
 
-    ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
-    _registry->addComponent<ecs::LocalPlayerTag>(
-        playerEntity, std::make_shared<ecs::LocalPlayerTag>());
-    _registry->addComponent<ecs::HitboxRenderComponent>(
-        playerEntity,
-        std::make_shared<ecs::HitboxRenderComponent>());
+    // ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
+    // _registry->addComponent<ecs::LocalPlayerTag>(
+    //     playerEntity, std::make_shared<ecs::LocalPlayerTag>());
+    // _registry->addComponent<ecs::HitboxRenderComponent>(
+    //     playerEntity,
+    //     std::make_shared<ecs::HitboxRenderComponent>());
 
-    auto colliderView = _registry->view<ecs::ColliderComponent>();
-    for (auto entityId : colliderView) {
-        if (_registry->hasComponent<ecs::PlayerTag>(entityId)) continue;
+    // auto colliderView = _registry->view<ecs::ColliderComponent>();
+    // for (auto entityId : colliderView) {
+    //     if (_registry->hasComponent<ecs::PlayerTag>(entityId)) continue;
 
-        gfx::color_t color = {255, 255, 255, 255};
-        if (_registry->hasComponent<ecs::ObstacleTag>(entityId)) {
-            color = {255, 0, 0, 255};
-        }
+    //     gfx::color_t color = {255, 255, 255, 255};
+    //     if (_registry->hasComponent<ecs::ObstacleTag>(entityId)) {
+    //         color = {255, 0, 0, 255};
+    //     }
 
-        _registry->addComponent<ecs::HitboxRenderComponent>(
-            entityId,
-            std::make_shared<ecs::HitboxRenderComponent>(color));
-    }
+    //     _registry->addComponent<ecs::HitboxRenderComponent>(
+    //         entityId,
+    //         std::make_shared<ecs::HitboxRenderComponent>(color));
+    // }
 }
 
 void InGameState::update(float deltaTime) {
