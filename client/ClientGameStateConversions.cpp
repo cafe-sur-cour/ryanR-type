@@ -5,6 +5,9 @@
 ** Client Game State Conversions
 */
 
+#include <vector>
+#include <memory>
+#include <string>
 #include "ClientNetwork.hpp"
 #include "../common/debug.hpp"
 #include "../common/translationToECS.hpp"
@@ -47,7 +50,8 @@ ecs::Entity ClientNetwork::findOrCreateNetworkEntity(std::shared_ptr<ecs::Regist
     return newEntity;
 }
 
-size_t ClientNetwork::parsePlayerTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parsePlayerTagComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     (void)payload;
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " has PlayerTag",
@@ -56,7 +60,8 @@ size_t ClientNetwork::parsePlayerTagComponent(const std::vector<uint64_t> &paylo
     return index;
 }
 
-size_t ClientNetwork::parseTransformComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseTransformComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     if (index + 5 > payload.size()) return index;
     auto registry = this->_resourceManager->get<ecs::Registry>();
     float posX = static_cast<float>(payload[index++]);
@@ -89,7 +94,8 @@ size_t ClientNetwork::parseTransformComponent(const std::vector<uint64_t> &paylo
     return index;
 }
 
-size_t ClientNetwork::parseSpeedComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseSpeedComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     if (index + 1 > payload.size()) return index;
     float speed = static_cast<float>(payload[index++]);
     debug::Debug::printDebug(this->_isDebug,
@@ -99,7 +105,8 @@ size_t ClientNetwork::parseSpeedComponent(const std::vector<uint64_t> &payload, 
     return index;
 }
 
-size_t ClientNetwork::parseHealthComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseHealthComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     if (index + 2 > payload.size()) return index;
     auto registry = this->_resourceManager->get<ecs::Registry>();
     uint32_t health = static_cast<uint32_t>(payload[index++]);
@@ -126,7 +133,8 @@ size_t ClientNetwork::parseHealthComponent(const std::vector<uint64_t> &payload,
     return index;
 }
 
-size_t ClientNetwork::parseColliderComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseColliderComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     if (index + 5 <= payload.size()) {
         float offsetX = static_cast<float>(payload[index++]);
         float offsetY = static_cast<float>(payload[index++]);
@@ -144,7 +152,8 @@ size_t ClientNetwork::parseColliderComponent(const std::vector<uint64_t> &payloa
     return index;
 }
 
-size_t ClientNetwork::parseShootingStatsComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseShootingStatsComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     if (index + 5 <= payload.size()) {
         float fireRate = static_cast<float>(payload[index++]);
         float cooldown = static_cast<float>(payload[index++]);
@@ -163,7 +172,8 @@ size_t ClientNetwork::parseShootingStatsComponent(const std::vector<uint64_t> &p
     return index;
 }
 
-size_t ClientNetwork::parseScoreComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseScoreComponent(const std::vector<uint64_t> &payload, size_t index,
+    ecs::Entity entityId) {
     if (index + 1 <= payload.size()) {
         uint32_t score = static_cast<uint32_t>(payload[index++]);
         debug::Debug::printDebug(this->_isDebug,
@@ -174,7 +184,8 @@ size_t ClientNetwork::parseScoreComponent(const std::vector<uint64_t> &payload, 
     return index;
 }
 
-size_t ClientNetwork::parseAIMovementPatternComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseAIMovementPatternComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     if (index + 6 <= payload.size()) {
         uint8_t pattern = static_cast<uint8_t>(payload[index++]);
         float amplitude = static_cast<float>(payload[index++]);
@@ -194,29 +205,34 @@ size_t ClientNetwork::parseAIMovementPatternComponent(const std::vector<uint64_t
     return index;
 }
 
-size_t ClientNetwork::parseDamageComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseDamageComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     if (index + 1 <= payload.size()) {
         uint32_t damage = static_cast<uint32_t>(payload[index++]);
         debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Entity " + std::to_string(entityId) + " Damage: " + std::to_string(damage),
+            "[CLIENT] Entity " + std::to_string(entityId) + " Damage: " +
+                std::to_string(damage),
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
     }
     return index;
 }
 
-size_t ClientNetwork::parseLifetimeComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseLifetimeComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     if (index + 1 <= payload.size()) {
         float lifetime = static_cast<float>(payload[index++]);
         debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Entity " + std::to_string(entityId) + " Lifetime: " + std::to_string(lifetime),
+            "[CLIENT] Entity " + std::to_string(entityId) + " Lifetime: " +
+                std::to_string(lifetime),
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
     }
     return index;
 }
 
-size_t ClientNetwork::parseVelocityComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseVelocityComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     if (index + 2 > payload.size()) return index;
     auto registry = this->_resourceManager->get<ecs::Registry>();
     float velX = static_cast<float>(payload[index++]);
@@ -236,7 +252,8 @@ size_t ClientNetwork::parseVelocityComponent(const std::vector<uint64_t> &payloa
     return index;
 }
 
-size_t ClientNetwork::parseAIMoverTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseAIMoverTagComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     (void)payload;
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " has AIMoverTag",
@@ -245,7 +262,8 @@ size_t ClientNetwork::parseAIMoverTagComponent(const std::vector<uint64_t> &payl
     return index;
 }
 
-size_t ClientNetwork::parseAIShooterTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseAIShooterTagComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     (void)payload;
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " has AIShooterTag",
@@ -254,7 +272,8 @@ size_t ClientNetwork::parseAIShooterTagComponent(const std::vector<uint64_t> &pa
     return index;
 }
 
-size_t ClientNetwork::parseControllableTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseControllableTagComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     (void)payload;
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " has ControllableTag",
@@ -263,7 +282,8 @@ size_t ClientNetwork::parseControllableTagComponent(const std::vector<uint64_t> 
     return index;
 }
 
-size_t ClientNetwork::parseEnemyProjectileTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseEnemyProjectileTagComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     (void)payload;
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " has EnnemyProjectileTag",
@@ -272,7 +292,8 @@ size_t ClientNetwork::parseEnemyProjectileTagComponent(const std::vector<uint64_
     return index;
 }
 
-size_t ClientNetwork::parseGameZoneColliderTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseGameZoneColliderTagComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     (void)payload;
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " has GameZoneColliderTag",
@@ -281,7 +302,8 @@ size_t ClientNetwork::parseGameZoneColliderTagComponent(const std::vector<uint64
     return index;
 }
 
-size_t ClientNetwork::parseMobTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseMobTagComponent(const std::vector<uint64_t> &payload, size_t index,
+    ecs::Entity entityId) {
     (void)payload;
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " has MobTag",
@@ -290,7 +312,8 @@ size_t ClientNetwork::parseMobTagComponent(const std::vector<uint64_t> &payload,
     return index;
 }
 
-size_t ClientNetwork::parseObstacleTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseObstacleTagComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     (void)payload;
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " has ObstacleTag",
@@ -299,7 +322,8 @@ size_t ClientNetwork::parseObstacleTagComponent(const std::vector<uint64_t> &pay
     return index;
 }
 
-size_t ClientNetwork::parsePlayerProjectileTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parsePlayerProjectileTagComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     (void)payload;
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " has PlayerProjectileTag",
@@ -308,7 +332,8 @@ size_t ClientNetwork::parsePlayerProjectileTagComponent(const std::vector<uint64
     return index;
 }
 
-size_t ClientNetwork::parseScoreTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseScoreTagComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     (void)payload;
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " has ScoreTag",
@@ -317,7 +342,8 @@ size_t ClientNetwork::parseScoreTagComponent(const std::vector<uint64_t> &payloa
     return index;
 }
 
-size_t ClientNetwork::parseShooterTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseShooterTagComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     (void)payload;
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " has ShooterTag",
@@ -326,7 +352,8 @@ size_t ClientNetwork::parseShooterTagComponent(const std::vector<uint64_t> &payl
     return index;
 }
 
-size_t ClientNetwork::parseProjectilePassThroughTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseProjectilePassThroughTagComponent(
+    const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
     (void)payload;
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " has ProjectilePassThroughTag",
@@ -335,7 +362,8 @@ size_t ClientNetwork::parseProjectilePassThroughTagComponent(const std::vector<u
     return index;
 }
 
-size_t ClientNetwork::parseProjectilePrefabComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseProjectilePrefabComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     std::string prefabName;
     while (index < payload.size()) {
         uint64_t charVal = payload[index++];
@@ -352,12 +380,12 @@ size_t ClientNetwork::parseProjectilePrefabComponent(const std::vector<uint64_t>
     }
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " ProjectilePrefab: " + prefabName,
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
     return index;
 }
 
-size_t ClientNetwork::parseNetworkIdComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseNetworkIdComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     if (index + 1 > payload.size()) return index;
     size_t networkId = static_cast<size_t>(payload[index++]);
     auto registry = this->_resourceManager->get<ecs::Registry>();
@@ -366,13 +394,13 @@ size_t ClientNetwork::parseNetworkIdComponent(const std::vector<uint64_t> &paylo
         registry->addComponent(entityId, netIdComp);
     }
     debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Entity " + std::to_string(entityId) + " NetworkId: " + std::to_string(networkId),
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
+        "[CLIENT] Entity " + std::to_string(entityId) + " NetworkId: " +
+        std::to_string(networkId), debug::debugType::NETWORK, debug::debugLevel::INFO);
     return index;
 }
 
-size_t ClientNetwork::parseGameZoneComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId) {
+size_t ClientNetwork::parseGameZoneComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
     if (index + 4 <= payload.size()) {
         float height = static_cast<float>(payload[index++]);
         float width = static_cast<float>(payload[index++]);
