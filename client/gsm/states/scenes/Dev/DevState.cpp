@@ -14,6 +14,7 @@
 #include "../../../../../libs/Multimedia/IWindow.hpp"
 #include "../../../../../libs/Multimedia/IEvent.hpp"
 #include "../../../../../libs/Multimedia/IAudio.hpp"
+#include "../../../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../../components/rendering/HitboxRenderComponent.hpp"
 #include "../../../../systems/rendering/AnimationRenderingSystem.hpp"
 #include "../../../../systems/rendering/HitboxRenderingSystem.hpp"
@@ -138,10 +139,12 @@ void DevState::update(float deltaTime) {
         return;
     }
 
-    auto event = _resourceManager->get<gfx::IEvent>();
-    if (event->isKeyPressed(gfx::EventType::ESCAPE)) {
-        _gsm->requestStatePush(std::make_shared<SettingsState>(_gsm, _resourceManager));
-        return;
+    if (_resourceManager->has<ecs::IInputProvider>()) {
+        auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
+        if (inputProvider->isActionPressed(ecs::InputAction::MENU_BACK)) {
+            _gsm->requestStatePush(std::make_shared<SettingsState>(_gsm, _resourceManager));
+            return;
+        }
     }
 
     _resourceManager->get<ecs::ISystemManager>()->updateAllSystems
