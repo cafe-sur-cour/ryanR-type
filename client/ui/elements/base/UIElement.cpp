@@ -67,6 +67,13 @@ void UIElement::handleInput(const math::Vector2f& mousePos, bool mousePressed) {
         return;
     }
 
+    bool justPressed = mousePressed && !_wasPressed;
+    _wasPressed = mousePressed;
+
+    if (justPressed) {
+        _pressedInside = containsPoint(mousePos);
+    }
+
     bool wasHovered = (_state == UIState::Hovered);
     bool containsMouse = containsPoint(mousePos);
 
@@ -80,7 +87,7 @@ void UIElement::handleInput(const math::Vector2f& mousePos, bool mousePressed) {
         } else {
             if (_state == UIState::Pressed) {
                 setState(UIState::Hovered);
-                if (_onRelease)
+                if (_pressedInside && _onRelease)
                     _onRelease();
             } else {
                 setState(UIState::Hovered);
@@ -89,6 +96,11 @@ void UIElement::handleInput(const math::Vector2f& mousePos, bool mousePressed) {
             }
         }
     } else {
+        if (mousePressed) {
+            if (_state != UIState::Pressed) {
+                //
+            }
+        }
         setState(UIState::Normal);
     }
 
