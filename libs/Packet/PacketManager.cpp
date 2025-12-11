@@ -119,7 +119,9 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::make_tuple(VELOCITY, 17, 3),
         std::make_tuple(AI_MOVER_TAG, 1, 1),
         std::make_tuple(AI_SHOOTER_TAG, 1, 1),
-        std::make_tuple(CONTROLLABLE_TAG, 1, 1)
+        std::make_tuple(CONTROLLABLE_TAG, 1, 1),
+        std::make_tuple(ENEMY_PROJECTILE_TAG, 1, 1),
+        std::make_tuple(GAME_ZONE_COLLIDER_TAG, 1, 1)
     };
 
     this->_packGSFunction = {
@@ -150,6 +152,10 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::bind(&pm::PacketManager::packAIShooterTag,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::packControllableTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packEnemyProjectileTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packGameZoneColliderTag,
         this, std::placeholders::_1, std::placeholders::_2)
     };
 
@@ -181,6 +187,10 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::bind(&pm::PacketManager::unpackAIShooterTag,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::unpackControllableTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackEnemyProjectileTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackGameZoneColliderTag,
         this, std::placeholders::_1, std::placeholders::_2)
     };
 }
