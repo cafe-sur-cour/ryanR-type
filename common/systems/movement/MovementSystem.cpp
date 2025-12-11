@@ -18,18 +18,57 @@
 #include "../../types/FRect.hpp"
 #include "../../constants.hpp"
 #include "../../components/tags/ObstacleTag.hpp"
+#include "../../components/tags/GameZoneColliderTag.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../CollisionRules/CollisionRules.hpp"
 
 namespace ecs {
 
-MovementSystem::MovementSystem() {
+MovementSystem::MovementSystem() : _spatialGrid(
+    constants::MAX_WIDTH,
+    constants::MAX_HEIGHT,
+    constants::SPATIAL_GRID_CELL_SIZE,
+    constants::SPATIAL_GRID_PADDING
+) {
 }
 
-void MovementSystem::update(std::shared_ptr<ResourceManager> resourceManager,
-                             std::shared_ptr<Registry> registry,
-                             float deltaTime) {
+void MovementSystem::buildSpatialGrid(std::shared_ptr<Registry> registry) {
+    _spatialGrid.clear();
+    _boundaryEntities.clear();
+
+    auto colliderView = registry->view<TransformComponent, ColliderComponent>();
+    for (auto entityId : colliderView) {
+        auto transform = registry->getComponent<TransformComponent>(entityId);
+        auto colliders = registry->getComponents<ColliderComponent>(entityId);
+
+        if (!transform || colliders.empty())
+            continue;
+
+        bool isBoundary = registry->hasComponent<GameZoneColliderTag>(entityId);
+        if (isBoundary) {
+            _boundaryEntities.push_back(entityId);
+            continue;
+        }
+
+        for (auto& collider : colliders) {
+            if (collider->getType() == CollisionType::Solid ||
+                collider->getType() == CollisionType::Push) {
+                math::FRect hitbox = collider->getHitbox(
+                    transform->getPosition(), transform->getScale());
+                _spatialGrid.insert(entityId, hitbox);
+            }
+        }
+    }
+}
+
+void MovementSystem::update(
+    std::shared_ptr<ResourceManager> resourceManager,
+    std::shared_ptr<Registry> registry,
+    float deltaTime
+) {
     (void)resourceManager;
+
+    buildSpatialGrid(registry);
 
     auto view = registry->view<VelocityComponent, TransformComponent>();
 
@@ -59,7 +98,7 @@ void MovementSystem::update(std::shared_ptr<ResourceManager> resourceManager,
     }
 }
 
-bool MovementSystem::checkCollision(
+bool MovementSystem::checkCollisionWithBoundaries(
     std::shared_ptr<Registry> registry,
     size_t entityId,
     math::Vector2f newPos) {
@@ -72,20 +111,73 @@ bool MovementSystem::checkCollision(
     auto movingTransform = registry->getComponent<TransformComponent>(entityId);
     math::Vector2f movingScale = movingTransform->getScale();
 
-    auto allEntitiesView = registry->view<
-        TransformComponent, ColliderComponent>();
-    for (auto otherEntityId : allEntitiesView) {
-        if (otherEntityId == entityId) continue;
+    for (auto& movingCollider : movingColliders) {
+        if (movingCollider->getType() != CollisionType::Solid) continue;
 
-        auto otherTransform = registry->getComponent<
-            TransformComponent>(otherEntityId);
-        auto otherColliders = registry->getComponents<
-            ColliderComponent>(otherEntityId);
+        math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale);
 
-        for (auto& movingCollider : movingColliders) {
-            if (movingCollider->getType() != CollisionType::Solid) continue;
+        for (auto boundaryEntityId : _boundaryEntities) {
+            if (boundaryEntityId == entityId) continue;
 
-            math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale);
+            auto otherTransform = registry->getComponent<TransformComponent>(boundaryEntityId);
+            auto otherColliders = registry->getComponents<ColliderComponent>(boundaryEntityId);
+
+            if (!otherTransform || otherColliders.empty())
+                continue;
+
+            for (auto& otherCollider : otherColliders) {
+                if (otherCollider->getType() != CollisionType::Solid &&
+                    otherCollider->getType() != CollisionType::Push) continue;
+
+                if (!shouldCollide(
+                    registry, entityId, *movingCollider, boundaryEntityId)) {
+                    continue;
+                }
+
+                math::Vector2f otherScale = otherTransform->getScale();
+                math::FRect otherHitbox =
+                    otherCollider->getHitbox(otherTransform->getPosition(), otherScale);
+
+                if (movingHitbox.intersects(otherHitbox)) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+bool MovementSystem::checkCollision(
+    std::shared_ptr<Registry> registry,
+    size_t entityId,
+    math::Vector2f newPos) {
+
+    if (!checkCollisionWithBoundaries(registry, entityId, newPos)) {
+        return false;
+    }
+
+    auto movingColliders = registry->getComponents<ColliderComponent>(entityId);
+    if (movingColliders.empty()) {
+        return true;
+    }
+
+    auto movingTransform = registry->getComponent<TransformComponent>(entityId);
+    math::Vector2f movingScale = movingTransform->getScale();
+
+    for (auto& movingCollider : movingColliders) {
+        if (movingCollider->getType() != CollisionType::Solid) continue;
+
+        math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale);
+        auto nearbyEntities = _spatialGrid.query(movingHitbox);
+
+        for (auto otherEntityId : nearbyEntities) {
+            if (otherEntityId == entityId) continue;
+
+            auto otherTransform = registry->getComponent<TransformComponent>(otherEntityId);
+            auto otherColliders = registry->getComponents<ColliderComponent>(otherEntityId);
+
+            if (!otherTransform || otherColliders.empty())
+                continue;
 
             for (auto& otherCollider : otherColliders) {
                 if (otherCollider->getType() != CollisionType::Solid &&
@@ -203,18 +295,20 @@ void MovementSystem::handlePushCollision(
     auto entityTransform = registry->getComponent<TransformComponent>(entityId);
     math::Vector2f entityScale = entityTransform->getScale();
 
-    auto allEntitiesView = registry->view<TransformComponent, ColliderComponent>();
+    for (auto& pushCollider : pushColliders) {
+        if (pushCollider->getType() != CollisionType::Push) continue;
 
-    for (auto otherEntityId : allEntitiesView) {
-        if (otherEntityId == entityId) continue;
+        math::FRect pushHitbox = pushCollider->getHitbox(finalPos, entityScale);
 
-        auto otherTransform = registry->getComponent<TransformComponent>(otherEntityId);
-        auto otherColliders = registry->getComponents<ColliderComponent>(otherEntityId);
+        auto allEntities = registry->view<TransformComponent, ColliderComponent>();
+        for (auto otherEntityId : allEntities) {
+            if (otherEntityId == entityId) continue;
 
-        for (auto& pushCollider : pushColliders) {
-            if (pushCollider->getType() != CollisionType::Push) continue;
+            auto otherTransform = registry->getComponent<TransformComponent>(otherEntityId);
+            auto otherColliders = registry->getComponents<ColliderComponent>(otherEntityId);
 
-            math::FRect pushHitbox = pushCollider->getHitbox(finalPos, entityScale);
+            if (!otherTransform || otherColliders.empty())
+                continue;
 
             for (auto& otherCollider : otherColliders) {
                 if (otherCollider->getType() == CollisionType::None) continue;
@@ -225,20 +319,21 @@ void MovementSystem::handlePushCollision(
                 }
 
                 math::Vector2f otherScale = otherTransform->getScale();
+                math::Vector2f currentOtherPos = otherTransform->getPosition();
                 math::FRect otherHitbox =
-                    otherCollider->getHitbox(otherTransform->getPosition(), otherScale);
+                    otherCollider->getHitbox(currentOtherPos, otherScale);
 
                 if (pushHitbox.intersects(otherHitbox)) {
                     auto pusherVelocity = registry->getComponent<VelocityComponent>(entityId);
                     math::Vector2f pushVelocity = pusherVelocity->getVelocity();
                     math::Vector2f pushAmount = pushVelocity * deltaTime;
-                    math::Vector2f newOtherPos = otherTransform->getPosition() + pushAmount;
+                    math::Vector2f newOtherPos = currentOtherPos + pushAmount;
 
                     if (checkCollision(registry, otherEntityId, newOtherPos)) {
                         otherTransform->setPosition(newOtherPos);
                     } else {
-                        registry->addComponent<DeathIntentComponent>(otherEntityId,
-                            std::make_shared<DeathIntentComponent>());
+                        registry->addComponent<DeathIntentComponent>(
+                            otherEntityId, std::make_shared<DeathIntentComponent>());
                     }
                 }
             }
@@ -260,4 +355,4 @@ bool MovementSystem::shouldCollide(
     return collisionRules.canCollide(colliderA.getType(), tagsA, tagsB);
 }
 
-}  // namespace ecs
+}

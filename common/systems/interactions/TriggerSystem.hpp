@@ -14,6 +14,7 @@
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../CollisionRules/CollisionRules.hpp"
+#include "../../SpatialGrid/SpatialGrid.hpp"
 #include "TagRegistry.hpp"
 
 namespace ecs {
@@ -30,6 +31,10 @@ class TriggerSystem : public ASystem {
         ) override;
 
     private:
+        void buildSpatialGrid(
+            std::shared_ptr<Registry> registry
+        );
+
         bool checkCollision(
             const TransformComponent& transformA,
             const ColliderComponent& colliderA,
@@ -43,8 +48,10 @@ class TriggerSystem : public ASystem {
             const ColliderComponent& colliderA,
             size_t entityB
         );
+
+        SpatialGrid _spatialGrid;
 };
 
-}  // namespace ecs
+}
 
 #endif /* !TRIGGERSYSTEM_HPP_ */

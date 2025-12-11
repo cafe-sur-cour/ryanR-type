@@ -167,6 +167,10 @@ namespace constants {
     const float MAX_WIDTH = 1920.0f;
     const float GAME_ZONE_BOUNDARY_THICKNESS = 100.0f;
 
+    const float SPATIAL_GRID_CELL_SIZE = 128.0f;
+    const float SPATIAL_GRID_PADDING = 200.0f;
+    const float OUT_OF_BOUNDS_MARGIN = 500.0f;
+
     /* Map parsing constants */
     const std::string MUSIC_FIELD = "music";
     const std::string BACKGROUND_FIELD = "background";
@@ -235,6 +239,7 @@ namespace constants {
     constexpr std::uint8_t PACKET_END_MAP = 0x07;
     constexpr std::uint8_t PACKET_END_GAME = 0x08;
     constexpr std::uint8_t PACKET_CAN_START = 0x09;
+    constexpr std::uint8_t PACKET_CLIENT_READY = 0x0A;
 
 }
 

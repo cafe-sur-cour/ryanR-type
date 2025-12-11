@@ -23,6 +23,14 @@ enum class InputAction {
     MENU_BACK,
 };
 
+enum class RemappableAction {
+    MOVE_LEFT,
+    MOVE_RIGHT,
+    MOVE_UP,
+    MOVE_DOWN,
+    SHOOT,
+};
+
 }  // namespace ecs
 
 #endif /* !INPUTACTION_HPP_ */

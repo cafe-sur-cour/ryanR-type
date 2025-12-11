@@ -41,6 +41,48 @@ MainMenuState::MainMenuState(
     auto config = _resourceManager->get<SettingsConfig>();
     _uiManager->setGlobalScale(config->getUIScale());
 
+    ui::LayoutConfig leftConfig;
+    leftConfig.direction = ui::LayoutDirection::Vertical;
+    leftConfig.alignment = ui::LayoutAlignment::Center;
+    leftConfig.spacing = 0.0f;
+    leftConfig.padding = math::Vector2f(0.0f, 0.0f);
+    leftConfig.anchorX = ui::AnchorX::Left;
+    leftConfig.anchorY = ui::AnchorY::Center;
+    leftConfig.offset = math::Vector2f(50.0f, 0.0f);
+
+    _leftLayout = std::make_shared<ui::UILayout>(_resourceManager, leftConfig);
+    _leftLayout->setSize(math::Vector2f(300.f, 108.f));
+
+    _connectButton = std::make_shared<ui::Button>(_resourceManager);
+    _connectButton->setText("Connect to Server");
+    _connectButton->setSize(math::Vector2f(300.f, 108.f));
+    _connectButton->setNormalColor({0, 100, 200});
+    _connectButton->setHoveredColor({0, 150, 255});
+    _connectButton->setFocusedColor({100, 200, 255});
+
+    _connectButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && !network->isConnected()) {
+            network->connect();
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[MainMenu] Connecting to server...",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
+    });
+    _connectButton->setOnActivated([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && !network->isConnected()) {
+            network->connect();
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[MainMenu] Connecting to server...",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
+    });
+
+    _leftLayout->addElement(_connectButton);
+
     ui::LayoutConfig menuConfig;
     menuConfig.direction = ui::LayoutDirection::Vertical;
     menuConfig.alignment = ui::LayoutAlignment::Center;
@@ -50,10 +92,10 @@ MainMenuState::MainMenuState(
     menuConfig.anchorY = ui::AnchorY::Center;
     menuConfig.offset = math::Vector2f(0.0f, 0.0f);
 
-    _mainMenuLayout = std::make_shared<ui::UILayout>(resourceManager, menuConfig);
+    _mainMenuLayout = std::make_shared<ui::UILayout>(_resourceManager, menuConfig);
     _mainMenuLayout->setSize(math::Vector2f(576.f, 400.f));
     _playButton = std::make_shared<ui::Button>(resourceManager);
-    _playButton->setText("Play Game");
+    _playButton->setText("Ready");
     _playButton->setSize(math::Vector2f(576.f, 108.f));
     _playButton->setNormalColor({0, 200, 0});
     _playButton->setHoveredColor({0, 255, 0});
@@ -62,11 +104,14 @@ MainMenuState::MainMenuState(
     _playButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            this->_gsm->requestStateChange(std::make_shared<DevState>(this->_gsm,
-                this->_resourceManager));
+            network->sendReady();
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[MainMenu] Sent ready signal to server.",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
         } else {
             debug::Debug::printDebug(network ? network->isDebugMode() : false,
-                "[MainMenu] Cannot start game: Not connected to server.",
+                "[MainMenu] Cannot send ready: Not connected to server.",
                 debug::debugType::NETWORK,
                 debug::debugLevel::WARNING);
         }
@@ -74,11 +119,14 @@ MainMenuState::MainMenuState(
     _playButton->setOnActivated([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            this->_gsm->requestStateChange(std::make_shared<DevState>(this->_gsm,
-                this->_resourceManager));
+            network->sendReady();
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[MainMenu] Sent ready signal to server.",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
         } else {
             debug::Debug::printDebug(network ? network->isDebugMode() : false,
-                "[MainMenu] Cannot start game: Not connected to server.",
+                "[MainMenu] Cannot send ready: Not connected to server.",
                 debug::debugType::NETWORK,
                 debug::debugLevel::WARNING);
         }
@@ -115,6 +163,8 @@ MainMenuState::MainMenuState(
     _mainMenuLayout->addElement(_playButton);
     _mainMenuLayout->addElement(_settingsButton);
     _mainMenuLayout->addElement(_quitButton);
+
+    _uiManager->addElement(_leftLayout);
     _uiManager->addElement(_mainMenuLayout);
 }
 

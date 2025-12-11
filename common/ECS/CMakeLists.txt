@@ -14,6 +14,7 @@ set_target_properties(${ECS_LIB_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(${ECS_LIB_NAME}
     PUBLIC ENTITY_PREFAB_MANAGER
+    PUBLIC SPATIAL_GRID
 )
 
 target_include_directories(${ECS_LIB_NAME}

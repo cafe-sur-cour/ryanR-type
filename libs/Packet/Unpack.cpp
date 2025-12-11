@@ -36,8 +36,13 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
     if (data.size() - HEADER_SIZE != length) {
         return false;
     }
-    if (length == 0)
+    if (length == 0) {
+        this->_idClient = static_cast<uint8_t>(idClient);
+        this->_sequenceNumber = static_cast<uint32_t>(sequenceNumber);
+        this->_type = static_cast<uint8_t>(type);
+        this->_length = static_cast<uint32_t>(length);
         return true;
+    }
 
     if (type == GAME_STATE_PACKET) {
         this->_idClient = static_cast<uint8_t>(idClient);
@@ -51,7 +56,6 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
             std::vector<uint8_t>(payload.begin(), payload.begin() + 8));
         this->_payload.push_back(idx);
         for (unsigned int i = 8; i < payload.size();) {
-            std::cout << "Unpacking at index: " << i << " aka: " << static_cast<int>(payload.at(i)) << std::endl;
             for (const auto &func : this->_unpackGSFunction) {
                 unsigned int ret = func(payload, i);
                 if (ret > 0) {

@@ -14,10 +14,35 @@
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/temporary/TriggerIntentComponent.hpp"
 #include "../../CollisionRules/CollisionRules.hpp"
+#include "../../constants.hpp"
 
 namespace ecs {
 
-TriggerSystem::TriggerSystem() {
+TriggerSystem::TriggerSystem() : _spatialGrid(
+    constants::MAX_WIDTH,
+    constants::MAX_HEIGHT,
+    constants::SPATIAL_GRID_CELL_SIZE,
+    constants::SPATIAL_GRID_PADDING
+) {
+}
+
+void TriggerSystem::buildSpatialGrid(std::shared_ptr<Registry> registry) {
+    _spatialGrid.clear();
+
+    auto colliderView = registry->view<TransformComponent, ColliderComponent>();
+    for (auto entityId : colliderView) {
+        auto transform = registry->getComponent<TransformComponent>(entityId);
+        auto colliders = registry->getComponents<ColliderComponent>(entityId);
+
+        if (!transform || colliders.empty())
+            continue;
+
+        for (auto& collider : colliders) {
+            math::FRect hitbox = collider->getScaledHitbox(
+                transform->getPosition(), transform->getScale());
+            _spatialGrid.insert(entityId, hitbox);
+        }
+    }
 }
 
 void TriggerSystem::update(
@@ -28,6 +53,8 @@ void TriggerSystem::update(
     (void)resourceManager;
     (void)deltaTime;
 
+    buildSpatialGrid(registry);
+
     auto colliderView = registry->view<ColliderComponent>();
     for (auto triggerEntity : colliderView) {
         auto triggerCollider = registry->getComponent<ColliderComponent>(triggerEntity);
@@ -35,16 +62,23 @@ void TriggerSystem::update(
             continue;
         }
 
-        for (auto colliderEntity : colliderView) {
+        auto triggerTransform = registry->getComponent<TransformComponent>(triggerEntity);
+        if (!triggerTransform)
+            continue;
+
+        math::FRect triggerHitbox = triggerCollider->getScaledHitbox(
+            triggerTransform->getPosition(), triggerTransform->getScale());
+
+        auto nearbyEntities = _spatialGrid.query(triggerHitbox);
+
+        for (auto colliderEntity : nearbyEntities) {
             if (triggerEntity == colliderEntity)
                 continue;
 
-            auto triggerTransform = registry->getComponent<
-                TransformComponent>(triggerEntity);
-            auto colliderTransform = registry->getComponent<
-                TransformComponent>(colliderEntity);
-
-            if (!triggerTransform || !colliderTransform)
+            auto colliderTransform = registry->getComponent<TransformComponent>(
+                colliderEntity
+            );
+            if (!colliderTransform)
                 continue;
 
             auto otherCollider = registry->getComponent<ColliderComponent>(colliderEntity);
@@ -88,4 +122,4 @@ bool TriggerSystem::shouldCollide(
     return collisionRules.canCollide(colliderA.getType(), tagsA, tagsB);
 }
 
-}  // namespace ecs
+}
