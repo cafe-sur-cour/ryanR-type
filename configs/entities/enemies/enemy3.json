@@ -1,0 +1,74 @@
+{
+    "name": "enemy3",
+    "components": {
+        "MobTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 100.0, "y": 100.0 },
+            "scale": { "x": 2.5, "y": 2.5 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 150.0 },
+        "HealthComponent": { "target": "both", "health": 50.0 },
+        "AIMovementPatternComponent": {
+            "target": "both",
+            "defaultBehavior": "FollowRight",
+            "verticalDeadzone": 10.0
+        },
+        "ProjectilePrefabComponent": {
+            "target": "both",
+            "prefabName": "enemy_basic_shot"
+        },
+        "ShootingStatsComponent": {
+            "target": "both",
+            "fireRate": 0.6,
+            "projectileSpeed": 700.0,
+            "shotCount": 1,
+            "angleOffset": 180.0,
+            "spreadAngle": 0.0
+        },
+        "AIMoverTag": { "target": "both" },
+        "AIShooterTag": { "target": "both" },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/ennemies/dick_to_right.png",
+                    "frameWidth": 33.125,
+                    "frameHeight": 33.0,
+                    "frameCount": 8,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                }
+            },
+            "initialState": "idle",
+            "transitions": []
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size" : { "x": 33.0, "y": 36.0 },
+            "type": "Solid"
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": []
+                },
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDamage"]
+                }
+            ]
+        },
+        "ShooterTag": { "target": "both" },
+        "HealthBarComponent": { "target": "client" }
+    }
+}
