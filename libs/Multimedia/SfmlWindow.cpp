@@ -30,7 +30,9 @@ SfmlWindow::SfmlWindow(std::string title, size_t width, size_t height)
     _viewportScale(1.f, 1.f),
     _renderQuality(1.0f),
     _renderWidth(static_cast<unsigned int>(constants::MAX_WIDTH)),
-    _renderHeight(static_cast<unsigned int>(constants::MAX_HEIGHT)) {
+    _renderHeight(static_cast<unsigned int>(constants::MAX_HEIGHT)),
+    _cursorArrow(sf::Cursor::Type::Arrow),
+    _cursorHand(sf::Cursor::Type::Hand) {
     init();
 }
 
@@ -413,10 +415,8 @@ void SfmlWindow::setRenderQuality(float quality) {
 
 void SfmlWindow::setCursor(bool isHand) {
     if (isHand) {
-        sf::Cursor cursor(sf::Cursor::Type::Hand);
-        _window->setMouseCursor(cursor);
+        _window->setMouseCursor(_cursorHand);
     } else {
-        sf::Cursor cursor(sf::Cursor::Type::Arrow);
-        _window->setMouseCursor(cursor);
+        _window->setMouseCursor(_cursorArrow);
     }
 }
