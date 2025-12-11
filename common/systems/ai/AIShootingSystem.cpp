@@ -15,15 +15,18 @@ namespace ecs {
 void AIShootingSystem::update(
     [[maybe_unused]] std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<Registry> registry,
-    float deltaTime) {
-    (void) deltaTime;
+    [[maybe_unused]] float deltaTime
+) {
     auto view = registry->view<AIShooterTag, ShootingStatsComponent, TransformComponent>();
     for (auto entityId : view) {
         if (registry->hasComponent<ShootIntentComponent>(entityId))
             continue;
         auto shootingStats = registry->getComponent<ShootingStatsComponent>(entityId);
-        float angleOffset = shootingStats ? shootingStats->getMultiShotPattern().offsetDistance : 0.0f;
-        auto shootIntentComponent = std::make_shared<ShootIntentComponent>(180.0f + angleOffset);
+        float angleOffset = shootingStats ?
+            shootingStats->getMultiShotPattern().offsetDistance : 0.0f;
+        auto shootIntentComponent = std::make_shared<ShootIntentComponent>(
+            180.0f + angleOffset
+        );
 
         registry->addComponent<ShootIntentComponent>(entityId, shootIntentComponent);
     }
