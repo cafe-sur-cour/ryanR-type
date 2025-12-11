@@ -213,7 +213,7 @@ void SfmlWindow::drawSprite(const std::string& texturePath,
     auto texture = _textureManager.loadTexture(texturePath);
     if (!texture)
         return drawFilledRectangle({255, 0, 0}, {static_cast<size_t>(x),
-            static_cast<size_t>(y)}, {50, 50});
+            static_cast<size_t>(y)}, {static_cast<size_t>(50), static_cast<size_t>(50)});
 
     sf::Sprite sprite(*texture);
     sprite.setPosition(sf::Vector2f(x, y));
@@ -226,7 +226,7 @@ void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y,
     auto texture = _textureManager.loadTexture(texturePath);
     if (!texture)
         return drawFilledRectangle({255, 0, 0}, {static_cast<size_t>(x),
-            static_cast<size_t>(y)}, {50, 50});
+            static_cast<size_t>(y)}, {static_cast<size_t>(50), static_cast<size_t>(50)});
 
 
     sf::Sprite sprite(*texture);
