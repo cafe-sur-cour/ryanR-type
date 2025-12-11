@@ -117,6 +117,7 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::make_tuple(DAMAGE, 9, 2),
         std::make_tuple(LIFETIME, 9, 2),
         std::make_tuple(VELOCITY, 17, 3),
+        std::make_tuple(AI_MOVER_TAG, 1, 1)
     };
 
     this->_packGSFunction = {
@@ -141,6 +142,8 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::bind(&pm::PacketManager::packLifetime,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::packVelocity,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packAIMoverTag,
         this, std::placeholders::_1, std::placeholders::_2)
     };
 
@@ -167,6 +170,8 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::unpackVelocity,
         this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackAIMoverTag,
+        this, std::placeholders::_1, std::placeholders::_2)
     };
 }
 

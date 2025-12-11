@@ -21,6 +21,7 @@
 #include "../common/components/permanent/DamageComponent.hpp"
 #include "../common/components/permanent/LifetimeComponent.hpp"
 #include "../common/components/permanent/VelocityComponent.hpp"
+#include "../common/components/tags/AIMoverTag.hpp"
 
 std::vector<uint64_t> rserv::Server::convertTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
@@ -157,6 +158,15 @@ std::vector<uint64_t> rserv::Server::convertVelocityComponent(
         data.push_back(static_cast<uint64_t>(VELOCITY));
         data.push_back(static_cast<uint64_t>(velocity->getVelocity().getX()));
         data.push_back(static_cast<uint64_t>(velocity->getVelocity().getY()));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertAIMoverTagComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::AIMoverTag>(i)) {
+        data.push_back(static_cast<uint64_t>(AI_MOVER_TAG));
     }
     return data;
 }
