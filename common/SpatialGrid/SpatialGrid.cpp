@@ -16,7 +16,7 @@ namespace ecs {
 SpatialGrid::SpatialGrid(
     float worldWidth, float worldHeight, float cellSize, float padding
 ) : _worldWidth(worldWidth), _worldHeight(worldHeight),
-    _cellSize(cellSize), _padding(padding) {
+    _cellSize(cellSize), _padding(padding), _offsetX(0.0f), _offsetY(0.0f) {
     float totalWidth = _worldWidth + 2 * _padding;
     float totalHeight = _worldHeight + 2 * _padding;
     _numCols = static_cast<size_t>(std::ceil(totalWidth / _cellSize)) + 1;
@@ -92,9 +92,16 @@ void SpatialGrid::setCellSize(float cellSize) {
     _cells.resize(_numCols * _numRows);
 }
 
+void SpatialGrid::setOffset(float offsetX, float offsetY) {
+    _offsetX = offsetX;
+    _offsetY = offsetY;
+}
+
 size_t SpatialGrid::getCellIndex(float x, float y) const {
-    int col = static_cast<int>(std::floor((x + _padding) / _cellSize));
-    int row = static_cast<int>(std::floor((y + _padding) / _cellSize));
+    float localX = x - _offsetX;
+    float localY = y - _offsetY;
+    int col = static_cast<int>(std::floor((localX + _padding) / _cellSize));
+    int row = static_cast<int>(std::floor((localY + _padding) / _cellSize));
 
     col = std::max(0, std::min(col, static_cast<int>(_numCols) - 1));
     row = std::max(0, std::min(row, static_cast<int>(_numRows) - 1));
@@ -105,8 +112,8 @@ size_t SpatialGrid::getCellIndex(float x, float y) const {
 std::vector<size_t> SpatialGrid::getCellIndices(const math::FRect& bounds) const {
     std::vector<size_t> indices;
 
-    float left = bounds.getLeft();
-    float top = bounds.getTop();
+    float left = bounds.getLeft() - _offsetX;
+    float top = bounds.getTop() - _offsetY;
     float right = left + bounds.getWidth();
     float bottom = top + bounds.getHeight();
 
