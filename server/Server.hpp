@@ -82,6 +82,8 @@ namespace rserv {
 
             void setCurrentMap(const std::vector<uint64_t> &map);
             std::vector<uint64_t> getCurrentMap() const;
+            bool isGameStarted() const;
+            bool allClientsReady() const;
         private:
             void loadNetworkLibrary();
             void loadBufferLibrary();
@@ -92,6 +94,7 @@ namespace rserv {
             uint8_t _nextClientId;
             uint32_t _sequenceNumber;
             std::vector<std::tuple<uint8_t, asio::ip::udp::endpoint, std::string>> _clients;
+            std::map<uint8_t, bool> _clientsReady;
 
             std::shared_ptr<ServerConfig> _config;
             std::shared_ptr<net::INetwork> _network;
@@ -100,6 +103,7 @@ namespace rserv {
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> _eventQueue;
 
             std::vector<uint64_t> _currentMap;
+            bool _gameStarted;
             std::shared_ptr<ResourceManager> _resourceManager;
 
             /* Functions to build game state packets */
