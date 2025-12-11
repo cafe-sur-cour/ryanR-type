@@ -103,11 +103,6 @@ void AFocusableElement::handleInput(const math::Vector2f& mousePos, bool mousePr
             }
         }
     } else {
-        if (mousePressed) {
-            if (_state != UIState::Pressed) {
-                //
-            }
-        }
         if (!_focused) {
             setState(UIState::Normal);
         }
