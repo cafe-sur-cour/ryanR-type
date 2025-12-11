@@ -39,6 +39,7 @@ void HealthSystem::_handleDamageUpdates(std::shared_ptr<Registry> registry) {
         float health = healthComponent->getHealth();
 
         healthComponent->setHealth(health - damages);
+        healthComponent->setLastDamageSource(damageComponent->getSource());
 
         registry->removeComponent<DamageIntentComponent>(entityId);
     }
@@ -51,7 +52,8 @@ void HealthSystem::_handleHealthUpdates(std::shared_ptr<Registry> registry) {
         auto healthComponent = registry->getComponent<HealthComponent>(entityId);
 
         if (healthComponent->getHealth() <= 0.0f) {
-            registry->addComponent(entityId, std::make_shared<DeathIntentComponent>());
+            ecs::Entity source = healthComponent->getLastDamageSource();
+            registry->addComponent(entityId, std::make_shared<DeathIntentComponent>(source));
         }
     }
 }
