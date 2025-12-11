@@ -33,6 +33,8 @@
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "Signal.hpp"
 
+#define CD_TPS 20
+
 namespace rserv {
     class Server : public IServer {
         public:
@@ -101,6 +103,7 @@ namespace rserv {
 
             std::vector<uint64_t> _currentMap;
             std::shared_ptr<ResourceManager> _resourceManager;
+            std::chrono::steady_clock::time_point _lastGameStateTime;
 
             /* Functions to build game state packets */
             std::vector<std::function<std::vector<uint64_t>(std::shared_ptr<ecs::Registry>, ecs::Entity)>> _convertFunctions;
