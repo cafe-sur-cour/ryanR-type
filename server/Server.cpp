@@ -80,6 +80,8 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
         std::bind(&rserv::Server::convertProjectilePassThroughTagComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertProjectilePrefabComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertNetworkIdComponent, this,
             std::placeholders::_1, std::placeholders::_2)
     };
 }

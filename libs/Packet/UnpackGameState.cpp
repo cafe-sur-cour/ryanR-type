@@ -360,3 +360,16 @@ unsigned int pm::PacketManager::unpackProjectilePrefabComponent(
     }
     return 0;
 }
+
+unsigned int pm::PacketManager::unpackNetworkIdComponent(
+    std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == NETWORK_ID) {
+        this->_payload.push_back(static_cast<uint64_t>(NETWORK_ID));
+        uint64_t networkId = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin() + i + 1,
+            payload.begin() + i + 9));
+        this->_payload.push_back(networkId);
+        return 9;
+    }
+    return 0;
+}
