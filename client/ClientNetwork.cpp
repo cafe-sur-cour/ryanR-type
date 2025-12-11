@@ -42,6 +42,8 @@ ClientNetwork::ClientNetwork() {
     this->_gsm = nullptr;
     this->_clientNames = {};
 
+    this->_shouldConnect = false;
+
     // Initialize packet handlers
     _packetHandlers[constants::PACKET_NO_OP] = &ClientNetwork::handleNoOp;
     _packetHandlers[constants::PACKET_CONNECTION] = &ClientNetwork::handleNoOp;
@@ -88,6 +90,17 @@ void ClientNetwork::init() {
         asio::ip::address::from_string(this->_ip),
         static_cast<uint16_t>(this->_port)
     );
+}
+
+void ClientNetwork::connect() {
+    this->_shouldConnect = true;
+    if (this->_network->getConnectionState() == net::ConnectionState::DISCONNECTED) {
+        debug::Debug::printDebug(this->_isDebug,
+            "Attempting to connect to server...",
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
+        this->connectionPacket();
+    }
 }
 
 void ClientNetwork::stop() {
@@ -199,7 +212,8 @@ std::pair<int, std::chrono::steady_clock::time_point> ClientNetwork::tryConnecti
     int maxRetries, int retryCount, std::chrono::steady_clock::time_point lastRetryTime) {
     auto currentTime = std::chrono::steady_clock::now();
 
-    if (this->_network->getConnectionState() == net::ConnectionState::CONNECTING &&
+    if (this->_shouldConnect &&
+        this->_network->getConnectionState() == net::ConnectionState::CONNECTING &&
         retryCount < maxRetries &&
         std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastRetryTime).count()
             >= constants::NETWORK_TIMEOUT) {
@@ -221,16 +235,6 @@ void ClientNetwork::start() {
     const int maxRetries = constants::MAX_RETRY_CONNECTIONS;
     int retryCount = 0;
     auto lastRetryTime = std::chrono::steady_clock::now();
-
-    if (this->_network->getConnectionState() == net::ConnectionState::CONNECTING) {
-        debug::Debug::printDebug(this->_isDebug,
-            "Attempting initial connection (attempt 1/" + std::to_string(maxRetries) + ")",
-            debug::debugType::NETWORK,
-            debug::debugLevel::INFO);
-        this->connectionPacket();
-        retryCount++;
-        lastRetryTime = std::chrono::steady_clock::now();
-    }
 
     while (!Signal::stopFlag) {
         std::tie(retryCount, lastRetryTime) = tryConnection(maxRetries, retryCount,
