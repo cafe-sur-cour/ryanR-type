@@ -11,9 +11,10 @@
 #include <thread>
 
 #include "Core.hpp"
-#include "../common/debug.hpp"
+#include "Constants.hpp"
 #include "initResourcesManager/initResourcesManager.hpp"
 #include "gsm/states/scenes/Boot/BootState.hpp"
+#include "../common/debug.hpp"
 #include "../../common/systems/systemManager/SystemManager.hpp"
 #include "../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 
@@ -54,7 +55,7 @@ Core::Core() {
 
 Core::~Core() {
     if (this->_serverThread.joinable()) {
-        if (this->_server != nullptr && this->_server->getState() == SERVER_UP) {
+        if (this->_server != nullptr && this->_server->getState() == constants::SERVER_UP) {
             this->_server->stop();
         }
         this->_serverThread.join();
@@ -122,15 +123,18 @@ void Core::processServerEvents() {
 void Core::loop() {
     auto previousTime = std::chrono::high_resolution_clock::now();
 
-    while (this->_server->getState() < SERVER_UP) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_THREAD_SLEEP_MS));
+    while (this->_server->getState() < constants::SERVER_UP) {
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(constants::SERVER_THREAD_SLEEP_MS));
     }
 
-    while (this->_server->getState() == SERVER_UP && !this->_server->isGameStarted()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_THREAD_SLEEP_MS));
+    while (this->_server->getState() == constants::SERVER_UP
+        && !this->_server->isGameStarted()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(
+            constants::SERVER_THREAD_SLEEP_MS));
     }
 
-    while (this->_server->getState() == SERVER_UP) {
+    while (this->_server->getState() == constants::SERVER_UP) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float>(currentTime - previousTime).count();
         previousTime = currentTime;
