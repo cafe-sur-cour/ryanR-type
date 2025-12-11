@@ -1,0 +1,22 @@
+set(SPATIAL_GRID_LIB SPATIAL_GRID)
+
+set(SPATIAL_GRID_SOURCES
+    SpatialGrid.cpp
+)
+
+set(SPATIAL_GRID_HEADERS
+    SpatialGrid.hpp
+)
+
+add_library(${SPATIAL_GRID_LIB} STATIC ${SPATIAL_GRID_SOURCES} ${SPATIAL_GRID_HEADERS})
+
+set_target_properties(${SPATIAL_GRID_LIB} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+target_include_directories(${SPATIAL_GRID_LIB} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
+
+target_sources(${SPATIAL_GRID_LIB} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../types/Vector2f.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../types/FRect.cpp
+)

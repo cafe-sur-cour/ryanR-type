@@ -94,10 +94,14 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
                 << static_cast<int>(type) << " for packing" << std::endl;
             return std::vector<uint8_t>();
         }
-        debug::Debug::printDebug(true, "[PACKET] Warning: Packet size not fixed " +
+        if (type == CAN_START_PACKET) {
+            length = static_cast<uint32_t>(payload.size()) * sizeof(uint64_t);
+        } else {
+            debug::Debug::printDebug(true, "[PACKET] Warning: Packet size not fixed " +
             std::to_string(static_cast<int>(type)) + " for packing",
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
-        length = static_cast<uint32_t>(payload.size()) * sizeof(uint64_t);
+            length = static_cast<uint32_t>(payload.size()) * sizeof(uint64_t);
+        }
     }
 
     temp = this->_serializer->serializeUInt(length);
