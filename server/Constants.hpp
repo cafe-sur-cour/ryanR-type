@@ -18,6 +18,9 @@ namespace constants {
     /* Core */
     constexpr long SERVER_THREAD_SLEEP_MS = 10;
     constexpr int SERVER_UP = 1;
+
+    /* Server */
+    constexpr uint8_t ID_SERVER = 0;
 }
 
 #endif /* !SERVER_CONSTANTS */
