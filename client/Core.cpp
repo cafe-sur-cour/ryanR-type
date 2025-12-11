@@ -41,6 +41,8 @@ Core::Core() {
     );
     this->_clientNetwork->setResourceManager(this->_resourceManager);
     this->_clientNetwork->setGameStateMachine(this->_gsm);
+    this->_resourceManager->add<ecs::Registry>(this->_registry);
+    this->_resourceManager->add<EntityPrefabManager>(entityPrefabManager);
 
     std::shared_ptr<gsm::MainMenuState> mainMenuState =
         std::make_shared<gsm::MainMenuState>(this->_gsm, this->_resourceManager);
