@@ -96,11 +96,6 @@ void UIElement::handleInput(const math::Vector2f& mousePos, bool mousePressed) {
             }
         }
     } else {
-        if (mousePressed) {
-            if (_state != UIState::Pressed) {
-                //
-            }
-        }
         setState(UIState::Normal);
     }
 
