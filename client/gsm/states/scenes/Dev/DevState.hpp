@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** DevState
+*/
+
 #ifndef DEVSTATE_HPP_
 #define DEVSTATE_HPP_
 
@@ -10,18 +17,18 @@
 namespace gsm {
 
 class DevState : public AGameState {
-public:
-    DevState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
-    ~DevState() override = default;
+    public:
+        DevState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
+        ~DevState() override = default;
 
-    void enter() override;
-    void update(float deltaTime) override;
-    void exit() override;
+        void enter() override;
+        void update(float deltaTime) override;
+        void exit() override;
 
-private:
-    std::shared_ptr<ecs::Registry> _registry;
-    std::shared_ptr<EntityPrefabManager> _prefabManager;
-    std::shared_ptr<Parser> _parser;
+    private:
+        std::shared_ptr<ecs::Registry> _registry;
+        std::shared_ptr<EntityPrefabManager> _prefabManager;
+        std::shared_ptr<Parser> _parser;
 };
 
 }  // namespace gsm
