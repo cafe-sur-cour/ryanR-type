@@ -241,6 +241,7 @@ namespace constants {
     constexpr std::uint8_t PACKET_CAN_START = 0x09;
     constexpr std::uint8_t PACKET_CLIENT_READY = 0x0A;
     constexpr std::uint8_t PACKET_SPAWN = 0x0B;
+    constexpr std::uint8_t PACKET_DEATH = 0x0C;
 
 }
 
