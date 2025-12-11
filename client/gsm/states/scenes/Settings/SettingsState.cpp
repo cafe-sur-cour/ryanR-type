@@ -729,6 +729,15 @@ void SettingsState::setScreenResolution(SettingsConfig::ScreenResolution resolut
     config->setScreenResolution(resolution);
     _settingsManager->saveSettings();
     updateResolutionButtonColors(resolution);
+
+    auto window = _resourceManager->get<gfx::IWindow>();
+    if (config->isFullscreen(resolution)) {
+        window->setFullscreen(true);
+    } else {
+        auto size = config->getScreenResolutionSize(resolution);
+        window->resizeWindow(static_cast<size_t>(size.first),
+            static_cast<size_t>(size.second));
+    }
 }
 
 void SettingsState::updateResolutionButtonColors(SettingsConfig::ScreenResolution current) {
@@ -745,10 +754,12 @@ void SettingsState::updateResolutionButtonColors(SettingsConfig::ScreenResolutio
             _resolutionButtons[i]->setNormalColor(colors::BUTTON_SECONDARY);
             _resolutionButtons[i]->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
             _resolutionButtons[i]->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+            _resolutionButtons[i]->setState(ui::UIState::Disabled);
         } else {
             _resolutionButtons[i]->setNormalColor(colors::BUTTON_PRIMARY);
             _resolutionButtons[i]->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
             _resolutionButtons[i]->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+            _resolutionButtons[i]->setState(ui::UIState::Normal);
         }
     }
 }

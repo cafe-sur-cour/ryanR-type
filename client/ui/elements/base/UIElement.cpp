@@ -196,6 +196,14 @@ std::pair<int, int> UIElement::getWindowSize() const {
     return resourceManager->get<gfx::IWindow>()->getWindowSize();
 }
 
+std::pair<int, int> UIElement::getLogicalSize() const {
+    auto resourceManager = _resourceManager.lock();
+    if (!resourceManager) {
+        return {constants::MAX_WIDTH, constants::MAX_HEIGHT};
+    }
+    return resourceManager->get<gfx::IWindow>()->getLogicalSize();
+}
+
 float UIElement::getScaleFactor() const {
     switch (_scale) {
         case UIScale::Small:
