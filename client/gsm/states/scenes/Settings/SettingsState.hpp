@@ -48,6 +48,7 @@ private:
     void updateToggleValue(bool value);
     void cycleScreenResolution();
     void updateTargetFPS(int fps);
+    void updateRenderQuality(float quality);
     void setScreenResolution(SettingsConfig::ScreenResolution resolution);
     void updateResolutionButtonColors(SettingsConfig::ScreenResolution current);
 
@@ -71,6 +72,7 @@ private:
     std::shared_ptr<ui::UILayout> _toggleLayout;
     std::vector<std::shared_ptr<ui::Button>> _resolutionButtons;
     std::shared_ptr<ui::Slider> _fpsSlider;
+    std::shared_ptr<ui::Slider> _renderQualitySlider;
     std::shared_ptr<ui::Button> _scaleButton;
     std::unique_ptr<ui::UIManager> _uiManager;
     std::shared_ptr<ui::UILayout> _settingsLayout;

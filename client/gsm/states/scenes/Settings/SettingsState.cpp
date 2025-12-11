@@ -179,6 +179,18 @@ SettingsState::SettingsState(
         updateTargetFPS(static_cast<int>(value));
     });
 
+    _renderQualitySlider = std::make_shared<ui::Slider>(resourceManager);
+    _renderQualitySlider->setLabel("Render Quality");
+    _renderQualitySlider->setMinValue(0.25f);
+    _renderQualitySlider->setMaxValue(1.0f);
+    _renderQualitySlider->setValue(config->getRenderQuality());
+    _renderQualitySlider->setStep(0.25f);
+    _renderQualitySlider->setSize(math::Vector2f(250.f, 55.f));
+    _renderQualitySlider->setShowPercentage(true);
+    _renderQualitySlider->setOnValueChanged([this](float value) {
+        updateRenderQuality(value);
+    });
+
     _colorBlindnessButton = std::make_shared<ui::Button>(resourceManager);
     _colorBlindnessButton->setText(getColorBlindnessText(config->getColorBlindnessState()));
     _colorBlindnessButton->setSize(math::Vector2f(380.f, 55.f));
@@ -488,6 +500,7 @@ SettingsState::SettingsState(
 
     _centerColumnLayout->addElement(spacer);
     _centerColumnLayout->addElement(_fpsSlider);
+    _centerColumnLayout->addElement(_renderQualitySlider);
     for (auto& button : _resolutionButtons) {
         _centerColumnLayout->addElement(button);
     }
@@ -773,6 +786,12 @@ void SettingsState::updateTargetFPS(int fps) {
     window->setFramerateLimit(static_cast<unsigned int>(fps));
 }
 
+void SettingsState::updateRenderQuality(float quality) {
+    auto config = _resourceManager->get<SettingsConfig>();
+    config->setRenderQuality(quality);
+    _settingsManager->saveSettings();
+}
+
 std::string SettingsState::getScreenResolutionText(
     SettingsConfig::ScreenResolution resolution
 ) {
@@ -799,6 +818,7 @@ void SettingsState::exit() {
     }
     _resolutionButtons.clear();
     _fpsSlider.reset();
+    _renderQualitySlider.reset();
 
     _moveUpLayout.reset();
     _moveUpLabel.reset();

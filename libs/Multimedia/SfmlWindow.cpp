@@ -372,3 +372,8 @@ void SfmlWindow::setFullscreen(bool fullscreen) {
         updateView();
     }
 }
+
+void SfmlWindow::setRenderQuality(float quality) {
+    // Render quality logic removed - keeping UI only
+    (void)quality;
+}
