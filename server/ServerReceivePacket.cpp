@@ -33,6 +33,10 @@ bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
     }
     this->connectionPacket(client.first);
     this->_clients.push_back(std::make_tuple(this->_nextClientId, client.first, name));
+    this->_clientsReady[this->_nextClientId] = false;
+    debug::Debug::printDebug(this->_config->getIsDebug(), "[SERVER] Set client " +
+        std::to_string(this->_nextClientId) + " ready to false",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
     this->canStartPacket();
     this->_nextClientId++;
     return true;

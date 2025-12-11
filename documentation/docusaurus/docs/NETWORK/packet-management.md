@@ -110,6 +110,7 @@ class IPacketManager {
 | END_MAP | 0x07 | Map end | Variable |
 | END_GAME | 0x08 | Game end | Variable |
 | CAN_START | 0x09 | Start authorization | Variable |
+| CLIENT_READY | 0x0A | Client ready signal | 0 bytes |
 
 ## Serialization System
 
@@ -353,6 +354,48 @@ bool unpack(std::vector<uint8_t> data);
 ```
 
 **Usage**: Game events (keys, actions, etc.).
+
+### CAN_START_PACKET (0x09)
+
+**Body size**: Variable
+
+**Format**:
+```
++------+------+------+------+
+| Data | Data | Data | ...  |
++------+------+------+------+
+```
+
+**Usage**: Sent by the server to all clients when all connected clients have signaled they are ready to start the game.
+
+### CLIENT_READY_PACKET (0x0A)
+
+**Body size**: 0 bytes
+
+**Format**:
+```
+(empty)
+```
+
+**Usage**: Sent by the client to the server when the player clicks "Ready" in the menu, indicating they are prepared to start the game.
+
+## Ready System
+
+The ready system ensures synchronized game starts across all clients. It prevents the server from launching the game until every connected client has explicitly signaled readiness.
+
+### Flow
+
+1. **Client Connection**: Clients connect to the server and receive the game map.
+2. **Ready Signal**: Each client sends a `CLIENT_READY` packet when the player clicks "Ready".
+3. **Server Tracking**: The server tracks readiness for each client.
+4. **Game Start**: Once all clients are ready, the server broadcasts a `CAN_START` packet.
+5. **Auto-Start**: Clients automatically transition to the game state upon receiving `CAN_START`.
+
+### Implementation
+
+- **Server**: Maintains a map of client IDs to readiness status.
+- **Client**: Sends ready signal on menu button press, handles auto-start on `CAN_START`.
+- **Synchronization**: Ensures all players start simultaneously, preventing desynchronization issues.
 
 ## Performance and Optimization
 
