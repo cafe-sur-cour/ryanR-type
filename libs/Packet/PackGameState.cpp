@@ -10,7 +10,8 @@
 #include "PacketManager.hpp"
 #include "../../common/translationToECS.hpp"
 
-std::vector<uint8_t> pm::PacketManager::packPlayerTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+std::vector<uint8_t> pm::PacketManager::packPlayerTag(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
     if (payload.at(*i) == PLAYER_TAG) {
@@ -21,7 +22,8 @@ std::vector<uint8_t> pm::PacketManager::packPlayerTag(std::vector<uint64_t> payl
     return packet;
 }
 
-std::vector<uint8_t> pm::PacketManager::packTransformation(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+std::vector<uint8_t> pm::PacketManager::packTransformation(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
     if (payload.at(*i) == TRANSFORM) {
@@ -42,7 +44,8 @@ std::vector<uint8_t> pm::PacketManager::packTransformation(std::vector<uint64_t>
     return packet;
 }
 
-std::vector<uint8_t> pm::PacketManager::packSpeed(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+std::vector<uint8_t> pm::PacketManager::packSpeed(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
     if (payload.at(*i) == SPEED) {
@@ -55,7 +58,8 @@ std::vector<uint8_t> pm::PacketManager::packSpeed(std::vector<uint64_t> payload 
     return packet;
 }
 
-std::vector<uint8_t> pm::PacketManager::packHealth(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+std::vector<uint8_t> pm::PacketManager::packHealth(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
     if (payload.at(*i) == HEALTH) {
@@ -70,7 +74,8 @@ std::vector<uint8_t> pm::PacketManager::packHealth(std::vector<uint64_t> payload
     return packet;
 }
 
-std::vector<uint8_t> pm::PacketManager::packCollider(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+std::vector<uint8_t> pm::PacketManager::packCollider(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
     if (payload.at(*i) == COLLIDER) {
@@ -91,7 +96,8 @@ std::vector<uint8_t> pm::PacketManager::packCollider(std::vector<uint64_t> paylo
     return packet;
 }
 
-std::vector<uint8_t> pm::PacketManager::packShootingStats(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+std::vector<uint8_t> pm::PacketManager::packShootingStats(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
     if (payload.at(*i) == SHOOTING_STATS) {
@@ -112,7 +118,8 @@ std::vector<uint8_t> pm::PacketManager::packShootingStats(std::vector<uint64_t> 
     return packet;
 }
 
-std::vector<uint8_t> pm::PacketManager::packScore(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+std::vector<uint8_t> pm::PacketManager::packScore(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
     if (payload.at(*i) == SCORE) {
@@ -125,7 +132,8 @@ std::vector<uint8_t> pm::PacketManager::packScore(std::vector<uint64_t> payload 
     return packet;
 }
 
-std::vector<uint8_t> pm::PacketManager::packAIMovementPattern(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+std::vector<uint8_t> pm::PacketManager::packAIMovementPattern(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
     if (payload.at(*i) == AI_MOVEMENT_PATTERN) {
@@ -148,7 +156,8 @@ std::vector<uint8_t> pm::PacketManager::packAIMovementPattern(std::vector<uint64
     return packet;
 }
 
-std::vector<uint8_t> pm::PacketManager::packDamage(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+std::vector<uint8_t> pm::PacketManager::packDamage(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
     if (payload.at(*i) == DAMAGE) {
@@ -161,7 +170,8 @@ std::vector<uint8_t> pm::PacketManager::packDamage(std::vector<uint64_t> payload
     return packet;
 }
 
-std::vector<uint8_t> pm::PacketManager::packLifetime(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+std::vector<uint8_t> pm::PacketManager::packLifetime(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
     if (payload.at(*i) == LIFETIME) {
@@ -174,7 +184,8 @@ std::vector<uint8_t> pm::PacketManager::packLifetime(std::vector<uint64_t> paylo
     return packet;
 }
 
-std::vector<uint8_t> pm::PacketManager::packVelocity(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+std::vector<uint8_t> pm::PacketManager::packVelocity(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
     if (payload.at(*i) == VELOCITY) {
