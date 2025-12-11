@@ -87,6 +87,7 @@ class UIElement : public std::enable_shared_from_this<UIElement> {
         std::function<void()> _onRelease;
 
         std::pair<int, int> getWindowSize() const;
+        std::pair<int, int> getLogicalSize() const;
 
         float getScaleFactor() const;
 };

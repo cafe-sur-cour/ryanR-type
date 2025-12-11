@@ -116,9 +116,9 @@ void SfmlWindow::clear() {
 }
 
 void SfmlWindow::resizeWindow(size_t x, size_t y) {
-    _window->setSize(sf::Vector2u(
-        static_cast<unsigned int>(x),
-        static_cast<unsigned int>(y) ));
+    sf::VideoMode mode(sf::Vector2u(static_cast<unsigned int>(x),
+        static_cast<unsigned int>(y)));
+    _window->create(mode, "R-Type", sf::Style::Default);
     updateView();
 }
 void SfmlWindow::drawSprite(std::string asset, gfx::color_t color,
@@ -284,6 +284,7 @@ void SfmlWindow::updateView() {
 void SfmlWindow::setViewCenter(float x, float y) {
     _view.setCenter(sf::Vector2f(x, y));
     _renderTexture.setView(_view);
+    _window->setView(_view);
 }
 
 math::Vector2f SfmlWindow::getViewCenter() {
@@ -357,4 +358,17 @@ void SfmlWindow::setShaderUniform(
 
 void SfmlWindow::setFramerateLimit(unsigned int fps) {
     _window->setFramerateLimit(fps);
+}
+
+void SfmlWindow::setFullscreen(bool fullscreen) {
+    if (fullscreen) {
+        sf::VideoMode mode = sf::VideoMode::getDesktopMode();
+        _window->create(mode, "R-Type", sf::State::Fullscreen);
+        updateView();
+    } else {
+        sf::VideoMode mode(sf::Vector2u(static_cast<unsigned int>(constants::MAX_WIDTH),
+            static_cast<unsigned int>(constants::MAX_HEIGHT)));
+        _window->create(mode, "R-Type", sf::Style::Default);
+        updateView();
+    }
 }
