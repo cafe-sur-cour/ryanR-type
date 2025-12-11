@@ -48,7 +48,7 @@ std::vector<uint8_t> pm::PacketManager::packSpeed(
     std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
     std::vector<uint8_t> temp = {};
     std::vector<uint8_t> packet = {};
-    if (payload.at(*i) == SPEED) {
+    if (payload.at(*i) == SPEED_COMP) {
         temp = this->_serializer->serializeUChar(payload.at(*i));
         packet.insert(packet.end(), temp.begin(), temp.end());
         temp = this->_serializer->serializeULong(payload.at(*i + 1));
