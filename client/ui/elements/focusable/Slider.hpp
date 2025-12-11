@@ -75,6 +75,7 @@ class Slider : public AFocusableElement {
         std::function<void(float)> _onValueChanged;
 
         bool _isDragging = false;
+        bool _wasMousePressed = false;
 
         float getNormalizedValue() const;
         void setNormalizedValue(float normalized);

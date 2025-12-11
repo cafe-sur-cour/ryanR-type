@@ -27,3 +27,4 @@ private:
 }  // namespace gsm
 
 #endif  // DEVSTATE_HPP_
+
