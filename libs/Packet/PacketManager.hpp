@@ -67,6 +67,35 @@ class PacketManager : public IPacketManager {
         bool parseEndGamePacket(const std::vector<uint8_t> payload);
         std::vector<uint8_t> buildCanStartPacket(std::vector<uint64_t> payload);
         bool parseCanStartPacket(const std::vector<uint8_t> payload);
+
+        /* Pack Game State */
+        std::vector<std::tuple<uint8_t, uint32_t, uint64_t>> _lengthComb;
+        std::vector<std::function<std::vector<uint8_t>(std::vector<uint64_t>, std::shared_ptr<unsigned int>)>> _packGSFunction;
+        std::vector<uint8_t> packPlayerTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packTransformation(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packSpeed(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packHealth(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packCollider(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packShootingStats(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packScore(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packAIMovementPattern(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packDamage(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packLifetime(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packVelocity(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+
+        /* Unpack Game State */
+        std::vector<std::function<unsigned int(const std::vector<uint8_t>, unsigned int)>> _unpackGSFunction;
+        unsigned int unpackPlayerTag(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackTransform(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackSpeed(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackHealth(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackCollider(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackShootingStats(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackScore(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackAIMovementPattern(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackDamage(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackLifetime(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackVelocity(std::vector<uint8_t> payload, unsigned int i);
 };
 } // namespace pm
 

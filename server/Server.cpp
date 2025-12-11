@@ -39,13 +39,23 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertTransformComponent, this,
             std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertVelocityComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertSpeedComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertHealthComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertColliderComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertShootStatComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertScoreComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertAIMovementPatternComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertDamageComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertLifetimeComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertVelocityComponent, this,
             std::placeholders::_1, std::placeholders::_2)
     };
 }
@@ -104,7 +114,10 @@ void rserv::Server::start() {
     Signal::setupSignalHandlers();
     while (this->getState() == 1 && !Signal::stopFlag) {
         this->processIncomingPackets();
-        this->gameStatePacket();
+        if (this->_clients.size() > 0) {
+            this->gameStatePacket();
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
         if (std::cin.eof()) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "EOF received (Ctrl+D pressed)",
