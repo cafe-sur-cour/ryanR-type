@@ -14,14 +14,18 @@ namespace ecs {
 
 class DamageIntentComponent : public AComponent {
     public:
-        DamageIntentComponent(float damages = 0.0f) : _damages(damages) {};
+        DamageIntentComponent(float damages = 0.0f, ecs::Entity source = 0) : _damages(damages), _source(source) {};
         ~DamageIntentComponent() = default;
 
         float getDamages() { return _damages; };
         void setDamages(float damages) { _damages = damages; };
 
+        ecs::Entity getSource() const { return _source; };
+        void setSource(ecs::Entity source) { _source = source; };
+
     private:
         float _damages;
+        ecs::Entity _source;
 };
 
 }  // namespace ecs
