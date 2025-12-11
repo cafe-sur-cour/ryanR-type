@@ -225,16 +225,6 @@ void rserv::Server::setNetwork(std::shared_ptr<net::INetwork> network) {
     _network = network;
 }
 
-void rserv::Server::setCurrentMap(const std::vector<uint64_t> &map) {
-    if (!this->_currentMap.empty())
-        this->_currentMap.clear();
-    this->_currentMap = map;
-}
-
-std::vector<uint64_t> rserv::Server::getCurrentMap() const {
-    return this->_currentMap;
-}
-
 void rserv::Server::processIncomingPackets() {
     if (!_network) {
         std::cerr << "[SERVER] Warning: Network not initialized" << std::endl;
@@ -337,6 +327,12 @@ bool rserv::Server::allClientsReady() const {
     debug::Debug::printDebug(true, "[SERVER] allClientsReady: checking " +
         std::to_string(this->_clientsReady.size()) + " clients",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
+    
+    // Must have at least the expected number of clients
+    if (static_cast<int>(this->_clientsReady.size()) < this->getConfig()->getNbClients()) {
+        return false;
+    }
+    
     for (const auto &ready : this->_clientsReady) {
         debug::Debug::printDebug(true, "[SERVER] Client " +
             std::to_string(ready.first) + " ready: " +
