@@ -77,7 +77,6 @@ namespace rserv {
             /* Sent Packet Handling */
             bool connectionPacket(asio::ip::udp::endpoint endpoint);
             bool gameStatePacket();
-            bool mapPacket(std::vector<uint64_t> mapData, const asio::ip::udp::endpoint &endpoint);
             bool canStartPacket();
 
             void setCurrentMap(const std::vector<uint64_t> &map);
@@ -102,7 +101,6 @@ namespace rserv {
             std::shared_ptr<pm::IPacketManager> _packet;
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> _eventQueue;
 
-            std::vector<uint64_t> _currentMap;
             bool _gameStarted;
             std::shared_ptr<ResourceManager> _resourceManager;
             std::chrono::steady_clock::time_point _lastGameStateTime;
