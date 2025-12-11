@@ -5,6 +5,7 @@
 ** RoundedRectangleShape
 */
 
+#define _USE_MATH_DEFINES
 #include "RoundedRectangleShape.hpp"
 #include <cmath>
 
