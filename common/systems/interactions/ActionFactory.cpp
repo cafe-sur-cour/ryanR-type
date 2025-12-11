@@ -73,7 +73,7 @@ void ActionFactory::initializeConditions() {
             if (damageComp) {
                 float damage = damageComp->getDamage();
                 reg->addComponent<ecs::DamageIntentComponent>(otherEntity,
-                    std::make_shared<ecs::DamageIntentComponent>(damage));
+                    std::make_shared<ecs::DamageIntentComponent>(damage, selfEntity));
             }
         });
 
@@ -87,7 +87,7 @@ void ActionFactory::initializeConditions() {
             if (damageComp) {
                 float damage = damageComp->getDamage();
                 reg->addComponent<ecs::DamageIntentComponent>(selfEntity,
-                    std::make_shared<ecs::DamageIntentComponent>(damage));
+                    std::make_shared<ecs::DamageIntentComponent>(damage, otherEntity));
             }
         });
 }
