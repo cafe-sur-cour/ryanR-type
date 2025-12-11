@@ -373,3 +373,28 @@ unsigned int pm::PacketManager::unpackNetworkIdComponent(
     }
     return 0;
 }
+
+unsigned int pm::PacketManager::unpackGameZoneComponent(
+    std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == GAME_ZONE) {
+        this->_payload.push_back(static_cast<uint64_t>(GAME_ZONE));
+        uint64_t height = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin() + i + 1,
+            payload.begin() + i + 9));
+        uint64_t width = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin() + i + 9,
+            payload.begin() + i + 17));
+        uint64_t left = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin() + i + 17,
+            payload.begin() + i + 25));
+        uint64_t top = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin() + i + 25,
+            payload.begin() + i + 33));
+        this->_payload.push_back(height);
+        this->_payload.push_back(width);
+        this->_payload.push_back(left);
+        this->_payload.push_back(top);
+        return 33;
+    }
+    return 0;
+}

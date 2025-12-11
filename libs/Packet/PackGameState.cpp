@@ -372,3 +372,23 @@ std::vector<uint8_t> pm::PacketManager::packNetworkIdComponent(
     }
     return packet;
 }
+
+std::vector<uint8_t> pm::PacketManager::packGameZoneComponent(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+    std::vector<uint8_t> temp = {};
+    std::vector<uint8_t> packet = {};
+    if (payload.at(*i) == GAME_ZONE) {
+        temp = this->_serializer->serializeUChar(payload.at(*i));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeULong(payload.at(*i + 1));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeULong(payload.at(*i + 2));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeULong(payload.at(*i + 3));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        temp = this->_serializer->serializeULong(payload.at(*i + 4));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        *i += 5;
+    }
+    return packet;
+}
