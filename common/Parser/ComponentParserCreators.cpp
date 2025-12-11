@@ -42,8 +42,8 @@
 #include "../ECS/entity/Entity.hpp"
 #include "../ECS/entity/registry/Registry.hpp"
 #include "../../client/components/tags/BackGroundMusicTag.hpp"
-#include "../components/tags/ScoreTag.hpp"
 #include "../components/permanent/ScoreComponent.hpp"
+#include "../components/permanent/ScoreValueComponent.hpp"
 #include "../components/permanent/DamageComponent.hpp"
 
 void Parser::instanciateComponentDefinitions() {
@@ -185,14 +185,15 @@ void Parser::instanciateComponentDefinitions() {
             {constants::VOLUME_FIELD, FieldType::FLOAT},
             {constants::LOOP_FIELD, FieldType::BOOL}
         }}},
-        {constants::SCORETAG, {
-            std::type_index(typeid(ecs::ScoreTag)), {
-            {constants::TARGET_FIELD, FieldType::STRING}
-        }}},
         {constants::SCORECOMPONENT, {
             std::type_index(typeid(ecs::ScoreComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING},
             {constants::SCORE_FIELD, FieldType::INT}
+        }}},
+        {constants::SCOREVALUECOMPONENT, {
+            std::type_index(typeid(ecs::ScoreValueComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::SCOREVALUE_FIELD, FieldType::INT}
         }}},
         {constants::DAMAGECOMPONENT, {
             std::type_index(typeid(ecs::DamageComponent)), {
@@ -437,14 +438,15 @@ void Parser::instanciateComponentCreators() {
         }
         return std::make_shared<ecs::LifetimeComponent>(lifetime);
     });
-    registerComponent<ecs::ScoreTag>([]([[maybe_unused]] const std::map<std::string,
-        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
-        return std::make_shared<ecs::ScoreTag>();
-    });
     registerComponent<ecs::ScoreComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto score = std::get<int>(*fields.at(constants::SCORE_FIELD));
         return std::make_shared<ecs::ScoreComponent>(score);
+    });
+    registerComponent<ecs::ScoreValueComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto scoreValue = std::get<int>(*fields.at(constants::SCOREVALUE_FIELD));
+        return std::make_shared<ecs::ScoreValueComponent>(scoreValue);
     });
     registerComponent<ecs::ParallaxComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
