@@ -128,6 +128,12 @@ void Core::loop() {
             std::chrono::milliseconds(constants::SERVER_THREAD_SLEEP_MS));
     }
 
+    while (this->_server->getState() == constants::SERVER_UP
+        && !this->_server->isGameStarted()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(
+            constants::SERVER_THREAD_SLEEP_MS));
+    }
+
     while (this->_server->getState() == constants::SERVER_UP) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float>(currentTime - previousTime).count();
