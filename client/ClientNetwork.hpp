@@ -117,6 +117,20 @@ class ClientNetwork {
         size_t parseDamageComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseLifetimeComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseVelocityComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseAIMoverTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseAIShooterTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseControllableTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseEnemyProjectileTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseGameZoneColliderTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseMobTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseObstacleTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parsePlayerProjectileTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseScoreTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseShooterTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseProjectilePassThroughTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseProjectilePrefabComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseNetworkIdComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseGameZoneComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
 
         DLLoader<createNetworkLib_t> _networloader;
         DLLoader<createBuffer_t> _bufferloader;
