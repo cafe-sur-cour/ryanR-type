@@ -42,7 +42,6 @@ MainMenuState::MainMenuState(
     _uiManager->setGlobalScale(config->getUIScale());
 
     _background = std::make_shared<ui::Background>(_resourceManager);
-    _background->setSize(math::Vector2f(constants::MAX_WIDTH, constants::MAX_HEIGHT));
     _background->addLayer("assets/ui/earth.jpg", 0.0f, 0.0f, math::Vector2f(5376.0f, 3584.0f));
     _uiManager->addElement(_background);
 
