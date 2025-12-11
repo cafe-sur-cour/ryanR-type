@@ -136,7 +136,8 @@ void SfmlWindow::drawSprite(std::string asset, gfx::color_t color,
 }
 
 void SfmlWindow::drawText(std::string text, gfx::color_t color,
-    std::pair<size_t, size_t> position, const std::string& fontPath, size_t fontSize) {
+    std::pair<size_t, size_t> position, const std::string& fontPath, size_t fontSize,
+    gfx::color_t outlineColor, float outlineThickness) {
     auto font = _fontManager.getFont(fontPath);
     if (!font) {
         std::cout << "Failed to load font: " << fontPath << std::endl;
@@ -147,6 +148,13 @@ void SfmlWindow::drawText(std::string text, gfx::color_t color,
     sfText.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
     sfText.setPosition(sf::Vector2f(static_cast<float>(position.first),
         static_cast<float>(position.second)));
+
+    if (outlineThickness > 0.0f) {
+        sfText.setOutlineColor(
+            sf::Color(outlineColor.r, outlineColor.g, outlineColor.b, outlineColor.a));
+        sfText.setOutlineThickness(outlineThickness);
+    }
+
     _renderTexture.draw(sfText);
 }
 

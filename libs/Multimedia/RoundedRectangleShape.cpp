@@ -62,7 +62,7 @@ Vector2f RoundedRectangleShape::getPoint(std::size_t index) const {
     if (index >= getPointCount())
         return Vector2f(0.f, 0.f);
 
-    static const float pi = M_PI;
+    static const float pi = static_cast<float>(M_PI);
     std::size_t pointIndex = 0;
 
     if (index == pointIndex++) return Vector2f(_radius, 0.f);
