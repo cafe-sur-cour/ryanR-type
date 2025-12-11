@@ -21,7 +21,9 @@ void AIShootingSystem::update(
     for (auto entityId : view) {
         if (registry->hasComponent<ShootIntentComponent>(entityId))
             continue;
-        auto shootIntentComponent = std::make_shared<ShootIntentComponent>(180.0f);
+        auto shootingStats = registry->getComponent<ShootingStatsComponent>(entityId);
+        float angleOffset = shootingStats ? shootingStats->getMultiShotPattern().offsetDistance : 0.0f;
+        auto shootIntentComponent = std::make_shared<ShootIntentComponent>(180.0f + angleOffset);
 
         registry->addComponent<ShootIntentComponent>(entityId, shootIntentComponent);
     }
