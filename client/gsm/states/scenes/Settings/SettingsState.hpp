@@ -61,6 +61,8 @@ private:
     std::shared_ptr<ui::Slider> _musicVolumeSlider;
     std::shared_ptr<ui::Slider> _soundVolumeSlider;
     std::shared_ptr<ui::ToggleSwitch> _toggleSwitch;
+    std::shared_ptr<ui::Text> _toggleLabel;
+    std::shared_ptr<ui::UILayout> _toggleLayout;
     std::shared_ptr<ui::Button> _scaleButton;
     std::unique_ptr<ui::UIManager> _uiManager;
     std::shared_ptr<ui::UILayout> _settingsLayout;
