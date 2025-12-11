@@ -6,6 +6,7 @@
 */
 
 #include <vector>
+#include <memory>
 #include <iostream>
 #include "PacketManager.hpp"
 #include "../../common/debug.hpp"
