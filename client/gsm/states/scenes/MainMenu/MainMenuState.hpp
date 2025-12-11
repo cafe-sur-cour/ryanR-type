@@ -14,6 +14,7 @@
 #include "../../../../ui/elements/focusable/Button.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
+#include "../../../../ui/elements/Background.hpp"
 
 
 namespace gsm {
@@ -39,6 +40,7 @@ private:
     std::unique_ptr<ui::UIManager> _uiManager;
     std::shared_ptr<ui::UILayout> _leftLayout;
     std::shared_ptr<ui::UILayout> _mainMenuLayout;
+    std::shared_ptr<ui::Background> _background;
 };
 
 }  // namespace gsm
