@@ -203,11 +203,6 @@ std::vector<uint8_t> pm::PacketManager::buildSpawnPlayerPacket(
         temp = this->_serializer->serializeUChar(payload.at(i));
         body.insert(body.end(), temp.begin(), temp.end());
     }
-    std::cout << "Spawn Player Packet Built: ";
-    for (auto &val : body) {
-        std::cout << static_cast<int>(val) << " ";
-    }
-    std::cout << std::endl;
     return body;
 }
 
