@@ -5,6 +5,8 @@
 ** ECS Conversions
 */
 
+#include <memory>
+#include <vector>
 #include "Server.hpp"
 #include "../common/translationToECS.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
@@ -20,7 +22,8 @@
 #include "../common/components/permanent/LifetimeComponent.hpp"
 #include "../common/components/permanent/VelocityComponent.hpp"
 
-std::vector<uint64_t> rserv::Server::convertTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+std::vector<uint64_t> rserv::Server::convertTagComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::PlayerTag>(i)) {
         data.push_back(static_cast<uint64_t>(PLAYER_TAG));
@@ -28,7 +31,8 @@ std::vector<uint64_t> rserv::Server::convertTagComponent(std::shared_ptr<ecs::Re
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertTransformComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+std::vector<uint64_t> rserv::Server::convertTransformComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::TransformComponent>(i)) {
         auto transform = registry->getComponent<ecs::TransformComponent>(i);
@@ -42,7 +46,8 @@ std::vector<uint64_t> rserv::Server::convertTransformComponent(std::shared_ptr<e
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertSpeedComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+std::vector<uint64_t> rserv::Server::convertSpeedComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::SpeedComponent>(i)) {
         auto speed = registry->getComponent<ecs::SpeedComponent>(i);
@@ -52,7 +57,8 @@ std::vector<uint64_t> rserv::Server::convertSpeedComponent(std::shared_ptr<ecs::
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertHealthComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+std::vector<uint64_t> rserv::Server::convertHealthComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::HealthComponent>(i)) {
         auto health = registry->getComponent<ecs::HealthComponent>(i);
@@ -63,7 +69,8 @@ std::vector<uint64_t> rserv::Server::convertHealthComponent(std::shared_ptr<ecs:
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertColliderComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+std::vector<uint64_t> rserv::Server::convertColliderComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::ColliderComponent>(i)) {
         auto collider = registry->getComponent<ecs::ColliderComponent>(i);
@@ -77,7 +84,8 @@ std::vector<uint64_t> rserv::Server::convertColliderComponent(std::shared_ptr<ec
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertShootStatComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+std::vector<uint64_t> rserv::Server::convertShootStatComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::ShootingStatsComponent>(i)) {
         auto shootStats = registry->getComponent<ecs::ShootingStatsComponent>(i);
@@ -86,12 +94,14 @@ std::vector<uint64_t> rserv::Server::convertShootStatComponent(std::shared_ptr<e
         data.push_back(static_cast<uint64_t>(shootStats->getCooldownTimer()));
         data.push_back(static_cast<uint64_t>(shootStats->getMultiShotPattern().shotCount));
         data.push_back(static_cast<uint64_t>(shootStats->getMultiShotPattern().angleSpread));
-        data.push_back(static_cast<uint64_t>(shootStats->getMultiShotPattern().offsetDistance));
+        data.push_back(static_cast<uint64_t>(
+            shootStats->getMultiShotPattern().offsetDistance));
     }
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertScoreComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+std::vector<uint64_t> rserv::Server::convertScoreComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::ScoreComponent>(i)) {
         auto scoreComp = registry->getComponent<ecs::ScoreComponent>(i);
@@ -101,9 +111,10 @@ std::vector<uint64_t> rserv::Server::convertScoreComponent(std::shared_ptr<ecs::
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertAIMovementPatternComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+std::vector<uint64_t> rserv::Server::convertAIMovementPatternComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-   if (registry->hasComponent<ecs::AIMovementPatternComponent>(i)) {
+    if (registry->hasComponent<ecs::AIMovementPatternComponent>(i)) {
         auto pattern = registry->getComponent<ecs::AIMovementPatternComponent>(i);
         data.push_back(static_cast<uint64_t>(AI_MOVEMENT_PATTERN));
         data.push_back(static_cast<uint64_t>(pattern->getPattern()));
@@ -116,7 +127,8 @@ std::vector<uint64_t> rserv::Server::convertAIMovementPatternComponent(std::shar
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertDamageComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+std::vector<uint64_t> rserv::Server::convertDamageComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::DamageComponent>(i)) {
         auto damageComp = registry->getComponent<ecs::DamageComponent>(i);
@@ -126,7 +138,8 @@ std::vector<uint64_t> rserv::Server::convertDamageComponent(std::shared_ptr<ecs:
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertLifetimeComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+std::vector<uint64_t> rserv::Server::convertLifetimeComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::LifetimeComponent>(i)) {
         auto lifetimeComp = registry->getComponent<ecs::LifetimeComponent>(i);
@@ -136,7 +149,8 @@ std::vector<uint64_t> rserv::Server::convertLifetimeComponent(std::shared_ptr<ec
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertVelocityComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+std::vector<uint64_t> rserv::Server::convertVelocityComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::VelocityComponent>(i)) {
         auto velocity = registry->getComponent<ecs::VelocityComponent>(i);
