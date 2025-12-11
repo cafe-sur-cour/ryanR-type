@@ -44,12 +44,12 @@ void InGameState::enter() {
     auto collisionData =
         ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
     ecs::CollisionRules::initWithData(collisionData);
+    addSystem(std::make_shared<ecs::ServerMovementInputSystem>());
+    addSystem(std::make_shared<ecs::ServerShootInputSystem>());
     addSystem(std::make_shared<ecs::AIMovementSystem>());
     addSystem(std::make_shared<ecs::AIShootingSystem>());
-    addSystem(std::make_shared<ecs::ServerMovementInputSystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::MovementSystem>());
-    addSystem(std::make_shared<ecs::ServerShootInputSystem>());
     addSystem(std::make_shared<ecs::ShootingSystem>());
     addSystem(std::make_shared<ecs::LifetimeSystem>());
     addSystem(std::make_shared<ecs::HealthSystem>());

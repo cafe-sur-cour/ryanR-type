@@ -9,7 +9,7 @@
 
 namespace ecs {
 
-Registry::Registry() : _nextEntityId(1) {
+Registry::Registry() : _nextEntityId(1), _onEntityDestroyed(nullptr) {
 }
 
 Registry::~Registry() {
@@ -31,9 +31,16 @@ Entity Registry::createEntity() {
 }
 
 void Registry::destroyEntity(Entity entityId) {
+    if (_onEntityDestroyed) {
+        _onEntityDestroyed(entityId);
+    }
     for (auto& pair : _components) {
         pair.second->remove(entityId);
     }
+}
+
+void Registry::setOnEntityDestroyed(std::function<void(Entity)> callback) {
+    _onEntityDestroyed = callback;
 }
 
 }  // namespace ecs

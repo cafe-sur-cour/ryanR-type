@@ -55,6 +55,17 @@ std::shared_ptr<ResourceManager> initResourcesManager(
                 }
             }
         );
+        registry->setOnEntityDestroyed(
+            [server](ecs::Entity entity) {
+                if (server->getNetwork() != nullptr && server->getPacketManager() != nullptr) {
+                    std::vector<uint64_t> deathData = server->deathPacket(entity);
+                    std::vector<uint8_t> deathPacketData = server->getPacketManager()->pack(0,
+                        server->getSequenceNumber(), constants::PACKET_DEATH, deathData);
+                    server->getNetwork()->broadcast(server->getConnectedClientEndpoints(), deathPacketData);
+                    server->incrementSequenceNumber();
+                }
+            }
+        );
     }
 
     resourceManager->add<ecs::Registry>(registry);

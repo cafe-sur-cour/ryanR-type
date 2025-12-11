@@ -238,6 +238,14 @@ void ClientNetwork::handleEntityDeath() {
         return;
     }
 
-    size_t entityId = static_cast<size_t>(payload.at(0));
-    (void)entityId;  // Currently unused, but may be used for further logic
+    ecs::Entity entityId = static_cast<ecs::Entity>(payload.at(0));
+    if (!this->_resourceManager->has<ecs::Registry>()) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Registry not found in ResourceManager",
+            debug::debugType::NETWORK,
+            debug::debugLevel::ERROR);
+        return;
+    }
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+    registry->destroyEntity(entityId);
 }
