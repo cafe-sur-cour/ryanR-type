@@ -343,11 +343,8 @@ void MovementSystem::handlePushCollision(
                     if (checkCollision(registry, otherEntityId, newOtherPos)) {
                         otherTransform->setPosition(newOtherPos);
                     } else {
-                        float pushRight = pushHitbox.getLeft() + pushHitbox.getWidth();
-                        float offsetX = otherCollider->getOffset().getX() * otherScale.getX();
-                        float correctedX = pushRight - offsetX;
-                        math::Vector2f correctedPos(correctedX, currentOtherPos.getY());
-                        otherTransform->setPosition(correctedPos);
+                        registry->addComponent<DeathIntentComponent>(
+                            otherEntityId, std::make_shared<DeathIntentComponent>());
                     }
                 }
             }

@@ -7,12 +7,13 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 #include "ClientNetwork.hpp"
 #include "../common/debug.hpp"
 #include "../common/Parser/Parser.hpp"
 #include "../common/ECS/entity/EntityCreationContext.hpp"
-#include "gsm/states/scenes/InGame/InGameState.hpp"
+#include "gsm/states/scenes/Dev/DevState.hpp"
 
 /* Packet Handlers */
 void ClientNetwork::handleNoOp() {
@@ -120,5 +121,10 @@ void ClientNetwork::handleCanStart() {
             "[CLIENT] Player name: " + name,
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
+    }
+
+    if (this->_gsm) {
+        this->_gsm->requestStateChange(
+            std::make_shared<gsm::DevState>(this->_gsm, this->_resourceManager));
     }
 }

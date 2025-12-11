@@ -9,6 +9,7 @@ add_library(${SERVER_LIB_NAME}
     ServerLibsLoading.cpp
     ServerReceivePacket.cpp
     ServerSentPacket.cpp
+    ECSConversions.cpp
     Utils.cpp
     Utils.hpp
     Core.cpp

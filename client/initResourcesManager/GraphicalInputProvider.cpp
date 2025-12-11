@@ -21,6 +21,7 @@ GraphicalInputProvider::GraphicalInputProvider(
     std::shared_ptr<InputMappingManager> mappingManager
 )
     : _eventSystem(eventSystem), _mappingManager(mappingManager) {
+    (void)_currentFrame;
 }
 
 float GraphicalInputProvider::getAxisValue(event_t axis, size_t clientID) {
