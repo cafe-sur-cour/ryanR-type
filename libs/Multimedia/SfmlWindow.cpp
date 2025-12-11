@@ -173,7 +173,7 @@ void SfmlWindow::drawRectangleOutline(gfx::color_t color,
     static_cast<float>(size.second)));
     rectangle.setFillColor(sf::Color::Transparent);
     rectangle.setOutlineColor(sf::Color(color.r, color.g, color.b, color.a));
-    rectangle.setOutlineThickness(1.0f);
+    rectangle.setOutlineThickness(4.0f);
     rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first),
     static_cast<float>(position.second)));
     _renderTexture.draw(rectangle);
