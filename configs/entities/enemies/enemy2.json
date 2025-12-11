@@ -11,6 +11,7 @@
         "VelocityComponent": { "target": "both" },
         "SpeedComponent": { "target": "both", "speed": 150.0 },
         "HealthComponent": { "target": "both", "health": 50.0 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 150 },
         "AIMovementPatternComponent": {
             "target": "both",
             "defaultBehavior": "FollowRight",
