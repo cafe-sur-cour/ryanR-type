@@ -1,5 +1,5 @@
 {
-    "name": "enemy1",
+    "name": "enemy2",
     "components": {
         "MobTag": { "target": "both" },
         "TransformComponent": {
@@ -9,11 +9,11 @@
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "both" },
-        "SpeedComponent": { "target": "both", "speed": 80.0 },
+        "SpeedComponent": { "target": "both", "speed": 150.0 },
         "HealthComponent": { "target": "both", "health": 50.0 },
         "AIMovementPatternComponent": {
             "target": "both",
-            "defaultBehavior": "VerticalMirror",
+            "defaultBehavior": "FollowRight",
             "verticalDeadzone": 10.0
         },
         "ProjectilePrefabComponent": {
@@ -22,11 +22,11 @@
         },
         "ShootingStatsComponent": {
             "target": "both",
-            "fireRate": 0.2,
-            "projectileSpeed": 500.0,
-            "shotCount": 3,
-            "angleOffset": 30.0,
-            "spreadAngle": 3.0
+            "fireRate": 0.6,
+            "projectileSpeed": 700.0,
+            "shotCount": 1,
+            "angleOffset": 0.0,
+            "spreadAngle": 0.0
         },
         "AIMoverTag": { "target": "both" },
         "AIShooterTag": { "target": "both" },
@@ -34,9 +34,9 @@
             "target": "client",
             "states": {
                 "idle": {
-                    "texturePath": "assets/sprites/ennemies/red_spinning.png",
-                    "frameWidth": 33.0,
-                    "frameHeight": 36.0,
+                    "texturePath": "assets/sprites/ennemies/dick_to_left.png",
+                    "frameWidth": 33.125,
+                    "frameHeight": 33.0,
                     "frameCount": 8,
                     "startWidth": 0.0,
                     "startHeight": 0.0,
