@@ -14,6 +14,7 @@
 EntityPrefabManager::EntityPrefabManager() {
     clearPrefabs();
     _entityFactory = std::make_shared<ecs::EntityFactory>();
+    _onEntityCreated = nullptr;
 }
 
 EntityPrefabManager::~EntityPrefabManager() {
@@ -55,7 +56,11 @@ ecs::Entity EntityPrefabManager::createEntityFromPrefab(
     std::shared_ptr<IPrefab> prefab = getPrefab(prefabName);
 
     if (prefab && registry && _entityFactory) {
-        return prefab->instantiate(registry, _entityFactory, context);
+        ecs::Entity entity = prefab->instantiate(registry, _entityFactory, context);
+        if (_onEntityCreated) {
+            _onEntityCreated(entity, prefabName);
+        }
+        return entity;
     }
     throw err::ParserError(std::string("Prefab '") + prefabName +
         "' not found, registry is null, or factory is null.", err::ParserError::UNKNOWN);
@@ -63,6 +68,7 @@ ecs::Entity EntityPrefabManager::createEntityFromPrefab(
 
 ecs::Entity EntityPrefabManager::createEntityFromPrefab(const std::string
     &prefabName, const std::shared_ptr<ecs::Registry> &registry) {
+    std::cout << "Creating entity from prefab: " << prefabName << std::endl;
     return createEntityFromPrefab(prefabName, registry,
         ecs::EntityCreationContext::forLocalClient());
 }
@@ -73,4 +79,8 @@ std::shared_ptr<ecs::IEntityFactory> EntityPrefabManager::getEntityFactory() con
 
 void EntityPrefabManager::setEntityFactory(std::shared_ptr<ecs::IEntityFactory> factory) {
     _entityFactory = factory;
+}
+
+void EntityPrefabManager::setOnEntityCreated(std::function<void(ecs::Entity, const std::string&)> callback) {
+    _onEntityCreated = callback;
 }

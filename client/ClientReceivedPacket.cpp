@@ -13,6 +13,7 @@
 #include "../common/debug.hpp"
 #include "../common/Parser/Parser.hpp"
 #include "../common/ECS/entity/EntityCreationContext.hpp"
+#include "../common/components/permanent/NetworkIdComponent.hpp"
 #include "gsm/states/scenes/InGame/InGameState.hpp"
 
 /* Packet Handlers */
@@ -208,8 +209,18 @@ void ClientNetwork::handleEntitySpawn() {
         prefabName += static_cast<char>(*it);
     }
 
-    (void)clientId;  // Currently unused, but may be used for further logic
-    (void)prefabName;  // Currently unused, but may be used for further logic
+    std::cout << "Spawning entity for prefab: " << prefabName << std::endl;
+    ecs::Entity entity = _resourceManager->get<Parser>()->getPrefabManager()->createEntityFromPrefab(
+        prefabName,
+        _resourceManager->get<ecs::Registry>(),
+        ecs::EntityCreationContext::forNetworkSync(0)
+    );
+    auto registry = _resourceManager->get<ecs::Registry>();
+    registry->addComponent<ecs::NetworkIdComponent>(
+        entity,
+        std::make_shared<ecs::NetworkIdComponent>(clientId)
+    );
+
 }
 
 void ClientNetwork::handleEntityDeath() {

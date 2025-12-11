@@ -84,6 +84,10 @@ namespace rserv {
             std::vector<uint64_t> getCurrentMap() const;
             bool isGameStarted() const;
             bool allClientsReady() const;
+            uint32_t getSequenceNumber() const;
+            std::shared_ptr<pm::IPacketManager> getPacketManager() const;
+            void incrementSequenceNumber();
+            void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
         private:
             void loadNetworkLibrary();
             void loadBufferLibrary();
