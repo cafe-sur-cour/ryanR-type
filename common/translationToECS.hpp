@@ -19,7 +19,8 @@ enum componentType {
     AI_MOVEMENT_PATTERN = 0x07,
     DAMAGE = 0x08,
     LIFETIME = 0x09,
-    VELOCITY = 0x0A
+    VELOCITY = 0x0A,
+    AI_MOVER_TAG = 0x0B
 };
 
 #endif /* !TRASLATION_TO_ECS_HPP_ */

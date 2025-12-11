@@ -215,3 +215,11 @@ unsigned int pm::PacketManager::unpackVelocity(std::vector<uint8_t> payload, uns
     }
     return 0;
 }
+
+unsigned int pm::PacketManager::unpackAIMoverTag(std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == AI_MOVER_TAG) {
+        this->_payload.push_back(static_cast<uint64_t>(AI_MOVER_TAG));
+        return 1;
+    }
+    return 0;
+}
