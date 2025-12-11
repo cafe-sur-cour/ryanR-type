@@ -33,6 +33,7 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
     this->_eventQueue = std::make_shared<std::queue<std::tuple<uint8_t,
         constants::EventType, double>>>();
     this->_config = std::make_shared<rserv::ServerConfig>();
+    this->_gameStarted = false;
     this->_resourceManager = resourceManager;
     this->_lastGameStateTime = std::chrono::steady_clock::now();
 
@@ -255,6 +256,8 @@ void rserv::Server::processIncomingPackets() {
             this->processConnections(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_EVENT) {
         this->processEvents(this->_packet->getIdClient());
+    } else if (this->_packet->getType() == constants::PACKET_CLIENT_READY) {
+        this->onPacketReceived(this->_packet->getIdClient(), *this->_packet);
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "
@@ -315,6 +318,32 @@ void rserv::Server::onPacketReceived(
         "Packet received from client " + std::to_string(idClient)
         + " of type " + std::to_string(static_cast<int>(packet.getType())),
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    (void)packet;
-    // Add game-specific packet processing logic here
+
+    switch (packet.getType()) {
+        case constants::PACKET_CLIENT_READY:
+            this->_clientsReady[idClient] = true;
+            this->canStartPacket();
+            break;
+        default:
+            break;
+    }
+}
+
+bool rserv::Server::isGameStarted() const {
+    return this->_gameStarted;
+}
+
+bool rserv::Server::allClientsReady() const {
+    debug::Debug::printDebug(true, "[SERVER] allClientsReady: checking " +
+        std::to_string(this->_clientsReady.size()) + " clients",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+    for (const auto &ready : this->_clientsReady) {
+        debug::Debug::printDebug(true, "[SERVER] Client " +
+            std::to_string(ready.first) + " ready: " +
+            std::to_string(ready.second), debug::debugType::NETWORK, debug::debugLevel::INFO);
+        if (!ready.second) {
+            return false;
+        }
+    }
+    return true;
 }
