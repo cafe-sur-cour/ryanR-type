@@ -15,6 +15,7 @@
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
+#include "../../components/permanent/GameZoneComponent.hpp"
 #include "../../types/FRect.hpp"
 #include "../../constants.hpp"
 #include "../../components/tags/ObstacleTag.hpp"
@@ -35,6 +36,16 @@ MovementSystem::MovementSystem() : _spatialGrid(
 void MovementSystem::buildSpatialGrid(std::shared_ptr<Registry> registry) {
     _spatialGrid.clear();
     _boundaryEntities.clear();
+
+    auto gameZoneView = registry->view<GameZoneComponent, TransformComponent>();
+    for (auto entityId : gameZoneView) {
+        auto transform = registry->getComponent<TransformComponent>(entityId);
+        if (transform) {
+            math::Vector2f gameZonePos = transform->getPosition();
+            _spatialGrid.setOffset(gameZonePos.getX(), gameZonePos.getY());
+            break;
+        }
+    }
 
     auto colliderView = registry->view<TransformComponent, ColliderComponent>();
     for (auto entityId : colliderView) {

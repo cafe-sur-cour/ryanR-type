@@ -36,10 +36,13 @@ class SpatialGrid {
         std::vector<Entity> query(const math::FRect& bounds) const;
         std::vector<std::pair<Entity, Entity>> getPotentialPairs() const;
         void setCellSize(float cellSize);
+        void setOffset(float offsetX, float offsetY);
 
         float getCellSize() const { return _cellSize; }
         size_t getNumCols() const { return _numCols; }
         size_t getNumRows() const { return _numRows; }
+        float getOffsetX() const { return _offsetX; }
+        float getOffsetY() const { return _offsetY; }
 
     private:
         size_t getCellIndex(float x, float y) const;
@@ -49,6 +52,8 @@ class SpatialGrid {
         float _worldHeight;
         float _cellSize;
         float _padding;
+        float _offsetX;
+        float _offsetY;
         size_t _numCols;
         size_t _numRows;
         std::vector<std::vector<Entity>> _cells;
