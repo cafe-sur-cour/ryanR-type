@@ -65,6 +65,11 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
             static_cast<uint8_t>(SPAWN_PLAYER_PACKET), std::bind(
             &pm::PacketManager::buildSpawnPlayerPacket,
             this, std::placeholders::_1)
+        },
+        {
+            static_cast<uint8_t>(DEATH_PLAYER_PACKET), std::bind(
+            &pm::PacketManager::buildDeathPacket,
+            this, std::placeholders::_1)
         }
     };
 
@@ -103,6 +108,11 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
             static_cast<uint8_t>(SPAWN_PLAYER_PACKET), std::bind(
             &pm::PacketManager::parseSpawnPlayerPacket,
             this, std::placeholders::_1)
+        },
+        {
+            static_cast<uint8_t>(DEATH_PLAYER_PACKET), std::bind(
+            &pm::PacketManager::parseDeathPacket,
+            this, std::placeholders::_1)
         }
     };
 
@@ -122,6 +132,10 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         {
             static_cast<uint8_t>(EVENT_PACKET),
             LENGTH_EVENT_PACKET
+        },
+        {
+            static_cast<uint8_t>(DEATH_PLAYER_PACKET),
+            LENGTH_DEATH_PACKET
         }
     };
 
@@ -217,8 +231,6 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::packPlayerProjectileTag,
         this, std::placeholders::_1, std::placeholders::_2),
-        std::bind(&pm::PacketManager::packScoreTag,
-        this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::packShooterTag,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::packProjectilePassThroughTag,
@@ -269,8 +281,6 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::bind(&pm::PacketManager::unpackObstacleTag,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::unpackPlayerProjectileTag,
-        this, std::placeholders::_1, std::placeholders::_2),
-        std::bind(&pm::PacketManager::unpackScoreTag,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::unpackShooterTag,
         this, std::placeholders::_1, std::placeholders::_2),

@@ -6,6 +6,7 @@
 */
 
 #include <vector>
+#include <string>
 #include <iostream>
 
 #include "Server.hpp"
@@ -120,5 +121,12 @@ std::vector<uint64_t> rserv::Server::spawnPacket(size_t entity, const std::strin
     payload.push_back(static_cast<uint64_t>('\r'));
     payload.push_back(static_cast<uint64_t>('\n'));
     payload.push_back(static_cast<uint64_t>('\0'));
+    return payload;
+}
+
+std::vector<uint64_t> rserv::Server::deathPacket(size_t entity) {
+    std::vector<uint64_t> payload;
+
+    payload.push_back(static_cast<uint64_t>(entity));
     return payload;
 }
