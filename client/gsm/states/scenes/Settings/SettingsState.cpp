@@ -34,6 +34,8 @@ SettingsState::SettingsState(
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
 
+    _background = std::make_shared<ui::Background>(_resourceManager);
+
     auto config = _resourceManager->get<SettingsConfig>();
     _uiManager->setGlobalScale(config->getUIScale());
 
@@ -444,6 +446,9 @@ void SettingsState::enter() {
             this->_gsm->requestStatePop();
         }
     });
+
+    _background->addLayer("assets/ui/earth.jpg", 0.0f, 0.0f,
+        math::Vector2f(5376.0f, 3584.0f));
 }
 
 void SettingsState::update(float deltaTime) {
@@ -474,6 +479,7 @@ void SettingsState::update(float deltaTime) {
             mappingManager && mappingManager->isKeyboardKey(eventResult)) {
             handleKeyRebind(eventResult);
         }
+        _background->update(deltaTime);
         _uiManager->update(deltaTime);
         renderUI();
         return;
@@ -490,11 +496,13 @@ void SettingsState::update(float deltaTime) {
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
     }
 
+    _background->update(deltaTime);
     _uiManager->update(deltaTime);
     renderUI();
 }
 
 void SettingsState::renderUI() {
+    _background->render();
     _uiManager->render();
 
     auto window = _resourceManager->get<gfx::IWindow>();

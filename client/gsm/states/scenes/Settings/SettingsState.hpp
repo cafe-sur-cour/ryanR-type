@@ -15,6 +15,7 @@
 #include "../../../../ui/elements/focusable/Slider.hpp"
 #include "../../../../ui/elements/focusable/ToggleSwitch.hpp"
 #include "../../../../ui/elements/Text.hpp"
+#include "../../../../ui/elements/Background.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../../common/types/Vector2f.hpp"
@@ -66,6 +67,7 @@ private:
     std::shared_ptr<ui::UILayout> _leftColumnLayout;
     std::shared_ptr<ui::UILayout> _rightColumnLayout;
     std::shared_ptr<ui::UILayout> _titleLayout;
+    std::shared_ptr<ui::Background> _background;
     math::Vector2f _savedViewCenter;
 
     std::shared_ptr<SettingsManager> _settingsManager;
