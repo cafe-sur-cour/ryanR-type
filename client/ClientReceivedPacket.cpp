@@ -178,3 +178,32 @@ void ClientNetwork::handleCanStart() {
             std::make_shared<gsm::DevState>(this->_gsm, this->_resourceManager));
     }
 }
+
+void ClientNetwork::handleEntitySpawn() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received entity spawn packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    if (payload.empty()) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Entity spawn packet is empty",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    size_t clientId = payload.at(0);
+    std::string prefabName;
+    for (auto it = payload.begin() + 1; it != payload.end(); ++it) {
+        if (*it == static_cast<uint64_t>('\r')) {
+            if (std::distance(it, payload.end()) >= 3 &&
+                *(it + 1) == static_cast<uint64_t>('\n') &&
+                *(it + 2) == static_cast<uint64_t>('\0')) {
+                break;
+            }
+        }
+        prefabName += static_cast<char>(*it);
+    }
+}
