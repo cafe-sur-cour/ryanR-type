@@ -14,7 +14,7 @@ namespace ecs {
 
 class HealthComponent : public AComponent {
     public:
-        HealthComponent(float health = 100) : _health(health), _baseHealth(health) {};
+        HealthComponent(float health = 100) : _health(health), _baseHealth(health), _lastDamageSource(0) {};
         ~HealthComponent() override = default;
 
         float getHealth() const { return _health; }
@@ -25,9 +25,13 @@ class HealthComponent : public AComponent {
         float getBaseHealth() const { return _baseHealth; };
         void setBaseHealth(float health) { _baseHealth = health; };
 
+        ecs::Entity getLastDamageSource() const { return _lastDamageSource; }
+        void setLastDamageSource(ecs::Entity source) { _lastDamageSource = source; }
+
     private:
         float _health;
         float _baseHealth;
+        ecs::Entity _lastDamageSource;
 };
 
 }

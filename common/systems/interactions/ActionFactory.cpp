@@ -51,7 +51,7 @@ void ActionFactory::initializeConditions() {
         ) {
             (void)selfEntity;
             reg->addComponent<ecs::DeathIntentComponent>(otherEntity,
-                std::make_shared<ecs::DeathIntentComponent>());
+                std::make_shared<ecs::DeathIntentComponent>(selfEntity));
         });
 
     registerAction(constants::TAKEDEATH_ACTION,
@@ -61,7 +61,7 @@ void ActionFactory::initializeConditions() {
         ) {
             (void)otherEntity;
             reg->addComponent<ecs::DeathIntentComponent>(selfEntity,
-                std::make_shared<ecs::DeathIntentComponent>());
+                std::make_shared<ecs::DeathIntentComponent>(otherEntity));
         });
 
     registerAction(constants::DEALDAMAGE_ACTION,
@@ -87,7 +87,7 @@ void ActionFactory::initializeConditions() {
             if (damageComp) {
                 float damage = damageComp->getDamage();
                 reg->addComponent<ecs::DamageIntentComponent>(selfEntity,
-                    std::make_shared<ecs::DamageIntentComponent>(damage, otherEntity));
+                    std::make_shared<ecs::DamageIntentComponent>(damage, selfEntity));
             }
         });
 }
