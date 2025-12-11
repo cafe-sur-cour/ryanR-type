@@ -42,6 +42,7 @@ class ClientNetwork {
         void init();
         void start();
         void stop();
+        void connect();
 
         uint16_t getPort() const;
         void setPort(int port);
@@ -71,11 +72,15 @@ class ClientNetwork {
         void eventPacket(const constants::EventType &eventType, double depth);
         void disconnectionPacket();
         void connectionPacket();
+        void sendReady();
 
         void addToEventQueue(const NetworkEvent &event);
 
         bool isConnected() const;
+        bool isReady() const;
         std::atomic<bool> _isConnected;
+        std::atomic<bool> _ready;
+
         void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
         void setGameStateMachine(std::shared_ptr<gsm::IGameStateMachine> gsm);
         std::shared_ptr<gsm::IGameStateMachine> getGameStateMachine() const;
@@ -139,6 +144,8 @@ class ClientNetwork {
         std::queue<NetworkEvent> _eventQueue;
         std::mutex _queueMutex;
         std::condition_variable _queueCond;
+
+        bool _shouldConnect;
 };
 
 #endif /* !CLIENTNETWORK_HPP_ */

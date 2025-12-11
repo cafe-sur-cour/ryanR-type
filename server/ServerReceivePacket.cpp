@@ -7,25 +7,37 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 
 #include "Server.hpp"
 #include "../common/debug.hpp"
 
-bool rserv::Server::processConnections(asio::ip::udp::endpoint endpoint) {
+
+bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
+    std::vector<uint8_t>> client) {
     if (!_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Network not initialized",
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
+    std::string name = "";
+    if (client.second.size() > HEADER_SIZE)
+        name = std::string(client.second.begin() + HEADER_SIZE, client.second.end());
+
     if (this->_nextClientId > this->getConfig()->getNbClients()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Maximum clients reached",
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
-    this->connectionPacket(endpoint);
-    this->_clients.push_back(std::make_tuple(this->_nextClientId, endpoint, ""));
+    this->connectionPacket(client.first);
+    this->_clients.push_back(std::make_tuple(this->_nextClientId, client.first, name));
+    this->_clientsReady[this->_nextClientId] = false;
+    debug::Debug::printDebug(this->_config->getIsDebug(), "[SERVER] Set client " +
+        std::to_string(this->_nextClientId) + " ready to false",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+    this->canStartPacket();
     this->_nextClientId++;
     return true;
 }

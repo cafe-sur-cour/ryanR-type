@@ -46,7 +46,9 @@ Client                          Server
   |<--(4) MAP_SEND (continued)----|
   |<--(5) END_MAP-----------------|
   |                               |
-  |<--(6) CAN_START---------------|
+  |---(6) CLIENT_READY----------->|
+  |                               |
+  |<--(7) CAN_START---------------|
   |                               |
   |===== Game Loop Begins ========|
 ```
@@ -65,6 +67,27 @@ Client                          Server
   |<--(GAME_STATE: Updated)-------|
   |                               |
 ```
+
+### Ready System
+
+After map loading, clients must signal readiness before the game begins. This ensures all players start simultaneously.
+
+**Flow:**
+1. Client loads map and displays "Ready" button
+2. Player clicks "Ready" → Client sends `CLIENT_READY` packet
+3. Server tracks readiness for each connected client
+4. When all clients are ready → Server broadcasts `CAN_START`
+5. Clients automatically transition to game state
+
+**Benefits:**
+- Synchronized game starts
+- Prevents premature starts
+- Ensures all players are prepared
+- Server waits for all connected clients before starting
+
+**Implementation:**
+- Server maintains readiness state per client
+- `CAN_START` sent only when `allClientsReady() == true`
 
 ## Packet Structure
 

@@ -28,7 +28,6 @@ bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
     }
     this->_sequenceNumber++;
     this->mapPacket(this->_currentMap, endpoint);
-    this->canStartPacket();
     return true;
 }
 
@@ -62,7 +61,6 @@ bool rserv::Server::mapPacket(std::vector<uint64_t> mapData,
     const asio::ip::udp::endpoint &endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber,
         constants::PACKET_MAP, mapData);
-
     if (!this->_network->sendTo(endpoint, packet)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER NETWORK] Failed to send map packet to "
@@ -75,12 +73,19 @@ bool rserv::Server::mapPacket(std::vector<uint64_t> mapData,
 }
 
 bool rserv::Server::canStartPacket() {
-    if (this->_nextClientId > this->getConfig()->getNbClients()) {
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Checking canStart: clients=" +
+        std::to_string(this->_clients.size()) + ", max=" +
+        std::to_string(this->getConfig()->getNbClients()) + ", allReady=" +
+        std::to_string(this->allClientsReady()),
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+    if (static_cast<int>(this->_clients.size()) ==
+        this->getConfig()->getNbClients() && this->allClientsReady()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] All clients are connected after sending starting packet",
+            "[SERVER] All clients are connected and ready, starting game",
             debug::debugType::NETWORK, debug::debugLevel::INFO);
 
-        std::vector<uint64_t> payload = {static_cast<uint64_t>(this->getClientCount() * 8)};
+        std::vector<uint64_t> payload;
         for (auto &client : this->_clients) {
             std::vector<uint64_t> name = this->_packet->formatString(std::get<2>(client));
             payload.insert(payload.end(), name.begin(), name.end());
@@ -94,6 +99,8 @@ bool rserv::Server::canStartPacket() {
                 debug::debugType::NETWORK, debug::debugLevel::ERROR);
             return false;
         }
+        this->_sequenceNumber++;
+        this->_gameStarted = true;
         return true;
     }
     return false;

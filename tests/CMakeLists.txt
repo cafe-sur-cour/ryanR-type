@@ -20,6 +20,10 @@ add_executable(ChronoTests common/types/ChronoTests.cpp)
 target_link_libraries(ChronoTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main)
 add_test(NAME ChronoTests COMMAND ChronoTests)
 
+add_executable(SpatialGridTests common/SpatialGridTests.cpp)
+target_link_libraries(SpatialGridTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main)
+add_test(NAME SpatialGridTests COMMAND SpatialGridTests)
+
 add_executable(VelocityComponentTests common/ECS/component/VelocityComponentTests.cpp)
 target_link_libraries(VelocityComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
 add_test(NAME VelocityComponentTests COMMAND VelocityComponentTests)
@@ -135,6 +139,10 @@ add_test(NAME HealthSystemTests COMMAND HealthSystemTests)
 add_executable(DeathSystemTests common/ECS/system/DeathSystemTests.cpp)
 target_link_libraries(DeathSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
 add_test(NAME DeathSystemTests COMMAND DeathSystemTests)
+
+add_executable(OutOfBoundsSystemTests common/ECS/system/OutOfBoundsSystemTests.cpp)
+target_link_libraries(OutOfBoundsSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME OutOfBoundsSystemTests COMMAND OutOfBoundsSystemTests)
 
 add_executable(ScoreSystemTests common/ECS/system/ScoreSystemTests.cpp)
 target_link_libraries(ScoreSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)

@@ -32,6 +32,7 @@
 #define END_MAP_PACKET 0x07
 #define END_GAME_PACKET 0x08
 #define CAN_START_PACKET 0x09
+#define CLIENT_READY_PACKET 0x0A
 
 namespace pm {
 

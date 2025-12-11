@@ -82,6 +82,20 @@ class PacketManager : public IPacketManager {
         std::vector<uint8_t> packDamage(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
         std::vector<uint8_t> packLifetime(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
         std::vector<uint8_t> packVelocity(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packAIMoverTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packAIShooterTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packControllableTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packEnemyProjectileTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packGameZoneColliderTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packMobTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packObstacleTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packPlayerProjectileTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packScoreTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packShooterTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packProjectilePassThroughTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packProjectilePrefabComponent(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packNetworkIdComponent(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packGameZoneComponent(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
 
         /* Unpack Game State */
         std::vector<std::function<unsigned int(const std::vector<uint8_t>, unsigned int)>> _unpackGSFunction;
@@ -96,6 +110,20 @@ class PacketManager : public IPacketManager {
         unsigned int unpackDamage(std::vector<uint8_t> payload, unsigned int i);
         unsigned int unpackLifetime(std::vector<uint8_t> payload, unsigned int i);
         unsigned int unpackVelocity(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackAIMoverTag(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackAIShooterTag(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackControllableTag(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackEnemyProjectileTag(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackGameZoneColliderTag(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackMobTag(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackObstacleTag(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackPlayerProjectileTag(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackScoreTag(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackShooterTag(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackProjectilePassThroughTag(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackProjectilePrefabComponent(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackNetworkIdComponent(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackGameZoneComponent(std::vector<uint8_t> payload, unsigned int i);
 };
 } // namespace pm
 

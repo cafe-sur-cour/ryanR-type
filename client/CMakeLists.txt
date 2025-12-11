@@ -11,6 +11,10 @@ add_executable(${CLIENT_BIN_NAME}
     ClientSentPacket.cpp
     ClientGameStateConversions.cpp
     Core.cpp
+    SettingsConfig.cpp
+    SettingsConfig.hpp
+    SettingsManager.cpp
+    SettingsManager.hpp
 )
 
 add_dependencies(${CLIENT_BIN_NAME} generate_embedded_assets)

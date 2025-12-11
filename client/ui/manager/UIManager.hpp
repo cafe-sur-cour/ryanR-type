@@ -50,6 +50,8 @@ class UIManager {
         void cycleGlobalScale();
         UIScale getGlobalScale() const;
 
+        void setOnBack(std::function<void()> callback);
+
     private:
         std::vector<std::shared_ptr<UIElement>> _elements;
         std::shared_ptr<UINavigationManager> _navigationManager;
@@ -58,6 +60,7 @@ class UIManager {
 
         float _navigationCooldown = 0.0f;
         UIScale _globalScale = UIScale::Normal;
+        std::function<void()> _onBack;
 
         bool hasMouseMoved(const math::Vector2f& mousePos);
 
