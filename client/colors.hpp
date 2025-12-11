@@ -41,6 +41,7 @@ namespace colors {
     const gfx::color_t BUTTON_SECONDARY = {100, 0, 150};                        // Purple
     const gfx::color_t BUTTON_SECONDARY_HOVER = {150, 0, 200};                  // Bright purple
     const gfx::color_t BUTTON_SECONDARY_PRESSED = {75, 0, 112};                 // Dark purple
+
     // Panel/Frame Colors
     const gfx::color_t PANEL_BACKGROUND = {20, 20, 50};                         // Slightly lighter than UI background
     const gfx::color_t PANEL_BORDER = {0, 200, 255};                            // Cyan border

@@ -123,6 +123,11 @@ SettingsState::SettingsState(
         updateToggleValue(value);
     });
 
+    _toggleLabel = std::make_shared<ui::Text>(resourceManager);
+    _toggleLabel->setText("Control Mode");
+    _toggleLabel->setFontSize(20);
+    _toggleLabel->setSize(math::Vector2f(380.f, 30.f));
+
     _colorBlindnessButton = std::make_shared<ui::Button>(resourceManager);
     _colorBlindnessButton->setText(getColorBlindnessText(config->getColorBlindnessState()));
     _colorBlindnessButton->setSize(math::Vector2f(380.f, 55.f));
@@ -150,7 +155,7 @@ SettingsState::SettingsState(
     _backButton->setSize(math::Vector2f(380.f, 55.f));
     _backButton->setNormalColor(colors::BUTTON_SECONDARY);
     _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _backButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _backButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _backButton->setOnRelease([this]() {
         this->_gsm->requestStatePop();
     });
@@ -206,7 +211,7 @@ SettingsState::SettingsState(
     _moveUpSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
     _moveUpSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
     _moveUpSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _moveUpSecondaryButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _moveUpSecondaryButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _moveUpSecondaryButton->setText("2");
     updateKeyBindingButtonText(_moveUpSecondaryButton, ecs::RemappableAction::MOVE_UP, false);
     _moveUpSecondaryButton->setOnRelease([this]() {
@@ -252,7 +257,7 @@ SettingsState::SettingsState(
     _moveDownSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
     _moveDownSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
     _moveDownSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _moveDownSecondaryButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _moveDownSecondaryButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _moveDownSecondaryButton->setText("2");
     updateKeyBindingButtonText(_moveDownSecondaryButton,
         ecs::RemappableAction::MOVE_DOWN, false);
@@ -299,7 +304,7 @@ SettingsState::SettingsState(
     _moveLeftSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
     _moveLeftSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
     _moveLeftSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _moveLeftSecondaryButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _moveLeftSecondaryButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _moveLeftSecondaryButton->setText("2");
     updateKeyBindingButtonText(_moveLeftSecondaryButton,
         ecs::RemappableAction::MOVE_LEFT, false);
@@ -347,7 +352,7 @@ SettingsState::SettingsState(
     _moveRightSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
     _moveRightSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
     _moveRightSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _moveRightSecondaryButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _moveRightSecondaryButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _moveRightSecondaryButton->setText("2");
     updateKeyBindingButtonText(_moveRightSecondaryButton,
         ecs::RemappableAction::MOVE_RIGHT, false);
@@ -394,7 +399,7 @@ SettingsState::SettingsState(
     _shootSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
     _shootSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
     _shootSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _shootSecondaryButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _shootSecondaryButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _shootSecondaryButton->setText("2");
     updateKeyBindingButtonText(_shootSecondaryButton, ecs::RemappableAction::SHOOT, false);
     _shootSecondaryButton->setOnRelease([this]() {
@@ -410,6 +415,11 @@ SettingsState::SettingsState(
     _shootLayout->addElement(_shootLabel);
     _shootLayout->addElement(shootButtonsLayout);
 
+    _toggleLayout = std::make_shared<ui::UILayout>(resourceManager, mappingVerticalConfig);
+    _toggleLayout->setSize(math::Vector2f(380.f, 85.f));
+    _toggleLayout->addElement(_toggleLabel);
+    _toggleLayout->addElement(_toggleSwitch);
+
     _leftColumnLayout->addElement(_musicVolumeSlider);
     _leftColumnLayout->addElement(_soundVolumeSlider);
     _leftColumnLayout->addElement(_brightnessSlider);
@@ -423,7 +433,7 @@ SettingsState::SettingsState(
     _rightColumnLayout->addElement(_moveLeftLayout);
     _rightColumnLayout->addElement(_moveRightLayout);
     _rightColumnLayout->addElement(_shootLayout);
-    _rightColumnLayout->addElement(_toggleSwitch);
+    _rightColumnLayout->addElement(_toggleLayout);
 
     _settingsLayout->addElement(_leftColumnLayout);
     _settingsLayout->addElement(_rightColumnLayout);
@@ -665,6 +675,8 @@ void SettingsState::exit() {
     _soundVolumeSlider.reset();
     _scaleButton.reset();
     _toggleSwitch.reset();
+    _toggleLabel.reset();
+    _toggleLayout.reset();
 
     _moveUpLayout.reset();
     _moveUpLabel.reset();

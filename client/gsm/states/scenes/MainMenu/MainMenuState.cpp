@@ -136,7 +136,7 @@ MainMenuState::MainMenuState(
     _settingsButton->setSize(math::Vector2f(576.f, 108.f));
     _settingsButton->setNormalColor(colors::BUTTON_SECONDARY);
     _settingsButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _settingsButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _settingsButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _settingsButton->setOnRelease([this]() {
         this->_gsm->requestStatePush(std::make_shared<SettingsState>(this->_gsm,
             this->_resourceManager));
@@ -151,7 +151,7 @@ MainMenuState::MainMenuState(
     _quitButton->setSize(math::Vector2f(576.f, 108.f));
     _quitButton->setNormalColor(colors::BUTTON_SECONDARY);
     _quitButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _quitButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _quitButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _quitButton->setOnRelease([this]() {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
     });
