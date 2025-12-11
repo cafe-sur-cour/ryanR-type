@@ -258,7 +258,6 @@ void rserv::Server::onPacketReceived(
             this->canStartPacket();
             break;
         default:
-            // Other packets handled elsewhere
             break;
     }
 }
@@ -268,9 +267,13 @@ bool rserv::Server::isGameStarted() const {
 }
 
 bool rserv::Server::allClientsReady() const {
-    debug::Debug::printDebug(true, "[SERVER] allClientsReady: checking " + std::to_string(this->_clientsReady.size()) + " clients", debug::debugType::NETWORK, debug::debugLevel::INFO);
+    debug::Debug::printDebug(true, "[SERVER] allClientsReady: checking " +
+        std::to_string(this->_clientsReady.size()) + " clients",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
     for (const auto &ready : this->_clientsReady) {
-        debug::Debug::printDebug(true, "[SERVER] Client " + std::to_string(ready.first) + " ready: " + std::to_string(ready.second), debug::debugType::NETWORK, debug::debugLevel::INFO);
+        debug::Debug::printDebug(true, "[SERVER] Client " +
+            std::to_string(ready.first) + " ready: " +
+            std::to_string(ready.second), debug::debugType::NETWORK, debug::debugLevel::INFO);
         if (!ready.second) {
             return false;
         }

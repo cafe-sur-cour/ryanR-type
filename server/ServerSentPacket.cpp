@@ -51,9 +51,13 @@ bool rserv::Server::mapPacket(std::vector<uint64_t> mapData,
 
 bool rserv::Server::canStartPacket() {
     debug::Debug::printDebug(this->_config->getIsDebug(),
-        "[SERVER] Checking canStart: clients=" + std::to_string(this->_clients.size()) + ", max=" + std::to_string(this->getConfig()->getNbClients()) + ", allReady=" + std::to_string(this->allClientsReady()),
+        "[SERVER] Checking canStart: clients=" +
+        std::to_string(this->_clients.size()) + ", max=" +
+        std::to_string(this->getConfig()->getNbClients()) + ", allReady=" +
+        std::to_string(this->allClientsReady()),
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    if (static_cast<int>(this->_clients.size()) == this->getConfig()->getNbClients() && this->allClientsReady()) {
+    if (static_cast<int>(this->_clients.size()) ==
+        this->getConfig()->getNbClients() && this->allClientsReady()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] All clients are connected and ready, starting game",
             debug::debugType::NETWORK, debug::debugLevel::INFO);
