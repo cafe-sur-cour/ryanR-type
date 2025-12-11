@@ -16,6 +16,7 @@
 #include <queue>
 
 #include "Server.hpp"
+#include "Constants.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../common/Error/ServerErrror.hpp"
 #include "../common/debug.hpp"
@@ -147,7 +148,7 @@ void rserv::Server::start() {
             auto now = std::chrono::steady_clock::now();
             auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
                 now - this->_lastGameStateTime).count();
-            if (elapsed >= CD_TPS) {
+            if (elapsed >= constants::CD_TPS) {
                 this->gameStatePacket();
                 this->_lastGameStateTime = now;
             }
