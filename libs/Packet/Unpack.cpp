@@ -51,7 +51,6 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
             std::vector<uint8_t>(payload.begin(), payload.begin() + 8));
         this->_payload.push_back(idx);
         for (unsigned int i = 8; i < payload.size();) {
-            std::cout << "Unpacking at index: " << i << " aka: " << static_cast<int>(payload.at(i)) << std::endl;
             for (const auto &func : this->_unpackGSFunction) {
                 unsigned int ret = func(payload, i);
                 if (ret > 0) {
