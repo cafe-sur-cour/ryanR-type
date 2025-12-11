@@ -43,6 +43,56 @@ void ClientNetwork::handleConnectionAcceptation() {
 }
 
 void ClientNetwork::handleGameState() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received game state packet, starting parsing...",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    if (payload.empty()) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Game state packet is empty",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    if (!this->_resourceManager->has<ecs::Registry>()) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Registry not found in ResourceManager",
+            debug::debugType::NETWORK,
+            debug::debugLevel::ERROR);
+        return;
+    }
+
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+    size_t index = 0;
+
+    if (index >= payload.size()) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Invalid game state packet: missing entity ID",
+            debug::debugType::NETWORK,
+            debug::debugLevel::ERROR);
+        return;
+    }
+
+    ecs::Entity entityId = static_cast<ecs::Entity>(payload[index++]);
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Processing entity ID: " + std::to_string(entityId),
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+    while (index < payload.size()) {
+        uint64_t componentType = payload[index++];
+        auto it = _componentParsers.find(componentType);
+        if (it != _componentParsers.end()) {
+            index = (this->*(it->second))(payload, index, entityId);
+        } else {
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Unknown component type: " + std::to_string(componentType),
+                debug::debugType::NETWORK,
+                debug::debugLevel::WARNING);
+        }
+    }
 }
 
 void ClientNetwork::handleMapSend() {

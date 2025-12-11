@@ -18,6 +18,7 @@
 #include "ClientNetwork.hpp"
 #include "constants.hpp"
 #include "../common/Error/ClientNetworkError.hpp"
+#include "../common/translationToECS.hpp"
 #include "../common/Signal/Signal.hpp"
 #include "../common/debug.hpp"
 #include "../common/constants.hpp"
@@ -55,6 +56,18 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_END_MAP] = &ClientNetwork::handleEndMap;
     _packetHandlers[constants::PACKET_END_GAME] = &ClientNetwork::handleEndGame;
     _packetHandlers[constants::PACKET_CAN_START] = &ClientNetwork::handleCanStart;
+
+    _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
+    _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
+    _componentParsers[SPEED] = &ClientNetwork::parseSpeedComponent;
+    _componentParsers[HEALTH] = &ClientNetwork::parseHealthComponent;
+    _componentParsers[COLLIDER] = &ClientNetwork::parseColliderComponent;
+    _componentParsers[SHOOTING_STATS] = &ClientNetwork::parseShootingStatsComponent;
+    _componentParsers[SCORE] = &ClientNetwork::parseScoreComponent;
+    _componentParsers[AI_MOVEMENT_PATTERN] = &ClientNetwork::parseAIMovementPatternComponent;
+    _componentParsers[DAMAGE] = &ClientNetwork::parseDamageComponent;
+    _componentParsers[LIFETIME] = &ClientNetwork::parseLifetimeComponent;
+    _componentParsers[VELOCITY] = &ClientNetwork::parseVelocityComponent;
 }
 
 ClientNetwork::~ClientNetwork() {
