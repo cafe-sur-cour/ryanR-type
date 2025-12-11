@@ -121,7 +121,6 @@ void Core::loop() {
         std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_THREAD_SLEEP_MS));
     }
 
-    // Wait for all clients to connect and game to start
     while (this->_server->getState() == SERVER_UP && !this->_server->isGameStarted()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_THREAD_SLEEP_MS));
     }

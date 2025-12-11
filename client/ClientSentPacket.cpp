@@ -105,8 +105,7 @@ void ClientNetwork::sendReady() {
             debug::debugLevel::WARNING);
         return;
     }
-    std::vector<uint64_t> payload = {};  // Empty payload for ready signal
-
+    std::vector<uint64_t> payload = {};
     std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
         this->_sequenceNumber, constants::PACKET_CLIENT_READY, payload);
 
