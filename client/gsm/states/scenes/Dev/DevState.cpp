@@ -26,6 +26,7 @@
 #include "../../../../systems/input/MovementInputSystem.hpp"
 #include "../../../../systems/input/ShootInputSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
+#include "../../../../systems/NetworkInterpolationSystem.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../../common/systems/shooting/ShootingSystem.hpp"
@@ -47,6 +48,7 @@
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
 #include "../../../../../common/systems/ai/AIMovementSystem.hpp"
 #include "../../../../../common/systems/ai/AIShootingSystem.hpp"
+#include "../../../../interpolation/NetworkStateComponent.hpp"
 
 namespace gsm {
 
@@ -69,17 +71,12 @@ void DevState::enter() {
     if (existingParser) {
         _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
         _parser->parseAllEntities(constants::CONFIG_PATH);
-
-        auto mapData = existingParser->getMapParser()->getMapJson();
-        if (!mapData.is_null()) {
-            _parser->getMapParser()->setMapJson(mapData);
-            _parser->getMapParser()->generateMapEntities();
-        }
     } else {
         _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
         _parser->parseAllEntities(constants::CONFIG_PATH);
     }
 
+    addSystem(std::make_shared<ecs::NetworkInterpolationSystem>());
     addSystem(std::make_shared<ecs::AIMovementSystem>());
     addSystem(std::make_shared<ecs::AIShootingSystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
@@ -112,10 +109,6 @@ void DevState::enter() {
     _registry->addComponent<ecs::MusicIntentComponent>(musicIntentEntity,
         std::make_shared<ecs::MusicIntentComponent>(ecs::PLAY, ""));
 
-    ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
-    _registry->addComponent<ecs::HitboxRenderComponent>(
-        playerEntity,
-        std::make_shared<ecs::HitboxRenderComponent>());
 
     auto colliderView = _registry->view<ecs::ColliderComponent>();
     for (auto entityId : colliderView) {

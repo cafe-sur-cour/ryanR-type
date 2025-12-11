@@ -15,6 +15,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
+#include <map>
 
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
@@ -22,6 +23,11 @@
 #include "../common/constants.hpp"
 #include "../common/resourceManager/ResourceManager.hpp"
 #include "../common/gsm/IGameStateMachine.hpp"
+
+namespace ecs {
+    class Registry;
+    using Entity = std::size_t;
+}
 
 struct NetworkEvent {
     constants::EventType eventType;
@@ -92,6 +98,26 @@ class ClientNetwork {
         void handleEndMap();
         void handleEndGame();
         void handleCanStart();
+        void handleEntitySpawn();
+        void handleEntityDeath();
+
+        typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
+        std::map<uint64_t, ComponentParser> _componentParsers;
+
+        ecs::Entity findOrCreateNetworkEntity(std::shared_ptr<ecs::Registry> registry, size_t networkId);
+
+        size_t parsePlayerTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseTransformComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseSpeedComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseHealthComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseColliderComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseShootingStatsComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseScoreComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseAIMovementPatternComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseDamageComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseLifetimeComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseVelocityComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+
         DLLoader<createNetworkLib_t> _networloader;
         DLLoader<createBuffer_t> _bufferloader;
         DLLoader<createPacket_t> _packetloader;
