@@ -59,7 +59,7 @@ ClientNetwork::ClientNetwork() {
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
-    _componentParsers[SPEED] = &ClientNetwork::parseSpeedComponent;
+    _componentParsers[SPEED_COMP] = &ClientNetwork::parseSpeedComponent;
     _componentParsers[HEALTH] = &ClientNetwork::parseHealthComponent;
     _componentParsers[COLLIDER] = &ClientNetwork::parseColliderComponent;
     _componentParsers[SHOOTING_STATS] = &ClientNetwork::parseShootingStatsComponent;
