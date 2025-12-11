@@ -166,7 +166,7 @@ SettingsState::SettingsState(
 
     _fpsSlider = std::make_shared<ui::Slider>(resourceManager);
     _fpsSlider->setLabel("FPS Limit");
-    _fpsSlider->setMinValue(5.0f);
+    _fpsSlider->setMinValue(15.0f);
     _fpsSlider->setMaxValue(160.0f);
     _fpsSlider->setValue(static_cast<float>(config->getTargetFPS()));
     _fpsSlider->setStep(5.0f);
