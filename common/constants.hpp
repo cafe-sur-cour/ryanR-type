@@ -97,6 +97,7 @@ namespace constants {
     const std::string STRAIGHT_LINE_VALUE = "StraightLine";
     const std::string ZIGZAG_VALUE = "Zigzag";
     const std::string VERTICAL_MIRROR_VALUE = "VerticalMirror";
+    const std::string FOLLOW_RIGHT_VALUE = "FollowRight";
     const std::string WIDTH_FIELD = "width";
     const std::string HEIGHT_FIELD = "height";
     const std::string COLOR_FIELD = "color";
