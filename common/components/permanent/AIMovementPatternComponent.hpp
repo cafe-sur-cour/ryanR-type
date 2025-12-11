@@ -16,7 +16,8 @@ namespace ecs {
 enum class AIMovementPattern {
     STRAIGHT_LINE,
     ZIGZAG,
-    VERTICAL_MIRROR
+    VERTICAL_MIRROR,
+    FOLLOW_RIGHT
 };
 
 class AIMovementPatternComponent : public AComponent {
