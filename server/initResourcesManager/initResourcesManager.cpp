@@ -44,6 +44,17 @@ std::shared_ptr<ResourceManager> initResourcesManager(
     if (server != nullptr) {
         resourceManager->add<rserv::Server>(server);
         resourceManager->add<rserv::ServerConfig>(server->getConfig());
+        entityPrefabManager->setOnEntityCreated(
+            [server](ecs::Entity entity, const std::string& prefabName) {
+                if (server->getNetwork() != nullptr && server->getPacketManager() != nullptr) {
+                    std::vector<uint64_t> spawnData = server->spawnPacket(entity, prefabName);
+                    std::vector<uint8_t> spawnPacketData = server->getPacketManager()->pack(0,
+                        server->getSequenceNumber(), constants::PACKET_SPAWN, spawnData);
+                    server->getNetwork()->broadcast(server->getConnectedClientEndpoints(), spawnPacketData);
+                    server->incrementSequenceNumber();
+                }
+            }
+        );
     }
 
     resourceManager->add<ecs::Registry>(registry);

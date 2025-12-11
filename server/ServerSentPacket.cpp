@@ -89,22 +89,12 @@ bool rserv::Server::canStartPacket() {
         this->_sequenceNumber++;
         this->_gameStarted = true;
         std::string playerString = "player";
+        auto prefabMgr = _resourceManager->get<EntityPrefabManager>();
         for (int i = 0; i < this->getConfig()->getNbClients(); i++) {
-            ecs::Entity playerEntity = _resourceManager->get<EntityPrefabManager>()->
-            createEntityFromPrefab(
+            prefabMgr->createEntityFromPrefab(
                 playerString,
                 _resourceManager->get<ecs::Registry>()
             );
-            std::vector<uint64_t> spawnData = this->spawnPacket(playerEntity, playerString);
-            std::vector<uint8_t> spawnPacket = this->_packet->pack(0, this->_sequenceNumber,
-                constants::PACKET_SPAWN, spawnData);
-            if (!this->_network->broadcast(this->getConnectedClientEndpoints(), spawnPacket)) {
-                debug::Debug::printDebug(this->_config->getIsDebug(),
-                    "[SERVER NETWORK] Failed to broadcast spawn packet",
-                    debug::debugType::NETWORK, debug::debugLevel::ERROR);
-                return false;
-            }
-            this->_sequenceNumber++;
         }
         return true;
     }
