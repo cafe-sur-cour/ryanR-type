@@ -16,6 +16,7 @@
 #include <queue>
 
 #include "Server.hpp"
+#include "Constants.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../common/Error/ServerErrror.hpp"
 #include "../common/debug.hpp"
@@ -34,6 +35,7 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
     this->_config = std::make_shared<rserv::ServerConfig>();
     this->_gameStarted = false;
     this->_resourceManager = resourceManager;
+    this->_lastGameStateTime = std::chrono::steady_clock::now();
 
     this->_convertFunctions = {
         std::bind(&rserv::Server::convertTagComponent, this,
@@ -142,7 +144,13 @@ void rserv::Server::start() {
     while (this->getState() == 1 && !Signal::stopFlag) {
         this->processIncomingPackets();
         if (this->_clients.size() > 0) {
-            this->gameStatePacket();
+            auto now = std::chrono::steady_clock::now();
+            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+                now - this->_lastGameStateTime).count();
+            if (elapsed >= constants::CD_TPS) {
+                this->gameStatePacket();
+                this->_lastGameStateTime = now;
+            }
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         if (std::cin.eof()) {
