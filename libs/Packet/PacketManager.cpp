@@ -60,6 +60,11 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
             static_cast<uint8_t>(CAN_START_PACKET), std::bind(
             &pm::PacketManager::buildCanStartPacket,
             this, std::placeholders::_1)
+        },
+        {
+            static_cast<uint8_t>(SPAWN_PLAYER_PACKET), std::bind(
+            &pm::PacketManager::buildSpawnPlayerPacket,
+            this, std::placeholders::_1)
         }
     };
 
@@ -92,6 +97,11 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         {
             static_cast<uint8_t>(CAN_START_PACKET), std::bind(
             &pm::PacketManager::parseCanStartPacket,
+            this, std::placeholders::_1)
+        },
+        {
+            static_cast<uint8_t>(SPAWN_PLAYER_PACKET), std::bind(
+            &pm::PacketManager::parseSpawnPlayerPacket,
             this, std::placeholders::_1)
         }
     };

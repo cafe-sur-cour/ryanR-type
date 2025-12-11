@@ -78,7 +78,7 @@ namespace rserv {
             bool connectionPacket(asio::ip::udp::endpoint endpoint);
             bool gameStatePacket();
             bool canStartPacket();
-
+            std::vector<uint64_t> spawnPacket(size_t entity, const std::string prefabName);
             void setCurrentMap(const std::vector<uint64_t> &map);
             std::vector<uint64_t> getCurrentMap() const;
             bool isGameStarted() const;
