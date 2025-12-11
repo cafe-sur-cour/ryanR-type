@@ -171,8 +171,8 @@ void DevState::renderHUD() {
     window->setViewCenter(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
 
     gfx::color_t blackSemiTransparent = {0, 0, 0, 128};
-    std::pair<size_t, size_t> position = {0, constants::MAX_HEIGHT - 50};
-    std::pair<size_t, size_t> size = {constants::MAX_WIDTH, 50};
+    std::pair<size_t, size_t> position = {0, static_cast<size_t>(constants::MAX_HEIGHT - 50)};
+    std::pair<size_t, size_t> size = {static_cast<size_t>(constants::MAX_WIDTH), 50};
 
     window->drawFilledRectangle(blackSemiTransparent, position, size);
 
