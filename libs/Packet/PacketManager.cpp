@@ -121,7 +121,13 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::make_tuple(AI_SHOOTER_TAG, 1, 1),
         std::make_tuple(CONTROLLABLE_TAG, 1, 1),
         std::make_tuple(ENEMY_PROJECTILE_TAG, 1, 1),
-        std::make_tuple(GAME_ZONE_COLLIDER_TAG, 1, 1)
+        std::make_tuple(GAME_ZONE_COLLIDER_TAG, 1, 1),
+        std::make_tuple(MOB_TAG, 1, 1),
+        std::make_tuple(OBSTACLE_TAG, 1, 1),
+        std::make_tuple(PLAYER_PROJECTILE_TAG, 1, 1),
+        std::make_tuple(SCORE_TAG, 1, 1),
+        std::make_tuple(SHOOTER_TAG, 1, 1),
+        std::make_tuple(PROJECTILE_PASS_THROUGH_TAG, 1, 1)
     };
 
     this->_packGSFunction = {
@@ -156,6 +162,18 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::bind(&pm::PacketManager::packEnemyProjectileTag,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::packGameZoneColliderTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packMobTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packObstacleTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packPlayerProjectileTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packScoreTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packShooterTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::packProjectilePassThroughTag,
         this, std::placeholders::_1, std::placeholders::_2)
     };
 
@@ -191,6 +209,18 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         std::bind(&pm::PacketManager::unpackEnemyProjectileTag,
         this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&pm::PacketManager::unpackGameZoneColliderTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackMobTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackObstacleTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackPlayerProjectileTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackScoreTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackShooterTag,
+        this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&pm::PacketManager::unpackProjectilePassThroughTag,
         this, std::placeholders::_1, std::placeholders::_2)
     };
 }
