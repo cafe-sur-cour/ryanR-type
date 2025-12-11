@@ -58,6 +58,8 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
         std::bind(&rserv::Server::convertVelocityComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertAIMoverTagComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Server::convertAIShooterTagComponent, this,
             std::placeholders::_1, std::placeholders::_2)
     };
 }

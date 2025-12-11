@@ -83,6 +83,7 @@ class PacketManager : public IPacketManager {
         std::vector<uint8_t> packLifetime(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
         std::vector<uint8_t> packVelocity(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
         std::vector<uint8_t> packAIMoverTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
+        std::vector<uint8_t> packAIShooterTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
 
         /* Unpack Game State */
         std::vector<std::function<unsigned int(const std::vector<uint8_t>, unsigned int)>> _unpackGSFunction;
@@ -98,6 +99,7 @@ class PacketManager : public IPacketManager {
         unsigned int unpackLifetime(std::vector<uint8_t> payload, unsigned int i);
         unsigned int unpackVelocity(std::vector<uint8_t> payload, unsigned int i);
         unsigned int unpackAIMoverTag(std::vector<uint8_t> payload, unsigned int i);
+        unsigned int unpackAIShooterTag(std::vector<uint8_t> payload, unsigned int i);
 };
 } // namespace pm
 

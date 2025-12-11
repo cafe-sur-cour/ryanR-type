@@ -223,3 +223,11 @@ unsigned int pm::PacketManager::unpackAIMoverTag(std::vector<uint8_t> payload, u
     }
     return 0;
 }
+
+unsigned int pm::PacketManager::unpackAIShooterTag(std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == AI_SHOOTER_TAG) {
+        this->_payload.push_back(static_cast<uint64_t>(AI_SHOOTER_TAG));
+        return 1;
+    }
+    return 0;
+}

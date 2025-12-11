@@ -116,6 +116,7 @@ namespace rserv {
             std::vector<uint64_t> convertLifetimeComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertVelocityComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertAIMoverTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertAIShooterTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
     };
 } // namespace rserv = r-type server
 
