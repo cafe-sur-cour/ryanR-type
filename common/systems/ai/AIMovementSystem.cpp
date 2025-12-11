@@ -39,6 +39,9 @@ void AIMovementSystem::update(std::shared_ptr<ResourceManager> resourceManager,
             case AIMovementPattern::VERTICAL_MIRROR:
                 executeVerticalMirror(registry, movement, transform, inputIntent);
                 break;
+            case AIMovementPattern::FOLLOW_RIGHT:
+                executeFollowRight(movement, transform, inputIntent, deltaTime);
+                break;
         }
     }
 }
@@ -98,6 +101,26 @@ void AIMovementSystem::executeVerticalMirror(
     math::Vector2f direction(-1.0f, verticalDir);
     float length = std::sqrt(direction.getX() * direction.getX() +
                             direction.getY() * direction.getY());
+    if (length > constants::EPS) {
+        direction = math::Vector2f(direction.getX() / length, direction.getY() / length);
+    }
+    inputIntent->setDirection(direction);
+}
+
+void AIMovementSystem::executeFollowRight(
+    std::shared_ptr<AIMovementPatternComponent> movement,
+    std::shared_ptr<TransformComponent> transform,
+    std::shared_ptr<InputIntentComponent> inputIntent,
+    float deltaTime
+) {
+    (void) transform;
+    movement->timer += deltaTime * movement->zigzagFrequency;
+    float verticalDirection = std::cos(movement->timer) * movement->zigzagFrequency;
+    math::Vector2f direction(1.0f, verticalDirection);
+    float length = std::sqrt(
+        direction.getX() * direction.getX() +
+        direction.getY() * direction.getY()
+    );
     if (length > constants::EPS) {
         direction = math::Vector2f(direction.getX() / length, direction.getY() / length);
     }

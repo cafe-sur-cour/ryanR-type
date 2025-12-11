@@ -12,6 +12,7 @@
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
+#include "../../components/permanent/GameZoneComponent.hpp"
 #include "../../components/temporary/TriggerIntentComponent.hpp"
 #include "../../CollisionRules/CollisionRules.hpp"
 #include "../../constants.hpp"
@@ -28,6 +29,16 @@ TriggerSystem::TriggerSystem() : _spatialGrid(
 
 void TriggerSystem::buildSpatialGrid(std::shared_ptr<Registry> registry) {
     _spatialGrid.clear();
+
+    auto gameZoneView = registry->view<GameZoneComponent, TransformComponent>();
+    for (auto entityId : gameZoneView) {
+        auto transform = registry->getComponent<TransformComponent>(entityId);
+        if (transform) {
+            math::Vector2f gameZonePos = transform->getPosition();
+            _spatialGrid.setOffset(gameZonePos.getX(), gameZonePos.getY());
+            break;
+        }
+    }
 
     auto colliderView = registry->view<TransformComponent, ColliderComponent>();
     for (auto entityId : colliderView) {

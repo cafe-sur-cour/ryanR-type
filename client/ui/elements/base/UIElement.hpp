@@ -79,6 +79,9 @@ class UIElement : public std::enable_shared_from_this<UIElement> {
         std::weak_ptr<UIElement> _parent;
         std::vector<std::shared_ptr<UIElement>> _children;
 
+        bool _pressedInside = false;
+        bool _wasPressed = false;
+
         std::function<void()> _onClick;
         std::function<void()> _onHover;
         std::function<void()> _onRelease;
