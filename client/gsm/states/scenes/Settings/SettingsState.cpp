@@ -164,10 +164,6 @@ SettingsState::SettingsState(
 
     updateResolutionButtonColors(config->getScreenResolution());
 
-    auto spacer = std::make_shared<ui::Text>(resourceManager);
-    spacer->setText("");
-    spacer->setSize(math::Vector2f(250.f, 60.f));
-
     _fpsSlider = std::make_shared<ui::Slider>(resourceManager);
     _fpsSlider->setLabel("FPS Limit");
     _fpsSlider->setMinValue(5.0f);
@@ -182,7 +178,7 @@ SettingsState::SettingsState(
 
     _renderQualitySlider = std::make_shared<ui::Slider>(resourceManager);
     _renderQualitySlider->setLabel("Render Quality");
-    _renderQualitySlider->setMinValue(35.0f);
+    _renderQualitySlider->setMinValue(30.0f);
     _renderQualitySlider->setMaxValue(100.0f);
     _renderQualitySlider->setValue(config->getRenderQuality() * 100.0f);
     _renderQualitySlider->setStep(5.0f);
@@ -499,7 +495,6 @@ SettingsState::SettingsState(
     _rightColumnLayout->addElement(_shootLayout);
     _rightColumnLayout->addElement(_toggleLayout);
 
-    _centerColumnLayout->addElement(spacer);
     _centerColumnLayout->addElement(_fpsSlider);
     _centerColumnLayout->addElement(_renderQualitySlider);
     for (auto& button : _resolutionButtons) {
