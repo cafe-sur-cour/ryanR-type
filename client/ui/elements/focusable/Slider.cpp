@@ -38,6 +38,13 @@ void Slider::setMaxValue(float maxValue) {
 void Slider::setValue(float value) {
     float oldValue = _value;
     _value = std::clamp(value, _minValue, _maxValue);
+
+    if (!_isDragging) {
+        if (std::abs(_maxValue - _minValue) > constants::EPS) {
+            _visualNormalizedValue = (_value - _minValue) / (_maxValue - _minValue);
+        }
+    }
+
     if (std::abs(oldValue - _value) > constants::EPS && _onValueChanged) {
         _onValueChanged(_value);
     }
@@ -124,7 +131,18 @@ float Slider::getNormalizedValue() const {
 
 void Slider::setNormalizedValue(float normalized) {
     normalized = std::clamp(normalized, 0.0f, 1.0f);
-    setValue(_minValue + normalized * (_maxValue - _minValue));
+    _visualNormalizedValue = normalized;
+
+    float rawValue = _minValue + normalized * (_maxValue - _minValue);
+
+    float snappedValue = rawValue;
+    if (_step > 0.0f) {
+        float steps = std::round((rawValue - _minValue) / _step);
+        snappedValue = _minValue + steps * _step;
+        snappedValue = std::clamp(snappedValue, _minValue, _maxValue);
+    }
+
+    setValue(snappedValue);
 }
 
 gfx::color_t Slider::getCurrentHandleColor() const {
@@ -192,7 +210,7 @@ void Slider::render() {
         {static_cast<size_t>(trackWidth), static_cast<size_t>(trackHeight)}
     );
 
-    float fillWidth = trackWidth * getNormalizedValue();
+    float fillWidth = trackWidth * _visualNormalizedValue;
     if (fillWidth > 0) {
         resourceManager->get<gfx::IWindow>()->drawFilledRectangle(
             _fillColor,
@@ -232,8 +250,7 @@ void Slider::render() {
     if (!_label.empty()) {
         std::ostringstream oss;
         std::string suffix = (_showPercentage) ? "%" : "";
-        oss << _label << ": " << std::fixed << std::setprecision(0) <<
-            (_value * (_showPercentage ? 100.0f : 1.0f)) << suffix;
+        oss << _label << ": " << std::fixed << std::setprecision(0) << _value << suffix;
         std::string displayText = oss.str();
 
         auto textSize = resourceManager->get<gfx::IWindow>()->getTextSize(

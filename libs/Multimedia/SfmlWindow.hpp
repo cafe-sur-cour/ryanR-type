@@ -78,6 +78,9 @@ class SfmlWindow : public gfx::IWindow {
 
         sf::Vector2f _viewportOffset;
         sf::Vector2f _viewportScale;
+        float _renderQuality;
+        unsigned int _renderWidth;
+        unsigned int _renderHeight;
 };
 
 #endif /* !SFMLWINDOW_HPP_ */

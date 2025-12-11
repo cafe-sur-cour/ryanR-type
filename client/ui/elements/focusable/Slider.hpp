@@ -62,6 +62,7 @@ class Slider : public AFocusableElement {
         float _maxValue = 1.0f;
         float _value = 0.5f;
         float _step = 0.1f;
+        float _visualNormalizedValue = 0.5f;
 
         std::string _label;
         gfx::color_t _labelColor = colors::SLIDER_LABEL;

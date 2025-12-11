@@ -6,6 +6,7 @@
 */
 
 #include "SettingsState.hpp"
+#include <cmath>
 #include <memory>
 #include <string>
 #include <vector>
@@ -172,23 +173,23 @@ SettingsState::SettingsState(
     _fpsSlider->setMinValue(5.0f);
     _fpsSlider->setMaxValue(160.0f);
     _fpsSlider->setValue(static_cast<float>(config->getTargetFPS()));
-    _fpsSlider->setStep(10.0f);
+    _fpsSlider->setStep(5.0f);
     _fpsSlider->setSize(math::Vector2f(250.f, 55.f));
     _fpsSlider->setShowPercentage(false);
     _fpsSlider->setOnValueChanged([this](float value) {
-        updateTargetFPS(static_cast<int>(value));
+        updateTargetFPS(static_cast<int>(std::round(value)));
     });
 
     _renderQualitySlider = std::make_shared<ui::Slider>(resourceManager);
     _renderQualitySlider->setLabel("Render Quality");
-    _renderQualitySlider->setMinValue(0.25f);
-    _renderQualitySlider->setMaxValue(1.0f);
-    _renderQualitySlider->setValue(config->getRenderQuality());
-    _renderQualitySlider->setStep(0.25f);
+    _renderQualitySlider->setMinValue(35.0f);
+    _renderQualitySlider->setMaxValue(100.0f);
+    _renderQualitySlider->setValue(config->getRenderQuality() * 100.0f);
+    _renderQualitySlider->setStep(5.0f);
     _renderQualitySlider->setSize(math::Vector2f(250.f, 55.f));
     _renderQualitySlider->setShowPercentage(true);
     _renderQualitySlider->setOnValueChanged([this](float value) {
-        updateRenderQuality(value);
+        updateRenderQuality(value / 100.0f);
     });
 
     _colorBlindnessButton = std::make_shared<ui::Button>(resourceManager);
@@ -789,6 +790,10 @@ void SettingsState::updateTargetFPS(int fps) {
 void SettingsState::updateRenderQuality(float quality) {
     auto config = _resourceManager->get<SettingsConfig>();
     config->setRenderQuality(quality);
+
+    auto window = _resourceManager->get<gfx::IWindow>();
+    window->setRenderQuality(quality);
+
     _settingsManager->saveSettings();
 }
 
