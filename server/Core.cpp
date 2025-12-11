@@ -33,23 +33,20 @@ Core::Core() {
 
     this->_inputProvider = std::make_shared<ecs::ServerInputProvider>();
 
-    // Create ResourceManager and populate it with initial resources
     this->_resourceManager = initResourcesManager(
-        nullptr,  // Server will be added after creation
+        nullptr,
         this->_registry,
         this->_parser,
         this->_systemsManager,
         this->_gsm,
         this->_inputProvider
     );
-    
-    // Now create server with the populated ResourceManager
+
     this->_server = std::make_shared<rserv::Server>(this->_resourceManager);
-    
-    // Add server to ResourceManager
+
     this->_resourceManager->add<rserv::Server>(this->_server);
     this->_resourceManager->add<rserv::ServerConfig>(this->_server->getConfig());
-    
+
     this->_parser->parseAllEntities(constants::CONFIG_PATH);
     this->_parser->parseMapFromFile("configs/map/map1.json");
     this->_server->setCurrentMap(this->_parser->getMapParser()->createPacketFromMap());
