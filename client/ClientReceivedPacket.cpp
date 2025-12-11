@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 #include "ClientNetwork.hpp"
 #include "../common/debug.hpp"
