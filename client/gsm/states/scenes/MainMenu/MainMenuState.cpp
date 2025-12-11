@@ -56,9 +56,6 @@ MainMenuState::MainMenuState(
     _connectButton = std::make_shared<ui::Button>(_resourceManager);
     _connectButton->setText("Connect to Server");
     _connectButton->setSize(math::Vector2f(300.f, 108.f));
-    _connectButton->setNormalColor({0, 100, 200});
-    _connectButton->setHoveredColor({0, 150, 255});
-    _connectButton->setFocusedColor({100, 200, 255});
 
     _connectButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
@@ -97,9 +94,6 @@ MainMenuState::MainMenuState(
     _playButton = std::make_shared<ui::Button>(resourceManager);
     _playButton->setText("Ready");
     _playButton->setSize(math::Vector2f(576.f, 108.f));
-    _playButton->setNormalColor({0, 200, 0});
-    _playButton->setHoveredColor({0, 255, 0});
-    _playButton->setFocusedColor({255, 255, 0});
 
     _playButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
@@ -135,9 +129,9 @@ MainMenuState::MainMenuState(
     _settingsButton = std::make_shared<ui::Button>(resourceManager);
     _settingsButton->setText("Settings");
     _settingsButton->setSize(math::Vector2f(576.f, 108.f));
-    _settingsButton->setNormalColor({100, 100, 150});
-    _settingsButton->setHoveredColor({150, 150, 200});
-    _settingsButton->setFocusedColor({100, 200, 255});
+    _settingsButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _settingsButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _settingsButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
     _settingsButton->setOnRelease([this]() {
         this->_gsm->requestStatePush(std::make_shared<SettingsState>(this->_gsm,
             this->_resourceManager));
@@ -150,9 +144,9 @@ MainMenuState::MainMenuState(
     _quitButton = std::make_shared<ui::Button>(resourceManager);
     _quitButton->setText("Quit");
     _quitButton->setSize(math::Vector2f(576.f, 108.f));
-    _quitButton->setNormalColor({200, 0, 0});
-    _quitButton->setHoveredColor({255, 0, 0});
-    _quitButton->setFocusedColor({255, 100, 0});
+    _quitButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _quitButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _quitButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
     _quitButton->setOnRelease([this]() {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
     });

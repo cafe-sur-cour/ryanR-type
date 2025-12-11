@@ -66,9 +66,6 @@ SettingsState::SettingsState(
     _scaleButton = std::make_shared<ui::Button>(resourceManager);
     _scaleButton->setText(getUIScaleText(config->getUIScale()));
     _scaleButton->setSize(math::Vector2f(380.f, 55.f));
-    _scaleButton->setNormalColor({150, 100, 200});
-    _scaleButton->setHoveredColor({200, 150, 255});
-    _scaleButton->setFocusedColor({255, 200, 255});
     _scaleButton->setOnRelease([this]() {
         cycleUIScale();
     });
@@ -83,11 +80,6 @@ SettingsState::SettingsState(
     _brightnessSlider->setValue(config->getBrightnessValue() * 100.0f);
     _brightnessSlider->setStep(5.0f);
     _brightnessSlider->setSize(math::Vector2f(380.f, 55.f));
-    _brightnessSlider->setTrackColor({80, 80, 80});
-    _brightnessSlider->setFillColor({100, 150, 200});
-    _brightnessSlider->setHandleColor({150, 150, 150});
-    _brightnessSlider->setHandleHoveredColor({200, 200, 200});
-    _brightnessSlider->setHandleFocusedColor({255, 200, 100});
     _brightnessSlider->setOnValueChanged([this](float value) {
         updateBrightnessFilter(value);
     });
@@ -99,11 +91,6 @@ SettingsState::SettingsState(
     _musicVolumeSlider->setValue(config->getMusicVolume());
     _musicVolumeSlider->setStep(5.0f);
     _musicVolumeSlider->setSize(math::Vector2f(380.f, 55.f));
-    _musicVolumeSlider->setTrackColor({80, 80, 80});
-    _musicVolumeSlider->setFillColor({100, 200, 100});
-    _musicVolumeSlider->setHandleColor({150, 150, 150});
-    _musicVolumeSlider->setHandleHoveredColor({200, 200, 200});
-    _musicVolumeSlider->setHandleFocusedColor({255, 200, 100});
     _musicVolumeSlider->setOnValueChanged([this](float value) {
         updateMusicVolume(value);
     });
@@ -115,11 +102,6 @@ SettingsState::SettingsState(
     _soundVolumeSlider->setValue(config->getSoundVolume());
     _soundVolumeSlider->setStep(5.0f);
     _soundVolumeSlider->setSize(math::Vector2f(380.f, 55.f));
-    _soundVolumeSlider->setTrackColor({80, 80, 80});
-    _soundVolumeSlider->setFillColor({200, 100, 100});
-    _soundVolumeSlider->setHandleColor({150, 150, 150});
-    _soundVolumeSlider->setHandleHoveredColor({200, 200, 200});
-    _soundVolumeSlider->setHandleFocusedColor({255, 200, 100});
     _soundVolumeSlider->setOnValueChanged([this](float value) {
         updateSoundVolume(value);
     });
@@ -135,12 +117,6 @@ SettingsState::SettingsState(
         _toggleSwitch->setValue(false);
     }
     _toggleSwitch->setSize(math::Vector2f(380.f, 55.f));
-    _toggleSwitch->setTrackColor({80, 80, 80});
-    _toggleSwitch->setHandleColor({150, 150, 150});
-    _toggleSwitch->setHandleHoveredColor({200, 200, 200});
-    _toggleSwitch->setHandleFocusedColor({255, 200, 100});
-    _toggleSwitch->setOnColor({0, 200, 0});
-    _toggleSwitch->setOffColor({200, 0, 0});
     _toggleSwitch->setOnValueChanged([this](bool value) {
         updateToggleValue(value);
     });
@@ -148,9 +124,6 @@ SettingsState::SettingsState(
     _colorBlindnessButton = std::make_shared<ui::Button>(resourceManager);
     _colorBlindnessButton->setText(getColorBlindnessText(config->getColorBlindnessState()));
     _colorBlindnessButton->setSize(math::Vector2f(380.f, 55.f));
-    _colorBlindnessButton->setNormalColor({100, 100, 150});
-    _colorBlindnessButton->setHoveredColor({150, 150, 200});
-    _colorBlindnessButton->setFocusedColor({100, 200, 255});
     _colorBlindnessButton->setOnRelease([this]() {
         cycleColorBlindnessFilter();
     });
@@ -163,11 +136,6 @@ SettingsState::SettingsState(
         config->isHighContrastEnabled() ? "High Contrast: ON" : "High Contrast: OFF"
     );
     _highContrastButton->setSize(math::Vector2f(380.f, 55.f));
-    _highContrastButton->setNormalColor(
-        config->isHighContrastEnabled() ? gfx::color_t{0, 200, 0} : gfx::color_t{200, 0, 0}
-    );
-    _highContrastButton->setHoveredColor({150, 150, 200});
-    _highContrastButton->setFocusedColor({100, 200, 255});
     _highContrastButton->setOnRelease([this]() {
         toggleHighContrastFilter();
     });
@@ -178,9 +146,9 @@ SettingsState::SettingsState(
     _backButton = std::make_shared<ui::Button>(resourceManager);
     _backButton->setText("Back");
     _backButton->setSize(math::Vector2f(380.f, 55.f));
-    _backButton->setNormalColor({200, 100, 0});
-    _backButton->setHoveredColor({255, 150, 50});
-    _backButton->setFocusedColor({255, 200, 100});
+    _backButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _backButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
     _backButton->setOnRelease([this]() {
         this->_gsm->requestStatePop();
     });
@@ -211,7 +179,6 @@ SettingsState::SettingsState(
 
     _moveUpLabel = std::make_shared<ui::Text>(resourceManager);
     _moveUpLabel->setText("Move Up");
-    _moveUpLabel->setTextColor({255, 255, 255});
     _moveUpLabel->setFontSize(20);
     _moveUpLabel->setSize(math::Vector2f(380.f, 30.f));
 
@@ -221,9 +188,9 @@ SettingsState::SettingsState(
 
     _moveUpPrimaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveUpPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveUpPrimaryButton->setNormalColor({80, 120, 160});
-    _moveUpPrimaryButton->setHoveredColor({100, 150, 200});
-    _moveUpPrimaryButton->setFocusedColor({120, 180, 240});
+    _moveUpPrimaryButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _moveUpPrimaryButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _moveUpPrimaryButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
     _moveUpPrimaryButton->setText("1");
     updateKeyBindingButtonText(_moveUpPrimaryButton, ecs::RemappableAction::MOVE_UP, true);
     _moveUpPrimaryButton->setOnRelease([this]() {
@@ -235,9 +202,9 @@ SettingsState::SettingsState(
 
     _moveUpSecondaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveUpSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveUpSecondaryButton->setNormalColor({60, 100, 140});
-    _moveUpSecondaryButton->setHoveredColor({80, 120, 180});
-    _moveUpSecondaryButton->setFocusedColor({100, 140, 220});
+    _moveUpSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _moveUpSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _moveUpSecondaryButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
     _moveUpSecondaryButton->setText("2");
     updateKeyBindingButtonText(_moveUpSecondaryButton, ecs::RemappableAction::MOVE_UP, false);
     _moveUpSecondaryButton->setOnRelease([this]() {
@@ -258,7 +225,6 @@ SettingsState::SettingsState(
 
     _moveDownLabel = std::make_shared<ui::Text>(resourceManager);
     _moveDownLabel->setText("Move Down");
-    _moveDownLabel->setTextColor({255, 255, 255});
     _moveDownLabel->setFontSize(20);
     _moveDownLabel->setSize(math::Vector2f(380.f, 30.f));
 
@@ -268,9 +234,9 @@ SettingsState::SettingsState(
 
     _moveDownPrimaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveDownPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveDownPrimaryButton->setNormalColor({80, 120, 160});
-    _moveDownPrimaryButton->setHoveredColor({100, 150, 200});
-    _moveDownPrimaryButton->setFocusedColor({120, 180, 240});
+    _moveDownPrimaryButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _moveDownPrimaryButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _moveDownPrimaryButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
     _moveDownPrimaryButton->setText("1");
     updateKeyBindingButtonText(_moveDownPrimaryButton, ecs::RemappableAction::MOVE_DOWN, true);
     _moveDownPrimaryButton->setOnRelease([this]() {
@@ -282,9 +248,9 @@ SettingsState::SettingsState(
 
     _moveDownSecondaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveDownSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveDownSecondaryButton->setNormalColor({60, 100, 140});
-    _moveDownSecondaryButton->setHoveredColor({80, 120, 180});
-    _moveDownSecondaryButton->setFocusedColor({100, 140, 220});
+    _moveDownSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _moveDownSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _moveDownSecondaryButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
     _moveDownSecondaryButton->setText("2");
     updateKeyBindingButtonText(_moveDownSecondaryButton,
         ecs::RemappableAction::MOVE_DOWN, false);
@@ -306,7 +272,6 @@ SettingsState::SettingsState(
 
     _moveLeftLabel = std::make_shared<ui::Text>(resourceManager);
     _moveLeftLabel->setText("Move Left");
-    _moveLeftLabel->setTextColor({255, 255, 255});
     _moveLeftLabel->setFontSize(20);
     _moveLeftLabel->setSize(math::Vector2f(380.f, 30.f));
 
@@ -316,9 +281,9 @@ SettingsState::SettingsState(
 
     _moveLeftPrimaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveLeftPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveLeftPrimaryButton->setNormalColor({80, 120, 160});
-    _moveLeftPrimaryButton->setHoveredColor({100, 150, 200});
-    _moveLeftPrimaryButton->setFocusedColor({120, 180, 240});
+    _moveLeftPrimaryButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _moveLeftPrimaryButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _moveLeftPrimaryButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
     _moveLeftPrimaryButton->setText("1");
     updateKeyBindingButtonText(_moveLeftPrimaryButton, ecs::RemappableAction::MOVE_LEFT, true);
     _moveLeftPrimaryButton->setOnRelease([this]() {
@@ -330,9 +295,9 @@ SettingsState::SettingsState(
 
     _moveLeftSecondaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveLeftSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveLeftSecondaryButton->setNormalColor({60, 100, 140});
-    _moveLeftSecondaryButton->setHoveredColor({80, 120, 180});
-    _moveLeftSecondaryButton->setFocusedColor({100, 140, 220});
+    _moveLeftSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _moveLeftSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _moveLeftSecondaryButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
     _moveLeftSecondaryButton->setText("2");
     updateKeyBindingButtonText(_moveLeftSecondaryButton,
         ecs::RemappableAction::MOVE_LEFT, false);
@@ -354,7 +319,6 @@ SettingsState::SettingsState(
 
     _moveRightLabel = std::make_shared<ui::Text>(resourceManager);
     _moveRightLabel->setText("Move Right");
-    _moveRightLabel->setTextColor({255, 255, 255});
     _moveRightLabel->setFontSize(20);
     _moveRightLabel->setSize(math::Vector2f(380.f, 30.f));
 
@@ -364,9 +328,9 @@ SettingsState::SettingsState(
 
     _moveRightPrimaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveRightPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveRightPrimaryButton->setNormalColor({80, 120, 160});
-    _moveRightPrimaryButton->setHoveredColor({100, 150, 200});
-    _moveRightPrimaryButton->setFocusedColor({120, 180, 240});
+    _moveRightPrimaryButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _moveRightPrimaryButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _moveRightPrimaryButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
     _moveRightPrimaryButton->setText("1");
     updateKeyBindingButtonText(_moveRightPrimaryButton,
         ecs::RemappableAction::MOVE_RIGHT, true);
@@ -379,9 +343,9 @@ SettingsState::SettingsState(
 
     _moveRightSecondaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveRightSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveRightSecondaryButton->setNormalColor({60, 100, 140});
-    _moveRightSecondaryButton->setHoveredColor({80, 120, 180});
-    _moveRightSecondaryButton->setFocusedColor({100, 140, 220});
+    _moveRightSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _moveRightSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _moveRightSecondaryButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
     _moveRightSecondaryButton->setText("2");
     updateKeyBindingButtonText(_moveRightSecondaryButton,
         ecs::RemappableAction::MOVE_RIGHT, false);
@@ -403,7 +367,6 @@ SettingsState::SettingsState(
 
     _shootLabel = std::make_shared<ui::Text>(resourceManager);
     _shootLabel->setText("Shoot");
-    _shootLabel->setTextColor({255, 255, 255});
     _shootLabel->setFontSize(20);
     _shootLabel->setSize(math::Vector2f(380.f, 30.f));
 
@@ -413,9 +376,9 @@ SettingsState::SettingsState(
 
     _shootPrimaryButton = std::make_shared<ui::Button>(resourceManager);
     _shootPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _shootPrimaryButton->setNormalColor({80, 120, 160});
-    _shootPrimaryButton->setHoveredColor({100, 150, 200});
-    _shootPrimaryButton->setFocusedColor({120, 180, 240});
+    _shootPrimaryButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _shootPrimaryButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _shootPrimaryButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
     _shootPrimaryButton->setText("1");
     updateKeyBindingButtonText(_shootPrimaryButton, ecs::RemappableAction::SHOOT, true);
     _shootPrimaryButton->setOnRelease([this]() {
@@ -427,9 +390,9 @@ SettingsState::SettingsState(
 
     _shootSecondaryButton = std::make_shared<ui::Button>(resourceManager);
     _shootSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _shootSecondaryButton->setNormalColor({60, 100, 140});
-    _shootSecondaryButton->setHoveredColor({80, 120, 180});
-    _shootSecondaryButton->setFocusedColor({100, 140, 220});
+    _shootSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _shootSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _shootSecondaryButton->setFocusedColor(colors::BUTTON_SECONDARY_PRESSED);
     _shootSecondaryButton->setText("2");
     updateKeyBindingButtonText(_shootSecondaryButton, ecs::RemappableAction::SHOOT, false);
     _shootSecondaryButton->setOnRelease([this]() {
@@ -573,12 +536,10 @@ void SettingsState::applyColorBlindnessFilter(int state) {
     auto window = _resourceManager->get<gfx::IWindow>();
     if (!window) return;
 
-    // Remove all
     window->removeShaderFilter(constants::FILTER_PROTANOPIA_SHADER_PATH);
     window->removeShaderFilter(constants::FILTER_DEUTERANOPIA_SHADER_PATH);
     window->removeShaderFilter(constants::FILTER_TRITANOPIA_SHADER_PATH);
 
-    // Add the current
     if (state == 1) {
         window->addShaderFilter(constants::FILTER_PROTANOPIA_SHADER_PATH);
     } else if (state == 2) {
@@ -603,11 +564,9 @@ void SettingsState::applyHighContrastFilter(bool enabled) {
 
     if (enabled) {
         window->addShaderFilter(constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
-        _highContrastButton->setNormalColor({0, 200, 0});
         _highContrastButton->setText("High Contrast: ON");
     } else {
         window->removeShaderFilter(constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
-        _highContrastButton->setNormalColor({200, 0, 0});
         _highContrastButton->setText("High Contrast: OFF");
     }
 }
