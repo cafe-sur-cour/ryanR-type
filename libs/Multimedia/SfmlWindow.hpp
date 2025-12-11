@@ -14,6 +14,7 @@
 #include "TextureManager.hpp"
 #include "FontManager.hpp"
 #include "ShaderManager.hpp"
+#include "RoundedRectangleShape.hpp"
 #include "../../common/types/FRect.hpp"
 #include "AssetManager/AssetManager.hpp"
 
@@ -33,6 +34,8 @@ class SfmlWindow : public gfx::IWindow {
         std::pair<size_t, size_t> getTextSize(const std::string& text, const std::string& fontPath, size_t fontSize) override;
         void drawRectangleOutline(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
         void drawFilledRectangle(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
+        void drawRoundedRectangleFilled(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, float radius) override;
+        void drawRoundedRectangleOutline(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, float radius) override;
 
         bool isMouseOver(std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
         std::pair<int, int> getWindowSize() override;

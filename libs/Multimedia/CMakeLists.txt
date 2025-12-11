@@ -40,6 +40,8 @@ add_library(${MULTIMEDIA_LIB_NAME} SHARED
     FontManager.hpp
     ShaderManager.cpp
     ShaderManager.hpp
+    RoundedRectangleShape.cpp
+    RoundedRectangleShape.hpp
     SfmlEntry.cpp
     EventTypes.hpp
     ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
