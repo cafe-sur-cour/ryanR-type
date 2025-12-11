@@ -191,3 +191,47 @@ bool pm::PacketManager::parseCanStartPacket(const std::vector<uint8_t> payload) 
     }
     return true;
 }
+
+std::vector<uint8_t> pm::PacketManager::buildSpawnPlayerPacket(
+    std::vector<uint64_t> payload) {
+    std::vector<uint8_t> body;
+    std::vector<uint8_t> temp;
+
+    temp = this->_serializer->serializeULong(payload.at(0));
+    body.insert(body.end(), temp.begin(), temp.end());
+    for (size_t i = 1; i < payload.size(); i++) {
+        temp = this->_serializer->serializeUChar(payload.at(i));
+        body.insert(body.end(), temp.begin(), temp.end());
+    }
+    std::cout << "Spawn Player Packet Built: ";
+    for (auto &val : body) {
+        std::cout << static_cast<int>(val) << " ";
+    }
+    std::cout << std::endl;
+    return body;
+}
+
+bool pm::PacketManager::parseSpawnPlayerPacket(
+    const std::vector<uint8_t> payload) {
+    if (payload.size() < 8 + 1) {
+        std::cerr << "[PACKET] SPAWN_PLAYER packet payload size invalid: "
+            << payload.size() << std::endl;
+        return false;
+    }
+
+    this->_payload.clear();
+    auto startIt = payload.begin();
+    auto endIt = payload.begin() + 8;
+    std::vector<uint8_t> longBytes(startIt, endIt);
+    uint64_t value = this->_serializer->deserializeULong(longBytes);
+    this->_payload.push_back(value);
+
+    for (size_t i = 8; i < payload.size(); i++) {
+        std::vector<uint8_t> charBytes(
+            payload.begin() + static_cast<std::ptrdiff_t>(i),
+            payload.begin() + static_cast<std::ptrdiff_t>(i + 1));
+        uint64_t charValue = this->_serializer->deserializeUChar(charBytes);
+        this->_payload.push_back(charValue);
+    }
+    return true;
+}

@@ -33,6 +33,7 @@
 #define END_GAME_PACKET 0x08
 #define CAN_START_PACKET 0x09
 #define CLIENT_READY_PACKET 0x0A
+#define SPAWN_PLAYER_PACKET 0x0B
 
 namespace pm {
 
