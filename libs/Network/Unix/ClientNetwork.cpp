@@ -101,8 +101,8 @@ bool UnixClientNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> 
             return false;
         }
         _socket->send_to(asio::buffer(packet), this->_serverEndpoint);
-        std::cout << "[CLIENT NETWORK] Sent packet of type " <<
-            static_cast<int>(packet[6]) << " size " << packet.size() << std::endl;
+        // std::cout << "[CLIENT NETWORK] Sent packet of type " <<
+        //     static_cast<int>(packet[6]) << " size " << packet.size() << std::endl;
         return true;
     } catch (const std::exception& e) {
         std::cerr << "[CLIENT NETWORK] Send error: " << e.what() << std::endl;
