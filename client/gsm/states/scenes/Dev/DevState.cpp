@@ -40,6 +40,7 @@
 #include "../../../../../common/Parser/CollisionRulesParser.hpp"
 #include "../../../../../common/CollisionRules/CollisionRules.hpp"
 #include "../../../../../common/components/tags/PlayerTag.hpp"
+#include "../../../../../common/components/tags/LocalPlayerTag.hpp"
 #include "../../../../../common/components/tags/ObstacleTag.hpp"
 #include "../../../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../../systems/rendering/GameZoneViewSystem.hpp"
@@ -113,6 +114,8 @@ void DevState::enter() {
         std::make_shared<ecs::MusicIntentComponent>(ecs::PLAY, ""));
 
     ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
+    _registry->addComponent<ecs::LocalPlayerTag>(
+        playerEntity, std::make_shared<ecs::LocalPlayerTag>());
     _registry->addComponent<ecs::HitboxRenderComponent>(
         playerEntity,
         std::make_shared<ecs::HitboxRenderComponent>());
