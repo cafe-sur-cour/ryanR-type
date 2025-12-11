@@ -8,6 +8,10 @@
 #include "DevState.hpp"
 #include <memory>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <string>
+#include <utility>
 #include "../../../../../common/ECS/entity/Entity.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../Settings/SettingsState.hpp"
@@ -41,6 +45,7 @@
 #include "../../../../../common/Parser/CollisionRulesParser.hpp"
 #include "../../../../../common/CollisionRules/CollisionRules.hpp"
 #include "../../../../../common/components/tags/PlayerTag.hpp"
+#include "../../../../../common/components/tags/LocalPlayerTag.hpp"
 #include "../../../../../common/components/tags/ObstacleTag.hpp"
 #include "../../../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../../systems/rendering/GameZoneViewSystem.hpp"
@@ -48,7 +53,8 @@
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
 #include "../../../../../common/systems/ai/AIMovementSystem.hpp"
 #include "../../../../../common/systems/ai/AIShootingSystem.hpp"
-#include "../../../../interpolation/NetworkStateComponent.hpp"
+#include "../../../../../common/components/permanent/ScoreComponent.hpp"
+#include "../../../../../common/components/permanent/HealthComponent.hpp"
 
 namespace gsm {
 
@@ -109,6 +115,12 @@ void DevState::enter() {
     _registry->addComponent<ecs::MusicIntentComponent>(musicIntentEntity,
         std::make_shared<ecs::MusicIntentComponent>(ecs::PLAY, ""));
 
+    ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
+    _registry->addComponent<ecs::LocalPlayerTag>(
+        playerEntity, std::make_shared<ecs::LocalPlayerTag>());
+    _registry->addComponent<ecs::HitboxRenderComponent>(
+        playerEntity,
+        std::make_shared<ecs::HitboxRenderComponent>());
 
     auto colliderView = _registry->view<ecs::ColliderComponent>();
     for (auto entityId : colliderView) {
@@ -142,6 +154,51 @@ void DevState::update(float deltaTime) {
 
     _resourceManager->get<ecs::ISystemManager>()->updateAllSystems
         (_resourceManager, _registry, deltaTime);
+
+    renderHUD();
+}
+
+void DevState::renderHUD() {
+    /* This HUD is a showcase example. It's indeed very basic and should be */
+    /* Proper HUD will be implented later in the Game Scene states.         */
+
+    auto window = _resourceManager->get<gfx::IWindow>();
+    auto currentCenter = window->getViewCenter();
+    window->setViewCenter(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
+
+    gfx::color_t blackSemiTransparent = {0, 0, 0, 128};
+    std::pair<size_t, size_t> position = {0, static_cast<size_t>(constants::MAX_HEIGHT - 50)};
+    std::pair<size_t, size_t> size = {static_cast<size_t>(constants::MAX_WIDTH), 50};
+
+    window->drawFilledRectangle(blackSemiTransparent, position, size);
+
+    int score = 0;
+    float health = 0.0f;
+    float maxHealth = 0.0f;
+    auto view = _registry->view<ecs::PlayerTag, ecs::LocalPlayerTag>();
+    for (auto entity : view) {
+        if (_registry->hasComponent<ecs::ScoreComponent>(entity)) {
+            auto scoreComp = _registry->getComponent<ecs::ScoreComponent>(entity);
+            score = scoreComp->getScore();
+        }
+        if (_registry->hasComponent<ecs::HealthComponent>(entity)) {
+            auto healthComp = _registry->getComponent<ecs::HealthComponent>(entity);
+            health = healthComp->getHealth();
+            maxHealth = healthComp->getBaseHealth();
+        }
+        break;
+    }
+
+    std::stringstream ss;
+    ss << "Health: " << static_cast<int>(health) << "/" << static_cast<int>(maxHealth)
+       << " Score: " << std::setfill('0') << std::setw(5) << score;
+    std::string hudText = ss.str();
+
+    gfx::color_t white = {255, 255, 255, 255};
+    std::pair<size_t, size_t> textPosition =
+        {10, static_cast<size_t>(constants::MAX_HEIGHT - 35)};
+    window->drawText(hudText, white, textPosition, "assets/fonts/ARIAL.TTF", 24);
+    window->setViewCenter(currentCenter.getX(), currentCenter.getY());
 }
 
 void DevState::exit() {
