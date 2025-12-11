@@ -32,6 +32,7 @@ namespace colors {
     const gfx::color_t UI_ACCENT = {0, 255, 255};                               // Cyan accent
     const gfx::color_t UI_TEXT = {255, 255, 255};                               // White text
     const gfx::color_t UI_TEXT_SECONDARY = {192, 192, 192};                     // Light gray
+    const gfx::color_t UI_OUTLINE = {0, 0, 0};                                  // Black outline
 
     // Button Colors
     const gfx::color_t BUTTON_PRIMARY = {0, 100, 200};                          // Deep blue

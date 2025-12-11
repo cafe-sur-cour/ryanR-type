@@ -33,6 +33,8 @@ public:
     void setTextColor(const gfx::color_t& color);
     void setFontSize(unsigned int size);
     void setFontPath(const std::string& path);
+    void setOutlineColor(const gfx::color_t& color);
+    void setOutlineThickness(float thickness);
 
 private:
     std::string _text;
@@ -40,6 +42,8 @@ private:
     unsigned int _fontSize;
     unsigned int _baseFontSize;
     std::string _fontPath;
+    gfx::color_t _outlineColor;
+    float _outlineThickness;
 };
 
 }  // namespace ui
