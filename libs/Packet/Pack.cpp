@@ -70,7 +70,7 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
         std::vector<uint8_t> body = this->_serializer->serializeULong(payload.at(0));
         packet.insert(packet.end(), body.begin(), body.end());
         for (uint64_t i = 1; i < payload.size();) {
-            auto iPtr = std::make_shared<unsigned int>(i);
+            auto iPtr = std::make_shared<unsigned int>(static_cast<unsigned int>(i));
             for (auto &func : this->_packGSFunction) {
                 std::vector<uint8_t> compData = func(payload, iPtr);
                 if (!compData.empty()) {
