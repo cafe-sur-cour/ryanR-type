@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "Server.hpp"
+#include "Constants.hpp"
 #include "../common/debug.hpp"
 #include "../common/translationToECS.hpp"
 #include "../common/ECS/entity/Entity.hpp"
@@ -16,8 +17,8 @@
 #include "../common/Parser/Parser.hpp"
 
 bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
-    std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber,
-        constants::PACKET_ACCEPT, std::vector<uint64_t>{
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_ACCEPT, std::vector<uint64_t>{
         static_cast<uint64_t>(this->_nextClientId)});
 
     if (!this->_network->sendTo(endpoint, packet)) {
@@ -45,7 +46,7 @@ bool rserv::Server::gameStatePacket() {
         }
 
         if (this->_network->broadcast(this->getConnectedClientEndpoints(),
-            this->_packet->pack(0, this->_sequenceNumber,
+            this->_packet->pack(constants::ID_SERVER, this->_sequenceNumber,
             constants::PACKET_GAME_STATE, payload)) == false) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER NETWORK] Failed to broadcast game state packet",
@@ -59,8 +60,8 @@ bool rserv::Server::gameStatePacket() {
 
 bool rserv::Server::mapPacket(std::vector<uint64_t> mapData,
     const asio::ip::udp::endpoint &endpoint) {
-    std::vector<uint8_t> packet = this->_packet->pack(0, this->_sequenceNumber,
-        constants::PACKET_MAP, mapData);
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_MAP, mapData);
     if (!this->_network->sendTo(endpoint, packet)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER NETWORK] Failed to send map packet to "
@@ -90,8 +91,8 @@ bool rserv::Server::canStartPacket() {
             std::vector<uint64_t> name = this->_packet->formatString(std::get<2>(client));
             payload.insert(payload.end(), name.begin(), name.end());
         }
-        std::vector<uint8_t> packetStart = this->_packet->pack(0, this->_sequenceNumber,
-            constants::PACKET_CAN_START, payload);
+        std::vector<uint8_t> packetStart = this->_packet->pack(constants::ID_SERVER,
+            this->_sequenceNumber, constants::PACKET_CAN_START, payload);
 
         if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packetStart)) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
