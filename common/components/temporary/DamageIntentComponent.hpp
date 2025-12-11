@@ -9,6 +9,7 @@
 #define DAMAGEINTENTCOMPONENT_HPP_
 
 #include "../base/AComponent.hpp"
+#include "../../ECS/entity/Entity.hpp"
 
 namespace ecs {
 
