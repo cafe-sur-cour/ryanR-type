@@ -23,6 +23,7 @@
 #include "../common/components/permanent/VelocityComponent.hpp"
 #include "../common/components/tags/AIMoverTag.hpp"
 #include "../common/components/tags/AIShooterTag.hpp"
+#include "../common/components/tags/ControllableTag.hpp"
 
 std::vector<uint64_t> rserv::Server::convertTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
@@ -177,6 +178,15 @@ std::vector<uint64_t> rserv::Server::convertAIShooterTagComponent(
     std::vector<uint64_t> data;
     if (registry->hasComponent<ecs::AIShooterTag>(i)) {
         data.push_back(static_cast<uint64_t>(AI_SHOOTER_TAG));
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Server::convertControllableTagComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry->hasComponent<ecs::ControllableTag>(i)) {
+        data.push_back(static_cast<uint64_t>(CONTROLLABLE_TAG));
     }
     return data;
 }
