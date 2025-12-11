@@ -20,7 +20,8 @@ enum componentType {
     DAMAGE = 0x08,
     LIFETIME = 0x09,
     VELOCITY = 0x0A,
-    AI_MOVER_TAG = 0x0B
+    AI_MOVER_TAG = 0x0B,
+    AI_SHOOTER_TAG = 0x0C
 };
 
 #endif /* !TRASLATION_TO_ECS_HPP_ */

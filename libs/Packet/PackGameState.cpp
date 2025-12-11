@@ -211,3 +211,15 @@ std::vector<uint8_t> pm::PacketManager::packAIMoverTag(
     }
     return packet;
 }
+
+std::vector<uint8_t> pm::PacketManager::packAIShooterTag(
+    std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i) {
+    std::vector<uint8_t> temp = {};
+    std::vector<uint8_t> packet = {};
+    if (payload.at(*i) == AI_SHOOTER_TAG) {
+        temp = this->_serializer->serializeUChar(payload.at(*i));
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        *i += 1;
+    }
+    return packet;
+}
