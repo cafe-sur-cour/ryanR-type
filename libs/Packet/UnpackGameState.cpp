@@ -231,3 +231,11 @@ unsigned int pm::PacketManager::unpackAIShooterTag(std::vector<uint8_t> payload,
     }
     return 0;
 }
+
+unsigned int pm::PacketManager::unpackControllableTag(std::vector<uint8_t> payload, unsigned int i) {
+    if (payload.at(i) == CONTROLLABLE_TAG) {
+        this->_payload.push_back(static_cast<uint64_t>(CONTROLLABLE_TAG));
+        return 1;
+    }
+    return 0;
+}
