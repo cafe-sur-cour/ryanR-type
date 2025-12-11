@@ -87,6 +87,10 @@ size_t Slider::getBaseFontSize() const {
     return _baseFontSize;
 }
 
+void Slider::setShowPercentage(bool show) {
+    _showPercentage = show;
+}
+
 void Slider::setTrackColor(const gfx::color_t& color) {
     _trackColor = color;
 }
@@ -182,6 +186,12 @@ void Slider::render() {
         {static_cast<size_t>(trackWidth), static_cast<size_t>(trackHeight)}
     );
 
+    resourceManager->get<gfx::IWindow>()->drawRectangleOutline(
+        colors::UI_OUTLINE,
+        {static_cast<size_t>(trackX), static_cast<size_t>(trackY)},
+        {static_cast<size_t>(trackWidth), static_cast<size_t>(trackHeight)}
+    );
+
     float fillWidth = trackWidth * getNormalizedValue();
     if (fillWidth > 0) {
         resourceManager->get<gfx::IWindow>()->drawFilledRectangle(
@@ -221,7 +231,8 @@ void Slider::render() {
 
     if (!_label.empty()) {
         std::ostringstream oss;
-        oss << _label << ": " << std::fixed << std::setprecision(0) << (_value) << "%";
+        std::string suffix = (_showPercentage) ? "%" : "";
+        oss << _label << ": " << std::fixed << std::setprecision(0) << (_value) << suffix;
         std::string displayText = oss.str();
 
         auto textSize = resourceManager->get<gfx::IWindow>()->getTextSize(
@@ -236,7 +247,9 @@ void Slider::render() {
             _labelColor,
             {static_cast<size_t>(textX), static_cast<size_t>(textY)},
             _fontPath,
-            getFontSize()
+            getFontSize(),
+            colors::UI_OUTLINE,
+            _outlineThickness
         );
     }
 }
