@@ -61,6 +61,7 @@ class IWindow {
         virtual void setShaderUniform(const std::string& filterPath, const std::string& name, float value) = 0;
         virtual void setFramerateLimit(unsigned int fps) = 0;
         virtual void setFullscreen(bool fullscreen) = 0;
+        virtual void setRenderQuality(float quality) = 0;
 };
 
 typedef IWindow *(*createWindow_t)();

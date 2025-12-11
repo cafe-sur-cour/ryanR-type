@@ -48,6 +48,9 @@ public:
     int getTargetFPS() const { return _targetFPS; }
     void setTargetFPS(int fps) { _targetFPS = fps; }
 
+    float getRenderQuality() const { return _renderQuality; }
+    void setRenderQuality(float quality) { _renderQuality = quality; }
+
     std::string getScreenResolutionName(ScreenResolution resolution) const;
     std::pair<int, int> getScreenResolutionSize(ScreenResolution resolution) const;
     bool isFullscreen(ScreenResolution resolution) const;
@@ -67,6 +70,7 @@ private:
     float _soundVolume = 100.0f;
     ScreenResolution _screenResolution = ScreenResolution::RES_1920x1080;
     int _targetFPS = 60;
+    float _renderQuality = 1.0f;
 };
 
 #endif  // SETTINGSCONFIG_HPP_

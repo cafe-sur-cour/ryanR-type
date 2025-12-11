@@ -232,7 +232,8 @@ void Slider::render() {
     if (!_label.empty()) {
         std::ostringstream oss;
         std::string suffix = (_showPercentage) ? "%" : "";
-        oss << _label << ": " << std::fixed << std::setprecision(0) << (_value) << suffix;
+        oss << _label << ": " << std::fixed << std::setprecision(0) <<
+            (_value * (_showPercentage ? 100.0f : 1.0f)) << suffix;
         std::string displayText = oss.str();
 
         auto textSize = resourceManager->get<gfx::IWindow>()->getTextSize(
