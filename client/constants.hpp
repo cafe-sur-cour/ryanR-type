@@ -65,6 +65,7 @@ namespace constants {
     const std::string KEYBINDS_FILE_PATH = "saves/keybinds.json";
     const std::string ACCESSIBILITY_FILE_PATH = "saves/accessibility.json";
     const std::string SETTINGS_FILE_PATH = "saves/settings.json";
+    const std::string UI_BACKGROUND_EARTH_PATH = "assets/ui/earth.jpg";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
