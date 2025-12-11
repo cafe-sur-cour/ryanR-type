@@ -33,8 +33,6 @@
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "Signal.hpp"
 
-#define CD_TPS 20
-
 namespace rserv {
     class Server : public IServer {
         public:
