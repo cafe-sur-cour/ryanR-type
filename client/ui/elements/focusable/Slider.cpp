@@ -250,7 +250,9 @@ void Slider::handleInput(const math::Vector2f& mousePos, bool mousePressed) {
     float trackX = absPos.getX() + handleRadius;
     float trackWidth = absSize.getX() - 2.0f * handleRadius;
 
-    if (mousePressed && containsPoint(mousePos)) {
+    bool justPressed = mousePressed && !_wasMousePressed;
+
+    if (justPressed && containsPoint(mousePos)) {
         _isDragging = true;
     }
 
@@ -258,10 +260,12 @@ void Slider::handleInput(const math::Vector2f& mousePos, bool mousePressed) {
         _isDragging = false;
     }
 
-    if (_isDragging && mousePressed) {
+    if (_isDragging) {
         float normalized = (mousePos.getX() - trackX) / trackWidth;
         setNormalizedValue(normalized);
     }
+
+    _wasMousePressed = mousePressed;
 }
 
 void Slider::onActivated() {

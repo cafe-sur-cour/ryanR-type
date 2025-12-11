@@ -309,3 +309,19 @@ bool SfmlWindow::isFilterActive(const std::string& filterName) const {
 ShaderManager& SfmlWindow::getShaderManager() {
     return _shaderManager;
 }
+
+void SfmlWindow::addShaderFilter(const std::string& path) {
+    _shaderManager.addFilter(path);
+}
+
+void SfmlWindow::removeShaderFilter(const std::string& path) {
+    _shaderManager.removeFilter(path);
+}
+
+void SfmlWindow::setShaderUniform(
+    const std::string& filterPath,
+    const std::string& name,
+    float value
+) {
+    _shaderManager.setUniform(filterPath, name, value);
+}

@@ -69,7 +69,10 @@ class ClientNetwork {
         void addToEventQueue(const NetworkEvent &event);
 
         bool isConnected() const;
+        bool isReady() const;
         std::atomic<bool> _isConnected;
+        std::atomic<bool> _ready;
+
         void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
         void setGameStateMachine(std::shared_ptr<gsm::IGameStateMachine> gsm);
         std::shared_ptr<gsm::IGameStateMachine> getGameStateMachine() const;

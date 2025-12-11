@@ -23,8 +23,8 @@
                     "zIndex": 0
                 },
                 {
-                    "name": "planets",
-                    "filePath": "assets/sprites/backgrounds/planets.png",
+                    "name": "stars",
+                    "filePath": "assets/sprites/backgrounds/stars.png",
                     "speedMultiplier": 0.5,
                     "scale": { "x": 1.0, "y": 1.0 },
                     "scaleMode": "FIT_SCREEN",
@@ -33,8 +33,8 @@
                     "zIndex": 1
                 },
                 {
-                    "name": "stars",
-                    "filePath": "assets/sprites/backgrounds/stars.png",
+                    "name": "planets",
+                    "filePath": "assets/sprites/backgrounds/planets.png",
                     "speedMultiplier": 1.0,
                     "scale": { "x": 1.0, "y": 1.0 },
                     "scaleMode": "FIT_SCREEN",
