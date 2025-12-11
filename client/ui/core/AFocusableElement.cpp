@@ -70,6 +70,13 @@ void AFocusableElement::handleInput(const math::Vector2f& mousePos, bool mousePr
     if (!_visible || _state == UIState::Disabled)
         return;
 
+    bool justPressed = mousePressed && !_wasPressed;
+    _wasPressed = mousePressed;
+
+    if (justPressed) {
+        _pressedInside = containsPoint(mousePos);
+    }
+
     bool wasHovered = (_state == UIState::Hovered);
     bool containsMouse = containsPoint(mousePos);
 
@@ -85,7 +92,7 @@ void AFocusableElement::handleInput(const math::Vector2f& mousePos, bool mousePr
                 if (!_focused) {
                     setState(UIState::Hovered);
                 }
-                if (_onRelease)
+                if (_pressedInside && _onRelease)
                     _onRelease();
             } else {
                 if (!_focused) {
