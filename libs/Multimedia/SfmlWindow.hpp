@@ -58,6 +58,7 @@ class SfmlWindow : public gfx::IWindow {
         void setFramerateLimit(unsigned int fps) override;
         void setFullscreen(bool fullscreen) override;
         void setRenderQuality(float quality) override;
+        void setCursor(bool isHand) override;
 
         void enableFilter(const std::string& filterName);
         void addFilter(const std::string& filterName);

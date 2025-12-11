@@ -178,9 +178,9 @@ MainMenuState::MainMenuState(
     _devButton = std::make_shared<ui::Button>(_resourceManager);
     _devButton->setText("Go to dev scene\n(no need to connect to server)");
     _devButton->setSize(math::Vector2f(400.f, 108.f));
-    _devButton->setNormalColor({255, 100, 200});
-    _devButton->setHoveredColor({255, 80, 150});
-    _devButton->setFocusedColor({255, 200, 255});
+    _devButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _devButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _devButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
     _devButton->setOnRelease([this]() {
         this->_gsm->requestStatePush(std::make_shared<DevState>(this->_gsm,
             this->_resourceManager));
@@ -216,6 +216,9 @@ void MainMenuState::update(float deltaTime) {
         static_cast<int>(constants::MouseButton::LEFT));
 
     _uiManager->handleMouseInput(mousePos, mousePressed);
+
+    bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
+    _resourceManager->get<gfx::IWindow>()->setCursor(isHoveringUI);
 
     if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();

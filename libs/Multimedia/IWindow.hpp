@@ -62,6 +62,7 @@ class IWindow {
         virtual void setFramerateLimit(unsigned int fps) = 0;
         virtual void setFullscreen(bool fullscreen) = 0;
         virtual void setRenderQuality(float quality) = 0;
+        virtual void setCursor(bool isHand) = 0;
 };
 
 typedef IWindow *(*createWindow_t)();

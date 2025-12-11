@@ -410,3 +410,13 @@ void SfmlWindow::setRenderQuality(float quality) {
 
     updateView();
 }
+
+void SfmlWindow::setCursor(bool isHand) {
+    if (isHand) {
+        sf::Cursor cursor(sf::Cursor::Type::Hand);
+        _window->setMouseCursor(cursor);
+    } else {
+        sf::Cursor cursor(sf::Cursor::Type::Arrow);
+        _window->setMouseCursor(cursor);
+    }
+}
