@@ -8,6 +8,12 @@
 #ifndef TRASLATION_TO_ECS_HPP_
 #define TRASLATION_TO_ECS_HPP_
 
+#ifdef _WIN32
+    #ifdef SPEED
+        #undef SPEED
+    #endif
+#endif
+
 enum componentType {
     PLAYER_TAG = 0x00,
     TRANSFORM = 0x01,
