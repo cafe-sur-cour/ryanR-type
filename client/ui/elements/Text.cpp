@@ -12,7 +12,7 @@
 namespace ui {
 
 Text::Text(std::shared_ptr<ResourceManager> resourceManager)
-    : UIElement(resourceManager), _text(""), _textColor({255, 255, 255}), _fontSize(24),
+    : UIElement(resourceManager), _text(""), _textColor(colors::UI_TEXT), _fontSize(24),
 _baseFontSize(24), _fontPath("assets/fonts/ARIAL.TTF"
 ) {
 }
