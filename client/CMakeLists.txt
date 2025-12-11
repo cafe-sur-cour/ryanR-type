@@ -9,6 +9,7 @@ add_executable(${CLIENT_BIN_NAME}
     ClientNetwork.hpp
     ClientReceivedPacket.cpp
     ClientSentPacket.cpp
+    ClientGameStateConversions.cpp
     Core.cpp
 )
 
@@ -26,6 +27,7 @@ target_link_libraries(${CLIENT_BIN_NAME}
         UI
         DEBUG
         InputNormalizer
+        NETWORK_INTERPOLATION
         asio::asio
         nlohmann_json::nlohmann_json
 )
@@ -43,6 +45,7 @@ add_subdirectory(components)
 add_subdirectory(systems)
 add_subdirectory(input)
 add_subdirectory(ui)
+add_subdirectory(interpolation)
 
 add_custom_command(TARGET ${CLIENT_BIN_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${CLIENT_BIN_NAME}> ${CMAKE_SOURCE_DIR}/
