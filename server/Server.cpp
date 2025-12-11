@@ -76,8 +76,6 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertPlayerProjectileTagComponent, this,
             std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertScoreTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertShooterTagComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertProjectilePassThroughTagComponent, this,

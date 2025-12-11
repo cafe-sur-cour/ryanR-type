@@ -178,3 +178,54 @@ void ClientNetwork::handleCanStart() {
             std::make_shared<gsm::DevState>(this->_gsm, this->_resourceManager));
     }
 }
+
+void ClientNetwork::handleEntitySpawn() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received entity spawn packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    if (payload.empty()) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Entity spawn packet is empty",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    size_t clientId = payload.at(0);
+    std::string prefabName;
+    for (auto it = payload.begin() + 1; it != payload.end(); ++it) {
+        if (*it == static_cast<uint64_t>('\r')) {
+            if (std::distance(it, payload.end()) >= 3 &&
+                *(it + 1) == static_cast<uint64_t>('\n') &&
+                *(it + 2) == static_cast<uint64_t>('\0')) {
+                break;
+            }
+        }
+        prefabName += static_cast<char>(*it);
+    }
+
+    (void)clientId;  // Currently unused, but may be used for further logic
+    (void)prefabName;  // Currently unused, but may be used for further logic
+}
+
+void ClientNetwork::handleEntityDeath() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received entity death packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    if (payload.size() < 1) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Entity death packet is invalid",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    size_t entityId = static_cast<size_t>(payload.at(0));
+    (void)entityId;  // Currently unused, but may be used for further logic
+}

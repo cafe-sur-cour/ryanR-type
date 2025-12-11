@@ -67,6 +67,10 @@ class PacketManager : public IPacketManager {
         bool parseEndGamePacket(const std::vector<uint8_t> payload);
         std::vector<uint8_t> buildCanStartPacket(std::vector<uint64_t> payload);
         bool parseCanStartPacket(const std::vector<uint8_t> payload);
+        std::vector<uint8_t> buildSpawnPlayerPacket(std::vector<uint64_t> payload);
+        bool parseSpawnPlayerPacket(const std::vector<uint8_t> payload);
+        std::vector<uint8_t> buildDeathPacket(std::vector<uint64_t> payload);
+        bool parseDeathPacket(const std::vector<uint8_t> payload);
 
         /* Pack Game State */
         std::vector<std::tuple<uint8_t, uint32_t, uint64_t>> _lengthComb;
@@ -90,7 +94,6 @@ class PacketManager : public IPacketManager {
         std::vector<uint8_t> packMobTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
         std::vector<uint8_t> packObstacleTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
         std::vector<uint8_t> packPlayerProjectileTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packScoreTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
         std::vector<uint8_t> packShooterTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
         std::vector<uint8_t> packProjectilePassThroughTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
         std::vector<uint8_t> packProjectilePrefabComponent(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
@@ -118,7 +121,6 @@ class PacketManager : public IPacketManager {
         unsigned int unpackMobTag(std::vector<uint8_t> payload, unsigned int i);
         unsigned int unpackObstacleTag(std::vector<uint8_t> payload, unsigned int i);
         unsigned int unpackPlayerProjectileTag(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackScoreTag(std::vector<uint8_t> payload, unsigned int i);
         unsigned int unpackShooterTag(std::vector<uint8_t> payload, unsigned int i);
         unsigned int unpackProjectilePassThroughTag(std::vector<uint8_t> payload, unsigned int i);
         unsigned int unpackProjectilePrefabComponent(std::vector<uint8_t> payload, unsigned int i);

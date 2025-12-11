@@ -80,10 +80,6 @@ add_executable(ScoreComponentTests common/ECS/component/ScoreComponentTests.cpp)
 target_link_libraries(ScoreComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
 add_test(NAME ScoreComponentTests COMMAND ScoreComponentTests)
 
-add_executable(ScoreTagTests common/ECS/component/ScoreTagTests.cpp)
-target_link_libraries(ScoreTagTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
-add_test(NAME ScoreTagTests COMMAND ScoreTagTests)
-
 add_executable(ScoreIntentComponentTests common/ECS/component/ScoreIntentComponentTests.cpp)
 target_link_libraries(ScoreIntentComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
 add_test(NAME ScoreIntentComponentTests COMMAND ScoreIntentComponentTests)
