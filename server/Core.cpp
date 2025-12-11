@@ -19,7 +19,6 @@
 
 Core::Core() {
     this->_utils = std::make_shared<Utils>();
-    this->_server = std::make_shared<rserv::Server>();
 
     this->_registry = std::make_shared<ecs::Registry>();
     this->_systemsManager = std::make_shared<ecs::SystemManager>();
@@ -35,13 +34,19 @@ Core::Core() {
     this->_inputProvider = std::make_shared<ecs::ServerInputProvider>();
 
     this->_resourceManager = initResourcesManager(
-        this->_server,
+        nullptr,
         this->_registry,
         this->_parser,
         this->_systemsManager,
         this->_gsm,
         this->_inputProvider
     );
+
+    this->_server = std::make_shared<rserv::Server>(this->_resourceManager);
+
+    this->_resourceManager->add<rserv::Server>(this->_server);
+    this->_resourceManager->add<rserv::ServerConfig>(this->_server->getConfig());
+
     this->_parser->parseAllEntities(constants::CONFIG_PATH);
     this->_parser->parseMapFromFile("configs/map/map1.json");
     this->_server->setCurrentMap(this->_parser->getMapParser()->createPacketFromMap());
@@ -129,7 +134,6 @@ void Core::loop() {
         auto currentTime = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float>(currentTime - previousTime).count();
         previousTime = currentTime;
-        processServerEvents();
         this->_gsm->update(deltaTime);
     }
 }

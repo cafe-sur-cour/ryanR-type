@@ -9,19 +9,14 @@
 #include <iostream>
 #include "PacketManager.hpp"
 #include "../../common/debug.hpp"
+#include "../../common/translationToECS.hpp"
 
 bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
     if (data.empty()) {
-        debug::Debug::printDebug(true,
-            "[PACKET] Received empty data for unpacking",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
 
     if (data.at(0) != MAGIC_NUMBER) {
-        debug::Debug::printDebug(true,
-            "[PACKET] Invalid magic number in received data",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
 
@@ -39,9 +34,6 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
         std::vector<uint8_t>(data.begin() + 7, data.begin() + 11));
 
     if (data.size() - HEADER_SIZE != length) {
-        debug::Debug::printDebug(true,
-            "[PACKET] Mismatch between declared length and actual data size",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
     if (length == 0) {
@@ -49,6 +41,29 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
         this->_sequenceNumber = static_cast<uint32_t>(sequenceNumber);
         this->_type = static_cast<uint8_t>(type);
         this->_length = static_cast<uint32_t>(length);
+        return true;
+    }
+
+    if (type == GAME_STATE_PACKET) {
+        this->_idClient = static_cast<uint8_t>(idClient);
+        this->_sequenceNumber = static_cast<uint32_t>(sequenceNumber);
+        this->_type = static_cast<uint8_t>(type);
+        this->_length = static_cast<uint32_t>(length);
+
+        std::vector<uint8_t> payload(data.begin() + 11, data.end());
+        this->_payload.clear();
+        uint64_t idx = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(payload.begin(), payload.begin() + 8));
+        this->_payload.push_back(idx);
+        for (unsigned int i = 8; i < payload.size();) {
+            for (const auto &func : this->_unpackGSFunction) {
+                unsigned int ret = func(payload, i);
+                if (ret > 0) {
+                    i += ret;
+                    break;
+                }
+            }
+        }
         return true;
     }
 
@@ -66,10 +81,5 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
             return true;
         }
     }
-    debug::Debug::printDebug(true,
-        "[PACKET] Unknown packet type "
-        + std::to_string(static_cast<int>(type))
-        + " for unpacking",
-        debug::debugType::NETWORK, debug::debugLevel::ERROR);
     return false;
 }
