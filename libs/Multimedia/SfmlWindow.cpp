@@ -283,7 +283,12 @@ void SfmlWindow::updateView() {
     float scaleX = static_cast<float>(windowSize.x) / static_cast<float>(_renderWidth);
     float scaleY = static_cast<float>(windowSize.y) / static_cast<float>(_renderHeight);
 
+    _view.setSize(sf::Vector2f(constants::MAX_WIDTH, constants::MAX_HEIGHT));
+    _view.setCenter(sf::Vector2f(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f));
     _view.setViewport(sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f(1.f, 1.f)));
+    _renderTexture.setView(_view);
+    _window->setView(_view);
+
     _viewportOffset = sf::Vector2f(0.f, 0.f);
     _viewportScale = sf::Vector2f(scaleX, scaleY);
 }
