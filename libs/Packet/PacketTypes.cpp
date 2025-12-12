@@ -191,3 +191,31 @@ bool pm::PacketManager::parseCanStartPacket(const std::vector<uint8_t> payload) 
     }
     return true;
 }
+
+std::vector<uint8_t> pm::PacketManager::buildWhoamiPacket(std::vector<uint64_t> payload) {
+    std::vector<uint8_t> body;
+    for (auto val : payload) {
+        auto temp = this->_serializer->serializeUChar(val);
+        body.insert(body.end(), temp.begin(), temp.end());
+    }
+    return body;
+}
+
+bool pm::PacketManager::parseWhoamiPacket(const std::vector<uint8_t> payload) {
+    if (payload.size() != LENGTH_WHOAMI_PACKET) {
+        std::cerr << "[PACKET] WHOAMI packet payload size invalid: "
+            << payload.size() << std::endl;
+        return false;
+    }
+
+    this->_payload.clear();
+    for (size_t i = 0; i < payload.size(); i += 1) {
+        auto startIt = payload.begin() + static_cast<std::ptrdiff_t>(i);
+        auto endIt = payload.begin() + static_cast<std::ptrdiff_t>(i + 1);
+        std::vector<uint8_t> charBytes(startIt, endIt);
+
+        uint64_t value = this->_serializer->deserializeUChar(charBytes);
+        this->_payload.push_back(value);
+    }
+    return true;
+}
