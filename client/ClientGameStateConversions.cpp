@@ -19,6 +19,14 @@
 #include "../common/components/tags/ObstacleTag.hpp"
 #include "interpolation/NetworkStateComponent.hpp"
 
+namespace {
+    inline float unpackFloat(uint64_t bits) {
+        float value;
+        memcpy(&value, &bits, sizeof(float));
+        return value;
+    }
+}
+
 ecs::Entity ClientNetwork::findOrCreateNetworkEntity(std::shared_ptr<ecs::Registry> registry,
     size_t networkId) {
     for (ecs::Entity entity = 0; entity < registry->getMaxEntityId(); ++entity) {
@@ -65,11 +73,11 @@ size_t ClientNetwork::parseTransformComponent(const std::vector<uint64_t> &paylo
     size_t index, ecs::Entity entityId) {
     if (index + 5 > payload.size()) return index;
     auto registry = this->_resourceManager->get<ecs::Registry>();
-    float posX = static_cast<float>(payload[index++]);
-    float posY = static_cast<float>(payload[index++]);
-    float rotation = static_cast<float>(payload[index++]);
-    float scaleX = static_cast<float>(payload[index++]);
-    float scaleY = static_cast<float>(payload[index++]);
+    float posX = unpackFloat(payload[index++]);
+    float posY = unpackFloat(payload[index++]);
+    float rotation = unpackFloat(payload[index++]);
+    float scaleX = unpackFloat(payload[index++]);
+    float scaleY = unpackFloat(payload[index++]);
     if (!registry->hasComponent<ecs::TransformComponent>(entityId)) {
         auto transform = std::make_shared<ecs::TransformComponent>();
         registry->addComponent(entityId, transform);
@@ -98,7 +106,7 @@ size_t ClientNetwork::parseTransformComponent(const std::vector<uint64_t> &paylo
 size_t ClientNetwork::parseSpeedComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     if (index + 1 > payload.size()) return index;
-    float speed = static_cast<float>(payload[index++]);
+    float speed = unpackFloat(payload[index++]);
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " Speed: " + std::to_string(speed),
         debug::debugType::NETWORK,
@@ -110,8 +118,8 @@ size_t ClientNetwork::parseHealthComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     if (index + 2 > payload.size()) return index;
     auto registry = this->_resourceManager->get<ecs::Registry>();
-    uint32_t health = static_cast<uint32_t>(payload[index++]);
-    uint32_t baseHealth = static_cast<uint32_t>(payload[index++]);
+    float health = unpackFloat(payload[index++]);
+    float baseHealth = unpackFloat(payload[index++]);
 
     if (!registry->hasComponent<ecs::HealthComponent>(entityId)) {
         auto healthComp = std::make_shared<ecs::HealthComponent>(static_cast<float>(health));
@@ -124,7 +132,8 @@ size_t ClientNetwork::parseHealthComponent(const std::vector<uint64_t> &payload,
     }
     if (registry->hasComponent<ecs::NetworkStateComponent>(entityId)) {
         auto networkState = registry->getComponent<ecs::NetworkStateComponent>(entityId);
-        networkState->setCurrentHealth(health, baseHealth);
+        networkState->setCurrentHealth(static_cast<uint32_t>(health),
+            static_cast<uint32_t>(baseHealth));
     }
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " Health: " +
@@ -137,10 +146,10 @@ size_t ClientNetwork::parseHealthComponent(const std::vector<uint64_t> &payload,
 size_t ClientNetwork::parseColliderComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     if (index + 5 <= payload.size()) {
-        float offsetX = static_cast<float>(payload[index++]);
-        float offsetY = static_cast<float>(payload[index++]);
-        float sizeX = static_cast<float>(payload[index++]);
-        float sizeY = static_cast<float>(payload[index++]);
+        float offsetX = unpackFloat(payload[index++]);
+        float offsetY = unpackFloat(payload[index++]);
+        float sizeX = unpackFloat(payload[index++]);
+        float sizeY = unpackFloat(payload[index++]);
         uint8_t colliderType = static_cast<uint8_t>(payload[index++]);
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Entity " + std::to_string(entityId) + " Collider: offset(" +
@@ -156,11 +165,11 @@ size_t ClientNetwork::parseColliderComponent(const std::vector<uint64_t> &payloa
 size_t ClientNetwork::parseShootingStatsComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     if (index + 5 <= payload.size()) {
-        float fireRate = static_cast<float>(payload[index++]);
-        float cooldown = static_cast<float>(payload[index++]);
+        float fireRate = unpackFloat(payload[index++]);
+        float cooldown = unpackFloat(payload[index++]);
         uint32_t shotCount = static_cast<uint32_t>(payload[index++]);
-        float angleSpread = static_cast<float>(payload[index++]);
-        float offsetDistance = static_cast<float>(payload[index++]);
+        float angleSpread = unpackFloat(payload[index++]);
+        float offsetDistance = unpackFloat(payload[index++]);
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Entity " + std::to_string(entityId) + " ShootingStats: fireRate(" +
             std::to_string(fireRate) + ") cooldown(" + std::to_string(cooldown) +
@@ -189,11 +198,11 @@ size_t ClientNetwork::parseAIMovementPatternComponent(const std::vector<uint64_t
     size_t index, ecs::Entity entityId) {
     if (index + 6 <= payload.size()) {
         uint8_t pattern = static_cast<uint8_t>(payload[index++]);
-        float amplitude = static_cast<float>(payload[index++]);
-        float frequency = static_cast<float>(payload[index++]);
-        float detectionRange = static_cast<float>(payload[index++]);
-        float deadzone = static_cast<float>(payload[index++]);
-        float timer = static_cast<float>(payload[index++]);
+        float amplitude = unpackFloat(payload[index++]);
+        float frequency = unpackFloat(payload[index++]);
+        float detectionRange = unpackFloat(payload[index++]);
+        float deadzone = unpackFloat(payload[index++]);
+        float timer = unpackFloat(payload[index++]);
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Entity " + std::to_string(entityId) + " AIMovementPattern: pattern(" +
             std::to_string(pattern) + ") amplitude(" + std::to_string(amplitude) +
@@ -222,7 +231,7 @@ size_t ClientNetwork::parseDamageComponent(const std::vector<uint64_t> &payload,
 size_t ClientNetwork::parseLifetimeComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     if (index + 1 <= payload.size()) {
-        float lifetime = static_cast<float>(payload[index++]);
+        float lifetime = unpackFloat(payload[index++]);
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Entity " + std::to_string(entityId) + " Lifetime: " +
                 std::to_string(lifetime),
@@ -236,8 +245,8 @@ size_t ClientNetwork::parseVelocityComponent(const std::vector<uint64_t> &payloa
     size_t index, ecs::Entity entityId) {
     if (index + 2 > payload.size()) return index;
     auto registry = this->_resourceManager->get<ecs::Registry>();
-    float velX = static_cast<float>(payload[index++]);
-    float velY = static_cast<float>(payload[index++]);
+    float velX = unpackFloat(payload[index++]);
+    float velY = unpackFloat(payload[index++]);
     if (!registry->hasComponent<ecs::VelocityComponent>(entityId)) {
         auto velocity = std::make_shared<ecs::VelocityComponent>(math::Vector2f(velX, velY));
         registry->addComponent(entityId, velocity);
@@ -410,10 +419,10 @@ size_t ClientNetwork::parseNetworkIdComponent(const std::vector<uint64_t> &paylo
 size_t ClientNetwork::parseGameZoneComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     if (index + 4 <= payload.size()) {
-        float height = static_cast<float>(payload[index++]);
-        float width = static_cast<float>(payload[index++]);
-        float left = static_cast<float>(payload[index++]);
-        float top = static_cast<float>(payload[index++]);
+        float height = unpackFloat(payload[index++]);
+        float width = unpackFloat(payload[index++]);
+        float left = unpackFloat(payload[index++]);
+        float top = unpackFloat(payload[index++]);
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Entity " + std::to_string(entityId) + " GameZone: height(" +
             std::to_string(height) + ") width(" + std::to_string(width) + ") left(" +
