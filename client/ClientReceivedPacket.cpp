@@ -210,8 +210,8 @@ void ClientNetwork::handleEntitySpawn() {
         prefabName += static_cast<char>(*it);
     }
 
-    std::cout << "Spawning entity for prefab: " << prefabName << std::endl;
-    ecs::Entity entity = _resourceManager->get<Parser>()->getPrefabManager()->createEntityFromPrefab(
+    ecs::Entity entity = _resourceManager->get<Parser>()->
+        getPrefabManager()->createEntityFromPrefab(
         prefabName,
         _resourceManager->get<ecs::Registry>(),
         ecs::EntityCreationContext::forNetworkSync(0)
@@ -221,7 +221,6 @@ void ClientNetwork::handleEntitySpawn() {
         entity,
         std::make_shared<ecs::NetworkIdComponent>(clientId)
     );
-
 }
 
 void ClientNetwork::handleEntityDeath() {
@@ -277,6 +276,7 @@ void ClientNetwork::handleWhoAmI() {
     auto registry = this->_resourceManager->get<ecs::Registry>();
     registry->registerComponent<ecs::LocalPlayerTag>();
     if (!registry->hasComponent<ecs::LocalPlayerTag>(entityId)) {
-        registry->addComponent<ecs::LocalPlayerTag>(entityId, std::make_shared<ecs::LocalPlayerTag>());
+        registry->addComponent<ecs::LocalPlayerTag>
+            (entityId, std::make_shared<ecs::LocalPlayerTag>());
     }
 }

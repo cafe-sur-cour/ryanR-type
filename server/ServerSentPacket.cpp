@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-
+#include <memory>
 #include "Server.hpp"
 #include "Constants.hpp"
 #include "../common/debug.hpp"

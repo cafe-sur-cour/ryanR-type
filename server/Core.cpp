@@ -121,21 +121,18 @@ void Core::processServerEvents() {
 void Core::loop() {
     auto previousTime = std::chrono::high_resolution_clock::now();
 
-    // Wait for server to be initialized
     while (this->_server->getState() < constants::SERVER_UP) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(constants::SERVER_THREAD_SLEEP_MS));
+        std::this_thread::sleep_for
+            (std::chrono::milliseconds(constants::SERVER_THREAD_SLEEP_MS));
     }
 
-    // Game loop: process events and update GSM
     while (this->_server->getState() == constants::SERVER_UP) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float>(currentTime - previousTime).count();
         previousTime = currentTime;
 
-        // Process network events and feed them to systems
         this->processServerEvents();
 
-        // Update current game state (Boot -> Lobby -> Loading -> InGame)
         this->_gsm->update(deltaTime);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));

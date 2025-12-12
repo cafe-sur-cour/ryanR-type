@@ -81,6 +81,7 @@ void EntityPrefabManager::setEntityFactory(std::shared_ptr<ecs::IEntityFactory> 
     _entityFactory = factory;
 }
 
-void EntityPrefabManager::setOnEntityCreated(std::function<void(ecs::Entity, const std::string&)> callback) {
+void EntityPrefabManager::setOnEntityCreated
+    (std::function<void(ecs::Entity, const std::string&)> callback) {
     _onEntityCreated = callback;
 }

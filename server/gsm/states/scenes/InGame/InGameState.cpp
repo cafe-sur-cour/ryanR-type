@@ -58,16 +58,6 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::ScoreSystem>());
     addSystem(std::make_shared<ecs::TriggerSystem>());
     addSystem(std::make_shared<ecs::InteractionSystem>());
-
-
-    // auto registry = _resourceManager->get<ecs::Registry>();
-    // if (_resourceManager->has<EntityPrefabManager>()) {
-    //     auto prefabManager = _resourceManager->get<EntityPrefabManager>();
-    //     // prefabManager->createEntityFromPrefab("player",
-    //     //     _resourceManager->get<ecs::Registry>(), ecs::EntityCreationContext::forServer());
-    // } else {
-    //     throw std::runtime_error("EntityPrefabManager not found in ResourceManager");
-    // }
 }
 
 }  // namespace gsm

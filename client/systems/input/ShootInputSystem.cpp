@@ -36,9 +36,8 @@ void ShootInputSystem::update(
     if (!inputProvider->isActionPressed(InputAction::SHOOT))
         return;
 
-    auto playerView = registry->view<ControllableTag, ShooterTag, LocalPlayerTag>(); // tmp remove local
+    auto playerView = registry->view<ControllableTag, ShooterTag, LocalPlayerTag>();
 
-    // auto playerView = registry->view<ControllableTag, ShooterTag>();
     for (auto playerId : playerView) {
         if (!registry->hasComponent<ShootIntentComponent>(playerId)) {
             auto shootIntentComponent = std::make_shared<ShootIntentComponent>();

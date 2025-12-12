@@ -9,6 +9,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include <vector>
 #include "../../common/resourceManager/ResourceManager.hpp"
 #include "../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "ServerInputProvider.hpp"
@@ -50,7 +51,8 @@ std::shared_ptr<ResourceManager> initResourcesManager(
                     std::vector<uint64_t> spawnData = server->spawnPacket(entity, prefabName);
                     std::vector<uint8_t> spawnPacketData = server->getPacketManager()->pack(0,
                         server->getSequenceNumber(), constants::PACKET_SPAWN, spawnData);
-                    server->getNetwork()->broadcast(server->getConnectedClientEndpoints(), spawnPacketData);
+                    server->getNetwork()->
+                        broadcast(server->getConnectedClientEndpoints(), spawnPacketData);
                     server->incrementSequenceNumber();
                 }
             }
@@ -61,7 +63,8 @@ std::shared_ptr<ResourceManager> initResourcesManager(
                     std::vector<uint64_t> deathData = server->deathPacket(entity);
                     std::vector<uint8_t> deathPacketData = server->getPacketManager()->pack(0,
                         server->getSequenceNumber(), constants::PACKET_DEATH, deathData);
-                    server->getNetwork()->broadcast(server->getConnectedClientEndpoints(), deathPacketData);
+                    server->getNetwork()->
+                        broadcast(server->getConnectedClientEndpoints(), deathPacketData);
                     server->incrementSequenceNumber();
                 }
             }
