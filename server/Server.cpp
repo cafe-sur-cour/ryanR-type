@@ -240,12 +240,17 @@ void rserv::Server::processIncomingPackets() {
     }
 
     this->_packet->unpack(received.second);
+    std::cout << "[SERVER] Packet received from client: "
+        << static_cast<int>(this->_packet->getIdClient())
+        << " of type: " << static_cast<int>(this->_packet->getType()) << std::endl;
     if (this->_packet->getType() == constants::PACKET_CONNECTION) {
             this->processConnections(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_EVENT) {
         this->processEvents(this->_packet->getIdClient());
     } else if (this->_packet->getType() == constants::PACKET_CLIENT_READY) {
         this->onPacketReceived(this->_packet->getIdClient(), *this->_packet);
+    } else if (this->_packet->getType() == constants::PACKET_WHOAMI) {
+        this->processWhoAmI(this->_packet->getIdClient());
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "
