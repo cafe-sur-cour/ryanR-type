@@ -70,6 +70,11 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
             static_cast<uint8_t>(DEATH_PLAYER_PACKET), std::bind(
             &pm::PacketManager::buildDeathPacket,
             this, std::placeholders::_1)
+        },
+        {
+            static_cast<uint8_t>(WHOAMI_PACKET), std::bind(
+            &pm::PacketManager::buildWhoAmIPacket,
+            this, std::placeholders::_1)
         }
     };
 
@@ -113,6 +118,11 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
             static_cast<uint8_t>(DEATH_PLAYER_PACKET), std::bind(
             &pm::PacketManager::parseDeathPacket,
             this, std::placeholders::_1)
+        },
+        {
+            static_cast<uint8_t>(WHOAMI_PACKET), std::bind(
+            &pm::PacketManager::parseWhoAmIPacket,
+            this, std::placeholders::_1)
         }
     };
 
@@ -136,6 +146,10 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         {
             static_cast<uint8_t>(DEATH_PLAYER_PACKET),
             LENGTH_DEATH_PACKET
+        },
+        {
+            static_cast<uint8_t>(WHOAMI_PACKET),
+            LENGTH_WHOAMI_PACKET
         }
     };
 

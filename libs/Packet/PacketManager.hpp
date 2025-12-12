@@ -71,6 +71,8 @@ class PacketManager : public IPacketManager {
         bool parseSpawnPlayerPacket(const std::vector<uint8_t> payload);
         std::vector<uint8_t> buildDeathPacket(std::vector<uint64_t> payload);
         bool parseDeathPacket(const std::vector<uint8_t> payload);
+        std::vector<uint8_t> buildWhoAmIPacket(std::vector<uint64_t> payload);
+        bool parseWhoAmIPacket(const std::vector<uint8_t> payload);
 
         /* Pack Game State */
         std::vector<std::tuple<uint8_t, uint32_t, uint64_t>> _lengthComb;
