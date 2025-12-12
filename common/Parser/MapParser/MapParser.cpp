@@ -155,42 +155,15 @@ void MapParser::createBackgroundEntity(const std::string& entityName) {
 }
 
 void MapParser::createGameZoneEntity(float scrollSpeed) {
-    auto factory = _prefabManager->getEntityFactory();
-    ecs::Entity gameZoneEntity = factory->createEntity(_registry, _creationContext);
+    ecs::Entity gameZoneEntity = _prefabManager->createEntityFromPrefab(
+        constants::GAME_ZONE_PREFAB, _registry, _creationContext);
 
-    math::FRect zoneRect(0.0f, 0.0f,
-        constants::MAX_WIDTH, constants::MAX_HEIGHT);
-
-    _registry->addComponent<ecs::TransformComponent>(gameZoneEntity,
-        std::make_shared<ecs::TransformComponent>(math::Vector2f(0.0f, 0.0f)));
-    _registry->addComponent<ecs::VelocityComponent>(gameZoneEntity,
-        std::make_shared<ecs::VelocityComponent>(math::Vector2f(scrollSpeed, 0.0f)));
-    _registry->addComponent<ecs::GameZoneComponent>(gameZoneEntity,
-        std::make_shared<ecs::GameZoneComponent>(zoneRect));
-
-    _registry->addComponent<ecs::GameZoneColliderTag>(gameZoneEntity,
-        std::make_shared<ecs::GameZoneColliderTag>());
-
-    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
-        std::make_shared<ecs::ColliderComponent>(
-            math::Vector2f(0.0f, -constants::GAME_ZONE_BOUNDARY_THICKNESS),
-            math::Vector2f(constants::MAX_WIDTH, constants::GAME_ZONE_BOUNDARY_THICKNESS)));
-
-    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
-        std::make_shared<ecs::ColliderComponent>(
-            math::Vector2f(0.0f, constants::MAX_HEIGHT),
-            math::Vector2f(constants::MAX_WIDTH, constants::GAME_ZONE_BOUNDARY_THICKNESS)));
-
-    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
-        std::make_shared<ecs::ColliderComponent>(
-            math::Vector2f(constants::MAX_WIDTH, 0.0f),
-            math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT)));
-
-    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
-        std::make_shared<ecs::ColliderComponent>(
-            math::Vector2f(-constants::GAME_ZONE_BOUNDARY_THICKNESS, 0.0f),
-            math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT),
-            ecs::CollisionType::Push));
+    if (_registry->hasComponent<ecs::VelocityComponent>(gameZoneEntity)) {
+        auto velocityComp = _registry->getComponent<ecs::VelocityComponent>(gameZoneEntity);
+        if (velocityComp) {
+            velocityComp->setVelocity(math::Vector2f(scrollSpeed, 0.0f));
+        }
+    }
 }
 
 void MapParser::parseMapGrid(const nlohmann::json& legend, const nlohmann::json& mapGrid,
