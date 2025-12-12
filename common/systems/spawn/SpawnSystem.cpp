@@ -27,21 +27,22 @@ void SpawnSystem::update(
     auto view = registry->view<SpawnIntentComponent>();
 
     for (auto entityId : view) {
-        auto spawnRequest = registry->getComponent<SpawnIntentComponent>(entityId);
+        while (registry->hasComponent<SpawnIntentComponent>(entityId)) {
+            auto spawnRequest = registry->getComponent<SpawnIntentComponent>(entityId);
 
-        const std::string prefabName = spawnRequest->getPrefabName();
-        const math::Vector2f position = spawnRequest->getPosition();
-        const EntityCreationContext context = spawnRequest->getCreationContext();
+            const std::string prefabName = spawnRequest->getPrefabName();
+            const math::Vector2f position = spawnRequest->getPosition();
+            const EntityCreationContext context = spawnRequest->getCreationContext();
 
-        auto prefabManager = resourceManager->get<EntityPrefabManager>();
-        auto newEntity = prefabManager->createEntityFromPrefab(prefabName, registry, context);
+            auto prefabManager = resourceManager->get<EntityPrefabManager>();
+            auto newEntity = prefabManager->createEntityFromPrefab(prefabName, registry, context);
 
-        auto transform = registry->getComponent<TransformComponent>(newEntity);
-        if (transform) {
-            transform->setPosition(position);
+            auto transform = registry->getComponent<TransformComponent>(newEntity);
+            if (transform) {
+                transform->setPosition(position);
+            }
+            registry->removeOneComponent<SpawnIntentComponent>(entityId);
         }
-
-        registry->removeComponent<SpawnIntentComponent>(entityId);
     }
 }
 
