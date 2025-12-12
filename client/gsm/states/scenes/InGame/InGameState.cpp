@@ -45,6 +45,7 @@
 #include "../../../../../common/CollisionRules/CollisionRules.hpp"
 #include "../../../../../common/components/tags/PlayerTag.hpp"
 #include "../../../../../common/components/tags/LocalPlayerTag.hpp"
+#include "../../../../../common/ECS/view/View.hpp"
 #include "../../../../../common/components/tags/ObstacleTag.hpp"
 #include "../../../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../../systems/rendering/GameZoneViewSystem.hpp"
@@ -117,6 +118,15 @@ void InGameState::update(float deltaTime) {
         (_resourceManager, _registry, deltaTime);
 
     renderHUD();
+
+    /* This part is temporary */
+    ecs::View<ecs::ColliderComponent> colliderView(_registry);
+    for (auto entityId : colliderView) {
+        if (!_registry->hasComponent<ecs::HitboxRenderComponent>(entityId)) {
+            _registry->addComponent<ecs::HitboxRenderComponent>(entityId,
+                std::make_shared<ecs::HitboxRenderComponent>(gfx::color_t{255, 0, 0, 255}));
+        }
+    }
 }
 
 void InGameState::renderHUD() {
