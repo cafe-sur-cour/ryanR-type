@@ -38,7 +38,7 @@ class Button : public AFocusableElement {
     private:
         std::string _text;
         gfx::color_t _textColor = {255, 255, 255};
-        std::string _fontPath = "assets/fonts/ARIAL.TTF";
+        std::string _fontPath = "assets/fonts/arial.ttf";
 
         gfx::color_t _normalColor = {100, 100, 100};
         gfx::color_t _hoveredColor = {150, 150, 150};

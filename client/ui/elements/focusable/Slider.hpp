@@ -63,7 +63,7 @@ class Slider : public AFocusableElement {
 
         std::string _label;
         gfx::color_t _labelColor = {255, 255, 255};
-        std::string _fontPath = "assets/fonts/ARIAL.TTF";
+        std::string _fontPath = "assets/fonts/arial.ttf";
         size_t _baseFontSize = constants::BUTTON_FONT_SIZE_BASE;
 
         gfx::color_t _trackColor = {80, 80, 80};
