@@ -53,7 +53,7 @@ class MapParser {
         void parseObstacles(const nlohmann::json &obstacles);
         void parseWaves(const nlohmann::json &waves);
 
-        const std::vector<float> &getPositionsFromDistrib(
+        std::vector<float> getPositionsFromDistrib(
             int count,
             const nlohmann::json &distribution,
             float limit
