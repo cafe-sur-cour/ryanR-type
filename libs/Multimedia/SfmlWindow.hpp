@@ -14,6 +14,7 @@
 #include "TextureManager.hpp"
 #include "FontManager.hpp"
 #include "ShaderManager.hpp"
+#include "RoundedRectangleShape.hpp"
 #include "../../common/types/FRect.hpp"
 #include "AssetManager/AssetManager.hpp"
 
@@ -29,10 +30,12 @@ class SfmlWindow : public gfx::IWindow {
         void resizeWindow(size_t x, size_t y) override;
 
         void drawSprite(std::string asset, gfx::color_t color, std::pair<size_t, size_t> position) override;
-        void drawText(std::string text, gfx::color_t color, std::pair<size_t, size_t> position, const std::string& fontPath, size_t fontSize) override;
+        void drawText(std::string text, gfx::color_t color, std::pair<size_t, size_t> position, const std::string& fontPath, size_t fontSize, gfx::color_t outlineColor = {0, 0, 0}, float outlineThickness = 0.0f) override;
         std::pair<size_t, size_t> getTextSize(const std::string& text, const std::string& fontPath, size_t fontSize) override;
         void drawRectangleOutline(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
         void drawFilledRectangle(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
+        void drawRoundedRectangleFilled(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, float radius) override;
+        void drawRoundedRectangleOutline(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, float radius) override;
 
         bool isMouseOver(std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
         std::pair<int, int> getWindowSize() override;
@@ -52,6 +55,10 @@ class SfmlWindow : public gfx::IWindow {
         void addShaderFilter(const std::string& path) override;
         void removeShaderFilter(const std::string& path) override;
         void setShaderUniform(const std::string& filterPath, const std::string& name, float value) override;
+        void setFramerateLimit(unsigned int fps) override;
+        void setFullscreen(bool fullscreen) override;
+        void setRenderQuality(float quality) override;
+        void setCursor(bool isHand) override;
 
         void enableFilter(const std::string& filterName);
         void addFilter(const std::string& filterName);
@@ -72,6 +79,11 @@ class SfmlWindow : public gfx::IWindow {
 
         sf::Vector2f _viewportOffset;
         sf::Vector2f _viewportScale;
+        float _renderQuality;
+        unsigned int _renderWidth;
+        unsigned int _renderHeight;
+        sf::Cursor _cursorArrow;
+        sf::Cursor _cursorHand;
 };
 
 #endif /* !SFMLWINDOW_HPP_ */

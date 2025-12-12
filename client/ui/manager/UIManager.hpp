@@ -52,6 +52,8 @@ class UIManager {
 
         void setOnBack(std::function<void()> callback);
 
+        bool isMouseHoveringAnyElement(const math::Vector2f& mousePos) const;
+
     private:
         std::vector<std::shared_ptr<UIElement>> _elements;
         std::shared_ptr<UINavigationManager> _navigationManager;

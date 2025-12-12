@@ -12,6 +12,7 @@
 #include <string>
 #include "../../../../libs/Multimedia/IWindow.hpp"
 #include "../../../constants.hpp"
+#include "../../../colors.hpp"
 
 namespace ui {
 
@@ -37,14 +38,14 @@ class Button : public AFocusableElement {
 
     private:
         std::string _text;
-        gfx::color_t _textColor = {255, 255, 255};
+        gfx::color_t _textColor = colors::UI_TEXT;
         std::string _fontPath = "assets/fonts/arial.ttf";
 
-        gfx::color_t _normalColor = {100, 100, 100};
-        gfx::color_t _hoveredColor = {150, 150, 150};
-        gfx::color_t _pressedColor = {200, 200, 200};
-        gfx::color_t _disabledColor = {50, 50, 50};
-        gfx::color_t _focusedColor = {255, 215, 0};
+        gfx::color_t _normalColor = colors::BUTTON_PRIMARY;
+        gfx::color_t _hoveredColor = colors::BUTTON_PRIMARY_HOVER;
+        gfx::color_t _pressedColor = colors::BUTTON_PRIMARY_PRESSED;
+        gfx::color_t _disabledColor = colors::UI_DISABLED;
+        gfx::color_t _focusedColor = colors::UI_FOCUSED;
         size_t _baseFontSize = constants::BUTTON_FONT_SIZE_BASE;
 
         gfx::color_t getCurrentColor() const;
