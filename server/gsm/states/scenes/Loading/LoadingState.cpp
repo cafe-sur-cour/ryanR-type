@@ -24,7 +24,6 @@ void LoadingState::enter() {
     if (parser) {
         parser->parseMapFromFile("configs/map/map1.json");
     }
-    // TODO: Send map data to clients via spawn packets
     _gsm->requestStateChange(std::make_shared<InGameState>(_gsm, _resourceManager));
 }
 

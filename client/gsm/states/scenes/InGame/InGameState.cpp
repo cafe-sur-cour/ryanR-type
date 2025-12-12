@@ -62,8 +62,8 @@ InGameState::InGameState(
     std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager)
     : AGameState(gsm, resourceManager) {
-    _registry = resourceManager->get<ecs::Registry>(); // std::make_shared<ecs::Registry>();
-    _prefabManager = resourceManager->get<EntityPrefabManager>(); // std::make_shared<EntityPrefabManager>();
+    _registry = resourceManager->get<ecs::Registry>();
+    _prefabManager = resourceManager->get<EntityPrefabManager>();
 }
 
 void InGameState::enter() {
