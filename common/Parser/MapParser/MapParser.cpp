@@ -66,7 +66,7 @@ void MapParser::parseMap(const nlohmann::json &mapJson) {
         createMusicEntity(mapJson[constants::MUSIC_FIELD].get<std::string>());
 
     if (mapJson.contains(constants::BACKGROUND_SCROLL_SPEED_FIELD))
-        createGameZoneEntity(mapJson[constants::BACKGROUND_SCROLL_SPEED_FIELD].get<float>());
+        createGameZoneEntity(mapJson[constants::BACKGROUND_SCROLL_SPEED_FIELD]);
 
     if (mapJson.contains(constants::POWERUPS_FIELD))
         parsePowerUps(mapJson[constants::POWERUPS_FIELD]);
@@ -208,6 +208,153 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
         std::cerr << "Error: obstacles is not a valid array" << std::endl;
         return;
     }
+
+    for (size_t index = 0; index < obstacles.size(); ++index) {
+        const auto &obstacle = obstacles[index];
+
+        if (
+            !obstacle.contains(constants::NAME_FIELD) ||
+            !obstacle.contains(constants::POSITIONS_FIELD)
+        ) {
+            std::cerr << "Warning: Obstacle " << index <<
+                ": missing required fields (name/positions), skipping" << std::endl;
+            continue;
+        }
+
+        const std::string &prefabName = obstacle[constants::NAME_FIELD].get<std::string>();
+
+        if (!obstacle[constants::POSITIONS_FIELD].is_array()) {
+            std::cerr << "Warning: Obstacle " << index <<
+                " positions is not an array, skipping" << std::endl;
+            continue;
+        }
+
+        for (const auto &position : obstacle[constants::POSITIONS_FIELD]) {
+            if (
+                !position.contains(constants::TYPE_FIELD) ||
+                !position.contains(constants::COUNT_FIELD)
+            ) {
+                std::cerr << "Warning: position in obstacle " << index
+                    << " missing required fields (type/count)"
+                    << ", skipping" << std::endl;
+                continue;
+            }
+
+            const std::string &type = position[constants::TYPE_FIELD];
+            int count = position[constants::COUNT_FIELD];
+
+            if (type == "horizontalLine") {
+                if (
+                    !position.contains(constants::FROMX_FIELD) ||
+                    !position.contains(constants::POSX_FIELD)
+                ) {
+                    std::cerr << "Warning: position in obstacle " << index
+                        << " missing required fields for type " << type
+                        << "(fromX/posY), skipping" << std::endl;
+                    continue;
+                }
+
+                float fromX = position[constants::FROMX_FIELD];
+                float posY = position[constants::POSY_FIELD];
+
+                for (int i = 0; i < count; ++i) {
+                    auto entity = _prefabManager->createEntityFromPrefab(
+                        prefabName,
+                        _registry,
+                        _creationContext
+                    );
+                    if (
+                        !_registry->hasComponent<ecs::TransformComponent>(entity) ||
+                        !_registry->hasComponent<ecs::ColliderComponent>(entity)
+                    ) {
+                        continue;
+                    }
+                    auto transComp = _registry->getComponent<ecs::TransformComponent>(entity);
+                    auto colComp = _registry->getComponent<ecs::ColliderComponent>(entity);
+
+                    auto rect = colComp->getScaledHitbox(
+                        transComp->getPosition(),
+                        transComp->getScale()
+                    );
+                    float width = rect.getWidth();
+
+                    transComp->setPosition(
+                        math::Vector2f(fromX + static_cast<float>(i) * width, posY)
+                    );
+                }
+            }
+            if (type == "verticalLine") {
+                if (
+                    !position.contains(constants::FROMY_FIELD) ||
+                    !position.contains(constants::POSY_FIELD)
+                ) {
+                    std::cerr << "Warning: position in obstacle " << index
+                        << " missing required fields for type " << type
+                        << "(fromY/posX), skipping" << std::endl;
+                    continue;
+                }
+
+                float fromY = position[constants::FROMY_FIELD];
+                float posX = position[constants::POSX_FIELD];
+
+                for (int i = 0; i < count; ++i) {
+                    auto entity = _prefabManager->createEntityFromPrefab(
+                        prefabName,
+                        _registry,
+                        _creationContext
+                    );
+                    if (
+                        !_registry->hasComponent<ecs::TransformComponent>(entity) ||
+                        !_registry->hasComponent<ecs::ColliderComponent>(entity)
+                    ) {
+                        continue;
+                    }
+                    auto transComp = _registry->getComponent<ecs::TransformComponent>(entity);
+                    auto colComp = _registry->getComponent<ecs::ColliderComponent>(entity);
+
+                    auto rect = colComp->getScaledHitbox(
+                        transComp->getPosition(),
+                        transComp->getScale()
+                    );
+                    float height = rect.getHeight();
+
+                    transComp->setPosition(
+                        math::Vector2f(posX, fromY + static_cast<float>(i) * height)
+                    );
+                }
+            }
+            if (type == "unique") {
+                if (
+                    !position.contains(constants::POSX_FIELD) ||
+                    !position.contains(constants::POSY_FIELD)
+                ) {
+                    std::cerr << "Warning: position in obstacle " << index
+                        << " missing required fields for type " << type
+                        << "(posX/posY), skipping" << std::endl;
+                    continue;
+                }
+
+                float posX = position[constants::POSX_FIELD];
+                float posY = position[constants::POSY_FIELD];
+
+                for (int i = 0; i < count; ++i) {
+                    auto entity = _prefabManager->createEntityFromPrefab(
+                        prefabName,
+                        _registry,
+                        _creationContext
+                    );
+                    if (!_registry->hasComponent<ecs::TransformComponent>(entity)) {
+                        continue;
+                    }
+                    auto transComp = _registry->getComponent<ecs::TransformComponent>(entity);
+
+                    transComp->setPosition(
+                        math::Vector2f(posX, posY)
+                    );
+                }
+            }
+        }
+    }
 }
 
 void MapParser::parseWaves(const nlohmann::json& waves) {
@@ -224,13 +371,12 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
             !wave.contains(constants::ENEMIES_FIELD)
         ) {
             std::cerr << "Warning: Wave " << waveIndex << ": missing required fields (" <<
-                constants::GAMEXTRIGGER_FIELD << "/" <<
-                constants::ENEMIES_FIELD <<
+                constants::GAMEXTRIGGER_FIELD << "/" << constants::ENEMIES_FIELD <<
                 "), skipping" << std::endl;
             continue;
         }
 
-        float gameXTrigger = wave[constants::GAMEXTRIGGER_FIELD].get<float>();
+        float gameXTrigger = wave[constants::GAMEXTRIGGER_FIELD];
 
         if (!wave[constants::ENEMIES_FIELD].is_array()) {
             std::cerr << "Warning: Wave " << waveIndex <<
@@ -290,7 +436,7 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
             }
 
             std::string enemyType = enemyGroup[constants::TYPE_FIELD].get<std::string>();
-            int count = enemyGroup[constants::COUNT_FIELD].get<int>();
+            int count = enemyGroup[constants::COUNT_FIELD];
 
             if (count <= 0) {
                 std::cerr << "Warning: Invalid enemy count (" << count <<
@@ -333,8 +479,8 @@ const std::vector<float> &MapParser::getPositionsFromDistrib(
     float limit
 ) {
     const std::string type = distribution[constants::TYPE_FIELD].get<std::string>();
-    int min = distribution[constants::MIN_FIELD].get<int>();
-    int max = distribution[constants::MAX_FIELD].get<int>();
+    int min = distribution[constants::MIN_FIELD];
+    int max = distribution[constants::MAX_FIELD];
 
     std::vector<float> values;
 
