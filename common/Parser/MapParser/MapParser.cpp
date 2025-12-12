@@ -23,6 +23,7 @@
 #include "../../../client/components/rendering/MusicComponent.hpp"
 #include "../../components/permanent/GameZoneComponent.hpp"
 #include "../../components/tags/GameZoneColliderTag.hpp"
+#include "../../components/temporary/SpawnIntentComponent.hpp"
 #include "../../ECS/entity/factory/EntityFactory.hpp"
 
 MapParser::MapParser(std::shared_ptr<EntityPrefabManager> prefabManager,
@@ -375,13 +376,15 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
             continue;
         }
 
-        // float gameXTrigger = wave[constants::GAMEXTRIGGER_FIELD];
+        float gameViewXTrigger = wave[constants::GAMEXTRIGGER_FIELD];
 
         if (!wave[constants::ENEMIES_FIELD].is_array()) {
             std::cerr << "Warning: Wave " << waveIndex <<
                 " enemies is not an array, skipping" << std::endl;
             continue;
         }
+
+        auto spawner = _registry->createEntity();
 
         for (const auto& enemyGroup : wave[constants::ENEMIES_FIELD]) {
             if (
@@ -462,7 +465,15 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
 
             for (size_t i = 0; i < static_cast<size_t>(count); ++i) {
                 try {
-                    createEntityFromPrefab(enemyType, xPositions[i], yPositions[i]);
+                    _registry->addComponent(
+                        spawner,
+                        std::make_shared<ecs::SpawnIntentComponent>(
+                            enemyType,
+                            math::Vector2f(xPositions[i], yPositions[i]),
+                            _creationContext,
+                            gameViewXTrigger
+                        )
+                    );
                 } catch (const std::exception& e) {
                     std::cerr << "Error creating enemy '" << enemyType <<
                         "': " << e.what() << std::endl;
