@@ -16,6 +16,7 @@
 #include "../common/components/permanent/TransformComponent.hpp"
 #include "../common/components/permanent/HealthComponent.hpp"
 #include "../common/components/permanent/VelocityComponent.hpp"
+#include "../common/components/tags/ObstacleTag.hpp"
 #include "interpolation/NetworkStateComponent.hpp"
 
 ecs::Entity ClientNetwork::findOrCreateNetworkEntity(std::shared_ptr<ecs::Registry> registry,
@@ -315,6 +316,13 @@ size_t ClientNetwork::parseMobTagComponent(const std::vector<uint64_t> &payload,
 size_t ClientNetwork::parseObstacleTagComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     (void)payload;
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+
+    if (!registry->hasComponent<ecs::ObstacleTag>(entityId)) {
+        auto obstacleTag = std::make_shared<ecs::ObstacleTag>();
+        registry->addComponent(entityId, obstacleTag);
+    }
+
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " has ObstacleTag",
         debug::debugType::NETWORK,
