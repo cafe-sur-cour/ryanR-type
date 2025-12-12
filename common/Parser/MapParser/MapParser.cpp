@@ -241,7 +241,6 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
             }
 
             const std::string &type = position[constants::TYPE_FIELD];
-            int count = position[constants::COUNT_FIELD];
 
             if (type == "horizontalLine") {
                 if (
@@ -254,6 +253,8 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
                         << "(fromX/posY), skipping" << std::endl;
                     continue;
                 }
+
+                int count = position[constants::COUNT_FIELD];
 
                 float fromX = position[constants::FROMX_FIELD];
                 float posY = position[constants::POSY_FIELD];
@@ -295,6 +296,8 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
                         << "(fromY/posX), skipping" << std::endl;
                     continue;
                 }
+
+                int count = position[constants::COUNT_FIELD];
 
                 float fromY = position[constants::FROMY_FIELD];
                 float posX = position[constants::POSX_FIELD];
