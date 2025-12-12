@@ -50,8 +50,12 @@ void AComponentArray<T>::removeComponents(Entity entityId) {
 
 template <typename T>
 void AComponentArray<T>::removeOneComponent(Entity entityId) {
-    if (entityId < static_cast<size_t>(_components.size()))
-        _components[entityId].pop_back();
+    if (
+        entityId < static_cast<size_t>(_components.size()) &&
+        !_components[entityId].empty()
+    ) {
+        _components[entityId].erase(_components[entityId].begin());
+    }
 }
 
 template <typename T>
