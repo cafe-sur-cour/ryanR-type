@@ -123,12 +123,12 @@ void DevState::enter() {
     _registry->addComponent<ecs::MusicIntentComponent>(musicIntentEntity,
         std::make_shared<ecs::MusicIntentComponent>(ecs::PLAY, ""));
 
-    // ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
-    // _registry->addComponent<ecs::LocalPlayerTag>(
-    //     playerEntity, std::make_shared<ecs::LocalPlayerTag>());
-    // _registry->addComponent<ecs::HitboxRenderComponent>(
-    //     playerEntity,
-    //     std::make_shared<ecs::HitboxRenderComponent>());
+    ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
+    _registry->addComponent<ecs::LocalPlayerTag>(
+        playerEntity, std::make_shared<ecs::LocalPlayerTag>());
+    _registry->addComponent<ecs::HitboxRenderComponent>(
+        playerEntity,
+        std::make_shared<ecs::HitboxRenderComponent>());
 
     auto colliderView = _registry->view<ecs::ColliderComponent>();
     for (auto entityId : colliderView) {

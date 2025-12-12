@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** NetworkStateComponent - Stores network state for interpolation
+** NetworkStateComponent
 */
 
 #ifndef NETWORKSTATECOMPONENT_HPP_
@@ -90,17 +90,12 @@ class NetworkStateComponent : public AComponent {
         }
 
     private:
-        // Transform states
         NetworkTransformState _previousTransform;
         NetworkTransformState _currentTransform;
         bool _hasTransform;
-
-        // Health states
         NetworkHealthState _previousHealth;
         NetworkHealthState _currentHealth;
         bool _hasHealth;
-
-        // Interpolation settings
         float _interpolationTime;
 };
 
