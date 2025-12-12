@@ -42,7 +42,7 @@ public:
 
 private:
     int _colorBlindnessState = 0;
-    float _brightnessValue = 100.0f;
+    float _brightnessValue = 1.0f;
     bool _highContrastEnabled = false;
     ui::UIScale _uiScale = ui::UIScale::Normal;
     float _musicVolume = 100.0f;

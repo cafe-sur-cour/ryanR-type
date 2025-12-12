@@ -602,6 +602,8 @@ void Parser::instanciateComponentCreators() {
             pattern = ecs::AIMovementPattern::ZIGZAG;
         } else if (behaviorStr == constants::VERTICAL_MIRROR_VALUE) {
             pattern = ecs::AIMovementPattern::VERTICAL_MIRROR;
+        } else if (behaviorStr == constants::FOLLOW_RIGHT_VALUE) {
+            pattern = ecs::AIMovementPattern::FOLLOW_RIGHT;
         }
 
         auto component = std::make_shared<ecs::AIMovementPatternComponent>();

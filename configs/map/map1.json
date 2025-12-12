@@ -30,6 +30,20 @@
             "enemies": [
                     { "type": "enemy1", "count": 6}
             ]
+        },
+        {
+            "spawnLength": 1,
+            "posX": 22,
+            "enemies": [
+                    { "type": "enemy2", "count": 4}
+            ]
+        },
+        {
+            "spawnLength": 1,
+            "posX": 2,
+            "enemies": [
+                    { "type": "enemy3", "count": 4}
+            ]
         }
     ]
 }

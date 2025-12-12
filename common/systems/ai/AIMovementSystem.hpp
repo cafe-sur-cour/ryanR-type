@@ -39,6 +39,11 @@ private:
         std::shared_ptr<AIMovementPatternComponent> movement,
         std::shared_ptr<TransformComponent> transform,
         std::shared_ptr<InputIntentComponent> inputIntent);
+    void executeFollowRight(
+        std::shared_ptr<AIMovementPatternComponent> movement,
+        std::shared_ptr<TransformComponent> transform,
+        std::shared_ptr<InputIntentComponent> inputIntent,
+        float deltaTime);
     std::optional<size_t> findNearestPlayer(
         std::shared_ptr<Registry> registry,
         const math::Vector2f& position,
