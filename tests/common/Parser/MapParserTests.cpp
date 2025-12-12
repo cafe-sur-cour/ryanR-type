@@ -71,6 +71,7 @@ protected:
         prefabManager->registerPrefab("wall", std::make_shared<MockPrefab>("wall"));
         prefabManager->registerPrefab("enemy1", std::make_shared<MockPrefab>("enemy1"));
         prefabManager->registerPrefab("enemy2", std::make_shared<MockPrefab>("enemy2"));
+        prefabManager->registerPrefab("gamezone", std::make_shared<MockPrefab>("gamezone"));
     }
 
     void TearDown() override {
