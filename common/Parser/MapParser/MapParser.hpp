@@ -10,6 +10,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 #include <nlohmann/json.hpp>
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../ECS/entity/EntityCreationContext.hpp"
@@ -19,8 +20,10 @@
 
 class MapParser {
     public:
-        MapParser(std::shared_ptr<EntityPrefabManager> prefabManager,
-            std::shared_ptr<ecs::Registry> registry);
+        MapParser(
+            std::shared_ptr<EntityPrefabManager> prefabManager,
+            std::shared_ptr<ecs::Registry> registry
+        );
         ~MapParser();
 
         void parseMapFromFile(const std::string& filePath);
@@ -36,21 +39,29 @@ class MapParser {
         void setCreationContext(const ecs::EntityCreationContext& context);
         ecs::EntityCreationContext getCreationContext() const;
 
-    protected:
     private:
         std::shared_ptr<EntityPrefabManager> _prefabManager;
         std::shared_ptr<ecs::Registry> _registry;
         ecs::EntityCreationContext _creationContext;
 
         nlohmann::json _mapJson;
-        void createBackgroundEntity(const std::string& entityName);
-        void createMusicEntity(const std::string& prefabName);
+        void createBackgroundEntity(const std::string &entityName);
+        void createMusicEntity(const std::string &prefabName);
         void createGameZoneEntity(float scrollSpeed);
-        void parseMapGrid(const nlohmann::json& legend, const nlohmann::json& mapGrid,
-            float tileWidth, float tileHeight);
-        void parseWaves(const nlohmann::json& waves, float tileWidth);
-        ecs::Entity createEntityFromPrefab(const std::string& prefabName,
-            float x, float y);
+
+        void parsePowerUps(const nlohmann::json &powerUps);
+        void parseObstacles(const nlohmann::json &obstacles);
+        void parseWaves(const nlohmann::json &waves);
+
+        const std::vector<float> &getPositionsFromDistrib(
+            int count,
+            const nlohmann::json &distribution,
+            float limit
+        );
+        ecs::Entity createEntityFromPrefab(
+            const std::string &prefabName,
+            float x, float y
+        );
 };
 
 #endif /* !MAPPARSER_HPP_ */
