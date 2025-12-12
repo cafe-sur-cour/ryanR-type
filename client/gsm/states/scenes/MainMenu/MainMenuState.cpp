@@ -41,6 +41,11 @@ MainMenuState::MainMenuState(
     auto config = _resourceManager->get<SettingsConfig>();
     _uiManager->setGlobalScale(config->getUIScale());
 
+    _background = std::make_shared<ui::Background>(_resourceManager);
+    _background->addLayer(constants::UI_BACKGROUND_EARTH_PATH, 0.0f, 0.0f,
+        math::Vector2f(5376.0f, 3584.0f));
+    _uiManager->addElement(_background);
+
     ui::LayoutConfig leftConfig;
     leftConfig.direction = ui::LayoutDirection::Vertical;
     leftConfig.alignment = ui::LayoutAlignment::Center;
@@ -56,9 +61,6 @@ MainMenuState::MainMenuState(
     _connectButton = std::make_shared<ui::Button>(_resourceManager);
     _connectButton->setText("Connect to Server");
     _connectButton->setSize(math::Vector2f(300.f, 108.f));
-    _connectButton->setNormalColor({0, 100, 200});
-    _connectButton->setHoveredColor({0, 150, 255});
-    _connectButton->setFocusedColor({100, 200, 255});
 
     _connectButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
@@ -97,9 +99,6 @@ MainMenuState::MainMenuState(
     _playButton = std::make_shared<ui::Button>(resourceManager);
     _playButton->setText("Ready");
     _playButton->setSize(math::Vector2f(576.f, 108.f));
-    _playButton->setNormalColor({0, 200, 0});
-    _playButton->setHoveredColor({0, 255, 0});
-    _playButton->setFocusedColor({255, 255, 0});
 
     _playButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
@@ -135,9 +134,9 @@ MainMenuState::MainMenuState(
     _settingsButton = std::make_shared<ui::Button>(resourceManager);
     _settingsButton->setText("Settings");
     _settingsButton->setSize(math::Vector2f(576.f, 108.f));
-    _settingsButton->setNormalColor({100, 100, 150});
-    _settingsButton->setHoveredColor({150, 150, 200});
-    _settingsButton->setFocusedColor({100, 200, 255});
+    _settingsButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _settingsButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _settingsButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _settingsButton->setOnRelease([this]() {
         this->_gsm->requestStatePush(std::make_shared<SettingsState>(this->_gsm,
             this->_resourceManager));
@@ -150,9 +149,9 @@ MainMenuState::MainMenuState(
     _quitButton = std::make_shared<ui::Button>(resourceManager);
     _quitButton->setText("Quit");
     _quitButton->setSize(math::Vector2f(576.f, 108.f));
-    _quitButton->setNormalColor({200, 0, 0});
-    _quitButton->setHoveredColor({255, 0, 0});
-    _quitButton->setFocusedColor({255, 100, 0});
+    _quitButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _quitButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _quitButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _quitButton->setOnRelease([this]() {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
     });
@@ -179,9 +178,9 @@ MainMenuState::MainMenuState(
     _devButton = std::make_shared<ui::Button>(_resourceManager);
     _devButton->setText("Go to dev scene\n(no need to connect to server)");
     _devButton->setSize(math::Vector2f(400.f, 108.f));
-    _devButton->setNormalColor({255, 100, 200});
-    _devButton->setHoveredColor({255, 80, 150});
-    _devButton->setFocusedColor({255, 200, 255});
+    _devButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _devButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _devButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
     _devButton->setOnRelease([this]() {
         this->_gsm->requestStatePush(std::make_shared<DevState>(this->_gsm,
             this->_resourceManager));
@@ -201,8 +200,6 @@ void MainMenuState::enter() {
 }
 
 void MainMenuState::update(float deltaTime) {
-    (void)deltaTime;
-
     auto config = _resourceManager->get<SettingsConfig>();
     if (_uiManager->getGlobalScale() != config->getUIScale()) {
         _uiManager->setGlobalScale(config->getUIScale());
@@ -219,6 +216,9 @@ void MainMenuState::update(float deltaTime) {
         static_cast<int>(constants::MouseButton::LEFT));
 
     _uiManager->handleMouseInput(mousePos, mousePressed);
+
+    bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
+    _resourceManager->get<gfx::IWindow>()->setCursor(isHoveringUI);
 
     if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
@@ -238,8 +238,11 @@ void MainMenuState::exit() {
     _playButton.reset();
     _settingsButton.reset();
     _quitButton.reset();
+    _connectButton.reset();
     _mainMenuLayout.reset();
     _rightLayout.reset();
+    _leftLayout.reset();
+    _background.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }

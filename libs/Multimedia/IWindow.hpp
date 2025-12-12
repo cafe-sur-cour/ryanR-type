@@ -35,10 +35,12 @@ class IWindow {
         virtual void resizeWindow(size_t x, size_t y) = 0;
 
         virtual void drawSprite(std::string asset, color_t color, std::pair<size_t, size_t> position) = 0;
-        virtual void drawText(std::string text, color_t color, std::pair<size_t, size_t> position, const std::string& fontPath, size_t fontSize = 24) = 0;
+        virtual void drawText(std::string text, color_t color, std::pair<size_t, size_t> position, const std::string& fontPath, size_t fontSize = 24, color_t outlineColor = {0, 0, 0}, float outlineThickness = 0.0f) = 0;
         virtual std::pair<size_t, size_t> getTextSize(const std::string& text, const std::string& fontPath, size_t fontSize = 24) = 0;
         virtual void drawRectangleOutline(color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
         virtual void drawFilledRectangle(color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
+        virtual void drawRoundedRectangleFilled(color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, float radius) = 0;
+        virtual void drawRoundedRectangleOutline(color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, float radius) = 0;
 
         virtual bool isMouseOver(std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
         virtual std::pair<int, int> getWindowSize() = 0;
@@ -57,6 +59,10 @@ class IWindow {
         virtual void addShaderFilter(const std::string& path) = 0;
         virtual void removeShaderFilter(const std::string& path) = 0;
         virtual void setShaderUniform(const std::string& filterPath, const std::string& name, float value) = 0;
+        virtual void setFramerateLimit(unsigned int fps) = 0;
+        virtual void setFullscreen(bool fullscreen) = 0;
+        virtual void setRenderQuality(float quality) = 0;
+        virtual void setCursor(bool isHand) = 0;
 };
 
 typedef IWindow *(*createWindow_t)();
