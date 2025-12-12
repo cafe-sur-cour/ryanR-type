@@ -46,29 +46,26 @@ gfx::IEvent::event_t SfmlEvent::pollEvents() {
         return event_t::NOTHING;
     auto window = sfmlWindow->getSfmlWindow();
 
+    event_t lastEvent = event_t::NOTHING;
+
     while (auto event = window->pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
             return event_t::CLOSE;
         } else if (event->is<sf::Event::Resized>()) {
             sfmlWindow->updateView();
-        } else if (const auto* keyPressed =
-                event->getIf<sf::Event::KeyPressed>()) {
-            return processKeyboardEvent(*keyPressed);
-        } else if (const auto* mousePressed =
-                event->getIf<sf::Event::MouseButtonPressed>()) {
-            return processMouseEvent(*mousePressed);
-        } else if (const auto* mouseReleased =
-                event->getIf<sf::Event::MouseButtonReleased>()) {
-            return processMouseReleaseEvent(*mouseReleased);
-        } else if (const auto* joystickPressed =
-                event->getIf<sf::Event::JoystickButtonPressed>()) {
-            return processJoystickButtonEvent(*joystickPressed);
-        } else if (const auto* joystickMoved =
-                event->getIf<sf::Event::JoystickMoved>()) {
-            return processJoystickAxisEvent(*joystickMoved);
+        } else if (auto keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+            lastEvent = processKeyboardEvent(*keyPressed);
+        } else if (auto mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+            lastEvent = processMouseEvent(*mousePressed);
+        } else if (auto mouseReleased = event->getIf<sf::Event::MouseButtonReleased>()) {
+            lastEvent = processMouseReleaseEvent(*mouseReleased);
+        } else if (auto joystickPressed = event->getIf<sf::Event::JoystickButtonPressed>()) {
+            lastEvent = processJoystickButtonEvent(*joystickPressed);
+        } else if (auto joystickMoved = event->getIf<sf::Event::JoystickMoved>()) {
+            lastEvent = processJoystickAxisEvent(*joystickMoved);
         }
     }
-    return event_t::NOTHING;
+    return lastEvent;
 }
 
 event_t SfmlEvent::processKeyboardEvent

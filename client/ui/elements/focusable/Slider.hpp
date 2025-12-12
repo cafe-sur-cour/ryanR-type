@@ -13,6 +13,7 @@
 #include <functional>
 #include "../../../../libs/Multimedia/IWindow.hpp"
 #include "../../../constants.hpp"
+#include "../../../colors.hpp"
 
 namespace ui {
 
@@ -37,6 +38,7 @@ class Slider : public AFocusableElement {
         void setFontPath(const std::string& fontPath);
         void setBaseFontSize(size_t fontSize);
         size_t getBaseFontSize() const;
+        void setShowPercentage(bool show);
 
         void setTrackColor(const gfx::color_t& color);
         void setFillColor(const gfx::color_t& color);
@@ -60,17 +62,20 @@ class Slider : public AFocusableElement {
         float _maxValue = 1.0f;
         float _value = 0.5f;
         float _step = 0.1f;
+        float _visualNormalizedValue = 0.5f;
 
         std::string _label;
-        gfx::color_t _labelColor = {255, 255, 255};
+        gfx::color_t _labelColor = colors::SLIDER_LABEL;
         std::string _fontPath = "assets/fonts/ARIAL.TTF";
         size_t _baseFontSize = constants::BUTTON_FONT_SIZE_BASE;
+        float _outlineThickness = 2.0f;
+        bool _showPercentage = true;
 
-        gfx::color_t _trackColor = {80, 80, 80};
-        gfx::color_t _fillColor = {100, 150, 200};
-        gfx::color_t _handleColor = {200, 200, 200};
-        gfx::color_t _handleHoveredColor = {255, 255, 255};
-        gfx::color_t _handleFocusedColor = {255, 215, 0};
+        gfx::color_t _trackColor = colors::SLIDER_TRACK;
+        gfx::color_t _fillColor = colors::SLIDER_FILL;
+        gfx::color_t _handleColor = colors::SLIDER_HANDLE;
+        gfx::color_t _handleHoveredColor = colors::SLIDER_HANDLE_HOVER;
+        gfx::color_t _handleFocusedColor = colors::SLIDER_HANDLE_FOCUSED;
 
         std::function<void(float)> _onValueChanged;
 
