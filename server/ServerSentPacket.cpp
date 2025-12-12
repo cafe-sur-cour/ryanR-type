@@ -106,3 +106,26 @@ bool rserv::Server::canStartPacket() {
     }
     return false;
 }
+
+bool rserv::Server::whoamiPacket(const asio::ip::udp::endpoint &endpoint) {
+    std::vector<uint64_t> payload;
+    for (const auto &client : this->_clients) {
+        if (std::get<1>(client) == endpoint) {
+            payload.push_back(static_cast<uint64_t>(std::get<0>(client)));
+            payload.insert(payload.end(), this->_packet->formatString(
+                std::get<2>(client)).begin(),
+                this->_packet->formatString(std::get<2>(client)).end());
+            std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+                this->_sequenceNumber, constants::PACKET_WHOAMI, payload);
+            this->_network->sendTo(endpoint, packet);
+            this->_sequenceNumber++;
+            return true;
+        }
+    }
+
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] whoamiPacket: Client not found for endpoint "
+        + endpoint.address().to_string() + ":" + std::to_string(endpoint.port()),
+        debug::debugType::NETWORK, debug::debugLevel::ERROR);
+    return false;
+}

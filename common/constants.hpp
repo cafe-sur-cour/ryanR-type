@@ -230,17 +230,18 @@ namespace constants {
     constexpr float DEFAULT_TIMER = 0.0f;
 
     /* Packet constants */
-    constexpr std::uint8_t PACKET_NO_OP = 0x00;
-    constexpr std::uint8_t PACKET_CONNECTION = 0x01;
-    constexpr std::uint8_t PACKET_ACCEPT = 0x02;
-    constexpr std::uint8_t PACKET_DISC = 0x03;
-    constexpr std::uint8_t PACKET_EVENT = 0x04;
-    constexpr std::uint8_t PACKET_GAME_STATE = 0x05;
-    constexpr std::uint8_t PACKET_MAP = 0x06;
-    constexpr std::uint8_t PACKET_END_MAP = 0x07;
-    constexpr std::uint8_t PACKET_END_GAME = 0x08;
-    constexpr std::uint8_t PACKET_CAN_START = 0x09;
-    constexpr std::uint8_t PACKET_CLIENT_READY = 0x0A;
+    constexpr uint8_t PACKET_NO_OP = 0x00;
+    constexpr uint8_t PACKET_CONNECTION = 0x01;
+    constexpr uint8_t PACKET_ACCEPT = 0x02;
+    constexpr uint8_t PACKET_DISC = 0x03;
+    constexpr uint8_t PACKET_EVENT = 0x04;
+    constexpr uint8_t PACKET_GAME_STATE = 0x05;
+    constexpr uint8_t PACKET_MAP = 0x06;
+    constexpr uint8_t PACKET_END_MAP = 0x07;
+    constexpr uint8_t PACKET_END_GAME = 0x08;
+    constexpr uint8_t PACKET_CAN_START = 0x09;
+    constexpr uint8_t PACKET_CLIENT_READY = 0x0A;
+    constexpr uint8_t PACKET_WHOAMI = 0x0D;
 
 }
 

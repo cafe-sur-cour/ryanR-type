@@ -79,11 +79,13 @@ namespace rserv {
             bool gameStatePacket();
             bool mapPacket(std::vector<uint64_t> mapData, const asio::ip::udp::endpoint &endpoint);
             bool canStartPacket();
+            bool whoamiPacket(const asio::ip::udp::endpoint &endpoint);
 
             void setCurrentMap(const std::vector<uint64_t> &map);
             std::vector<uint64_t> getCurrentMap() const;
             bool isGameStarted() const;
             bool allClientsReady() const;
+
         private:
             void loadNetworkLibrary();
             void loadBufferLibrary();
