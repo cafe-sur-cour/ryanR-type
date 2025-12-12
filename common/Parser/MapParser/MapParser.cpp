@@ -376,7 +376,7 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
             continue;
         }
 
-        float gameXTrigger = wave[constants::GAMEXTRIGGER_FIELD];
+        // float gameXTrigger = wave[constants::GAMEXTRIGGER_FIELD];
 
         if (!wave[constants::ENEMIES_FIELD].is_array()) {
             std::cerr << "Warning: Wave " << waveIndex <<
@@ -450,18 +450,18 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
                 continue;
             }
 
-            const std::vector<float> &xPositions = getPositionsFromDistrib(
+            const std::vector<float> xPositions = getPositionsFromDistrib(
                 count,
                 distributionX,
                 constants::MAX_WIDTH
             );
-            const std::vector<float> &yPositions = getPositionsFromDistrib(
+            const std::vector<float> yPositions = getPositionsFromDistrib(
                 count,
                 distributionY,
                 constants::MAX_HEIGHT
             );
 
-            for (int i = 0; i < count; ++i) {
+            for (size_t i = 0; i < static_cast<size_t>(count); ++i) {
                 try {
                     createEntityFromPrefab(enemyType, xPositions[i], yPositions[i]);
                 } catch (const std::exception& e) {
@@ -473,7 +473,7 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
     }
 }
 
-const std::vector<float> &MapParser::getPositionsFromDistrib(
+std::vector<float> MapParser::getPositionsFromDistrib(
     int count,
     const nlohmann::json &distribution,
     float limit
@@ -492,14 +492,14 @@ const std::vector<float> &MapParser::getPositionsFromDistrib(
         std::mt19937 gen(rd());
         std::uniform_real_distribution<> dis(real_min, real_max);
 
-        for (int i; i < count; ++i) {
+        for (int i = 0; i < count; ++i) {
             values.push_back(static_cast<float>(dis(gen)));
         }
     }
     if (type == "uniform") {
         double offset = (real_max - real_min) / static_cast<double>(count);
 
-        for (int i; i < count; ++i) {
+        for (int i = 0; i < count; ++i) {
             values.push_back(
                 static_cast<float>(i) * static_cast<float>(offset)
             );
