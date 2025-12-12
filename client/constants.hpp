@@ -56,6 +56,9 @@ namespace constants {
     const std::string SETTINGS_UI_SCALE = "uiScale";
     const std::string SETTINGS_MUSIC_VOLUME = "musicVolume";
     const std::string SETTINGS_SOUND_VOLUME = "soundVolume";
+    const std::string SETTINGS_SCREEN_RESOLUTION = "screenResolution";
+    const std::string SETTINGS_TARGET_FPS = "targetFPS";
+    const std::string SETTINGS_RENDER_QUALITY = "renderQuality";
     const std::string KEYBIND_PRIMARY = "primary";
     const std::string KEYBIND_SECONDARY = "secondary";
     const std::string KEYBIND_TOGGLE_MODE = "toggle_mode";
@@ -65,6 +68,7 @@ namespace constants {
     const std::string KEYBINDS_FILE_PATH = "saves/keybinds.json";
     const std::string ACCESSIBILITY_FILE_PATH = "saves/accessibility.json";
     const std::string SETTINGS_FILE_PATH = "saves/settings.json";
+    const std::string UI_BACKGROUND_EARTH_PATH = "assets/ui/earth.jpg";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */

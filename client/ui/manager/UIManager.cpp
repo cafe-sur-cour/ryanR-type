@@ -241,4 +241,40 @@ void UIManager::setOnBack(std::function<void()> callback) {
     _onBack = callback;
 }
 
+bool UIManager::isMouseHoveringAnyElement(const math::Vector2f& mousePos) const {
+    std::function<bool(const std::shared_ptr<UIElement>&)> checkElementAndChildren =
+        [&checkElementAndChildren, &mousePos]
+            (const std::shared_ptr<UIElement>& element) -> bool {
+            if (!element || !element->isVisible()) {
+                return false;
+            }
+
+            if (!element->containsPoint(mousePos)) {
+                return false;
+            }
+
+            if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
+                if (focusable->canBeFocused()) {
+                    return true;
+                }
+            }
+
+            const auto& children = element->getChildren();
+            for (const auto& child : children) {
+                if (checkElementAndChildren(child)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
+    for (const auto& element : _elements) {
+        if (checkElementAndChildren(element)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 }  // namespace ui

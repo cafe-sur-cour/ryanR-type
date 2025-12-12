@@ -153,9 +153,9 @@ void UILayout::applyAnchor() {
         return;
     }
 
-    auto windowSize = getWindowSize();
-    float windowWidth = static_cast<float>(windowSize.first);
-    float windowHeight = static_cast<float>(windowSize.second);
+    auto logicalSize = getLogicalSize();
+    float windowWidth = static_cast<float>(logicalSize.first);
+    float windowHeight = static_cast<float>(logicalSize.second);
 
     math::Vector2f anchoredPos(0.0f, 0.0f);
     float scaledPaddingX = _config.padding.getX() * getScaleFactor();

@@ -38,6 +38,13 @@ void Slider::setMaxValue(float maxValue) {
 void Slider::setValue(float value) {
     float oldValue = _value;
     _value = std::clamp(value, _minValue, _maxValue);
+
+    if (!_isDragging) {
+        if (std::abs(_maxValue - _minValue) > constants::EPS) {
+            _visualNormalizedValue = (_value - _minValue) / (_maxValue - _minValue);
+        }
+    }
+
     if (std::abs(oldValue - _value) > constants::EPS && _onValueChanged) {
         _onValueChanged(_value);
     }
@@ -87,6 +94,10 @@ size_t Slider::getBaseFontSize() const {
     return _baseFontSize;
 }
 
+void Slider::setShowPercentage(bool show) {
+    _showPercentage = show;
+}
+
 void Slider::setTrackColor(const gfx::color_t& color) {
     _trackColor = color;
 }
@@ -120,7 +131,18 @@ float Slider::getNormalizedValue() const {
 
 void Slider::setNormalizedValue(float normalized) {
     normalized = std::clamp(normalized, 0.0f, 1.0f);
-    setValue(_minValue + normalized * (_maxValue - _minValue));
+    _visualNormalizedValue = normalized;
+
+    float rawValue = _minValue + normalized * (_maxValue - _minValue);
+
+    float snappedValue = rawValue;
+    if (_step > 0.0f) {
+        float steps = std::round((rawValue - _minValue) / _step);
+        snappedValue = _minValue + steps * _step;
+        snappedValue = std::clamp(snappedValue, _minValue, _maxValue);
+    }
+
+    setValue(snappedValue);
 }
 
 gfx::color_t Slider::getCurrentHandleColor() const {
@@ -182,7 +204,13 @@ void Slider::render() {
         {static_cast<size_t>(trackWidth), static_cast<size_t>(trackHeight)}
     );
 
-    float fillWidth = trackWidth * getNormalizedValue();
+    resourceManager->get<gfx::IWindow>()->drawRectangleOutline(
+        colors::UI_OUTLINE,
+        {static_cast<size_t>(trackX), static_cast<size_t>(trackY)},
+        {static_cast<size_t>(trackWidth), static_cast<size_t>(trackHeight)}
+    );
+
+    float fillWidth = trackWidth * _visualNormalizedValue;
     if (fillWidth > 0) {
         resourceManager->get<gfx::IWindow>()->drawFilledRectangle(
             _fillColor,
@@ -221,7 +249,8 @@ void Slider::render() {
 
     if (!_label.empty()) {
         std::ostringstream oss;
-        oss << _label << ": " << std::fixed << std::setprecision(0) << (_value) << "%";
+        std::string suffix = (_showPercentage) ? "%" : "";
+        oss << _label << ": " << std::fixed << std::setprecision(0) << _value << suffix;
         std::string displayText = oss.str();
 
         auto textSize = resourceManager->get<gfx::IWindow>()->getTextSize(
@@ -236,7 +265,9 @@ void Slider::render() {
             _labelColor,
             {static_cast<size_t>(textX), static_cast<size_t>(textY)},
             _fontPath,
-            getFontSize()
+            getFontSize(),
+            colors::UI_OUTLINE,
+            _outlineThickness
         );
     }
 }

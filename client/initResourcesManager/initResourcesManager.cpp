@@ -98,5 +98,19 @@ std::shared_ptr<ResourceManager> initResourcesManager(
     resourceManager->add<SettingsManager>(settingsManager);
 
     settingsManager->applyAccessibilityToWindow(window);
+    window->setFramerateLimit(static_cast<unsigned int>(settingsConfig->getTargetFPS()));
+
+    if (settingsConfig->isFullscreen(settingsConfig->getScreenResolution())) {
+        window->setFullscreen(true);
+    } else {
+        auto size =
+            settingsConfig->getScreenResolutionSize(settingsConfig->getScreenResolution());
+        if (size.first != constants::WINDOW_WIDTH ||
+            size.second != constants::WINDOW_HEIGHT) {
+            window->resizeWindow(
+                static_cast<size_t>(size.first), static_cast<size_t>(size.second));
+        }
+    }
+
     return resourceManager;
 }
