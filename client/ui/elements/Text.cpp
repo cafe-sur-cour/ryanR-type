@@ -11,10 +11,10 @@
 
 namespace ui {
 
-Text::Text(std::shared_ptr<ResourceManager> resourceManager)
-    : UIElement(resourceManager), _text(""), _textColor(colors::UI_TEXT), _fontSize(24),
-_baseFontSize(24), _fontPath("assets/fonts/ARIAL.TTF"
-), _outlineColor(colors::UI_OUTLINE), _outlineThickness(2.0f) {
+Text::Text(std::shared_ptr<ResourceManager> resourceManager) :
+    UIElement(resourceManager), _text(""), _textColor(colors::UI_TEXT), _fontSize(24),
+    _baseFontSize(24), _fontPath("assets/fonts/arial.ttf"),
+    _outlineColor(colors::UI_OUTLINE), _outlineThickness(2.0f) {
 }
 
 void Text::setScale(UIScale scale) {

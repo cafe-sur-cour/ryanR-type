@@ -17,7 +17,8 @@ class IComponentArray {
     public:
         virtual ~IComponentArray() = default;
         virtual Entity getMaxEntityId() const = 0;
-        virtual void remove(Entity entityId) = 0;
+        virtual void removeComponents(Entity entityId) = 0;
+        virtual void removeOneComponent(Entity entityId) = 0;
 };
 
 } // namespace ecs

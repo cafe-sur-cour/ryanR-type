@@ -37,7 +37,7 @@ void InteractionSystem::update(
 
         auto interactionConfig = registry->getComponent<InteractionConfigComponent>(entity);
         if (!interactionConfig) {
-            registry->removeComponent<TriggerIntentComponent>(entity);
+            registry->removeOneComponent<TriggerIntentComponent>(entity);
             continue;
         }
 
@@ -78,7 +78,7 @@ void InteractionSystem::update(
             }
         }
 
-        registry->removeComponent<TriggerIntentComponent>(entity);
+        registry->removeOneComponent<TriggerIntentComponent>(entity);
     }
 }
 
