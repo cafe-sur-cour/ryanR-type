@@ -62,15 +62,18 @@ void DeathSystem::update(
             }
         }
 
-        std::string explosionPrefab = "";
-        if (registry->hasComponent<MobTag>(entityId)) {
-            explosionPrefab = constants::SMALL_EXPLOSION;
-        } else if (registry->hasComponent<PlayerTag>(entityId)) {
-            explosionPrefab = constants::BIG_EXPLOSION;
-        }
-        if (!explosionPrefab.empty()) {
-            spawnExplosionAtMobCenter(resourceManager, registry, entityId, explosionPrefab);
-        }
+        /* TODO(anyone): fix the explosion spawning logic and handling with network */
+        // std::string explosionPrefab = "";
+        // if (registry->hasComponent<MobTag>(entityId)) {
+        //     explosionPrefab = constants::SMALL_EXPLOSION;
+        // } else if (registry->hasComponent<PlayerTag>(entityId)) {
+        //     explosionPrefab = constants::BIG_EXPLOSION;
+        // }
+        // if (!explosionPrefab.empty()) {
+        //     spawnExplosionAtMobCenter(resourceManager, registry, entityId, explosionPrefab);
+        // }
+
+        (void) resourceManager;
         registry->destroyEntity(entityId);
     }
 }
@@ -107,7 +110,7 @@ void DeathSystem::spawnExplosionAtMobCenter(
     try {
         ecs::Entity explosionEntity =
             prefabManager->createEntityFromPrefab(prefabName, registry,
-                ecs::EntityCreationContext::forLocalClient());
+                ecs::EntityCreationContext::forServer());
 
         auto explosionTransform =
             registry->getComponent<TransformComponent>(explosionEntity);
