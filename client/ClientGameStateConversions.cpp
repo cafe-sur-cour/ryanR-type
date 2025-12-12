@@ -20,11 +20,13 @@
 #include "interpolation/NetworkStateComponent.hpp"
 
 namespace {
-    inline float unpackFloat(uint64_t bits) {
-        float value;
-        memcpy(&value, &bits, sizeof(float));
-        return value;
-    }
+
+inline float unpackFloat(uint64_t bits) {
+    float value;
+    memcpy(&value, &bits, sizeof(float));
+    return value;
+}
+
 }
 
 ecs::Entity ClientNetwork::findOrCreateNetworkEntity(std::shared_ptr<ecs::Registry> registry,
