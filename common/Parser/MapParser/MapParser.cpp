@@ -60,33 +60,23 @@ void MapParser::parseMapFromFile(const std::string &filePath) {
 
 void MapParser::parseMap(const nlohmann::json &mapJson) {
     if (mapJson.contains(constants::BACKGROUND_FIELD))
-        createBackgroundEntity(mapJson[constants::BACKGROUND_FIELD]);
+        createBackgroundEntity(mapJson[constants::BACKGROUND_FIELD].get<std::string>());
 
-    if (mapJson.contains(constants::MUSIC_FIELD)) {
-        std::string prefabName = mapJson[constants::MUSIC_FIELD].get<std::string>();
-        createMusicEntity(prefabName);
-    }
+    if (mapJson.contains(constants::MUSIC_FIELD))
+        createMusicEntity(mapJson[constants::MUSIC_FIELD].get<std::string>());
+
     if (mapJson.contains(constants::BACKGROUND_SCROLL_SPEED_FIELD))
-        createGameZoneEntity(mapJson[constants::BACKGROUND_SCROLL_SPEED_FIELD]);
+        createGameZoneEntity(mapJson[constants::BACKGROUND_SCROLL_SPEED_FIELD].get<float>());
 
-    float tileWidth = constants::TILE_SIZE.getX();
-    float tileHeight = constants::TILE_SIZE.getY();
+    if (mapJson.contains(constants::POWERUPS_FIELD))
+        parsePowerUps(mapJson[constants::POWERUPS_FIELD]);
 
-    if (mapJson.contains(constants::TILE_FIELD)) {
-        tileWidth = mapJson[constants::TILE_FIELD].
-            value(constants::WIDTH_FIELD, tileWidth);
-        tileHeight = mapJson[constants::TILE_FIELD].
-            value(constants::HEIGHT_FIELD, tileHeight);
-    }
-
-    if (mapJson.contains(constants::LEGEND_FIELD) && mapJson.contains(constants::MAP_FIELD))
-        parseMapGrid(mapJson[constants::LEGEND_FIELD], mapJson[constants::MAP_FIELD],
-            tileWidth, tileHeight);
+    if (mapJson.contains(constants::OBSTACLES_FIELD))
+        parseObstacles(mapJson[constants::OBSTACLES_FIELD]);
 
     if (mapJson.contains(constants::WAVES_FIELD))
-        parseWaves(mapJson[constants::WAVES_FIELD], tileWidth);
+        parseWaves(mapJson[constants::WAVES_FIELD]);
 }
-
 
 std::vector<std::uint64_t> MapParser::createPacketFromMap() {
     std::string jsonStr = this->_mapJson.dump();
@@ -101,7 +91,6 @@ std::vector<std::uint64_t> MapParser::createPacketFromMap() {
     }
     return data;
 }
-
 
 void MapParser::parseMapFromPacket(std::vector<uint8_t> mapData) {
     std::string jsonStr(mapData.begin(), mapData.end());
@@ -158,125 +147,90 @@ void MapParser::createGameZoneEntity(float scrollSpeed) {
     auto factory = _prefabManager->getEntityFactory();
     ecs::Entity gameZoneEntity = factory->createEntity(_registry, _creationContext);
 
-    math::FRect zoneRect(0.0f, 0.0f,
-        constants::MAX_WIDTH, constants::MAX_HEIGHT);
-
-    _registry->addComponent<ecs::TransformComponent>(gameZoneEntity,
-        std::make_shared<ecs::TransformComponent>(math::Vector2f(0.0f, 0.0f)));
-    _registry->addComponent<ecs::VelocityComponent>(gameZoneEntity,
-        std::make_shared<ecs::VelocityComponent>(math::Vector2f(scrollSpeed, 0.0f)));
-    _registry->addComponent<ecs::GameZoneComponent>(gameZoneEntity,
-        std::make_shared<ecs::GameZoneComponent>(zoneRect));
-
-    _registry->addComponent<ecs::GameZoneColliderTag>(gameZoneEntity,
-        std::make_shared<ecs::GameZoneColliderTag>());
-
-    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
+    _registry->addComponent<ecs::TransformComponent>(
+        gameZoneEntity,
+        std::make_shared<ecs::TransformComponent>(math::Vector2f(0.0f, 0.0f))
+    );
+    _registry->addComponent<ecs::VelocityComponent>(
+        gameZoneEntity,
+        std::make_shared<ecs::VelocityComponent>(math::Vector2f(scrollSpeed, 0.0f))
+    );
+    math::FRect zoneRect(0.0f, 0.0f, constants::MAX_WIDTH, constants::MAX_HEIGHT);
+    _registry->addComponent<ecs::GameZoneComponent>(
+        gameZoneEntity,
+        std::make_shared<ecs::GameZoneComponent>(zoneRect)
+    );
+    _registry->addComponent<ecs::GameZoneColliderTag>(
+        gameZoneEntity,
+        std::make_shared<ecs::GameZoneColliderTag>()
+    );
+    _registry->addComponent<ecs::ColliderComponent>(
+        gameZoneEntity,
         std::make_shared<ecs::ColliderComponent>(
             math::Vector2f(0.0f, -constants::GAME_ZONE_BOUNDARY_THICKNESS),
-            math::Vector2f(constants::MAX_WIDTH, constants::GAME_ZONE_BOUNDARY_THICKNESS)));
-
-    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
+            math::Vector2f(constants::MAX_WIDTH, constants::GAME_ZONE_BOUNDARY_THICKNESS)
+        )
+    );
+    _registry->addComponent<ecs::ColliderComponent>(
+        gameZoneEntity,
         std::make_shared<ecs::ColliderComponent>(
             math::Vector2f(0.0f, constants::MAX_HEIGHT),
-            math::Vector2f(constants::MAX_WIDTH, constants::GAME_ZONE_BOUNDARY_THICKNESS)));
-
-    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
+            math::Vector2f(constants::MAX_WIDTH, constants::GAME_ZONE_BOUNDARY_THICKNESS)
+        )
+    );
+    _registry->addComponent<ecs::ColliderComponent>(
+        gameZoneEntity,
         std::make_shared<ecs::ColliderComponent>(
             math::Vector2f(constants::MAX_WIDTH, 0.0f),
-            math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT)));
-
-    _registry->addComponent<ecs::ColliderComponent>(gameZoneEntity,
+            math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT)
+        )
+    );
+    _registry->addComponent<ecs::ColliderComponent>(
+        gameZoneEntity,
         std::make_shared<ecs::ColliderComponent>(
             math::Vector2f(-constants::GAME_ZONE_BOUNDARY_THICKNESS, 0.0f),
             math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT),
-            ecs::CollisionType::Push));
+            ecs::CollisionType::Push
+        )
+    );
 }
 
-void MapParser::parseMapGrid(const nlohmann::json& legend, const nlohmann::json& mapGrid,
-    float tileWidth, float tileHeight) {
-    if (!legend.is_object()) {
-        std::cerr << "Error: Legend is not a valid object" << std::endl;
+void MapParser::parsePowerUps(const nlohmann::json &powerUps) {
+    // TODO(anyone): create configs for power-up entities and parse them
+    if (!powerUps.is_array()) {
+        std::cerr << "Error: powerUps is not a valid array" << std::endl;
         return;
-    }
-
-    if (!mapGrid.is_array()) {
-        std::cerr << "Error: Map grid is not a valid array" << std::endl;
-        return;
-    }
-
-    for (size_t row = 0; row < mapGrid.size(); ++row) {
-        if (!mapGrid[row].is_string()) {
-            std::cerr << "Warning: Map row " << row <<
-                " is not a string, skipping" << std::endl;
-            continue;
-        }
-
-        std::string line = mapGrid[row].get<std::string>();
-        std::istringstream iss(line);
-        std::string token;
-        size_t col = 0;
-
-        while (iss >> token) {
-            if (token == " ") {
-                ++col;
-                continue;
-            }
-
-            if (legend.contains(token)) {
-                std::string prefabName = legend[token].get<std::string>();
-                if (prefabName == constants::EMPTY_PREFAB) {
-                    ++col;
-                    continue;
-                }
-
-                if (_prefabManager->hasPrefab(prefabName)) {
-                    float x = static_cast<float>(col) * tileWidth;
-                    float y = static_cast<float>(row) * tileHeight;
-                    try {
-                        createEntityFromPrefab(prefabName, x, y);
-                    } catch (const std::exception& e) {
-                        std::cerr << "Error creating entity '" << prefabName << "': "
-                        << e.what() << std::endl;
-                    }
-                } else {
-                    std::cerr << "Warning: Prefab '" << prefabName
-                        << "' not found for token '" << token
-                        << "' at position (" << col << ", " << row << ")" << std::endl;
-                }
-            } else {
-                std::cerr << "Error: Token '" << token
-                    << "' not found in legend at position("
-                    << col << ", " << row << ")" << std::endl;
-            }
-            ++col;
-        }
     }
 }
 
-void MapParser::parseWaves(const nlohmann::json& waves, float tileWidth) {
+void MapParser::parseObstacles(const nlohmann::json &obstacles) {
+    if (!obstacles.is_array()) {
+        std::cerr << "Error: obstacles is not a valid array" << std::endl;
+        return;
+    }
+}
+
+void MapParser::parseWaves(const nlohmann::json& waves) {
     if (!waves.is_array()) {
         std::cerr << "Error: Waves is not a valid array" << std::endl;
         return;
     }
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> disY(0.0, static_cast<double>(constants::MAX_HEIGHT));
-    std::uniform_real_distribution<> disX(0.0, 1.0);
-
     for (size_t waveIndex = 0; waveIndex < waves.size(); ++waveIndex) {
         const auto& wave = waves[waveIndex];
 
-        if (!wave.contains(constants::SPAWNLENGTH_FIELD) ||
-            !wave.contains(constants::ENEMIES_FIELD)) {
-            std::cerr << "Warning: Wave " << waveIndex
-                << " missing required fields (spawnLength/enemies), skipping" << std::endl;
+        if (
+            !wave.contains(constants::GAMEXTRIGGER_FIELD) ||
+            !wave.contains(constants::ENEMIES_FIELD)
+        ) {
+            std::cerr << "Warning: Wave " << waveIndex << ": missing required fields (" <<
+                constants::GAMEXTRIGGER_FIELD << "/" <<
+                constants::ENEMIES_FIELD <<
+                "), skipping" << std::endl;
             continue;
         }
 
-        int spawnLength = wave[constants::SPAWNLENGTH_FIELD].get<int>();
-        int colIndex = wave.value(constants::POSX_FIELD, 0);
+        float gameXTrigger = wave[constants::GAMEXTRIGGER_FIELD].get<float>();
 
         if (!wave[constants::ENEMIES_FIELD].is_array()) {
             std::cerr << "Warning: Wave " << waveIndex <<
@@ -285,10 +239,53 @@ void MapParser::parseWaves(const nlohmann::json& waves, float tileWidth) {
         }
 
         for (const auto& enemyGroup : wave[constants::ENEMIES_FIELD]) {
-            if (!enemyGroup.contains(constants::TYPE_FIELD) ||
-                !enemyGroup.contains(constants::COUNT_FIELD)) {
+            if (
+                !enemyGroup.contains(constants::TYPE_FIELD) ||
+                !enemyGroup.contains(constants::DISTRIBUTIONX_FIELD) ||
+                !enemyGroup.contains(constants::DISTRIBUTIONY_FIELD) ||
+                !enemyGroup.contains(constants::COUNT_FIELD)
+            ) {
                 std::cerr << "Warning: Enemy group in wave " << waveIndex
-                    << " missing required fields (type/count), skipping" << std::endl;
+                    << " missing required fields (type/count/distributionX/distributionY)"
+                    << ", skipping" << std::endl;
+                continue;
+            }
+
+            if (!enemyGroup[constants::DISTRIBUTIONX_FIELD].is_object()) {
+                std::cerr << "Warning: Wave " << waveIndex <<
+                    ": distributionX is not an object, skipping" << std::endl;
+                continue;
+            }
+            auto distributionX = enemyGroup[constants::DISTRIBUTIONX_FIELD];
+            if (
+                !distributionX.contains(constants::MIN_FIELD) ||
+                !distributionX.contains(constants::MAX_FIELD) ||
+                !distributionX.contains(constants::TYPE_FIELD)
+            ) {
+                std::cerr << "Warning: distributionX in wave " << waveIndex <<
+                    " is missing a required field (" <<
+                    constants::MIN_FIELD << "/" <<
+                    constants::MAX_FIELD << "/" <<
+                    constants::TYPE_FIELD << "), skipping" << std::endl;
+                continue;
+            }
+
+            if (!enemyGroup[constants::DISTRIBUTIONY_FIELD].is_object()) {
+                std::cerr << "Warning: Wave " << waveIndex <<
+                    ": distributionY is not an object, skipping" << std::endl;
+                continue;
+            }
+            auto distributionY = enemyGroup[constants::DISTRIBUTIONY_FIELD];
+            if (
+                !distributionY.contains(constants::MIN_FIELD) ||
+                !distributionY.contains(constants::MAX_FIELD) ||
+                !distributionY.contains(constants::TYPE_FIELD)
+            ) {
+                std::cerr << "Warning: distributionY in wave " << waveIndex <<
+                    " is missing a required field (" <<
+                    constants::MIN_FIELD << "/" <<
+                    constants::MAX_FIELD << "/" <<
+                    constants::TYPE_FIELD << "), skipping" << std::endl;
                 continue;
             }
 
@@ -301,31 +298,79 @@ void MapParser::parseWaves(const nlohmann::json& waves, float tileWidth) {
                 continue;
             }
 
-            if (_prefabManager->hasPrefab(enemyType)) {
-                for (int i = 0; i < count; ++i) {
-                    float x = static_cast<float>(colIndex) * tileWidth +
-                        static_cast<float>(disX(gen)) * static_cast<float>(spawnLength)
-                        * tileWidth;
-                    float y = static_cast<float>(disY(gen));
-                    try {
-                        createEntityFromPrefab(enemyType, x, y);
-                    } catch (const std::exception& e) {
-                        std::cerr << "Error creating enemy '" << enemyType <<
-                            "': " << e.what() << std::endl;
-                    }
-                }
-            } else {
+            if (!_prefabManager->hasPrefab(enemyType)) {
                 std::cerr << "Warning: Enemy prefab '" << enemyType
                     << "' not found in wave " << waveIndex << std::endl;
+                continue;
+            }
+
+            const std::vector<float> &xPositions = getPositionsFromDistrib(
+                count,
+                distributionX,
+                constants::MAX_WIDTH
+            );
+            const std::vector<float> &yPositions = getPositionsFromDistrib(
+                count,
+                distributionY,
+                constants::MAX_HEIGHT
+            );
+
+            for (int i = 0; i < count; ++i) {
+                try {
+                    createEntityFromPrefab(enemyType, xPositions[i], yPositions[i]);
+                } catch (const std::exception& e) {
+                    std::cerr << "Error creating enemy '" << enemyType <<
+                        "': " << e.what() << std::endl;
+                }
             }
         }
     }
 }
 
-ecs::Entity MapParser::createEntityFromPrefab(const std::string& prefabName,
-    float x, float y) {
+const std::vector<float> &MapParser::getPositionsFromDistrib(
+    int count,
+    const nlohmann::json &distribution,
+    float limit
+) {
+    const std::string type = distribution[constants::TYPE_FIELD].get<std::string>();
+    int min = distribution[constants::MIN_FIELD].get<int>();
+    int max = distribution[constants::MAX_FIELD].get<int>();
+
+    std::vector<float> values;
+
+    double real_min = static_cast<double>(limit) * static_cast<double>(min);
+    double real_max = static_cast<double>(limit) * static_cast<double>(max);
+
+    if (type == "random") {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<> dis(real_min, real_max);
+
+        for (int i; i < count; ++i) {
+            values.push_back(static_cast<float>(dis(gen)));
+        }
+    }
+    if (type == "uniform") {
+        double offset = (real_max - real_min) / static_cast<double>(count);
+
+        for (int i; i < count; ++i) {
+            values.push_back(
+                static_cast<float>(i) * static_cast<float>(offset)
+            );
+        }
+    }
+
+    return values;
+}
+
+ecs::Entity MapParser::createEntityFromPrefab(
+    const std::string& prefabName,
+    float x,
+    float y
+) {
     ecs::Entity entity = _prefabManager->createEntityFromPrefab(
-        prefabName, _registry, _creationContext);
+        prefabName, _registry, _creationContext
+    );
 
     if (_registry->hasComponent<ecs::TransformComponent>(entity)) {
         auto comp = _registry->getComponent<ecs::TransformComponent>(entity);
