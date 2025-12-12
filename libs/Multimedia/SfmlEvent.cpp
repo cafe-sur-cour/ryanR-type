@@ -53,20 +53,15 @@ gfx::IEvent::event_t SfmlEvent::pollEvents() {
             return event_t::CLOSE;
         } else if (event->is<sf::Event::Resized>()) {
             sfmlWindow->updateView();
-        } else if (const auto* keyPressed =
-                event->getIf<sf::Event::KeyPressed>()) {
+        } else if (auto keyPressed = event->getIf<sf::Event::KeyPressed>()) {
             lastEvent = processKeyboardEvent(*keyPressed);
-        } else if (const auto* mousePressed =
-                event->getIf<sf::Event::MouseButtonPressed>()) {
+        } else if (auto mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
             lastEvent = processMouseEvent(*mousePressed);
-        } else if (const auto* mouseReleased =
-                event->getIf<sf::Event::MouseButtonReleased>()) {
+        } else if (auto mouseReleased = event->getIf<sf::Event::MouseButtonReleased>()) {
             lastEvent = processMouseReleaseEvent(*mouseReleased);
-        } else if (const auto* joystickPressed =
-                event->getIf<sf::Event::JoystickButtonPressed>()) {
+        } else if (auto joystickPressed = event->getIf<sf::Event::JoystickButtonPressed>()) {
             lastEvent = processJoystickButtonEvent(*joystickPressed);
-        } else if (const auto* joystickMoved =
-                event->getIf<sf::Event::JoystickMoved>()) {
+        } else if (auto joystickMoved = event->getIf<sf::Event::JoystickMoved>()) {
             lastEvent = processJoystickAxisEvent(*joystickMoved);
         }
     }
