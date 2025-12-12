@@ -40,12 +40,11 @@ void ShootInputSystem::update(
 
     auto playerView = registry->view<ControllableTag, ShooterTag>();
     for (auto playerId : playerView) {
-        if (registry->hasComponent<ShootIntentComponent>(playerId))
-            continue;
-
-        auto shootIntentComponent = std::make_shared<ShootIntentComponent>();
-        registry->addComponent<ShootIntentComponent>(playerId, shootIntentComponent);
-                auto clientNetwork = resourceManager->get<ClientNetwork>();
+        if (!registry->hasComponent<ShootIntentComponent>(playerId)) {
+            auto shootIntentComponent = std::make_shared<ShootIntentComponent>();
+            registry->addComponent<ShootIntentComponent>(playerId, shootIntentComponent);
+        }
+        auto clientNetwork = resourceManager->get<ClientNetwork>();
         if (clientNetwork) {
             NetworkEvent shootEvent;
             shootEvent.eventType = constants::EventType::SHOOT;
