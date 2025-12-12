@@ -32,7 +32,7 @@ Entity Registry::createEntity() {
 
 void Registry::destroyEntity(Entity entityId) {
     for (auto& pair : _components) {
-        pair.second->remove(entityId);
+        pair.second->removeComponents(entityId);
     }
 }
 
