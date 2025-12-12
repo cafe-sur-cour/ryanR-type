@@ -201,7 +201,7 @@ void InGameState::renderHUD() {
     gfx::color_t white = {255, 255, 255, 255};
     std::pair<size_t, size_t> textPosition =
         {10, static_cast<size_t>(constants::MAX_HEIGHT - 35)};
-    window->drawText(hudText, white, textPosition, "assets/fonts/ARIAL.TTF", 24);
+    window->drawText(hudText, white, textPosition, "assets/fonts/arial.ttf", 24);
     window->setViewCenter(currentCenter.getX(), currentCenter.getY());
 }
 
