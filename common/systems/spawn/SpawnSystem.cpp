@@ -35,7 +35,11 @@ void SpawnSystem::update(
             const EntityCreationContext context = spawnRequest->getCreationContext();
 
             auto prefabManager = resourceManager->get<EntityPrefabManager>();
-            auto newEntity = prefabManager->createEntityFromPrefab(prefabName, registry, context);
+            auto newEntity = prefabManager->createEntityFromPrefab(
+                prefabName,
+                registry,
+                context
+            );
 
             auto transform = registry->getComponent<TransformComponent>(newEntity);
             if (transform) {
