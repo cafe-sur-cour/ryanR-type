@@ -52,6 +52,7 @@
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
 #include "../../../../../common/systems/ai/AIMovementSystem.hpp"
 #include "../../../../../common/systems/ai/AIShootingSystem.hpp"
+#include "../../../../../common/systems/spawn/SpawnSystem.hpp"
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../../common/components/permanent/HealthComponent.hpp"
 
@@ -113,6 +114,7 @@ void DevState::enter() {
     addSystem(std::make_shared<ecs::HitboxRenderingSystem>());
     addSystem(std::make_shared<ecs::HealthBarRenderingSystem>());
     addSystem(std::make_shared<ecs::TextRenderingSystem>());
+    addSystem(std::make_shared<ecs::SpawnSystem>());
 
     auto audio = _resourceManager->get<gfx::IAudio>();
 
