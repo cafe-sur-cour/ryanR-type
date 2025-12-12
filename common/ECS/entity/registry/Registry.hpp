@@ -30,14 +30,22 @@ class Registry : public std::enable_shared_from_this<Registry> {
 
         template <typename T>
         void addComponent(Entity entityId, std::shared_ptr<T> component);
+
         template <typename T>
         std::shared_ptr<T> getComponent(Entity entityId) const;
+
         template <typename T>
         std::vector<std::shared_ptr<T>> getComponents(Entity entityId) const;
+
         template <typename T>
-        void removeComponent(Entity entityId);
+        void removeAllComponents(Entity entityId);
+
+        template <typename T>
+        void removeOneComponent(Entity entityId);
+
         template <typename T>
         bool hasComponent(Entity entityId) const;
+
         template <typename... Components>
         View<Components...> view();
 
