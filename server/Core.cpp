@@ -44,7 +44,7 @@ Core::Core() {
         this->_systemsManager,
         this->_gsm,
         this->_inputProvider
-    );    // Update the server with the real resource manager
+    );
     this->_server->setResourceManager(this->_resourceManager);
 
     this->_resourceManager->add<rserv::Server>(this->_server);
