@@ -54,6 +54,7 @@
 #include "../../../../../common/systems/ai/AIShootingSystem.hpp"
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../../common/components/permanent/HealthComponent.hpp"
+#include "../../../../ClientNetwork.hpp"
 
 namespace gsm {
 
@@ -72,24 +73,16 @@ void InGameState::enter() {
     auto collisionData =
         ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
     ecs::CollisionRules::initWithData(collisionData);
-    if (_resourceManager->has<Parser>()) {
-        _parser = _resourceManager->get<Parser>();
-    } else {
-        _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
-    }
 
-    if (_parser) {
-        _parser->parseAllEntities(constants::CONFIG_PATH);
-    }
 
     // addSystem(std::make_shared<ecs::AIMovementSystem>());
     // addSystem(std::make_shared<ecs::AIShootingSystem>());
-    addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     // addSystem(std::make_shared<ecs::MovementSystem>());
     addSystem(std::make_shared<ecs::MovementInputSystem>());
+    addSystem(std::make_shared<ecs::InputToVelocitySystem>());
+    addSystem(std::make_shared<ecs::ShootInputSystem>());
     // addSystem(std::make_shared<ecs::InteractionSystem>());
     addSystem(std::make_shared<ecs::SoundSystem>());
-    addSystem(std::make_shared<ecs::ShootInputSystem>());
     // addSystem(std::make_shared<ecs::ShootingSystem>());
     // addSystem(std::make_shared<ecs::LifetimeSystem>());
     // addSystem(std::make_shared<ecs::HealthSystem>());
@@ -134,6 +127,7 @@ void InGameState::enter() {
     //         entityId,
     //         std::make_shared<ecs::HitboxRenderComponent>(color));
     // }
+    _resourceManager->get<ClientNetwork>()->sendWhoAmI();
 }
 
 void InGameState::update(float deltaTime) {
