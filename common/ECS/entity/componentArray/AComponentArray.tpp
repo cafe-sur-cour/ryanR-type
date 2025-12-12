@@ -43,9 +43,15 @@ std::vector<std::shared_ptr<T>> AComponentArray<T>::getAll(Entity entityId) cons
 }
 
 template <typename T>
-void AComponentArray<T>::remove(Entity entityId) {
+void AComponentArray<T>::removeComponents(Entity entityId) {
     if (entityId < static_cast<size_t>(_components.size()))
         _components[entityId].clear();
+}
+
+template <typename T>
+void AComponentArray<T>::removeOneComponent(Entity entityId) {
+    if (entityId < static_cast<size_t>(_components.size()))
+        _components[entityId].pop_back();
 }
 
 template <typename T>
