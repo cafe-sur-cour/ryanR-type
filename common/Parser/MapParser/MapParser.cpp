@@ -231,8 +231,7 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
 
         for (const auto &position : obstacle[constants::POSITIONS_FIELD]) {
             if (
-                !position.contains(constants::TYPE_FIELD) ||
-                !position.contains(constants::COUNT_FIELD)
+                !position.contains(constants::TYPE_FIELD)
             ) {
                 std::cerr << "Warning: position in obstacle " << index
                     << " missing required fields (type/count)"
@@ -246,7 +245,8 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
             if (type == "horizontalLine") {
                 if (
                     !position.contains(constants::FROMX_FIELD) ||
-                    !position.contains(constants::POSX_FIELD)
+                    !position.contains(constants::POSY_FIELD) ||
+                    !position.contains(constants::COUNT_FIELD)
                 ) {
                     std::cerr << "Warning: position in obstacle " << index
                         << " missing required fields for type " << type
@@ -286,7 +286,8 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
             if (type == "verticalLine") {
                 if (
                     !position.contains(constants::FROMY_FIELD) ||
-                    !position.contains(constants::POSY_FIELD)
+                    !position.contains(constants::POSX_FIELD) ||
+                    !position.contains(constants::COUNT_FIELD)
                 ) {
                     std::cerr << "Warning: position in obstacle " << index
                         << " missing required fields for type " << type
@@ -337,21 +338,19 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
                 float posX = position[constants::POSX_FIELD];
                 float posY = position[constants::POSY_FIELD];
 
-                for (int i = 0; i < count; ++i) {
-                    auto entity = _prefabManager->createEntityFromPrefab(
-                        prefabName,
-                        _registry,
-                        _creationContext
-                    );
-                    if (!_registry->hasComponent<ecs::TransformComponent>(entity)) {
-                        continue;
-                    }
-                    auto transComp = _registry->getComponent<ecs::TransformComponent>(entity);
-
-                    transComp->setPosition(
-                        math::Vector2f(posX, posY)
-                    );
+                auto entity = _prefabManager->createEntityFromPrefab(
+                    prefabName,
+                    _registry,
+                    _creationContext
+                );
+                if (!_registry->hasComponent<ecs::TransformComponent>(entity)) {
+                    continue;
                 }
+                auto transComp = _registry->getComponent<ecs::TransformComponent>(entity);
+
+                transComp->setPosition(
+                    math::Vector2f(posX, posY)
+                );
             }
         }
     }
