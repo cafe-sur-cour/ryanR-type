@@ -257,3 +257,35 @@ bool pm::PacketManager::parseDeathPacket(
     this->_payload.push_back(value);
     return true;
 }
+
+std::vector<uint8_t> pm::PacketManager::buildWhoAmIPacket(
+    std::vector<uint64_t> payload) {
+    std::vector<uint8_t> body;
+    std::vector<uint8_t> temp;
+
+    if (payload.empty()) {
+        return body;
+    }
+    temp = this->_serializer->serializeULong(payload.at(0));
+    body.insert(body.end(), temp.begin(), temp.end());
+    return body;
+}
+
+bool pm::PacketManager::parseWhoAmIPacket(
+    const std::vector<uint8_t> payload) {
+    if (payload.size() != 0 && payload.size() != 8) {
+        std::cerr << "[PACKET] WHOAMI packet payload size invalid: "
+            << payload.size() << " (expected 0 or 8)" << std::endl;
+        return false;
+    }
+
+    this->_payload.clear();
+    if (payload.size() == 8) {
+        auto startIt = payload.begin();
+        auto endIt = payload.begin() + 8;
+        std::vector<uint8_t> longBytes(startIt, endIt);
+        uint64_t value = this->_serializer->deserializeULong(longBytes);
+        this->_payload.push_back(value);
+    }
+    return true;
+}
