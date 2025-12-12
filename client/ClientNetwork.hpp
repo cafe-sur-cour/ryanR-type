@@ -73,6 +73,7 @@ class ClientNetwork {
         void disconnectionPacket();
         void connectionPacket();
         void sendReady();
+        void sendWhoAmI();
 
         void addToEventQueue(const NetworkEvent &event);
 
@@ -89,7 +90,7 @@ class ClientNetwork {
         void handlePacketType(uint8_t type);
     private:
         typedef void (ClientNetwork::*PacketHandler)();
-        PacketHandler _packetHandlers[13];
+        PacketHandler _packetHandlers[14];
 
         void handleNoOp();
         void handleConnectionAcceptation();
@@ -100,6 +101,7 @@ class ClientNetwork {
         void handleCanStart();
         void handleEntitySpawn();
         void handleEntityDeath();
+        void handleWhoAmI();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;

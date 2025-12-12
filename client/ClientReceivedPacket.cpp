@@ -14,6 +14,7 @@
 #include "../common/Parser/Parser.hpp"
 #include "../common/ECS/entity/EntityCreationContext.hpp"
 #include "../common/components/permanent/NetworkIdComponent.hpp"
+#include "../common/components/tags/LocalPlayerTag.hpp"
 #include "gsm/states/scenes/InGame/InGameState.hpp"
 
 /* Packet Handlers */
@@ -248,4 +249,34 @@ void ClientNetwork::handleEntityDeath() {
     }
     auto registry = this->_resourceManager->get<ecs::Registry>();
     registry->destroyEntity(entityId);
+}
+
+void ClientNetwork::handleWhoAmI() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received WHOAMI response",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    if (payload.size() < 1) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] WHOAMI packet is invalid",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    ecs::Entity entityId = static_cast<ecs::Entity>(payload.at(0));
+    if (!this->_resourceManager->has<ecs::Registry>()) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Registry not found in ResourceManager",
+            debug::debugType::NETWORK,
+            debug::debugLevel::ERROR);
+        return;
+    }
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+    registry->registerComponent<ecs::LocalPlayerTag>();
+    if (!registry->hasComponent<ecs::LocalPlayerTag>(entityId)) {
+        registry->addComponent<ecs::LocalPlayerTag>(entityId, std::make_shared<ecs::LocalPlayerTag>());
+    }
 }
