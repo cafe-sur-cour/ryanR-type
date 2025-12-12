@@ -483,8 +483,8 @@ std::vector<float> MapParser::getPositionsFromDistrib(
 
     std::vector<float> values;
 
-    double real_min = static_cast<double>(limit) * static_cast<double>(min);
-    double real_max = static_cast<double>(limit) * static_cast<double>(max);
+    double real_min = static_cast<double>(limit) * static_cast<double>(min) / 100.0;
+    double real_max = static_cast<double>(limit) * static_cast<double>(max) / 100.0;
 
     if (type == "random") {
         std::random_device rd;
