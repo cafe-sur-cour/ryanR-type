@@ -18,17 +18,24 @@ namespace ecs {
 
 class SpawnIntentComponent : public AComponent {
     public:
-        SpawnIntentComponent(const std::string &prefabName, const math::Vector2f &position) :
-            _prefabName(prefabName), _position(position),
-            _creationContext(EntityCreationContext::forLocalClient()) {}
+        SpawnIntentComponent(
+            const std::string &prefabName,
+            const math::Vector2f &position,
+            float gameViewXTrigger = 0.0f
+        ) : _prefabName(prefabName),
+            _position(position),
+            _creationContext(EntityCreationContext::forLocalClient()),
+            _gameViewXTrigger(gameViewXTrigger) {}
 
         SpawnIntentComponent(
             const std::string &prefabName,
             const math::Vector2f &position,
-            const EntityCreationContext &context
-        ) :
-            _prefabName(prefabName), _position(position),
-            _creationContext(context) {}
+            const EntityCreationContext &context,
+            float gameViewXTrigger = 0.0f
+        ) : _prefabName(prefabName),
+            _position(position),
+            _creationContext(context),
+            _gameViewXTrigger(gameViewXTrigger) {}
 
         ~SpawnIntentComponent() = default;
 
@@ -41,13 +48,16 @@ class SpawnIntentComponent : public AComponent {
         void setCreationContext(const EntityCreationContext &context) {
             _creationContext = context;
         }
-
         EntityCreationContext getCreationContext() const { return _creationContext; }
+
+        void setGameViewXTrigger(const float &gameViewXTrigger) { _gameViewXTrigger = gameViewXTrigger; };
+        float getGameViewXTrigger() const { return _gameViewXTrigger; };
 
     private:
         std::string _prefabName;
         math::Vector2f _position;
         EntityCreationContext _creationContext;
+        float _gameViewXTrigger;
 };
 
 }
