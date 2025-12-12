@@ -73,6 +73,7 @@ namespace rserv {
             bool processDisconnections(uint8_t idClient) override;
             bool processEvents(uint8_t idClient) override;
             bool processEndOfGame(uint8_t idClient) override;
+            bool processWhoAmI(uint8_t idClient);
 
             /* Sent Packet Handling */
             bool connectionPacket(asio::ip::udp::endpoint endpoint);

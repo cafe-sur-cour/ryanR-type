@@ -16,6 +16,7 @@
 #include "../common/ECS/entity/Entity.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/Parser/Parser.hpp"
+#include "../common/components/permanent/NetworkIdComponent.hpp"
 
 bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
@@ -90,11 +91,24 @@ bool rserv::Server::canStartPacket() {
         this->_gameStarted = true;
         std::string playerString = "player";
         auto prefabMgr = _resourceManager->get<EntityPrefabManager>();
-        for (int i = 0; i < this->getConfig()->getNbClients(); i++) {
-            prefabMgr->createEntityFromPrefab(
+        auto registry = _resourceManager->get<ecs::Registry>();
+        size_t clientIndex = 0;
+        for (const auto &client : this->_clients) {
+            uint8_t clientId = std::get<0>(client);
+            ecs::Entity playerEntity = prefabMgr->createEntityFromPrefab(
                 playerString,
-                _resourceManager->get<ecs::Registry>()
+                registry
             );
+            registry->registerComponent<ecs::NetworkIdComponent>();
+            registry->addComponent<ecs::NetworkIdComponent>(
+                playerEntity,
+                std::make_shared<ecs::NetworkIdComponent>(clientId)
+            );
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Created player entity " + std::to_string(playerEntity) +
+                " for client " + std::to_string(static_cast<int>(clientId)),
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+            clientIndex++;
         }
         return true;
     }
