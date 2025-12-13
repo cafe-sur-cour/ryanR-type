@@ -45,7 +45,7 @@ void ServerShootInputSystem::update(
         float value = serverInputProvider->getActionAxis(InputAction::SHOOT, clientID);
         if (value > 0.0f) {
             updateShootIntent(registry, entityId);
-            serverInputProvider->getActionAxis(InputAction::SHOOT, clientID);
+            serverInputProvider->setAxisValue(InputAction::SHOOT, 0.0f, clientID);
         }
         clientIndex++;
     }

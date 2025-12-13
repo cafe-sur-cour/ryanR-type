@@ -89,13 +89,18 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
             packet.insert(packet.end(), temp.begin(), temp.end());
             return packet;
         }
-        if (type != MAP_SEND_PACKET && type != GAME_STATE_PACKET &&
-            type != CAN_START_PACKET) {
+        if (type != MAP_SEND_PACKET && type != SPAWN_PLAYER_PACKET &&
+            type != CAN_START_PACKET && type != DEATH_PLAYER_PACKET &&
+            type != WHOAMI_PACKET) {
             std::cerr << "[PACKET] Error: Unknown packet type "
                 << static_cast<int>(type) << " for packing" << std::endl;
             return std::vector<uint8_t>();
         }
         if (type == CAN_START_PACKET) {
+            length = static_cast<uint32_t>(payload.size()) * sizeof(uint64_t);
+        } else if (type == SPAWN_PLAYER_PACKET) {
+            length = static_cast<uint32_t>(payload.size() + 7);
+        } else if (type == DEATH_PLAYER_PACKET || type == WHOAMI_PACKET) {
             length = static_cast<uint32_t>(payload.size()) * sizeof(uint64_t);
         } else {
             debug::Debug::printDebug(true, "[PACKET] Warning: Packet size not fixed " +

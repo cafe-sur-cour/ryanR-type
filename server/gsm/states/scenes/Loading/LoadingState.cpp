@@ -7,6 +7,10 @@
 
 #include "LoadingState.hpp"
 #include <memory>
+#include "../InGame/InGameState.hpp"
+#include "../../../../../common/Parser/Parser.hpp"
+#include "../../../../../common/constants.hpp"
+#include "../../../../../common/gsm/IGameStateMachine.hpp"
 
 namespace gsm {
 
@@ -16,6 +20,11 @@ LoadingState::LoadingState(std::shared_ptr<IGameStateMachine> gsm,
 }
 
 void LoadingState::enter() {
+    auto parser = _resourceManager->get<Parser>();
+    if (parser) {
+        parser->parseMapFromFile("configs/map/map1.json");
+    }
+    _gsm->requestStateChange(std::make_shared<InGameState>(_gsm, _resourceManager));
 }
 
 

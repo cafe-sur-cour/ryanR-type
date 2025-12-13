@@ -14,6 +14,7 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
+#include <functional>
 
 namespace ecs {
 
@@ -48,10 +49,13 @@ class Registry : public std::enable_shared_from_this<Registry> {
 
         Entity createEntity();
         void destroyEntity(Entity entityId);
+
+        void setOnEntityDestroyed(std::function<void(Entity)> callback);
     protected:
     private:
         Entity _nextEntityId;
         std::unordered_map<std::string, std::shared_ptr<IComponentArray>> _components;
+        std::function<void(Entity)> _onEntityDestroyed;
 };
 
 } // namespace ecs

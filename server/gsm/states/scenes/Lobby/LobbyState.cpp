@@ -7,6 +7,9 @@
 
 #include "LobbyState.hpp"
 #include <memory>
+#include "../Loading/LoadingState.hpp"
+#include "../../../../../server/Server.hpp"
+#include "../../../../../common/gsm/IGameStateMachine.hpp"
 
 namespace gsm {
 
@@ -16,7 +19,14 @@ LobbyState::LobbyState(std::shared_ptr<IGameStateMachine> gsm,
 }
 
 void LobbyState::enter() {
-    // TODO(anyone): Initialize server lobby state
+}
+
+void LobbyState::update(float deltaTime) {
+    (void)deltaTime;
+    auto server = _resourceManager->get<rserv::Server>();
+    if (server && server->allClientsReady()) {
+        _gsm->requestStateChange(std::make_shared<LoadingState>(_gsm, _resourceManager));
+    }
 }
 
 

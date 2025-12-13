@@ -12,6 +12,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <functional>
 #include "../../ECS/entity/Entity.hpp"
 #include "../../ECS/entity/EntityCreationContext.hpp"
 #include "../../ECS/entity/factory/IEntityFactory.hpp"
@@ -45,9 +46,12 @@ class EntityPrefabManager
         std::shared_ptr<ecs::IEntityFactory> getEntityFactory() const;
         void setEntityFactory(std::shared_ptr<ecs::IEntityFactory> factory);
 
+        void setOnEntityCreated(std::function<void(ecs::Entity, const std::string&)> callback);
+
     private:
         std::map<std::string, std::shared_ptr<IPrefab>> _prefabs;
         std::shared_ptr<ecs::IEntityFactory> _entityFactory;
+        std::function<void(ecs::Entity, const std::string&)> _onEntityCreated;
 };
 
 #endif /* !ENTITYPREFABMANAGER_HPP_ */

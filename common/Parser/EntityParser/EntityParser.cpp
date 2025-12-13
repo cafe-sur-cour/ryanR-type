@@ -47,10 +47,20 @@ std::shared_ptr<IPrefab> EntityParser::parseEntity(const std::string& filePath) 
     auto prefab = std::make_shared<ParsedEntityPrefab>(jsonData["name"], _componentAdders);
 
     for (const auto& [componentName, componentData] : jsonData["components"].items()) {
-        auto [component, typeIndex] =
-            _composantParser.parseComponent(componentName, componentData);
-        if (component != nullptr) {
-            prefab->addComponent(component, typeIndex);
+        if (componentData.is_array()) {
+            for (const auto& item : componentData) {
+                auto [component, typeIndex] =
+                    _composantParser.parseComponent(componentName, item);
+                if (component != nullptr) {
+                    prefab->addComponent(component, typeIndex);
+                }
+            }
+        } else {
+            auto [component, typeIndex] =
+                _composantParser.parseComponent(componentName, componentData);
+            if (component != nullptr) {
+                prefab->addComponent(component, typeIndex);
+            }
         }
     }
 

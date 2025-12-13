@@ -223,16 +223,6 @@ void rserv::Server::setNetwork(std::shared_ptr<net::INetwork> network) {
     _network = network;
 }
 
-void rserv::Server::setCurrentMap(const std::vector<uint64_t> &map) {
-    if (!this->_currentMap.empty())
-        this->_currentMap.clear();
-    this->_currentMap = map;
-}
-
-std::vector<uint64_t> rserv::Server::getCurrentMap() const {
-    return this->_currentMap;
-}
-
 void rserv::Server::processIncomingPackets() {
     if (!_network) {
         std::cerr << "[SERVER] Warning: Network not initialized" << std::endl;
@@ -250,12 +240,17 @@ void rserv::Server::processIncomingPackets() {
     }
 
     this->_packet->unpack(received.second);
+    std::cout << "[SERVER] Packet received from client: "
+        << static_cast<int>(this->_packet->getIdClient())
+        << " of type: " << static_cast<int>(this->_packet->getType()) << std::endl;
     if (this->_packet->getType() == constants::PACKET_CONNECTION) {
             this->processConnections(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_EVENT) {
         this->processEvents(this->_packet->getIdClient());
     } else if (this->_packet->getType() == constants::PACKET_CLIENT_READY) {
         this->onPacketReceived(this->_packet->getIdClient(), *this->_packet);
+    } else if (this->_packet->getType() == constants::PACKET_WHOAMI) {
+        this->processWhoAmI(this->_packet->getIdClient());
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "
@@ -335,6 +330,11 @@ bool rserv::Server::allClientsReady() const {
     debug::Debug::printDebug(true, "[SERVER] allClientsReady: checking " +
         std::to_string(this->_clientsReady.size()) + " clients",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+    if (static_cast<int>(this->_clientsReady.size()) < this->getConfig()->getNbClients()) {
+        return false;
+    }
+
     for (const auto &ready : this->_clientsReady) {
         debug::Debug::printDebug(true, "[SERVER] Client " +
             std::to_string(ready.first) + " ready: " +
@@ -344,4 +344,20 @@ bool rserv::Server::allClientsReady() const {
         }
     }
     return true;
+}
+
+uint32_t rserv::Server::getSequenceNumber() const {
+    return this->_sequenceNumber;
+}
+
+std::shared_ptr<pm::IPacketManager> rserv::Server::getPacketManager() const {
+    return this->_packet;
+}
+
+void rserv::Server::incrementSequenceNumber() {
+    this->_sequenceNumber++;
+}
+
+void rserv::Server::setResourceManager(std::shared_ptr<ResourceManager> resourceManager) {
+    this->_resourceManager = resourceManager;
 }
