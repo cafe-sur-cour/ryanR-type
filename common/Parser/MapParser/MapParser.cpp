@@ -125,6 +125,10 @@ void MapParser::generateMapEntities() {
         std::cout << "[MapParser] No map data available to generate entities" << std::endl;
         return;
     }
+    if (_creationContext.origin == ecs::EntityCreationOrigin::CLIENT_LOCAL) {
+        std::cout << "[MapParser] Skipping entity creation for client" << std::endl;
+        return;
+    }
     parseMap(_mapJson);
 }
 
