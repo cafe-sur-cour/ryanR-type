@@ -31,17 +31,19 @@ void Button::render() {
     math::Vector2f absSize = getAbsoluteSize();
 
     gfx::color_t bgColor = getCurrentColor();
-    resourceManager->get<gfx::IWindow>()->drawFilledRectangle(
+    resourceManager->get<gfx::IWindow>()->drawRoundedRectangleFilled(
         bgColor,
         {static_cast<size_t>(absPos.getX()), static_cast<size_t>(absPos.getY())},
-        {static_cast<size_t>(absSize.getX()), static_cast<size_t>(absSize.getY())}
+        {static_cast<size_t>(absSize.getX()), static_cast<size_t>(absSize.getY())},
+        15.0f
     );
 
     gfx::color_t borderColor = {0, 0, 0};
-    resourceManager->get<gfx::IWindow>()->drawRectangleOutline(
+    resourceManager->get<gfx::IWindow>()->drawRoundedRectangleOutline(
         borderColor,
         {static_cast<size_t>(absPos.getX()), static_cast<size_t>(absPos.getY())},
-        {static_cast<size_t>(absSize.getX()), static_cast<size_t>(absSize.getY())}
+        {static_cast<size_t>(absSize.getX()), static_cast<size_t>(absSize.getY())},
+        15.0f
     );
 
     if (!_text.empty()) {

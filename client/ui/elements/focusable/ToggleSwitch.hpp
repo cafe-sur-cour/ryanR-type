@@ -13,6 +13,7 @@
 #include <functional>
 #include "../../../../libs/Multimedia/IWindow.hpp"
 #include "../../../constants.hpp"
+#include "../../../colors.hpp"
 
 namespace ui {
 
@@ -51,12 +52,12 @@ class ToggleSwitch : public AFocusableElement {
         std::string _onText = "ON";
         std::string _offText = "OFF";
 
-        gfx::color_t _trackColor = {80, 80, 80};
-        gfx::color_t _handleColor = {150, 150, 150};
-        gfx::color_t _handleHoveredColor = {200, 200, 200};
-        gfx::color_t _handleFocusedColor = {255, 200, 100};
-        gfx::color_t _onColor = {0, 200, 0};
-        gfx::color_t _offColor = {200, 0, 0};
+        gfx::color_t _trackColor = colors::TOGGLE_TRACK;
+        gfx::color_t _handleColor = colors::TOGGLE_HANDLE;
+        gfx::color_t _handleHoveredColor = colors::TOGGLE_HANDLE_HOVER;
+        gfx::color_t _handleFocusedColor = colors::TOGGLE_HANDLE_FOCUSED;
+        gfx::color_t _onColor = colors::TOGGLE_ON;
+        gfx::color_t _offColor = colors::TOGGLE_OFF;
 
         std::function<void(bool)> _onValueChanged;
 
