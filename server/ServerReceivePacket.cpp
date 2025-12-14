@@ -128,7 +128,16 @@ bool rserv::Server::processWhoAmI(uint8_t idClient) {
     }
 
     std::vector<uint64_t> payload;
-    payload.push_back(static_cast<uint64_t>(playerEntity));
+    auto netIdComp = this->_resourceManager->get<ecs::Registry>()->getComponent<
+        ecs::NetworkIdComponent>(playerEntity);
+    if (netIdComp) {
+        payload.push_back(static_cast<uint64_t>(netIdComp->getNetworkId()));
+    } else {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Player entity has no NetworkID for client " + std::to_string(idClient),
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
 
     asio::ip::udp::endpoint clientEndpoint;
     for (const auto &client : this->_clients) {
