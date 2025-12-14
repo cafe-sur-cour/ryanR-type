@@ -78,9 +78,18 @@ void ClientNetwork::handleGameState() {
         return;
     }
 
-    ecs::Entity entityId = static_cast<ecs::Entity>(payload[index++]);
+    size_t networkId = static_cast<size_t>(payload[index++]);
+    ecs::Entity entityId = registry->getEntityByNetworkId(networkId);
+    if (entityId == 0) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Entity with NetworkID " + std::to_string(networkId) + " not found",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
     debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Processing entity ID: " + std::to_string(entityId),
+        "[CLIENT] Processing entity NetworkID: " + std::to_string(networkId) +
+            " (local ID: " + std::to_string(entityId) + ")",
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
     while (index < payload.size()) {
@@ -125,7 +134,7 @@ void ClientNetwork::handleMapSend() {
     }
     try {
         parser->getMapParser()->setCreationContext(
-            ecs::EntityCreationContext::forNetworkSync(0));
+            ecs::EntityCreationContext::forLocalClient());
         parser->getMapParser()->parseMapFromPacket(payloadBytes);
     } catch (const std::exception& e) {
         debug::Debug::printDebug(this->_isDebug,
@@ -175,6 +184,12 @@ void ClientNetwork::handleCanStart() {
             debug::debugLevel::INFO);
     }
 
+    std::vector<uint64_t> whoamiPayload;
+    std::vector<uint8_t> whoamiPacket = _packet->pack(_idClient, _sequenceNumber,
+        constants::PACKET_WHOAMI, whoamiPayload);
+    this->_network->sendTo(_serverEndpoint, whoamiPacket);
+    _sequenceNumber++;
+
     if (this->_gsm) {
         this->_gsm->requestStateChange(
             std::make_shared<gsm::InGameState>(this->_gsm, this->_resourceManager)
@@ -210,17 +225,26 @@ void ClientNetwork::handleEntitySpawn() {
         prefabName += static_cast<char>(*it);
     }
 
-    ecs::Entity entity = _resourceManager->get<Parser>()->
-        getPrefabManager()->createEntityFromPrefab(
-        prefabName,
-        _resourceManager->get<ecs::Registry>(),
-        ecs::EntityCreationContext::forNetworkSync(0)
-    );
-    auto registry = _resourceManager->get<ecs::Registry>();
-    registry->addComponent<ecs::NetworkIdComponent>(
-        entity,
-        std::make_shared<ecs::NetworkIdComponent>(clientId)
-    );
+    try {
+        _resourceManager->get<Parser>()->
+            getPrefabManager()->createEntityFromPrefab(
+            prefabName,
+            _resourceManager->get<ecs::Registry>(),
+            ecs::EntityCreationContext::forNetworkSync(clientId)
+        );
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Created entity from prefab '" + prefabName +
+                "' with networkId " + std::to_string(clientId),
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
+    } catch (const std::exception& e) {
+        debug::Debug::printDebug(this->_isDebug,
+            std::string("[CLIENT] Error creating entity from prefab '")
+                + prefabName + "': " + e.what(),
+            debug::debugType::NETWORK,
+            debug::debugLevel::ERROR);
+        return;
+    }
 }
 
 void ClientNetwork::handleEntityDeath() {
@@ -238,15 +262,17 @@ void ClientNetwork::handleEntityDeath() {
         return;
     }
 
-    ecs::Entity entityId = static_cast<ecs::Entity>(payload.at(0));
-    if (!this->_resourceManager->has<ecs::Registry>()) {
+    size_t networkId = static_cast<size_t>(payload.at(0));
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+    ecs::Entity entityId = registry->getEntityByNetworkId(networkId);
+    if (entityId == 0) {
         debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Registry not found in ResourceManager",
+            "[CLIENT] Entity with NetworkID " + std::to_string(networkId) +
+                " not found for death",
             debug::debugType::NETWORK,
-            debug::debugLevel::ERROR);
+            debug::debugLevel::WARNING);
         return;
     }
-    auto registry = this->_resourceManager->get<ecs::Registry>();
     registry->destroyEntity(entityId);
 }
 
@@ -265,15 +291,17 @@ void ClientNetwork::handleWhoAmI() {
         return;
     }
 
-    ecs::Entity entityId = static_cast<ecs::Entity>(payload.at(0));
-    if (!this->_resourceManager->has<ecs::Registry>()) {
+    size_t networkId = static_cast<size_t>(payload.at(0));
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+    ecs::Entity entityId = registry->getEntityByNetworkId(networkId);
+    if (entityId == 0) {
         debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Registry not found in ResourceManager",
+            "[CLIENT] Entity with NetworkID " + std::to_string(networkId) +
+                " not found for WHOAMI",
             debug::debugType::NETWORK,
-            debug::debugLevel::ERROR);
+            debug::debugLevel::WARNING);
         return;
     }
-    auto registry = this->_resourceManager->get<ecs::Registry>();
     registry->registerComponent<ecs::LocalPlayerTag>();
     if (!registry->hasComponent<ecs::LocalPlayerTag>(entityId)) {
         registry->addComponent<ecs::LocalPlayerTag>
