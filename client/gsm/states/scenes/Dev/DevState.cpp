@@ -123,7 +123,9 @@ void DevState::enter() {
     _registry->addComponent<ecs::MusicIntentComponent>(musicIntentEntity,
         std::make_shared<ecs::MusicIntentComponent>(ecs::PLAY, ""));
 
-    ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
+    ecs::Entity playerEntity =
+    _prefabManager->createEntityFromPrefab(
+        "player", _registry, ecs::EntityCreationContext::forServer());
     _registry->addComponent<ecs::LocalPlayerTag>(
         playerEntity, std::make_shared<ecs::LocalPlayerTag>());
     _registry->addComponent<ecs::HitboxRenderComponent>(
