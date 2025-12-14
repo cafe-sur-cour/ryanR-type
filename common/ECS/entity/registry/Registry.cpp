@@ -6,6 +6,7 @@
 */
 
 #include "Registry.hpp"
+#include "../../../components/permanent/NetworkIdComponent.hpp"
 
 namespace ecs {
 
@@ -37,6 +38,17 @@ void Registry::destroyEntity(Entity entityId) {
     for (auto& pair : _components) {
         pair.second->remove(entityId);
     }
+}
+
+Entity Registry::getEntityByNetworkId(size_t networkId) {
+    auto view = this->view<ecs::NetworkIdComponent>();
+    for (auto entity : view) {
+        auto netIdComp = getComponent<ecs::NetworkIdComponent>(entity);
+        if (netIdComp && netIdComp->getNetworkId() == networkId) {
+            return entity;
+        }
+    }
+    return 0;
 }
 
 void Registry::setOnEntityDestroyed(std::function<void(Entity)> callback) {
