@@ -34,6 +34,27 @@ public:
     float getSoundVolume() const { return _soundVolume; }
     void setSoundVolume(float volume) { _soundVolume = volume; }
 
+    enum class ScreenResolution {
+        RES_800x600,
+        RES_1024x768,
+        RES_1280x720,
+        RES_1920x1080,
+        FULLSCREEN
+    };
+
+    ScreenResolution getScreenResolution() const { return _screenResolution; }
+    void setScreenResolution(ScreenResolution resolution) { _screenResolution = resolution; }
+
+    int getTargetFPS() const { return _targetFPS; }
+    void setTargetFPS(int fps) { _targetFPS = fps; }
+
+    float getRenderQuality() const { return _renderQuality; }
+    void setRenderQuality(float quality) { _renderQuality = quality; }
+
+    std::string getScreenResolutionName(ScreenResolution resolution) const;
+    std::pair<int, int> getScreenResolutionSize(ScreenResolution resolution) const;
+    bool isFullscreen(ScreenResolution resolution) const;
+
     void saveAccessibility(const std::string& filepath = constants::ACCESSIBILITY_FILE_PATH);
     void loadAccessibility(const std::string& filepath = constants::ACCESSIBILITY_FILE_PATH);
 
@@ -47,6 +68,9 @@ private:
     ui::UIScale _uiScale = ui::UIScale::Normal;
     float _musicVolume = 100.0f;
     float _soundVolume = 100.0f;
+    ScreenResolution _screenResolution = ScreenResolution::RES_1920x1080;
+    int _targetFPS = 60;
+    float _renderQuality = 1.0f;
 };
 
 #endif  // SETTINGSCONFIG_HPP_

@@ -6,6 +6,8 @@
 */
 
 #include <memory>
+#include <cmath>
+#include <algorithm>
 #include "GameZoneViewSystem.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
@@ -43,9 +45,18 @@ void GameZoneViewSystem::update(std::shared_ptr<ResourceManager>
 
             float smoothingSpeed = constants::VIEW_SMOOTHING_SPEED;
             math::Vector2f direction = targetCenter - currentCenter;
-            math::Vector2f newCenter = currentCenter + direction * smoothingSpeed * deltaTime;
+            float distance = std::sqrt(direction.getX() * direction.getX() +
+                direction.getY() * direction.getY());
 
-            window->setViewCenter(newCenter.getX(), newCenter.getY());
+            if (distance > 0.1f) {
+                float maxDistancePerSecond = smoothingSpeed * 100.0f;
+                float moveDistance = std::min(distance, maxDistancePerSecond * deltaTime);
+                math::Vector2f normalizedDirection = direction * (1.0f / distance);
+                math::Vector2f newCenter = currentCenter + normalizedDirection * moveDistance;
+                window->setViewCenter(newCenter.getX(), newCenter.getY());
+            } else {
+                window->setViewCenter(targetCenter.getX(), targetCenter.getY());
+            }
         }
         break;
     }
