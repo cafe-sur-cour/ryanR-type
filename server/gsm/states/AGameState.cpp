@@ -18,6 +18,7 @@ AGameState::AGameState(std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager) {
     _gsm = gsm;
     _resourceManager = resourceManager;
+    this->_systems = std::vector<std::shared_ptr<ecs::ISystem>>();
 }
 
 void AGameState::enter() {

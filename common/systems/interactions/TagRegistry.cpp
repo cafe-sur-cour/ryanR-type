@@ -28,6 +28,7 @@ const TagRegistry& TagRegistry::getInstance() {
 }
 
 TagRegistry::TagRegistry() {
+    this->_tagCheckers = {};
     initializeTags();
 }
 

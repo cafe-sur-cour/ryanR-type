@@ -15,6 +15,10 @@ namespace gfx {
 
 SfmlAudio::SfmlAudio()
     : _musicVolume(100.0f), _soundVolume(100.0f) {
+    this->_soundBuffers = std::map<std::string, std::shared_ptr<sf::SoundBuffer>>();
+    this->_sounds = std::map<std::string, std::shared_ptr<sf::Sound>>();
+    this->_assetManager = assets::AssetManager();
+    this->_musicAssetData = nullptr;
 }
 
 void SfmlAudio::playMusic(const std::string& musicPath, bool loop) {

@@ -13,6 +13,7 @@
 namespace ecs {
 
 ASystemManager::ASystemManager() {
+    this->_systems = {};
 }
 
 ASystemManager::~ASystemManager() {

@@ -42,6 +42,7 @@ ClientNetwork::ClientNetwork() {
     this->_resourceManager = nullptr;
     this->_gsm = nullptr;
     this->_clientNames = {};
+    this->_serverEndpoint = {};
 
     this->_shouldConnect = false;
 

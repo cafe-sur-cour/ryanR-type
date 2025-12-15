@@ -30,6 +30,7 @@ MapParser::MapParser(std::shared_ptr<EntityPrefabManager> prefabManager,
     std::shared_ptr<ecs::Registry> registry)
     : _prefabManager(prefabManager), _registry(registry),
       _creationContext(ecs::EntityCreationContext::forServer()) {
+    this->_mapJson = nullptr;
     if (!_prefabManager)
         throw err::ParserError("PrefabManager cannot be null", err::ParserError::UNKNOWN);
     if (!_registry)

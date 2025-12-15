@@ -25,8 +25,8 @@ int main(int ac, char **av) {
     std::cout << "Max Clients: " << core.getConfig()->getNbClients();
     std::cout << std::endl << "------------------------" << std::endl;
     try {
-        core.init();
-        core.loop();
+        // core.init();
+        // core.loop();
     } catch (const err::IError &e) {
         std::cerr << e.getDetails() << std::endl;
         exit(84);

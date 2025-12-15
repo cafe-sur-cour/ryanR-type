@@ -21,7 +21,13 @@ GraphicalInputProvider::GraphicalInputProvider(
     std::shared_ptr<InputMappingManager> mappingManager
 )
     : _eventSystem(eventSystem), _mappingManager(mappingManager) {
-    (void)_currentFrame;
+    this->_toggleMode = false;
+    this->_toggledStates = {};
+    this->_lastKeyState = {};
+    this->_keyPressedState = {};
+    this->_toggledKeyStates = {};
+    this->_lastToggleFrame = {};
+    this->_currentFrame = 0;
 }
 
 float GraphicalInputProvider::getAxisValue(event_t axis, size_t clientID) {
