@@ -94,20 +94,14 @@ bool pm::PacketManager::parseEventPacket(const std::vector<uint8_t> payload) {
         return false;
     }
 
-    std::vector<uint8_t> charBytes1(
-        payload.begin() + 0, payload.begin() + 1);
-    uint64_t result1 = this->_serializer->deserializeUChar(charBytes1);
-    this->_payload.push_back(result1);
+    std::vector<uint8_t> charBytes1(payload.begin() + 0, payload.begin() + 1);
+    uint64_t eventType = this->_serializer->deserializeUChar(charBytes1);
+    this->_payload.push_back(eventType);
 
-    std::vector<uint8_t> longBytes1(
-        payload.begin() + 1, payload.begin() + 10);
-    uint64_t result3 = this->_serializer->deserializeULong(longBytes1);
-    this->_payload.push_back(result3);
+    std::vector<uint8_t> longBytes1(payload.begin() + 1, payload.begin() + 9);
+    uint64_t param = this->_serializer->deserializeULong(longBytes1);
+    this->_payload.push_back(param);
 
-    std::vector<uint8_t> longBytes2(
-        payload.begin() + 10, payload.begin() + 18);
-    uint64_t result4 = this->_serializer->deserializeULong(longBytes2);
-    this->_payload.push_back(result4);
     return true;
 }
 
@@ -186,6 +180,104 @@ bool pm::PacketManager::parseCanStartPacket(const std::vector<uint8_t> payload) 
         auto endIt = payload.begin() + static_cast<std::ptrdiff_t>(i + 8);
         std::vector<uint8_t> longBytes(startIt, endIt);
 
+        uint64_t value = this->_serializer->deserializeULong(longBytes);
+        this->_payload.push_back(value);
+    }
+    return true;
+}
+
+std::vector<uint8_t> pm::PacketManager::buildSpawnPlayerPacket(
+    std::vector<uint64_t> payload) {
+    std::vector<uint8_t> body;
+    std::vector<uint8_t> temp;
+
+    temp = this->_serializer->serializeULong(payload.at(0));
+    body.insert(body.end(), temp.begin(), temp.end());
+    for (size_t i = 1; i < payload.size(); i++) {
+        temp = this->_serializer->serializeUChar(payload.at(i));
+        body.insert(body.end(), temp.begin(), temp.end());
+    }
+    return body;
+}
+
+bool pm::PacketManager::parseSpawnPlayerPacket(
+    const std::vector<uint8_t> payload) {
+    if (payload.size() < 8 + 1) {
+        std::cerr << "[PACKET] SPAWN_PLAYER packet payload size invalid: "
+            << payload.size() << std::endl;
+        return false;
+    }
+
+    this->_payload.clear();
+    auto startIt = payload.begin();
+    auto endIt = payload.begin() + 8;
+    std::vector<uint8_t> longBytes(startIt, endIt);
+    uint64_t value = this->_serializer->deserializeULong(longBytes);
+    this->_payload.push_back(value);
+
+    for (size_t i = 8; i < payload.size(); i++) {
+        std::vector<uint8_t> charBytes(
+            payload.begin() + static_cast<std::ptrdiff_t>(i),
+            payload.begin() + static_cast<std::ptrdiff_t>(i + 1));
+        uint64_t charValue = this->_serializer->deserializeUChar(charBytes);
+        this->_payload.push_back(charValue);
+    }
+    return true;
+}
+
+std::vector<uint8_t> pm::PacketManager::buildDeathPacket(
+    std::vector<uint64_t> payload) {
+    std::vector<uint8_t> body;
+    std::vector<uint8_t> temp;
+
+    temp = this->_serializer->serializeULong(payload.at(0));
+    body.insert(body.end(), temp.begin(), temp.end());
+    return body;
+}
+
+bool pm::PacketManager::parseDeathPacket(
+    const std::vector<uint8_t> payload) {
+    if (payload.size() != LENGTH_DEATH_PACKET) {
+        std::cerr << "[PACKET] DEATH packet payload size invalid: "
+            << payload.size() << std::endl;
+        return false;
+    }
+
+    this->_payload.clear();
+    auto startIt = payload.begin();
+    auto endIt = payload.begin() + 8;
+    std::vector<uint8_t> longBytes(startIt, endIt);
+    uint64_t value = this->_serializer->deserializeULong(longBytes);
+    this->_payload.push_back(value);
+    return true;
+}
+
+std::vector<uint8_t> pm::PacketManager::buildWhoAmIPacket(
+    std::vector<uint64_t> payload) {
+    std::vector<uint8_t> body;
+    std::vector<uint8_t> temp;
+
+    if (payload.empty()) {
+        return body;
+    }
+    temp = this->_serializer->serializeULong(payload.at(0));
+    body.insert(body.end(), temp.begin(), temp.end());
+    return body;
+}
+
+bool pm::PacketManager::parseWhoAmIPacket(
+    const std::vector<uint8_t> payload) {
+    if (payload.size() != 0 && payload.size() != 8) {
+        std::cerr << "[PACKET] WHOAMI packet payload size invalid: "
+            << payload.size() << " (expected 0 or 8)" << std::endl;
+        return false;
+    }
+
+    this->_payload.clear();
+    if (payload.size() == 8) {
+        auto startIt = payload.begin();
+        auto endIt = payload.begin() + 8;
+        std::vector<uint8_t> longBytes(startIt, endIt);
         uint64_t value = this->_serializer->deserializeULong(longBytes);
         this->_payload.push_back(value);
     }

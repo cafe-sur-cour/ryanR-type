@@ -118,6 +118,7 @@ namespace constants {
     const std::string BASESCROLLSPEED_FIELD = "baseScrollSpeed";
     const std::string DIRECTION_FIELD = "direction";
     const std::string LAYERS_FIELD = "layers";
+    const std::string ZONERECT_FIELD = "zoneRect";
     const std::string NAME_FIELD = "name";
     const std::string SPEEDMULTIPLIER_FIELD = "speedMultiplier";
     const std::string SCALEMODE_FIELD = "scaleMode";
@@ -172,7 +173,7 @@ namespace constants {
 
     const float SPATIAL_GRID_CELL_SIZE = 128.0f;
     const float SPATIAL_GRID_PADDING = 200.0f;
-    const float OUT_OF_BOUNDS_MARGIN = 500.0f;
+    const float OUT_OF_BOUNDS_MARGIN = 200.0f;
 
     /* Map parsing constants */
     const std::string MUSIC_FIELD = "music";
@@ -208,6 +209,7 @@ namespace constants {
     const std::string ENNEMYPROJECTILETAG = "EnnemyProjectileTag";
     const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
     const std::string PARALLAXCOMPONENT = "ParallaxComponent";
+    const std::string GAMEZONECOMPONENT = "GameZoneComponent";
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
     const std::string OBSTACLETAG = "ObstacleTag";
     const std::string AIMOVERTAG = "AIMoverTag";
@@ -220,6 +222,7 @@ namespace constants {
     const std::string TAKEDAMAGE_ACTION = "TakeDamage";
 
     /* Prefabs */
+    const std::string GAME_ZONE_PREFAB = "gamezone";
     const std::string SMALL_EXPLOSION = "small_explosion";
     const std::string BIG_EXPLOSION = "big_explosion";
 
@@ -242,7 +245,11 @@ namespace constants {
     constexpr std::uint8_t PACKET_END_GAME = 0x08;
     constexpr std::uint8_t PACKET_CAN_START = 0x09;
     constexpr std::uint8_t PACKET_CLIENT_READY = 0x0A;
+    constexpr std::uint8_t PACKET_SPAWN = 0x0B;
+    constexpr std::uint8_t PACKET_DEATH = 0x0C;
+    constexpr std::uint8_t PACKET_WHOAMI = 0x0D;
 
+    const int MAX_INDEX_PACKET_TYPE = 14;
 }
 
 #endif /* !CONSTANTS_HPP_ */

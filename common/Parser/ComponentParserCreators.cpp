@@ -22,6 +22,7 @@
 #include "../components/tags/MobTag.hpp"
 #include "../components/tags/ObstacleTag.hpp"
 #include "../components/tags/GameZoneColliderTag.hpp"
+#include "../components/permanent/GameZoneComponent.hpp"
 #include "../components/tags/ProjectilePassThroughTag.hpp"
 #include "../components/permanent/ShootingStatsComponent.hpp"
 #include "../components/permanent/ProjectilePrefabComponent.hpp"
@@ -172,6 +173,10 @@ void Parser::instanciateComponentDefinitions() {
             {constants::BASESCROLLSPEED_FIELD, FieldType::FLOAT},
             {constants::DIRECTION_FIELD, FieldType::VECTOR2F},
             {constants::LAYERS_FIELD, FieldType::JSON}
+        }}},
+        {constants::GAMEZONECOMPONENT, {std::type_index(typeid(ecs::GameZoneComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::ZONERECT_FIELD, FieldType::JSON}
         }}},
                 {constants::BACKGROUNDMUSICTAG, {
             std::type_index(typeid(ecs::BackGroundMusicTag)), {
@@ -347,6 +352,15 @@ void Parser::instanciateComponentCreators() {
     registerComponent<ecs::GameZoneColliderTag>([]([[maybe_unused]] const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::GameZoneColliderTag>();
+    });
+
+    registerComponent<ecs::GameZoneComponent>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto zoneRectJson = std::get<nlohmann::json>(*fields.at(constants::ZONERECT_FIELD));
+        math::FRect zoneRect(zoneRectJson[constants::X_FIELD],
+            zoneRectJson[constants::Y_FIELD],
+            zoneRectJson[constants::WIDTH_FIELD], zoneRectJson[constants::HEIGHT_FIELD]);
+        return std::make_shared<ecs::GameZoneComponent>(zoneRect);
     });
 
     registerComponent<

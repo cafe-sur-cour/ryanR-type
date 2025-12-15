@@ -9,7 +9,6 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
-
 #include "Core.hpp"
 #include "Constants.hpp"
 #include "initResourcesManager/initResourcesManager.hpp"
@@ -34,23 +33,21 @@ Core::Core() {
 
     this->_inputProvider = std::make_shared<ecs::ServerInputProvider>();
 
+    auto tempResourceManager = std::make_shared<ResourceManager>();
+    this->_server = std::make_shared<rserv::Server>(tempResourceManager);
+
     this->_resourceManager = initResourcesManager(
-        nullptr,
+        this->_server,
         this->_registry,
         this->_parser,
         this->_systemsManager,
         this->_gsm,
         this->_inputProvider
     );
-
-    this->_server = std::make_shared<rserv::Server>(this->_resourceManager);
+    this->_server->setResourceManager(this->_resourceManager);
 
     this->_resourceManager->add<rserv::Server>(this->_server);
     this->_resourceManager->add<rserv::ServerConfig>(this->_server->getConfig());
-
-    this->_parser->parseAllEntities(constants::CONFIG_PATH);
-    this->_parser->parseMapFromFile("configs/map/map1.json");
-    this->_server->setCurrentMap(this->_parser->getMapParser()->createPacketFromMap());
 }
 
 Core::~Core() {
@@ -124,21 +121,20 @@ void Core::loop() {
     auto previousTime = std::chrono::high_resolution_clock::now();
 
     while (this->_server->getState() < constants::SERVER_UP) {
-        std::this_thread::sleep_for(
-            std::chrono::milliseconds(constants::SERVER_THREAD_SLEEP_MS));
-    }
-
-    while (this->_server->getState() == constants::SERVER_UP
-        && !this->_server->isGameStarted()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(
-            constants::SERVER_THREAD_SLEEP_MS));
+        std::this_thread::sleep_for
+            (std::chrono::milliseconds(constants::SERVER_THREAD_SLEEP_MS));
     }
 
     while (this->_server->getState() == constants::SERVER_UP) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float>(currentTime - previousTime).count();
         previousTime = currentTime;
+
+        this->processServerEvents();
+
         this->_gsm->update(deltaTime);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 

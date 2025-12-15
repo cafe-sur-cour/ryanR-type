@@ -73,17 +73,22 @@ namespace rserv {
             bool processDisconnections(uint8_t idClient) override;
             bool processEvents(uint8_t idClient) override;
             bool processEndOfGame(uint8_t idClient) override;
+            bool processWhoAmI(uint8_t idClient);
 
             /* Sent Packet Handling */
             bool connectionPacket(asio::ip::udp::endpoint endpoint);
             bool gameStatePacket();
-            bool mapPacket(std::vector<uint64_t> mapData, const asio::ip::udp::endpoint &endpoint);
             bool canStartPacket();
-
+            std::vector<uint64_t> spawnPacket(size_t entity, const std::string prefabName);
+            std::vector<uint64_t> deathPacket(size_t entity);
             void setCurrentMap(const std::vector<uint64_t> &map);
             std::vector<uint64_t> getCurrentMap() const;
             bool isGameStarted() const;
             bool allClientsReady() const;
+            uint32_t getSequenceNumber() const;
+            std::shared_ptr<pm::IPacketManager> getPacketManager() const;
+            void incrementSequenceNumber();
+            void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
         private:
             void loadNetworkLibrary();
             void loadBufferLibrary();
@@ -102,7 +107,6 @@ namespace rserv {
             std::shared_ptr<pm::IPacketManager> _packet;
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> _eventQueue;
 
-            std::vector<uint64_t> _currentMap;
             bool _gameStarted;
             std::shared_ptr<ResourceManager> _resourceManager;
             std::chrono::steady_clock::time_point _lastGameStateTime;

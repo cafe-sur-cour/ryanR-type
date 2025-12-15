@@ -12,6 +12,9 @@
 #include "Server.hpp"
 #include "Constants.hpp"
 #include "../common/debug.hpp"
+#include "../common/components/tags/PlayerTag.hpp"
+#include "../common/components/permanent/NetworkIdComponent.hpp"
+#include "../common/ECS/entity/registry/Registry.hpp"
 
 bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
     std::vector<uint8_t>> client) {
@@ -79,13 +82,93 @@ bool rserv::Server::processEvents(uint8_t idClient) {
         "[SERVER] Processing event packet from client: "
         + std::to_string(idClient),
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    constants::EventType eventType =
-        static_cast<constants::EventType>(this->_packet->getPayload().at(0));
 
-    uint64_t param1Bits = this->_packet->getPayload().at(1);
+    auto payload = this->_packet->getPayload();
+    if (payload.size() < 2) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Invalid event packet payload size: " + std::to_string(payload.size()),
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
+    constants::EventType eventType =
+        static_cast<constants::EventType>(payload.at(0));
+
+    uint64_t param1Bits = payload.at(1);
     double param1;
     std::memcpy(&param1, &param1Bits, sizeof(double));
 
     this->_eventQueue->push(std::tuple(idClient, eventType, param1));
+    return true;
+}
+
+bool rserv::Server::processWhoAmI(uint8_t idClient) {
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Processing WHOAMI request from client: "
+        + std::to_string(idClient),
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+    if (!this->_resourceManager->has<ecs::Registry>()) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Registry not found, cannot process WHOAMI",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+    auto playerView = registry->view<ecs::PlayerTag, ecs::NetworkIdComponent>();
+
+    ecs::Entity playerEntity = 0;
+    for (auto entityId : playerView) {
+        auto networkId = registry->getComponent<ecs::NetworkIdComponent>(entityId);
+        if (networkId && networkId->getNetworkId() == idClient) {
+            playerEntity = entityId;
+            break;
+        }
+    }
+
+    if (playerEntity == 0) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] No player entity found for client " + std::to_string(idClient),
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    std::vector<uint64_t> payload;
+    auto netIdComp = this->_resourceManager->get<ecs::Registry>()->getComponent<
+        ecs::NetworkIdComponent>(playerEntity);
+    if (netIdComp) {
+        payload.push_back(static_cast<uint64_t>(netIdComp->getNetworkId()));
+    } else {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Player entity has no NetworkID for client " + std::to_string(idClient),
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
+    asio::ip::udp::endpoint clientEndpoint;
+    for (const auto &client : this->_clients) {
+        if (std::get<0>(client) == idClient) {
+            clientEndpoint = std::get<1>(client);
+            break;
+        }
+    }
+
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_WHOAMI, payload);
+
+    if (!this->_network->sendTo(clientEndpoint, packet)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Failed to send WHOAMI response to client " + std::to_string(idClient),
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
+    this->_sequenceNumber++;
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Sent WHOAMI response to client " + std::to_string(idClient)
+        + " with entity ID " + std::to_string(playerEntity),
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+
     return true;
 }
