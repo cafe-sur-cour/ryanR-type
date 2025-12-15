@@ -23,6 +23,14 @@ class ResourceManager {
         template<typename T>
         bool has();
 
+        void clear() {
+            resources.clear();
+        }
+
+        template<typename T>
+        void remove() {
+            resources.erase(typeid(T).hash_code());
+        }
     private:
         std::unordered_map<size_t, std::shared_ptr<void>> resources;
 };

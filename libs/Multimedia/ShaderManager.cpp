@@ -14,6 +14,11 @@
 
 ShaderManager::ShaderManager(std::shared_ptr<assets::AssetManager> assetManager)
     : _assetManager(assetManager), _combinedShader(nullptr) {
+    this->_shaderCache = {};
+    this->_failedShaders = {};
+    this->_activeFilters = {};
+    this->_intermediateTextures = std::vector<sf::RenderTexture>();
+    this->_uniforms = {};
 }
 
 std::shared_ptr<sf::Shader> ShaderManager::loadShader(const std::string& path) {

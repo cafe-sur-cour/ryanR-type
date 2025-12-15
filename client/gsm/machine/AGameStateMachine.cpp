@@ -6,7 +6,12 @@
 
 namespace gsm {
 
-AGameStateMachine::AGameStateMachine() {}
+AGameStateMachine::AGameStateMachine() {
+    this->_states = std::stack<std::shared_ptr<IGameState>>();
+    this->_pendingChangeState = nullptr;
+    this->_pendingPushState = nullptr;
+    this->_pendingPopState = false;
+}
 
 void AGameStateMachine::changeState(std::shared_ptr<IGameState> newState) {
     if (!_states.empty()) {

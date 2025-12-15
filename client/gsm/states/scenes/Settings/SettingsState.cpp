@@ -217,10 +217,14 @@ SettingsState::SettingsState(
     _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _backButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _backButton->setOnRelease([this]() {
-        this->_gsm->requestStatePop();
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePop();
+        }
     });
     _backButton->setOnActivated([this]() {
-        this->_gsm->requestStatePop();
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePop();
+        }
     });
 
     ui::LayoutConfig verticalConfig;
@@ -523,7 +527,9 @@ void SettingsState::enter() {
 
     _uiManager->setOnBack([this]() {
         if (!_isWaitingForKey) {
-            this->_gsm->requestStatePop();
+            if (auto stateMachine = this->_gsm.lock()) {
+                stateMachine->requestStatePop();
+            }
         }
     });
 

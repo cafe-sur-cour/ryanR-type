@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "R-Type Keybinds",
+  "type": "object",
+  "patternProperties": {
+    "^[A-Za-z0-9_]+$": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "properties": {
+            "primary": { "type": "string" },
+            "secondary": { "type": "string" }
+          },
+          "required": ["primary"]
+        }
+      ]
+    }
+  },
+  "properties": {
+    "toggle_mode": { "type": "boolean" }
+  },
+  "additionalProperties": true,
+  "examples": [{
+    "MOVE_LEFT": { "primary": "Q", "secondary": "Left Arrow" },
+    "MOVE_RIGHT": { "primary": "D", "secondary": "Right Arrow" },
+    "SHOOT": { "primary": "Space", "secondary": "Unknown" },
+    "toggle_mode": false
+  }]
+}

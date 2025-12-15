@@ -30,11 +30,11 @@ class SfmlEvent : public gfx::IEvent {
     private:
         void initializeMappings();
         void createReverseKeyboardMapping();
-        event_t processKeyboardEvent(const sf::Event::KeyPressed& keyPressed);
-        event_t processMouseEvent(const sf::Event::MouseButtonPressed& mousePressed);
-        event_t processMouseReleaseEvent(const sf::Event::MouseButtonReleased& mouseReleased);
-        event_t processJoystickButtonEvent(const sf::Event::JoystickButtonPressed& joystickPressed);
-        event_t processJoystickAxisEvent(const sf::Event::JoystickMoved& joystickMoved);
+        event_t processKeyboardEvent(const sf::Event::KeyPressed &keyPressed);
+        event_t processMouseEvent(const sf::Event::MouseButtonPressed &mousePressed);
+        event_t processMouseReleaseEvent(const sf::Event::MouseButtonReleased &mouseReleased);
+        event_t processJoystickButtonEvent(const sf::Event::JoystickButtonPressed &joystickPressed);
+        event_t processJoystickAxisEvent(const sf::Event::JoystickMoved &joystickMoved);
         bool isJoystickAxisPressed(event_t key);
 
         // Member variables

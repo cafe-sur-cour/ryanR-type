@@ -57,13 +57,24 @@ std::vector<std::shared_ptr<T>> Registry::getComponents(Entity entityId) const
 }
 
 template <typename T>
-void Registry::removeComponent(Entity entityId)
+void Registry::removeAllComponents(Entity entityId)
 {
     const char *typeName = typeid(T).name();
     auto it = _components.find(typeName);
     if (it != _components.end()) {
         auto array = std::static_pointer_cast<AComponentArray<T>>(it->second);
-        array->remove(entityId);
+        array->removeComponents(entityId);
+    }
+}
+
+template <typename T>
+void Registry::removeOneComponent(Entity entityId)
+{
+    const char *typeName = typeid(T).name();
+    auto it = _components.find(typeName);
+    if (it != _components.end()) {
+        auto array = std::static_pointer_cast<AComponentArray<T>>(it->second);
+        array->removeOneComponent(entityId);
     }
 }
 
@@ -83,12 +94,6 @@ template <typename... Components>
 View<Components...> Registry::view()
 {
     return View<Components...>(std::static_pointer_cast<Registry>(shared_from_this()));
-}
-
-template <typename... Components>
-Group<Components...> Registry::group()
-{
-    return Group<Components...>(std::static_pointer_cast<Registry>(shared_from_this()));
 }
 
 }  // namespace ecs

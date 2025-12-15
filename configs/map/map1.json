@@ -1,48 +1,84 @@
 {
     "name": "Level 1",
     "background": "background",
-    "scrollSpeed": 100,
+    "scrollSpeed": 100.0,
     "music": "music",
-
-    "legend": {
-        "0": "empty",
-        "3": "obstacle1",
-        "5": "obstacle2"
-        },
-    "map": [
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
+    "powerUps": [],
+    "obstacles": [
+        {
+            "name": "obstacle1",
+            "positions": [
+                {
+                    "type": "horizontalLine",
+                    "fromX": 500.0,
+                    "posY": 0.0,
+                    "count": 10
+                },
+                {
+                    "type": "verticalLine",
+                    "fromY": 500.0,
+                    "posX": 1000.0,
+                    "count": 3
+                },
+                {
+                    "type": "unique",
+                    "posX": 600.0,
+                    "posY": 600.0
+                }
+            ]
+        }
     ],
     "waves": [
         {
-            "spawnLength": 19,
-            "posX": 15,
+            "gameXTrigger": 200.0,
             "enemies": [
-                    { "type": "enemy1", "count": 6}
+                {
+                    "type": "enemy1",
+                    "distributionX": {
+                        "min": 95,
+                        "max": 100,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 20,
+                        "max": 80,
+                        "type": "uniform"
+                    },
+                    "count": 6
+                }
             ]
         },
         {
-            "spawnLength": 1,
-            "posX": 22,
+            "gameXTrigger": 1000.0,
             "enemies": [
-                    { "type": "enemy2", "count": 4}
-            ]
-        },
-        {
-            "spawnLength": 1,
-            "posX": 2,
-            "enemies": [
-                    { "type": "enemy3", "count": 4}
+                {
+                    "type": "enemy2",
+                    "distributionX": {
+                        "min": 90,
+                        "max": 95,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 50,
+                        "max": 80,
+                        "type": "uniform"
+                    },
+                    "count": 4
+                },
+                {
+                    "type": "enemy3",
+                    "distributionX": {
+                        "min": 10,
+                        "max": 15,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 20,
+                        "max": 50,
+                        "type": "uniform"
+                    },
+                    "count": 4
+                }
             ]
         }
     ]

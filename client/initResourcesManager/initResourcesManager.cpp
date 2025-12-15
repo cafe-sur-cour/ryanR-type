@@ -23,6 +23,7 @@
 #include "../SettingsConfig.hpp"
 #include "../SettingsManager.hpp"
 #include "../constants.hpp"
+#include "../../common/Error/LibrairiesLoadError.hpp"
 
 std::shared_ptr<ResourceManager> initResourcesManager(
     std::shared_ptr<DLLoader<gfx::createWindow_t>> windowLoader,
@@ -43,7 +44,7 @@ std::shared_ptr<ResourceManager> initResourcesManager(
         if (!error.empty()) {
             errorMsg += " - Error: " + error;
         }
-        throw std::runtime_error(errorMsg);
+        throw err::LibrairiesLoadError(errorMsg, err::LibrairiesLoadError::SYMBOL_NOT_FOUND);
     }
     std::shared_ptr<gfx::IWindow> window(createWindowFunc());
 
@@ -54,7 +55,7 @@ std::shared_ptr<ResourceManager> initResourcesManager(
         if (!error.empty()) {
             errorMsg += " - Error: " + error;
         }
-        throw std::runtime_error(errorMsg);
+        throw err::LibrairiesLoadError(errorMsg, err::LibrairiesLoadError::SYMBOL_NOT_FOUND);
     }
     std::shared_ptr<gfx::IEvent> event(
         createEventFunc(resourceManager.get(), window.get())
@@ -67,7 +68,7 @@ std::shared_ptr<ResourceManager> initResourcesManager(
         if (!error.empty()) {
             errorMsg += " - Error: " + error;
         }
-        throw std::runtime_error(errorMsg);
+        throw err::LibrairiesLoadError(errorMsg, err::LibrairiesLoadError::SYMBOL_NOT_FOUND);
     }
     std::shared_ptr<gfx::IAudio> audio(createAudioFunc());
 

@@ -17,9 +17,9 @@
 namespace ecs {
 
 enum class ParallaxScaleMode {
-    FIT_SCREEN,
-    STRETCH,
-    MANUAL,
+    FIT_SCREEN = 0,
+    STRETCH = 1,
+    MANUAL = 2,
 };
 
 struct ParallaxLayer {

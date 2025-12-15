@@ -20,7 +20,13 @@ namespace net {
 
 WindowsNetwork::WindowsNetwork() : _connected(false) {
     _ioContext = std::make_shared<asio::io_context>();
+    _socket = nullptr;
+    _onConnectCallback = nullptr;
+    _onDisconnectCallback = nullptr;
     _isRunning = false;
+    _connectionState = ConnectionState::DISCONNECTED;
+
+    this->_serverEndpoint = {};
 }
 
 WindowsNetwork::~WindowsNetwork() {

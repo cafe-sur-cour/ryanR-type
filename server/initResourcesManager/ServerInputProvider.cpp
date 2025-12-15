@@ -24,6 +24,8 @@ ServerInputProvider::ServerInputProvider() {
         &ServerInputProvider::handleShoot,
         &ServerInputProvider::handleStop
     };
+    this->_inputMapping = std::vector<std::tuple<size_t, size_t, InputMapping>>();
+    this->_clientAxisValues = std::map<size_t, std::map<ecs::InputAction, float>>();
 }
 
 float ServerInputProvider::getAxisValue(event_t axis, size_t clientID) {

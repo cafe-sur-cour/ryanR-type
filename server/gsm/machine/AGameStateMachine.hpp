@@ -8,7 +8,7 @@ namespace gsm {
 class AGameStateMachine : public IGameStateMachine {
 public:
     AGameStateMachine();
-    ~AGameStateMachine() override = default;
+    ~AGameStateMachine() override;
 
     void changeState(std::shared_ptr<IGameState> newState) override;
     void pushState(std::shared_ptr<IGameState> newState) override;

@@ -36,7 +36,7 @@ void MusicSystem::update(std::shared_ptr<ResourceManager>
     bool hasMusic = (musicIt != musicEnd);
     if (!hasMusic) {
         for (auto entityId : intentView) {
-            registry->removeComponent<MusicIntentComponent>(entityId);
+            registry->removeOneComponent<MusicIntentComponent>(entityId);
         }
         return;
     }
@@ -92,7 +92,7 @@ void MusicSystem::update(std::shared_ptr<ResourceManager>
             }
         }
 
-        registry->removeComponent<MusicIntentComponent>(entityId);
+        registry->removeOneComponent<MusicIntentComponent>(entityId);
     }
 }
 

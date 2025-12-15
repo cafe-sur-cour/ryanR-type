@@ -15,10 +15,10 @@
 namespace ecs {
 
 enum class CollisionType {
-    None,
-    Solid,
-    Trigger,
-    Push
+    None = 0,
+    Solid = 1,
+    Trigger = 2,
+    Push = 3
 };
 
 class ColliderComponent : public AComponent {

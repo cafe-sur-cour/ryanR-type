@@ -41,7 +41,7 @@ void HealthSystem::_handleDamageUpdates(std::shared_ptr<Registry> registry) {
         healthComponent->setHealth(health - damages);
         healthComponent->setLastDamageSource(damageComponent->getSource());
 
-        registry->removeComponent<DamageIntentComponent>(entityId);
+        registry->removeOneComponent<DamageIntentComponent>(entityId);
     }
 }
 
