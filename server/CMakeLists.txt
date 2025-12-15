@@ -37,6 +37,7 @@ target_link_libraries(${SERVER_LIB_NAME}
         InputNormalizer
         ServerMovementInputSystem
         ServerShootInputSystem
+        Server::PacketHandlers
 )
 
 target_include_directories(${SERVER_LIB_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/common)
@@ -44,6 +45,7 @@ target_include_directories(${SERVER_LIB_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/common
 add_subdirectory(gsm)
 add_subdirectory(initResourcesManager)
 add_subdirectory(systems)
+add_subdirectory(packet)
 
 set(SERVER_BIN_NAME r-type_server)
 
