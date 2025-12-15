@@ -91,6 +91,7 @@ namespace rserv {
             std::shared_ptr<pm::IPacketManager> getPacketManager() const;
             void incrementSequenceNumber();
             void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
+            void clearEntityDeltaCache(uint8_t clientId, uint32_t entityId);
         private:
             void loadNetworkLibrary();
             void loadBufferLibrary();
