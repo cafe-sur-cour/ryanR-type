@@ -5,7 +5,10 @@
 ** Component Delta Tracker
 */
 
+#include <vector>
+#include <map>
 #include "ComponentDeltaTracker.hpp"
+#include "Constants.hpp"
 
 std::vector<uint64_t> rserv::ComponentDeltaTracker::createEntityDelta(uint8_t clientId,
     uint32_t entityId, const EntitySnapshot& currentSnapshot) {
@@ -91,7 +94,8 @@ rserv::EntitySnapshot rserv::ComponentDeltaTracker::applyDelta(uint8_t clientId,
         }
     }
 
-    for (uint8_t compType = 0; compType < 32 && offset < deltaPayload.size(); compType++) {
+    for (uint8_t compType = 0; compType < constants::BITMASK_INT &&
+        offset < deltaPayload.size(); compType++) {
         if (componentMask & (1u << compType)) {
             if (offset >= deltaPayload.size()) break;
             size_t compSize = static_cast<size_t>(deltaPayload[offset++]);
@@ -134,7 +138,7 @@ std::vector<uint64_t> rserv::ComponentDeltaTracker::serializeFullSnapshot(uint32
 
     payload.push_back(entityId);
     payload.push_back(snapshot.componentMask);
-    for (uint8_t compType = 0; compType < 32; compType++) {
+    for (uint8_t compType = 0; compType < constants::BITMASK_INT; compType++) {
         if (snapshot.componentMask & (1u << compType)) {
             auto it = snapshot.components.find(compType);
             if (it != snapshot.components.end()) {
@@ -146,13 +150,13 @@ std::vector<uint64_t> rserv::ComponentDeltaTracker::serializeFullSnapshot(uint32
     return payload;
 }
 
-std::vector<uint64_t> rserv::ComponentDeltaTracker::serializeDelta(uint32_t entityId, uint32_t changedMask,
-    const std::map<uint8_t, std::vector<uint64_t>>& changedComponents) {
+std::vector<uint64_t> rserv::ComponentDeltaTracker::serializeDelta(uint32_t entityId,
+    uint32_t changedMask, const std::map<uint8_t, std::vector<uint64_t>>& changedComponents) {
     std::vector<uint64_t> payload;
 
     payload.push_back(entityId);
     payload.push_back(changedMask);
-    for (uint8_t compType = 0; compType < 32; compType++) {
+    for (uint8_t compType = 0; compType < constants::BITMASK_INT; compType++) {
         if (changedMask & (1u << compType)) {
             auto it = changedComponents.find(compType);
             if (it != changedComponents.end()) {
