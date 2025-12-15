@@ -287,7 +287,7 @@ jobs:
       - name: CREATE UNIX SOURCE ARCHIVE
         run: |
           mkdir -p release-package
-          cp -r client server common configs assets libs scripts tests CMakeLists.txt CMakePresets.json vcpkg.json release-package/
+          cp -r client server common configs assets libs scripts tests CMakeLists.txt CMakePresets.json vcpkg.json libraries release-package/
           cd release-package
           tar -czf ../r-type-unix-${{ needs.calculate_version.outputs.version }}.tar.gz .
           cd ..
