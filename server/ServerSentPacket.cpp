@@ -81,7 +81,6 @@ bool rserv::Server::canStartPacket() {
         std::string playerString = "player";
         auto prefabMgr = _resourceManager->get<EntityPrefabManager>();
         auto registry = _resourceManager->get<ecs::Registry>();
-        size_t clientIndex = 0;
         for (const auto &client : this->_clients) {
             uint8_t clientId = std::get<0>(client);
             ecs::Entity playerEntity = prefabMgr->createEntityFromPrefab(
@@ -93,7 +92,6 @@ bool rserv::Server::canStartPacket() {
                 "[SERVER] Created player entity " + std::to_string(playerEntity) +
                 " for client " + std::to_string(static_cast<int>(clientId)),
                 debug::debugType::NETWORK, debug::debugLevel::INFO);
-            clientIndex++;
         }
         prefabMgr->getEntityFactory()->setNextNetworkId(this->_clients.size() + 1);
 

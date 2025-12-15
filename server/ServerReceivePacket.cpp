@@ -103,8 +103,6 @@ bool rserv::Server::processEvents(uint8_t idClient) {
 }
 
 bool rserv::Server::processWhoAmI(uint8_t idClient) {
-    std::cout << "[SERVER] Processing WHOAMI request from client: "
-        << static_cast<int>(idClient) << std::endl;
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "[SERVER] Processing WHOAMI request from client: "
         + std::to_string(idClient),
