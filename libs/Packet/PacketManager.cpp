@@ -30,129 +30,6 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
         );
     }
 
-    this->_packetHandlers = {
-        {
-            static_cast<uint8_t>(CONNECTION_CLIENT_PACKET), std::bind(
-                &pm::PacketManager::buildConnectionPacket,
-                this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(ACCEPTATION_PACKET), std::bind(
-                &pm::PacketManager::buildAcceptationPacket,
-                this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(DISCONNECTION_PACKET), std::bind(
-                &pm::PacketManager::buildDisconnectionPacket,
-                this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(EVENT_PACKET), std::bind(
-            &pm::PacketManager::buildEventPacket,
-            this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(MAP_SEND_PACKET), std::bind(
-            &pm::PacketManager::buildMapPacket,
-            this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(CAN_START_PACKET), std::bind(
-            &pm::PacketManager::buildCanStartPacket,
-            this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(SPAWN_PLAYER_PACKET), std::bind(
-            &pm::PacketManager::buildSpawnPlayerPacket,
-            this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(DEATH_PLAYER_PACKET), std::bind(
-            &pm::PacketManager::buildDeathPacket,
-            this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(WHOAMI_PACKET), std::bind(
-            &pm::PacketManager::buildWhoAmIPacket,
-            this, std::placeholders::_1)
-        }
-    };
-
-    this->_packetReceived = {
-        {
-            static_cast<uint8_t>(CONNECTION_CLIENT_PACKET), std::bind(
-                &pm::PacketManager::parseConnectionPacket,
-                this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(ACCEPTATION_PACKET), std::bind(
-                &pm::PacketManager::parseAcceptationPacket,
-                this, std::placeholders::_1),
-        },
-        {
-            static_cast<uint8_t>(DISCONNECTION_PACKET), std::bind(
-                &pm::PacketManager::parseDisconnectionPacket,
-                this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(EVENT_PACKET), std::bind(
-                &pm::PacketManager::parseEventPacket,
-                this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(MAP_SEND_PACKET), std::bind(
-            &pm::PacketManager::parseMapPacket,
-            this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(CAN_START_PACKET), std::bind(
-            &pm::PacketManager::parseCanStartPacket,
-            this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(SPAWN_PLAYER_PACKET), std::bind(
-            &pm::PacketManager::parseSpawnPlayerPacket,
-            this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(DEATH_PLAYER_PACKET), std::bind(
-            &pm::PacketManager::parseDeathPacket,
-            this, std::placeholders::_1)
-        },
-        {
-            static_cast<uint8_t>(WHOAMI_PACKET), std::bind(
-            &pm::PacketManager::parseWhoAmIPacket,
-            this, std::placeholders::_1)
-        }
-    };
-
-    this->_packetLengths = {
-        {
-            static_cast<uint8_t>(CONNECTION_CLIENT_PACKET),
-            LENGTH_CONNECTION_PACKET
-        },
-        {
-            static_cast<uint8_t>(ACCEPTATION_PACKET),
-            LENGTH_ACCEPTATION_PACKET
-        },
-        {
-            static_cast<uint8_t>(DISCONNECTION_PACKET),
-            LENGTH_DISCONNECTION_PACKET
-        },
-        {
-            static_cast<uint8_t>(EVENT_PACKET),
-            LENGTH_EVENT_PACKET
-        },
-        {
-            static_cast<uint8_t>(DEATH_PLAYER_PACKET),
-            LENGTH_DEATH_PACKET
-        },
-        {
-            static_cast<uint8_t>(WHOAMI_PACKET),
-            LENGTH_WHOAMI_PACKET
-        }
-    };
-
     this->_lengthComb = {
         std::make_tuple(static_cast<uint8_t>(PLAYER_TAG),
         static_cast<uint32_t>(1), static_cast<uint64_t>(1)),
@@ -315,7 +192,57 @@ pm::PacketManager::~PacketManager() {
     }
 }
 
+void pm::PacketManager::registerBuilder(
+    uint8_t type,
+    std::function<std::vector<uint8_t>(std::vector<uint64_t>)> builder
+) {
+    this->_packetHandlers[type] = builder;
+}
 
+void pm::PacketManager::registerParser(
+    uint8_t type,
+    std::function<bool(const std::vector<uint8_t>)> parser
+) {
+    this->_packetReceived[type] = parser;
+}
+
+void pm::PacketManager::registerLength(
+    uint8_t type,
+    uint32_t length
+) {
+    this->_packetLengths[type] = length;
+}
+
+void pm::PacketManager::registerGameStatePackFunction(
+    std::function<std::vector<uint8_t>(std::vector<uint64_t>,
+    std::shared_ptr<unsigned int>)> func
+) {
+    this->_packGSFunction.push_back(func);
+}
+
+void pm::PacketManager::registerGameStateUnpackFunction(
+    std::function<unsigned int(const std::vector<uint8_t>,
+    unsigned int)> func
+) {
+    this->_unpackGSFunction.push_back(func);
+}
+
+void pm::PacketManager::registerLengthCombEntry(
+    uint8_t compType,
+    uint32_t compLength,
+    uint64_t compSize
+) {
+    this->_lengthComb.push_back(std::make_tuple(compType, compLength, compSize));
+}
+
+void pm::PacketManager::clearAllHandlers() {
+    this->_packetHandlers.clear();
+    this->_packetReceived.clear();
+    this->_packetLengths.clear();
+    this->_packGSFunction.clear();
+    this->_unpackGSFunction.clear();
+    this->_lengthComb.clear();
+}
 
 uint32_t pm::PacketManager::getLength() const {
     return this->_length;
@@ -337,8 +264,6 @@ uint8_t pm::PacketManager::getIdClient() const {
     return this->_idClient;
 }
 
-
-
 void pm::PacketManager::setType(uint8_t type) {
     this->_type = type;
 }
@@ -358,8 +283,6 @@ void pm::PacketManager::setPayload(std::vector<uint64_t> payload) {
 void pm::PacketManager::setIdClient(uint8_t idClient) {
     this->_idClient = idClient;
 }
-
-
 
 void pm::PacketManager::reset() {
     this->_idClient = 0;
