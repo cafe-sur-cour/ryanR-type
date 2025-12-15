@@ -56,7 +56,8 @@ std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Ser
                             server->spawnPacket(networkId, prefabName);
                         std::vector<uint8_t> spawnPacketData =
                             server->getPacketManager()->pack(0,
-                                server->getSequenceNumber(), constants::PACKET_SPAWN, spawnData);
+                                server->getSequenceNumber(),
+                                constants::PACKET_SPAWN, spawnData);
                         server->getNetwork()->
                             broadcast(server->getConnectedClientEndpoints(), spawnPacketData);
                         server->incrementSequenceNumber();
@@ -78,7 +79,8 @@ std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Ser
                         std::vector<uint64_t> deathData = server->deathPacket(networkId);
                         std::vector<uint8_t> deathPacketData =
                             server->getPacketManager()->pack(0,
-                                server->getSequenceNumber(), constants::PACKET_DEATH, deathData);
+                                server->getSequenceNumber(),
+                                constants::PACKET_DEATH, deathData);
                         server->getNetwork()->
                             broadcast(server->getConnectedClientEndpoints(), deathPacketData);
                         server->incrementSequenceNumber();
