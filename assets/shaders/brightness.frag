@@ -1,7 +1,7 @@
-#version 130
+#version 120
 
 uniform sampler2D texture;
-uniform float brightness = 1.0;
+uniform float brightness;
 
 void main() {
     vec4 color = texture2D(texture, gl_TexCoord[0].xy);
