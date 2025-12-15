@@ -299,7 +299,7 @@ void rserv::Server::onClientDisconnected(uint8_t idClient) {
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "Client " + std::to_string(idClient) + " disconnected",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    // Add game-specific cleanup logic here
+    this->_deltaTracker.clearClientCache(idClient);
 }
 
 void rserv::Server::onPacketReceived(
