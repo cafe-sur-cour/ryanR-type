@@ -12,7 +12,7 @@
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/GameZoneComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
-#include <iostream>
+
 namespace ecs {
 
 SpawnSystem::SpawnSystem() {
