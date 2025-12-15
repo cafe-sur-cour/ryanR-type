@@ -35,6 +35,7 @@ class UIManager {
         void handleMouseInput(const math::Vector2f& mousePos, bool mousePressed);
         bool handleNavigationInput(ecs::InputAction action);
         bool handleNavigationInputs(std::shared_ptr<ecs::IInputProvider> inputProvider, float deltaTime);
+        void handleKeyboardInput(gfx::EventType event);
 
         std::shared_ptr<UINavigationManager> getNavigationManager();
 
