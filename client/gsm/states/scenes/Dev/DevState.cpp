@@ -53,6 +53,7 @@
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
 #include "../../../../../common/systems/ai/AIMovementSystem.hpp"
 #include "../../../../../common/systems/ai/AIShootingSystem.hpp"
+#include "../../../../../common/systems/spawn/SpawnSystem.hpp"
 #include "../../../../interpolation/NetworkStateComponent.hpp"
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../../common/components/permanent/HealthComponent.hpp"
@@ -116,6 +117,7 @@ void DevState::enter() {
     addSystem(std::make_shared<ecs::HitboxRenderingSystem>());
     addSystem(std::make_shared<ecs::HealthBarRenderingSystem>());
     addSystem(std::make_shared<ecs::TextRenderingSystem>());
+    addSystem(std::make_shared<ecs::SpawnSystem>());
 
     auto audio = _resourceManager->get<gfx::IAudio>();
 
@@ -206,7 +208,7 @@ void DevState::renderHUD() {
     gfx::color_t white = {255, 255, 255, 255};
     std::pair<size_t, size_t> textPosition =
         {10, static_cast<size_t>(constants::MAX_HEIGHT - 35)};
-    window->drawText(hudText, white, textPosition, "assets/fonts/ARIAL.TTF", 24);
+    window->drawText(hudText, white, textPosition, "assets/fonts/arial.ttf", 24);
     window->setViewCenter(currentCenter.getX(), currentCenter.getY());
 }
 

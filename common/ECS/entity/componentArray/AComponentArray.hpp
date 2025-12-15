@@ -24,7 +24,8 @@ class AComponentArray : public IComponentArray {
         void add(Entity entityId, std::shared_ptr<T> component);
         std::shared_ptr<T> get(Entity entityId) const;
         std::vector<std::shared_ptr<T>> getAll(Entity entityId) const;
-        void remove(Entity entityId) override;
+        void removeComponents(Entity entityId) override;
+        void removeOneComponent(Entity entityId) override;
         bool has(Entity entityId) const;
 
         Entity getMaxEntityId() const override;
