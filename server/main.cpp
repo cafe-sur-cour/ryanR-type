@@ -26,7 +26,7 @@ int main(int ac, char **av) {
     std::cout << std::endl << "------------------------" << std::endl;
     try {
         core.init();
-        // core.loop();
+        core.loop();
     } catch (const err::IError &e) {
         std::cerr << e.getDetails() << std::endl;
         return (84);
