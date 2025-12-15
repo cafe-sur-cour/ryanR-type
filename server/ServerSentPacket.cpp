@@ -55,7 +55,7 @@ bool rserv::Server::gameStatePacket() {
                 componentData.insert(componentData.end(), compData.begin(), compData.end());
             }
 
-            pm::EntitySnapshot snapshot = pm::ComponentSerializer::createSnapshotFromComponents(
+            EntitySnapshot snapshot = ComponentSerializer::createSnapshotFromComponents(
                 networkId, componentData
             );
 

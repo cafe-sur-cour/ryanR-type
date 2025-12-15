@@ -7,7 +7,7 @@
 
 #include "ComponentDeltaTracker.hpp"
 
-std::vector<uint64_t> pm::ComponentDeltaTracker::createEntityDelta(uint8_t clientId,
+std::vector<uint64_t> rserv::ComponentDeltaTracker::createEntityDelta(uint8_t clientId,
     uint32_t entityId, const EntitySnapshot& currentSnapshot) {
     std::vector<uint64_t> delta;
     auto clientIt = _clientEntityCache.find(clientId);
@@ -51,7 +51,7 @@ std::vector<uint64_t> pm::ComponentDeltaTracker::createEntityDelta(uint8_t clien
     return serializeDelta(entityId, changedMask, changedComponents);
 }
 
-std::vector<uint64_t> pm::ComponentDeltaTracker::createMultiEntityDelta(uint8_t clientId,
+std::vector<uint64_t> rserv::ComponentDeltaTracker::createMultiEntityDelta(uint8_t clientId,
     const std::vector<EntitySnapshot>& entities) {
     std::vector<uint64_t> payload;
     std::vector<std::vector<uint64_t>> entityDeltas;
@@ -70,7 +70,7 @@ std::vector<uint64_t> pm::ComponentDeltaTracker::createMultiEntityDelta(uint8_t 
     return payload;
 }
 
-pm::EntitySnapshot pm::ComponentDeltaTracker::applyDelta(uint8_t clientId,
+rserv::EntitySnapshot rserv::ComponentDeltaTracker::applyDelta(uint8_t clientId,
     const std::vector<uint64_t>& deltaPayload) {
     if (deltaPayload.size() < 2) {
         return {};
@@ -113,22 +113,22 @@ pm::EntitySnapshot pm::ComponentDeltaTracker::applyDelta(uint8_t clientId,
     return snapshot;
 }
 
-void pm::ComponentDeltaTracker::clearClientCache(uint8_t clientId) {
+void rserv::ComponentDeltaTracker::clearClientCache(uint8_t clientId) {
     _clientEntityCache.erase(clientId);
 }
 
-void pm::ComponentDeltaTracker::clearEntityCache(uint8_t clientId, uint32_t entityId) {
+void rserv::ComponentDeltaTracker::clearEntityCache(uint8_t clientId, uint32_t entityId) {
     auto it = _clientEntityCache.find(clientId);
     if (it != _clientEntityCache.end()) {
         it->second.erase(entityId);
     }
 }
 
-void pm::ComponentDeltaTracker::clearAllCaches() {
+void rserv::ComponentDeltaTracker::clearAllCaches() {
     _clientEntityCache.clear();
 }
 
-std::vector<uint64_t> pm::ComponentDeltaTracker::serializeFullSnapshot(uint32_t entityId,
+std::vector<uint64_t> rserv::ComponentDeltaTracker::serializeFullSnapshot(uint32_t entityId,
     const EntitySnapshot& snapshot) {
     std::vector<uint64_t> payload;
 
@@ -146,7 +146,7 @@ std::vector<uint64_t> pm::ComponentDeltaTracker::serializeFullSnapshot(uint32_t 
     return payload;
 }
 
-std::vector<uint64_t> pm::ComponentDeltaTracker::serializeDelta(uint32_t entityId, uint32_t changedMask,
+std::vector<uint64_t> rserv::ComponentDeltaTracker::serializeDelta(uint32_t entityId, uint32_t changedMask,
     const std::map<uint8_t, std::vector<uint64_t>>& changedComponents) {
     std::vector<uint64_t> payload;
 

@@ -31,8 +31,8 @@
 #include "../common/InputMapping/InputAction.hpp"
 #include "../common/resourceManager/ResourceManager.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
-#include "../libs/Packet/ComponentDeltaTracker.hpp"
-#include "../libs/Packet/ComponentSerializer.hpp"
+#include "ComponentDeltaTracker.hpp"
+#include "ComponentSerializer.hpp"
 #include "Signal.hpp"
 
 namespace rserv {
@@ -114,7 +114,7 @@ namespace rserv {
             std::shared_ptr<ResourceManager> _resourceManager;
             std::chrono::steady_clock::time_point _lastGameStateTime;
 
-            pm::ComponentDeltaTracker _deltaTracker;
+            ComponentDeltaTracker _deltaTracker;
 
             /* Functions to build game state packets */
             std::vector<std::function<std::vector<uint64_t>(std::shared_ptr<ecs::Registry>, ecs::Entity)>> _convertFunctions;
