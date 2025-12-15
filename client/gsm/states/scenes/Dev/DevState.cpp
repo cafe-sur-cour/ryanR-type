@@ -66,6 +66,7 @@ DevState::DevState(
 ) : AGameState(gsm, resourceManager) {
     _registry = std::make_shared<ecs::Registry>();
     _prefabManager = std::make_shared<EntityPrefabManager>();
+    this->_parser = nullptr;
 }
 
 void DevState::enter() {

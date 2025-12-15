@@ -12,6 +12,7 @@
 namespace ecs {
 
 AnimationConditionFactory::AnimationConditionFactory() {
+    this->_conditions = {};
     initializeConditions();
 }
 

@@ -15,10 +15,10 @@
 namespace ecs {
 
 typedef enum MusicState {
-    PLAYING,
-    PAUSED,
-    CHANGING,
-    STOPPED
+    PLAYING = 0,
+    PAUSED = 1,
+    CHANGING = 2,
+    STOPPED = 3
 } MusicState;
 
 class MusicComponent : public AComponent {

@@ -14,7 +14,10 @@ namespace gfx {
 
 TextureManager::TextureManager(
     std::shared_ptr<assets::AssetManager> assetManager)
-    : _assetManager(assetManager) {}
+    : _assetManager(assetManager) {
+    this->_textureCache = {};
+    this->_failedTextures = {};
+}
 
 std::shared_ptr<sf::Texture> TextureManager::loadTexture
 (const std::string& path) {

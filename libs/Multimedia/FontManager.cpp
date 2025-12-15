@@ -14,7 +14,10 @@
 namespace gfx {
 
 FontManager::FontManager(std::shared_ptr<assets::AssetManager> assetManager)
-    : _assetManager(assetManager) {}
+    : _assetManager(assetManager) {
+    this->_fontCache = std::unordered_map<std::string, std::shared_ptr<sf::Font>>();
+    this->_fontDataCache = std::unordered_map<std::string, std::vector<unsigned char>>();
+}
 
 std::shared_ptr<sf::Font> FontManager::getFont(const std::string& path) {
     auto it = _fontCache.find(path);

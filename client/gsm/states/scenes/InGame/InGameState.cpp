@@ -65,6 +65,7 @@ InGameState::InGameState(
     : AGameState(gsm, resourceManager) {
     _registry = resourceManager->get<ecs::Registry>();
     _prefabManager = resourceManager->get<EntityPrefabManager>();
+    this->_parser = nullptr;
 }
 
 void InGameState::enter() {

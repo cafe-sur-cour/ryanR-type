@@ -46,7 +46,12 @@ struct Transition {
 class AnimationComponent : public AComponent {
     public:
         AnimationComponent()
-            : _currentState(""), _timer(0.f), _isPlaying(false), _currentFrame(0), _rewindStartFrame(-1) {}
+            : _currentState(""), _timer(0.f), _isPlaying(false), _currentFrame(0), _rewindStartFrame(-1) {
+                this->_states = {};
+                this->_playRewind = false;
+                this->_transitions = {};
+                this->_frameRect = math::FRect();
+            }
 
         void addState(const std::string& name, std::shared_ptr<AnimationClip> clip) {
             _states[name] = clip;
