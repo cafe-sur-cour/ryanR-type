@@ -87,39 +87,6 @@ void MapParser::parseMap(const nlohmann::json &mapJson) {
         parseWaves(mapJson[constants::WAVES_FIELD], tileWidth);
 }
 
-
-std::vector<std::uint64_t> MapParser::createPacketFromMap() {
-    std::string jsonStr = this->_mapJson.dump();
-
-    std::vector<std::uint64_t> data;
-    for (size_t i = 0; i < jsonStr.size(); i += 8) {
-        uint64_t value = 0;
-        for (size_t j = 0; j < 8 && (i + j) < jsonStr.size(); ++j) {
-            value |= static_cast<uint64_t>(static_cast<uint8_t>(jsonStr[i + j])) << (j * 8);
-        }
-        data.push_back(value);
-    }
-    return data;
-}
-
-
-void MapParser::parseMapFromPacket(std::vector<uint8_t> mapData) {
-    std::string jsonStr(mapData.begin(), mapData.end());
-
-    nlohmann::json mapJson;
-    try {
-        mapJson = nlohmann::json::parse(jsonStr);
-    } catch (const nlohmann::detail::exception& e) {
-        throw err::ParserError("Invalid JSON format in map data: "
-            + std::string(e.what()),
-            err::ParserError::INVALID_FORMAT);
-    }
-    if (!this->_mapJson.is_null())
-        this->_mapJson.clear();
-    this->_mapJson = mapJson;
-    parseMap(mapJson);
-}
-
 void MapParser::generateMapEntities() {
     if (_mapJson.is_null()) {
         std::cout << "[MapParser] No map data available to generate entities" << std::endl;
