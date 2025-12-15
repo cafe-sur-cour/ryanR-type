@@ -98,19 +98,22 @@ class IPacketManager {
 
 ## Packet Types
 
-| Type | Code | Description | Body Size |
-|------|------|-------------|-----------|
-| NO_OP | 0x00 | Empty/test packet | Variable |
-| CONNECTION_CLIENT | 0x01 | Client connection request | 11 bytes |
-| ACCEPTATION | 0x02 | Connection acceptance | 4 bytes |
-| DISCONNECTION | 0x03 | Disconnection | 4 bytes |
-| EVENT | 0x04 | Game event | 5 bytes |
-| GAME_STATE | 0x05 | Game state | Variable |
-| MAP_SEND | 0x06 | Map sending | Variable |
-| END_MAP | 0x07 | Map end | Variable |
-| END_GAME | 0x08 | Game end | Variable |
-| CAN_START | 0x09 | Start authorization | Variable |
-| CLIENT_READY | 0x0A | Client ready signal | 0 bytes |
+| Type | Code | Description | Body Size | Payload Format |
+|------|------|-------------|-----------|----------------|
+| CONNECTION_CLIENT | 0x00 | Client connection request | 8 bytes | 8 uint8_t values |
+| CONNECTION_CLIENT_PACKET | 0x01 | Client connection request | 8 bytes | 8 uint8_t values |
+| ACCEPTATION_PACKET | 0x02 | Connection acceptance | 1 byte | 1 uint8_t (client ID) |
+| DISCONNECTION_PACKET | 0x03 | Disconnection | 4 bytes | 1 uint32_t (client ID) |
+| EVENT | 0x04 | Game event | 9 bytes | uint8_t event_type + uint64_t param |
+| GAME_STATE | 0x05 | Game state | Variable | Complex ECS component data |
+| POSITION_UPDATE | 0x06 | Position updates | Variable | Entity positions and movements |
+| HEALTH_UPDATE | 0x07 | Health updates | Variable | Entity health changes |
+| BULLET_SPAWN | 0x08 | Bullet creation | Variable | Bullet creation data |
+| CAN_START | 0x09 | Start authorization | 0 bytes | Empty |
+| CLIENT_READY | 0x0A | Client ready signal | 0 bytes | Empty |
+| PING | 0x0B | Network latency measurement | 8 bytes | 1 uint64_t (timestamp) |
+| PONG | 0x0C | Network latency response | 8 bytes | 1 uint64_t (timestamp) |
+| ERROR | 0x0D | Error notification | Variable | uint8_t error_code + string message |
 
 ## Serialization System
 
@@ -303,81 +306,201 @@ bool unpack(std::vector<uint8_t> data);
 
 ## Packet Types Details
 
+### CONNECTION_CLIENT (0x00)
+
+**Body size**: 8 bytes
+
+**Payload Format**: 8 uint8_t values
+
+**Usage**: Connection request sent by the client to the server.
+
+**Example**:
+```
+Payload: [1, 2, 3, 4, 5, 6, 7, 8]
+Serialized: 01 02 03 04 05 06 07 08
+```
+
 ### CONNECTION_CLIENT_PACKET (0x01)
 
 **Body size**: 8 bytes
 
-**Format**:
-```
-+------+------+------+------+------+------+------+------+
-| Data | Data | Data | Data | Data | Data | Data | Data |
-+------+------+------+------+------+------+------+------+
-```
+**Payload Format**: 8 uint8_t values
 
 **Usage**: Connection request sent by the client to the server.
 
+**Example**:
+```
+Payload: [1, 2, 3, 4, 5, 6, 7, 8]
+Serialized: 01 02 03 04 05 06 07 08
+```
+
 ### ACCEPTATION_PACKET (0x02)
 
-**Body size**: 1 bytes
+**Body size**: 1 byte
 
-**Format**:
-```
-+------+
-| Data |
-+------+
-```
+**Payload Format**: 1 uint8_t (client ID)
 
 **Usage**: Connection confirmation sent by the server to the client.
+
+**Example**:
+```
+Payload: [42]
+Serialized: 2A
+```
 
 ### DISCONNECTION_PACKET (0x03)
 
 **Body size**: 4 bytes
 
-**Format**:
-```
-+------+
-| Data |
-+------+
-```
+**Payload Format**: 1 uint32_t (client ID)
 
 **Usage**: Disconnection notification (client or server).
 
-### EVENT_PACKET (0x04)
-
-**Body size**: 5 bytes
-
-**Format**:
+**Example**:
 ```
-+------+------+------+
-| Type | Dep. | Dir. |
-+------+------+------+
+Payload: [42]
+Serialized: 2A 00 00 00
 ```
+
+### EVENT (0x04)
+
+**Body size**: 9 bytes
+
+**Payload Format**: uint8_t event_type + uint64_t param
 
 **Usage**: Game events (keys, actions, etc.).
 
-### CAN_START_PACKET (0x09)
+**Example**:
+```
+Payload: [4, 123456789]
+Serialized: 04 00 00 00 00 00 00 00 15
+```
+
+### GAME_STATE (0x05)
 
 **Body size**: Variable
 
-**Format**:
+**Payload Format**: Complex ECS component data
+
+**Usage**: Complete game state synchronization.
+
+**Example**:
 ```
-+------+------+------+------+
-| Data | Data | Data | ...  |
-+------+------+------+------+
+Payload: [variable ECS data]
+Serialized: [depends on current game state]
 ```
 
-**Usage**: Sent by the server to all clients when all connected clients have signaled they are ready to start the game.
+### POSITION_UPDATE (0x06)
 
-### CLIENT_READY_PACKET (0x0A)
+**Body size**: Variable
+
+**Payload Format**: Entity positions and movements
+
+**Usage**: Position updates for entities.
+
+**Example**:
+```
+Payload: [entity_id, x, y, vx, vy]
+Serialized: [variable length]
+```
+
+### HEALTH_UPDATE (0x07)
+
+**Body size**: Variable
+
+**Payload Format**: Entity health changes
+
+**Usage**: Health updates for entities.
+
+**Example**:
+```
+Payload: [entity_id, health_value]
+Serialized: [variable length]
+```
+
+### BULLET_SPAWN (0x08)
+
+**Body size**: Variable
+
+**Payload Format**: Bullet creation data
+
+**Usage**: New bullet creation notification.
+
+**Example**:
+```
+Payload: [entity_id, x, y, direction]
+Serialized: [variable length]
+```
+
+### CAN_START (0x09)
 
 **Body size**: 0 bytes
 
-**Format**:
+**Payload Format**: Empty
+
+**Usage**: Sent by the server to all clients when all connected clients have signaled they are ready to start the game.
+
+**Example**:
 ```
-(empty)
+Payload: []
+Serialized: (empty)
 ```
 
+### CLIENT_READY (0x0A)
+
+**Body size**: 0 bytes
+
+**Payload Format**: Empty
+
 **Usage**: Sent by the client to the server when the player clicks "Ready" in the menu, indicating they are prepared to start the game.
+
+**Example**:
+```
+Payload: []
+Serialized: (empty)
+```
+
+### PING (0x0B)
+
+**Body size**: 8 bytes
+
+**Payload Format**: 1 uint64_t (timestamp)
+
+**Usage**: Network latency measurement.
+
+**Example**:
+```
+Payload: [1234567890123456789]
+Serialized: 15 CD 5B 07 00 00 00 00
+```
+
+### PONG (0x0C)
+
+**Body size**: 8 bytes
+
+**Payload Format**: 1 uint64_t (timestamp)
+
+**Usage**: Network latency response.
+
+**Example**:
+```
+Payload: [1234567890123456789]
+Serialized: 15 CD 5B 07 00 00 00 00
+```
+
+### ERROR (0x0D)
+
+**Body size**: Variable
+
+**Payload Format**: uint8_t error_code + string message
+
+**Usage**: Error notification.
+
+**Example**:
+```
+Payload: [1, "Connection failed"]
+Serialized: 01 [string bytes]
+```
 
 ## Ready System
 
