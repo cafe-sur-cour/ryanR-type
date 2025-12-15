@@ -17,6 +17,7 @@
 #include "../../libs/Multimedia/IWindow.hpp"
 #include "../../libs/Multimedia/IEvent.hpp"
 #include "../../common/DLLoader/DLLoader.hpp"
+#include "../../common/Error/LibrairiesLoadError.hpp"
 
 Core::Core() {
     Signal::setupSignalHandlers();
@@ -108,7 +109,8 @@ void Core::initLibraries() {
         if (!error.empty()) {
             errorMsg += " - Error: " + error;
         }
-        throw std::runtime_error(errorMsg);
+        throw err::LibrairiesLoadError(errorMsg,
+            err::LibrairiesLoadError::LIBRARY_NOT_FOUND);
     }
     if (!this->_eventLoader->Open(multimediaPath.c_str())) {
         std::string error = this->_eventLoader->Error();
@@ -117,7 +119,8 @@ void Core::initLibraries() {
         if (!error.empty()) {
             errorMsg += " - Error: " + error;
         }
-        throw std::runtime_error(errorMsg);
+        throw err::LibrairiesLoadError(errorMsg,
+            err::LibrairiesLoadError::LIBRARY_NOT_FOUND);
     }
     if (!this->_audioLoader->Open(multimediaPath.c_str())) {
         std::string error = this->_audioLoader->Error();
@@ -126,7 +129,8 @@ void Core::initLibraries() {
         if (!error.empty()) {
             errorMsg += " - Error: " + error;
         }
-        throw std::runtime_error(errorMsg);
+        throw err::LibrairiesLoadError(errorMsg,
+            err::LibrairiesLoadError::LIBRARY_NOT_FOUND);
     }
 }
 
