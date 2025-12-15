@@ -62,6 +62,7 @@ MainMenuState::MainMenuState(
     _portInput->setSize(math::Vector2f(300.f, 50.f));
     _portInput->setOnRelease([this]() {
         auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
         navMan->setFocus(this->_portInput);
     });
 
