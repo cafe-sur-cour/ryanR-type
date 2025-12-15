@@ -50,9 +50,6 @@ class Registry : public std::enable_shared_from_this<Registry> {
         template <typename... Components>
         View<Components...> view();
 
-        template <typename... Components>
-        Group<Components...> group();
-
         Entity getMaxEntityId() const;
 
         Entity createEntity();
