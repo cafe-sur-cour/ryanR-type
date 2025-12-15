@@ -91,7 +91,7 @@ class DLLoader : public ILoader {
 #else
             int result = dlclose(_handler);
 #endif
-            _handler = nullptr;  // Prevent double-close
+            _handler = nullptr;
             return result;
         };
 

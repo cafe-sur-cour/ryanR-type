@@ -111,7 +111,8 @@ void InGameState::update(float deltaTime) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         if (inputProvider->isActionPressed(ecs::InputAction::MENU_BACK)) {
             if (auto stateMachine = _gsm.lock()) {
-                stateMachine->requestStatePush(std::make_shared<SettingsState>(stateMachine, _resourceManager));
+                stateMachine->requestStatePush(std::make_shared<SettingsState>(stateMachine,
+                    _resourceManager));
                 return;
             }
         }

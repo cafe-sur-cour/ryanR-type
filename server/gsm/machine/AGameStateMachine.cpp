@@ -1,3 +1,12 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** AGameStateMachine
+*/
+
+#include <stack>
+
 #include "AGameStateMachine.hpp"
 #include "../../../common/gsm/IGameState.hpp"
 

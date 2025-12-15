@@ -93,8 +93,7 @@ rserv::Server::~Server() {
     if (this->getState() == 1)
         this->stop();
     this->_resourceManager->clear();
-    
-    // Reset shared pointers first (releases the loaded objects)
+
     if (this->_network != nullptr) {
         this->_network.reset();
     }
@@ -104,10 +103,6 @@ rserv::Server::~Server() {
     if (this->_packet != nullptr) {
         this->_packet.reset();
     }
-    
-    // Now close the loaders - they will handle their own cleanup
-    // The DLLoader destructor will call Close() which now safely sets _handler to nullptr
-    // So there's no double-close issue
 }
 
 void rserv::Server::init() {

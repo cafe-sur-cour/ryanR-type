@@ -12,7 +12,6 @@
 #include "../../Error/ParserError.hpp"
 
 EntityPrefabManager::EntityPrefabManager() {
-
     clearPrefabs();
     _entityFactory = std::make_shared<ecs::EntityFactory>();
     _onEntityCreated = nullptr;

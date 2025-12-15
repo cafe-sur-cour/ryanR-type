@@ -29,7 +29,6 @@ UnixServerNetwork::UnixServerNetwork() : _port(0) {
     _connectionState = ConnectionState::DISCONNECTED;
 
     this->_incomingPackets = {};
-
 }
 
 UnixServerNetwork::~UnixServerNetwork() {

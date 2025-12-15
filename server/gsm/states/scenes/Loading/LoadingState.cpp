@@ -25,7 +25,8 @@ void LoadingState::enter() {
         parser->parseMapFromFile("configs/map/map1.json");
     }
     if (auto stateMachine = _gsm.lock()) {
-        stateMachine->requestStateChange(std::make_shared<InGameState>(stateMachine, _resourceManager));
+        stateMachine->requestStateChange(std::make_shared<InGameState>(stateMachine,
+            _resourceManager));
     }
 }
 
