@@ -42,6 +42,15 @@ class PacketManager : public IPacketManager {
         bool unpack(std::vector<uint8_t> data) override;
 
         void reset() override;
+
+        void registerBuilder(uint8_t type, std::function<std::vector<uint8_t>(std::vector<uint64_t>)> builder) override;
+        void registerParser(uint8_t type, std::function<bool(const std::vector<uint8_t>)> parser) override;
+        void registerLength(uint8_t type, uint32_t length) override;
+        void registerGameStatePackFunction(std::function<std::vector<uint8_t>(std::vector<uint64_t>, std::shared_ptr<unsigned int>)> func) override;
+        void registerGameStateUnpackFunction(std::function<unsigned int(const std::vector<uint8_t>, unsigned int)> func) override;
+        void registerLengthCombEntry(uint8_t compType, uint32_t compLength, uint64_t compSize) override;
+        void clearAllHandlers() override;
+
     private:
         uint8_t _idClient;
         uint32_t _sequenceNumber;
@@ -52,27 +61,6 @@ class PacketManager : public IPacketManager {
         std::map<uint8_t, std::function<std::vector<uint8_t>(std::vector<uint64_t>)>> _packetHandlers;
         std::map<uint8_t, std::function<bool(const std::vector<uint8_t>)>> _packetReceived;
         std::map<uint8_t, uint32_t> _packetLengths;
-
-        std::vector<uint8_t> buildConnectionPacket(std::vector<uint64_t> payload);
-        bool parseConnectionPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildAcceptationPacket(std::vector<uint64_t> payload);
-        bool parseAcceptationPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildDisconnectionPacket(std::vector<uint64_t> payload);
-        bool parseDisconnectionPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildEventPacket(std::vector<uint64_t> payload);
-        bool parseEventPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildMapPacket(std::vector<uint64_t> payload);
-        bool parseMapPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildEndGamePacket(std::vector<uint64_t> payload);
-        bool parseEndGamePacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildCanStartPacket(std::vector<uint64_t> payload);
-        bool parseCanStartPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildSpawnPlayerPacket(std::vector<uint64_t> payload);
-        bool parseSpawnPlayerPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildDeathPacket(std::vector<uint64_t> payload);
-        bool parseDeathPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildWhoAmIPacket(std::vector<uint64_t> payload);
-        bool parseWhoAmIPacket(const std::vector<uint8_t> payload);
 
         /* Pack Game State */
         std::vector<std::tuple<uint8_t, uint32_t, uint64_t>> _lengthComb;

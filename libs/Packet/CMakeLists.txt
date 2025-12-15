@@ -6,7 +6,6 @@ add_library(${PACKET_LIB_NAME} SHARED
     PacketManager.cpp
     Pack.cpp
     Unpack.cpp
-    PacketTypes.cpp
     PackGameState.cpp
     UnpackGameState.cpp
 )
