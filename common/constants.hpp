@@ -249,6 +249,7 @@ namespace constants {
     constexpr std::uint8_t PACKET_DEATH = 0x0C;
     constexpr std::uint8_t PACKET_WHOAMI = 0x0D;
 
+    const int MAX_INDEX_PACKET_TYPE = 14;
 }
 
 #endif /* !CONSTANTS_HPP_ */

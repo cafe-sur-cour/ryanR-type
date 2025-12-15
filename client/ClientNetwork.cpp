@@ -214,7 +214,7 @@ void ClientNetwork::handlePacketType(uint8_t type) {
     if (this->_packet->getPayload().empty()) {
         return;
     }
-    if (type < 14) {
+    if (type < constants::MAX_INDEX_PACKET_TYPE && this->_packetHandlers[type]) {
         (this->*_packetHandlers[type])();
     } else {
         debug::Debug::printDebug(this->_isDebug,
