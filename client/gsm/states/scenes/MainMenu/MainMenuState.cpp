@@ -138,7 +138,7 @@ MainMenuState::MainMenuState(
     _mainMenuLayout = std::make_shared<ui::UILayout>(_resourceManager, menuConfig);
     _mainMenuLayout->setSize(math::Vector2f(576.f, 400.f));
     _playButton = std::make_shared<ui::Button>(resourceManager);
-    _playButton->setText("Ready");
+    _playButton->setText("Not connected");
     _playButton->setSize(math::Vector2f(576.f, 108.f));
 
     _playButton->setOnRelease([this]() {
@@ -277,11 +277,28 @@ void MainMenuState::update(float deltaTime) {
     }
 
     _uiManager->update(deltaTime);
+    updatePlayButtonText();
     renderUI();
 }
 
 void MainMenuState::renderUI() {
     _uiManager->render();
+}
+
+void MainMenuState::updatePlayButtonText() {
+    auto network = this->_resourceManager->get<ClientNetwork>();
+    if (!network) {
+        _playButton->setText("Not connected");
+        return;
+    }
+
+    if (!network->isConnected()) {
+        _playButton->setText("Not connected");
+    } else if (network->isReady()) {
+        _playButton->setText("Waiting for other players");
+    } else {
+        _playButton->setText("Ready ?");
+    }
 }
 
 void MainMenuState::exit() {

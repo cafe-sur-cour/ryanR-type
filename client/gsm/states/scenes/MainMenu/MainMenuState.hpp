@@ -31,6 +31,7 @@ public:
 
 private:
     void renderUI();
+    void updatePlayButtonText();
 
 private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
