@@ -9,7 +9,6 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
-#include "./constants.hpp"
 #include "Core.hpp"
 #include "Constants.hpp"
 #include "initResourcesManager/initResourcesManager.hpp"
