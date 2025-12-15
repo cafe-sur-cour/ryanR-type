@@ -52,7 +52,6 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_DISC] = &ClientNetwork::handleNoOp;
     _packetHandlers[constants::PACKET_EVENT] = &ClientNetwork::handleNoOp;
     _packetHandlers[constants::PACKET_GAME_STATE] = &ClientNetwork::handleGameState;
-    _packetHandlers[constants::PACKET_MAP] = &ClientNetwork::handleMapSend;
     _packetHandlers[constants::PACKET_END_MAP] = &ClientNetwork::handleEndMap;
     _packetHandlers[constants::PACKET_END_GAME] = &ClientNetwork::handleEndGame;
     _packetHandlers[constants::PACKET_CAN_START] = &ClientNetwork::handleCanStart;

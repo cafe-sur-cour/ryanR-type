@@ -95,7 +95,6 @@ class ClientNetwork {
         void handleNoOp();
         void handleConnectionAcceptation();
         void handleGameState();
-        void handleMapSend();
         void handleEndMap();
         void handleEndGame();
         void handleCanStart();
