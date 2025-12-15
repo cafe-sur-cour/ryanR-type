@@ -42,6 +42,7 @@ class View {
         std::shared_ptr<Registry> _registry;
 };
 
+
 }  // namespace ecs
 
 #include "View.tpp"
