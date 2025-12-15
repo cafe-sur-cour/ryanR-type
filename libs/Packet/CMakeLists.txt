@@ -9,6 +9,8 @@ add_library(${PACKET_LIB_NAME} SHARED
     PacketTypes.cpp
     PackGameState.cpp
     UnpackGameState.cpp
+    ComponentDeltaTracker.cpp
+    ComponentSerializer.cpp
 )
 
 if(WIN32)
