@@ -27,19 +27,20 @@
 #include "../components/permanent/ColliderComponent.hpp"
 
 enum class ParserParam {
-    NONE,
-    NAME,
-    COMPONENTS,
+    NONE = 0,
+    NAME = 1,
+    COMPONENTS = 2,
 };
 
 enum class FieldType {
-    VECTOR2F,
-    FLOAT,
-    STRING,
-    INT,
-    BOOL,
-    OBJECT,
-    JSON,
+    VECTOR2F = 0,
+    FLOAT = 1,
+    STRING = 2,
+    INT = 3,
+    BOOL = 4,
+    OBJECT = 5,
+    JSON = 6,
+    UNDEFINED = 7
 };
 
 using FieldValueMap = std::map<std::string, std::shared_ptr<struct FieldValue>>;
@@ -54,7 +55,7 @@ struct FieldValue : FieldValueVariant {
 };
 
 struct Field {
-    std::string name;
+    std::string name = "";
     FieldType type;
     bool optional = false;
     std::shared_ptr<FieldValue> defaultValue = nullptr;

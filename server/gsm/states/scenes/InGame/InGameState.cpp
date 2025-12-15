@@ -28,6 +28,8 @@
 #include "../../../../../common/systems/interactions/InteractionSystem.hpp"
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
 #include "../../../../../common/Parser/CollisionRulesParser.hpp"
+#include "../../../../../common/systems/spawn/SpawnSystem.hpp"
+
 namespace gsm {
 
 InGameState::InGameState(std::shared_ptr<IGameStateMachine> gsm,
@@ -41,8 +43,9 @@ void InGameState::enter() {
         parser->parseAllEntities(constants::CONFIG_PATH);
     }
 
-    auto collisionData =
-        ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
+    auto collisionData = ecs::CollisionRulesParser::parseFromFile(
+        "configs/rules/collision_rules.json"
+    );
     ecs::CollisionRules::initWithData(collisionData);
     addSystem(std::make_shared<ecs::ServerMovementInputSystem>());
     addSystem(std::make_shared<ecs::ServerShootInputSystem>());
@@ -58,6 +61,7 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::ScoreSystem>());
     addSystem(std::make_shared<ecs::TriggerSystem>());
     addSystem(std::make_shared<ecs::InteractionSystem>());
+    addSystem(std::make_shared<ecs::SpawnSystem>());
 }
 
 }  // namespace gsm

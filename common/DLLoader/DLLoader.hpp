@@ -87,10 +87,12 @@ class DLLoader : public ILoader {
             if (_handler == nullptr)
                 return -1;
 #ifdef _WIN32
-            return FreeLibrary(_handler) ? 0 : -1;
+            int result = FreeLibrary(_handler) ? 0 : -1;
 #else
-            return dlclose(_handler);
+            int result = dlclose(_handler);
 #endif
+            _handler = nullptr;
+            return result;
         };
 
         const char *Error() override {

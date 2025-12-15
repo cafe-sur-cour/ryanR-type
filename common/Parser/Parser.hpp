@@ -17,8 +17,8 @@
 #include "../common/ECS/entity/registry/Registry.hpp"
 
 typedef enum {
-    CLIENT,
-    SERVER
+    CLIENT = 0,
+    SERVER = 1
 } ParsingType;
 
 class Parser {

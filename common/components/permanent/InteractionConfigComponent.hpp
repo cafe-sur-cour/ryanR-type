@@ -22,7 +22,9 @@ struct InteractionMapping {
 
 class InteractionConfigComponent : public AComponent {
     public:
-        InteractionConfigComponent() = default;
+        InteractionConfigComponent(){
+            _mappings = std::vector<InteractionMapping>();
+        };
         InteractionConfigComponent(const std::vector<InteractionMapping>& mappings)
             : _mappings(mappings) {}
         ~InteractionConfigComponent() = default;

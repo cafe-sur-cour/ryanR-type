@@ -36,7 +36,7 @@ void ScoreSystem::update(
             auto intentComp = registry->getComponent<ScoreIntentComponent>(entityId);
             if (intentComp) {
                 scoreComp->addScore(intentComp->getScore());
-                registry->removeComponent<ScoreIntentComponent>(entityId);
+                registry->removeOneComponent<ScoreIntentComponent>(entityId);
             }
         }
     }

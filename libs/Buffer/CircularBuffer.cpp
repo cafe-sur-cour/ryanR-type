@@ -15,6 +15,7 @@
 
 
 CircularBuffer::CircularBuffer() {
+    this->_buffer = std::vector<uint64_t>();
     this->_capacity = 0;
     this->_readPos = 0;
     this->_writePos = 0;
