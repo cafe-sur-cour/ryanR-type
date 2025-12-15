@@ -32,6 +32,7 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
 }
 
 pm::PacketManager::~PacketManager() {
+    this->clearAllHandlers();
     if (this->_serializer) {
         this->_serializer.reset();
     }
