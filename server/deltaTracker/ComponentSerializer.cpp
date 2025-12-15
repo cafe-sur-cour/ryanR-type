@@ -8,7 +8,7 @@
 #include <vector>
 #include <utility>
 #include "ComponentSerializer.hpp"
-#include "Constants.hpp"
+#include "../Constants.hpp"
 
 std::vector<uint64_t> rserv::ComponentSerializer::serializePosition(uint32_t x, uint32_t y) {
     uint64_t packed = (static_cast<uint64_t>(x) << constants::BITMASK_INT) | y;

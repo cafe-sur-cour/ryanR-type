@@ -8,7 +8,7 @@
 #include <vector>
 #include <map>
 #include "ComponentDeltaTracker.hpp"
-#include "Constants.hpp"
+#include "../Constants.hpp"
 
 std::vector<uint64_t> rserv::ComponentDeltaTracker::createEntityDelta(uint8_t clientId,
     uint32_t entityId, const EntitySnapshot& currentSnapshot) {
