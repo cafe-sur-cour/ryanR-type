@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "R-Type Accessibility Config",
+  "type": "object",
+  "properties": {
+    "colorFilter": { "type": "string", "enum": ["none","deuteranopia","protanopia","tritanopia","highcontrast"] },
+    "uiScale": { "type": "number", "minimum": 1.0, "maximum": 3.0 },
+    "highContrast": { "type": "boolean" },
+    "brightnessValue": { "type": "number" },
+    "colorBlindnessState": { "type": "integer" },
+    "highContrastEnabled": { "type": "boolean" }
+  },
+  "anyOf": [
+    { "required": ["colorFilter", "uiScale"] },
+    { "required": ["brightnessValue", "colorBlindnessState"] }
+  ],
+  "additionalProperties": true
+}
