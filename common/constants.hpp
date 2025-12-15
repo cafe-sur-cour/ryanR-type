@@ -198,6 +198,12 @@ namespace constants {
     const float BACKGROUND_PARALLAX_DIRECTION_Y = 0.0f;
     const std::string EMPTY_PREFAB = "empty";
 
+    const std::string HORIZONTAL_LINE_TYPE = "horizontalLine";
+    const std::string VERTICAL_LINE_TYPE = "verticalLine";
+    const std::string UNIQUE_TYPE = "unique";
+    const std::string RANDOM_TYPE = "random";
+    const std::string UNIFORM_TYPE = "uniform";
+
     /* Animation conditions */
     const std::string VELOCITY_UP_CONDITION = "isVelocityUp";
     const std::string VELOCITY_DOWN_CONDITION = "isVelocityDown";
