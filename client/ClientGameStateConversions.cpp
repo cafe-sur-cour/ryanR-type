@@ -16,15 +16,18 @@
 #include "../common/components/permanent/TransformComponent.hpp"
 #include "../common/components/permanent/HealthComponent.hpp"
 #include "../common/components/permanent/VelocityComponent.hpp"
+#include "../common/components/permanent/ProjectilePrefabComponent.hpp"
 #include "../common/components/tags/ObstacleTag.hpp"
 #include "interpolation/NetworkStateComponent.hpp"
 
 namespace {
-    inline float unpackFloat(uint64_t bits) {
-        float value;
-        memcpy(&value, &bits, sizeof(float));
-        return value;
-    }
+
+inline float unpackFloat(uint64_t bits) {
+    float value;
+    memcpy(&value, &bits, sizeof(float));
+    return value;
+}
+
 }
 
 ecs::Entity ClientNetwork::findOrCreateNetworkEntity(std::shared_ptr<ecs::Registry> registry,
@@ -395,6 +398,17 @@ size_t ClientNetwork::parseProjectilePrefabComponent(const std::vector<uint64_t>
         }
         prefabName += static_cast<char>(charVal);
     }
+
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+
+    if (!registry->hasComponent<ecs::ProjectilePrefabComponent>(entityId)) {
+        auto prefabComp = std::make_shared<ecs::ProjectilePrefabComponent>(prefabName);
+        registry->addComponent(entityId, prefabComp);
+    } else {
+        auto prefabComp = registry->getComponent<ecs::ProjectilePrefabComponent>(entityId);
+        prefabComp->setPrefabName(prefabName);
+    }
+
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " ProjectilePrefab: " + prefabName,
         debug::debugType::NETWORK, debug::debugLevel::INFO);

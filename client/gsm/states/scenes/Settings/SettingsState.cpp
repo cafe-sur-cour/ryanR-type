@@ -6,6 +6,7 @@
 */
 
 #include "SettingsState.hpp"
+#include <cmath>
 #include <memory>
 #include <string>
 #include <vector>
@@ -34,22 +35,33 @@ SettingsState::SettingsState(
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
 
+    _background = std::make_shared<ui::Background>(_resourceManager);
+
     auto config = _resourceManager->get<SettingsConfig>();
     _uiManager->setGlobalScale(config->getUIScale());
 
     auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
 
     ui::LayoutConfig settingsConfig;
-    settingsConfig.direction = ui::LayoutDirection::Horizontal;
+    settingsConfig.direction = ui::LayoutDirection::Vertical;
     settingsConfig.alignment = ui::LayoutAlignment::Center;
-    settingsConfig.spacing = 40.0f;
+    settingsConfig.spacing = 20.0f;
     settingsConfig.padding = math::Vector2f(0.0f, 0.0f);
     settingsConfig.anchorX = ui::AnchorX::Center;
     settingsConfig.anchorY = ui::AnchorY::Center;
     settingsConfig.offset = math::Vector2f(0.0f, 0.0f);
 
     _settingsLayout = std::make_shared<ui::UILayout>(resourceManager, settingsConfig);
-    _settingsLayout->setSize(math::Vector2f(900.f, 600.f));
+    _settingsLayout->setSize(math::Vector2f(1300.f, 650.f));
+
+    ui::LayoutConfig columnsConfig;
+    columnsConfig.direction = ui::LayoutDirection::Horizontal;
+    columnsConfig.alignment = ui::LayoutAlignment::Center;
+    columnsConfig.spacing = 100.0f;
+    columnsConfig.padding = math::Vector2f(0.0f, 0.0f);
+
+    auto columnsLayout = std::make_shared<ui::UILayout>(resourceManager, columnsConfig);
+    columnsLayout->setSize(math::Vector2f(1300.f, 600.f));
 
     ui::LayoutConfig columnConfig;
     columnConfig.direction = ui::LayoutDirection::Vertical;
@@ -58,17 +70,17 @@ SettingsState::SettingsState(
     columnConfig.padding = math::Vector2f(0.0f, 0.0f);
 
     _leftColumnLayout = std::make_shared<ui::UILayout>(resourceManager, columnConfig);
-    _leftColumnLayout->setSize(math::Vector2f(420.f, 600.f));
+    _leftColumnLayout->setSize(math::Vector2f(400.f, 600.f));
 
     _rightColumnLayout = std::make_shared<ui::UILayout>(resourceManager, columnConfig);
-    _rightColumnLayout->setSize(math::Vector2f(420.f, 600.f));
+    _rightColumnLayout->setSize(math::Vector2f(400.f, 600.f));
+
+    _centerColumnLayout = std::make_shared<ui::UILayout>(resourceManager, columnConfig);
+    _centerColumnLayout->setSize(math::Vector2f(250.f, 600.f));
 
     _scaleButton = std::make_shared<ui::Button>(resourceManager);
     _scaleButton->setText(getUIScaleText(config->getUIScale()));
     _scaleButton->setSize(math::Vector2f(380.f, 55.f));
-    _scaleButton->setNormalColor({150, 100, 200});
-    _scaleButton->setHoveredColor({200, 150, 255});
-    _scaleButton->setFocusedColor({255, 200, 255});
     _scaleButton->setOnRelease([this]() {
         cycleUIScale();
     });
@@ -83,11 +95,6 @@ SettingsState::SettingsState(
     _brightnessSlider->setValue(config->getBrightnessValue() * 100.0f);
     _brightnessSlider->setStep(5.0f);
     _brightnessSlider->setSize(math::Vector2f(380.f, 55.f));
-    _brightnessSlider->setTrackColor({80, 80, 80});
-    _brightnessSlider->setFillColor({100, 150, 200});
-    _brightnessSlider->setHandleColor({150, 150, 150});
-    _brightnessSlider->setHandleHoveredColor({200, 200, 200});
-    _brightnessSlider->setHandleFocusedColor({255, 200, 100});
     _brightnessSlider->setOnValueChanged([this](float value) {
         updateBrightnessFilter(value);
     });
@@ -99,11 +106,6 @@ SettingsState::SettingsState(
     _musicVolumeSlider->setValue(config->getMusicVolume());
     _musicVolumeSlider->setStep(5.0f);
     _musicVolumeSlider->setSize(math::Vector2f(380.f, 55.f));
-    _musicVolumeSlider->setTrackColor({80, 80, 80});
-    _musicVolumeSlider->setFillColor({100, 200, 100});
-    _musicVolumeSlider->setHandleColor({150, 150, 150});
-    _musicVolumeSlider->setHandleHoveredColor({200, 200, 200});
-    _musicVolumeSlider->setHandleFocusedColor({255, 200, 100});
     _musicVolumeSlider->setOnValueChanged([this](float value) {
         updateMusicVolume(value);
     });
@@ -115,11 +117,6 @@ SettingsState::SettingsState(
     _soundVolumeSlider->setValue(config->getSoundVolume());
     _soundVolumeSlider->setStep(5.0f);
     _soundVolumeSlider->setSize(math::Vector2f(380.f, 55.f));
-    _soundVolumeSlider->setTrackColor({80, 80, 80});
-    _soundVolumeSlider->setFillColor({200, 100, 100});
-    _soundVolumeSlider->setHandleColor({150, 150, 150});
-    _soundVolumeSlider->setHandleHoveredColor({200, 200, 200});
-    _soundVolumeSlider->setHandleFocusedColor({255, 200, 100});
     _soundVolumeSlider->setOnValueChanged([this](float value) {
         updateSoundVolume(value);
     });
@@ -135,22 +132,65 @@ SettingsState::SettingsState(
         _toggleSwitch->setValue(false);
     }
     _toggleSwitch->setSize(math::Vector2f(380.f, 55.f));
-    _toggleSwitch->setTrackColor({80, 80, 80});
-    _toggleSwitch->setHandleColor({150, 150, 150});
-    _toggleSwitch->setHandleHoveredColor({200, 200, 200});
-    _toggleSwitch->setHandleFocusedColor({255, 200, 100});
-    _toggleSwitch->setOnColor({0, 200, 0});
-    _toggleSwitch->setOffColor({200, 0, 0});
     _toggleSwitch->setOnValueChanged([this](bool value) {
         updateToggleValue(value);
+    });
+
+    _toggleLabel = std::make_shared<ui::Text>(resourceManager);
+    _toggleLabel->setText("Control Mode");
+    _toggleLabel->setFontSize(20);
+    _toggleLabel->setSize(math::Vector2f(380.f, 30.f));
+
+    std::vector<SettingsConfig::ScreenResolution> resolutions = {
+        SettingsConfig::ScreenResolution::FULLSCREEN,
+        SettingsConfig::ScreenResolution::RES_1920x1080,
+        SettingsConfig::ScreenResolution::RES_1280x720,
+        SettingsConfig::ScreenResolution::RES_1024x768,
+        SettingsConfig::ScreenResolution::RES_800x600
+    };
+
+    for (auto res : resolutions) {
+        auto button = std::make_shared<ui::Button>(resourceManager);
+        button->setText(getScreenResolutionText(res));
+        button->setSize(math::Vector2f(250.f, 55.f));
+        button->setOnRelease([this, res]() {
+            setScreenResolution(res);
+        });
+        button->setOnActivated([this, res]() {
+            setScreenResolution(res);
+        });
+        _resolutionButtons.push_back(button);
+    }
+
+    updateResolutionButtonColors(config->getScreenResolution());
+
+    _fpsSlider = std::make_shared<ui::Slider>(resourceManager);
+    _fpsSlider->setLabel("FPS Limit");
+    _fpsSlider->setMinValue(15.0f);
+    _fpsSlider->setMaxValue(160.0f);
+    _fpsSlider->setValue(static_cast<float>(config->getTargetFPS()));
+    _fpsSlider->setStep(5.0f);
+    _fpsSlider->setSize(math::Vector2f(250.f, 55.f));
+    _fpsSlider->setShowPercentage(false);
+    _fpsSlider->setOnValueChanged([this](float value) {
+        updateTargetFPS(static_cast<int>(std::round(value)));
+    });
+
+    _renderQualitySlider = std::make_shared<ui::Slider>(resourceManager);
+    _renderQualitySlider->setLabel("Render Quality");
+    _renderQualitySlider->setMinValue(30.0f);
+    _renderQualitySlider->setMaxValue(100.0f);
+    _renderQualitySlider->setValue(config->getRenderQuality() * 100.0f);
+    _renderQualitySlider->setStep(5.0f);
+    _renderQualitySlider->setSize(math::Vector2f(250.f, 55.f));
+    _renderQualitySlider->setShowPercentage(true);
+    _renderQualitySlider->setOnValueChanged([this](float value) {
+        updateRenderQuality(value / 100.0f);
     });
 
     _colorBlindnessButton = std::make_shared<ui::Button>(resourceManager);
     _colorBlindnessButton->setText(getColorBlindnessText(config->getColorBlindnessState()));
     _colorBlindnessButton->setSize(math::Vector2f(380.f, 55.f));
-    _colorBlindnessButton->setNormalColor({100, 100, 150});
-    _colorBlindnessButton->setHoveredColor({150, 150, 200});
-    _colorBlindnessButton->setFocusedColor({100, 200, 255});
     _colorBlindnessButton->setOnRelease([this]() {
         cycleColorBlindnessFilter();
     });
@@ -163,11 +203,6 @@ SettingsState::SettingsState(
         config->isHighContrastEnabled() ? "High Contrast: ON" : "High Contrast: OFF"
     );
     _highContrastButton->setSize(math::Vector2f(380.f, 55.f));
-    _highContrastButton->setNormalColor(
-        config->isHighContrastEnabled() ? gfx::color_t{0, 200, 0} : gfx::color_t{200, 0, 0}
-    );
-    _highContrastButton->setHoveredColor({150, 150, 200});
-    _highContrastButton->setFocusedColor({100, 200, 255});
     _highContrastButton->setOnRelease([this]() {
         toggleHighContrastFilter();
     });
@@ -178,9 +213,9 @@ SettingsState::SettingsState(
     _backButton = std::make_shared<ui::Button>(resourceManager);
     _backButton->setText("Back");
     _backButton->setSize(math::Vector2f(380.f, 55.f));
-    _backButton->setNormalColor({200, 100, 0});
-    _backButton->setHoveredColor({255, 150, 50});
-    _backButton->setFocusedColor({255, 200, 100});
+    _backButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _backButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _backButton->setOnRelease([this]() {
         this->_gsm->requestStatePop();
     });
@@ -211,7 +246,6 @@ SettingsState::SettingsState(
 
     _moveUpLabel = std::make_shared<ui::Text>(resourceManager);
     _moveUpLabel->setText("Move Up");
-    _moveUpLabel->setTextColor({255, 255, 255});
     _moveUpLabel->setFontSize(20);
     _moveUpLabel->setSize(math::Vector2f(380.f, 30.f));
 
@@ -221,9 +255,9 @@ SettingsState::SettingsState(
 
     _moveUpPrimaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveUpPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveUpPrimaryButton->setNormalColor({80, 120, 160});
-    _moveUpPrimaryButton->setHoveredColor({100, 150, 200});
-    _moveUpPrimaryButton->setFocusedColor({120, 180, 240});
+    _moveUpPrimaryButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _moveUpPrimaryButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _moveUpPrimaryButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
     _moveUpPrimaryButton->setText("1");
     updateKeyBindingButtonText(_moveUpPrimaryButton, ecs::RemappableAction::MOVE_UP, true);
     _moveUpPrimaryButton->setOnRelease([this]() {
@@ -235,9 +269,9 @@ SettingsState::SettingsState(
 
     _moveUpSecondaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveUpSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveUpSecondaryButton->setNormalColor({60, 100, 140});
-    _moveUpSecondaryButton->setHoveredColor({80, 120, 180});
-    _moveUpSecondaryButton->setFocusedColor({100, 140, 220});
+    _moveUpSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _moveUpSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _moveUpSecondaryButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _moveUpSecondaryButton->setText("2");
     updateKeyBindingButtonText(_moveUpSecondaryButton, ecs::RemappableAction::MOVE_UP, false);
     _moveUpSecondaryButton->setOnRelease([this]() {
@@ -258,7 +292,6 @@ SettingsState::SettingsState(
 
     _moveDownLabel = std::make_shared<ui::Text>(resourceManager);
     _moveDownLabel->setText("Move Down");
-    _moveDownLabel->setTextColor({255, 255, 255});
     _moveDownLabel->setFontSize(20);
     _moveDownLabel->setSize(math::Vector2f(380.f, 30.f));
 
@@ -268,9 +301,9 @@ SettingsState::SettingsState(
 
     _moveDownPrimaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveDownPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveDownPrimaryButton->setNormalColor({80, 120, 160});
-    _moveDownPrimaryButton->setHoveredColor({100, 150, 200});
-    _moveDownPrimaryButton->setFocusedColor({120, 180, 240});
+    _moveDownPrimaryButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _moveDownPrimaryButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _moveDownPrimaryButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
     _moveDownPrimaryButton->setText("1");
     updateKeyBindingButtonText(_moveDownPrimaryButton, ecs::RemappableAction::MOVE_DOWN, true);
     _moveDownPrimaryButton->setOnRelease([this]() {
@@ -282,9 +315,9 @@ SettingsState::SettingsState(
 
     _moveDownSecondaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveDownSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveDownSecondaryButton->setNormalColor({60, 100, 140});
-    _moveDownSecondaryButton->setHoveredColor({80, 120, 180});
-    _moveDownSecondaryButton->setFocusedColor({100, 140, 220});
+    _moveDownSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _moveDownSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _moveDownSecondaryButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _moveDownSecondaryButton->setText("2");
     updateKeyBindingButtonText(_moveDownSecondaryButton,
         ecs::RemappableAction::MOVE_DOWN, false);
@@ -306,7 +339,6 @@ SettingsState::SettingsState(
 
     _moveLeftLabel = std::make_shared<ui::Text>(resourceManager);
     _moveLeftLabel->setText("Move Left");
-    _moveLeftLabel->setTextColor({255, 255, 255});
     _moveLeftLabel->setFontSize(20);
     _moveLeftLabel->setSize(math::Vector2f(380.f, 30.f));
 
@@ -316,9 +348,9 @@ SettingsState::SettingsState(
 
     _moveLeftPrimaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveLeftPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveLeftPrimaryButton->setNormalColor({80, 120, 160});
-    _moveLeftPrimaryButton->setHoveredColor({100, 150, 200});
-    _moveLeftPrimaryButton->setFocusedColor({120, 180, 240});
+    _moveLeftPrimaryButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _moveLeftPrimaryButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _moveLeftPrimaryButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
     _moveLeftPrimaryButton->setText("1");
     updateKeyBindingButtonText(_moveLeftPrimaryButton, ecs::RemappableAction::MOVE_LEFT, true);
     _moveLeftPrimaryButton->setOnRelease([this]() {
@@ -330,9 +362,9 @@ SettingsState::SettingsState(
 
     _moveLeftSecondaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveLeftSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveLeftSecondaryButton->setNormalColor({60, 100, 140});
-    _moveLeftSecondaryButton->setHoveredColor({80, 120, 180});
-    _moveLeftSecondaryButton->setFocusedColor({100, 140, 220});
+    _moveLeftSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _moveLeftSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _moveLeftSecondaryButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _moveLeftSecondaryButton->setText("2");
     updateKeyBindingButtonText(_moveLeftSecondaryButton,
         ecs::RemappableAction::MOVE_LEFT, false);
@@ -354,7 +386,6 @@ SettingsState::SettingsState(
 
     _moveRightLabel = std::make_shared<ui::Text>(resourceManager);
     _moveRightLabel->setText("Move Right");
-    _moveRightLabel->setTextColor({255, 255, 255});
     _moveRightLabel->setFontSize(20);
     _moveRightLabel->setSize(math::Vector2f(380.f, 30.f));
 
@@ -364,9 +395,9 @@ SettingsState::SettingsState(
 
     _moveRightPrimaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveRightPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveRightPrimaryButton->setNormalColor({80, 120, 160});
-    _moveRightPrimaryButton->setHoveredColor({100, 150, 200});
-    _moveRightPrimaryButton->setFocusedColor({120, 180, 240});
+    _moveRightPrimaryButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _moveRightPrimaryButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _moveRightPrimaryButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
     _moveRightPrimaryButton->setText("1");
     updateKeyBindingButtonText(_moveRightPrimaryButton,
         ecs::RemappableAction::MOVE_RIGHT, true);
@@ -379,9 +410,9 @@ SettingsState::SettingsState(
 
     _moveRightSecondaryButton = std::make_shared<ui::Button>(resourceManager);
     _moveRightSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _moveRightSecondaryButton->setNormalColor({60, 100, 140});
-    _moveRightSecondaryButton->setHoveredColor({80, 120, 180});
-    _moveRightSecondaryButton->setFocusedColor({100, 140, 220});
+    _moveRightSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _moveRightSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _moveRightSecondaryButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _moveRightSecondaryButton->setText("2");
     updateKeyBindingButtonText(_moveRightSecondaryButton,
         ecs::RemappableAction::MOVE_RIGHT, false);
@@ -403,7 +434,6 @@ SettingsState::SettingsState(
 
     _shootLabel = std::make_shared<ui::Text>(resourceManager);
     _shootLabel->setText("Shoot");
-    _shootLabel->setTextColor({255, 255, 255});
     _shootLabel->setFontSize(20);
     _shootLabel->setSize(math::Vector2f(380.f, 30.f));
 
@@ -413,9 +443,9 @@ SettingsState::SettingsState(
 
     _shootPrimaryButton = std::make_shared<ui::Button>(resourceManager);
     _shootPrimaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _shootPrimaryButton->setNormalColor({80, 120, 160});
-    _shootPrimaryButton->setHoveredColor({100, 150, 200});
-    _shootPrimaryButton->setFocusedColor({120, 180, 240});
+    _shootPrimaryButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _shootPrimaryButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _shootPrimaryButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
     _shootPrimaryButton->setText("1");
     updateKeyBindingButtonText(_shootPrimaryButton, ecs::RemappableAction::SHOOT, true);
     _shootPrimaryButton->setOnRelease([this]() {
@@ -427,9 +457,9 @@ SettingsState::SettingsState(
 
     _shootSecondaryButton = std::make_shared<ui::Button>(resourceManager);
     _shootSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
-    _shootSecondaryButton->setNormalColor({60, 100, 140});
-    _shootSecondaryButton->setHoveredColor({80, 120, 180});
-    _shootSecondaryButton->setFocusedColor({100, 140, 220});
+    _shootSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _shootSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _shootSecondaryButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _shootSecondaryButton->setText("2");
     updateKeyBindingButtonText(_shootSecondaryButton, ecs::RemappableAction::SHOOT, false);
     _shootSecondaryButton->setOnRelease([this]() {
@@ -445,6 +475,11 @@ SettingsState::SettingsState(
     _shootLayout->addElement(_shootLabel);
     _shootLayout->addElement(shootButtonsLayout);
 
+    _toggleLayout = std::make_shared<ui::UILayout>(resourceManager, mappingVerticalConfig);
+    _toggleLayout->setSize(math::Vector2f(380.f, 85.f));
+    _toggleLayout->addElement(_toggleLabel);
+    _toggleLayout->addElement(_toggleSwitch);
+
     _leftColumnLayout->addElement(_musicVolumeSlider);
     _leftColumnLayout->addElement(_soundVolumeSlider);
     _leftColumnLayout->addElement(_brightnessSlider);
@@ -458,10 +493,20 @@ SettingsState::SettingsState(
     _rightColumnLayout->addElement(_moveLeftLayout);
     _rightColumnLayout->addElement(_moveRightLayout);
     _rightColumnLayout->addElement(_shootLayout);
-    _rightColumnLayout->addElement(_toggleSwitch);
+    _rightColumnLayout->addElement(_toggleLayout);
 
-    _settingsLayout->addElement(_leftColumnLayout);
-    _settingsLayout->addElement(_rightColumnLayout);
+    _centerColumnLayout->addElement(_fpsSlider);
+    _centerColumnLayout->addElement(_renderQualitySlider);
+    for (auto& button : _resolutionButtons) {
+        _centerColumnLayout->addElement(button);
+    }
+
+    columnsLayout->addElement(_leftColumnLayout);
+    columnsLayout->addElement(_centerColumnLayout);
+    columnsLayout->addElement(_rightColumnLayout);
+
+    _settingsLayout->addElement(_titleLayout);
+    _settingsLayout->addElement(columnsLayout);
     _uiManager->addElement(_settingsLayout);
 
     _settingsManager = _resourceManager->get<SettingsManager>();
@@ -481,6 +526,9 @@ void SettingsState::enter() {
             this->_gsm->requestStatePop();
         }
     });
+
+    _background->addLayer(constants::UI_BACKGROUND_EARTH_PATH, 0.0f, 0.0f,
+        math::Vector2f(5376.0f, 3584.0f));
 }
 
 void SettingsState::update(float deltaTime) {
@@ -511,6 +559,7 @@ void SettingsState::update(float deltaTime) {
             mappingManager && mappingManager->isKeyboardKey(eventResult)) {
             handleKeyRebind(eventResult);
         }
+        _background->update(deltaTime);
         _uiManager->update(deltaTime);
         renderUI();
         return;
@@ -522,16 +571,21 @@ void SettingsState::update(float deltaTime) {
 
     _uiManager->handleMouseInput(mousePos, mousePressed);
 
+    bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
+    _resourceManager->get<gfx::IWindow>()->setCursor(isHoveringUI);
+
     if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
     }
 
+    _background->update(deltaTime);
     _uiManager->update(deltaTime);
     renderUI();
 }
 
 void SettingsState::renderUI() {
+    _background->render();
     _uiManager->render();
 
     auto window = _resourceManager->get<gfx::IWindow>();
@@ -573,12 +627,10 @@ void SettingsState::applyColorBlindnessFilter(int state) {
     auto window = _resourceManager->get<gfx::IWindow>();
     if (!window) return;
 
-    // Remove all
     window->removeShaderFilter(constants::FILTER_PROTANOPIA_SHADER_PATH);
     window->removeShaderFilter(constants::FILTER_DEUTERANOPIA_SHADER_PATH);
     window->removeShaderFilter(constants::FILTER_TRITANOPIA_SHADER_PATH);
 
-    // Add the current
     if (state == 1) {
         window->addShaderFilter(constants::FILTER_PROTANOPIA_SHADER_PATH);
     } else if (state == 2) {
@@ -603,11 +655,9 @@ void SettingsState::applyHighContrastFilter(bool enabled) {
 
     if (enabled) {
         window->addShaderFilter(constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
-        _highContrastButton->setNormalColor({0, 200, 0});
         _highContrastButton->setText("High Contrast: ON");
     } else {
         window->removeShaderFilter(constants::FILTER_HIGH_CONTRAST_SHADER_PATH);
-        _highContrastButton->setNormalColor({200, 0, 0});
         _highContrastButton->setText("High Contrast: OFF");
     }
 }
@@ -686,6 +736,72 @@ std::string SettingsState::getUIScaleText(ui::UIScale scale) {
     }
 }
 
+void SettingsState::setScreenResolution(SettingsConfig::ScreenResolution resolution) {
+    auto config = _resourceManager->get<SettingsConfig>();
+    config->setScreenResolution(resolution);
+    _settingsManager->saveSettings();
+    updateResolutionButtonColors(resolution);
+
+    auto window = _resourceManager->get<gfx::IWindow>();
+    if (config->isFullscreen(resolution)) {
+        window->setFullscreen(true);
+    } else {
+        auto size = config->getScreenResolutionSize(resolution);
+        window->resizeWindow(static_cast<size_t>(size.first),
+            static_cast<size_t>(size.second));
+    }
+}
+
+void SettingsState::updateResolutionButtonColors(SettingsConfig::ScreenResolution current) {
+    std::vector<SettingsConfig::ScreenResolution> resolutions = {
+        SettingsConfig::ScreenResolution::FULLSCREEN,
+        SettingsConfig::ScreenResolution::RES_1920x1080,
+        SettingsConfig::ScreenResolution::RES_1280x720,
+        SettingsConfig::ScreenResolution::RES_1024x768,
+        SettingsConfig::ScreenResolution::RES_800x600
+    };
+
+    for (size_t i = 0; i < _resolutionButtons.size(); ++i) {
+        if (resolutions[i] == current) {
+            _resolutionButtons[i]->setNormalColor(colors::BUTTON_SECONDARY);
+            _resolutionButtons[i]->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+            _resolutionButtons[i]->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+            _resolutionButtons[i]->setState(ui::UIState::Disabled);
+        } else {
+            _resolutionButtons[i]->setNormalColor(colors::BUTTON_PRIMARY);
+            _resolutionButtons[i]->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+            _resolutionButtons[i]->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+            _resolutionButtons[i]->setState(ui::UIState::Normal);
+        }
+    }
+}
+
+void SettingsState::updateTargetFPS(int fps) {
+    auto config = _resourceManager->get<SettingsConfig>();
+    config->setTargetFPS(fps);
+    _settingsManager->saveSettings();
+
+    auto window = _resourceManager->get<gfx::IWindow>();
+    window->setFramerateLimit(static_cast<unsigned int>(fps));
+}
+
+void SettingsState::updateRenderQuality(float quality) {
+    auto config = _resourceManager->get<SettingsConfig>();
+    config->setRenderQuality(quality);
+
+    auto window = _resourceManager->get<gfx::IWindow>();
+    window->setRenderQuality(quality);
+
+    _settingsManager->saveSettings();
+}
+
+std::string SettingsState::getScreenResolutionText(
+    SettingsConfig::ScreenResolution resolution
+) {
+    SettingsConfig tempConfig;
+    return tempConfig.getScreenResolutionName(resolution);
+}
+
 void SettingsState::exit() {
     auto window = _resourceManager->get<gfx::IWindow>();
     window->setViewCenter(_savedViewCenter.getX(), _savedViewCenter.getY());
@@ -698,6 +814,14 @@ void SettingsState::exit() {
     _soundVolumeSlider.reset();
     _scaleButton.reset();
     _toggleSwitch.reset();
+    _toggleLabel.reset();
+    _toggleLayout.reset();
+    for (auto& button : _resolutionButtons) {
+        button.reset();
+    }
+    _resolutionButtons.clear();
+    _fpsSlider.reset();
+    _renderQualitySlider.reset();
 
     _moveUpLayout.reset();
     _moveUpLabel.reset();
@@ -723,6 +847,8 @@ void SettingsState::exit() {
     _shootLabel.reset();
     _shootPrimaryButton.reset();
     _shootSecondaryButton.reset();
+
+    _centerColumnLayout.reset();
 
     _leftColumnLayout.reset();
     _rightColumnLayout.reset();

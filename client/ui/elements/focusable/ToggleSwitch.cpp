@@ -107,6 +107,10 @@ void ToggleSwitch::render() {
         {static_cast<size_t>(trackX), static_cast<size_t>(trackY)},
         {static_cast<size_t>(trackWidth), static_cast<size_t>(trackHeight)});
 
+    window->drawRectangleOutline(gfx::color_t{0, 0, 0},
+        {static_cast<size_t>(trackX), static_cast<size_t>(trackY)},
+        {static_cast<size_t>(trackWidth), static_cast<size_t>(trackHeight)});
+
     float handleWidth = trackWidth / 2.0f;
     float handleHeight = trackHeight;
     float handleX = _value ? (trackX + trackWidth - handleWidth) : trackX;
@@ -120,6 +124,10 @@ void ToggleSwitch::render() {
     }
 
     window->drawFilledRectangle(handleColor,
+        {static_cast<size_t>(handleX), static_cast<size_t>(handleY)},
+        {static_cast<size_t>(handleWidth), static_cast<size_t>(handleHeight)});
+
+    window->drawRectangleOutline(gfx::color_t{0, 0, 0},
         {static_cast<size_t>(handleX), static_cast<size_t>(handleY)},
         {static_cast<size_t>(handleWidth), static_cast<size_t>(handleHeight)});
 

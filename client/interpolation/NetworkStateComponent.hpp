@@ -47,7 +47,6 @@ class NetworkStateComponent : public AComponent {
 
         ~NetworkStateComponent() = default;
 
-        // Transform
         void setCurrentTransform(const math::Vector2f& pos, float rot, const math::Vector2f& scale) {
             if (_hasTransform) {
                 _previousTransform = _currentTransform;
@@ -63,7 +62,6 @@ class NetworkStateComponent : public AComponent {
         const NetworkTransformState& getPreviousTransform() const { return _previousTransform; }
         const NetworkTransformState& getCurrentTransform() const { return _currentTransform; }
 
-        // Health
         void setCurrentHealth(uint32_t health, uint32_t baseHealth) {
             if (_hasHealth) {
                 _previousHealth = _currentHealth;

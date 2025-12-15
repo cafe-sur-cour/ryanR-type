@@ -37,11 +37,13 @@
 #include "../common/components/permanent/GameZoneComponent.hpp"
 
 namespace {
-    inline uint64_t packFloat(float value) {
-        uint64_t bits;
-        memcpy(&bits, &value, sizeof(float));
-        return bits;
-    }
+
+inline uint64_t packFloat(float value) {
+    uint64_t bits;
+    memcpy(&bits, &value, sizeof(float));
+    return bits;
+}
+
 }
 
 std::vector<uint64_t> rserv::Server::convertTagComponent(
