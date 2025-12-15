@@ -5,17 +5,20 @@
 ** Component Serializer
 */
 
+#include <vector>
+#include <utility>
 #include "ComponentSerializer.hpp"
+#include "Constants.hpp"
 
 std::vector<uint64_t> rserv::ComponentSerializer::serializePosition(uint32_t x, uint32_t y) {
-    uint64_t packed = (static_cast<uint64_t>(x) << 32) | y;
+    uint64_t packed = (static_cast<uint64_t>(x) << constants::BITMASK_INT) | y;
     return {packed};
 }
 
 void rserv::ComponentSerializer::deserializePosition(const std::vector<uint64_t>& data,
     uint32_t& x, uint32_t& y) {
     if (!data.empty()) {
-        x = static_cast<uint32_t>(data[0] >> 32);
+        x = static_cast<uint32_t>(data[0] >> constants::BITMASK_INT);
         y = static_cast<uint32_t>(data[0] & 0xFFFFFFFF);
     }
 }
@@ -29,35 +32,35 @@ std::vector<uint64_t> rserv::ComponentSerializer::serializeVelocity(int32_t vx, 
 void rserv::ComponentSerializer::deserializeVelocity(const std::vector<uint64_t>& data,
     int32_t& vx, int32_t& vy) {
     if (!data.empty()) {
-        vx = static_cast<int32_t>(data[0] >> 32);
+        vx = static_cast<int32_t>(data[0] >> constants::BITMASK_INT);
         vy = static_cast<int32_t>(data[0] & 0xFFFFFFFF);
     }
 }
 
 std::vector<uint64_t> rserv::ComponentSerializer::serializeHealth(uint32_t current,
     uint32_t max) {
-    uint64_t packed = (static_cast<uint64_t>(current) << 32) | max;
+    uint64_t packed = (static_cast<uint64_t>(current) << constants::BITMASK_INT) | max;
     return {packed};
 }
 
 void rserv::ComponentSerializer::deserializeHealth(const std::vector<uint64_t>& data,
     uint32_t& current, uint32_t& max) {
     if (!data.empty()) {
-        current = static_cast<uint32_t>(data[0] >> 32);
+        current = static_cast<uint32_t>(data[0] >> constants::BITMASK_INT);
         max = static_cast<uint32_t>(data[0] & 0xFFFFFFFF);
     }
 }
 
 std::vector<uint64_t> rserv::ComponentSerializer::serializeCollider(uint32_t x, uint32_t y,
     uint32_t width, uint32_t height, uint32_t rotation) {
-    uint64_t pos = (static_cast<uint64_t>(x) << 32) | y;
-    uint64_t size = (static_cast<uint64_t>(width) << 32) | height;
+    uint64_t pos = (static_cast<uint64_t>(x) << constants::BITMASK_INT) | y;
+    uint64_t size = (static_cast<uint64_t>(width) << constants::BITMASK_INT) | height;
     return {pos, size, rotation};
 }
 
 std::vector<uint64_t> rserv::ComponentSerializer::serializeShootingStats(uint32_t fireRate,
     uint32_t damage, uint32_t lastShot) {
-    uint64_t packed1 = (static_cast<uint64_t>(fireRate) << 32) | damage;
+    uint64_t packed1 = (static_cast<uint64_t>(fireRate) << constants::BITMASK_INT) | damage;
     return {packed1, lastShot};
 }
 
@@ -88,8 +91,8 @@ std::vector<uint64_t> rserv::ComponentSerializer::serializeNetworkId(uint32_t ne
 
 std::vector<uint64_t> rserv::ComponentSerializer::serializeGameZone(uint32_t x, uint32_t y,
     uint32_t width, uint32_t height) {
-    uint64_t pos = (static_cast<uint64_t>(x) << 32) | y;
-    uint64_t size = (static_cast<uint64_t>(width) << 32) | height;
+    uint64_t pos = (static_cast<uint64_t>(x) << constants::BITMASK_INT) | y;
+    uint64_t size = (static_cast<uint64_t>(width) << constants::BITMASK_INT) | height;
     return {pos, size};
 }
 
@@ -179,14 +182,17 @@ rserv::EntitySnapshot rserv::ComponentSerializer::createSnapshotFromComponents(
         if (compType == PROJECTILE_PREFAB) {
             if (i + 1 < componentData.size()) {
                 std::vector<uint64_t> prefabData;
-                prefabData.reserve(32);
+                prefabData.reserve(constants::BITMASK_INT);
                 size_t j = i + 1;
                 while (j < componentData.size()) {
                     prefabData.push_back(componentData[j]);
                     if (j + 2 < componentData.size() &&
-                        componentData[j] == static_cast<uint64_t>('\r') &&
-                        componentData[j + 1] == static_cast<uint64_t>('\n') &&
-                        componentData[j + 2] == static_cast<uint64_t>('\0')) {
+                        componentData[j] == static_cast<uint64_t>(
+                            constants::END_OFSTRING_ST) &&
+                        componentData[j + 1] == static_cast<uint64_t>(
+                            constants::END_OFSTRING_ND) &&
+                        componentData[j + 2] == static_cast<uint64_t>(
+                            constants::END_OFSTRING_TRD)) {
                         j += 3;
                         break;
                     }

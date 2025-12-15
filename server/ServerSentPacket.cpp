@@ -59,7 +59,8 @@ bool rserv::Server::gameStatePacket() {
                 networkId, componentData
             );
 
-            std::vector<uint64_t> delta = this->_deltaTracker.createEntityDelta(clientId, networkId, snapshot);
+            std::vector<uint64_t> delta = this->_deltaTracker.createEntityDelta(
+                clientId, networkId, snapshot);
             if (delta.empty()) {
                 continue;
             }
@@ -147,9 +148,9 @@ std::vector<uint64_t> rserv::Server::spawnPacket(size_t networkId,
     for (const auto &c : prefabName) {
         payload.push_back(static_cast<uint64_t>(c));
     }
-    payload.push_back(static_cast<uint64_t>('\r'));
-    payload.push_back(static_cast<uint64_t>('\n'));
-    payload.push_back(static_cast<uint64_t>('\0'));
+    payload.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
+    payload.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
+    payload.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
     return payload;
 }
 
