@@ -50,6 +50,11 @@
                     "toSelf": ["TakeDeath"]
                 }
             ]
+        },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "sounds/shooting.wav",
+            "volume": 50.0
         }
     }
 }
