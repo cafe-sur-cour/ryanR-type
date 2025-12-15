@@ -90,7 +90,7 @@ class ClientNetwork {
         void handlePacketType(uint8_t type);
     private:
         typedef void (ClientNetwork::*PacketHandler)();
-        PacketHandler _packetHandlers[14];
+        PacketHandler _packetHandlers[constants::MAX_INDEX_PACKET_TYPE];
 
         void handleNoOp();
         void handleConnectionAcceptation();
