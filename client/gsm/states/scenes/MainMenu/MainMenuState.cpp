@@ -138,12 +138,16 @@ MainMenuState::MainMenuState(
     _settingsButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _settingsButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _settingsButton->setOnRelease([this]() {
-        this->_gsm->requestStatePush(std::make_shared<SettingsState>(this->_gsm,
-            this->_resourceManager));
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<SettingsState>(stateMachine,
+                this->_resourceManager));
+        }
     });
     _settingsButton->setOnActivated([this]() {
-        this->_gsm->requestStatePush(std::make_shared<SettingsState>(this->_gsm,
-            this->_resourceManager));
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<SettingsState>(stateMachine,
+                this->_resourceManager));
+        }
     });
 
     _quitButton = std::make_shared<ui::Button>(resourceManager);
@@ -182,12 +186,16 @@ MainMenuState::MainMenuState(
     _devButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
     _devButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
     _devButton->setOnRelease([this]() {
-        this->_gsm->requestStatePush(std::make_shared<DevState>(this->_gsm,
-            this->_resourceManager));
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<DevState>(stateMachine,
+                this->_resourceManager));
+        }
     });
     _devButton->setOnActivated([this]() {
-        this->_gsm->requestStatePush(std::make_shared<DevState>(this->_gsm,
-            this->_resourceManager));
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<DevState>(stateMachine,
+                this->_resourceManager));
+        }
     });
     _rightLayout->addElement(_devButton);
 

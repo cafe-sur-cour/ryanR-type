@@ -15,6 +15,7 @@ namespace ecs {
 
 template <typename T>
 AComponentArray<T>::AComponentArray() {
+    this->_components = std::vector<std::vector<std::shared_ptr<T>>>();
 }
 
 template <typename T>

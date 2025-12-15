@@ -5,12 +5,17 @@
 ** Registry
 */
 
+#include <string>
+#include <memory>
+#include <unordered_map>
+
 #include "Registry.hpp"
 #include "../../../components/permanent/NetworkIdComponent.hpp"
 
 namespace ecs {
 
 Registry::Registry() : _nextEntityId(1), _onEntityDestroyed(nullptr) {
+    this->_components = std::unordered_map<std::string, std::shared_ptr<IComponentArray>>();
 }
 
 Registry::~Registry() {

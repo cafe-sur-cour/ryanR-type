@@ -41,8 +41,8 @@ class MapParser {
         std::shared_ptr<EntityPrefabManager> _prefabManager;
         std::shared_ptr<ecs::Registry> _registry;
         ecs::EntityCreationContext _creationContext;
-
         nlohmann::json _mapJson;
+
         void createBackgroundEntity(const std::string &entityName);
         void createMusicEntity(const std::string &prefabName);
         void createGameZoneEntity(float scrollSpeed);

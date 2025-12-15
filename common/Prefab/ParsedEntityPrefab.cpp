@@ -18,6 +18,7 @@
 ParsedEntityPrefab::ParsedEntityPrefab(const std::string& name, const std::map<std::type_index,
     ComponentAdder>& adders)
     : _name(name), _componentAdders(adders) {
+    this->_components = {};
 }
 
 ParsedEntityPrefab::~ParsedEntityPrefab() {

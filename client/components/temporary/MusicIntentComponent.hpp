@@ -14,9 +14,9 @@
 namespace ecs {
 
 typedef enum MusicAction {
-    PLAY,
-    PAUSE,
-    CHANGE
+    PLAY = 0,
+    PAUSE = 1,
+    CHANGE = 2
 } MusicAction;
 
 class MusicIntentComponent : public AComponent {
