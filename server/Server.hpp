@@ -23,6 +23,8 @@
 #include <memory>
 #include "IServer.hpp"
 #include "ServerConfig.hpp"
+#include "deltaTracker/ComponentDeltaTracker.hpp"
+#include "deltaTracker/ComponentSerializer.hpp"
 #include "../libs/Network/INetwork.hpp"
 #include "../libs/Buffer/IBuffer.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
@@ -89,6 +91,7 @@ namespace rserv {
             std::shared_ptr<pm::IPacketManager> getPacketManager() const;
             void incrementSequenceNumber();
             void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
+            void clearEntityDeltaCache(uint8_t clientId, uint32_t entityId);
         private:
             void loadNetworkLibrary();
             void loadBufferLibrary();
@@ -110,6 +113,8 @@ namespace rserv {
             bool _gameStarted;
             std::shared_ptr<ResourceManager> _resourceManager;
             std::chrono::steady_clock::time_point _lastGameStateTime;
+
+            ComponentDeltaTracker _deltaTracker;
 
             /* Functions to build game state packets */
             std::vector<std::function<std::vector<uint64_t>(std::shared_ptr<ecs::Registry>, ecs::Entity)>> _convertFunctions;

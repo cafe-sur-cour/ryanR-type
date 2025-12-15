@@ -35,32 +35,57 @@ bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
 }
 
 bool rserv::Server::gameStatePacket() {
-    std::vector<uint64_t> payload;
     if (!this->_resourceManager->has<ecs::Registry>()) {
         return false;
     }
-    auto registry = this->_resourceManager->get<ecs::Registry>();
-    for (ecs::Entity i = 0; i < registry->getMaxEntityId(); i++) {
-        if (!registry->hasComponent<ecs::NetworkIdComponent>(i)) {
-            continue;
-        }
-        auto netIdComp = registry->getComponent<ecs::NetworkIdComponent>(i);
-        payload.push_back(static_cast<uint64_t>(netIdComp->getNetworkId()));
-        for (const auto& func : this->_convertFunctions) {
-            std::vector<uint64_t> componentData = func(registry, i);
-            payload.insert(payload.end(), componentData.begin(), componentData.end());
-        }
 
-        if (this->_network->broadcast(this->getConnectedClientEndpoints(),
-            this->_packet->pack(constants::ID_SERVER, this->_sequenceNumber,
-            constants::PACKET_GAME_STATE, payload)) == false) {
-            debug::Debug::printDebug(this->_config->getIsDebug(),
-                "[SERVER NETWORK] Failed to broadcast game state packet",
-                debug::debugType::NETWORK, debug::debugLevel::ERROR);
-            return false;
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+    for (auto& client : this->_clients) {
+        uint8_t clientId = std::get<0>(client);
+        for (ecs::Entity i = 0; i < registry->getMaxEntityId(); i++) {
+            if (!registry->hasComponent<ecs::NetworkIdComponent>(i)) {
+                continue;
+            }
+
+            auto netIdComp = registry->getComponent<ecs::NetworkIdComponent>(i);
+            uint32_t networkId = static_cast<uint32_t>(netIdComp->getNetworkId());
+            std::vector<uint64_t> componentData;
+            for (const auto& func : this->_convertFunctions) {
+                std::vector<uint64_t> compData = func(registry, i);
+                componentData.insert(componentData.end(), compData.begin(), compData.end());
+            }
+
+            EntitySnapshot snapshot = ComponentSerializer::createSnapshotFromComponents(
+                networkId, componentData
+            );
+
+            std::vector<uint64_t> delta = this->_deltaTracker.createEntityDelta(
+                clientId, networkId, snapshot);
+            if (delta.empty()) {
+                continue;
+            }
+
+            std::vector<uint64_t> payload;
+            payload.push_back(networkId);
+            payload.insert(payload.end(), componentData.begin(), componentData.end());
+
+            std::vector<uint8_t> packet = this->_packet->pack(
+                constants::ID_SERVER,
+                this->_sequenceNumber,
+                constants::PACKET_GAME_STATE,
+                payload
+            );
+
+            if (!this->_network->sendTo(std::get<1>(client), packet)) {
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER NETWORK] Failed to send game state packet to client " +
+                    std::to_string(static_cast<int>(clientId)),
+                    debug::debugType::NETWORK, debug::debugLevel::ERROR);
+                return false;
+            }
         }
-        payload.clear();
     }
+    this->_sequenceNumber++;
     return true;
 }
 
@@ -115,19 +140,17 @@ bool rserv::Server::canStartPacket() {
     return false;
 }
 
-std::vector<uint64_t> rserv::Server::spawnPacket(
-    size_t networkId,
-    const std::string prefabName
-) {
+std::vector<uint64_t> rserv::Server::spawnPacket(size_t networkId,
+    const std::string prefabName) {
     std::vector<uint64_t> payload;
 
     payload.push_back(static_cast<uint64_t>(networkId));
     for (const auto &c : prefabName) {
         payload.push_back(static_cast<uint64_t>(c));
     }
-    payload.push_back(static_cast<uint64_t>('\r'));
-    payload.push_back(static_cast<uint64_t>('\n'));
-    payload.push_back(static_cast<uint64_t>('\0'));
+    payload.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
+    payload.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
+    payload.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
     return payload;
 }
 
