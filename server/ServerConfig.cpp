@@ -10,7 +10,7 @@
 #include "ServerConfig.hpp"
 
 rserv::ServerConfig::ServerConfig() :
-    _state(-1), _port(0), _nbClients(0) {
+    _state(-1), _port(0), _nbClients(0), _isDebug(false) {
 }
 
 rserv::ServerConfig::~ServerConfig() {
