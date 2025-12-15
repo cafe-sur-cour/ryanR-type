@@ -30,7 +30,7 @@
     ],
     "waves": [
         {
-            "gameXTrigger": 50.0,
+            "gameXTrigger": 200.0,
             "enemies": [
                 {
                     "type": "enemy1",
@@ -49,17 +49,17 @@
             ]
         },
         {
-            "gameXTrigger": 500.0,
+            "gameXTrigger": 1000.0,
             "enemies": [
                 {
                     "type": "enemy2",
                     "distributionX": {
-                        "min": 95,
-                        "max": 100,
+                        "min": 90,
+                        "max": 95,
                         "type": "random"
                     },
                     "distributionY": {
-                        "min": 20,
+                        "min": 50,
                         "max": 80,
                         "type": "uniform"
                     },
@@ -68,13 +68,13 @@
                 {
                     "type": "enemy3",
                     "distributionX": {
-                        "min": 0,
-                        "max": 5,
+                        "min": 10,
+                        "max": 15,
                         "type": "random"
                     },
                     "distributionY": {
                         "min": 20,
-                        "max": 80,
+                        "max": 50,
                         "type": "uniform"
                     },
                     "count": 4

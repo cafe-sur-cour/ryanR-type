@@ -514,6 +514,7 @@ std::vector<float> MapParser::getPositionsFromDistrib(
 
         for (int i = 0; i < count; ++i) {
             values.push_back(
+                static_cast<float>(real_min) +
                 static_cast<float>(i) * static_cast<float>(offset)
             );
         }
