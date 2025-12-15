@@ -28,7 +28,7 @@ void AGameState::addSystem(std::shared_ptr<ecs::ISystem> system) {
         _resourceManager->get<ecs::ISystemManager>()->addSystem(system);
     else
         throw err::ClientError("ISystemManager not found in ResourceManager",
-            err::ClientError::UNKNOWN);
+            err::ClientError::NOT_INITIALIZED);
     _systems.push_back(system);
 }
 

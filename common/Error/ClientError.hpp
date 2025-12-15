@@ -18,7 +18,9 @@ class ClientError : public AError {
             UNKNOWN = 2000,
             CONNECTION_FAILED = 2001,
             DISCONNECTED = 2002,
-            TIMEOUT = 2003
+            TIMEOUT = 2003,
+            NOT_INITIALIZED = 2004,
+            CAN_NOT_OPEN_FILE = 2005
         };
 
         ClientError(const std::string &message, ErrorCode code = UNKNOWN);

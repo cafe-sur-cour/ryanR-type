@@ -21,7 +21,7 @@ CollisionRulesData CollisionRulesParser::parseFromFile(const std::string& filePa
     std::ifstream collisionFile(filePath);
     if (!collisionFile.is_open()) {
         throw err::ClientError("Cannot open collision rules file: " +
-            filePath, err::ClientError::UNKNOWN);
+            filePath, err::ClientError::CAN_NOT_OPEN_FILE);
     }
     std::string jsonString((std::istreambuf_iterator<char>(collisionFile)),
         std::istreambuf_iterator<char>());
