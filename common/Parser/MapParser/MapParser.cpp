@@ -79,40 +79,13 @@ void MapParser::parseMap(const nlohmann::json &mapJson) {
         parseWaves(mapJson[constants::WAVES_FIELD]);
 }
 
-std::vector<std::uint64_t> MapParser::createPacketFromMap() {
-    std::string jsonStr = this->_mapJson.dump();
-
-    std::vector<std::uint64_t> data;
-    for (size_t i = 0; i < jsonStr.size(); i += 8) {
-        uint64_t value = 0;
-        for (size_t j = 0; j < 8 && (i + j) < jsonStr.size(); ++j) {
-            value |= static_cast<uint64_t>(static_cast<uint8_t>(jsonStr[i + j])) << (j * 8);
-        }
-        data.push_back(value);
-    }
-    return data;
-}
-
-void MapParser::parseMapFromPacket(std::vector<uint8_t> mapData) {
-    std::string jsonStr(mapData.begin(), mapData.end());
-
-    nlohmann::json mapJson;
-    try {
-        mapJson = nlohmann::json::parse(jsonStr);
-    } catch (const nlohmann::detail::exception& e) {
-        throw err::ParserError("Invalid JSON format in map data: "
-            + std::string(e.what()),
-            err::ParserError::INVALID_FORMAT);
-    }
-    if (!this->_mapJson.is_null())
-        this->_mapJson.clear();
-    this->_mapJson = mapJson;
-    parseMap(mapJson);
-}
-
 void MapParser::generateMapEntities() {
     if (_mapJson.is_null()) {
         std::cout << "[MapParser] No map data available to generate entities" << std::endl;
+        return;
+    }
+    if (_creationContext.origin == ecs::EntityCreationOrigin::CLIENT_LOCAL) {
+        std::cout << "[MapParser] Skipping entity creation for client" << std::endl;
         return;
     }
     parseMap(_mapJson);
@@ -145,55 +118,15 @@ void MapParser::createBackgroundEntity(const std::string& entityName) {
 }
 
 void MapParser::createGameZoneEntity(float scrollSpeed) {
-    auto factory = _prefabManager->getEntityFactory();
-    ecs::Entity gameZoneEntity = factory->createEntity(_registry, _creationContext);
+    ecs::Entity gameZoneEntity = _prefabManager->createEntityFromPrefab(
+        constants::GAME_ZONE_PREFAB, _registry, _creationContext);
 
-    _registry->addComponent<ecs::TransformComponent>(
-        gameZoneEntity,
-        std::make_shared<ecs::TransformComponent>(math::Vector2f(0.0f, 0.0f))
-    );
-    _registry->addComponent<ecs::VelocityComponent>(
-        gameZoneEntity,
-        std::make_shared<ecs::VelocityComponent>(math::Vector2f(scrollSpeed, 0.0f))
-    );
-    math::FRect zoneRect(0.0f, 0.0f, constants::MAX_WIDTH, constants::MAX_HEIGHT);
-    _registry->addComponent<ecs::GameZoneComponent>(
-        gameZoneEntity,
-        std::make_shared<ecs::GameZoneComponent>(zoneRect)
-    );
-    _registry->addComponent<ecs::GameZoneColliderTag>(
-        gameZoneEntity,
-        std::make_shared<ecs::GameZoneColliderTag>()
-    );
-    _registry->addComponent<ecs::ColliderComponent>(
-        gameZoneEntity,
-        std::make_shared<ecs::ColliderComponent>(
-            math::Vector2f(0.0f, -constants::GAME_ZONE_BOUNDARY_THICKNESS),
-            math::Vector2f(constants::MAX_WIDTH, constants::GAME_ZONE_BOUNDARY_THICKNESS)
-        )
-    );
-    _registry->addComponent<ecs::ColliderComponent>(
-        gameZoneEntity,
-        std::make_shared<ecs::ColliderComponent>(
-            math::Vector2f(0.0f, constants::MAX_HEIGHT),
-            math::Vector2f(constants::MAX_WIDTH, constants::GAME_ZONE_BOUNDARY_THICKNESS)
-        )
-    );
-    _registry->addComponent<ecs::ColliderComponent>(
-        gameZoneEntity,
-        std::make_shared<ecs::ColliderComponent>(
-            math::Vector2f(constants::MAX_WIDTH, 0.0f),
-            math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT)
-        )
-    );
-    _registry->addComponent<ecs::ColliderComponent>(
-        gameZoneEntity,
-        std::make_shared<ecs::ColliderComponent>(
-            math::Vector2f(-constants::GAME_ZONE_BOUNDARY_THICKNESS, 0.0f),
-            math::Vector2f(constants::GAME_ZONE_BOUNDARY_THICKNESS, constants::MAX_HEIGHT),
-            ecs::CollisionType::Push
-        )
-    );
+    if (_registry->hasComponent<ecs::VelocityComponent>(gameZoneEntity)) {
+        auto velocityComp = _registry->getComponent<ecs::VelocityComponent>(gameZoneEntity);
+        if (velocityComp) {
+            velocityComp->setVelocity(math::Vector2f(scrollSpeed, 0.0f));
+        }
+    }
 }
 
 void MapParser::parsePowerUps(const nlohmann::json &powerUps) {
@@ -545,7 +478,7 @@ void MapParser::createMusicEntity(const std::string& prefabName) {
     if (_prefabManager->hasPrefab(prefabName)) {
         try {
             ecs::EntityCreationContext musicContext =
-                ecs::EntityCreationContext::forLocalClient();
+                ecs::EntityCreationContext::forServer();
             _prefabManager->createEntityFromPrefab(prefabName, _registry, musicContext);
         } catch (const std::exception& e) {
             std::cerr << "Error creating music entity: " << e.what() << std::endl;

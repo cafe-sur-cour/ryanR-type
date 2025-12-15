@@ -36,6 +36,16 @@
 #include "../common/components/permanent/NetworkIdComponent.hpp"
 #include "../common/components/permanent/GameZoneComponent.hpp"
 
+namespace {
+
+inline uint64_t packFloat(float value) {
+    uint64_t bits;
+    memcpy(&bits, &value, sizeof(float));
+    return bits;
+}
+
+}
+
 std::vector<uint64_t> rserv::Server::convertTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
@@ -51,11 +61,11 @@ std::vector<uint64_t> rserv::Server::convertTransformComponent(
     if (registry->hasComponent<ecs::TransformComponent>(i)) {
         auto transform = registry->getComponent<ecs::TransformComponent>(i);
         data.push_back(static_cast<uint64_t>(TRANSFORM));
-        data.push_back(static_cast<uint64_t>(transform->getPosition().getX()));
-        data.push_back(static_cast<uint64_t>(transform->getPosition().getY()));
-        data.push_back(static_cast<uint64_t>(transform->getRotation()));
-        data.push_back(static_cast<uint64_t>(transform->getScale().getX()));
-        data.push_back(static_cast<uint64_t>(transform->getScale().getY()));
+        data.push_back(packFloat(transform->getPosition().getX()));
+        data.push_back(packFloat(transform->getPosition().getY()));
+        data.push_back(packFloat(transform->getRotation()));
+        data.push_back(packFloat(transform->getScale().getX()));
+        data.push_back(packFloat(transform->getScale().getY()));
     }
     return data;
 }
@@ -66,7 +76,7 @@ std::vector<uint64_t> rserv::Server::convertSpeedComponent(
     if (registry->hasComponent<ecs::SpeedComponent>(i)) {
         auto speed = registry->getComponent<ecs::SpeedComponent>(i);
         data.push_back(static_cast<uint64_t>(SPEED_COMP));
-        data.push_back(static_cast<uint64_t>(speed->getSpeed()));
+        data.push_back(packFloat(speed->getSpeed()));
     }
     return data;
 }
@@ -77,8 +87,8 @@ std::vector<uint64_t> rserv::Server::convertHealthComponent(
     if (registry->hasComponent<ecs::HealthComponent>(i)) {
         auto health = registry->getComponent<ecs::HealthComponent>(i);
         data.push_back(static_cast<uint64_t>(HEALTH));
-        data.push_back(static_cast<uint64_t>(health->getHealth()));
-        data.push_back(static_cast<uint64_t>(health->getBaseHealth()));
+        data.push_back(packFloat(health->getHealth()));
+        data.push_back(packFloat(health->getBaseHealth()));
     }
     return data;
 }
@@ -89,10 +99,10 @@ std::vector<uint64_t> rserv::Server::convertColliderComponent(
     if (registry->hasComponent<ecs::ColliderComponent>(i)) {
         auto collider = registry->getComponent<ecs::ColliderComponent>(i);
         data.push_back(static_cast<uint64_t>(COLLIDER));
-        data.push_back(static_cast<uint64_t>(collider->getOffset().getX()));
-        data.push_back(static_cast<uint64_t>(collider->getOffset().getY()));
-        data.push_back(static_cast<uint64_t>(collider->getSize().getX()));
-        data.push_back(static_cast<uint64_t>(collider->getSize().getY()));
+        data.push_back(packFloat(collider->getOffset().getX()));
+        data.push_back(packFloat(collider->getOffset().getY()));
+        data.push_back(packFloat(collider->getSize().getX()));
+        data.push_back(packFloat(collider->getSize().getY()));
         data.push_back(static_cast<uint64_t>(collider->getType()));
     }
     return data;
@@ -104,12 +114,11 @@ std::vector<uint64_t> rserv::Server::convertShootStatComponent(
     if (registry->hasComponent<ecs::ShootingStatsComponent>(i)) {
         auto shootStats = registry->getComponent<ecs::ShootingStatsComponent>(i);
         data.push_back(static_cast<uint64_t>(SHOOTING_STATS));
-        data.push_back(static_cast<uint64_t>(shootStats->getFireRate()));
-        data.push_back(static_cast<uint64_t>(shootStats->getCooldownTimer()));
+        data.push_back(packFloat(shootStats->getFireRate()));
+        data.push_back(packFloat(shootStats->getCooldownTimer()));
         data.push_back(static_cast<uint64_t>(shootStats->getMultiShotPattern().shotCount));
-        data.push_back(static_cast<uint64_t>(shootStats->getMultiShotPattern().angleSpread));
-        data.push_back(static_cast<uint64_t>(
-            shootStats->getMultiShotPattern().offsetDistance));
+        data.push_back(packFloat(shootStats->getMultiShotPattern().angleSpread));
+        data.push_back(packFloat(shootStats->getMultiShotPattern().offsetDistance));
     }
     return data;
 }
@@ -132,11 +141,11 @@ std::vector<uint64_t> rserv::Server::convertAIMovementPatternComponent(
         auto pattern = registry->getComponent<ecs::AIMovementPatternComponent>(i);
         data.push_back(static_cast<uint64_t>(AI_MOVEMENT_PATTERN));
         data.push_back(static_cast<uint64_t>(pattern->getPattern()));
-        data.push_back(static_cast<uint64_t>(pattern->getZigzagAmplitude()));
-        data.push_back(static_cast<uint64_t>(pattern->getZigzagFrequency()));
-        data.push_back(static_cast<uint64_t>(pattern->getDetectionRange()));
-        data.push_back(static_cast<uint64_t>(pattern->getVerticalDeadzone()));
-        data.push_back(static_cast<uint64_t>(pattern->getTimer()));
+        data.push_back(packFloat(pattern->getZigzagAmplitude()));
+        data.push_back(packFloat(pattern->getZigzagFrequency()));
+        data.push_back(packFloat(pattern->getDetectionRange()));
+        data.push_back(packFloat(pattern->getVerticalDeadzone()));
+        data.push_back(packFloat(pattern->getTimer()));
     }
     return data;
 }
@@ -147,7 +156,7 @@ std::vector<uint64_t> rserv::Server::convertDamageComponent(
     if (registry->hasComponent<ecs::DamageComponent>(i)) {
         auto damageComp = registry->getComponent<ecs::DamageComponent>(i);
         data.push_back(static_cast<uint64_t>(DAMAGE));
-        data.push_back(static_cast<uint64_t>(damageComp->getDamage()));
+        data.push_back(packFloat(damageComp->getDamage()));
     }
     return data;
 }
@@ -158,7 +167,7 @@ std::vector<uint64_t> rserv::Server::convertLifetimeComponent(
     if (registry->hasComponent<ecs::LifetimeComponent>(i)) {
         auto lifetimeComp = registry->getComponent<ecs::LifetimeComponent>(i);
         data.push_back(static_cast<uint64_t>(LIFETIME));
-        data.push_back(static_cast<uint64_t>(lifetimeComp->getLifetime()));
+        data.push_back(packFloat(lifetimeComp->getLifetime()));
     }
     return data;
 }
@@ -169,8 +178,8 @@ std::vector<uint64_t> rserv::Server::convertVelocityComponent(
     if (registry->hasComponent<ecs::VelocityComponent>(i)) {
         auto velocity = registry->getComponent<ecs::VelocityComponent>(i);
         data.push_back(static_cast<uint64_t>(VELOCITY));
-        data.push_back(static_cast<uint64_t>(velocity->getVelocity().getX()));
-        data.push_back(static_cast<uint64_t>(velocity->getVelocity().getY()));
+        data.push_back(packFloat(velocity->getVelocity().getX()));
+        data.push_back(packFloat(velocity->getVelocity().getY()));
     }
     return data;
 }
@@ -299,10 +308,10 @@ std::vector<uint64_t> rserv::Server::convertGameZoneComponent(
     if (registry->hasComponent<ecs::GameZoneComponent>(i)) {
         auto gameZoneComp = registry->getComponent<ecs::GameZoneComponent>(i);
         data.push_back(static_cast<uint64_t>(GAME_ZONE));
-        data.push_back(static_cast<uint64_t>(gameZoneComp->getZone().getHeight()));
-        data.push_back(static_cast<uint64_t>(gameZoneComp->getZone().getWidth()));
-        data.push_back(static_cast<uint64_t>(gameZoneComp->getZone().getLeft()));
-        data.push_back(static_cast<uint64_t>(gameZoneComp->getZone().getTop()));
+        data.push_back(packFloat(gameZoneComp->getZone().getHeight()));
+        data.push_back(packFloat(gameZoneComp->getZone().getWidth()));
+        data.push_back(packFloat(gameZoneComp->getZone().getLeft()));
+        data.push_back(packFloat(gameZoneComp->getZone().getTop()));
     }
     return data;
 }

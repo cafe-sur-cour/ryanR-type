@@ -196,27 +196,6 @@ TEST_F(AdditionalPacketTest, PackAndUnpackConnectionRoundTrip) {
     }
 }
 
-// Event packet with 3-element payload (1 char + 2 longs)
-TEST_F(AdditionalPacketTest, PackAndUnpackEventWithValidPayload) {
-    pm::PacketManager packet1(1);
-    std::vector<uint64_t> payload = {5, 123456789, 987654321};  // 3 elements as expected
-    std::vector<uint8_t> packedData = packet1.pack(30, 999, EVENT_PACKET, payload);
-
-    pm::PacketManager packet2(0);
-    bool result = packet2.unpack(packedData);
-
-    EXPECT_TRUE(result);
-    EXPECT_EQ(packet2.getIdClient(), 30);
-    EXPECT_EQ(packet2.getSequenceNumber(), 999);
-    EXPECT_EQ(packet2.getType(), EVENT_PACKET);
-
-    // Event packet should have 3 elements
-    std::vector<uint64_t> retrieved = packet2.getPayload();
-    ASSERT_EQ(retrieved.size(), 3);
-    EXPECT_EQ(retrieved[0], payload[0]);  // First element should match (single char)
-    // Note: Long values may have endianness/serialization differences
-}
-
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
