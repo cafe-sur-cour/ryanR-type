@@ -18,7 +18,7 @@ namespace rserv {
 
 struct EntitySnapshot {
     uint32_t entityId;
-    uint32_t componentMask;  // Bitmask of present components
+    uint32_t componentMask;
     std::map<uint8_t, std::vector<uint64_t>> components;
 
     EntitySnapshot() : entityId(0), componentMask(0) {}

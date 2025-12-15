@@ -14,8 +14,6 @@ add_library(${SERVER_LIB_NAME}
     Utils.hpp
     Core.cpp
     Core.hpp
-    ComponentDeltaTracker.cpp
-    ComponentSerializer.cpp
 )
 
 find_package(asio CONFIG REQUIRED)
@@ -45,6 +43,7 @@ target_include_directories(${SERVER_LIB_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/common
 add_subdirectory(gsm)
 add_subdirectory(initResourcesManager)
 add_subdirectory(systems)
+add_subdirectory(deltaTracker)
 
 set(SERVER_BIN_NAME r-type_server)
 

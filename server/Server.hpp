@@ -23,6 +23,8 @@
 #include <memory>
 #include "IServer.hpp"
 #include "ServerConfig.hpp"
+#include "deltaTracker/ComponentDeltaTracker.hpp"
+#include "deltaTracker/ComponentSerializer.hpp"
 #include "../libs/Network/INetwork.hpp"
 #include "../libs/Buffer/IBuffer.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
@@ -31,8 +33,6 @@
 #include "../common/InputMapping/InputAction.hpp"
 #include "../common/resourceManager/ResourceManager.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
-#include "ComponentDeltaTracker.hpp"
-#include "ComponentSerializer.hpp"
 #include "Signal.hpp"
 
 namespace rserv {
