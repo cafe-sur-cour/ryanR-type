@@ -205,7 +205,7 @@ jobs:
         id: get_version_type
         run: |
           # Get labels from the latest merged PR
-          PR_NUMBER=$(gh pr list --state merged --limit 1 --json number --jq '.[0].number')
+          PR_NUMBER=$(gh pr list --state merged --limit 10 --json mergedAt,number --jq 'sort_by(.mergedAt) | reverse | .[0].number')
           if [ -n "$PR_NUMBER" ]; then
             LABELS=$(gh pr view $PR_NUMBER --json labels --jq '.labels[].name')
             echo "Labels found: $LABELS"
