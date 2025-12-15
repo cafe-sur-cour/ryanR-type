@@ -62,18 +62,15 @@ void DeathSystem::update(
             }
         }
 
-        /* TODO(anyone): fix the explosion spawning logic and handling with network */
-        // std::string explosionPrefab = "";
-        // if (registry->hasComponent<MobTag>(entityId)) {
-        //     explosionPrefab = constants::SMALL_EXPLOSION;
-        // } else if (registry->hasComponent<PlayerTag>(entityId)) {
-        //     explosionPrefab = constants::BIG_EXPLOSION;
-        // }
-        // if (!explosionPrefab.empty()) {
-        //     spawnExplosionAtMobCenter(resourceManager, registry, entityId, explosionPrefab);
-        // }
-
-        (void) resourceManager;
+        std::string explosionPrefab = "";
+        if (registry->hasComponent<MobTag>(entityId)) {
+            explosionPrefab = constants::SMALL_EXPLOSION;
+        } else if (registry->hasComponent<PlayerTag>(entityId)) {
+            explosionPrefab = constants::BIG_EXPLOSION;
+        }
+        if (!explosionPrefab.empty()) {
+            spawnExplosionAtMobCenter(resourceManager, registry, entityId, explosionPrefab);
+        }
         registry->destroyEntity(entityId);
     }
 }

@@ -29,6 +29,7 @@ class EntityFactory : public IEntityFactory {
     private:
         size_t resolveNetworkId(const EntityCreationContext& context);
         std::atomic<size_t> _nextNetworkId;
+        std::atomic<size_t> _nextLocalId;
 };
 
 }  // namespace ecs
