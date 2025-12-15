@@ -44,7 +44,7 @@ void TextInput::render() {
     );
 
     gfx::color_t borderColor = _focused ?
-        gfx::color_t{0, 123, 255} : gfx::color_t{200, 200, 200};
+        colors::UI_ACCENT : colors::UI_DISABLED;
     resourceManager->get<gfx::IWindow>()->drawRoundedRectangleOutline(
         borderColor,
         {static_cast<size_t>(absPos.getX()), static_cast<size_t>(absPos.getY())},
@@ -78,13 +78,13 @@ void TextInput::render() {
         auto textSize = resourceManager->get<gfx::IWindow>()->getTextSize(
             textBeforeCursor, _fontPath, getFontSize()
         );
-        float cursorX = absPos.getX() + 15.0f + static_cast<float>(textSize.first);
+        float cursorX = absPos.getX() + 12.0f + static_cast<float>(textSize.first);
         float cursorY = absPos.getY() + (
             absSize.getY() - static_cast<float>(textSize.second)
         ) / 2.0f;
 
         resourceManager->get<gfx::IWindow>()->drawFilledRectangle(
-            {0, 0, 0},
+            colors::BLACK,
             {static_cast<size_t>(cursorX), static_cast<size_t>(cursorY)},
             {2, static_cast<size_t>(static_cast<double>(textSize.second) * 1.5)}
         );
