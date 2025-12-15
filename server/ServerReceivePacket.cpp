@@ -82,10 +82,19 @@ bool rserv::Server::processEvents(uint8_t idClient) {
         "[SERVER] Processing event packet from client: "
         + std::to_string(idClient),
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    constants::EventType eventType =
-        static_cast<constants::EventType>(this->_packet->getPayload().at(0));
 
-    uint64_t param1Bits = this->_packet->getPayload().at(1);
+    auto payload = this->_packet->getPayload();
+    if (payload.size() < 2) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Invalid event packet payload size: " + std::to_string(payload.size()),
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
+    constants::EventType eventType =
+        static_cast<constants::EventType>(payload.at(0));
+
+    uint64_t param1Bits = payload.at(1);
     double param1;
     std::memcpy(&param1, &param1Bits, sizeof(double));
 
