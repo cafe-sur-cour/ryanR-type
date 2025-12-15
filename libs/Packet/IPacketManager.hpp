@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <cstdint>
+#include <functional>
 #include <string>
 #include "../Buffer/IBuffer.hpp"
 
@@ -62,6 +63,14 @@ namespace pm {
         virtual bool unpack(std::vector<uint8_t> data) = 0;
 
         virtual void reset() = 0;
+
+        virtual void registerBuilder(uint8_t type, std::function<std::vector<uint8_t>(std::vector<uint64_t>)> builder) = 0;
+        virtual void registerParser(uint8_t type, std::function<bool(const std::vector<uint8_t>)> parser) = 0;
+        virtual void registerLength(uint8_t type, uint32_t length) = 0;
+        virtual void registerGameStatePackFunction(std::function<std::vector<uint8_t>(std::vector<uint64_t>, std::shared_ptr<unsigned int>)> func) = 0;
+        virtual void registerGameStateUnpackFunction(std::function<unsigned int(const std::vector<uint8_t>, unsigned int)> func) = 0;
+        virtual void registerLengthCombEntry(uint8_t compType, uint32_t compLength, uint64_t compSize) = 0;
+        virtual void clearAllHandlers() = 0;
 };
 } // namespace pm
 
