@@ -92,20 +92,16 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
 rserv::Server::~Server() {
     if (this->getState() == 1)
         this->stop();
-    if (this->_network != nullptr &&
-        this->_networloader.getHandler() != nullptr) {
+    this->_resourceManager->clear();
+
+    if (this->_network != nullptr) {
         this->_network.reset();
-        this->_networloader.Close();
     }
-    if (this->_buffer != nullptr &&
-        this->_bufferloader.getHandler() != nullptr) {
+    if (this->_buffer != nullptr) {
         this->_buffer.reset();
-        this->_bufferloader.Close();
     }
-    if (this->_packet != nullptr &&
-        this->_packetloader.getHandler() != nullptr) {
+    if (this->_packet != nullptr) {
         this->_packet.reset();
-        this->_packetloader.Close();
     }
 }
 
@@ -349,6 +345,10 @@ void rserv::Server::incrementSequenceNumber() {
 }
 
 void rserv::Server::setResourceManager(std::shared_ptr<ResourceManager> resourceManager) {
+    if (this->_resourceManager != nullptr) {
+        this->_resourceManager.reset();
+        this->_resourceManager = nullptr;
+    }
     this->_resourceManager = resourceManager;
 }
 

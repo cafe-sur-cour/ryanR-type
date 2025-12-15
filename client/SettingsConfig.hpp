@@ -35,11 +35,11 @@ public:
     void setSoundVolume(float volume) { _soundVolume = volume; }
 
     enum class ScreenResolution {
-        RES_800x600,
-        RES_1024x768,
-        RES_1280x720,
-        RES_1920x1080,
-        FULLSCREEN
+        RES_800x600 = 0,
+        RES_1024x768 = 1,
+        RES_1280x720 = 2,
+        RES_1920x1080 = 3,
+        FULLSCREEN = 4
     };
 
     ScreenResolution getScreenResolution() const { return _screenResolution; }

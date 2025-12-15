@@ -24,13 +24,13 @@ class EntityParser {
         using ShouldParseComponentCallback = ComposantParser::ShouldParseComponentCallback;
         EntityParser(
             std::shared_ptr<const std::map<std::string, std::pair<std::type_index, std::vector<Field>>>> componentDefinitions,
-            const std::map<std::type_index, ComponentCreator>& componentCreators,
-            const std::map<std::type_index, ComponentAdder>& componentAdders,
-            const ShouldParseComponentCallback& shouldParseCallback = nullptr
+            const std::map<std::type_index, ComponentCreator> &componentCreators,
+            const std::map<std::type_index, ComponentAdder> &componentAdders,
+            const ShouldParseComponentCallback &shouldParseCallback = nullptr
         );
         ~EntityParser();
 
-        std::shared_ptr<IPrefab> parseEntity(const std::string& filePath);
+        std::shared_ptr<IPrefab> parseEntity(const std::string &filePath);
 
     protected:
     private:

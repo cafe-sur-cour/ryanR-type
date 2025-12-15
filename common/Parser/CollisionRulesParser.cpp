@@ -13,13 +13,15 @@
 #include <utility>
 #include <nlohmann/json.hpp>
 #include "../constants.hpp"
+#include "../Error/ClientError.hpp"
 
 namespace ecs {
 
 CollisionRulesData CollisionRulesParser::parseFromFile(const std::string& filePath) {
     std::ifstream collisionFile(filePath);
     if (!collisionFile.is_open()) {
-        throw std::runtime_error("Cannot open collision rules file: " + filePath);
+        throw err::ClientError("Cannot open collision rules file: " +
+            filePath, err::ClientError::CAN_NOT_OPEN_FILE);
     }
     std::string jsonString((std::istreambuf_iterator<char>(collisionFile)),
         std::istreambuf_iterator<char>());

@@ -17,4 +17,8 @@ target_sources(${ERROR_LIB} PUBLIC
     ClientNetworkError.hpp
     ParserError.cpp
     ParserError.hpp
+    LibrairiesLoadError.cpp
+    LibrairiesLoadError.hpp
+    ClientError.cpp
+    ClientError.hpp
 )
