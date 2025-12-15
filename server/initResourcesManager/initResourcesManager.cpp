@@ -74,6 +74,10 @@ std::shared_ptr<ResourceManager> initResourcesManager(
                     auto netIdComp = registry->getComponent<ecs::NetworkIdComponent>(entity);
                     if (netIdComp) {
                         size_t networkId = netIdComp->getNetworkId();
+                        for (const auto& client : server->getConnectedClients()) {
+                            server->clearEntityDeltaCache(client, static_cast<uint32_t>(networkId));
+                        }
+
                         std::vector<uint64_t> deathData = server->deathPacket(networkId);
                         std::vector<uint8_t> deathPacketData =
                             server->getPacketManager()->pack(0,

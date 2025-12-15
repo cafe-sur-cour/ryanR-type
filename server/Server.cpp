@@ -351,3 +351,7 @@ void rserv::Server::incrementSequenceNumber() {
 void rserv::Server::setResourceManager(std::shared_ptr<ResourceManager> resourceManager) {
     this->_resourceManager = resourceManager;
 }
+
+void rserv::Server::clearEntityDeltaCache(uint8_t clientId, uint32_t entityId) {
+    this->_deltaTracker.clearEntityCache(clientId, entityId);
+}
