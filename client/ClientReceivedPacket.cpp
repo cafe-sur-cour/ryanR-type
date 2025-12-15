@@ -45,11 +45,6 @@ void ClientNetwork::handleConnectionAcceptation() {
 }
 
 void ClientNetwork::handleGameState() {
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Received game state packet, starting parsing...",
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
-
     auto payload = _packet->getPayload();
     if (payload.empty()) {
         debug::Debug::printDebug(this->_isDebug,
@@ -87,11 +82,6 @@ void ClientNetwork::handleGameState() {
             debug::debugLevel::WARNING);
         return;
     }
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Processing entity NetworkID: " + std::to_string(networkId) +
-            " (local ID: " + std::to_string(entityId) + ")",
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
     while (index < payload.size()) {
         uint64_t componentType = payload[index++];
         auto it = _componentParsers.find(componentType);
@@ -120,7 +110,7 @@ void ClientNetwork::handleCanStart() {
         return;
     }
     debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Received can start packet, starting parsing...",
+        "[CLIENT] Received can start packet",
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
     std::vector<uint64_t> payload = _packet->getPayload();
@@ -138,12 +128,6 @@ void ClientNetwork::handleCanStart() {
 
     this->_clientNames = names;
     this->_ready = true;
-    for (const auto &name : this->_clientNames) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Player name: " + name,
-            debug::debugType::NETWORK,
-            debug::debugLevel::INFO);
-    }
 
     std::vector<uint64_t> whoamiPayload;
     std::vector<uint8_t> whoamiPacket = _packet->pack(_idClient, _sequenceNumber,
@@ -159,11 +143,6 @@ void ClientNetwork::handleCanStart() {
 }
 
 void ClientNetwork::handleEntitySpawn() {
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Received entity spawn packet",
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
-
     auto payload = _packet->getPayload();
     if (payload.empty()) {
         debug::Debug::printDebug(this->_isDebug,
@@ -209,11 +188,6 @@ void ClientNetwork::handleEntitySpawn() {
 }
 
 void ClientNetwork::handleEntityDeath() {
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Received entity death packet",
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
-
     auto payload = _packet->getPayload();
     if (payload.size() < 1) {
         debug::Debug::printDebug(this->_isDebug,
@@ -238,11 +212,6 @@ void ClientNetwork::handleEntityDeath() {
 }
 
 void ClientNetwork::handleWhoAmI() {
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Received WHOAMI response",
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
-
     auto payload = _packet->getPayload();
     if (payload.size() < 1) {
         debug::Debug::printDebug(this->_isDebug,
