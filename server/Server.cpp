@@ -240,9 +240,6 @@ void rserv::Server::processIncomingPackets() {
     }
 
     this->_packet->unpack(received.second);
-    std::cout << "[SERVER] Packet received from client: "
-        << static_cast<int>(this->_packet->getIdClient())
-        << " of type: " << static_cast<int>(this->_packet->getType()) << std::endl;
     if (this->_packet->getType() == constants::PACKET_CONNECTION) {
             this->processConnections(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_EVENT) {
@@ -327,18 +324,11 @@ bool rserv::Server::isGameStarted() const {
 }
 
 bool rserv::Server::allClientsReady() const {
-    debug::Debug::printDebug(true, "[SERVER] allClientsReady: checking " +
-        std::to_string(this->_clientsReady.size()) + " clients",
-        debug::debugType::NETWORK, debug::debugLevel::INFO);
-
     if (static_cast<int>(this->_clientsReady.size()) < this->getConfig()->getNbClients()) {
         return false;
     }
 
     for (const auto &ready : this->_clientsReady) {
-        debug::Debug::printDebug(true, "[SERVER] Client " +
-            std::to_string(ready.first) + " ready: " +
-            std::to_string(ready.second), debug::debugType::NETWORK, debug::debugLevel::INFO);
         if (!ready.second) {
             return false;
         }
