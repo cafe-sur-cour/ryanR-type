@@ -3,6 +3,8 @@ set(COMMON_PACKET_HANDLERS_NAME CommonPacketHandlers)
 add_library(${COMMON_PACKET_HANDLERS_NAME} STATIC
     DefaultPacketHandlers.cpp
     DefaultPacketHandlers.hpp
+    GameStateHandlers.cpp
+    GameStateHandlers.hpp
 )
 
 target_include_directories(${COMMON_PACKET_HANDLERS_NAME}

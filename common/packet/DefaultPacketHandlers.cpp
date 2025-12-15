@@ -9,6 +9,7 @@
 #include "../../libs/Packet/serializer/BigEndianSerialization.hpp"
 #include "../../libs/Packet/PacketManager.hpp"
 #include "../../common/translationToECS.hpp"
+#include "GameStateHandlers.hpp"
 #include <iostream>
 
 using namespace pm;
@@ -221,6 +222,9 @@ bool registerDefaultPacketHandlers(std::shared_ptr<pm::IPacketManager> packet) {
         }
         return true;
     });
+
+        // Register game state handlers (pack/unpack implementations)
+        if (!registerGameStateHandlers(packet)) return false;
 
     packet->registerLength(CONNECTION_CLIENT_PACKET, LENGTH_CONNECTION_PACKET);
     packet->registerLength(ACCEPTATION_PACKET, LENGTH_ACCEPTATION_PACKET);
