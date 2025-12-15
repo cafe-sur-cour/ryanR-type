@@ -9,6 +9,7 @@
 
 #include "ClientNetwork.hpp"
 #include "../common/Error/ClientNetworkError.hpp"
+#include "packet/DefaultPacketHandlers.hpp"
 
 
 void ClientNetwork::loadNetworkLibrary() {
@@ -83,5 +84,10 @@ void ClientNetwork::loadPacketLibrary() {
     if (!_packet) {
         throw err::ClientNetworkError("[ClientNetwork] Loading packet lib failed",
             err::ClientNetworkError::LIBRARY_LOAD_FAILED);
+    }
+
+    if (!rcli::packet::registerDefaultPacketHandlers(_packet)) {
+        std::cerr <<
+            "[CLIENT] Warning: Default packet handlers registration failed" << std::endl;
     }
 }

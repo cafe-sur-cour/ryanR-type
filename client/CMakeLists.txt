@@ -17,6 +17,8 @@ add_executable(${CLIENT_BIN_NAME}
     SettingsManager.hpp
 )
 
+add_subdirectory(packet)
+
 add_dependencies(${CLIENT_BIN_NAME} generate_embedded_assets)
 
 target_link_libraries(${CLIENT_BIN_NAME}
@@ -34,6 +36,8 @@ target_link_libraries(${CLIENT_BIN_NAME}
         NETWORK_INTERPOLATION
         asio::asio
         nlohmann_json::nlohmann_json
+        Packet
+        Client::PacketHandlers
 )
 
 target_include_directories(${CLIENT_BIN_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/common)
