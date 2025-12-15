@@ -65,6 +65,7 @@ InGameState::InGameState(
     : AGameState(gsm, resourceManager) {
     _registry = resourceManager->get<ecs::Registry>();
     _prefabManager = resourceManager->get<EntityPrefabManager>();
+    this->_parser = nullptr;
 }
 
 void InGameState::enter() {
@@ -109,8 +110,11 @@ void InGameState::update(float deltaTime) {
     if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         if (inputProvider->isActionPressed(ecs::InputAction::MENU_BACK)) {
-            _gsm->requestStatePush(std::make_shared<SettingsState>(_gsm, _resourceManager));
-            return;
+            if (auto stateMachine = _gsm.lock()) {
+                stateMachine->requestStatePush(std::make_shared<SettingsState>(stateMachine,
+                    _resourceManager));
+                return;
+            }
         }
     }
 
@@ -159,7 +163,7 @@ void InGameState::renderHUD() {
     gfx::color_t white = {255, 255, 255, 255};
     std::pair<size_t, size_t> textPosition =
         {10, static_cast<size_t>(constants::MAX_HEIGHT - 35)};
-    window->drawText(hudText, white, textPosition, "assets/fonts/ARIAL.TTF", 24);
+    window->drawText(hudText, white, textPosition, "assets/fonts/arial.ttf", 24);
     window->setViewCenter(currentCenter.getX(), currentCenter.getY());
 }
 

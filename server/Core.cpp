@@ -57,9 +57,14 @@ Core::~Core() {
         }
         this->_serverThread.join();
     }
+
+    if (this->_resourceManager != nullptr) {
+        this->_resourceManager->clear();
+    }
     if (this->_gsm != nullptr) {
         this->_gsm.reset();
     }
+
     if (this->_systemsManager != nullptr) {
         this->_systemsManager.reset();
     }
@@ -69,14 +74,14 @@ Core::~Core() {
     if (this->_registry != nullptr) {
         this->_registry.reset();
     }
-    if (this->_resourceManager != nullptr) {
-        this->_resourceManager.reset();
-    }
     if (this->_server != nullptr) {
         this->_server.reset();
     }
     if (this->_utils != nullptr) {
         this->_utils.reset();
+    }
+    if (this->_inputProvider != nullptr) {
+        this->_inputProvider.reset();
     }
 }
 

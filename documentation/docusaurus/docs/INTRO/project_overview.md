@@ -129,7 +129,7 @@ We welcome contributions! Whether you're interested in:
 - Enhancing the documentation
 - Fixing bugs or adding tests
 
-Please see our [Contributing Guide](./contributing.md) for detailed information.
+Please see our [Contributing Guide](../HOW-TO-CONTRIBUTE/htc-intro.md) for detailed information.
 
 ## 📄 Documentation
 

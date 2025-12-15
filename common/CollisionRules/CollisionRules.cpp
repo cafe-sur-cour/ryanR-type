@@ -25,6 +25,9 @@ void CollisionRules::initWithData(const CollisionRulesData& data) {
 }
 
 CollisionRules::CollisionRules() {
+    this->_solidAllowRules = nullptr;
+    this->_triggerAllowRules = nullptr;
+    this->_pushAllowRules = nullptr;
 }
 
 const std::vector<CollisionRule>& CollisionRules::getAllowRules(

@@ -230,7 +230,7 @@ void Parser::instanciateComponentDefinitions() {
         }}},
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
-        std::pair<std::type_index, std::vector<Field>>>>(componentDefinitions);
+        std::pair<std::type_index, std::vector<Field>>>>(std::move(componentDefinitions));
 }
 
 void Parser::instanciateComponentCreators() {

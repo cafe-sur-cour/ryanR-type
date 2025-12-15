@@ -69,7 +69,7 @@ TEST(ARegistryTest, RemoveComponent) {
     registry.addComponent<TestComponent>(entityId, comp);
     EXPECT_TRUE(registry.hasComponent<TestComponent>(entityId));
 
-    registry.removeComponent<TestComponent>(entityId);
+    registry.removeAllComponents<TestComponent>(entityId);
     EXPECT_FALSE(registry.hasComponent<TestComponent>(entityId));
 }
 

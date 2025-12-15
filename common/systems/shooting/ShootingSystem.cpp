@@ -53,7 +53,7 @@ void ShootingSystem::update(
         auto intent = registry->getComponent<ShootIntentComponent>(entityId);
         float baseAngle = intent ? intent->getAngle() : 0.0f;
 
-        registry->removeComponent<ShootIntentComponent>(entityId);
+        registry->removeOneComponent<ShootIntentComponent>(entityId);
 
         if (!shootingStats->canShoot())
             continue;

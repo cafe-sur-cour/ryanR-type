@@ -15,6 +15,7 @@ namespace ecs {
 
 template <typename T>
 AComponentArray<T>::AComponentArray() {
+    this->_components = std::vector<std::vector<std::shared_ptr<T>>>();
 }
 
 template <typename T>
@@ -43,9 +44,19 @@ std::vector<std::shared_ptr<T>> AComponentArray<T>::getAll(Entity entityId) cons
 }
 
 template <typename T>
-void AComponentArray<T>::remove(Entity entityId) {
+void AComponentArray<T>::removeComponents(Entity entityId) {
     if (entityId < static_cast<size_t>(_components.size()))
         _components[entityId].clear();
+}
+
+template <typename T>
+void AComponentArray<T>::removeOneComponent(Entity entityId) {
+    if (
+        entityId < static_cast<size_t>(_components.size()) &&
+        !_components[entityId].empty()
+    ) {
+        _components[entityId].erase(_components[entityId].begin());
+    }
 }
 
 template <typename T>

@@ -45,42 +45,57 @@ std::shared_ptr<ResourceManager> initResourcesManager(
     if (server != nullptr) {
         resourceManager->add<rserv::Server>(server);
         resourceManager->add<rserv::ServerConfig>(server->getConfig());
+        auto weakServer = std::weak_ptr<rserv::Server>(server);
+        auto weakRegistry = std::weak_ptr<ecs::Registry>(registry);
         entityPrefabManager->setOnEntityCreated(
-            [server, registry](ecs::Entity entity, const std::string& prefabName) {
-                if (server->getNetwork() != nullptr && server->getPacketManager() != nullptr) {
-                    auto netIdComp = registry->getComponent<ecs::NetworkIdComponent>(entity);
+            [weakServer, weakRegistry](ecs::Entity entity, const std::string& prefabName) {
+                auto lockedServer = weakServer.lock();
+                auto lockedRegistry = weakRegistry.lock();
+                if (lockedServer && lockedRegistry && lockedServer->getNetwork() != nullptr
+                    && lockedServer->getPacketManager() != nullptr) {
+                    auto netIdComp = lockedRegistry->getComponent<ecs::NetworkIdComponent>
+                        (entity);
                     if (netIdComp) {
                         size_t networkId = netIdComp->getNetworkId();
-                        debug::Debug::printDebug(server->getConfig()->getIsDebug(),
+                        debug::Debug::printDebug(lockedServer->getConfig()->getIsDebug(),
                             "[SERVER] Sending spawn packet for entity " +
                                 std::to_string(networkId) + " prefab '" + prefabName + "'",
                             debug::debugType::NETWORK,
                             debug::debugLevel::INFO);
                         std::vector<uint64_t> spawnData =
-                            server->spawnPacket(networkId, prefabName);
+                            lockedServer->spawnPacket(networkId, prefabName);
                         std::vector<uint8_t> spawnPacketData =
-                            server->getPacketManager()->pack(0,
-                            server->getSequenceNumber(), constants::PACKET_SPAWN, spawnData);
-                        server->getNetwork()->
-                            broadcast(server->getConnectedClientEndpoints(), spawnPacketData);
-                        server->incrementSequenceNumber();
+                            lockedServer->getPacketManager()->pack(0,
+                            lockedServer->getSequenceNumber(), constants::PACKET_SPAWN,
+                                spawnData);
+                        lockedServer->getNetwork()->
+                            broadcast(lockedServer->getConnectedClientEndpoints(),
+                                spawnPacketData);
+                        lockedServer->incrementSequenceNumber();
                     }
                 }
             }
         );
         registry->setOnEntityDestroyed(
-            [server, registry](ecs::Entity entity) {
-                if (server->getNetwork() != nullptr && server->getPacketManager() != nullptr) {
-                    auto netIdComp = registry->getComponent<ecs::NetworkIdComponent>(entity);
+            [weakServer, weakRegistry](ecs::Entity entity) {
+                auto lockedServer = weakServer.lock();
+                auto lockedRegistry = weakRegistry.lock();
+                if (lockedServer && lockedRegistry && lockedServer->getNetwork() != nullptr
+                    && lockedServer->getPacketManager() != nullptr) {
+                    auto netIdComp = lockedRegistry->getComponent<ecs::NetworkIdComponent>
+                        (entity);
                     if (netIdComp) {
                         size_t networkId = netIdComp->getNetworkId();
-                        std::vector<uint64_t> deathData = server->deathPacket(networkId);
+                        std::vector<uint64_t> deathData =
+                            lockedServer->deathPacket(networkId);
                         std::vector<uint8_t> deathPacketData =
-                            server->getPacketManager()->pack(0,
-                            server->getSequenceNumber(), constants::PACKET_DEATH, deathData);
-                        server->getNetwork()->
-                            broadcast(server->getConnectedClientEndpoints(), deathPacketData);
-                        server->incrementSequenceNumber();
+                            lockedServer->getPacketManager()->pack(0,
+                            lockedServer->getSequenceNumber(), constants::PACKET_DEATH,
+                                deathData);
+                        lockedServer->getNetwork()->
+                            broadcast(lockedServer->getConnectedClientEndpoints(),
+                                deathPacketData);
+                        lockedServer->incrementSequenceNumber();
                     }
                 }
             }

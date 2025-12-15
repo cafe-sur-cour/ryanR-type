@@ -165,7 +165,6 @@ namespace constants {
     const std::string PAUSED_FIELD = "PAUSED";
     const std::string STOPPED_FIELD = "STOPPED";
     const std::string CHANGING_FIELD = "CHANGING";
-    const math::Vector2f TILE_SIZE = math::Vector2f(64.0f, 64.0f);
 
     const float MAX_HEIGHT = 1080.0f;
     const float MAX_WIDTH = 1920.0f;
@@ -176,24 +175,35 @@ namespace constants {
     const float OUT_OF_BOUNDS_MARGIN = 200.0f;
 
     /* Map parsing constants */
-    const std::string MUSIC_FIELD = "music";
     const std::string BACKGROUND_FIELD = "background";
     const std::string BACKGROUND_SCROLL_SPEED_FIELD = "scrollSpeed";
-    const std::string TILE_FIELD = "tile";
-    const std::string LEGEND_FIELD = "legend";
-    const std::string MAP_FIELD = "map";
+    const std::string MUSIC_FIELD = "music";
+    const std::string POWERUPS_FIELD = "powerUps";
+    const std::string OBSTACLES_FIELD = "obstacles";
     const std::string WAVES_FIELD = "waves";
-    const std::string SPAWNLENGTH_FIELD = "spawnLength";
-    const std::string POSX_FIELD = "posX";
-    const std::string ENEMIES_FIELD = "enemies";
+    const std::string POSITIONS_FIELD = "positions";
     const std::string TYPE_FIELD = "type";
-    const std::string INCLUDE_FIELD = "include";
-    const std::string EXCLUDE_FIELD = "exclude";
+    const std::string FROMX_FIELD = "fromX";
+    const std::string FROMY_FIELD = "fromY";
+    const std::string POSX_FIELD = "posX";
+    const std::string POSY_FIELD = "posY";
     const std::string COUNT_FIELD = "count";
-    const std::string EMPTY_PREFAB = "empty";
+    const std::string GAMEXTRIGGER_FIELD = "gameXTrigger";
+    const std::string DISTRIBUTIONX_FIELD = "distributionX";
+    const std::string DISTRIBUTIONY_FIELD = "distributionY";
+    const std::string ENEMIES_FIELD = "enemies";
+    const std::string MIN_FIELD = "min";
+    const std::string MAX_FIELD = "max";
     const math::Vector2f BACKGROUND_POSITION = math::Vector2f(0.0f, 0.0f);
     const float BACKGROUND_PARALLAX_DIRECTION_X = -1.0f;
     const float BACKGROUND_PARALLAX_DIRECTION_Y = 0.0f;
+    const std::string EMPTY_PREFAB = "empty";
+
+    const std::string HORIZONTAL_LINE_TYPE = "horizontalLine";
+    const std::string VERTICAL_LINE_TYPE = "verticalLine";
+    const std::string UNIQUE_TYPE = "unique";
+    const std::string RANDOM_TYPE = "random";
+    const std::string UNIFORM_TYPE = "uniform";
 
     /* Animation conditions */
     const std::string VELOCITY_UP_CONDITION = "isVelocityUp";

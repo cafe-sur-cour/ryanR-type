@@ -31,6 +31,7 @@ MovementSystem::MovementSystem() : _spatialGrid(
     constants::SPATIAL_GRID_CELL_SIZE,
     constants::SPATIAL_GRID_PADDING
 ) {
+    this->_boundaryEntities = {};
 }
 
 void MovementSystem::buildSpatialGrid(std::shared_ptr<Registry> registry) {
