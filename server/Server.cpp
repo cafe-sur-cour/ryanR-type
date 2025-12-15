@@ -101,6 +101,7 @@ rserv::Server::~Server() {
         this->_buffer.reset();
     }
     if (this->_packet != nullptr) {
+        this->_packet->clearAllHandlers();
         this->_packet.reset();
     }
 }
