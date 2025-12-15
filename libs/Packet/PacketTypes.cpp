@@ -94,20 +94,14 @@ bool pm::PacketManager::parseEventPacket(const std::vector<uint8_t> payload) {
         return false;
     }
 
-    std::vector<uint8_t> charBytes1(
-        payload.begin() + 0, payload.begin() + 1);
-    uint64_t result1 = this->_serializer->deserializeUChar(charBytes1);
-    this->_payload.push_back(result1);
+    std::vector<uint8_t> charBytes1(payload.begin() + 0, payload.begin() + 1);
+    uint64_t eventType = this->_serializer->deserializeUChar(charBytes1);
+    this->_payload.push_back(eventType);
 
-    std::vector<uint8_t> longBytes1(
-        payload.begin() + 1, payload.begin() + 10);
-    uint64_t result3 = this->_serializer->deserializeULong(longBytes1);
-    this->_payload.push_back(result3);
+    std::vector<uint8_t> longBytes1(payload.begin() + 1, payload.begin() + 9);
+    uint64_t param = this->_serializer->deserializeULong(longBytes1);
+    this->_payload.push_back(param);
 
-    std::vector<uint8_t> longBytes2(
-        payload.begin() + 10, payload.begin() + 18);
-    uint64_t result4 = this->_serializer->deserializeULong(longBytes2);
-    this->_payload.push_back(result4);
     return true;
 }
 
