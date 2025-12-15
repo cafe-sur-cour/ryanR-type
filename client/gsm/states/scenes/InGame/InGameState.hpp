@@ -12,8 +12,16 @@
 #include "resourceManager/ResourceManager.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
+#include <vector>
+#include <string>
 
 namespace gsm {
+
+struct ScoreFeedback {
+    std::string text;
+    float lifetime;
+    float maxLifetime;
+};
 
 class InGameState : public AGameState {
     public:
@@ -31,6 +39,10 @@ class InGameState : public AGameState {
         std::shared_ptr<ecs::Registry> _registry;
         std::shared_ptr<EntityPrefabManager> _prefabManager;
         std::shared_ptr<Parser> _parser;
+        int _previousScore;
+        int _previousHealth;
+        std::vector<ScoreFeedback> _scoreFeedbacks;
+        std::vector<ScoreFeedback> _healthFeedbacks;
 };
 
 }  // namespace gsm
