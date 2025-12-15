@@ -110,8 +110,10 @@ void InGameState::update(float deltaTime) {
     if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         if (inputProvider->isActionPressed(ecs::InputAction::MENU_BACK)) {
-            _gsm->requestStatePush(std::make_shared<SettingsState>(_gsm, _resourceManager));
-            return;
+            if (auto stateMachine = _gsm.lock()) {
+                stateMachine->requestStatePush(std::make_shared<SettingsState>(stateMachine, _resourceManager));
+                return;
+            }
         }
     }
 
