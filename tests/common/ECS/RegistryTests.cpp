@@ -144,25 +144,6 @@ TEST(ARegistryTest, View_MultipleComponents) {
     EXPECT_EQ(foundEntities[0], 1);
 }
 
-TEST(ARegistryTest, Group_BasicFunctionality) {
-    auto registry = std::make_shared<Registry>();
-    registry->registerComponent<PlayerTag>();
-
-    auto playerTag = std::make_shared<PlayerTag>();
-    registry->addComponent(0, playerTag);
-
-    auto group = registry->group<PlayerTag>();
-
-    int count = 0;
-    size_t foundEntityId = 0;
-    for (auto entityId : group) {
-        count++;
-        foundEntityId = entityId;
-    }
-    EXPECT_EQ(count, 1);
-    EXPECT_EQ(foundEntityId, 0);
-}
-
 TEST(ARegistryTest, GetComponents_SingleComponent) {
     auto registry = std::make_shared<Registry>();
     registry->registerComponent<TransformComponent>();

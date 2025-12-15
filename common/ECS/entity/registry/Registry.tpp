@@ -96,10 +96,4 @@ View<Components...> Registry::view()
     return View<Components...>(std::static_pointer_cast<Registry>(shared_from_this()));
 }
 
-template <typename... Components>
-Group<Components...> Registry::group()
-{
-    return Group<Components...>(std::static_pointer_cast<Registry>(shared_from_this()));
-}
-
 }  // namespace ecs
