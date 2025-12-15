@@ -7,6 +7,13 @@ AGameStateMachine::AGameStateMachine() {
     this->_states = std::stack<std::shared_ptr<IGameState>>();
 }
 
+AGameStateMachine::~AGameStateMachine() {
+    while (!_states.empty()) {
+        _states.top()->exit();
+        _states.pop();
+    }
+}
+
 void AGameStateMachine::changeState(std::shared_ptr<IGameState> newState) {
     if (!_states.empty()) {
         _states.top()->exit();

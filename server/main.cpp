@@ -25,17 +25,17 @@ int main(int ac, char **av) {
     std::cout << "Max Clients: " << core.getConfig()->getNbClients();
     std::cout << std::endl << "------------------------" << std::endl;
     try {
-        // core.init();
+        core.init();
         // core.loop();
     } catch (const err::IError &e) {
         std::cerr << e.getDetails() << std::endl;
-        exit(84);
+        return (84);
     } catch (const std::runtime_error &e) {
         std::cerr << "Runtime error: " << e.what() << std::endl;
-        exit(84);
+        return (84);
     } catch (...) {
         std::cerr << "Unknown error occurred in server." << std::endl;
-        exit(84);
+        return (84);
     }
     return 0;
 }

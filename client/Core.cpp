@@ -54,9 +54,11 @@ Core::~Core() {
         this->_networkThread.join();
         this->_clientNetwork->stop();
     }
-    this->_windowLoader->Close();
-    this->_eventLoader->Close();
-    this->_audioLoader->Close();
+    if (this->_resourceManager != nullptr) {
+        this->_resourceManager->clear();
+    }
+    // The DLLoader destructors will automatically call Close() now
+    // which safely handles cleanup and sets _handler to nullptr
 }
 
 void Core::run() {

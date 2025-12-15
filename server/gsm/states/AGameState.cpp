@@ -16,9 +16,19 @@ namespace gsm {
 
 AGameState::AGameState(std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager) {
-    _gsm = gsm;
+    _gsm = gsm; // weak_ptr automatically converts from shared_ptr
     _resourceManager = resourceManager;
     this->_systems = std::vector<std::shared_ptr<ecs::ISystem>>();
+}
+
+AGameState::~AGameState() {
+    if (this->_resourceManager != nullptr) {
+        this->_systems.clear();
+    }
+    // No need to reset weak_ptr explicitly, it doesn't hold ownership
+    while (!_systems.empty()) {
+        _systems.pop_back();
+    }
 }
 
 void AGameState::enter() {
