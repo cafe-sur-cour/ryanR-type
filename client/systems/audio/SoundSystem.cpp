@@ -51,7 +51,7 @@ void SoundSystem::update(std::shared_ptr<ResourceManager>
             audio->playSound(soundIntent->getSoundPath(), volume);
         }
 
-        registry->removeComponent<SoundIntentComponent>(entityId);
+        registry->removeOneComponent<SoundIntentComponent>(entityId);
     }
 }
 

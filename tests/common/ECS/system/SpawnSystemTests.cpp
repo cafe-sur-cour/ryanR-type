@@ -14,6 +14,7 @@
 #include "../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../common/Prefab/IPrefab.hpp"
 #include "../../../../common/ECS/entity/factory/EntityFactory.hpp"
+#include "../../../../common/components/permanent/GameZoneComponent.hpp"
 
 using namespace ecs;
 
@@ -55,9 +56,18 @@ protected:
         // Register components
         registry->registerComponent<SpawnIntentComponent>();
         registry->registerComponent<TransformComponent>();
+        registry->registerComponent<GameZoneComponent>();
 
         // Register prefab manager in resource manager
         resourceManager->add<EntityPrefabManager>(prefabManager);
+
+        // Create game zone entity
+        ecs::Entity gameZoneEntity = registry->createEntity();
+        auto gameZoneTransform = std::make_shared<TransformComponent>();
+        gameZoneTransform->setPosition(math::Vector2f(0.0f, 0.0f));
+        registry->addComponent<TransformComponent>(gameZoneEntity, gameZoneTransform);
+        auto gameZone = std::make_shared<GameZoneComponent>();
+        registry->addComponent<GameZoneComponent>(gameZoneEntity, gameZone);
     }
 
     std::shared_ptr<Registry> registry;
@@ -87,6 +97,8 @@ TEST_F(SpawnSystemTest, EntityWithSpawnIntent_SpawnsNewEntity) {
     auto view = registry->view<TransformComponent>();
     bool foundSpawnedEntity = false;
     for (auto entityId : view) {
+        if (registry->hasComponent<GameZoneComponent>(entityId))
+            continue;
         if (entityId != spawnerEntity) {
             auto transform = registry->getComponent<TransformComponent>(entityId);
             EXPECT_EQ(transform->getPosition().getX(), 100.0f);
@@ -123,6 +135,8 @@ TEST_F(SpawnSystemTest, MultipleSpawnIntents_SpawnsMultipleEntities) {
     auto view = registry->view<TransformComponent>();
     int spawnedCount = 0;
     for (auto entityId : view) {
+        if (registry->hasComponent<GameZoneComponent>(entityId))
+            continue;
         if (entityId != spawner1 && entityId != spawner2) {
             spawnedCount++;
         }
@@ -147,6 +161,8 @@ TEST_F(SpawnSystemTest, SpawnIntent_PositionCorrectlySet) {
     // Find the spawned entity and verify position
     auto view = registry->view<TransformComponent>();
     for (auto entityId : view) {
+        if (registry->hasComponent<GameZoneComponent>(entityId))
+            continue;
         if (entityId != spawnerEntity) {
             auto transform = registry->getComponent<TransformComponent>(entityId);
             EXPECT_EQ(transform->getPosition().getX(), 500.0f);
@@ -172,6 +188,8 @@ TEST_F(SpawnSystemTest, SpawnIntent_NegativePosition) {
     // Find the spawned entity and verify position
     auto view = registry->view<TransformComponent>();
     for (auto entityId : view) {
+        if (registry->hasComponent<GameZoneComponent>(entityId))
+            continue;
         if (entityId != spawnerEntity) {
             auto transform = registry->getComponent<TransformComponent>(entityId);
             EXPECT_EQ(transform->getPosition().getX(), -100.0f);
@@ -197,6 +215,8 @@ TEST_F(SpawnSystemTest, SpawnIntent_ZeroPosition) {
     // Find the spawned entity and verify position
     auto view = registry->view<TransformComponent>();
     for (auto entityId : view) {
+        if (registry->hasComponent<GameZoneComponent>(entityId))
+            continue;
         if (entityId != spawnerEntity) {
             auto transform = registry->getComponent<TransformComponent>(entityId);
             EXPECT_EQ(transform->getPosition().getX(), 0.0f);
