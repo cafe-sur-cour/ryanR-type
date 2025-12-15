@@ -12,7 +12,7 @@
 namespace ecs {
 
 EntityFactory::EntityFactory(size_t startingNetworkId)
-    : _nextNetworkId(startingNetworkId) {}
+    : _nextNetworkId(startingNetworkId), _nextLocalId(0) {}
 
 EntityFactory::~EntityFactory() = default;
 
@@ -20,7 +20,16 @@ Entity EntityFactory::createEntity(
     const std::shared_ptr<Registry>& registry,
     const EntityCreationContext& context
 ) {
-    Entity entity = registry->createEntity();
+    Entity entity;
+
+    if (context.origin == EntityCreationOrigin::CLIENT_LOCAL) {
+        if (_nextLocalId.load() == 0) {
+            _nextLocalId.store(registry->getMaxEntityId() + 1);
+        }
+        entity = _nextLocalId.fetch_add(1);
+    } else {
+        entity = registry->createEntity();
+    }
 
     if (context.shouldHaveNetworkId()) {
         size_t networkId = resolveNetworkId(context);

@@ -16,8 +16,8 @@
 #include "../ServerConfig.hpp"
 #include "../../common/ECS/entity/registry/Registry.hpp"
 #include "../../common/Parser/Parser.hpp"
-#include "../../common/systems/systemManager/ASystemManager.hpp"
-#include "../gsm/machine/GameStateMachine.hpp"
+#include "../../common/components/permanent/NetworkIdComponent.hpp"
+#include "../../common/debug.hpp"
 #include "initResourcesManager.hpp"
 
 std::shared_ptr<ResourceManager> initResourcesManager(
@@ -46,26 +46,42 @@ std::shared_ptr<ResourceManager> initResourcesManager(
         resourceManager->add<rserv::Server>(server);
         resourceManager->add<rserv::ServerConfig>(server->getConfig());
         entityPrefabManager->setOnEntityCreated(
-            [server](ecs::Entity entity, const std::string& prefabName) {
+            [server, registry](ecs::Entity entity, const std::string& prefabName) {
                 if (server->getNetwork() != nullptr && server->getPacketManager() != nullptr) {
-                    std::vector<uint64_t> spawnData = server->spawnPacket(entity, prefabName);
-                    std::vector<uint8_t> spawnPacketData = server->getPacketManager()->pack(0,
-                        server->getSequenceNumber(), constants::PACKET_SPAWN, spawnData);
-                    server->getNetwork()->
-                        broadcast(server->getConnectedClientEndpoints(), spawnPacketData);
-                    server->incrementSequenceNumber();
+                    auto netIdComp = registry->getComponent<ecs::NetworkIdComponent>(entity);
+                    if (netIdComp) {
+                        size_t networkId = netIdComp->getNetworkId();
+                        debug::Debug::printDebug(server->getConfig()->getIsDebug(),
+                            "[SERVER] Sending spawn packet for entity " +
+                                std::to_string(networkId) + " prefab '" + prefabName + "'",
+                            debug::debugType::NETWORK,
+                            debug::debugLevel::INFO);
+                        std::vector<uint64_t> spawnData =
+                            server->spawnPacket(networkId, prefabName);
+                        std::vector<uint8_t> spawnPacketData =
+                            server->getPacketManager()->pack(0,
+                            server->getSequenceNumber(), constants::PACKET_SPAWN, spawnData);
+                        server->getNetwork()->
+                            broadcast(server->getConnectedClientEndpoints(), spawnPacketData);
+                        server->incrementSequenceNumber();
+                    }
                 }
             }
         );
         registry->setOnEntityDestroyed(
-            [server](ecs::Entity entity) {
+            [server, registry](ecs::Entity entity) {
                 if (server->getNetwork() != nullptr && server->getPacketManager() != nullptr) {
-                    std::vector<uint64_t> deathData = server->deathPacket(entity);
-                    std::vector<uint8_t> deathPacketData = server->getPacketManager()->pack(0,
-                        server->getSequenceNumber(), constants::PACKET_DEATH, deathData);
-                    server->getNetwork()->
-                        broadcast(server->getConnectedClientEndpoints(), deathPacketData);
-                    server->incrementSequenceNumber();
+                    auto netIdComp = registry->getComponent<ecs::NetworkIdComponent>(entity);
+                    if (netIdComp) {
+                        size_t networkId = netIdComp->getNetworkId();
+                        std::vector<uint64_t> deathData = server->deathPacket(networkId);
+                        std::vector<uint8_t> deathPacketData =
+                            server->getPacketManager()->pack(0,
+                            server->getSequenceNumber(), constants::PACKET_DEATH, deathData);
+                        server->getNetwork()->
+                            broadcast(server->getConnectedClientEndpoints(), deathPacketData);
+                        server->incrementSequenceNumber();
+                    }
                 }
             }
         );

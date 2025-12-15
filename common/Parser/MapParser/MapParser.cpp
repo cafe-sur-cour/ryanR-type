@@ -125,6 +125,10 @@ void MapParser::generateMapEntities() {
         std::cout << "[MapParser] No map data available to generate entities" << std::endl;
         return;
     }
+    if (_creationContext.origin == ecs::EntityCreationOrigin::CLIENT_LOCAL) {
+        std::cout << "[MapParser] Skipping entity creation for client" << std::endl;
+        return;
+    }
     parseMap(_mapJson);
 }
 
@@ -313,7 +317,7 @@ void MapParser::createMusicEntity(const std::string& prefabName) {
     if (_prefabManager->hasPrefab(prefabName)) {
         try {
             ecs::EntityCreationContext musicContext =
-                ecs::EntityCreationContext::forLocalClient();
+                ecs::EntityCreationContext::forServer();
             _prefabManager->createEntityFromPrefab(prefabName, _registry, musicContext);
         } catch (const std::exception& e) {
             std::cerr << "Error creating music entity: " << e.what() << std::endl;
