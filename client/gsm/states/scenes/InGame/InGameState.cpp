@@ -62,7 +62,7 @@ namespace gsm {
 InGameState::InGameState(
     std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager)
-    : AGameState(gsm, resourceManager) {
+    : AGameState(gsm, resourceManager), _previousScore(-1), _previousHealth(-1) {
     _registry = resourceManager->get<ecs::Registry>();
     _prefabManager = resourceManager->get<EntityPrefabManager>();
     this->_parser = nullptr;
@@ -121,6 +121,24 @@ void InGameState::update(float deltaTime) {
     _resourceManager->get<ecs::ISystemManager>()->updateAllSystems
         (_resourceManager, _registry, deltaTime);
 
+    for (auto it = _scoreFeedbacks.begin(); it != _scoreFeedbacks.end(); ) {
+        it->lifetime -= deltaTime;
+        if (it->lifetime <= 0.0f) {
+            it = _scoreFeedbacks.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
+    for (auto it = _healthFeedbacks.begin(); it != _healthFeedbacks.end(); ) {
+        it->lifetime -= deltaTime;
+        if (it->lifetime <= 0.0f) {
+            it = _healthFeedbacks.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
     renderHUD();
 }
 
@@ -155,15 +173,67 @@ void InGameState::renderHUD() {
         break;
     }
 
-    std::stringstream ss;
-    ss << "Health: " << static_cast<int>(health) << "/" << static_cast<int>(maxHealth)
-       << " Score: " << std::setfill('0') << std::setw(5) << score;
-    std::string hudText = ss.str();
+    if (_previousHealth == -1) {
+        _previousHealth = static_cast<int>(health);
+    } else if (static_cast<int>(health) < _previousHealth) {
+        int lost = _previousHealth - static_cast<int>(health);
+        _healthFeedbacks.push_back({"-" + std::to_string(lost), 1.0f, 1.0f});
+        _previousHealth = static_cast<int>(health);
+    } else if (static_cast<int>(health) > _previousHealth) {
+        _previousHealth = static_cast<int>(health);
+    }
+
+    if (_previousScore == -1) {
+        _previousScore = score;
+    } else if (score > _previousScore) {
+        int gained = score - _previousScore;
+        _scoreFeedbacks.push_back({"+" + std::to_string(gained), 1.0f, 1.0f});
+        _previousScore = score;
+    } else if (score < _previousScore) {
+        _previousScore = score;
+    }
+
+    std::stringstream healthSs;
+    healthSs << "Health: " << static_cast<int>(health) << "/" << static_cast<int>(maxHealth);
+    std::string healthText = healthSs.str();
+
+    std::stringstream scoreSs;
+    scoreSs << "Score: " << std::setfill('0') << std::setw(5) << score;
+    std::string scoreText = scoreSs.str();
 
     gfx::color_t white = {255, 255, 255, 255};
-    std::pair<size_t, size_t> textPosition =
+    std::pair<size_t, size_t> healthPosition =
         {10, static_cast<size_t>(constants::MAX_HEIGHT - 35)};
-    window->drawText(hudText, white, textPosition, "assets/fonts/arial.ttf", 24);
+    window->drawText(healthText, white, healthPosition, "assets/fonts/arial.ttf", 24);
+
+    std::pair<size_t, size_t> scorePosition =
+        {200, static_cast<size_t>(constants::MAX_HEIGHT - 35)};
+    window->drawText(scoreText, white, scorePosition, "assets/fonts/arial.ttf", 24);
+
+    for (const auto& feedback : _healthFeedbacks) {
+        uint8_t alpha =
+            static_cast<uint8_t>((feedback.lifetime / feedback.maxLifetime) * 255.0f);
+        gfx::color_t red = {255, 0, 0, alpha};
+        size_t x = 10;
+        size_t base_y = constants::MAX_HEIGHT - 35 - 25;
+        float progress = 1.0f - (feedback.lifetime / feedback.maxLifetime);
+        size_t y = base_y - static_cast<size_t>(progress * 50.0f);
+        std::pair<size_t, size_t> feedbackPosition = {x, y};
+        window->drawText(feedback.text, red, feedbackPosition, "assets/fonts/arial.ttf", 28);
+    }
+
+    for (const auto& feedback : _scoreFeedbacks) {
+        uint8_t alpha =
+            static_cast<uint8_t>((feedback.lifetime / feedback.maxLifetime) * 255.0f);
+        gfx::color_t green = {0, 255, 0, alpha};
+        size_t x = 200;
+        size_t base_y = constants::MAX_HEIGHT - 35 - 25;
+        float progress = 1.0f - (feedback.lifetime / feedback.maxLifetime);
+        size_t y = base_y - static_cast<size_t>(progress * 50.0f);
+        std::pair<size_t, size_t> feedbackPosition = {x, y};
+        window->drawText(feedback.text, green, feedbackPosition, "assets/fonts/arial.ttf", 28);
+    }
+
     window->setViewCenter(currentCenter.getX(), currentCenter.getY());
 }
 
