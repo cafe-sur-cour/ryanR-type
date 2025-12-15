@@ -11,6 +11,7 @@
 #include <stdexcept>
 #include "../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../common/ECS/entity/registry/Registry.hpp"
+#include "../../../common/Error/ClientError.hpp"
 
 namespace gsm {
 
@@ -38,7 +39,8 @@ void AGameState::addSystem(std::shared_ptr<ecs::ISystem> system) {
     if (_resourceManager->has<ecs::ISystemManager>())
         _resourceManager->get<ecs::ISystemManager>()->addSystem(system);
     else
-        throw std::runtime_error("ISystemManager not found in ResourceManager");
+        throw err::ClientError("ISystemManager not found in ResourceManager",
+            err::ClientError::UNKNOWN);
     _systems.push_back(system);
 }
 
