@@ -58,8 +58,6 @@ Core::~Core() {
     if (this->_resourceManager != nullptr) {
         this->_resourceManager->clear();
     }
-    // The DLLoader destructors will automatically call Close() now
-    // which safely handles cleanup and sets _handler to nullptr
 }
 
 void Core::run() {
