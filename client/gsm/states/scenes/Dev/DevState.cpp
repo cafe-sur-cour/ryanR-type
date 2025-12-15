@@ -30,7 +30,7 @@
 #include "../../../../systems/input/MovementInputSystem.hpp"
 #include "../../../../systems/input/ShootInputSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
-#include "../../../../systems/NetworkInterpolationSystem.hpp"
+#include "../../../../systems/network/NetworkInterpolationSystem.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../../common/systems/shooting/ShootingSystem.hpp"
