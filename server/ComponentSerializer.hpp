@@ -12,8 +12,7 @@
 #include <cstring>
 #include <string>
 
-namespace pm {
-
+namespace rserv {
 class ComponentSerializer {
     public:
         static std::vector<uint64_t> serializePosition(uint32_t x, uint32_t y);
@@ -33,8 +32,9 @@ class ComponentSerializer {
         static std::vector<uint64_t> serializeGameZone(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
         static EntitySnapshot createSnapshotFromComponents(uint32_t entityId, const std::vector<uint64_t>& componentData);
         static std::vector<uint64_t> snapshotToComponentData(const EntitySnapshot& snapshot);
+        static bool isTagComponent(uint8_t component);
+        static bool isOneParamComponent(uint8_t component);
 };
-
-} // namespace pm
+} // namespace rserv
 
 #endif // COMPONENT_SERIALIZER_HPP

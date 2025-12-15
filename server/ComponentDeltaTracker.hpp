@@ -14,7 +14,7 @@
 #include <map>
 #include "../../common/translationToECS.hpp"
 
-namespace pm {
+namespace rserv {
 
 struct EntitySnapshot {
     uint32_t entityId;
@@ -40,6 +40,6 @@ class ComponentDeltaTracker {
         std::vector<uint64_t> serializeDelta(uint32_t entityId, uint32_t changedMask, const std::map<uint8_t, std::vector<uint64_t>>& changedComponents);
 };
 
-} // namespace pm
+} // namespace rserv
 
 #endif // COMPONENT_DELTA_TRACKER_HPP

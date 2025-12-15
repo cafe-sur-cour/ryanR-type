@@ -14,7 +14,8 @@ add_library(${SERVER_LIB_NAME}
     Utils.hpp
     Core.cpp
     Core.hpp
-    ServerLibsLoading.cpp
+    ComponentDeltaTracker.cpp
+    ComponentSerializer.cpp
 )
 
 find_package(asio CONFIG REQUIRED)
