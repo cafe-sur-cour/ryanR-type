@@ -18,6 +18,7 @@
 #include "ClientNetwork.hpp"
 #include "constants.hpp"
 #include "../common/Error/ClientNetworkError.hpp"
+#include "../common/translationToECS.hpp"
 #include "../common/Signal/Signal.hpp"
 #include "../common/debug.hpp"
 #include "../common/constants.hpp"
@@ -51,10 +52,26 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_DISC] = &ClientNetwork::handleNoOp;
     _packetHandlers[constants::PACKET_EVENT] = &ClientNetwork::handleNoOp;
     _packetHandlers[constants::PACKET_GAME_STATE] = &ClientNetwork::handleGameState;
-    _packetHandlers[constants::PACKET_MAP] = &ClientNetwork::handleMapSend;
     _packetHandlers[constants::PACKET_END_MAP] = &ClientNetwork::handleEndMap;
     _packetHandlers[constants::PACKET_END_GAME] = &ClientNetwork::handleEndGame;
     _packetHandlers[constants::PACKET_CAN_START] = &ClientNetwork::handleCanStart;
+    _packetHandlers[constants::PACKET_SPAWN] = &ClientNetwork::handleEntitySpawn;
+    _packetHandlers[constants::PACKET_DEATH] = &ClientNetwork::handleEntityDeath;
+    _packetHandlers[constants::PACKET_WHOAMI] = &ClientNetwork::handleWhoAmI;
+
+    _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
+    _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
+    _componentParsers[SPEED_COMP] = &ClientNetwork::parseSpeedComponent;
+    _componentParsers[HEALTH] = &ClientNetwork::parseHealthComponent;
+    _componentParsers[COLLIDER] = &ClientNetwork::parseColliderComponent;
+    _componentParsers[SHOOTING_STATS] = &ClientNetwork::parseShootingStatsComponent;
+    _componentParsers[SCORE] = &ClientNetwork::parseScoreComponent;
+    _componentParsers[AI_MOVEMENT_PATTERN] = &ClientNetwork::parseAIMovementPatternComponent;
+    _componentParsers[DAMAGE] = &ClientNetwork::parseDamageComponent;
+    _componentParsers[LIFETIME] = &ClientNetwork::parseLifetimeComponent;
+    _componentParsers[VELOCITY] = &ClientNetwork::parseVelocityComponent;
+    _componentParsers[PROJECTILE_PREFAB] = &ClientNetwork::parseProjectilePrefabComponent;
+    _componentParsers[OBSTACLE_TAG] = &ClientNetwork::parseObstacleTagComponent;
 }
 
 ClientNetwork::~ClientNetwork() {
@@ -197,7 +214,7 @@ void ClientNetwork::handlePacketType(uint8_t type) {
     if (this->_packet->getPayload().empty()) {
         return;
     }
-    if (type < 10) {
+    if (type < constants::MAX_INDEX_PACKET_TYPE && this->_packetHandlers[type]) {
         (this->*_packetHandlers[type])();
     } else {
         debug::Debug::printDebug(this->_isDebug,
@@ -249,7 +266,6 @@ void ClientNetwork::start() {
                     debug::debugType::NETWORK,
                     debug::debugLevel::ERROR);
             }
-            handlePacketType(this->_packet->getType());
             receivedData.clear();
         }
         if (!this->_eventQueue.empty()) {

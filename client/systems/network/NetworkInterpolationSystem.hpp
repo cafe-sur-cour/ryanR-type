@@ -1,0 +1,35 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** NetworkInterpolationSystem
+*/
+
+#ifndef NETWORKINTERPOLATIONSYSTEM_HPP_
+#define NETWORKINTERPOLATIONSYSTEM_HPP_
+
+#include "../../common/systems/base/ASystem.hpp"
+#include "../../common/ECS/entity/registry/Registry.hpp"
+#include "../interpolation/NetworkStateComponent.hpp"
+#include "../../common/components/permanent/TransformComponent.hpp"
+#include "../../common/components/permanent/HealthComponent.hpp"
+
+namespace ecs {
+
+class NetworkInterpolationSystem : public ASystem {
+    public:
+        NetworkInterpolationSystem() = default;
+        ~NetworkInterpolationSystem() override = default;
+
+        void update(std::shared_ptr<ResourceManager> resourceManager,
+                   std::shared_ptr<Registry> registry,
+                   float deltaTime) override;
+
+    private:
+        void interpolateTransform(std::shared_ptr<NetworkStateComponent> networkState,
+                std::shared_ptr<TransformComponent> transform);
+};
+
+}  // namespace ecs
+
+#endif /* !NETWORKINTERPOLATIONSYSTEM_HPP_ */
