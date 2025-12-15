@@ -55,9 +55,9 @@ Core::~Core() {
         this->_networkThread.join();
         this->_clientNetwork->stop();
     }
-    this->_windowLoader->Close();
-    this->_eventLoader->Close();
-    this->_audioLoader->Close();
+    if (this->_resourceManager != nullptr) {
+        this->_resourceManager->clear();
+    }
 }
 
 void Core::run() {

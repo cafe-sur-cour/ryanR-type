@@ -25,7 +25,10 @@ void LobbyState::update(float deltaTime) {
     (void)deltaTime;
     auto server = _resourceManager->get<rserv::Server>();
     if (server && server->allClientsReady()) {
-        _gsm->requestStateChange(std::make_shared<LoadingState>(_gsm, _resourceManager));
+        if (auto stateMachine = _gsm.lock()) {
+            stateMachine->requestStateChange(std::make_shared<LoadingState>(stateMachine,
+                _resourceManager));
+        }
     }
 }
 

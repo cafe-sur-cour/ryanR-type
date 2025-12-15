@@ -66,6 +66,7 @@ DevState::DevState(
 ) : AGameState(gsm, resourceManager) {
     _registry = std::make_shared<ecs::Registry>();
     _prefabManager = std::make_shared<EntityPrefabManager>();
+    this->_parser = nullptr;
 }
 
 void DevState::enter() {
@@ -158,8 +159,11 @@ void DevState::update(float deltaTime) {
     if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         if (inputProvider->isActionPressed(ecs::InputAction::MENU_BACK)) {
-            _gsm->requestStatePush(std::make_shared<SettingsState>(_gsm, _resourceManager));
-            return;
+            if (auto stateMachine = _gsm.lock()) {
+                stateMachine->requestStatePush(std::make_shared<SettingsState>(stateMachine,
+                    _resourceManager));
+                return;
+            }
         }
     }
 

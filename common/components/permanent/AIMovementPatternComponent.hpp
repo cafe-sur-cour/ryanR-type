@@ -14,10 +14,10 @@
 namespace ecs {
 
 enum class AIMovementPattern {
-    STRAIGHT_LINE,
-    ZIGZAG,
-    VERTICAL_MIRROR,
-    FOLLOW_RIGHT
+    STRAIGHT_LINE = 0,
+    ZIGZAG = 1,
+    VERTICAL_MIRROR = 2,
+    FOLLOW_RIGHT = 3
 };
 
 class AIMovementPatternComponent : public AComponent {

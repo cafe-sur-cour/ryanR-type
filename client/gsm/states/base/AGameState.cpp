@@ -11,6 +11,7 @@ AGameState::AGameState(std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager) {
     _gsm = gsm;
     _resourceManager = resourceManager;
+    this->_systems = {};
 }
 
 void AGameState::enter() {

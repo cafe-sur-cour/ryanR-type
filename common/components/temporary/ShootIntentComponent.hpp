@@ -15,7 +15,9 @@ namespace ecs {
 
 class ShootIntentComponent : public AComponent {
     public:
-        ShootIntentComponent(float angle = 0.0f) : _angle(angle) {}
+        ShootIntentComponent(float angle = 0.0f) : _angle(angle) {
+            _position = math::Vector2f(0.0f, 0.0f);
+        }
         ~ShootIntentComponent() = default;
 
         void setAngle(float angle) { _angle = angle; }
