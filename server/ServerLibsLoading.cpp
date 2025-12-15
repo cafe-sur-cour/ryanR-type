@@ -8,6 +8,7 @@
 #include <memory>
 #include "Server.hpp"
 #include "../common/Error/ServerErrror.hpp"
+#include "packet/DefaultPacketHandlers.hpp"
 
 void rserv::Server::loadNetworkLibrary() {
     if (!_networloader.Open(pathLoad "/" networkServerLib sharedLibExt)) {
@@ -86,6 +87,12 @@ void rserv::Server::loadPacketLibrary() {
     if (!_packet) {
         throw err::ServerError(
             "[Server] Creating packet instance failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
+
+    if (!rserv::packet::registerDefaultPacketHandlers(_packet)) {
+        throw err::ServerError(
+            "[Server] Registering default packet handlers failed",
             err::ServerError::LIBRARY_LOAD_FAILED);
     }
 }
