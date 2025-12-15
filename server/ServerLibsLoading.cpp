@@ -91,7 +91,8 @@ void rserv::Server::loadPacketLibrary() {
     }
 
     if (!rserv::packet::registerDefaultPacketHandlers(_packet)) {
-        std::cerr <<
-            "[SERVER] Warning: Default packet handlers registration failed" << std::endl;
+        throw err::ServerError(
+            "[Server] Registering default packet handlers failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
     }
 }

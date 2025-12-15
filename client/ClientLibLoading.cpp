@@ -87,7 +87,8 @@ void ClientNetwork::loadPacketLibrary() {
     }
 
     if (!rcli::packet::registerDefaultPacketHandlers(_packet)) {
-        std::cerr <<
-            "[CLIENT] Warning: Default packet handlers registration failed" << std::endl;
+        throw err::ClientNetworkError(
+            "[ClientNetwork] Registering default packet handlers failed",
+            err::ClientNetworkError::LIBRARY_LOAD_FAILED);
     }
 }

@@ -5,11 +5,13 @@
 ** Default packet handlers registration (client-side)
 */
 
-// forward to common implementation
+#include "DefaultPacketHandlers.hpp"
 #include "../../common/packet/DefaultPacketHandlers.hpp"
 
 namespace rcli::packet {
-    bool registerDefaultPacketHandlers(std::shared_ptr<pm::IPacketManager> packet) {
-        return common::packet::registerDefaultPacketHandlers(packet);
-    }
+
+bool registerDefaultPacketHandlers(std::shared_ptr<pm::IPacketManager> packet) {
+    return common::packet::registerDefaultPacketHandlers(packet);
+}
+
 }

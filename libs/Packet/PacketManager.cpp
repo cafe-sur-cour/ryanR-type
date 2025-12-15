@@ -29,14 +29,6 @@ pm::PacketManager::PacketManager(uint32_t seqNumber) {
             err::PacketError::SERIALIZER_ATTRIBUTION_FAILED
         );
     }
-
-    // Game state component size/combination entries are managed by the embedding
-    // project (registered via registerLengthCombEntry). Keeping them inside the
-    // Packet library hardcodes application logic and prevents modular usage.
-    // Leave `_lengthComb` empty here and rely on registerLengthCombEntry to
-    // populate it at runtime (e.g., called by `common::packet::registerDefaultPacketHandlers`).
-
-    // Game state pack/unpack functions moved to project-level (registered by common/packet)
 }
 
 pm::PacketManager::~PacketManager() {
@@ -74,7 +66,7 @@ void pm::PacketManager::registerGameStatePackFunction(
 }
 
 void pm::PacketManager::registerGameStateUnpackFunction(
-    std::function<unsigned int(const std::vector<uint8_t>,
+    std::function<unsigned int (const std::vector<uint8_t>,
     unsigned int)> func
 ) {
     this->_unpackGSFunction.push_back(func);
