@@ -357,7 +357,8 @@ void Parser::instanciateComponentCreators() {
     registerComponent<ecs::GameZoneComponent>([](const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         auto zoneRectJson = std::get<nlohmann::json>(*fields.at(constants::ZONERECT_FIELD));
-        math::FRect zoneRect(zoneRectJson[constants::X_FIELD], zoneRectJson[constants::Y_FIELD],
+        math::FRect zoneRect(zoneRectJson[constants::X_FIELD],
+            zoneRectJson[constants::Y_FIELD],
             zoneRectJson[constants::WIDTH_FIELD], zoneRectJson[constants::HEIGHT_FIELD]);
         return std::make_shared<ecs::GameZoneComponent>(zoneRect);
     });

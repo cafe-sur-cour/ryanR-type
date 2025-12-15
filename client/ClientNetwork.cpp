@@ -71,6 +71,7 @@ ClientNetwork::ClientNetwork() {
     _componentParsers[DAMAGE] = &ClientNetwork::parseDamageComponent;
     _componentParsers[LIFETIME] = &ClientNetwork::parseLifetimeComponent;
     _componentParsers[VELOCITY] = &ClientNetwork::parseVelocityComponent;
+    _componentParsers[PROJECTILE_PREFAB] = &ClientNetwork::parseProjectilePrefabComponent;
     _componentParsers[OBSTACLE_TAG] = &ClientNetwork::parseObstacleTagComponent;
 }
 
