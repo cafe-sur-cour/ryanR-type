@@ -30,7 +30,7 @@ class GraphicalInputProvider : public IInputProvider {
     private:
         std::shared_ptr<gfx::IEvent> _eventSystem;
         std::shared_ptr<InputMappingManager> _mappingManager;
-        bool _toggleMode ;
+        bool _toggleMode;
         std::map<InputAction, bool> _toggledStates;
         std::map<InputAction, bool> _lastKeyState;
         std::map<std::pair<InputAction, gfx::EventType>, bool> _keyPressedState;
