@@ -9,7 +9,7 @@ namespace gsm {
 
 AGameState::AGameState(std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager) {
-    _gsm = gsm; // weak_ptr automatically converts from shared_ptr
+    _gsm = gsm;
     _resourceManager = resourceManager;
     this->_systems = {};
 }

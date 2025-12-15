@@ -23,7 +23,8 @@ BootState::BootState(std::shared_ptr<IGameStateMachine> gsm,
 void BootState::enter() {
     _resourceManager->get<Parser>()->parseAllEntities(constants::CONFIG_PATH);
     if (auto stateMachine = _gsm.lock()) {
-        stateMachine->requestStateChange(std::make_shared<LobbyState>(stateMachine, _resourceManager));
+        stateMachine->requestStateChange(std::make_shared<LobbyState>(stateMachine,
+            _resourceManager));
     }
 }
 

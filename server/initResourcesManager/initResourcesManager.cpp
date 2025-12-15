@@ -51,8 +51,10 @@ std::shared_ptr<ResourceManager> initResourcesManager(
             [weakServer, weakRegistry](ecs::Entity entity, const std::string& prefabName) {
                 auto lockedServer = weakServer.lock();
                 auto lockedRegistry = weakRegistry.lock();
-                if (lockedServer && lockedRegistry && lockedServer->getNetwork() != nullptr && lockedServer->getPacketManager() != nullptr) {
-                    auto netIdComp = lockedRegistry->getComponent<ecs::NetworkIdComponent>(entity);
+                if (lockedServer && lockedRegistry && lockedServer->getNetwork() != nullptr
+                    && lockedServer->getPacketManager() != nullptr) {
+                    auto netIdComp = lockedRegistry->getComponent<ecs::NetworkIdComponent>
+                        (entity);
                     if (netIdComp) {
                         size_t networkId = netIdComp->getNetworkId();
                         debug::Debug::printDebug(lockedServer->getConfig()->getIsDebug(),
@@ -64,9 +66,11 @@ std::shared_ptr<ResourceManager> initResourcesManager(
                             lockedServer->spawnPacket(networkId, prefabName);
                         std::vector<uint8_t> spawnPacketData =
                             lockedServer->getPacketManager()->pack(0,
-                            lockedServer->getSequenceNumber(), constants::PACKET_SPAWN, spawnData);
+                            lockedServer->getSequenceNumber(), constants::PACKET_SPAWN,
+                                spawnData);
                         lockedServer->getNetwork()->
-                            broadcast(lockedServer->getConnectedClientEndpoints(), spawnPacketData);
+                            broadcast(lockedServer->getConnectedClientEndpoints(),
+                                spawnPacketData);
                         lockedServer->incrementSequenceNumber();
                     }
                 }
@@ -76,16 +80,21 @@ std::shared_ptr<ResourceManager> initResourcesManager(
             [weakServer, weakRegistry](ecs::Entity entity) {
                 auto lockedServer = weakServer.lock();
                 auto lockedRegistry = weakRegistry.lock();
-                if (lockedServer && lockedRegistry && lockedServer->getNetwork() != nullptr && lockedServer->getPacketManager() != nullptr) {
-                    auto netIdComp = lockedRegistry->getComponent<ecs::NetworkIdComponent>(entity);
+                if (lockedServer && lockedRegistry && lockedServer->getNetwork() != nullptr
+                    && lockedServer->getPacketManager() != nullptr) {
+                    auto netIdComp = lockedRegistry->getComponent<ecs::NetworkIdComponent>
+                        (entity);
                     if (netIdComp) {
                         size_t networkId = netIdComp->getNetworkId();
-                        std::vector<uint64_t> deathData = lockedServer->deathPacket(networkId);
+                        std::vector<uint64_t> deathData =
+                            lockedServer->deathPacket(networkId);
                         std::vector<uint8_t> deathPacketData =
                             lockedServer->getPacketManager()->pack(0,
-                            lockedServer->getSequenceNumber(), constants::PACKET_DEATH, deathData);
+                            lockedServer->getSequenceNumber(), constants::PACKET_DEATH,
+                                deathData);
                         lockedServer->getNetwork()->
-                            broadcast(lockedServer->getConnectedClientEndpoints(), deathPacketData);
+                            broadcast(lockedServer->getConnectedClientEndpoints(),
+                                deathPacketData);
                         lockedServer->incrementSequenceNumber();
                     }
                 }

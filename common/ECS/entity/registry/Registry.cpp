@@ -5,6 +5,10 @@
 ** Registry
 */
 
+#include <string>
+#include <memory>
+#include <unordered_map>
+
 #include "Registry.hpp"
 #include "../../../components/permanent/NetworkIdComponent.hpp"
 

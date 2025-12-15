@@ -27,7 +27,6 @@ WindowsNetwork::WindowsNetwork() : _connected(false) {
     _connectionState = ConnectionState::DISCONNECTED;
 
     this->_serverEndpoint = {};
-
 }
 
 WindowsNetwork::~WindowsNetwork() {
