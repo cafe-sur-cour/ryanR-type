@@ -242,7 +242,7 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
 
             const std::string &type = position[constants::TYPE_FIELD];
 
-            if (type == "horizontalLine") {
+            if (type == constants::HORIZONTAL_LINE_TYPE) {
                 if (
                     !position.contains(constants::FROMX_FIELD) ||
                     !position.contains(constants::POSY_FIELD) ||
@@ -285,7 +285,7 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
                     );
                 }
             }
-            if (type == "verticalLine") {
+            if (type == constants::VERTICAL_LINE_TYPE) {
                 if (
                     !position.contains(constants::FROMY_FIELD) ||
                     !position.contains(constants::POSX_FIELD) ||
@@ -328,7 +328,7 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
                     );
                 }
             }
-            if (type == "unique") {
+            if (type == constants::UNIQUE_TYPE) {
                 if (
                     !position.contains(constants::POSX_FIELD) ||
                     !position.contains(constants::POSY_FIELD)
@@ -500,7 +500,7 @@ std::vector<float> MapParser::getPositionsFromDistrib(
     double real_min = static_cast<double>(limit) * static_cast<double>(min) / 100.0;
     double real_max = static_cast<double>(limit) * static_cast<double>(max) / 100.0;
 
-    if (type == "random") {
+    if (type == constants::RANDOM_TYPE) {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_real_distribution<> dis(real_min, real_max);
@@ -509,7 +509,7 @@ std::vector<float> MapParser::getPositionsFromDistrib(
             values.push_back(static_cast<float>(dis(gen)));
         }
     }
-    if (type == "uniform") {
+    if (type == constants::UNIFORM_TYPE) {
         double offset = (real_max - real_min) / static_cast<double>(count);
 
         for (int i = 0; i < count; ++i) {
