@@ -107,7 +107,7 @@ void DeathSystem::spawnExplosionAtMobCenter(
     try {
         ecs::Entity explosionEntity =
             prefabManager->createEntityFromPrefab(prefabName, registry,
-                ecs::EntityCreationContext::forLocalClient());
+                ecs::EntityCreationContext::forServer());
 
         auto explosionTransform =
             registry->getComponent<TransformComponent>(explosionEntity);

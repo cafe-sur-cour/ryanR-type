@@ -81,5 +81,19 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
             return true;
         }
     }
-    return false;
+
+    std::vector<uint8_t> rawPayload(data.begin() + 11, data.end());
+    this->_payload.clear();
+    for (size_t i = 0; i < rawPayload.size(); i += 8) {
+        if (i + 8 > rawPayload.size()) break;
+        uint64_t val = this->_serializer->deserializeULong(
+            std::vector<uint8_t>(rawPayload.begin() + static_cast<ptrdiff_t>(i),
+            rawPayload.begin() + static_cast<ptrdiff_t>(i + 8)));
+        this->_payload.push_back(val);
+    }
+    this->_idClient = static_cast<uint8_t>(idClient);
+    this->_sequenceNumber = static_cast<uint32_t>(sequenceNumber);
+    this->_type = static_cast<uint8_t>(type);
+    this->_length = static_cast<uint32_t>(length);
+    return true;
 }

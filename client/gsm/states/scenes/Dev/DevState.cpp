@@ -30,6 +30,7 @@
 #include "../../../../systems/input/MovementInputSystem.hpp"
 #include "../../../../systems/input/ShootInputSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
+#include "../../../../systems/network/NetworkInterpolationSystem.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../../common/systems/shooting/ShootingSystem.hpp"
@@ -52,6 +53,7 @@
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
 #include "../../../../../common/systems/ai/AIMovementSystem.hpp"
 #include "../../../../../common/systems/ai/AIShootingSystem.hpp"
+#include "../../../../interpolation/NetworkStateComponent.hpp"
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../../common/components/permanent/HealthComponent.hpp"
 
@@ -88,6 +90,7 @@ void DevState::enter() {
         _parser->parseAllEntities(constants::CONFIG_PATH);
     }
 
+    addSystem(std::make_shared<ecs::NetworkInterpolationSystem>());
     addSystem(std::make_shared<ecs::AIMovementSystem>());
     addSystem(std::make_shared<ecs::AIShootingSystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
@@ -120,7 +123,8 @@ void DevState::enter() {
     _registry->addComponent<ecs::MusicIntentComponent>(musicIntentEntity,
         std::make_shared<ecs::MusicIntentComponent>(ecs::PLAY, ""));
 
-    ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab("player", _registry);
+    ecs::Entity playerEntity = _prefabManager->createEntityFromPrefab(
+        "player", _registry, ecs::EntityCreationContext::forServer());
     _registry->addComponent<ecs::LocalPlayerTag>(
         playerEntity, std::make_shared<ecs::LocalPlayerTag>());
     _registry->addComponent<ecs::HitboxRenderComponent>(

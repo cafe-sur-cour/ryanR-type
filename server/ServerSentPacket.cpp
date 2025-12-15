@@ -6,14 +6,17 @@
 */
 
 #include <vector>
+#include <string>
 #include <iostream>
-
+#include <memory>
 #include "Server.hpp"
 #include "Constants.hpp"
 #include "../common/debug.hpp"
 #include "../common/translationToECS.hpp"
 #include "../common/ECS/entity/Entity.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
+#include "../common/Parser/Parser.hpp"
+#include "../common/components/permanent/NetworkIdComponent.hpp"
 
 bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
@@ -28,7 +31,6 @@ bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
         return false;
     }
     this->_sequenceNumber++;
-    this->mapPacket(this->_currentMap, endpoint);
     return true;
 }
 
@@ -39,7 +41,11 @@ bool rserv::Server::gameStatePacket() {
     }
     auto registry = this->_resourceManager->get<ecs::Registry>();
     for (ecs::Entity i = 0; i < registry->getMaxEntityId(); i++) {
-        payload.push_back(static_cast<uint64_t>(i));
+        if (!registry->hasComponent<ecs::NetworkIdComponent>(i)) {
+            continue;
+        }
+        auto netIdComp = registry->getComponent<ecs::NetworkIdComponent>(i);
+        payload.push_back(static_cast<uint64_t>(netIdComp->getNetworkId()));
         for (const auto& func : this->_convertFunctions) {
             std::vector<uint64_t> componentData = func(registry, i);
             payload.insert(payload.end(), componentData.begin(), componentData.end());
@@ -58,21 +64,6 @@ bool rserv::Server::gameStatePacket() {
     return true;
 }
 
-bool rserv::Server::mapPacket(std::vector<uint64_t> mapData,
-    const asio::ip::udp::endpoint &endpoint) {
-    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
-        this->_sequenceNumber, constants::PACKET_MAP, mapData);
-    if (!this->_network->sendTo(endpoint, packet)) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER NETWORK] Failed to send map packet to "
-            + endpoint.address().to_string() + ":" + std::to_string(endpoint.port()),
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
-        return false;
-    }
-    this->_sequenceNumber++;
-    return true;
-}
-
 bool rserv::Server::canStartPacket() {
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "[SERVER] Checking canStart: clients=" +
@@ -85,6 +76,24 @@ bool rserv::Server::canStartPacket() {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] All clients are connected and ready, starting game",
             debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+        this->_gameStarted = true;
+        std::string playerString = "player";
+        auto prefabMgr = _resourceManager->get<EntityPrefabManager>();
+        auto registry = _resourceManager->get<ecs::Registry>();
+        for (const auto &client : this->_clients) {
+            uint8_t clientId = std::get<0>(client);
+            ecs::Entity playerEntity = prefabMgr->createEntityFromPrefab(
+                playerString,
+                registry,
+                ecs::EntityCreationContext::forServer(clientId)
+            );
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Created player entity " + std::to_string(playerEntity) +
+                " for client " + std::to_string(static_cast<int>(clientId)),
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+        }
+        prefabMgr->getEntityFactory()->setNextNetworkId(this->_clients.size() + 1);
 
         std::vector<uint64_t> payload;
         for (auto &client : this->_clients) {
@@ -101,8 +110,30 @@ bool rserv::Server::canStartPacket() {
             return false;
         }
         this->_sequenceNumber++;
-        this->_gameStarted = true;
         return true;
     }
     return false;
+}
+
+std::vector<uint64_t> rserv::Server::spawnPacket(
+    size_t networkId,
+    const std::string prefabName
+) {
+    std::vector<uint64_t> payload;
+
+    payload.push_back(static_cast<uint64_t>(networkId));
+    for (const auto &c : prefabName) {
+        payload.push_back(static_cast<uint64_t>(c));
+    }
+    payload.push_back(static_cast<uint64_t>('\r'));
+    payload.push_back(static_cast<uint64_t>('\n'));
+    payload.push_back(static_cast<uint64_t>('\0'));
+    return payload;
+}
+
+std::vector<uint64_t> rserv::Server::deathPacket(size_t networkId) {
+    std::vector<uint64_t> payload;
+
+    payload.push_back(static_cast<uint64_t>(networkId));
+    return payload;
 }
