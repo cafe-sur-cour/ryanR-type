@@ -12,8 +12,10 @@
 #include "resourceManager/ResourceManager.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
+#include "../../../../../libs/Multimedia/IWindow.hpp"
 #include <vector>
 #include <string>
+#include <memory>
 
 namespace gsm {
 
@@ -34,6 +36,7 @@ class InGameState : public AGameState {
 
     private:
         void renderHUD();
+        void drawHealthHUD(std::shared_ptr<gfx::IWindow> window, float health, float maxHealth);
 
     private:
         std::shared_ptr<ecs::Registry> _registry;
