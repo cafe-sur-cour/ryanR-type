@@ -79,8 +79,19 @@ class ClientNetwork {
 
         bool isConnected() const;
         bool isReady() const;
+
+        size_t getConnectedClients() const;
+        size_t getReadyClients() const;
+        uint8_t getClientId() const;
+        bool getClientReadyStatus() const;
+
         std::atomic<bool> _isConnected;
         std::atomic<bool> _ready;
+
+        std::atomic<size_t> _connectedClients;
+        std::atomic<size_t> _readyClients;
+        std::atomic<uint8_t> _clientId;
+        std::atomic<bool> _clientReadyStatus;
 
         void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
         void setGameStateMachine(std::shared_ptr<gsm::IGameStateMachine> gsm);
@@ -105,6 +116,7 @@ class ClientNetwork {
         void handleEntitySpawn();
         void handleEntityDeath();
         void handleWhoAmI();
+        void handleServerStatus();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;

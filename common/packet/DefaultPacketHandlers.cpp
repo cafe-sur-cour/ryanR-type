@@ -110,37 +110,6 @@ static void registerUCharULongPacket(
     });
 }
 
-static void registerULongSequencePacket(
-    std::shared_ptr<pm::IPacketManager> packet,
-    SerializerPtr ser,
-    uint8_t id
-) {
-    packet->registerBuilder(
-        id, [ser](std::vector<uint64_t> payload) -> std::vector<uint8_t> {
-        std::vector<uint8_t> body;
-        for (auto val : payload) {
-            auto temp = ser->serializeULong(val);
-            body.insert(body.end(), temp.begin(), temp.end());
-        }
-        return body;
-    });
-
-    packet->registerParser(
-        id, [ser, packet](const std::vector<uint8_t> payload) -> bool {
-        if (payload.size() % 8 != 0)
-            return false;
-        std::vector<uint64_t> vals;
-        for (size_t i = 0; i < payload.size(); i += 8) {
-            uint64_t value = ser->deserializeULong(
-                std::vector<uint8_t>(payload.begin() + static_cast<std::ptrdiff_t>(i),
-                payload.begin() + static_cast<std::ptrdiff_t>(i + 8)));
-            vals.push_back(value);
-        }
-        packet->setPayload(vals);
-        return true;
-    });
-}
-
 static void registerSpawnPlayerPacket(
     std::shared_ptr<pm::IPacketManager> packet,
     SerializerPtr ser
@@ -230,6 +199,38 @@ static void registerOptionalULongPacket(
     });
 }
 
+static void registerServerStatusPacket(
+    std::shared_ptr<pm::IPacketManager> packet,
+    SerializerPtr ser
+) {
+    packet->registerBuilder(
+        SERVER_STATUS_PACKET, [ser](std::vector<uint64_t> payload) -> std::vector<uint8_t> {
+        std::vector<uint8_t> body;
+        size_t nbDataPayload = 4;
+        for (size_t i = 0; i < nbDataPayload && i < payload.size(); ++i) {
+            auto temp = ser->serializeULong(payload.at(i));
+            body.insert(body.end(), temp.begin(), temp.end());
+        }
+        return body;
+    });
+
+    packet->registerParser(
+        SERVER_STATUS_PACKET, [ser, packet](const std::vector<uint8_t> payload) -> bool {
+        if (payload.size() != LENGTH_SERVER_STATUS_PACKET)
+            return false;
+        std::vector<uint64_t> vals;
+        size_t nbDataPayload = 4;
+        for (size_t i = 0; i < nbDataPayload; i++) {
+            uint64_t value = ser->deserializeULong(
+                std::vector<uint8_t>(payload.begin() + static_cast<std::ptrdiff_t>(i * 8),
+                payload.begin() + static_cast<std::ptrdiff_t>((i + 1) * 8)));
+            vals.push_back(value);
+        }
+        packet->setPayload(vals);
+        return true;
+    });
+}
+
 static void registerCanStartPacket(
     std::shared_ptr<pm::IPacketManager> packet,
     SerializerPtr ser
@@ -314,8 +315,6 @@ bool registerDefaultPacketHandlers(
 
     registerUCharULongPacket(packet, ser, EVENT_PACKET);
 
-    registerULongSequencePacket(packet, ser, MAP_SEND_PACKET);
-
     registerSingleUCharPacket(packet, ser, END_GAME_PACKET, LENGTH_END_GAME_PACKET);
 
     registerCanStartPacket(packet, ser);
@@ -325,6 +324,8 @@ bool registerDefaultPacketHandlers(
     registerSingleULongPacket(packet, ser, DEATH_PLAYER_PACKET, LENGTH_DEATH_PACKET);
 
     registerOptionalULongPacket(packet, ser, WHOAMI_PACKET);
+
+    registerServerStatusPacket(packet, ser);
 
     registerOptionalULongPacket(packet, ser, constants::PACKET_END_GAME);
 
@@ -337,6 +338,7 @@ bool registerDefaultPacketHandlers(
     packet->registerLength(EVENT_PACKET, LENGTH_EVENT_PACKET);
     packet->registerLength(DEATH_PLAYER_PACKET, LENGTH_DEATH_PACKET);
     packet->registerLength(WHOAMI_PACKET, LENGTH_WHOAMI_PACKET);
+    packet->registerLength(SERVER_STATUS_PACKET, LENGTH_SERVER_STATUS_PACKET);
     packet->registerLength(constants::PACKET_END_GAME, 0);
 
     packet->registerLengthCombEntry(TRANSFORM, 41, 6);

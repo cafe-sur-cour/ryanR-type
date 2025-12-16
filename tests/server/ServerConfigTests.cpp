@@ -19,7 +19,7 @@ protected:
 };
 
 TEST_F(ServerConfigTest, ConstructorSetsPort) {
-    EXPECT_EQ(config.getPort(), 0);
+    EXPECT_EQ(config.getPort(), 4242);
 }
 
 TEST_F(ServerConfigTest, InitialState) {

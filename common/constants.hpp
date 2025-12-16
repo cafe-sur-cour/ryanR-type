@@ -15,7 +15,7 @@
 namespace constants {
     /* Network Defaults */
     constexpr int DEFAULT_SERVER_PORT = 4242;
-    const std::string DEFAULT_SERVER_IP = "127.0.0.1";  // 127.0.0.1
+    const std::string DEFAULT_SERVER_IP = "127.0.0.1";
 
     /* Game Defaults */
     constexpr float BASE_SPEED = 100.0f;
@@ -251,8 +251,6 @@ namespace constants {
     constexpr std::uint8_t PACKET_DISC = 0x03;
     constexpr std::uint8_t PACKET_EVENT = 0x04;
     constexpr std::uint8_t PACKET_GAME_STATE = 0x05;
-    constexpr std::uint8_t PACKET_MAP = 0x06;
-    constexpr std::uint8_t PACKET_END_MAP = 0x07;
     constexpr std::uint8_t PACKET_END_GAME = 0x08;
     constexpr std::uint8_t PACKET_CAN_START = 0x09;
     constexpr std::uint8_t PACKET_CLIENT_READY = 0x0A;
@@ -260,7 +258,7 @@ namespace constants {
     constexpr std::uint8_t PACKET_DEATH = 0x0C;
     constexpr std::uint8_t PACKET_WHOAMI = 0x0D;
 
-    const int MAX_INDEX_PACKET_TYPE = 14;
+    const int MAX_INDEX_PACKET_TYPE = 16;
 }
 
 #endif /* !CONSTANTS_HPP_ */
