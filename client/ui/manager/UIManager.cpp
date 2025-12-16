@@ -10,6 +10,7 @@
 #include <cmath>
 #include <memory>
 #include <functional>
+#include <string>
 #include "../elements/focusable/TextInput.hpp"
 
 namespace ui {

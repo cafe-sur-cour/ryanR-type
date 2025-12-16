@@ -60,7 +60,9 @@ gfx::IEvent::event_t SfmlEvent::pollEvents() {
             sfmlWindow->updateView();
         } else if (auto textEntered = event->getIf<sf::Event::TextEntered>()) {
             auto now = std::chrono::steady_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - _lastTextTime);
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+                now - _lastTextTime
+            );
             if (duration.count() > 100) {
                 _lastTextInput = std::string(1, static_cast<char>(textEntered->unicode));
                 _lastTextTime = now;
