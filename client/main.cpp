@@ -21,6 +21,7 @@ int main(int ac, char **av) {
     try {
         utils.parseCli(ac, av, core.getNetwork());
         core.startNetwork();
+        core.initFirstScene();
         core.run();
     } catch (const err::IError &e) {
         std::cerr << e.getDetails() << std::endl;
