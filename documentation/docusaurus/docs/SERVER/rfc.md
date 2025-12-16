@@ -34,10 +34,12 @@ You can also download it in pdf format [here](../../static/pdfs/rfc-r-type.pdf)
    3. Packet Types ................................................ 3
    4. Packet Details .............................................. 3
    5. Communication Example ....................................... 6
-   6. Technical Considerations .................................... 7
-   7. Map Format Protocol ......................................... 7
-   8. References .................................................. 8
-   9. Author's Address ............................................ 8
+   5.1 Ready System Logic ......................................... 6
+   6. Packet lost consideration ................................... 7
+   7. Technical Considerations .................................... 8
+   8. Map Format Protocol ......................................... 8
+   9. References .................................................. 9
+   10. Author's Address ........................................... 9
 
 
 
@@ -184,28 +186,54 @@ Notes:
    |                  |                      |                  |
    +------------------+                      +------------------+
            |                                          |
-           |            CONNECTION                    |
+           |             CONNECTION_CLIENT            |
            |----------------------------------------->|
            |                                          |
-           |            CONNECTIONS                   |
+           |               ACCEPTATION                |
            |<-----------------------------------------|
            |                                          |
-           |            GAME_STATE                    |
-           |<-----------------------------------------|
-           |                                          |
-           |            EVENT (if space pressed)      |
+           |               CLIENT_READY               |
            |----------------------------------------->|
            |                                          |
-           |            GAME_STATE (20 fps updates)   |
+           |               SERVER_STATUS              |
            |<-----------------------------------------|
            |                                          |
-           |            END GAME                      |
+           |                CAN_START                 |
+           |<-----------------------------------------|
+           |                                          |
+           |============= Game Loop Begins ===========|
+           |                                          |
+           |                  EVENT                   |
            |----------------------------------------->|
            |                                          |
-           |            DISCONECTION                  |
+           |               GAME_STATE                 |
+           |<-----------------------------------------|
+           |                                          |
+           |                END_GAME                  |
+           |<-----------------------------------------|
+           |                                          |
+           |              DISCONNECTION               |
            |----------------------------------------->|
 
 ```
+
+**5.1 Ready System Logic**
+
+After connection establishment, clients must signal readiness before the game begins. This ensures all players start simultaneously.
+
+**Flow:**
+1. Client connects and receives ACCEPTATION
+2. Client loads necessary resources and displays ready interface
+3. Client sends CLIENT_READY when player indicates readiness
+4. Server tracks readiness status for each client
+5. Server periodically sends SERVER_STATUS to update lobby information
+6. When all connected clients are ready, server broadcasts CAN_START
+7. Game loop begins with synchronized start
+
+**Benefits:**
+- Synchronized game starts across all clients
+- Prevents clients from starting prematurely
+- Provides lobby status updates
 
 **6. Packet lost consideration**
 
