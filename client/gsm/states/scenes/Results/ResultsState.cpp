@@ -34,7 +34,7 @@ void ResultsState::enter() {
     ecs::Entity textEntity = _registry->createEntity();
     std::string text = _isWin ? constants::WIN_TEXT : constants::LOSE_TEXT;
     _registry->addComponent(textEntity, std::make_shared<ecs::TextComponent>(
-        text, "assets/fonts/arial.ttf", gfx::color_t{255, 255, 255}));
+        text, "assets/fonts/abduction2002.ttf", gfx::color_t{255, 255, 255}));
     _registry->addComponent(textEntity,
         std::make_shared<ecs::TransformComponent>(
         math::Vector2f(constants::MAX_WIDTH / 2.0f - 50.0f,
