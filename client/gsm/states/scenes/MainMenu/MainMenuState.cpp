@@ -81,7 +81,7 @@ MainMenuState::MainMenuState(
 
     _connectButton = std::make_shared<ui::Button>(_resourceManager);
     _connectButton->setText("Connect to Server");
-    _connectButton->setSize(math::Vector2f(300.f, 108.f));
+    _connectButton->setSize(math::Vector2f(300.f, 50.f));
 
     _connectButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
@@ -124,9 +124,25 @@ MainMenuState::MainMenuState(
         }
     });
 
+    _connectionStatusText = std::make_shared<ui::Text>(_resourceManager);
+    _connectionStatusText->setText("Not connected to server");
+    _connectionStatusText->setSize(math::Vector2f(300.f, 30.f));
+    _connectionStatusText->setTextColor(gfx::color_t{255, 100, 100, 255});
+    _connectionStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
+    _connectionStatusText->setOutlineThickness(2.0f);
+
+    _serverStatusText = std::make_shared<ui::Text>(_resourceManager);
+    _serverStatusText->setText("");
+    _serverStatusText->setSize(math::Vector2f(300.f, 40.f));
+    _serverStatusText->setTextColor(gfx::color_t{100, 150, 255, 255});
+    _serverStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
+    _serverStatusText->setOutlineThickness(1.0f);
+
     _leftLayout->addElement(_ipInput);
     _leftLayout->addElement(_portInput);
     _leftLayout->addElement(_connectButton);
+    _leftLayout->addElement(_connectionStatusText);
+    _leftLayout->addElement(_serverStatusText);
 
     ui::LayoutConfig menuConfig;
     menuConfig.direction = ui::LayoutDirection::Vertical;
@@ -286,7 +302,7 @@ void MainMenuState::update(float deltaTime) {
     }
 
     _uiManager->update(deltaTime);
-    updatePlayButtonText();
+    updateUIStatus();
     renderUI();
 }
 
@@ -294,19 +310,44 @@ void MainMenuState::renderUI() {
     _uiManager->render();
 }
 
-void MainMenuState::updatePlayButtonText() {
+void MainMenuState::updateUIStatus() {
     auto network = this->_resourceManager->get<ClientNetwork>();
     if (!network) {
         _playButton->setText("Not connected");
+        _connectionStatusText->setText("Not connected");
+        _connectionStatusText->setTextColor(gfx::color_t{255, 100, 100, 255});
+        _connectionStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
+        _connectionStatusText->setOutlineThickness(2.0f);
+        _serverStatusText->setText("to server");
         return;
     }
 
     if (!network->isConnected()) {
-        _playButton->setText("Not connected");
-    } else if (network->isReady()) {
-        _playButton->setText("Waiting for other players");
+        _playButton->setText("Not connected to server");
+        _connectionStatusText->setText("Not connected to server");
+        _connectionStatusText->setTextColor(gfx::color_t{255, 100, 100, 255});
+        _connectionStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
+        _connectionStatusText->setOutlineThickness(2.0f);
+        _serverStatusText->setText("");
     } else {
-        _playButton->setText("Ready ?");
+        if (network->isReady()) {
+            _playButton->setText("Waiting for other players");
+        } else {
+            _playButton->setText("Ready ?");
+        }
+
+        _connectionStatusText->setText("Connected");
+        _connectionStatusText->setTextColor(gfx::color_t{100, 255, 100, 255});
+        _connectionStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
+        _connectionStatusText->setOutlineThickness(2.0f);
+
+        std::string status = std::to_string(network->getConnectedClients()) + " players, ";
+        status += std::to_string(network->getReadyClients()) + " ready";
+        if (network->getClientId() != 0) {
+            status += "\nYou are player " + std::to_string(network->getClientId());
+            status += network->getClientReadyStatus() ? " (ready)" : " (not ready)";
+        }
+        _serverStatusText->setText(status);
     }
 }
 
@@ -318,6 +359,8 @@ void MainMenuState::exit() {
     _connectButton.reset();
     _ipInput.reset();
     _portInput.reset();
+    _connectionStatusText.reset();
+    _serverStatusText.reset();
     _mainMenuLayout.reset();
     _rightLayout.reset();
     _leftLayout.reset();
