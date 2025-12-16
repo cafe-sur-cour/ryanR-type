@@ -4,6 +4,7 @@
     "scrollSpeed": 100.0,
     "music": "music",
     "powerUps": [],
+    "mapLength": 2500.0,
     "obstacles": [
         {
             "name": "obstacle1",
@@ -23,6 +24,11 @@
                 {
                     "type": "unique",
                     "posX": 600.0,
+                    "posY": 600.0
+                },
+                {
+                    "type": "unique",
+                    "posX": 2500.0,
                     "posY": 600.0
                 }
             ]

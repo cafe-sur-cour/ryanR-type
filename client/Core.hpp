@@ -25,6 +25,7 @@ class Core
         Core();
         ~Core();
 
+        void initFirstScene();
         void run();
         void startNetwork();
 

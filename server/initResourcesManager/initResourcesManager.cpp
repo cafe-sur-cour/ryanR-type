@@ -19,15 +19,13 @@
 #include "../../common/components/permanent/NetworkIdComponent.hpp"
 #include "../../common/debug.hpp"
 #include "initResourcesManager.hpp"
+#include "../gsm/gsmStates.hpp"
 
-std::shared_ptr<ResourceManager> initResourcesManager(
-    std::shared_ptr<rserv::Server> server,
-    std::shared_ptr<ecs::Registry> registry,
-    std::shared_ptr<Parser> parser,
+std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Server> server,
+    std::shared_ptr<ecs::Registry> registry, std::shared_ptr<Parser> parser,
     std::shared_ptr<ecs::ISystemManager> systemsManager,
     std::shared_ptr<gsm::GameStateMachine> gameStateMachine,
-    std::shared_ptr<ecs::IInputProvider> inputProvider
-) {
+    std::shared_ptr<ecs::IInputProvider> inputProvider) {
     std::shared_ptr<ResourceManager> resourceManager =
         std::make_shared<ResourceManager>();
 
@@ -41,7 +39,6 @@ std::shared_ptr<ResourceManager> initResourcesManager(
 
     auto entityPrefabManager = parser->getPrefabManager();
     resourceManager->add<EntityPrefabManager>(entityPrefabManager);
-
     if (server != nullptr) {
         resourceManager->add<rserv::Server>(server);
         resourceManager->add<rserv::ServerConfig>(server->getConfig());
@@ -76,6 +73,7 @@ std::shared_ptr<ResourceManager> initResourcesManager(
                 }
             }
         );
+
         registry->setOnEntityDestroyed(
             [weakServer, weakRegistry](ecs::Entity entity) {
                 auto lockedServer = weakServer.lock();
@@ -106,6 +104,6 @@ std::shared_ptr<ResourceManager> initResourcesManager(
     resourceManager->add<Parser>(parser);
     resourceManager->add<ecs::ISystemManager>(systemsManager);
     resourceManager->add<gsm::GameStateMachine>(gameStateMachine);
-
+    resourceManager->add<gsm::GameStateType>(std::make_shared<gsm::GameStateType>(gsm::BOOT));
     return resourceManager;
 }

@@ -15,6 +15,7 @@
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../ui/elements/Background.hpp"
+#include "../../../../ui/elements/focusable/TextInput.hpp"
 
 
 namespace gsm {
@@ -30,6 +31,7 @@ public:
 
 private:
     void renderUI();
+    void updatePlayButtonText();
 
 private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
@@ -43,6 +45,9 @@ private:
 
     std::shared_ptr<ui::UILayout> _rightLayout;
     std::shared_ptr<ui::Button> _devButton;
+
+    std::shared_ptr<ui::TextInput> _ipInput;
+    std::shared_ptr<ui::TextInput> _portInput;
 
     std::shared_ptr<ui::Background> _background;
 };

@@ -20,7 +20,7 @@ namespace constants {
 
     /* UI */
     constexpr float INVALID_MOUSE_POSITION = -1.0f;
-    constexpr float NAVIGATION_COOLDOWN_TIME = 0.2f;
+    constexpr float NAVIGATION_COOLDOWN_TIME = 0.1f;
     constexpr float UI_SCALE_SMALL = 0.75f;
     constexpr float UI_SCALE_NORMAL = 1.0f;
     constexpr float UI_SCALE_LARGE = 1.25f;
@@ -69,6 +69,13 @@ namespace constants {
     const std::string ACCESSIBILITY_FILE_PATH = "saves/accessibility.json";
     const std::string SETTINGS_FILE_PATH = "saves/settings.json";
     const std::string UI_BACKGROUND_EARTH_PATH = "assets/ui/earth.jpg";
+
+    const std::string WIN_TEXT = "YOU WIN!";
+    const std::string LOSE_TEXT = "YOU LOSE!";
+
+    /* Home page input place holders */
+    const std::string IP_PLACEHOLDER = "Enter an IP address";
+    const std::string PORT_PLACEHOLDER = "Enter a port";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */

@@ -14,13 +14,17 @@
 namespace gsm {
 
 class ResultsState : public AGameState {
-public:
-    ResultsState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
-    ~ResultsState() override = default;
+    public:
+        ResultsState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager, bool isWin);
+        ~ResultsState() override = default;
 
-    void enter() override;
-    void update(float deltaTime) override;
-    void exit() override;
+        void enter() override;
+        void update(float deltaTime) override;
+        void exit() override;
+
+    private:
+        bool _isWin;
+        std::shared_ptr<ecs::Registry> _registry;
 };
 
 }  // namespace gsm

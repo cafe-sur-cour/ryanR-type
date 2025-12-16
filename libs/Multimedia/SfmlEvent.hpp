@@ -10,6 +10,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <map>
+#include <chrono>
+#include <string>
 #include "IEvent.hpp"
 #include "IWindow.hpp"
 #include "SfmlKeyMappings.hpp"
@@ -21,6 +23,7 @@ class SfmlEvent : public gfx::IEvent {
         ~SfmlEvent() override;
         void init() override;
         event_t pollEvents() override;
+        std::string getLastTextInput() override;
         void cleanup() override;
         std::pair<int, int> getMousePos() override;
         bool isKeyPressed(event_t key) override;
@@ -44,6 +47,8 @@ class SfmlEvent : public gfx::IEvent {
         std::map<sf::Keyboard::Key, event_t> _reverseKeyMap;
         std::map<event_t, sf::Mouse::Button> _mouseMap;
         std::map<event_t, unsigned int> _joystickButtonMap;
+        std::string _lastTextInput;
+        std::chrono::steady_clock::time_point _lastTextTime;
 };
 
 #endif /* !SFMLEVENT_HPP_ */

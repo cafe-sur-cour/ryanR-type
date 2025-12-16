@@ -17,7 +17,7 @@ using event_t = gfx::IEvent::event_t;
 
 SfmlEvent::SfmlEvent(std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<gfx::IWindow> window)
-    : _resourceManager(resourceManager), _window(window) {
+    : _resourceManager(resourceManager), _window(window), _lastTextInput("") {
     this->_keyMap = {};
     this->_reverseKeyMap = {};
     this->_mouseMap = {};
@@ -30,6 +30,7 @@ SfmlEvent::~SfmlEvent() {}
 void SfmlEvent::init() {
     initializeMappings();
     createReverseKeyboardMapping();
+    _lastTextTime = std::chrono::steady_clock::now();
 }
 
 void SfmlEvent::initializeMappings() {
@@ -57,6 +58,16 @@ gfx::IEvent::event_t SfmlEvent::pollEvents() {
             return event_t::CLOSE;
         } else if (event->is<sf::Event::Resized>()) {
             sfmlWindow->updateView();
+        } else if (auto textEntered = event->getIf<sf::Event::TextEntered>()) {
+            auto now = std::chrono::steady_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+                now - _lastTextTime
+            );
+            if (duration.count() > 100) {
+                _lastTextInput = std::string(1, static_cast<char>(textEntered->unicode));
+                _lastTextTime = now;
+                lastEvent = event_t::TEXT_INPUT;
+            }
         } else if (auto keyPressed = event->getIf<sf::Event::KeyPressed>()) {
             lastEvent = processKeyboardEvent(*keyPressed);
         } else if (auto mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
@@ -288,4 +299,8 @@ float SfmlEvent::getAxisValue(event_t axis) {
         default:
             return 0.0f;
     }
+}
+
+std::string SfmlEvent::getLastTextInput() {
+    return _lastTextInput;
 }

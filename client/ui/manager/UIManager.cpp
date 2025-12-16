@@ -10,6 +10,8 @@
 #include <cmath>
 #include <memory>
 #include <functional>
+#include <string>
+#include "../elements/focusable/TextInput.hpp"
 
 namespace ui {
 
@@ -83,8 +85,11 @@ void UIManager::render() {
 
 void UIManager::handleMouseInput(const math::Vector2f& mousePos, bool mousePressed) {
     if (_lastMousePos.getX() > constants::INVALID_MOUSE_POSITION && hasMouseMoved(mousePos)) {
-        _navigationManager->onMouseMovement();
-        _mouseMovementDetected = true;
+        auto focusedElement = getFocusedElement();
+        if (!focusedElement || !std::dynamic_pointer_cast<TextInput>(focusedElement)) {
+            _navigationManager->onMouseMovement();
+            _mouseMovementDetected = true;
+        }
     }
     _lastMousePos = mousePos;
 
@@ -121,6 +126,8 @@ bool UIManager::handleNavigationInputs(
 
     bool navigationTriggered = false;
 
+    auto focusedElement = getFocusedElement();
+
     if (inputProvider->isActionPressed(ecs::InputAction::MENU_UP)) {
         handleNavigationInput(ecs::InputAction::MENU_UP);
         navigationTriggered = true;
@@ -129,11 +136,17 @@ bool UIManager::handleNavigationInputs(
         handleNavigationInput(ecs::InputAction::MENU_DOWN);
         navigationTriggered = true;
     }
-    if (inputProvider->isActionPressed(ecs::InputAction::MENU_LEFT)) {
+    if (
+        inputProvider->isActionPressed(ecs::InputAction::MENU_LEFT) &&
+        !(focusedElement && std::dynamic_pointer_cast<TextInput>(focusedElement))
+    ) {
         handleNavigationInput(ecs::InputAction::MENU_LEFT);
         navigationTriggered = true;
     }
-    if (inputProvider->isActionPressed(ecs::InputAction::MENU_RIGHT)) {
+    if (
+        inputProvider->isActionPressed(ecs::InputAction::MENU_RIGHT) &&
+        !(focusedElement && std::dynamic_pointer_cast<TextInput>(focusedElement))
+    ) {
         handleNavigationInput(ecs::InputAction::MENU_RIGHT);
         navigationTriggered = true;
     }
@@ -146,6 +159,24 @@ bool UIManager::handleNavigationInputs(
         _navigationCooldown = constants::NAVIGATION_COOLDOWN_TIME;
 
     return navigationTriggered;
+}
+
+void UIManager::handleKeyboardInput(gfx::EventType event) {
+    auto focusedElement = getFocusedElement();
+    if (focusedElement) {
+        if (auto textInput = std::dynamic_pointer_cast<TextInput>(focusedElement)) {
+            textInput->handleKeyboardInput(event);
+        }
+    }
+}
+
+void UIManager::handleTextInput(const std::string& text) {
+    auto focusedElement = getFocusedElement();
+    if (focusedElement) {
+        if (auto textInput = std::dynamic_pointer_cast<TextInput>(focusedElement)) {
+            textInput->handleTextInput(text);
+        }
+    }
 }
 
 std::shared_ptr<UINavigationManager> UIManager::getNavigationManager() {

@@ -16,6 +16,8 @@ public:
 
     void update(float deltaTime) override;
 
+    void requestStateChange(std::shared_ptr<IGameState> newState) override;
+
 protected:
     std::stack<std::shared_ptr<IGameState>> _states;
 };

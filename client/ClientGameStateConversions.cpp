@@ -15,6 +15,7 @@
 #include "../common/components/permanent/NetworkIdComponent.hpp"
 #include "../common/components/permanent/TransformComponent.hpp"
 #include "../common/components/permanent/HealthComponent.hpp"
+#include "../common/components/permanent/ScoreComponent.hpp"
 #include "../common/components/permanent/VelocityComponent.hpp"
 #include "../common/components/permanent/ProjectilePrefabComponent.hpp"
 #include "../common/components/tags/ObstacleTag.hpp"
@@ -190,9 +191,19 @@ size_t ClientNetwork::parseScoreComponent(const std::vector<uint64_t> &payload, 
     if (index + 1 <= payload.size()) {
         uint32_t score = static_cast<uint32_t>(payload[index++]);
         debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Entity " + std::to_string(entityId) + " Score: " + std::to_string(score),
+            "[CLIENT] Entity " + std::to_string(entityId)
+                + " Score: " + std::to_string(score),
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
+
+        auto _registry = this->_resourceManager->get<ecs::Registry>();
+        if (_registry->hasComponent<ecs::ScoreComponent>(entityId)) {
+            _registry->getComponent<
+                ecs::ScoreComponent>(entityId)->setScore(static_cast<int>(score));
+        } else {
+            _registry->addComponent(
+                entityId, std::make_shared<ecs::ScoreComponent>(static_cast<int>(score)));
+        }
     }
     return index;
 }

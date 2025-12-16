@@ -96,7 +96,6 @@ bool WindowsNetwork::isConnected() const {
 }
 
 bool WindowsNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
-    (void)id;
     try {
         if (!this->_socket || !this->_socket->is_open()) {
             std::cerr << "[CLIENT NETWORK] Socket is not open for sending." << std::endl;
@@ -106,7 +105,7 @@ bool WindowsNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> pac
             std::cerr << "[CLIENT NETWORK] No data to send." << std::endl;
             return false;
         }
-        _socket->send_to(asio::buffer(packet), this->_serverEndpoint);
+        _socket->send_to(asio::buffer(packet), id);
         return true;
     } catch (const std::exception& e) {
         std::cerr << "[CLIENT NETWORK] Send error: " << e.what() << std::endl;
