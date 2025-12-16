@@ -140,9 +140,11 @@ void MapParser::createGameEndEntity(float mapLength) {
     ecs::Entity gameEndEntity = _registry->createEntity();
 
     _registry->addComponent(gameEndEntity, std::make_shared<ecs::GameEndTag>());
-    _registry->addComponent(gameEndEntity, std::make_shared<ecs::TransformComponent>(math::Vector2f(x, 0.0f)));
+    _registry->addComponent(gameEndEntity, std::make_shared<ecs::TransformComponent>
+        (math::Vector2f(x, 0.0f)));
     _registry->addComponent(gameEndEntity, std::make_shared<ecs::ColliderComponent>(
-        math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, constants::MAX_HEIGHT), ecs::CollisionType::Trigger));
+        math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, constants::MAX_HEIGHT),
+        ecs::CollisionType::Trigger));
 }
 
 void MapParser::parsePowerUps(const nlohmann::json &powerUps) {

@@ -88,7 +88,8 @@ void InGameState::update(float deltaTime) {
 
             if (auto gsmPtr = _gsm.lock()) {
                 if (auto gsm = std::dynamic_pointer_cast<GameStateMachine>(gsmPtr)) {
-                    gsm->requestStateChange(std::make_shared<gsm::GameEndState>(gsmPtr, _resourceManager));
+                    gsm->requestStateChange(std::make_shared<gsm::GameEndState>
+                        (gsmPtr, _resourceManager));
                 }
             }
         }
