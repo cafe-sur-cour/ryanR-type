@@ -181,6 +181,7 @@ namespace constants {
     const std::string POWERUPS_FIELD = "powerUps";
     const std::string OBSTACLES_FIELD = "obstacles";
     const std::string WAVES_FIELD = "waves";
+    const std::string MAP_LENGTH_FIELD = "mapLength";
     const std::string POSITIONS_FIELD = "positions";
     const std::string TYPE_FIELD = "type";
     const std::string FROMX_FIELD = "fromX";

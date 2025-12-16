@@ -280,6 +280,13 @@ void InGameState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) 
 }
 
 void InGameState::exit() {
+    auto systemManager = _resourceManager->get<ecs::ISystemManager>();
+    for (auto& sys : _systems) {
+        systemManager->removeSystem(sys);
+    }
+    _systems.clear();
+    _resourceManager->remove<ecs::Registry>();
+    _resourceManager->remove<EntityPrefabManager>();
 }
 
 }  // namespace gsm
