@@ -97,9 +97,6 @@ void ClientNetwork::handleGameState() {
     }
 }
 
-void ClientNetwork::handleEndMap() {
-}
-
 void ClientNetwork::handleEndGame() {
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Received end game packet",

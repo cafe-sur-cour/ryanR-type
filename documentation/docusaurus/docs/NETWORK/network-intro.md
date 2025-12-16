@@ -42,11 +42,7 @@ Client                          Server
   |                               |
   |<--(2) ACCEPTATION-------------|
   |                               |
-  |<--(3) MAP_SEND----------------|
-  |<--(4) MAP_SEND (continued)----|
-  |<--(5) END_MAP-----------------|
-  |                               |
-  |---(6) CLIENT_READY----------->|
+  |---(3) CLIENT_READY----------->|
   |                               |
   |<--(7) CAN_START---------------|
   |                               |
