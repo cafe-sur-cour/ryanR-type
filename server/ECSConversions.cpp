@@ -52,7 +52,6 @@ std::vector<uint64_t> rserv::Server::convertTagComponent(
     if (registry && registry->hasComponent<ecs::PlayerTag>(i)) {
         data.push_back(static_cast<uint64_t>(PLAYER_TAG));
     }
-    // std::cout << "[convertTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -70,7 +69,6 @@ std::vector<uint64_t> rserv::Server::convertTransformComponent(
             data.push_back(packFloat(transform->getScale().getY()));
         }
     }
-    // std::cout << "[convertTransformComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -84,7 +82,6 @@ std::vector<uint64_t> rserv::Server::convertSpeedComponent(
             data.push_back(packFloat(speed->getSpeed()));
         }
     }
-    // std::cout << "[convertSpeedComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -99,7 +96,6 @@ std::vector<uint64_t> rserv::Server::convertHealthComponent(
             data.push_back(packFloat(health->getBaseHealth()));
         }
     }
-    // std::cout << "[convertHealthComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -110,14 +106,13 @@ std::vector<uint64_t> rserv::Server::convertColliderComponent(
         auto collider = registry->getComponent<ecs::ColliderComponent>(i);
         if (collider) {
             data.push_back(static_cast<uint64_t>(COLLIDER));
-            data.push_back(packFloat(collider->getOffset().getX())); // here
+            data.push_back(packFloat(collider->getOffset().getX()));
             data.push_back(packFloat(collider->getOffset().getY()));
             data.push_back(packFloat(collider->getSize().getX()));
             data.push_back(packFloat(collider->getSize().getY()));
             data.push_back(static_cast<uint64_t>(collider->getType()));
         }
     }
-    // std::cout << "[convertColliderComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -135,7 +130,6 @@ std::vector<uint64_t> rserv::Server::convertShootStatComponent(
             data.push_back(packFloat(shootStats->getMultiShotPattern().offsetDistance));
         }
     }
-    // std::cout << "[convertShootStatComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -149,7 +143,6 @@ std::vector<uint64_t> rserv::Server::convertScoreComponent(
             data.push_back(static_cast<uint64_t>(scoreComp->getScore()));
         }
     }
-    // std::cout << "[convertScoreComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -168,7 +161,6 @@ std::vector<uint64_t> rserv::Server::convertAIMovementPatternComponent(
             data.push_back(packFloat(pattern->getTimer()));
         }
     }
-    // std::cout << "[convertAIMovementPatternComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -179,10 +171,9 @@ std::vector<uint64_t> rserv::Server::convertDamageComponent(
         auto damageComp = registry->getComponent<ecs::DamageComponent>(i);
         if (damageComp) {
             data.push_back(static_cast<uint64_t>(DAMAGE));
-            data.push_back(packFloat(damageComp->getDamage())); // here
+            data.push_back(packFloat(damageComp->getDamage()));
         }
     }
-    // std::cout << "[convertDamageComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -196,7 +187,6 @@ std::vector<uint64_t> rserv::Server::convertLifetimeComponent(
             data.push_back(packFloat(lifetimeComp->getLifetime()));
         }
     }
-    // std::cout << "[convertLifetimeComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -211,7 +201,6 @@ std::vector<uint64_t> rserv::Server::convertVelocityComponent(
             data.push_back(packFloat(velocity->getVelocity().getY()));
         }
     }
-    // std::cout << "[convertVelocityComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -221,7 +210,6 @@ std::vector<uint64_t> rserv::Server::convertAIMoverTagComponent(
     if (registry && registry->hasComponent<ecs::AIMoverTag>(i)) {
         data.push_back(static_cast<uint64_t>(AI_MOVER_TAG));
     }
-    // std::cout << "[convertAIMoverTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -231,7 +219,6 @@ std::vector<uint64_t> rserv::Server::convertAIShooterTagComponent(
     if (registry && registry->hasComponent<ecs::AIShooterTag>(i)) {
         data.push_back(static_cast<uint64_t>(AI_SHOOTER_TAG));
     }
-    // std::cout << "[convertAIShooterTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -241,7 +228,6 @@ std::vector<uint64_t> rserv::Server::convertControllableTagComponent(
     if (registry && registry->hasComponent<ecs::ControllableTag>(i)) {
         data.push_back(static_cast<uint64_t>(CONTROLLABLE_TAG));
     }
-    // std::cout << "[convertControllableTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -251,7 +237,6 @@ std::vector<uint64_t> rserv::Server::convertEnemyProjectileTagComponent(
     if (registry && registry->hasComponent<ecs::EnnemyProjectileTag>(i)) {
         data.push_back(static_cast<uint64_t>(ENEMY_PROJECTILE_TAG));
     }
-    // std::cout << "[convertEnemyProjectileTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -261,7 +246,6 @@ std::vector<uint64_t> rserv::Server::convertGameZoneColliderTagComponent(
     if (registry && registry->hasComponent<ecs::GameZoneColliderTag>(i)) {
         data.push_back(static_cast<uint64_t>(GAME_ZONE_COLLIDER_TAG));
     }
-    // std::cout << "[convertGameZoneColliderTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -271,7 +255,6 @@ std::vector<uint64_t> rserv::Server::convertMobTagComponent(
     if (registry && registry->hasComponent<ecs::MobTag>(i)) {
         data.push_back(static_cast<uint64_t>(MOB_TAG));
     }
-    // std::cout << "[convertMobTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -281,7 +264,6 @@ std::vector<uint64_t> rserv::Server::convertObstacleTagComponent(
     if (registry && registry->hasComponent<ecs::ObstacleTag>(i)) {
         data.push_back(static_cast<uint64_t>(OBSTACLE_TAG));
     }
-    // std::cout << "[convertObstacleTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -291,7 +273,6 @@ std::vector<uint64_t> rserv::Server::convertPlayerProjectileTagComponent(
     if (registry && registry->hasComponent<ecs::PlayerProjectileTag>(i)) {
         data.push_back(static_cast<uint64_t>(PLAYER_PROJECTILE_TAG));
     }
-    // std::cout << "[convertPlayerProjectileTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -301,7 +282,6 @@ std::vector<uint64_t> rserv::Server::convertShooterTagComponent(
     if (registry && registry->hasComponent<ecs::ShooterTag>(i)) {
         data.push_back(static_cast<uint64_t>(SHOOTER_TAG));
     }
-    // std::cout << "[convertShooterTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -311,7 +291,6 @@ std::vector<uint64_t> rserv::Server::convertProjectilePassThroughTagComponent(
     if (registry && registry->hasComponent<ecs::ProjectilePassThroughTag>(i)) {
         data.push_back(static_cast<uint64_t>(PROJECTILE_PASS_THROUGH_TAG));
     }
-    // std::cout << "[convertProjectilePassThroughTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -331,7 +310,6 @@ std::vector<uint64_t> rserv::Server::convertProjectilePrefabComponent(
             data.push_back(static_cast<uint64_t>('\0'));
         }
     }
-    // std::cout << "[convertProjectilePrefabComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -345,7 +323,6 @@ std::vector<uint64_t> rserv::Server::convertNetworkIdComponent(
             data.push_back(static_cast<uint64_t>(networkIdComp->getNetworkId()));
         }
     }
-    // std::cout << "[convertNetworkIdComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
@@ -362,6 +339,5 @@ std::vector<uint64_t> rserv::Server::convertGameZoneComponent(
             data.push_back(packFloat(gameZoneComp->getZone().getTop()));
         }
     }
-    // std::cout << "[convertGameZoneComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }

@@ -61,7 +61,8 @@ Vector2f Vector2f::operator+(Vector2f const &other) const {
 
 void Vector2f::operator=(Vector2f const &other) {
     if (this != &other) {
-        if (std::isnan(other._x) || std::isnan(other._y) || std::isinf(other._x) || std::isinf(other._y)) {
+        if (std::isnan(other._x) || std::isnan(other._y) || std::isinf(other._x)
+        || std::isinf(other._y)) {
             std::cout << "[Vector2f] Warning: Assignment operator received invalid Vector2f"
                       << " (x: " << other._x << ", y: " << other._y << ")\n";
             _x = 0.f;
