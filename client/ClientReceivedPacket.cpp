@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 #include <memory>
-
+#include <unordered_map>
 #include "ClientNetwork.hpp"
 #include "../common/debug.hpp"
 #include "../common/Parser/Parser.hpp"
@@ -17,6 +17,7 @@
 #include "../common/components/tags/LocalPlayerTag.hpp"
 #include "gsm/states/scenes/InGame/InGameState.hpp"
 #include "gsm/states/scenes/Results/ResultsState.hpp"
+#include "./components/rendering/AnimationComponent.hpp"
 
 /* Packet Handlers */
 void ClientNetwork::handleNoOp() {
@@ -249,6 +250,23 @@ void ClientNetwork::handleWhoAmI() {
     if (!registry->hasComponent<ecs::LocalPlayerTag>(entityId)) {
         registry->addComponent<ecs::LocalPlayerTag>
             (entityId, std::make_shared<ecs::LocalPlayerTag>());
+    }
+    if (registry->hasComponent<ecs::LocalPlayerTag>(entityId) &&
+        registry->hasComponent<ecs::AnimationComponent>(entityId)) {
+        auto animComp = registry->getComponent<ecs::AnimationComponent>(entityId);
+        std::unordered_map<std::string, std::shared_ptr<ecs::AnimationClip>>
+            states = animComp->getStates();
+        for (auto& kv : states) {
+            const std::shared_ptr<ecs::AnimationClip>& originalClip = kv.second;
+            if (!originalClip)
+                continue;
+            auto newClip = std::make_shared<ecs::AnimationClip>(*originalClip);
+            newClip->startHeight = 0.0f;
+            kv.second = newClip;
+        }
+        for (const auto& kv : states) {
+            animComp->addState(kv.first, kv.second);
+        }
     }
 }
 
