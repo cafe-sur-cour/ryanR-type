@@ -19,6 +19,7 @@
 #include "../../common/components/permanent/NetworkIdComponent.hpp"
 #include "../../common/debug.hpp"
 #include "initResourcesManager.hpp"
+#include "../gsm/gsmStates.hpp"
 
 std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Server> server,
     std::shared_ptr<ecs::Registry> registry, std::shared_ptr<Parser> parser,
@@ -103,5 +104,6 @@ std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Ser
     resourceManager->add<Parser>(parser);
     resourceManager->add<ecs::ISystemManager>(systemsManager);
     resourceManager->add<gsm::GameStateMachine>(gameStateMachine);
+    resourceManager->add<gsm::GameStateType>(std::make_shared<gsm::GameStateType>(gsm::BOOT));
     return resourceManager;
 }
