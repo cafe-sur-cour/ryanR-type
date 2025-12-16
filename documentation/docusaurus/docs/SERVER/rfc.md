@@ -80,94 +80,98 @@ You can also download it in pdf format [here](../../static/pdfs/rfc-r-type.pdf)
 
 
 **3. Packet Types**
-
-Client :
-
-```
-   +--------+-------------------+----------------------------------------+
-   | Value  | Name              | Description                            |
-   +--------+-------------------+----------------------------------------+
-   | 0x01   | CONNECTION        | Client connection request              |
-   | 0x03   | DISCONECTION      | End of connection or window close      |
-   | 0x04   | EVENT             | Sent when event happens                |
-   +--------+-------------------+----------------------------------------+
-```
-Server :
+Client and Server packet types (complete list used by the codebase):
 
 ```
-   +--------+-------------------+----------------------------------------+
-   | Value  | Name              | Description                            |
-   +--------+-------------------+----------------------------------------+
-   | 0x02   | CONNECTIONS       | Server response to connection          |
-   | 0x05   | GAME_STATE        | Game state update                      |
-   | 0x06   | MAP_SEND          | Sends map state and elements           |
-   | 0x07   | END_MAP           | Signals map has ended                  |
-   | 0x08   | END_GAME          | Signals a player victory               |
-   | 0x09   | CAN_START         | Client ready to start movement         |
-   +--------+-------------------+----------------------------------------+
+   +--------+---------------------------+----------------------------------------+
+   | Value  | Name                      | Description                            |
+   +--------+---------------------------+----------------------------------------+
+   | 0x00   | NO_OP_PACKET              | No operation / keep-alive              |
+   | 0x01   | CONNECTION_CLIENT_PACKET  | Client connection request (name)       |
+   | 0x02   | ACCEPTATION_PACKET        | Server acceptance / assign client ID   |
+   | 0x03   | DISCONNECTION_PACKET      | Client disconnection                   |
+   | 0x04   | EVENT_PACKET              | Client input/event                     |
+   | 0x05   | GAME_STATE_PACKET         | Server game state update               |
+   | 0x06   | MAP_SEND_PACKET           | Server sends map data                  |
+   | 0x07   | END_MAP_PACKET            | Server notifies end of map             |
+   | 0x08   | END_GAME_PACKET           | Server notifies end of game / winner   |
+   | 0x09   | CAN_START_PACKET          | Server tells clients they can start    |
+   | 0x0A   | CLIENT_READY_PACKET       | Client signals ready state             |
+   | 0x0B   | SPAWN_PLAYER_PACKET       | Server spawns a player/entity          |
+   | 0x0C   | DEATH_PLAYER_PACKET       | Server notifies a player/entity death  |
+   | 0x0D   | WHOAMI_PACKET             | Optional identification/resync packet  |
+   +--------+---------------------------+----------------------------------------+
 ```
 
 **4. Packet Details**
 
 4.1 Client Details
 
-
-4.1.1 CONNECTION (0x01) – Sent from client to server
+4.1.1 CONNECTION_CLIENT_PACKET (0x01) – Sent from client to server
 
    - Player name (UTF-8, max 8 chars + null terminator)
+   - Fixed length: `LENGTH_CONNECTION_PACKET` (8 bytes)
 
+4.1.2 DISCONNECTION_PACKET (0x03) – Client requests to disconnect
 
-4.1.2. DISCONECTION (0x03) – Client requests to disconnect to server
+   - Player ID (1 byte)
+   - Fixed length: `LENGTH_DISCONNECTION_PACKET` (1 byte)
 
-   - Player ID (1 bytes)
-
-4.1.3. EVENT (0x04) – Client notifies input
+4.1.3 EVENT_PACKET (0x04) – Client notifies input
    - Event type (1 byte, e.g., Up, Down, Left, Right, Space)
-   - Depth of movement
+   - Additional event data (e.g., movement depth)
+   - Fixed length: `LENGTH_EVENT_PACKET` (9 bytes)
+
+4.1.4 CLIENT_READY_PACKET (0x0A) – Client signals it is ready
+   - Used by client to indicate readiness prior to start
 
 
-**4.2 Server Details**
+4.2 Server Details
 
-4.2.1 CONNECTIONS_ACC   (0x02) – Sent from Server to Client
+4.2.1 ACCEPTATION_PACKET (0x02) – Sent from Server to Client (connection accept)
 
-   - Player ID (1 bytes)
+   - Player ID assigned by server (1 byte)
+   - Fixed length: `LENGTH_ACCEPTATION_PACKET` (1 byte)
 
-4.2.2. GAME_STATE (0x05) – Server sends games state to clients
+4.2.2 GAME_STATE_PACKET (0x05) – Server sends game state to clients
 
-   - State (position, velocity, state...)
+   - Contains state of entities (position, velocity, state...) serialized
 
-4.2.3. MAP_SEND (0x06) – Server sends the map to the clients
+4.2.3 MAP_SEND_PACKET (0x06) – Server sends the map to the clients
 
-   - Player ID (4 bytes)
-   - Map Data:
-     ```
-     [
-        - mapName
-        - background entity
-        - speed
-        - music entity
-        - legend [ name: value ; name ...]
-        - map [
-              element element ,
-              element element ,
-              ...
-           ]
-        - waves [
-           {spawnLenth: ; posX ; enemies { type : , count :}},
-           ...
-        ]
-     ]
-     ```
+   - Map data (variable length / serialized JSON-like structure)
+   - May include map name, background, waves, spawn info, etc.
 
+4.2.4 END_MAP_PACKET (0x07) – Server notifies end of the map
 
-4.2.4. END_MAP (0x07) – Server notify the end of the map
+4.2.5 END_GAME_PACKET (0x08) – Server notifies end of game and winner
 
-4.2.5. END_GAME (0x08) – Server notify end of game and who won
+   - Player ID who won (1 byte)
+   - Fixed length: `LENGTH_END_GAME_PACKET` (1 byte)
 
-   - Player ID who won (1 bytes)
+4.2.6 CAN_START_PACKET (0x09) – Server tells clients the game can start
 
+4.2.7 SPAWN_PLAYER_PACKET (0x0B) – Server spawns a player/entity
 
-4.2.6. CAN_START (0x09) – Server tells client game can start
+   - Payload includes entity data required for client to instantiate the entity
+
+4.2.8 DEATH_PLAYER_PACKET (0x0C) – Server notifies a player/entity death
+
+   - Payload describing the dead entity (identified, e.g., by ID)
+   - Fixed length: `LENGTH_DEATH_PACKET` (8 bytes)
+
+4.2.9 WHOAMI_PACKET (0x0D) – Optional identification / resynchronization packet
+
+   - May be used to request/confirm identification or small resync actions
+   - Fixed length: `LENGTH_WHOAMI_PACKET` (0 bytes)
+
+4.2.10 NO_OP_PACKET (0x00) – No operation / keep-alive
+
+   - Used when there is nothing to send; helps keep sequence numbers in sync
+
+Notes:
+- The canonical constant names and packet lengths are defined in `libs/Packet/IPacketManager.hpp`.
+- The RFC tables above were aligned to match the names used in the codebase (both client and server). Where the original RFC used a different label (for example `CONNECTIONS`), the equivalent code name `ACCEPTATION_PACKET` is used here for clarity.
 
 
 **5. Communication Example**
