@@ -46,9 +46,10 @@ MainMenuState::MainMenuState(
         math::Vector2f(5376.0f, 3584.0f));
     _uiManager->addElement(_background);
 
+    auto net = this->_resourceManager->get<ClientNetwork>();
     _ipInput = std::make_shared<ui::TextInput>(_resourceManager);
-    _ipInput->setPlaceholder("Enter IP address");
-    _ipInput->setText("127.0.0.1");
+    _ipInput->setPlaceholder(constants::IP_PLACEHOLDER);
+    _ipInput->setText(net->getIp());
     _ipInput->setSize(math::Vector2f(300.f, 50.f));
     _ipInput->setOnRelease([this]() {
         auto navMan = this->_uiManager->getNavigationManager();
@@ -57,8 +58,8 @@ MainMenuState::MainMenuState(
     });
 
     _portInput = std::make_shared<ui::TextInput>(_resourceManager);
-    _portInput->setPlaceholder("Enter port");
-    _portInput->setText("4242");
+    _portInput->setPlaceholder(constants::PORT_PLACEHOLDER);
+    _portInput->setText(std::to_string(net->getPort()));
     _portInput->setSize(math::Vector2f(300.f, 50.f));
     _portInput->setOnRelease([this]() {
         auto navMan = this->_uiManager->getNavigationManager();
