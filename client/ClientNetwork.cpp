@@ -46,6 +46,11 @@ ClientNetwork::ClientNetwork() {
 
     this->_shouldConnect = false;
 
+    this->_connectedClients = 0;
+    this->_readyClients = 0;
+    this->_clientId = 0;
+    this->_clientReadyStatus = false;
+
     // Initialize packet handlers
     _packetHandlers[constants::PACKET_NO_OP] = &ClientNetwork::handleNoOp;
     _packetHandlers[constants::PACKET_CONNECTION] = &ClientNetwork::handleNoOp;
@@ -59,6 +64,7 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_SPAWN] = &ClientNetwork::handleEntitySpawn;
     _packetHandlers[constants::PACKET_DEATH] = &ClientNetwork::handleEntityDeath;
     _packetHandlers[constants::PACKET_WHOAMI] = &ClientNetwork::handleWhoAmI;
+    _packetHandlers[SERVER_STATUS_PACKET] = &ClientNetwork::handleServerStatus;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
@@ -302,6 +308,22 @@ void ClientNetwork::start() {
             debug::debugLevel::INFO);
         this->stop();
     }
+}
+
+size_t ClientNetwork::getConnectedClients() const {
+    return this->_connectedClients.load();
+}
+
+size_t ClientNetwork::getReadyClients() const {
+    return this->_readyClients.load();
+}
+
+uint8_t ClientNetwork::getClientId() const {
+    return this->_clientId.load();
+}
+
+bool ClientNetwork::getClientReadyStatus() const {
+    return this->_clientReadyStatus.load();
 }
 
 void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
