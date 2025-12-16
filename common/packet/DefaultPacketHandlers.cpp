@@ -13,6 +13,7 @@
 #include "../../libs/Packet/serializer/BigEndianSerialization.hpp"
 #include "../../libs/Packet/PacketManager.hpp"
 #include "../../common/translationToECS.hpp"
+#include "../constants.hpp"
 
 using SerializerPtr = std::shared_ptr<pm::ISerializer>;
 using pm::BigEndianSerialization;
@@ -325,6 +326,8 @@ bool registerDefaultPacketHandlers(
 
     registerOptionalULongPacket(packet, ser, WHOAMI_PACKET);
 
+    registerOptionalULongPacket(packet, ser, constants::PACKET_END_GAME);
+
     if (!registerGameStateHandlers(packet))
         return false;
 
@@ -334,6 +337,7 @@ bool registerDefaultPacketHandlers(
     packet->registerLength(EVENT_PACKET, LENGTH_EVENT_PACKET);
     packet->registerLength(DEATH_PLAYER_PACKET, LENGTH_DEATH_PACKET);
     packet->registerLength(WHOAMI_PACKET, LENGTH_WHOAMI_PACKET);
+    packet->registerLength(constants::PACKET_END_GAME, 0);
 
     packet->registerLengthCombEntry(TRANSFORM, 41, 6);
     packet->registerLengthCombEntry(SPEED_COMP, 9, 2);
