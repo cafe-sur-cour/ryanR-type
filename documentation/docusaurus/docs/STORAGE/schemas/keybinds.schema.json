@@ -22,8 +22,8 @@
   },
   "additionalProperties": true,
   "examples": [{
-    "MOVE_LEFT": { "primary": "Q", "secondary": "Left Arrow" },
-    "MOVE_RIGHT": { "primary": "D", "secondary": "Right Arrow" },
+    "MOVE_LEFT": { "primary": "Q", "secondary": "Left" },
+    "MOVE_RIGHT": { "primary": "D", "secondary": "Right" },
     "SHOOT": { "primary": "Space", "secondary": "Unknown" },
     "toggle_mode": false
   }]

@@ -13,7 +13,7 @@ namespace ui {
 
 Text::Text(std::shared_ptr<ResourceManager> resourceManager) :
     UIElement(resourceManager), _text(""), _textColor(colors::UI_TEXT), _fontSize(24),
-    _baseFontSize(24), _fontPath("assets/fonts/arial.ttf"),
+    _baseFontSize(24), _fontPath("assets/fonts/abduction2002.ttf"),
     _outlineColor(colors::UI_OUTLINE), _outlineThickness(2.0f) {
 }
 
