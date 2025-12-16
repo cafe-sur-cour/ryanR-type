@@ -19,21 +19,9 @@ SfmlAudio::SfmlAudio()
     this->_soundBuffers = std::map<std::string, std::shared_ptr<sf::SoundBuffer>>();
     this->_sounds = std::map<std::string, std::shared_ptr<sf::Sound>>();
     this->_assetManager = assets::AssetManager();
-    // this->_musicAssetData = nullptr;
 }
 
 SfmlAudio::~SfmlAudio() {
-    // stopMusic();
-    // stopAllSounds();
-    // if (_musicAssetData != nullptr) {
-    //     _musicAssetData.reset();
-    // }
-    // if (_soundBuffers.size() > 0) {
-    //     _soundBuffers.clear();
-    // }
-    // if (_sounds.size() > 0) {
-    //     _sounds.clear();
-    // }
 }
 
 void SfmlAudio::playMusic(const std::string& musicPath, bool loop) {
