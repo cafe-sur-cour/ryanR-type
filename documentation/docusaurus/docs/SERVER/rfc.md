@@ -100,6 +100,7 @@ Client and Server packet types (complete list used by the codebase):
    | 0x0B   | SPAWN_PLAYER_PACKET       | Server spawns a player/entity          |
    | 0x0C   | DEATH_PLAYER_PACKET       | Server notifies a player/entity death  |
    | 0x0D   | WHOAMI_PACKET             | Optional identification/resync packet  |
+   | 0x0E   | SERVER_STATUS_PACKET      | Server sends lobby status information  |
    +--------+---------------------------+----------------------------------------+
 ```
 
@@ -165,7 +166,16 @@ Client and Server packet types (complete list used by the codebase):
    - May be used to request/confirm identification or small resync actions
    - Fixed length: `LENGTH_WHOAMI_PACKET` (0 bytes)
 
-4.2.10 NO_OP_PACKET (0x00) – No operation / keep-alive
+4.2.10 SERVER_STATUS_PACKET (0x0E) – Server sends lobby status information
+
+   - Connected clients count (8 bytes, uint64_t)
+   - Ready clients count (8 bytes, uint64_t)
+   - Client ID (8 bytes, uint64_t)
+   - Client ready status (8 bytes, uint64_t, 0=not ready, 1=ready)
+   - Fixed length: `LENGTH_SERVER_STATUS_PACKET` (32 bytes)
+   - Sent periodically to keep clients updated on lobby state
+
+4.2.11 NO_OP_PACKET (0x00) – No operation / keep-alive
 
    - Used when there is nothing to send; helps keep sequence numbers in sync
 
