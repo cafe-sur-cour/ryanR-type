@@ -24,9 +24,6 @@ namespace rserv {
 
             void setState(int state);
 
-            void setNbClients(int nbClients);
-            int getNbClients() const;
-
             std::string getIp() const;
             void setIp(std::string ip);
 
@@ -35,7 +32,6 @@ namespace rserv {
         private:
             int _state;
             uint16_t _port;
-            int _nbClients;
             std::string _ip;
             bool _isDebug;
     };
