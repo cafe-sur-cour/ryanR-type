@@ -36,6 +36,7 @@ class UIManager {
         bool handleNavigationInput(ecs::InputAction action);
         bool handleNavigationInputs(std::shared_ptr<ecs::IInputProvider> inputProvider, float deltaTime);
         void handleKeyboardInput(gfx::EventType event);
+        void handleTextInput(const std::string& text);
 
         std::shared_ptr<UINavigationManager> getNavigationManager();
 
