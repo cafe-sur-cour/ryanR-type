@@ -51,12 +51,44 @@ Core::Core() {
 }
 
 Core::~Core() {
-    if (this->_networkThread.joinable()) {
-        this->_networkThread.join();
+
+    if (this->_clientNetwork != nullptr) {
         this->_clientNetwork->stop();
     }
+    if (this->_networkThread.joinable()) {
+        this->_networkThread.join();
+    }
+
+    if (this->_gsm != nullptr) {
+        this->_gsm.reset();
+    }
+
+    if (this->_parser != nullptr) {
+        this->_parser.reset();
+    }
+
     if (this->_resourceManager != nullptr) {
         this->_resourceManager->clear();
+    }
+
+    if (this->_clientNetwork != nullptr) {
+        this->_clientNetwork.reset();
+    }
+
+    if (this->_windowLoader != nullptr) {
+        this->_windowLoader->Close();
+        this->_windowLoader.reset();
+    }
+    if (this->_eventLoader != nullptr) {
+        this->_eventLoader->Close();
+    }
+    if (this->_audioLoader != nullptr) {
+        this->_audioLoader->Close();
+        this->_audioLoader.reset();
+    }
+
+    if (this->_registry != nullptr) {
+        this->_registry.reset();
     }
 }
 
