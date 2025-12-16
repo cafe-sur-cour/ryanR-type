@@ -39,6 +39,7 @@ class TextInput : public AFocusableElement {
 
         virtual void handleInput(const math::Vector2f& mousePos, bool mousePressed) override;
         void handleKeyboardInput(gfx::EventType event);
+        void handleTextInput(const std::string& text);
 
         virtual void update(float deltaTime) override;
 
