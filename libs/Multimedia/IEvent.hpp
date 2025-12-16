@@ -10,6 +10,7 @@
 
 #include <utility>
 #include <memory>
+#include <string>
 #include "EventTypes.hpp"
 
 namespace gfx {
