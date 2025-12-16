@@ -48,6 +48,8 @@ Core::Core() {
 
     this->_resourceManager->add<rserv::Server>(this->_server);
     this->_resourceManager->add<rserv::ServerConfig>(this->_server->getConfig());
+
+    this->_statusUpdateTimer = 0.0f;
 }
 
 Core::~Core() {
@@ -138,6 +140,12 @@ void Core::loop() {
         this->processServerEvents();
 
         this->_gsm->update(deltaTime);
+
+        this->_statusUpdateTimer += deltaTime;
+        if (this->_statusUpdateTimer >= 2.0f) {
+            this->_server->serverStatusPacket();
+            this->_statusUpdateTimer = 0.0f;
+        }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }

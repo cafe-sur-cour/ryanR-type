@@ -229,6 +229,37 @@ static void registerOptionalULongPacket(
     });
 }
 
+static void registerServerStatusPacket(
+    std::shared_ptr<pm::IPacketManager> packet,
+    SerializerPtr ser
+) {
+    packet->registerBuilder(
+        SERVER_STATUS_PACKET, [ser](std::vector<uint64_t> payload) -> std::vector<uint8_t> {
+        std::vector<uint8_t> body;
+        // connected_clients, ready_clients, client_id, connection_status
+        for (size_t i = 0; i < 4 && i < payload.size(); ++i) {
+            auto temp = ser->serializeULong(payload.at(i));
+            body.insert(body.end(), temp.begin(), temp.end());
+        }
+        return body;
+    });
+
+    packet->registerParser(
+        SERVER_STATUS_PACKET, [ser, packet](const std::vector<uint8_t> payload) -> bool {
+        if (payload.size() != LENGTH_SERVER_STATUS_PACKET)
+            return false;
+        std::vector<uint64_t> vals;
+        for (size_t i = 0; i < 4; i++) {
+            uint64_t value = ser->deserializeULong(
+                std::vector<uint8_t>(payload.begin() + static_cast<std::ptrdiff_t>(i * 8),
+                payload.begin() + static_cast<std::ptrdiff_t>((i + 1) * 8)));
+            vals.push_back(value);
+        }
+        packet->setPayload(vals);
+        return true;
+    });
+}
+
 static void registerCanStartPacket(
     std::shared_ptr<pm::IPacketManager> packet,
     SerializerPtr ser
@@ -325,6 +356,8 @@ bool registerDefaultPacketHandlers(
 
     registerOptionalULongPacket(packet, ser, WHOAMI_PACKET);
 
+    registerServerStatusPacket(packet, ser);
+
     if (!registerGameStateHandlers(packet))
         return false;
 
@@ -334,6 +367,7 @@ bool registerDefaultPacketHandlers(
     packet->registerLength(EVENT_PACKET, LENGTH_EVENT_PACKET);
     packet->registerLength(DEATH_PLAYER_PACKET, LENGTH_DEATH_PACKET);
     packet->registerLength(WHOAMI_PACKET, LENGTH_WHOAMI_PACKET);
+    packet->registerLength(SERVER_STATUS_PACKET, LENGTH_SERVER_STATUS_PACKET);
 
     packet->registerLengthCombEntry(TRANSFORM, 41, 6);
     packet->registerLengthCombEntry(SPEED_COMP, 9, 2);

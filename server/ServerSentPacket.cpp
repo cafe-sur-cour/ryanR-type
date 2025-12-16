@@ -158,3 +158,50 @@ std::vector<uint64_t> rserv::Server::deathPacket(size_t networkId) {
     payload.push_back(static_cast<uint64_t>(networkId));
     return payload;
 }
+
+bool rserv::Server::serverStatusPacket() {
+    size_t connectedClients = this->_clients.size();
+    size_t readyClients = 0;
+
+    for (const auto &client : this->_clients) {
+        uint8_t clientId = std::get<0>(client);
+        auto it = this->_clientsReady.find(clientId);
+        if (it != this->_clientsReady.end() && it->second) {
+            readyClients++;
+        }
+    }
+
+    for (const auto &client : this->_clients) {
+        uint8_t clientId = std::get<0>(client);
+        bool isClientReady = false;
+        auto it = this->_clientsReady.find(clientId);
+        if (it != this->_clientsReady.end() && it->second) {
+            isClientReady = true;
+        }
+
+        std::vector<uint64_t> payload = {
+            static_cast<uint64_t>(connectedClients),
+            static_cast<uint64_t>(readyClients),
+            static_cast<uint64_t>(clientId),
+            static_cast<uint64_t>(isClientReady ? 1 : 0)
+        };
+
+        std::vector<uint8_t> packet = this->_packet->pack(
+            constants::ID_SERVER,
+            this->_sequenceNumber,
+            SERVER_STATUS_PACKET,
+            payload
+        );
+
+        if (!this->_network->sendTo(std::get<1>(client), packet)) {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER NETWORK] Failed to send server status packet to client " +
+                std::to_string(static_cast<int>(clientId)),
+                debug::debugType::NETWORK, debug::debugLevel::ERROR);
+            return false;
+        }
+    }
+
+    this->_sequenceNumber++;
+    return true;
+}

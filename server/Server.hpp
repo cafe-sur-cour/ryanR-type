@@ -83,7 +83,7 @@ namespace rserv {
             bool canStartPacket();
             std::vector<uint64_t> spawnPacket(size_t entity, const std::string prefabName);
             std::vector<uint64_t> deathPacket(size_t entity);
-            void setCurrentMap(const std::vector<uint64_t> &map);
+            bool serverStatusPacket();
             std::vector<uint64_t> getCurrentMap() const;
             bool isGameStarted() const;
             bool allClientsReady() const;
