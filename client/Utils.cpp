@@ -32,8 +32,11 @@ void Utils::helper() {
         << "\r./r-type_client  # Uses default values\n";
 }
 
-void Utils::parseCli(int ac, char **av, std::shared_ptr<ClientNetwork>
-    clientNetwork) {
+void Utils::parseCli(
+    int ac,
+    char **av,
+    std::shared_ptr<ClientNetwork> clientNetwork
+) {
     int port = constants::DEFAULT_SERVER_PORT;
     std::string ip = constants::DEFAULT_SERVER_IP;
     bool debugMode = false;
