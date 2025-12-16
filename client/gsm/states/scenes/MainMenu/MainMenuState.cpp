@@ -352,6 +352,8 @@ void MainMenuState::updateUIStatus() {
 }
 
 void MainMenuState::exit() {
+    auto window = _resourceManager->get<gfx::IWindow>();
+    window->setCursor(false);
     _uiManager->clearElements();
     _playButton.reset();
     _settingsButton.reset();

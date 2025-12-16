@@ -10,6 +10,10 @@
 
 #include "../../base/AGameState.hpp"
 #include "resourceManager/ResourceManager.hpp"
+#include "../../../libs/Multimedia/IWindow.hpp"
+#include "ui/manager/UIManager.hpp"
+#include "ui/elements/Text.hpp"
+#include "../../../../colors.hpp"
 
 namespace gsm {
 
@@ -24,7 +28,8 @@ class ResultsState : public AGameState {
 
     private:
         bool _isWin;
-        std::shared_ptr<ecs::Registry> _registry;
+        std::unique_ptr<ui::UIManager> _uiManager;
+        std::shared_ptr<ui::Text> _resultText;
 };
 
 }  // namespace gsm
