@@ -11,6 +11,7 @@
 #include <SFML/Graphics.hpp>
 #include <map>
 #include <chrono>
+#include <string>
 #include "IEvent.hpp"
 #include "IWindow.hpp"
 #include "SfmlKeyMappings.hpp"
