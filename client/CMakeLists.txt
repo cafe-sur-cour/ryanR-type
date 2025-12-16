@@ -41,6 +41,7 @@ target_link_libraries(${CLIENT_BIN_NAME}
 )
 
 target_include_directories(${CLIENT_BIN_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/common)
+target_include_directories(${CLIENT_BIN_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_compile_definitions(${CLIENT_BIN_NAME}
     PUBLIC ASIO_STANDALONE
