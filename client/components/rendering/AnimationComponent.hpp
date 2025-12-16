@@ -122,6 +122,9 @@ class AnimationComponent : public AComponent {
         void setMinAnimationTime(float time) { _minAnimationTime = time; }
         float getMinAnimationTime() const { return _minAnimationTime; }
 
+        std::unordered_map<std::string, std::shared_ptr<AnimationClip>> getStates() const {
+            return _states;
+        }
     private:
         std::unordered_map<std::string, std::shared_ptr<AnimationClip>> _states;
         std::vector<Transition> _transitions;

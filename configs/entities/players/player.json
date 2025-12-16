@@ -19,7 +19,7 @@
                     "frameHeight": 17.0,
                     "frameCount": 1,
                     "startWidth": 0.0,
-                    "startHeight": 0.0,
+                    "startHeight": 17.0,
                     "speed": 0.2,
                     "loop": true
                 },
@@ -29,7 +29,7 @@
                     "frameHeight": 17.0,
                     "frameCount": 2,
                     "startWidth": 0.0,
-                    "startHeight": 0.0,
+                    "startHeight": 17.0,
                     "speed": 0.2,
                     "loop": false
                 },
@@ -39,7 +39,7 @@
                     "frameHeight": 17.0,
                     "frameCount": 2,
                     "startWidth": 0.0,
-                    "startHeight": 0.0,
+                    "startHeight": 17.0,
                     "speed": 0.2,
                     "loop": false
                 }
