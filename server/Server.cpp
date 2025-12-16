@@ -101,6 +101,7 @@ rserv::Server::~Server() {
         this->_buffer.reset();
     }
     if (this->_packet != nullptr) {
+        this->_packet->clearAllHandlers();
         this->_packet.reset();
     }
 }
@@ -295,7 +296,7 @@ void rserv::Server::onClientDisconnected(uint8_t idClient) {
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "Client " + std::to_string(idClient) + " disconnected",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    // Add game-specific cleanup logic here
+    this->_deltaTracker.clearClientCache(idClient);
 }
 
 void rserv::Server::onPacketReceived(
@@ -350,4 +351,8 @@ void rserv::Server::setResourceManager(std::shared_ptr<ResourceManager> resource
         this->_resourceManager = nullptr;
     }
     this->_resourceManager = resourceManager;
+}
+
+void rserv::Server::clearEntityDeltaCache(uint8_t clientId, uint32_t entityId) {
+    this->_deltaTracker.clearEntityCache(clientId, entityId);
 }

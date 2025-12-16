@@ -57,6 +57,7 @@
 #include "../../../../interpolation/NetworkStateComponent.hpp"
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../../common/components/permanent/HealthComponent.hpp"
+#include "../../../../colors.hpp"
 
 namespace gsm {
 
@@ -67,6 +68,8 @@ DevState::DevState(
     _registry = std::make_shared<ecs::Registry>();
     _prefabManager = std::make_shared<EntityPrefabManager>();
     this->_parser = nullptr;
+    _previousScore = -1;
+    _previousHealth = -1;
 }
 
 void DevState::enter() {
@@ -170,22 +173,31 @@ void DevState::update(float deltaTime) {
     _resourceManager->get<ecs::ISystemManager>()->updateAllSystems
         (_resourceManager, _registry, deltaTime);
 
+    // Update feedbacks
+    for (auto it = _scoreFeedbacks.begin(); it != _scoreFeedbacks.end(); ) {
+        it->lifetime -= deltaTime;
+        if (it->lifetime <= 0) {
+            it = _scoreFeedbacks.erase(it);
+        } else {
+            ++it;
+        }
+    }
+    for (auto it = _healthFeedbacks.begin(); it != _healthFeedbacks.end(); ) {
+        it->lifetime -= deltaTime;
+        if (it->lifetime <= 0) {
+            it = _healthFeedbacks.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
     renderHUD();
 }
 
 void DevState::renderHUD() {
-    /* This HUD is a showcase example. It's indeed very basic and should be */
-    /* Proper HUD will be implented later in the Game Scene states.         */
-
     auto window = _resourceManager->get<gfx::IWindow>();
     auto currentCenter = window->getViewCenter();
     window->setViewCenter(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
-
-    gfx::color_t blackSemiTransparent = {0, 0, 0, 128};
-    std::pair<size_t, size_t> position = {0, static_cast<size_t>(constants::MAX_HEIGHT - 50)};
-    std::pair<size_t, size_t> size = {static_cast<size_t>(constants::MAX_WIDTH), 50};
-
-    window->drawFilledRectangle(blackSemiTransparent, position, size);
 
     int score = 0;
     float health = 0.0f;
@@ -204,18 +216,119 @@ void DevState::renderHUD() {
         break;
     }
 
-    std::stringstream ss;
-    ss << "Health: " << static_cast<int>(health) << "/" << static_cast<int>(maxHealth)
-       << " Score: " << std::setfill('0') << std::setw(5) << score;
-    std::string hudText = ss.str();
+    if (_previousHealth == -1) {
+        _previousHealth = static_cast<int>(health);
+    } else if (static_cast<int>(health) < _previousHealth) {
+        int lost = _previousHealth - static_cast<int>(health);
+        _healthFeedbacks.push_back({"-" + std::to_string(lost), 1.0f, 1.0f});
+        _previousHealth = static_cast<int>(health);
+    } else if (static_cast<int>(health) > _previousHealth) {
+        _previousHealth = static_cast<int>(health);
+    }
 
-    gfx::color_t white = {255, 255, 255, 255};
-    std::pair<size_t, size_t> textPosition =
-        {10, static_cast<size_t>(constants::MAX_HEIGHT - 35)};
-    window->drawText(hudText, white, textPosition, "assets/fonts/arial.ttf", 24);
+    if (_previousScore == -1) {
+        _previousScore = score;
+    } else if (score > _previousScore) {
+        int gained = score - _previousScore;
+        _scoreFeedbacks.push_back({"+" + std::to_string(gained), 1.0f, 1.0f});
+        _previousScore = score;
+    } else if (score < _previousScore) {
+        _previousScore = score;
+    }
+
+    drawHealthHUD(window, health, maxHealth);
+    drawScoreHUD(window, score);
+
     window->setViewCenter(currentCenter.getX(), currentCenter.getY());
 }
 
+void DevState::drawHealthHUD(
+    std::shared_ptr<gfx::IWindow> window,
+    float health,
+    float maxHealth
+) {
+    size_t barX = 20;
+    size_t barY = static_cast<size_t>(constants::MAX_HEIGHT - 35);
+    float barWidth = 200.0f;
+    size_t barHeight = 20;
+    size_t textOffsetY = 35;
+    size_t feedbackBaseOffsetY = 105;
+
+    std::stringstream healthSs;
+    healthSs << "Health: " << static_cast<int>(health) << "/" << static_cast<int>(maxHealth);
+    std::string healthText = healthSs.str();
+
+    float healthRatio = (maxHealth > 0.0f) ? health / maxHealth : 0.0f;
+    uint8_t red = static_cast<uint8_t>((1.0f - healthRatio) * 255.0f);
+    uint8_t green = static_cast<uint8_t>(healthRatio * 255.0f);
+    gfx::color_t barColor = {red, green, 0, 255};
+    std::pair<size_t, size_t> barPosition = {barX, barY};
+    std::pair<size_t, size_t> barSize =
+        {static_cast<size_t>(barWidth * healthRatio), barHeight};
+    window->drawRoundedRectangleFilled(
+        colors::BLACK, barPosition, {static_cast<size_t>(barWidth), barHeight}, 5.0f);
+    window->drawRoundedRectangleFilled(
+        barColor, barPosition, barSize, 5.0f);
+
+    window->drawRoundedRectangleOutline(
+        colors::WHITE, barPosition, {static_cast<size_t>(barWidth), barHeight}, 5.0f);
+    std::pair<size_t, size_t> healthTextPosition =
+        {barX, static_cast<size_t>(barY - textOffsetY)};
+    window->drawText(healthText, colors::WHITE, healthTextPosition,
+        "assets/fonts/arial.ttf", 20, colors::BLACK, 1.0f);
+
+    for (const auto& feedback : _healthFeedbacks) {
+        uint8_t alpha =
+            static_cast<uint8_t>((feedback.lifetime / feedback.maxLifetime) * 255.0f);
+        gfx::color_t feedbackColor = {colors::RED.r, colors::RED.g, colors::RED.b, alpha};
+        size_t x = static_cast<size_t>(barX);
+        float base_y = constants::MAX_HEIGHT - static_cast<float>(feedbackBaseOffsetY);
+        float progress = 1.0f - (feedback.lifetime / feedback.maxLifetime);
+        size_t y = static_cast<size_t>(base_y - progress * 50.0f);
+        std::pair<size_t, size_t> feedbackPosition = {x, y};
+        window->drawText(
+            feedback.text, feedbackColor, feedbackPosition, "assets/fonts/arial.ttf", 28);
+    }
+}
+
+void DevState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) {
+    size_t barX = 250;
+    size_t barY = static_cast<size_t>(constants::MAX_HEIGHT - 35);
+    float barWidth = 100.0f;
+    size_t barHeight = 20;
+    size_t textOffsetY = 35;
+    size_t feedbackBaseOffsetY = 105;
+
+    std::pair<size_t, size_t> labelPosition = {barX, barY - textOffsetY};
+    window->drawText("Score", colors::WHITE, labelPosition,
+        "assets/fonts/arial.ttf", 20, colors::BLACK, 1.0f);
+
+    std::pair<size_t, size_t> rectPosition = {barX, barY};
+    window->drawRoundedRectangleFilled(
+        colors::BLACK, rectPosition, {static_cast<size_t>(barWidth), barHeight}, 5.0f);
+    window->drawRoundedRectangleOutline(
+        colors::WHITE, rectPosition, {static_cast<size_t>(barWidth), barHeight}, 5.0f);
+
+    std::stringstream scoreSs;
+    scoreSs << std::setfill('0') << std::setw(7) << score;
+    std::string scoreText = scoreSs.str();
+    std::pair<size_t, size_t> scorePosition = {barX + 10, barY - 2};
+    window->drawText(scoreText, colors::YELLOW, scorePosition, "assets/fonts/arial.ttf", 20);
+
+    for (const auto& feedback : _scoreFeedbacks) {
+        uint8_t alpha =
+            static_cast<uint8_t>((feedback.lifetime / feedback.maxLifetime) * 255.0f);
+        gfx::color_t feedbackColor =
+            {colors::GREEN.r, colors::GREEN.g, colors::GREEN.b, alpha};
+        size_t x = barX;
+        size_t base_y = static_cast<size_t>(constants::MAX_HEIGHT) - feedbackBaseOffsetY;
+        float progress = 1.0f - (feedback.lifetime / feedback.maxLifetime);
+        size_t y = base_y - static_cast<size_t>(progress * 50.0f);
+        std::pair<size_t, size_t> feedbackPosition = {x, y};
+        window->drawText(
+            feedback.text, feedbackColor, feedbackPosition, "assets/fonts/arial.ttf", 28);
+    }
+}
 void DevState::exit() {
 }
 

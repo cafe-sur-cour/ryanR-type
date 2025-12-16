@@ -46,17 +46,38 @@ MainMenuState::MainMenuState(
         math::Vector2f(5376.0f, 3584.0f));
     _uiManager->addElement(_background);
 
+    auto net = this->_resourceManager->get<ClientNetwork>();
+    _ipInput = std::make_shared<ui::TextInput>(_resourceManager);
+    _ipInput->setPlaceholder(constants::IP_PLACEHOLDER);
+    _ipInput->setText(net->getIp());
+    _ipInput->setSize(math::Vector2f(300.f, 50.f));
+    _ipInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_ipInput);
+    });
+
+    _portInput = std::make_shared<ui::TextInput>(_resourceManager);
+    _portInput->setPlaceholder(constants::PORT_PLACEHOLDER);
+    _portInput->setText(std::to_string(net->getPort()));
+    _portInput->setSize(math::Vector2f(300.f, 50.f));
+    _portInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_portInput);
+    });
+
     ui::LayoutConfig leftConfig;
     leftConfig.direction = ui::LayoutDirection::Vertical;
     leftConfig.alignment = ui::LayoutAlignment::Center;
-    leftConfig.spacing = 0.0f;
+    leftConfig.spacing = 20.0f;
     leftConfig.padding = math::Vector2f(0.0f, 0.0f);
     leftConfig.anchorX = ui::AnchorX::Left;
     leftConfig.anchorY = ui::AnchorY::Center;
     leftConfig.offset = math::Vector2f(50.0f, 0.0f);
 
     _leftLayout = std::make_shared<ui::UILayout>(_resourceManager, leftConfig);
-    _leftLayout->setSize(math::Vector2f(300.f, 108.f));
+    _leftLayout->setSize(math::Vector2f(300.f, 300.f));
 
     _connectButton = std::make_shared<ui::Button>(_resourceManager);
     _connectButton->setText("Connect to Server");
@@ -64,25 +85,47 @@ MainMenuState::MainMenuState(
 
     _connectButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
-        if (network && !network->isConnected()) {
-            network->connect();
-            debug::Debug::printDebug(network->isDebugMode(),
-                "[MainMenu] Connecting to server...",
-                debug::debugType::NETWORK,
-                debug::debugLevel::INFO);
+        if (network) {
+            network->setIp(this->_ipInput->getText());
+            try {
+                int port = std::stoi(this->_portInput->getText());
+                network->setPort(port);
+                network->redoServerEndpoint();
+            } catch (const std::exception&) {
+                network->setPort(4242);
+            }
+            if (!network->isConnected()) {
+                network->connect();
+                debug::Debug::printDebug(network->isDebugMode(),
+                    "[MainMenu] Connecting to server...",
+                    debug::debugType::NETWORK,
+                    debug::debugLevel::INFO);
+            }
         }
     });
     _connectButton->setOnActivated([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
-        if (network && !network->isConnected()) {
-            network->connect();
-            debug::Debug::printDebug(network->isDebugMode(),
-                "[MainMenu] Connecting to server...",
-                debug::debugType::NETWORK,
-                debug::debugLevel::INFO);
+        if (network) {
+            network->setIp(this->_ipInput->getText());
+            try {
+                int port = std::stoi(this->_portInput->getText());
+                network->setPort(port);
+                network->redoServerEndpoint();
+            } catch (const std::exception&) {
+                network->setPort(4242);
+            }
+            if (!network->isConnected()) {
+                network->connect();
+                debug::Debug::printDebug(network->isDebugMode(),
+                    "[MainMenu] Connecting to server...",
+                    debug::debugType::NETWORK,
+                    debug::debugLevel::INFO);
+            }
         }
     });
 
+    _leftLayout->addElement(_ipInput);
+    _leftLayout->addElement(_portInput);
     _leftLayout->addElement(_connectButton);
 
     ui::LayoutConfig menuConfig;
@@ -97,7 +140,7 @@ MainMenuState::MainMenuState(
     _mainMenuLayout = std::make_shared<ui::UILayout>(_resourceManager, menuConfig);
     _mainMenuLayout->setSize(math::Vector2f(576.f, 400.f));
     _playButton = std::make_shared<ui::Button>(resourceManager);
-    _playButton->setText("Ready");
+    _playButton->setText("Not connected");
     _playButton->setSize(math::Vector2f(576.f, 108.f));
 
     _playButton->setOnRelease([this]() {
@@ -219,6 +262,15 @@ void MainMenuState::update(float deltaTime) {
         return;
     }
 
+    _uiManager->handleKeyboardInput(eventResult);
+
+    if (eventResult == gfx::EventType::TEXT_INPUT) {
+        std::string textInput = _resourceManager->get<gfx::IEvent>()->getLastTextInput();
+        if (!textInput.empty()) {
+            _uiManager->handleTextInput(textInput);
+        }
+    }
+
     math::Vector2f mousePos = _mouseHandler->getWorldMousePosition();
     bool mousePressed = _mouseHandler->isMouseButtonPressed(
         static_cast<int>(constants::MouseButton::LEFT));
@@ -234,11 +286,28 @@ void MainMenuState::update(float deltaTime) {
     }
 
     _uiManager->update(deltaTime);
+    updatePlayButtonText();
     renderUI();
 }
 
 void MainMenuState::renderUI() {
     _uiManager->render();
+}
+
+void MainMenuState::updatePlayButtonText() {
+    auto network = this->_resourceManager->get<ClientNetwork>();
+    if (!network) {
+        _playButton->setText("Not connected");
+        return;
+    }
+
+    if (!network->isConnected()) {
+        _playButton->setText("Not connected");
+    } else if (network->isReady()) {
+        _playButton->setText("Waiting for other players");
+    } else {
+        _playButton->setText("Ready ?");
+    }
 }
 
 void MainMenuState::exit() {
@@ -247,6 +316,8 @@ void MainMenuState::exit() {
     _settingsButton.reset();
     _quitButton.reset();
     _connectButton.reset();
+    _ipInput.reset();
+    _portInput.reset();
     _mainMenuLayout.reset();
     _rightLayout.reset();
     _leftLayout.reset();

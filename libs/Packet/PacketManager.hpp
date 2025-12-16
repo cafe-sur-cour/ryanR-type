@@ -42,6 +42,15 @@ class PacketManager : public IPacketManager {
         bool unpack(std::vector<uint8_t> data) override;
 
         void reset() override;
+
+        void registerBuilder(uint8_t type, std::function<std::vector<uint8_t>(std::vector<uint64_t>)> builder) override;
+        void registerParser(uint8_t type, std::function<bool(const std::vector<uint8_t>)> parser) override;
+        void registerLength(uint8_t type, uint32_t length) override;
+        void registerGameStatePackFunction(std::function<std::vector<uint8_t>(std::vector<uint64_t>, std::shared_ptr<unsigned int>)> func) override;
+        void registerGameStateUnpackFunction(std::function<unsigned int(const std::vector<uint8_t>, unsigned int)> func) override;
+        void registerLengthCombEntry(uint8_t compType, uint32_t compLength, uint64_t compSize) override;
+        void clearAllHandlers() override;
+
     private:
         uint8_t _idClient;
         uint32_t _sequenceNumber;
@@ -53,81 +62,12 @@ class PacketManager : public IPacketManager {
         std::map<uint8_t, std::function<bool(const std::vector<uint8_t>)>> _packetReceived;
         std::map<uint8_t, uint32_t> _packetLengths;
 
-        std::vector<uint8_t> buildConnectionPacket(std::vector<uint64_t> payload);
-        bool parseConnectionPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildAcceptationPacket(std::vector<uint64_t> payload);
-        bool parseAcceptationPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildDisconnectionPacket(std::vector<uint64_t> payload);
-        bool parseDisconnectionPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildEventPacket(std::vector<uint64_t> payload);
-        bool parseEventPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildMapPacket(std::vector<uint64_t> payload);
-        bool parseMapPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildEndGamePacket(std::vector<uint64_t> payload);
-        bool parseEndGamePacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildCanStartPacket(std::vector<uint64_t> payload);
-        bool parseCanStartPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildSpawnPlayerPacket(std::vector<uint64_t> payload);
-        bool parseSpawnPlayerPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildDeathPacket(std::vector<uint64_t> payload);
-        bool parseDeathPacket(const std::vector<uint8_t> payload);
-        std::vector<uint8_t> buildWhoAmIPacket(std::vector<uint64_t> payload);
-        bool parseWhoAmIPacket(const std::vector<uint8_t> payload);
-
         /* Pack Game State */
         std::vector<std::tuple<uint8_t, uint32_t, uint64_t>> _lengthComb;
         std::vector<std::function<std::vector<uint8_t>(std::vector<uint64_t>, std::shared_ptr<unsigned int>)>> _packGSFunction;
-        std::vector<uint8_t> packPlayerTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packTransformation(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packSpeed(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packHealth(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packCollider(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packShootingStats(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packScore(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packAIMovementPattern(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packDamage(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packLifetime(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packVelocity(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packAIMoverTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packAIShooterTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packControllableTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packEnemyProjectileTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packGameZoneColliderTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packMobTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packObstacleTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packPlayerProjectileTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packShooterTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packProjectilePassThroughTag(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packProjectilePrefabComponent(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packNetworkIdComponent(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
-        std::vector<uint8_t> packGameZoneComponent(std::vector<uint64_t> payload , std::shared_ptr<unsigned int> i);
 
         /* Unpack Game State */
         std::vector<std::function<unsigned int(const std::vector<uint8_t>, unsigned int)>> _unpackGSFunction;
-        unsigned int unpackPlayerTag(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackTransform(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackSpeed(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackHealth(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackCollider(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackShootingStats(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackScore(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackAIMovementPattern(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackDamage(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackLifetime(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackVelocity(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackAIMoverTag(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackAIShooterTag(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackControllableTag(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackEnemyProjectileTag(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackGameZoneColliderTag(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackMobTag(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackObstacleTag(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackPlayerProjectileTag(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackShooterTag(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackProjectilePassThroughTag(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackProjectilePrefabComponent(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackNetworkIdComponent(std::vector<uint8_t> payload, unsigned int i);
-        unsigned int unpackGameZoneComponent(std::vector<uint8_t> payload, unsigned int i);
 };
 } // namespace pm
 

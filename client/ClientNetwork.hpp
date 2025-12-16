@@ -85,9 +85,13 @@ class ClientNetwork {
         void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
         void setGameStateMachine(std::shared_ptr<gsm::IGameStateMachine> gsm);
         std::shared_ptr<gsm::IGameStateMachine> getGameStateMachine() const;
+
+        void redoServerEndpoint();
+
     protected:
         std::pair<int, std::chrono::steady_clock::time_point> tryConnection(const int maxRetries, int retryCount, std::chrono::steady_clock::time_point lastRetryTime);
         void handlePacketType(uint8_t type);
+
     private:
         typedef void (ClientNetwork::*PacketHandler)();
         PacketHandler _packetHandlers[constants::MAX_INDEX_PACKET_TYPE];

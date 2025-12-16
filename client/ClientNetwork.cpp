@@ -171,6 +171,13 @@ void ClientNetwork::setIp(const std::string &ip) {
     _ip = ip;
 }
 
+void ClientNetwork::redoServerEndpoint() {
+    this->_serverEndpoint = asio::ip::udp::endpoint(
+        asio::ip::address::from_string(this->_ip),
+        static_cast<uint16_t>(this->_port)
+    );
+}
+
 void ClientNetwork::setDebugMode(bool isDebug) {
     this->_isDebug = isDebug;
 }
@@ -308,8 +315,6 @@ void ClientNetwork::start() {
         this->stop();
     }
 }
-
-
 
 void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
     std::lock_guard<std::mutex> lock(this->_queueMutex);
