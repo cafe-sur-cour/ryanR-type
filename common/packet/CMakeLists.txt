@@ -14,6 +14,7 @@ target_include_directories(${COMMON_PACKET_HANDLERS_NAME}
 
 target_link_libraries(${COMMON_PACKET_HANDLERS_NAME}
     PUBLIC Packet
+    PUBLIC ECS
 )
 
 add_library(Common::PacketHandlers ALIAS ${COMMON_PACKET_HANDLERS_NAME})
