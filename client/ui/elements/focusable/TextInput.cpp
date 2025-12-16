@@ -147,54 +147,6 @@ void TextInput::handleKeyboardInput(gfx::EventType event) {
     if (!_focused) return;
 
     switch (event) {
-        case gfx::EventType::PERIOD: insertChar('.'); break;
-        case gfx::EventType::A: insertChar('a'); break;
-        case gfx::EventType::B: insertChar('b'); break;
-        case gfx::EventType::C: insertChar('c'); break;
-        case gfx::EventType::D: insertChar('d'); break;
-        case gfx::EventType::E: insertChar('e'); break;
-        case gfx::EventType::F: insertChar('f'); break;
-        case gfx::EventType::G: insertChar('g'); break;
-        case gfx::EventType::H: insertChar('h'); break;
-        case gfx::EventType::I: insertChar('i'); break;
-        case gfx::EventType::J: insertChar('j'); break;
-        case gfx::EventType::K: insertChar('k'); break;
-        case gfx::EventType::L: insertChar('l'); break;
-        case gfx::EventType::M: insertChar('m'); break;
-        case gfx::EventType::N: insertChar('n'); break;
-        case gfx::EventType::O: insertChar('o'); break;
-        case gfx::EventType::P: insertChar('p'); break;
-        case gfx::EventType::Q: insertChar('q'); break;
-        case gfx::EventType::R: insertChar('r'); break;
-        case gfx::EventType::S: insertChar('s'); break;
-        case gfx::EventType::T: insertChar('t'); break;
-        case gfx::EventType::U: insertChar('u'); break;
-        case gfx::EventType::V: insertChar('v'); break;
-        case gfx::EventType::W: insertChar('w'); break;
-        case gfx::EventType::X: insertChar('x'); break;
-        case gfx::EventType::Y: insertChar('y'); break;
-        case gfx::EventType::Z: insertChar('z'); break;
-        case gfx::EventType::NUMPAD0:
-        case gfx::EventType::NUM0: insertChar('0'); break;
-        case gfx::EventType::NUMPAD1:
-        case gfx::EventType::NUM1: insertChar('1'); break;
-        case gfx::EventType::NUMPAD2:
-        case gfx::EventType::NUM2: insertChar('2'); break;
-        case gfx::EventType::NUMPAD3:
-        case gfx::EventType::NUM3: insertChar('3'); break;
-        case gfx::EventType::NUMPAD4:
-        case gfx::EventType::NUM4: insertChar('4'); break;
-        case gfx::EventType::NUMPAD5:
-        case gfx::EventType::NUM5: insertChar('5'); break;
-        case gfx::EventType::NUMPAD6:
-        case gfx::EventType::NUM6: insertChar('6'); break;
-        case gfx::EventType::NUMPAD7:
-        case gfx::EventType::NUM7: insertChar('7'); break;
-        case gfx::EventType::NUMPAD8:
-        case gfx::EventType::NUM8: insertChar('8'); break;
-        case gfx::EventType::NUMPAD9:
-        case gfx::EventType::NUM9: insertChar('9'); break;
-        case gfx::EventType::SPACE: insertChar(' '); break;
         case gfx::EventType::BACKSPACE: deleteChar(); break;
         case gfx::EventType::ENTER:
             if (_onSubmit) _onSubmit(_text);
@@ -202,6 +154,15 @@ void TextInput::handleKeyboardInput(gfx::EventType event) {
         case gfx::EventType::LEFT: moveCursorLeft(); break;
         case gfx::EventType::RIGHT: moveCursorRight(); break;
         default: break;
+    }
+}
+
+void TextInput::handleTextInput(const std::string& text) {
+    if (!_focused) return;
+    for (char c : text) {
+        if (c >= 32 && c <= 126) {
+            insertChar(c);
+        }
     }
 }
 
