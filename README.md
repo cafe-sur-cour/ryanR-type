@@ -17,9 +17,9 @@ If you want to install our project by cloning it, you will need to follow these 
 ```
 
 #### For windows
-```batch
+```cmd
 .\scripts\install_dependencies.bat
-.\scripts\compile_project.sh
+.\scripts\compile_project.bat
 ```
 
 ### Running the Program

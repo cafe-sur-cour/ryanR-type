@@ -80,8 +80,8 @@ MainMenuState::MainMenuState(
     _leftLayout->setSize(math::Vector2f(300.f, 300.f));
 
     _connectButton = std::make_shared<ui::Button>(_resourceManager);
-    _connectButton->setText("Connect to Server");
-    _connectButton->setSize(math::Vector2f(300.f, 50.f));
+    _connectButton->setText("Connect");
+    _connectButton->setSize(math::Vector2f(300.f, 108.f));
 
     _connectButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
@@ -239,7 +239,7 @@ MainMenuState::MainMenuState(
     _rightLayout->setSize(math::Vector2f(400.f, 108.f));
 
     _devButton = std::make_shared<ui::Button>(_resourceManager);
-    _devButton->setText("Go to dev scene\n(no need to connect to server)");
+    _devButton->setText("Dev Scene\n(Offline Mode)");
     _devButton->setSize(math::Vector2f(400.f, 108.f));
     _devButton->setNormalColor(colors::BUTTON_PRIMARY);
     _devButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
@@ -331,7 +331,7 @@ void MainMenuState::updateUIStatus() {
         _serverStatusText->setText("");
     } else {
         if (network->isReady()) {
-            _playButton->setText("Waiting for other players");
+            _playButton->setText("Waiting for players...");
         } else {
             _playButton->setText("Ready ?");
         }
