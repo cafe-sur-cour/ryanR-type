@@ -47,7 +47,7 @@ class ToggleSwitch : public AFocusableElement {
 
     private:
         bool _value = false;
-        std::string _fontPath = "assets/fonts/arial.ttf";
+        std::string _fontPath = "assets/fonts/abduction2002.ttf";
         size_t _baseFontSize = constants::BUTTON_FONT_SIZE_BASE;
         std::string _onText = "ON";
         std::string _offText = "OFF";

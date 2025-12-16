@@ -923,7 +923,7 @@ void SettingsState::handleKeyRebind(gfx::EventType newKey) {
     if (!keyName.empty()) {
         displayText += ": " + keyName;
     } else {
-        displayText += ": Unassigned";
+        displayText += ": None";
     }
     button->setText(displayText);
 }
