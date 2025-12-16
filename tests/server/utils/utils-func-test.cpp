@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 #include "../../server/Utils.hpp"
+#include "../../../common/constants.hpp"
 
 class UtilsTest : public ::testing::Test {
 protected:
@@ -23,7 +24,7 @@ TEST_F(UtilsTest, HelperPrintsUsage) {
 }
 
 TEST_F(UtilsTest, ParsCliSetsConfigCorrectly) {
-    const char* argv[] = {"program", "-p", "8080", "-i", "127001", "-n", "2"};
+    const char* argv[] = {"program", "-p", "8080", "-i", "127001"};
     int argc = sizeof(argv) / sizeof(argv[0]);
     auto config = std::make_shared<rserv::ServerConfig>();
 
@@ -31,17 +32,17 @@ TEST_F(UtilsTest, ParsCliSetsConfigCorrectly) {
 
     EXPECT_EQ(config->getPort(), 8080);
     EXPECT_EQ(config->getIp(), "127001");
-    EXPECT_EQ(config->getNbClients(), 2);
 }
 
-TEST_F(UtilsTest, ParsCliInvalidNbClientsExits) {
-    const char* argv[] = {"program", "-p", "8080", "-i", "127001", "-n", "5"};
+TEST_F(UtilsTest, ParsCliUsesDefaults) {
+    const char* argv[] = {"program"};
     int argc = sizeof(argv) / sizeof(argv[0]);
     auto config = std::make_shared<rserv::ServerConfig>();
 
-    testing::internal::CaptureStdout();
-    EXPECT_EXIT(utils.parsCli(argc, const_cast<char**>(argv), config), ::testing::ExitedWithCode(84), "");
-    testing::internal::GetCapturedStdout();
+    utils.parsCli(argc, const_cast<char**>(argv), config);
+
+    EXPECT_EQ(config->getPort(), constants::DEFAULT_SERVER_PORT);
+    EXPECT_EQ(config->getIp(), constants::DEFAULT_SERVER_IP);
 }
 
 TEST_F(UtilsTest, ParsCliHelpExits) {

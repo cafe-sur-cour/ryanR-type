@@ -22,6 +22,7 @@ namespace constants {
     /* Server */
     constexpr uint8_t ID_SERVER = 0;
     constexpr uint8_t BITMASK_INT = 32;
+    constexpr int MAX_CLIENT = 4;
 
     /* Packets */
     constexpr char END_OFSTRING_ST = '\r';

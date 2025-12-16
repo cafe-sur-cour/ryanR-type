@@ -8,9 +8,11 @@
 #include <cstdint>
 #include <string>
 #include "ServerConfig.hpp"
+#include "../common/constants.hpp"
 
 rserv::ServerConfig::ServerConfig() :
-    _state(-1), _port(0), _nbClients(0), _isDebug(false) {
+    _state(-1), _port(constants::DEFAULT_SERVER_PORT),
+    _ip(constants::DEFAULT_SERVER_IP), _isDebug(false) {
 }
 
 rserv::ServerConfig::~ServerConfig() {
@@ -31,14 +33,6 @@ void rserv::ServerConfig::setPort(uint16_t port) {
 
 uint16_t rserv::ServerConfig::getPort() const {
     return this->_port;
-}
-
-void rserv::ServerConfig::setNbClients(int nbClients) {
-    this->_nbClients = nbClients;
-}
-
-int rserv::ServerConfig::getNbClients() const {
-    return this->_nbClients;
 }
 
 std::string rserv::ServerConfig::getIp() const {

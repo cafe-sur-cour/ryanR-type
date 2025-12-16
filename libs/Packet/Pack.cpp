@@ -84,12 +84,12 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
     }
 
     if (length == 0) {
-        if (type == END_MAP_PACKET || type == CLIENT_READY_PACKET) {
+        if (type == CLIENT_READY_PACKET) {
             temp = this->_serializer->serializeUInt(length);
             packet.insert(packet.end(), temp.begin(), temp.end());
             return packet;
         }
-        if (type != MAP_SEND_PACKET && type != SPAWN_PLAYER_PACKET &&
+        if (type != SPAWN_PLAYER_PACKET &&
             type != CAN_START_PACKET && type != DEATH_PLAYER_PACKET &&
             type != WHOAMI_PACKET && type != END_GAME_PACKET) {
             std::cerr << "[PACKET] Error: Unknown packet type "

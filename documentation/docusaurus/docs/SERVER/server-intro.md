@@ -40,8 +40,6 @@ The server implements the PSJM protocol, handling the following packet types:
 |------------|------|-------------|
 | `ACCEPTATION` | 0x02 | Connection acceptance with assigned client ID |
 | `GAME_STATE` | 0x05 | Game state updates (20 FPS) |
-| `MAP_SEND` | 0x06 | Map data transmission |
-| `END_MAP` | 0x07 | Map completion notification |
 | `END_GAME` | 0x08 | Game end with winner information |
 | `CAN_START` | 0x09 | Signal to start player movement |
 
@@ -96,9 +94,8 @@ The server maintains the **single source of truth** for:
 1. Client sends CONNECTION_CLIENT (0x01) with player name
 2. Server validates and assigns unique ID (1-255)
 3. Server responds with ACCEPTATION (0x02) containing ID
-4. Server sends MAP_SEND (0x06) with map data
-5. Server broadcasts CAN_START (0x09) when ready
-6. Game loop begins
+4. Server broadcasts CAN_START (0x09) when ready
+5. Game loop begins
 ```
 
 ## Map System
@@ -122,13 +119,6 @@ Maps are loaded from JSON configuration files:
   "background": "assets/backgrounds/space.png"
 }
 ```
-
-### Map Broadcasting
-
-The server sends map data to clients in chunks to avoid UDP packet size limits:
-- Each `MAP_SEND` packet contains a portion of the map
-- Sequence numbers track packet order
-- `END_MAP` signals complete transmission
 
 ## Error Handling
 

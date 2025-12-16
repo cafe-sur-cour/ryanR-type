@@ -321,12 +321,14 @@ bool rserv::Server::isGameStarted() const {
 }
 
 bool rserv::Server::allClientsReady() const {
-    if (static_cast<int>(this->_clientsReady.size()) < this->getConfig()->getNbClients()) {
+    if (this->_clients.empty()) {
         return false;
     }
 
-    for (const auto &ready : this->_clientsReady) {
-        if (!ready.second) {
+    for (const auto &client : this->_clients) {
+        uint8_t clientId = std::get<0>(client);
+        auto it = this->_clientsReady.find(clientId);
+        if (it == this->_clientsReady.end() || !it->second) {
             return false;
         }
     }

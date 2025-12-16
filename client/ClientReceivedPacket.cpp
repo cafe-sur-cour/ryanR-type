@@ -98,9 +98,6 @@ void ClientNetwork::handleGameState() {
     }
 }
 
-void ClientNetwork::handleEndMap() {
-}
-
 void ClientNetwork::handleEndGame() {
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Received end game packet",
@@ -271,4 +268,28 @@ void ClientNetwork::handleWhoAmI() {
             animComp->addState(kv.first, kv.second);
         }
     }
+}
+
+void ClientNetwork::handleServerStatus() {
+    auto payload = _packet->getPayload();
+    if (payload.size() < 4) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] SERVER_STATUS packet is invalid",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    this->_connectedClients = static_cast<size_t>(payload.at(0));
+    this->_readyClients = static_cast<size_t>(payload.at(1));
+    this->_clientId = static_cast<uint8_t>(payload.at(2));
+    this->_clientReadyStatus = static_cast<bool>(payload.at(3));
+
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Server status: " + std::to_string(this->_connectedClients.load()) +
+        " connected, " + std::to_string(this->_readyClients.load()) + " ready, client ID: " +
+        std::to_string(this->_clientId.load()) + ", ready: " +
+        std::to_string(this->_clientReadyStatus.load()),
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
 }
