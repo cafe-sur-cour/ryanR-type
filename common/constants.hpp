@@ -251,8 +251,6 @@ namespace constants {
     constexpr std::uint8_t PACKET_DISC = 0x03;
     constexpr std::uint8_t PACKET_EVENT = 0x04;
     constexpr std::uint8_t PACKET_GAME_STATE = 0x05;
-    constexpr std::uint8_t PACKET_MAP = 0x06;
-    constexpr std::uint8_t PACKET_END_MAP = 0x07;
     constexpr std::uint8_t PACKET_END_GAME = 0x08;
     constexpr std::uint8_t PACKET_CAN_START = 0x09;
     constexpr std::uint8_t PACKET_CLIENT_READY = 0x0A;

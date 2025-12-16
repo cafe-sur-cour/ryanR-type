@@ -92,8 +92,6 @@ Client and Server packet types (complete list used by the codebase):
    | 0x03   | DISCONNECTION_PACKET      | Client disconnection                   |
    | 0x04   | EVENT_PACKET              | Client input/event                     |
    | 0x05   | GAME_STATE_PACKET         | Server game state update               |
-   | 0x06   | MAP_SEND_PACKET           | Server sends map data                  |
-   | 0x07   | END_MAP_PACKET            | Server notifies end of map             |
    | 0x08   | END_GAME_PACKET           | Server notifies end of game / winner   |
    | 0x09   | CAN_START_PACKET          | Server tells clients they can start    |
    | 0x0A   | CLIENT_READY_PACKET       | Client signals ready state             |
@@ -138,21 +136,14 @@ Client and Server packet types (complete list used by the codebase):
 
    - Contains state of entities (position, velocity, state...) serialized
 
-4.2.3 MAP_SEND_PACKET (0x06) – Server sends the map to the clients
-
-   - Map data (variable length / serialized JSON-like structure)
-   - May include map name, background, waves, spawn info, etc.
-
-4.2.4 END_MAP_PACKET (0x07) – Server notifies end of the map
-
-4.2.5 END_GAME_PACKET (0x08) – Server notifies end of game and winner
+4.2.3 END_GAME_PACKET (0x08) – Server notifies end of game and winner
 
    - Player ID who won (1 byte)
    - Fixed length: `LENGTH_END_GAME_PACKET` (1 byte)
 
-4.2.6 CAN_START_PACKET (0x09) – Server tells clients the game can start
+4.2.4 CAN_START_PACKET (0x09) – Server tells clients the game can start
 
-4.2.7 SPAWN_PLAYER_PACKET (0x0B) – Server spawns a player/entity
+4.2.5 SPAWN_PLAYER_PACKET (0x0B) – Server spawns a player/entity
 
    - Payload includes entity data required for client to instantiate the entity
 
@@ -200,9 +191,6 @@ Notes:
            |<-----------------------------------------|
            |                                          |
            |            GAME_STATE                    |
-           |<-----------------------------------------|
-           |                                          |
-           |            MAP_SEND                      |
            |<-----------------------------------------|
            |                                          |
            |            EVENT (if space pressed)      |
