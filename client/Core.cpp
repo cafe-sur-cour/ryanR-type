@@ -47,7 +47,6 @@ Core::Core() {
 }
 
 Core::~Core() {
-
     if (this->_clientNetwork != nullptr) {
         this->_clientNetwork->stop();
     }
