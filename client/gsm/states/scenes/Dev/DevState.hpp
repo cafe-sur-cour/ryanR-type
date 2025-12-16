@@ -9,12 +9,22 @@
 #define DEVSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
+#include <vector>
+#include <string>
+#include <memory>
 #include "resourceManager/ResourceManager.hpp"
 #include "../../../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
+#include "../../../../../libs/Multimedia/IWindow.hpp"
 
 namespace gsm {
+
+struct ScoreFeedback {
+    std::string text;
+    float lifetime;
+    float maxLifetime;
+};
 
 class DevState : public AGameState {
     public:
@@ -27,11 +37,17 @@ class DevState : public AGameState {
 
     private:
         void renderHUD();
+        void drawHealthHUD(std::shared_ptr<gfx::IWindow> window, float health, float maxHealth);
+        void drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score);
 
     private:
         std::shared_ptr<ecs::Registry> _registry;
         std::shared_ptr<EntityPrefabManager> _prefabManager;
         std::shared_ptr<Parser> _parser;
+        int _previousScore;
+        int _previousHealth;
+        std::vector<ScoreFeedback> _scoreFeedbacks;
+        std::vector<ScoreFeedback> _healthFeedbacks;
 };
 
 }  // namespace gsm
