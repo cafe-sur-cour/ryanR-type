@@ -94,11 +94,12 @@ ClientNetwork::~ClientNetwork() {
     }
     // Note: ResourceManager is owned by Core, so we don't clear it here
     // Core::~Core() will handle clearing the ResourceManager
+    if (this->_packet != nullptr) {
+        this->_packet->clearAllHandlers();
+        this->_packet.reset();
+    }
     if (this->_network != nullptr) {
         this->_network.reset();
-    }
-    if (this->_packet != nullptr) {
-        this->_packet.reset();
     }
     if (this->_gsm != nullptr) {
         this->_gsm.reset();
