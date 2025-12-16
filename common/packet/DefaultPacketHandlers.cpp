@@ -237,8 +237,8 @@ static void registerServerStatusPacket(
     packet->registerBuilder(
         SERVER_STATUS_PACKET, [ser](std::vector<uint64_t> payload) -> std::vector<uint8_t> {
         std::vector<uint8_t> body;
-        // connected_clients, ready_clients, client_id, connection_status
-        for (size_t i = 0; i < 4 && i < payload.size(); ++i) {
+        size_t nbDataPayload = 4;
+        for (size_t i = 0; i < nbDataPayload && i < payload.size(); ++i) {
             auto temp = ser->serializeULong(payload.at(i));
             body.insert(body.end(), temp.begin(), temp.end());
         }
@@ -250,7 +250,8 @@ static void registerServerStatusPacket(
         if (payload.size() != LENGTH_SERVER_STATUS_PACKET)
             return false;
         std::vector<uint64_t> vals;
-        for (size_t i = 0; i < 4; i++) {
+        size_t nbDataPayload = 4;
+        for (size_t i = 0; i < nbDataPayload; i++) {
             uint64_t value = ser->deserializeULong(
                 std::vector<uint8_t>(payload.begin() + static_cast<std::ptrdiff_t>(i * 8),
                 payload.begin() + static_cast<std::ptrdiff_t>((i + 1) * 8)));
