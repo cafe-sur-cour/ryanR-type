@@ -236,7 +236,9 @@ void InGameState::drawHealthHUD(
         size_t y = static_cast<size_t>(base_y - progress * 50.0f);
         std::pair<size_t, size_t> feedbackPosition = {x, y};
         window->drawText(
-            feedback.text, feedbackColor, feedbackPosition, "assets/fonts/abduction2002.ttf", 28);
+            feedback.text, feedbackColor, feedbackPosition,
+            "assets/fonts/abduction2002.ttf", 28
+        );
     }
 }
 
@@ -262,7 +264,10 @@ void InGameState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) 
     scoreSs << std::setfill('0') << std::setw(7) << score;
     std::string scoreText = scoreSs.str();
     std::pair<size_t, size_t> scorePosition = {barX + 10, barY - 2};
-    window->drawText(scoreText, colors::YELLOW, scorePosition, "assets/fonts/abduction2002.ttf", 20);
+    window->drawText(
+        scoreText, colors::YELLOW, scorePosition,
+        "assets/fonts/abduction2002.ttf", 20
+    );
 
     for (const auto& feedback : _scoreFeedbacks) {
         uint8_t alpha =
@@ -275,7 +280,9 @@ void InGameState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) 
         size_t y = base_y - static_cast<size_t>(progress * 50.0f);
         std::pair<size_t, size_t> feedbackPosition = {x, y};
         window->drawText(
-            feedback.text, feedbackColor, feedbackPosition, "assets/fonts/abduction2002.ttf", 28);
+            feedback.text, feedbackColor, feedbackPosition,
+            "assets/fonts/abduction2002.ttf", 28
+        );
     }
 }
 
