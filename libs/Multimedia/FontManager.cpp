@@ -49,6 +49,9 @@ std::shared_ptr<sf::Font> FontManager::getFont(const std::string& path) {
         return nullptr;
     }
     _fontCache[path] = font;
+    if (asset != nullptr) {
+        asset.reset();
+    }
     return font;
 }
 
