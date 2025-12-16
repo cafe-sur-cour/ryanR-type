@@ -20,6 +20,7 @@ class IEvent {
         virtual ~IEvent() = default;
         virtual void init() = 0;
         virtual event_t pollEvents() = 0;
+        virtual std::string getLastTextInput() = 0;
         virtual void cleanup() = 0;
         virtual std::pair<int, int> getMousePos() = 0;
         virtual bool isKeyPressed(event_t key) = 0;
