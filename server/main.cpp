@@ -10,6 +10,7 @@
 
 #include "Core.hpp"
 #include "Utils.hpp"
+#include "Constants.hpp"
 
 #include "../common/Error/IError.hpp"
 
@@ -22,7 +23,7 @@ int main(int ac, char **av) {
     std::cout << "[Server] RTYPE SERVER" << std::endl;
     std::cout << "------------------------" << std::endl;
     std::cout << "Port: " << core.getConfig()->getPort() << std::endl;
-    std::cout << "Max Clients: " << core.getConfig()->getNbClients();
+    std::cout << "Max Clients: " << constants::MAX_CLIENT;
     std::cout << std::endl << "------------------------" << std::endl;
     try {
         core.init();

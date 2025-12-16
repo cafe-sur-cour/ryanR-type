@@ -28,7 +28,7 @@ bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
     if (client.second.size() > HEADER_SIZE)
         name = std::string(client.second.begin() + HEADER_SIZE, client.second.end());
 
-    if (this->_nextClientId > this->getConfig()->getNbClients()) {
+    if (this->_nextClientId > constants::MAX_CLIENT) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Maximum clients reached",
             debug::debugType::NETWORK, debug::debugLevel::WARNING);

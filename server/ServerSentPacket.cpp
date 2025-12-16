@@ -92,14 +92,12 @@ bool rserv::Server::gameStatePacket() {
 bool rserv::Server::canStartPacket() {
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "[SERVER] Checking canStart: clients=" +
-        std::to_string(this->_clients.size()) + ", max=" +
-        std::to_string(this->getConfig()->getNbClients()) + ", allReady=" +
+        std::to_string(this->_clients.size()) + ", allReady=" +
         std::to_string(this->allClientsReady()),
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    if (static_cast<int>(this->_clients.size()) ==
-        this->getConfig()->getNbClients() && this->allClientsReady()) {
+    if (this->_clients.size() > 0 && this->allClientsReady()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] All clients are connected and ready, starting game",
+            "[SERVER] All connected clients are ready, starting game",
             debug::debugType::NETWORK, debug::debugLevel::INFO);
 
         this->_gameStarted = true;
