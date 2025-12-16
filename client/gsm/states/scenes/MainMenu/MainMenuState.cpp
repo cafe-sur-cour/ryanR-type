@@ -263,6 +263,13 @@ void MainMenuState::update(float deltaTime) {
 
     _uiManager->handleKeyboardInput(eventResult);
 
+    if (eventResult == gfx::EventType::TEXT_INPUT) {
+        std::string textInput = _resourceManager->get<gfx::IEvent>()->getLastTextInput();
+        if (!textInput.empty()) {
+            _uiManager->handleTextInput(textInput);
+        }
+    }
+
     math::Vector2f mousePos = _mouseHandler->getWorldMousePosition();
     bool mousePressed = _mouseHandler->isMouseButtonPressed(
         static_cast<int>(constants::MouseButton::LEFT));
