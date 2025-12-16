@@ -7,6 +7,7 @@
 
 #include "EndOfMapDetectionSystem.hpp"
 #include <iostream>
+#include <memory>
 #include "../../../common/components/tags/PlayerTag.hpp"
 #include "../../gsm/gsmStates.hpp"
 #include "../../../common/components/tags/GameEndTag.hpp"

@@ -7,6 +7,7 @@
 
 #include "ResultsState.hpp"
 #include <memory>
+#include <string>
 #include "../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "components/rendering/TextComponent.hpp"
@@ -23,7 +24,8 @@ ResultsState::ResultsState(
     std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager,
     bool isWin)
-    : AGameState(gsm, resourceManager), _isWin(isWin), _registry(resourceManager->get<ecs::Registry>()) {
+    : AGameState(gsm, resourceManager), _isWin(isWin),
+    _registry(resourceManager->get<ecs::Registry>()) {
 }
 
 void ResultsState::enter() {
@@ -33,8 +35,10 @@ void ResultsState::enter() {
     std::string text = _isWin ? constants::WIN_TEXT : constants::LOSE_TEXT;
     _registry->addComponent(textEntity, std::make_shared<ecs::TextComponent>(
         text, "assets/fonts/arial.ttf", gfx::color_t{255, 255, 255}));
-    _registry->addComponent(textEntity, std::make_shared<ecs::TransformComponent>(
-        math::Vector2f(constants::MAX_WIDTH / 2.0f - 50.0f, constants::MAX_HEIGHT / 2.0f), 0.0f,
+    _registry->addComponent(textEntity,
+        std::make_shared<ecs::TransformComponent>(
+        math::Vector2f(constants::MAX_WIDTH / 2.0f - 50.0f,
+        constants::MAX_HEIGHT / 2.0f), 0.0f,
         math::Vector2f(5.0f, 5.0f)));
 }
 
@@ -45,7 +49,8 @@ void ResultsState::update(float deltaTime) {
         return;
     }
 
-    _resourceManager->get<ecs::ISystemManager>()->updateAllSystems (_resourceManager, _registry, deltaTime);
+    _resourceManager->get<ecs::ISystemManager>()->updateAllSystems
+        (_resourceManager, _registry, deltaTime);
 }
 
 void ResultsState::exit() {
