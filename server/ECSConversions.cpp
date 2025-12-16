@@ -49,269 +49,319 @@ inline uint64_t packFloat(float value) {
 std::vector<uint64_t> rserv::Server::convertTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::PlayerTag>(i)) {
+    if (registry && registry->hasComponent<ecs::PlayerTag>(i)) {
         data.push_back(static_cast<uint64_t>(PLAYER_TAG));
     }
+    // std::cout << "[convertTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertTransformComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::TransformComponent>(i)) {
+    if (registry && registry->hasComponent<ecs::TransformComponent>(i)) {
         auto transform = registry->getComponent<ecs::TransformComponent>(i);
-        data.push_back(static_cast<uint64_t>(TRANSFORM));
-        data.push_back(packFloat(transform->getPosition().getX()));
-        data.push_back(packFloat(transform->getPosition().getY()));
-        data.push_back(packFloat(transform->getRotation()));
-        data.push_back(packFloat(transform->getScale().getX()));
-        data.push_back(packFloat(transform->getScale().getY()));
+        if (transform) {
+            data.push_back(static_cast<uint64_t>(TRANSFORM));
+            data.push_back(packFloat(transform->getPosition().getX()));
+            data.push_back(packFloat(transform->getPosition().getY()));
+            data.push_back(packFloat(transform->getRotation()));
+            data.push_back(packFloat(transform->getScale().getX()));
+            data.push_back(packFloat(transform->getScale().getY()));
+        }
     }
+    // std::cout << "[convertTransformComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertSpeedComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::SpeedComponent>(i)) {
+    if (registry && registry->hasComponent<ecs::SpeedComponent>(i)) {
         auto speed = registry->getComponent<ecs::SpeedComponent>(i);
-        data.push_back(static_cast<uint64_t>(SPEED_COMP));
-        data.push_back(packFloat(speed->getSpeed()));
+        if (speed) {
+            data.push_back(static_cast<uint64_t>(SPEED_COMP));
+            data.push_back(packFloat(speed->getSpeed()));
+        }
     }
+    // std::cout << "[convertSpeedComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertHealthComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::HealthComponent>(i)) {
+    if (registry && registry->hasComponent<ecs::HealthComponent>(i)) {
         auto health = registry->getComponent<ecs::HealthComponent>(i);
-        data.push_back(static_cast<uint64_t>(HEALTH));
-        data.push_back(packFloat(health->getHealth()));
-        data.push_back(packFloat(health->getBaseHealth()));
+        if (health) {
+            data.push_back(static_cast<uint64_t>(HEALTH));
+            data.push_back(packFloat(health->getHealth()));
+            data.push_back(packFloat(health->getBaseHealth()));
+        }
     }
+    // std::cout << "[convertHealthComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertColliderComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::ColliderComponent>(i)) {
+    if (registry && registry->hasComponent<ecs::ColliderComponent>(i)) {
         auto collider = registry->getComponent<ecs::ColliderComponent>(i);
-        data.push_back(static_cast<uint64_t>(COLLIDER));
-        data.push_back(packFloat(collider->getOffset().getX()));
-        data.push_back(packFloat(collider->getOffset().getY()));
-        data.push_back(packFloat(collider->getSize().getX()));
-        data.push_back(packFloat(collider->getSize().getY()));
-        data.push_back(static_cast<uint64_t>(collider->getType()));
+        if (collider) {
+            data.push_back(static_cast<uint64_t>(COLLIDER));
+            data.push_back(packFloat(collider->getOffset().getX())); // here
+            data.push_back(packFloat(collider->getOffset().getY()));
+            data.push_back(packFloat(collider->getSize().getX()));
+            data.push_back(packFloat(collider->getSize().getY()));
+            data.push_back(static_cast<uint64_t>(collider->getType()));
+        }
     }
+    // std::cout << "[convertColliderComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertShootStatComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::ShootingStatsComponent>(i)) {
+    if (registry && registry->hasComponent<ecs::ShootingStatsComponent>(i)) {
         auto shootStats = registry->getComponent<ecs::ShootingStatsComponent>(i);
-        data.push_back(static_cast<uint64_t>(SHOOTING_STATS));
-        data.push_back(packFloat(shootStats->getFireRate()));
-        data.push_back(packFloat(shootStats->getCooldownTimer()));
-        data.push_back(static_cast<uint64_t>(shootStats->getMultiShotPattern().shotCount));
-        data.push_back(packFloat(shootStats->getMultiShotPattern().angleSpread));
-        data.push_back(packFloat(shootStats->getMultiShotPattern().offsetDistance));
+        if (shootStats) {
+            data.push_back(static_cast<uint64_t>(SHOOTING_STATS));
+            data.push_back(packFloat(shootStats->getFireRate()));
+            data.push_back(packFloat(shootStats->getCooldownTimer()));
+            data.push_back(static_cast<uint64_t>(shootStats->getMultiShotPattern().shotCount));
+            data.push_back(packFloat(shootStats->getMultiShotPattern().angleSpread));
+            data.push_back(packFloat(shootStats->getMultiShotPattern().offsetDistance));
+        }
     }
+    // std::cout << "[convertShootStatComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertScoreComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::ScoreComponent>(i)) {
+    if (registry && registry->hasComponent<ecs::ScoreComponent>(i)) {
         auto scoreComp = registry->getComponent<ecs::ScoreComponent>(i);
-        data.push_back(static_cast<uint64_t>(SCORE));
-        data.push_back(static_cast<uint64_t>(scoreComp->getScore()));
+        if (scoreComp) {
+            data.push_back(static_cast<uint64_t>(SCORE));
+            data.push_back(static_cast<uint64_t>(scoreComp->getScore()));
+        }
     }
+    // std::cout << "[convertScoreComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertAIMovementPatternComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::AIMovementPatternComponent>(i)) {
+    if (registry && registry->hasComponent<ecs::AIMovementPatternComponent>(i)) {
         auto pattern = registry->getComponent<ecs::AIMovementPatternComponent>(i);
-        data.push_back(static_cast<uint64_t>(AI_MOVEMENT_PATTERN));
-        data.push_back(static_cast<uint64_t>(pattern->getPattern()));
-        data.push_back(packFloat(pattern->getZigzagAmplitude()));
-        data.push_back(packFloat(pattern->getZigzagFrequency()));
-        data.push_back(packFloat(pattern->getDetectionRange()));
-        data.push_back(packFloat(pattern->getVerticalDeadzone()));
-        data.push_back(packFloat(pattern->getTimer()));
+        if (pattern) {
+            data.push_back(static_cast<uint64_t>(AI_MOVEMENT_PATTERN));
+            data.push_back(static_cast<uint64_t>(pattern->getPattern()));
+            data.push_back(packFloat(pattern->getZigzagAmplitude()));
+            data.push_back(packFloat(pattern->getZigzagFrequency()));
+            data.push_back(packFloat(pattern->getDetectionRange()));
+            data.push_back(packFloat(pattern->getVerticalDeadzone()));
+            data.push_back(packFloat(pattern->getTimer()));
+        }
     }
+    // std::cout << "[convertAIMovementPatternComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertDamageComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::DamageComponent>(i)) {
+    if (registry && registry->hasComponent<ecs::DamageComponent>(i)) {
         auto damageComp = registry->getComponent<ecs::DamageComponent>(i);
-        data.push_back(static_cast<uint64_t>(DAMAGE));
-        data.push_back(packFloat(damageComp->getDamage()));
+        if (damageComp) {
+            data.push_back(static_cast<uint64_t>(DAMAGE));
+            data.push_back(packFloat(damageComp->getDamage())); // here
+        }
     }
+    // std::cout << "[convertDamageComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertLifetimeComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::LifetimeComponent>(i)) {
+    if (registry && registry->hasComponent<ecs::LifetimeComponent>(i)) {
         auto lifetimeComp = registry->getComponent<ecs::LifetimeComponent>(i);
-        data.push_back(static_cast<uint64_t>(LIFETIME));
-        data.push_back(packFloat(lifetimeComp->getLifetime()));
+        if (lifetimeComp) {
+            data.push_back(static_cast<uint64_t>(LIFETIME));
+            data.push_back(packFloat(lifetimeComp->getLifetime()));
+        }
     }
+    // std::cout << "[convertLifetimeComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertVelocityComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::VelocityComponent>(i)) {
+    if (registry && registry->hasComponent<ecs::VelocityComponent>(i)) {
         auto velocity = registry->getComponent<ecs::VelocityComponent>(i);
-        data.push_back(static_cast<uint64_t>(VELOCITY));
-        data.push_back(packFloat(velocity->getVelocity().getX()));
-        data.push_back(packFloat(velocity->getVelocity().getY()));
+        if (velocity) {
+            data.push_back(static_cast<uint64_t>(VELOCITY));
+            data.push_back(packFloat(velocity->getVelocity().getX()));
+            data.push_back(packFloat(velocity->getVelocity().getY()));
+        }
     }
+    // std::cout << "[convertVelocityComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertAIMoverTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::AIMoverTag>(i)) {
+    if (registry && registry->hasComponent<ecs::AIMoverTag>(i)) {
         data.push_back(static_cast<uint64_t>(AI_MOVER_TAG));
     }
+    // std::cout << "[convertAIMoverTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertAIShooterTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::AIShooterTag>(i)) {
+    if (registry && registry->hasComponent<ecs::AIShooterTag>(i)) {
         data.push_back(static_cast<uint64_t>(AI_SHOOTER_TAG));
     }
+    // std::cout << "[convertAIShooterTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertControllableTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::ControllableTag>(i)) {
+    if (registry && registry->hasComponent<ecs::ControllableTag>(i)) {
         data.push_back(static_cast<uint64_t>(CONTROLLABLE_TAG));
     }
+    // std::cout << "[convertControllableTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertEnemyProjectileTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::EnnemyProjectileTag>(i)) {
+    if (registry && registry->hasComponent<ecs::EnnemyProjectileTag>(i)) {
         data.push_back(static_cast<uint64_t>(ENEMY_PROJECTILE_TAG));
     }
+    // std::cout << "[convertEnemyProjectileTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertGameZoneColliderTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::GameZoneColliderTag>(i)) {
+    if (registry && registry->hasComponent<ecs::GameZoneColliderTag>(i)) {
         data.push_back(static_cast<uint64_t>(GAME_ZONE_COLLIDER_TAG));
     }
+    // std::cout << "[convertGameZoneColliderTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertMobTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::MobTag>(i)) {
+    if (registry && registry->hasComponent<ecs::MobTag>(i)) {
         data.push_back(static_cast<uint64_t>(MOB_TAG));
     }
+    // std::cout << "[convertMobTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertObstacleTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::ObstacleTag>(i)) {
+    if (registry && registry->hasComponent<ecs::ObstacleTag>(i)) {
         data.push_back(static_cast<uint64_t>(OBSTACLE_TAG));
     }
+    // std::cout << "[convertObstacleTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertPlayerProjectileTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::PlayerProjectileTag>(i)) {
+    if (registry && registry->hasComponent<ecs::PlayerProjectileTag>(i)) {
         data.push_back(static_cast<uint64_t>(PLAYER_PROJECTILE_TAG));
     }
+    // std::cout << "[convertPlayerProjectileTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertShooterTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::ShooterTag>(i)) {
+    if (registry && registry->hasComponent<ecs::ShooterTag>(i)) {
         data.push_back(static_cast<uint64_t>(SHOOTER_TAG));
     }
+    // std::cout << "[convertShooterTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertProjectilePassThroughTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::ProjectilePassThroughTag>(i)) {
+    if (registry && registry->hasComponent<ecs::ProjectilePassThroughTag>(i)) {
         data.push_back(static_cast<uint64_t>(PROJECTILE_PASS_THROUGH_TAG));
     }
+    // std::cout << "[convertProjectilePassThroughTagComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertProjectilePrefabComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::ProjectilePrefabComponent>(i)) {
-        data.push_back(static_cast<uint64_t>(PROJECTILE_PREFAB));
-        std::string prefabName =
-            registry->getComponent<ecs::ProjectilePrefabComponent>(i)->getPrefabName();
-        for (char c : prefabName) {
-            data.push_back(static_cast<uint64_t>(c));
+    if (registry && registry->hasComponent<ecs::ProjectilePrefabComponent>(i)) {
+        auto prefabComp = registry->getComponent<ecs::ProjectilePrefabComponent>(i);
+        if (prefabComp) {
+            data.push_back(static_cast<uint64_t>(PROJECTILE_PREFAB));
+            std::string prefabName = prefabComp->getPrefabName();
+            for (char c : prefabName) {
+                data.push_back(static_cast<uint64_t>(c));
+            }
+            data.push_back(static_cast<uint64_t>('\r'));
+            data.push_back(static_cast<uint64_t>('\n'));
+            data.push_back(static_cast<uint64_t>('\0'));
         }
-        data.push_back(static_cast<uint64_t>('\r'));
-        data.push_back(static_cast<uint64_t>('\n'));
-        data.push_back(static_cast<uint64_t>('\0'));
     }
+    // std::cout << "[convertProjectilePrefabComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertNetworkIdComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::NetworkIdComponent>(i)) {
+    if (registry && registry->hasComponent<ecs::NetworkIdComponent>(i)) {
         auto networkIdComp = registry->getComponent<ecs::NetworkIdComponent>(i);
-        data.push_back(static_cast<uint64_t>(NETWORK_ID));
-        data.push_back(static_cast<uint64_t>(networkIdComp->getNetworkId()));
+        if (networkIdComp) {
+            data.push_back(static_cast<uint64_t>(NETWORK_ID));
+            data.push_back(static_cast<uint64_t>(networkIdComp->getNetworkId()));
+        }
     }
+    // std::cout << "[convertNetworkIdComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }
 
 std::vector<uint64_t> rserv::Server::convertGameZoneComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
-    if (registry->hasComponent<ecs::GameZoneComponent>(i)) {
+    if (registry && registry->hasComponent<ecs::GameZoneComponent>(i)) {
         auto gameZoneComp = registry->getComponent<ecs::GameZoneComponent>(i);
-        data.push_back(static_cast<uint64_t>(GAME_ZONE));
-        data.push_back(packFloat(gameZoneComp->getZone().getHeight()));
-        data.push_back(packFloat(gameZoneComp->getZone().getWidth()));
-        data.push_back(packFloat(gameZoneComp->getZone().getLeft()));
-        data.push_back(packFloat(gameZoneComp->getZone().getTop()));
+        if (gameZoneComp) {
+            data.push_back(static_cast<uint64_t>(GAME_ZONE));
+            data.push_back(packFloat(gameZoneComp->getZone().getHeight()));
+            data.push_back(packFloat(gameZoneComp->getZone().getWidth()));
+            data.push_back(packFloat(gameZoneComp->getZone().getLeft()));
+            data.push_back(packFloat(gameZoneComp->getZone().getTop()));
+        }
     }
+    // std::cout << "[convertGameZoneComponent] Entity " << i << " returning " << data.size() << " elements" << std::endl;
     return data;
 }

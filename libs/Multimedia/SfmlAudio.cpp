@@ -19,7 +19,21 @@ SfmlAudio::SfmlAudio()
     this->_soundBuffers = std::map<std::string, std::shared_ptr<sf::SoundBuffer>>();
     this->_sounds = std::map<std::string, std::shared_ptr<sf::Sound>>();
     this->_assetManager = assets::AssetManager();
-    this->_musicAssetData = nullptr;
+    // this->_musicAssetData = nullptr;
+}
+
+SfmlAudio::~SfmlAudio() {
+    // stopMusic();
+    // stopAllSounds();
+    // if (_musicAssetData != nullptr) {
+    //     _musicAssetData.reset();
+    // }
+    // if (_soundBuffers.size() > 0) {
+    //     _soundBuffers.clear();
+    // }
+    // if (_sounds.size() > 0) {
+    //     _sounds.clear();
+    // }
 }
 
 void SfmlAudio::playMusic(const std::string& musicPath, bool loop) {
@@ -44,9 +58,14 @@ void SfmlAudio::playMusic(const std::string& musicPath, bool loop) {
     _music.setLooping(loop);
     _music.setVolume(_musicVolume);
     _music.play();
+    if (assetData != nullptr) {
+        assetData.reset();
+    }
 }
 
 void SfmlAudio::stopMusic() {
+    if (_music.getStatus() == sf::SoundSource::Status::Stopped)
+        return;
     _music.stop();
 }
 
@@ -94,6 +113,9 @@ void SfmlAudio::loadSoundBuffer(const std::string& soundPath) {
         return;
     }
     _soundBuffers[soundPath] = buffer;
+    if (assetData != nullptr) {
+        assetData.reset();
+    }
 }
 
 void SfmlAudio::cleanupFinishedSounds() {
@@ -139,7 +161,8 @@ float SfmlAudio::getSoundVolume() const {
 
 void SfmlAudio::stopAllSounds() {
     for (auto& [key, sound] : _sounds) {
-        sound->stop();
+        if (sound->getStatus() != sf::SoundSource::Status::Stopped)
+            sound->stop();
     }
     _sounds.clear();
 }

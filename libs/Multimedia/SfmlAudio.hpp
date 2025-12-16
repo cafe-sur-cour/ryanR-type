@@ -24,7 +24,7 @@ class SfmlAudio : public IAudio
 {
     public:
         SfmlAudio();
-        ~SfmlAudio() override = default;
+        ~SfmlAudio() override;
 
         void playMusic(const std::string& musicPath, bool loop = true) override;
         void stopMusic() override;
@@ -40,13 +40,13 @@ class SfmlAudio : public IAudio
         void stopAllSounds() override;
 
     private:
+        std::shared_ptr<assets::AssetData> _musicAssetData;
         sf::Music _music;
         std::map<std::string, std::shared_ptr<sf::SoundBuffer>> _soundBuffers;
         std::map<std::string, std::shared_ptr<sf::Sound>> _sounds;
         float _musicVolume;
         float _soundVolume;
         assets::AssetManager _assetManager;
-        std::shared_ptr<assets::AssetData> _musicAssetData;
 
         void loadSoundBuffer(const std::string& soundPath);
         void cleanupFinishedSounds();
