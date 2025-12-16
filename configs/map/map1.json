@@ -4,7 +4,7 @@
     "scrollSpeed": 100.0,
     "music": "music",
     "powerUps": [],
-    "mapLength": 2500.0,
+    "mapLength": 6500.0,
     "obstacles": [
         {
             "name": "obstacle1",
@@ -16,20 +16,76 @@
                     "count": 10
                 },
                 {
+                    "type": "horizontalLine",
+                    "fromX": 500.0,
+                    "posY":  1000.0,
+                    "count": 14
+                },
+                {
                     "type": "verticalLine",
-                    "fromY": 500.0,
+                    "fromY": 400.0,
                     "posX": 1000.0,
-                    "count": 3
+                    "count": 5
                 },
                 {
-                    "type": "unique",
-                    "posX": 600.0,
-                    "posY": 600.0
+                    "type": "verticalLine",
+                    "fromY": 100.0,
+                    "posX": 1650.0,
+                    "count": 10
                 },
                 {
-                    "type": "unique",
-                    "posX": 2500.0,
-                    "posY": 600.0
+                    "type": "horizontalLine",
+                    "fromX": 2200.0,
+                    "posY": 100.0,
+                    "count": 8
+                },
+                {
+                    "type": "horizontalLine",
+                    "fromX": 2200.0,
+                    "posY": 900.0,
+                    "count": 8
+                },
+                {
+                    "type": "verticalLine",
+                    "fromY": 200.0,
+                    "posX": 3000.0,
+                    "count": 12
+                },
+                {
+                    "type": "horizontalLine",
+                    "fromX": 4500.0,
+                    "posY": 80.0,
+                    "count": 10
+                },
+                {
+                    "type": "horizontalLine",
+                    "fromX": 4500.0,
+                    "posY": 920.0,
+                    "count": 10
+                },
+                {
+                    "type": "verticalLine",
+                    "fromY": 0.0,
+                    "posX": 6000.0,
+                    "count": 5
+                },
+                {
+                    "type": "verticalLine",
+                    "fromY": 680.0,
+                    "posX": 6000.0,
+                    "count": 5
+                },
+                {
+                    "type": "horizontalLine",
+                    "fromX": 6000.0,
+                    "posY": 680.0,
+                    "count": 20
+                },
+                {
+                    "type": "horizontalLine",
+                    "fromX": 6000.0,
+                    "posY": 400.0,
+                    "count": 20
                 }
             ]
         }
@@ -46,16 +102,16 @@
                         "type": "random"
                     },
                     "distributionY": {
-                        "min": 20,
-                        "max": 80,
+                        "min": 10,
+                        "max": 90,
                         "type": "uniform"
                     },
-                    "count": 6
+                    "count": 3
                 }
             ]
         },
         {
-            "gameXTrigger": 1000.0,
+            "gameXTrigger": 600.0,
             "enemies": [
                 {
                     "type": "enemy2",
@@ -65,12 +121,17 @@
                         "type": "random"
                     },
                     "distributionY": {
-                        "min": 50,
-                        "max": 80,
+                        "min": 10,
+                        "max": 90,
                         "type": "uniform"
                     },
                     "count": 4
-                },
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 1000.0,
+            "enemies": [
                 {
                     "type": "enemy3",
                     "distributionX": {
@@ -79,11 +140,252 @@
                         "type": "random"
                     },
                     "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 3
+                },
+                {
+                    "type": "enemy1",
+                    "distributionX": {
+                        "min": 85,
+                        "max": 90,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 3
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 1400.0,
+            "enemies": [
+                {
+                    "type": "enemy2",
+                    "distributionX": {
+                        "min": 50,
+                        "max": 55,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 5
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 1800.0,
+            "enemies": [
+                {
+                    "type": "enemy3",
+                    "distributionX": {
                         "min": 20,
-                        "max": 50,
+                        "max": 25,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
                         "type": "uniform"
                     },
                     "count": 4
+                },
+                {
+                    "type": "enemy1",
+                    "distributionX": {
+                        "min": 75,
+                        "max": 80,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 4
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 2300.0,
+            "enemies": [
+                {
+                    "type": "enemy2",
+                    "distributionX": {
+                        "min": 45,
+                        "max": 50,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 6
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 2800.0,
+            "enemies": [
+                {
+                    "type": "enemy3",
+                    "distributionX": {
+                        "min": 5,
+                        "max": 10,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 4
+                },
+                {
+                    "type": "enemy1",
+                    "distributionX": {
+                        "min": 90,
+                        "max": 95,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 3
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 3300.0,
+            "enemies": [
+                {
+                    "type": "enemy2",
+                    "distributionX": {
+                        "min": 40,
+                        "max": 45,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 5
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 3800.0,
+            "enemies": [
+                {
+                    "type": "enemy3",
+                    "distributionX": {
+                        "min": 15,
+                        "max": 20,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 5
+                },
+                {
+                    "type": "enemy1",
+                    "distributionX": {
+                        "min": 80,
+                        "max": 85,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 4
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 4300.0,
+            "enemies": [
+                {
+                    "type": "enemy2",
+                    "distributionX": {
+                        "min": 35,
+                        "max": 40,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 6
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 4800.0,
+            "enemies": [
+                {
+                    "type": "enemy3",
+                    "distributionX": {
+                        "min": 25,
+                        "max": 30,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 4
+                },
+                {
+                    "type": "enemy1",
+                    "distributionX": {
+                        "min": 50,
+                        "max": 55,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 4
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 5300.0,
+            "enemies": [
+                {
+                    "type": "enemy3",
+                    "distributionX": {
+                        "min": 20,
+                        "max": 25,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 6
                 }
             ]
         }
