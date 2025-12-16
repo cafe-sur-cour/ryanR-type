@@ -157,23 +157,6 @@ bool rserv::Server::endGamePacket(bool isWin) {
     return true;
 }
 
-bool rserv::Server::endGamePacket(bool isWin) {
-    std::vector<uint64_t> payload;
-    payload.push_back(isWin ? 1 : 0);
-    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
-        this->_sequenceNumber, constants::PACKET_END_GAME, payload);
-
-    if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
-        std::cout << "[SERVER NETWORK] Failed to broadcast end game packet" << std::endl;
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER NETWORK] Failed to broadcast end game packet",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
-        return false;
-    }
-    this->_sequenceNumber++;
-    return true;
-}
-
 std::vector<uint64_t> rserv::Server::spawnPacket(
     size_t networkId,
     const std::string prefabName) {
