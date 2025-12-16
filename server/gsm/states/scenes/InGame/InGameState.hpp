@@ -21,7 +21,7 @@ public:
 
     void enter() override;
 
-
+    void update(float deltaTime) override;
     private:
 
 };
