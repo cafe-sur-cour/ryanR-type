@@ -16,6 +16,7 @@
 #include "../common/components/permanent/NetworkIdComponent.hpp"
 #include "../common/components/tags/LocalPlayerTag.hpp"
 #include "gsm/states/scenes/InGame/InGameState.hpp"
+#include "gsm/states/scenes/Results/ResultsState.hpp"
 
 /* Packet Handlers */
 void ClientNetwork::handleNoOp() {
@@ -100,6 +101,21 @@ void ClientNetwork::handleEndMap() {
 }
 
 void ClientNetwork::handleEndGame() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received end game packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+    auto payload = _packet->getPayload();
+    bool isWin = false;
+    if (!payload.empty()) {
+        isWin = payload[0] != 0;
+    }
+    if (this->_gsm) {
+        this->_gsm->requestStateChange(
+            std::make_shared<gsm::ResultsState>
+                (this->_gsm, this->_resourceManager, isWin)
+        );
+    }
 }
 
 void ClientNetwork::handleCanStart() {
