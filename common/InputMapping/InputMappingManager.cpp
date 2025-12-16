@@ -16,10 +16,10 @@
 namespace ecs {
 
 const std::map<std::string, gfx::EventType> stringToEventMap = {
-    {"Up Arrow", gfx::EventType::UP},
-    {"Down Arrow", gfx::EventType::DOWN},
-    {"Left Arrow", gfx::EventType::LEFT},
-    {"Right Arrow", gfx::EventType::RIGHT},
+    {"Up", gfx::EventType::UP},
+    {"Down", gfx::EventType::DOWN},
+    {"Left", gfx::EventType::LEFT},
+    {"Right", gfx::EventType::RIGHT},
     {"A", gfx::EventType::A},
     {"B", gfx::EventType::B},
     {"C", gfx::EventType::C},

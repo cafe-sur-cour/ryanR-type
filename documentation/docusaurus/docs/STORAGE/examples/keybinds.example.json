@@ -1,19 +1,19 @@
 {
   "MOVE_DOWN": {
     "primary": "S",
-    "secondary": "Down Arrow"
+    "secondary": "Down"
   },
   "MOVE_LEFT": {
     "primary": "Q",
-    "secondary": "Left Arrow"
+    "secondary": "Left"
   },
   "MOVE_RIGHT": {
     "primary": "D",
-    "secondary": "Right Arrow"
+    "secondary": "Right"
   },
   "MOVE_UP": {
     "primary": "Z",
-    "secondary": "Up Arrow"
+    "secondary": "Up"
   },
   "SHOOT": {
     "primary": "Space",
