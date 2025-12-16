@@ -23,11 +23,7 @@ int main(int ac, char **av) {
     std::cout << "[Server] RTYPE SERVER" << std::endl;
     std::cout << "------------------------" << std::endl;
     std::cout << "Port: " << core.getConfig()->getPort() << std::endl;
-    std::cout << "Local IP: " << core.getConfig()->getIp() << std::endl;
-    if (core.getConfig()->getIp() == "127.0.0.1") {
-        std::cout << "Note: Server is bound to localhost. " << std::endl
-            << "Use 0.0.0.0 for external connections." << std::endl;
-    }
+    std::cout << "IP: " << core.getConfig()->getIp() << std::endl;
     std::cout << "Max Clients: " << constants::MAX_CLIENT;
     std::cout << std::endl << "------------------------" << std::endl;
     try {
