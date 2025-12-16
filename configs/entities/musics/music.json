@@ -6,7 +6,7 @@
         },
         "MusicComponent": {
             "target": "client",
-            "musicFile": "musics/hava-nagila.ogg",
+            "musicFile": "musics/conquest.ogg",
             "initialState": "STOPPED",
             "volume": 100.0,
             "loop": true

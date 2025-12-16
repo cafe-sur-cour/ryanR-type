@@ -5,17 +5,17 @@
         "TransformComponent": {
             "target": "both",
             "position": { "x": 0.0, "y": 0.0 },
-            "scale": { "x": 0.2, "y": 0.2 },
+            "scale": { "x": 0.5, "y": 0.5 },
             "rotation": 0.0
         },
         "SpriteComponent": {
             "target": "client",
-            "filePath": "assets/sprites/obstacle1.jpg"
+            "filePath": "assets/sprites/obstacle1.png"
         },
         "ColliderComponent": {
             "target": "both",
             "offset": { "x": 0.0, "y": 0.0 },
-            "size" : { "x": 370.0, "y": 370.0 },
+            "size" : { "x": 160.0, "y": 160.0 },
             "type": "Solid"
         }
     }
