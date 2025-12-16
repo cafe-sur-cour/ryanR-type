@@ -91,7 +91,7 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
         }
         if (type != MAP_SEND_PACKET && type != SPAWN_PLAYER_PACKET &&
             type != CAN_START_PACKET && type != DEATH_PLAYER_PACKET &&
-            type != WHOAMI_PACKET) {
+            type != WHOAMI_PACKET && type != END_GAME_PACKET) {
             std::cerr << "[PACKET] Error: Unknown packet type "
                 << static_cast<int>(type) << " for packing" << std::endl;
             return std::vector<uint8_t>();

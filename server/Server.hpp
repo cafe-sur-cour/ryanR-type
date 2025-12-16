@@ -81,6 +81,7 @@ namespace rserv {
             bool connectionPacket(asio::ip::udp::endpoint endpoint);
             bool gameStatePacket();
             bool canStartPacket();
+            bool endGamePacket(bool isWin);
             std::vector<uint64_t> spawnPacket(size_t entity, const std::string prefabName);
             std::vector<uint64_t> deathPacket(size_t entity);
             bool serverStatusPacket();

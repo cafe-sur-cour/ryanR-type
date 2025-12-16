@@ -11,7 +11,7 @@
 #include "../../../../../common/Parser/Parser.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
-
+#include "../../../gsmStates.hpp"
 namespace gsm {
 
 LoadingState::LoadingState(std::shared_ptr<IGameStateMachine> gsm,
@@ -24,6 +24,7 @@ void LoadingState::enter() {
     if (parser) {
         parser->parseMapFromFile("configs/map/map1.json");
     }
+    *(_resourceManager->get<gsm::GameStateType>()) = gsm::LOADING;
     if (auto stateMachine = _gsm.lock()) {
         stateMachine->requestStateChange(std::make_shared<InGameState>(stateMachine,
             _resourceManager));

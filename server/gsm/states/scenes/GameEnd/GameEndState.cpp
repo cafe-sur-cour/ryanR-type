@@ -7,6 +7,8 @@
 
 #include "GameEndState.hpp"
 #include <memory>
+#include <iostream>
+
 namespace gsm {
 
 GameEndState::GameEndState(std::shared_ptr<IGameStateMachine> gsm,
@@ -18,5 +20,8 @@ void GameEndState::enter() {
     // TODO(anyone): Initialize server game end state
 }
 
+void GameEndState::update(float deltaTime) {
+    (void)deltaTime;
+}
 
 }  // namespace gsm

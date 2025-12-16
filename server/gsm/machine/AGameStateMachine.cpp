@@ -32,6 +32,10 @@ void AGameStateMachine::changeState(std::shared_ptr<IGameState> newState) {
     _states.top()->enter();
 }
 
+void AGameStateMachine::requestStateChange(std::shared_ptr<IGameState> newState) {
+    changeState(newState);
+}
+
 void AGameStateMachine::pushState(std::shared_ptr<IGameState> newState) {
     if (!_states.empty()) {
         _states.top()->exit();

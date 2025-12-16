@@ -26,3 +26,17 @@ target_include_directories(ServerShootInputSystem PRIVATE
     ${CMAKE_SOURCE_DIR}/common
     ${CMAKE_SOURCE_DIR}/server
 )
+
+add_library(EndOfMapDetectionSystem STATIC
+    gameEnd/EndOfMapDetectionSystem.cpp
+)
+
+target_link_libraries(EndOfMapDetectionSystem
+    ECS
+    ${SERVER_LIB_NAME}
+)
+
+target_include_directories(EndOfMapDetectionSystem PRIVATE
+    ${CMAKE_SOURCE_DIR}/common
+    ${CMAKE_SOURCE_DIR}/server
+)

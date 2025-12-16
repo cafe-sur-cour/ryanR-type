@@ -15,6 +15,7 @@
 #include <vector>
 #include "../../Error/ParserError.hpp"
 #include "../../constants.hpp"
+#include "../../debug.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/NetworkIdComponent.hpp"
 #include "../../types/Vector2f.hpp"
@@ -22,6 +23,7 @@
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../../client/components/rendering/MusicComponent.hpp"
 #include "../../components/permanent/GameZoneComponent.hpp"
+#include "../../components/tags/GameEndTag.hpp"
 #include "../../components/tags/GameZoneColliderTag.hpp"
 #include "../../components/temporary/SpawnIntentComponent.hpp"
 #include "../../ECS/entity/factory/EntityFactory.hpp"
@@ -69,6 +71,9 @@ void MapParser::parseMap(const nlohmann::json &mapJson) {
 
     if (mapJson.contains(constants::BACKGROUND_SCROLL_SPEED_FIELD))
         createGameZoneEntity(mapJson[constants::BACKGROUND_SCROLL_SPEED_FIELD]);
+
+    if (mapJson.contains(constants::MAP_LENGTH_FIELD))
+        createGameEndEntity(mapJson[constants::MAP_LENGTH_FIELD]);
 
     if (mapJson.contains(constants::POWERUPS_FIELD))
         parsePowerUps(mapJson[constants::POWERUPS_FIELD]);
@@ -128,6 +133,18 @@ void MapParser::createGameZoneEntity(float scrollSpeed) {
             velocityComp->setVelocity(math::Vector2f(scrollSpeed, 0.0f));
         }
     }
+}
+
+void MapParser::createGameEndEntity(float mapLength) {
+    float x = mapLength;
+    ecs::Entity gameEndEntity = _registry->createEntity();
+
+    _registry->addComponent(gameEndEntity, std::make_shared<ecs::GameEndTag>());
+    _registry->addComponent(gameEndEntity, std::make_shared<ecs::TransformComponent>
+        (math::Vector2f(x, 0.0f)));
+    _registry->addComponent(gameEndEntity, std::make_shared<ecs::ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, constants::MAX_HEIGHT),
+        ecs::CollisionType::Trigger));
 }
 
 void MapParser::parsePowerUps(const nlohmann::json &powerUps) {

@@ -10,6 +10,7 @@
 #include "../Loading/LoadingState.hpp"
 #include "../../../../../server/Server.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
+#include "../../../gsmStates.hpp"
 
 namespace gsm {
 
@@ -23,6 +24,7 @@ void LobbyState::enter() {
 
 void LobbyState::update(float deltaTime) {
     (void)deltaTime;
+    *(_resourceManager->get<gsm::GameStateType>()) = gsm::LOBBY;
     auto server = _resourceManager->get<rserv::Server>();
     if (server && server->allClientsReady()) {
         if (auto stateMachine = _gsm.lock()) {
