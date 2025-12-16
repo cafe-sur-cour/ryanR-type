@@ -10,6 +10,7 @@
 #include <cmath>
 #include <memory>
 #include <functional>
+#include <string>
 #include "../elements/focusable/TextInput.hpp"
 
 namespace ui {
@@ -165,6 +166,15 @@ void UIManager::handleKeyboardInput(gfx::EventType event) {
     if (focusedElement) {
         if (auto textInput = std::dynamic_pointer_cast<TextInput>(focusedElement)) {
             textInput->handleKeyboardInput(event);
+        }
+    }
+}
+
+void UIManager::handleTextInput(const std::string& text) {
+    auto focusedElement = getFocusedElement();
+    if (focusedElement) {
+        if (auto textInput = std::dynamic_pointer_cast<TextInput>(focusedElement)) {
+            textInput->handleTextInput(text);
         }
     }
 }

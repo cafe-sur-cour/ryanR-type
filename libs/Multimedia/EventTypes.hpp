@@ -119,8 +119,11 @@ enum class EventType {
     CLOSE = 132,
     REFRESH = 133,
 
+    // Text input
+    TEXT_INPUT = 134,
+
     // Default
-    NOTHING = 134
+    NOTHING = 135
 };
 
 } // namespace gfx
