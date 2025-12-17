@@ -5,6 +5,9 @@
 ** Vector2f
 */
 
+#include <cmath>
+#include <iostream>
+
 #include "Vector2f.hpp"
 
 namespace math {
@@ -12,8 +15,17 @@ namespace math {
 Vector2f::Vector2f(float x, float y) : _x(x), _y(y) {
 }
 
-Vector2f::Vector2f(Vector2f const &other) : _x(other._x), _y(other._y) {
+Vector2f::Vector2f(Vector2f const &other) {
+    if (std::isnan(other._x) || std::isnan(other._y) || std::isinf(other._x)
+        || std::isinf(other._y)) {
+        _x = 0.f;
+        _y = 0.f;
+    } else {
+        _x = other._x;
+        _y = other._y;
+    }
 }
+
 
 float Vector2f::getX() const {
     return _x;
@@ -48,8 +60,18 @@ Vector2f Vector2f::operator+(Vector2f const &other) const {
 }
 
 void Vector2f::operator=(Vector2f const &other) {
-    _x = other._x;
-    _y = other._y;
+    if (this != &other) {
+        if (std::isnan(other._x) || std::isnan(other._y) || std::isinf(other._x)
+        || std::isinf(other._y)) {
+            std::cout << "[Vector2f] Warning: Assignment operator received invalid Vector2f"
+                      << " (x: " << other._x << ", y: " << other._y << ")\n";
+            _x = 0.f;
+            _y = 0.f;
+        } else {
+            _x = other._x;
+            _y = other._y;
+        }
+    }
 }
 
 void Vector2f::operator+=(Vector2f const &other) {

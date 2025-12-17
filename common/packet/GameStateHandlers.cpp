@@ -30,13 +30,13 @@ static void registerGameStatePackers(
     auto pushSerialized = [](std::vector<uint8_t> &dst, const std::vector<uint8_t> &bytes) {
         dst.insert(dst.end(), bytes.begin(), bytes.end());
     };
-    auto pushUChar = [ser, &pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
+    auto pushUChar = [ser, pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
         pushSerialized(dst, ser->serializeUChar(val));
     };
-    auto pushULong = [ser, &pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
+    auto pushULong = [ser, pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
         pushSerialized(dst, ser->serializeULong(val));
     };
-    auto pushUInt = [ser, &pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
+    auto pushUInt = [ser, pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
         pushSerialized(dst, ser->serializeUInt(val));
     };
 

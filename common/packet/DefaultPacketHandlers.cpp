@@ -272,11 +272,11 @@ bool registerDefaultPacketHandlers(
         dst.insert(dst.end(), bytes.begin(), bytes.end());
     };
 
-    auto appendUChar = [ser, &pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
+    auto appendUChar = [ser, pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
         pushSerialized(dst, ser->serializeUChar(val));
     };
 
-    auto appendULong = [ser, &pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
+    auto appendULong = [ser, pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
         pushSerialized(dst, ser->serializeULong(val));
     };
 
