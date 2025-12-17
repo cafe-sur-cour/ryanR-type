@@ -59,6 +59,9 @@ std::shared_ptr<sf::Shader> ShaderManager::loadShader(const std::string& path) {
     }
 
     _shaderCache[path] = shader;
+    if (asset != nullptr) {
+        asset.reset();
+    }
     return shader;
 }
 
