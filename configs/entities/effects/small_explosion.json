@@ -38,6 +38,9 @@
             "target": "client",
             "soundFile": "assets/sounds/effects/small_explosion.wav",
             "volume": 100.0
+        },
+        "ClientEffectTag": {
+            "target": "client"
         }
     }
 }
