@@ -223,6 +223,7 @@ namespace constants {
     const std::string GAMEZONECOMPONENT = "GameZoneComponent";
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
     const std::string OBSTACLETAG = "ObstacleTag";
+    const std::string CLIENTEFFECTTAG = "ClientEffectTag";
     const std::string AIMOVERTAG = "AIMoverTag";
     const std::string AISHOOTERTAG = "AIShooterTag";
 
