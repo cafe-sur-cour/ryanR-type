@@ -35,6 +35,7 @@ void DeathSystem::update(
     float deltaTime
 ) {
     (void) deltaTime;
+    (void) resourceManager;
 
     auto view = registry->view<DeathIntentComponent>();
 
@@ -62,71 +63,7 @@ void DeathSystem::update(
             }
         }
 
-        std::string explosionPrefab = "";
-        if (registry->hasComponent<MobTag>(entityId)) {
-            explosionPrefab = constants::SMALL_EXPLOSION;
-        } else if (registry->hasComponent<PlayerTag>(entityId)) {
-            explosionPrefab = constants::BIG_EXPLOSION;
-        }
-        if (!explosionPrefab.empty()) {
-            spawnExplosionAtMobCenter(resourceManager, registry, entityId, explosionPrefab);
-        }
         registry->destroyEntity(entityId);
-    }
-}
-
-math::Vector2f DeathSystem::getFirstHitboxCenter(
-    std::shared_ptr<Registry> registry,
-    ecs::Entity entity
-) {
-    auto transform = registry->getComponent<TransformComponent>(entity);
-    auto collider = registry->getComponent<ColliderComponent>(entity);
-    if (!transform || !collider) {
-        return math::Vector2f(0.0f, 0.0f);
-    }
-    math::Vector2f position = transform->getPosition();
-    math::Vector2f offset = collider->getOffset();
-    math::Vector2f size = collider->getSize();
-    math::Vector2f scale = transform->getScale();
-
-    return position + offset + math::Vector2f(
-        size.getX() * scale.getX() / 2.0f,
-        size.getY() * scale.getY() / 2.0f
-    );
-}
-
-void DeathSystem::spawnExplosionAtMobCenter(
-    std::shared_ptr<ResourceManager> resourceManager,
-    std::shared_ptr<Registry> registry,
-    ecs::Entity mobEntity,
-    const std::string& prefabName
-) {
-    auto prefabManager = resourceManager->get<EntityPrefabManager>();
-    if (!prefabManager) return;
-
-    try {
-        ecs::Entity explosionEntity =
-            prefabManager->createEntityFromPrefab(prefabName, registry,
-                ecs::EntityCreationContext::forServer());
-
-        auto explosionTransform =
-            registry->getComponent<TransformComponent>(explosionEntity);
-        auto explosionCollider =
-            registry->getComponent<ColliderComponent>(explosionEntity);
-        if (explosionTransform && explosionCollider) {
-            math::Vector2f mobCenter = getFirstHitboxCenter(registry, mobEntity);
-            math::Vector2f explosionOffset = explosionCollider->getOffset();
-            math::Vector2f explosionSize = explosionCollider->getSize();
-            math::Vector2f explosionScale = explosionTransform->getScale();
-            math::Vector2f explosionCenterOffset = explosionOffset + math::Vector2f(
-                explosionSize.getX() * explosionScale.getX() / 2.0f,
-                explosionSize.getY() * explosionScale.getY() / 2.0f
-            );
-            math::Vector2f explosionPosition = mobCenter - explosionCenterOffset;
-            explosionTransform->setPosition(explosionPosition);
-        }
-    } catch (const std::exception& e) {
-        (void) e;
     }
 }
 
