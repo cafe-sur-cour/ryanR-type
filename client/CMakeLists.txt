@@ -15,6 +15,8 @@ add_executable(${CLIENT_BIN_NAME}
     SettingsConfig.hpp
     SettingsManager.cpp
     SettingsManager.hpp
+    DeathAnimationSpawner.cpp
+    DeathAnimationSpawner.hpp
 )
 
 add_subdirectory(packet)
