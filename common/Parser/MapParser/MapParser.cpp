@@ -17,7 +17,6 @@
 #include "../../constants.hpp"
 #include "../../debug.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
-#include "../../components/permanent/NetworkIdComponent.hpp"
 #include "../../types/Vector2f.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"

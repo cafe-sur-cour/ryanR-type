@@ -12,7 +12,6 @@
 #include "../common/debug.hpp"
 #include "../common/translationToECS.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
-#include "../common/components/permanent/NetworkIdComponent.hpp"
 #include "../common/components/permanent/TransformComponent.hpp"
 #include "../common/components/permanent/HealthComponent.hpp"
 #include "../common/components/permanent/ScoreComponent.hpp"
@@ -29,38 +28,6 @@ inline float unpackFloat(uint64_t bits) {
     return value;
 }
 
-}
-
-ecs::Entity ClientNetwork::findOrCreateNetworkEntity(std::shared_ptr<ecs::Registry> registry,
-    size_t networkId) {
-    for (ecs::Entity entity = 0; entity < registry->getMaxEntityId(); ++entity) {
-        if (registry->hasComponent<ecs::NetworkIdComponent>(entity)) {
-            auto netId = registry->getComponent<ecs::NetworkIdComponent>(entity);
-            if (netId->getNetworkId() == networkId) {
-                if (!registry->hasComponent<ecs::NetworkStateComponent>(entity)) {
-                    auto networkState = std::make_shared<ecs::NetworkStateComponent>();
-                    registry->addComponent(entity, networkState);
-                    debug::Debug::printDebug(this->_isDebug,
-                        "[CLIENT] Added NetworkStateComponent to existing entity " +
-                        std::to_string(entity),
-                        debug::debugType::NETWORK,
-                        debug::debugLevel::INFO);
-                }
-                return entity;
-            }
-        }
-    }
-    ecs::Entity newEntity = registry->createEntity();
-    auto netIdComp = std::make_shared<ecs::NetworkIdComponent>(networkId);
-    registry->addComponent(newEntity, netIdComp);
-    auto networkState = std::make_shared<ecs::NetworkStateComponent>();
-    registry->addComponent(newEntity, networkState);
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Created new entity " + std::to_string(newEntity) +
-        " for network ID " + std::to_string(networkId),
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
-    return newEntity;
 }
 
 size_t ClientNetwork::parsePlayerTagComponent(const std::vector<uint64_t> &payload,
@@ -423,21 +390,6 @@ size_t ClientNetwork::parseProjectilePrefabComponent(const std::vector<uint64_t>
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " ProjectilePrefab: " + prefabName,
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    return index;
-}
-
-size_t ClientNetwork::parseNetworkIdComponent(const std::vector<uint64_t> &payload,
-    size_t index, ecs::Entity entityId) {
-    if (index + 1 > payload.size()) return index;
-    size_t networkId = static_cast<size_t>(payload[index++]);
-    auto registry = this->_resourceManager->get<ecs::Registry>();
-    if (!registry->hasComponent<ecs::NetworkIdComponent>(entityId)) {
-        auto netIdComp = std::make_shared<ecs::NetworkIdComponent>(networkId);
-        registry->addComponent(entityId, netIdComp);
-    }
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Entity " + std::to_string(entityId) + " NetworkId: " +
-        std::to_string(networkId), debug::debugType::NETWORK, debug::debugLevel::INFO);
     return index;
 }
 

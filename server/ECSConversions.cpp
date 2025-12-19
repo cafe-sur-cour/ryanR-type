@@ -33,7 +33,6 @@
 #include "../common/components/tags/ShooterTag.hpp"
 #include "../common/components/tags/ProjectilePassThroughTag.hpp"
 #include "../common/components/permanent/ProjectilePrefabComponent.hpp"
-#include "../common/components/permanent/NetworkIdComponent.hpp"
 #include "../common/components/permanent/GameZoneComponent.hpp"
 
 namespace {
@@ -308,19 +307,6 @@ std::vector<uint64_t> rserv::Server::convertProjectilePrefabComponent(
             data.push_back(static_cast<uint64_t>('\r'));
             data.push_back(static_cast<uint64_t>('\n'));
             data.push_back(static_cast<uint64_t>('\0'));
-        }
-    }
-    return data;
-}
-
-std::vector<uint64_t> rserv::Server::convertNetworkIdComponent(
-    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
-    std::vector<uint64_t> data;
-    if (registry && registry->hasComponent<ecs::NetworkIdComponent>(i)) {
-        auto networkIdComp = registry->getComponent<ecs::NetworkIdComponent>(i);
-        if (networkIdComp) {
-            data.push_back(static_cast<uint64_t>(NETWORK_ID));
-            data.push_back(static_cast<uint64_t>(networkIdComp->getNetworkId()));
         }
     }
     return data;

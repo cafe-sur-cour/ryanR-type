@@ -82,8 +82,6 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertProjectilePrefabComponent, this,
             std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertNetworkIdComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertGameZoneComponent, this,
             std::placeholders::_1, std::placeholders::_2)
     };
