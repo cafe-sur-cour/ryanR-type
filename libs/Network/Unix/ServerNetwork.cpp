@@ -77,7 +77,10 @@ void UnixServerNetwork::init(uint16_t port, const std::string host) {
 
 void UnixServerNetwork::stop() {
     if (_socket && _socket->is_open()) {
-        _socket->close();
+        try {
+            _socket->close();
+        } catch (const std::system_error&) {
+        }
     }
     while (!_incomingPackets.empty()) {
         _incomingPackets.pop();
