@@ -14,7 +14,7 @@
 #include "resourceManager/ResourceManager.hpp"
 #include <memory>
 #include <string>
-#include "../colors.hpp"
+#include "../../colors.hpp"
 
 namespace ui {
 

@@ -79,7 +79,8 @@ void ClientNetwork::handleGameState() {
     auto it = _serverToLocalEntityMap.find(serverEntityId);
     if (it == _serverToLocalEntityMap.end()) {
         debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Entity with server ID " + std::to_string(serverEntityId) + " not found in map",
+            "[CLIENT] Entity with server ID " +
+            std::to_string(serverEntityId) + " not found in map",
             debug::debugType::NETWORK,
             debug::debugLevel::WARNING);
         return;
@@ -190,7 +191,8 @@ void ClientNetwork::handleEntitySpawn() {
         _serverToLocalEntityMap[clientId] = newEntity;
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Created entity from prefab '" + prefabName +
-                "' with serverId " + std::to_string(clientId) + " mapped to local " + std::to_string(newEntity),
+                "' with serverId " + std::to_string(clientId) +
+                " mapped to local " + std::to_string(newEntity),
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
     } catch (const std::exception& e) {
