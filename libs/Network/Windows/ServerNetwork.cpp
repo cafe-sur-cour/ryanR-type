@@ -78,7 +78,10 @@ void ServerNetwork::init(uint16_t port, const std::string host) {
 
 void ServerNetwork::stop() {
     if (_socket && _socket->is_open()) {
-        _socket->close();
+        try {
+            _socket->close();
+        } catch (const std::system_error&) {
+        }
     }
     _clients.clear();
     while (!_incomingPackets.empty()) {
