@@ -14,6 +14,7 @@ namespace ecs {
 template <typename T>
 void Registry::registerComponent()
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     std::string typeName = typeid(T).name();
     if (_components.find(typeName) == _components.end()) {
         _components[typeName] = std::make_shared<AComponentArray<T>>();
@@ -23,6 +24,7 @@ void Registry::registerComponent()
 template <typename T>
 void Registry::addComponent(Entity entityId, std::shared_ptr<T> component)
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     registerComponent<T>();
     std::string typeName = typeid(T).name();
     auto it = _components.find(typeName);
@@ -35,6 +37,7 @@ void Registry::addComponent(Entity entityId, std::shared_ptr<T> component)
 template <typename T>
 std::shared_ptr<T> Registry::getComponent(Entity entityId) const
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     std::string typeName = typeid(T).name();
     auto it = _components.find(typeName);
     if (it != _components.end()) {
@@ -47,6 +50,7 @@ std::shared_ptr<T> Registry::getComponent(Entity entityId) const
 template <typename T>
 std::vector<std::shared_ptr<T>> Registry::getComponents(Entity entityId) const
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     std::string typeName = typeid(T).name();
     auto it = _components.find(typeName);
     if (it != _components.end()) {
@@ -59,6 +63,7 @@ std::vector<std::shared_ptr<T>> Registry::getComponents(Entity entityId) const
 template <typename T>
 void Registry::removeAllComponents(Entity entityId)
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     const char *typeName = typeid(T).name();
     auto it = _components.find(typeName);
     if (it != _components.end()) {
@@ -70,6 +75,7 @@ void Registry::removeAllComponents(Entity entityId)
 template <typename T>
 void Registry::removeOneComponent(Entity entityId)
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     const char *typeName = typeid(T).name();
     auto it = _components.find(typeName);
     if (it != _components.end()) {
@@ -81,6 +87,7 @@ void Registry::removeOneComponent(Entity entityId)
 template <typename T>
 bool Registry::hasComponent(Entity entityId) const
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     std::string typeName = typeid(T).name();
     auto it = _components.find(typeName);
     if (it != _components.end()) {
@@ -93,6 +100,7 @@ bool Registry::hasComponent(Entity entityId) const
 template <typename... Components>
 View<Components...> Registry::view()
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     return View<Components...>(std::static_pointer_cast<Registry>(shared_from_this()));
 }
 
