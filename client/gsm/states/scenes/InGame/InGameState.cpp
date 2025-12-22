@@ -37,6 +37,7 @@
 #include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
+#include "../../../../systems/effects/ClientEffectCleanupSystem.hpp"
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
@@ -83,6 +84,7 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::ShootInputSystem>());
     addSystem(std::make_shared<ecs::SoundSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
+    addSystem(std::make_shared<ecs::ClientEffectCleanupSystem>());
     addSystem(std::make_shared<ecs::GameZoneViewSystem>());
     addSystem(std::make_shared<ecs::MusicSystem>());
     addSystem(std::make_shared<ecs::ParallaxRenderingSystem>());
