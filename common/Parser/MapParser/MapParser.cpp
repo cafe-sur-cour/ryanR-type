@@ -165,7 +165,8 @@ void MapParser::parsePowerUps(const nlohmann::json &powerUps) {
         const std::string &prefabName = powerUp[constants::NAME_FIELD].get<std::string>();
         const auto &position = powerUp[constants::POSITION_FIELD];
 
-        if (!position.contains(constants::POSX_FIELD) || !position.contains(constants::POSY_FIELD)) {
+        if (!position.contains(constants::POSX_FIELD) ||
+            !position.contains(constants::POSY_FIELD)) {
             std::cerr << "Warning: PowerUp " << index <<
                 ": position missing posX or posY, skipping" << std::endl;
             continue;
@@ -178,10 +179,12 @@ void MapParser::parsePowerUps(const nlohmann::json &powerUps) {
             try {
                 createEntityFromPrefab(prefabName, posX, posY);
             } catch (const std::exception& e) {
-                std::cerr << "Error creating power-up entity '" << prefabName << "': " << e.what() << std::endl;
+                std::cerr << "Error creating power-up entity '"
+                << prefabName << "': " << e.what() << std::endl;
             }
         } else {
-            std::cerr << "Warning: Power-up prefab '" << prefabName << "' not found" << std::endl;
+            std::cerr << "Warning: Power-up prefab '"
+            << prefabName << "' not found" << std::endl;
         }
     }
 }
