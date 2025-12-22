@@ -13,7 +13,6 @@
 #include "Constants.hpp"
 #include "../common/debug.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
-#include "../common/components/permanent/NetworkIdComponent.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 
 bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
@@ -116,12 +115,11 @@ bool rserv::Server::processWhoAmI(uint8_t idClient) {
     }
 
     auto registry = this->_resourceManager->get<ecs::Registry>();
-    auto playerView = registry->view<ecs::PlayerTag, ecs::NetworkIdComponent>();
+    auto playerView = registry->view<ecs::PlayerTag>();
 
     ecs::Entity playerEntity = 0;
     for (auto entityId : playerView) {
-        auto networkId = registry->getComponent<ecs::NetworkIdComponent>(entityId);
-        if (networkId && networkId->getNetworkId() == idClient) {
+        if (entityId == idClient) {
             playerEntity = entityId;
             break;
         }
@@ -135,16 +133,7 @@ bool rserv::Server::processWhoAmI(uint8_t idClient) {
     }
 
     std::vector<uint64_t> payload;
-    auto netIdComp = this->_resourceManager->get<ecs::Registry>()->getComponent<
-        ecs::NetworkIdComponent>(playerEntity);
-    if (netIdComp) {
-        payload.push_back(static_cast<uint64_t>(netIdComp->getNetworkId()));
-    } else {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Player entity has no NetworkID for client " + std::to_string(idClient),
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
-        return false;
-    }
+    payload.push_back(static_cast<uint64_t>(playerEntity));
 
     asio::ip::udp::endpoint clientEndpoint;
     for (const auto &client : this->_clients) {

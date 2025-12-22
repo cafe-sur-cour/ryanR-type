@@ -19,6 +19,7 @@
 #include "../../components/tags/ObstacleTag.hpp"
 #include "../../components/tags/ProjectilePassThroughTag.hpp"
 #include "../../components/tags/ShooterTag.hpp"
+#include "../../components/tags/ClientEffectTag.hpp"
 #include "../../../client/components/tags/BackGroundMusicTag.hpp"
 #include "../../components/tags/PowerUpTag.hpp"
 #include "../../constants.hpp"
@@ -68,6 +69,7 @@ void TagRegistry::initializeTags() {
     registerTag<ecs::ObstacleTag>(constants::OBSTACLETAG);
     registerTag<ecs::ProjectilePassThroughTag>(constants::PROJECTILEPASSTHROUGHTAG);
     registerTag<ecs::ShooterTag>(constants::SHOOTERTAG);
+    registerTag<ecs::ClientEffectTag>(constants::CLIENTEFFECTTAG);
     registerTag<ecs::BackGroundMusicTag>(constants::BACKGROUNDMUSICTAG);
     registerTag<ecs::PowerUpTag>(constants::POWERUP_TAG);
 }

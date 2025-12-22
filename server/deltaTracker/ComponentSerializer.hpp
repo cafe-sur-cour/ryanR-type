@@ -28,7 +28,6 @@ class ComponentSerializer {
         static std::vector<uint64_t> serializeLifetime(uint64_t lifetime);
         static std::vector<uint64_t> serializeSpeed(uint64_t speed);
         static std::vector<uint64_t> serializeAIMovementPattern(uint32_t patternId);
-        static std::vector<uint64_t> serializeNetworkId(uint32_t networkId);
         static std::vector<uint64_t> serializeGameZone(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
         static EntitySnapshot createSnapshotFromComponents(uint32_t entityId, const std::vector<uint64_t>& componentData);
         static std::vector<uint64_t> snapshotToComponentData(const EntitySnapshot& snapshot);

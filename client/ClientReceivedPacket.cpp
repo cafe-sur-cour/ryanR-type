@@ -13,8 +13,8 @@
 #include "../common/debug.hpp"
 #include "../common/Parser/Parser.hpp"
 #include "../common/ECS/entity/EntityCreationContext.hpp"
-#include "../common/components/permanent/NetworkIdComponent.hpp"
 #include "../common/components/tags/LocalPlayerTag.hpp"
+#include "DeathAnimationSpawner.hpp"
 #include "gsm/states/scenes/InGame/InGameState.hpp"
 #include "gsm/states/scenes/Results/ResultsState.hpp"
 #include "./components/rendering/AnimationComponent.hpp"
@@ -75,20 +75,22 @@ void ClientNetwork::handleGameState() {
         return;
     }
 
-    size_t networkId = static_cast<size_t>(payload[index++]);
-    ecs::Entity entityId = registry->getEntityByNetworkId(networkId);
-    if (entityId == 0) {
+    size_t serverEntityId = static_cast<size_t>(payload[index++]);
+    auto it = _serverToLocalEntityMap.find(serverEntityId);
+    if (it == _serverToLocalEntityMap.end()) {
         debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Entity with NetworkID " + std::to_string(networkId) + " not found",
+            "[CLIENT] Entity with server ID " +
+            std::to_string(serverEntityId) + " not found in map",
             debug::debugType::NETWORK,
             debug::debugLevel::WARNING);
         return;
     }
+    ecs::Entity entityId = it->second;
     while (index < payload.size()) {
         uint64_t componentType = payload[index++];
-        auto it = _componentParsers.find(componentType);
-        if (it != _componentParsers.end()) {
-            index = (this->*(it->second))(payload, index, entityId);
+        auto parserIt = _componentParsers.find(componentType);
+        if (parserIt != _componentParsers.end()) {
+            index = (this->*(parserIt->second))(payload, index, entityId);
         } else {
             debug::Debug::printDebug(this->_isDebug,
                 "[CLIENT] Unknown component type: " + std::to_string(componentType),
@@ -180,15 +182,17 @@ void ClientNetwork::handleEntitySpawn() {
     }
 
     try {
-        _resourceManager->get<Parser>()->
+        ecs::Entity newEntity = _resourceManager->get<Parser>()->
             getPrefabManager()->createEntityFromPrefab(
             prefabName,
             _resourceManager->get<ecs::Registry>(),
-            ecs::EntityCreationContext::forNetworkSync(clientId)
+            ecs::EntityCreationContext::forLocalClient()
         );
+        _serverToLocalEntityMap[clientId] = newEntity;
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Created entity from prefab '" + prefabName +
-                "' with networkId " + std::to_string(clientId),
+                "' with serverId " + std::to_string(clientId) +
+                " mapped to local " + std::to_string(newEntity),
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
     } catch (const std::exception& e) {
@@ -211,18 +215,23 @@ void ClientNetwork::handleEntityDeath() {
         return;
     }
 
-    size_t networkId = static_cast<size_t>(payload.at(0));
+    size_t serverEntityId = static_cast<size_t>(payload.at(0));
     auto registry = this->_resourceManager->get<ecs::Registry>();
-    ecs::Entity entityId = registry->getEntityByNetworkId(networkId);
-    if (entityId == 0) {
+    auto it = _serverToLocalEntityMap.find(serverEntityId);
+    if (it == _serverToLocalEntityMap.end()) {
         debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Entity with NetworkID " + std::to_string(networkId) +
+            "[CLIENT] Entity with server ID " + std::to_string(serverEntityId) +
                 " not found for death",
             debug::debugType::NETWORK,
             debug::debugLevel::WARNING);
         return;
     }
+    ecs::Entity entityId = it->second;
+
+    DeathAnimationSpawner::spawnDeathAnimation(_resourceManager, registry, entityId);
+
     registry->destroyEntity(entityId);
+    _serverToLocalEntityMap.erase(serverEntityId);
 }
 
 void ClientNetwork::handleWhoAmI() {
@@ -235,17 +244,18 @@ void ClientNetwork::handleWhoAmI() {
         return;
     }
 
-    size_t networkId = static_cast<size_t>(payload.at(0));
+    size_t serverPlayerId = static_cast<size_t>(payload.at(0));
     auto registry = this->_resourceManager->get<ecs::Registry>();
-    ecs::Entity entityId = registry->getEntityByNetworkId(networkId);
-    if (entityId == 0) {
+    auto it = _serverToLocalEntityMap.find(serverPlayerId);
+    if (it == _serverToLocalEntityMap.end()) {
         debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Entity with NetworkID " + std::to_string(networkId) +
+            "[CLIENT] Player entity with server ID " + std::to_string(serverPlayerId) +
                 " not found for WHOAMI",
             debug::debugType::NETWORK,
             debug::debugLevel::WARNING);
         return;
     }
+    ecs::Entity entityId = it->second;
     registry->registerComponent<ecs::LocalPlayerTag>();
     if (!registry->hasComponent<ecs::LocalPlayerTag>(entityId)) {
         registry->addComponent<ecs::LocalPlayerTag>
