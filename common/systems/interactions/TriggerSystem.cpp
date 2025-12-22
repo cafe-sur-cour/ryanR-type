@@ -95,8 +95,8 @@ void TriggerSystem::update(
                 continue;
 
             auto otherCollider = registry->getComponent<ColliderComponent>(colliderEntity);
-            if (otherCollider && shouldCollide(resourceManager, registry, triggerEntity, *triggerCollider,
-                    colliderEntity) &&
+            if (otherCollider && shouldCollide(resourceManager, registry, triggerEntity,
+                *triggerCollider, colliderEntity) &&
                     checkCollision(*triggerTransform, *triggerCollider,
                     *colliderTransform, *otherCollider)
             ) {

@@ -80,7 +80,6 @@ void MovementSystem::update(
     std::shared_ptr<Registry> registry,
     float deltaTime
 ) {
-
     buildSpatialGrid(registry);
 
     auto view = registry->view<VelocityComponent, TransformComponent>();
@@ -296,7 +295,8 @@ math::Vector2f MovementSystem::calculateSmoothSlidingPosition(
     math::Vector2f smoothPos =
         calculateSmoothMovement(resourceManager, registry, entityId, startPos, desiredPos);
 
-    return calculateSlidingMovement(resourceManager, registry, entityId, smoothPos, desiredPos);
+    return calculateSlidingMovement(
+        resourceManager, registry, entityId, smoothPos, desiredPos);
 }
 
 void MovementSystem::handlePushCollision(
@@ -348,7 +348,8 @@ void MovementSystem::handlePushCollision(
                     math::Vector2f pushAmount = pushVelocity * deltaTime;
                     math::Vector2f newOtherPos = currentOtherPos + pushAmount;
 
-                    if (checkCollision(resourceManager, registry, otherEntityId, newOtherPos)) {
+                    if (checkCollision(
+                            resourceManager, registry, otherEntityId, newOtherPos)) {
                         otherTransform->setPosition(newOtherPos);
                     } else {
                         registry->addComponent<DeathIntentComponent>(
