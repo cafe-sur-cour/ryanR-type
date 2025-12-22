@@ -44,6 +44,11 @@ const std::string INPUT_TO_VELOCITY_SYSTEM = "InputToVelocitySystem";
 const std::string TRIGGER_SYSTEM = "TriggerSystem";
 const std::string INTERACTION_SYSTEM = "InteractionSystem";
 
+/* Server Systems */
+const std::string SERVER_MOVEMENT_INPUT_SYSTEM = "ServerMovementInputSystem";
+const std::string SERVER_SHOOT_INPUT_SYSTEM = "ServerShootInputSystem";
+const std::string END_OF_MAP_DETECTION_SYSTEM = "EndOfMapDetectionSystem";
+
 }  // namespace ecs::systems
 
 #endif /* !SYSTEMNAMES_HPP_ */

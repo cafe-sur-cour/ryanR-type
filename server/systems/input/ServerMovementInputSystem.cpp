@@ -16,6 +16,7 @@
 #include "../../../common/components/temporary/InputIntentComponent.hpp"
 #include "../../../common/components/tags/PlayerTag.hpp"
 #include "../../../common/systems/input/InputNormalizer.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 
 namespace ecs {
 
@@ -101,3 +102,15 @@ void ServerMovementInputSystem::updateInputIntent(
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::ServerMovementInputSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::SERVER_MOVEMENT_INPUT_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

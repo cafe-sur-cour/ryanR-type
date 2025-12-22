@@ -19,9 +19,6 @@
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
 #include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
-#include "../../../../systems/input/ServerMovementInputSystem.hpp"
-#include "../../../../systems/input/ServerShootInputSystem.hpp"
-#include "../../../../systems/gameEnd/EndOfMapDetectionSystem.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
 #include "../../../../../common/systems/SystemNames.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
@@ -55,8 +52,8 @@ void InGameState::enter() {
     );
     *(_resourceManager->get<gsm::GameStateType>()) = gsm::IN_GAME;
     _resourceManager->add(std::make_shared<ecs::CollisionRules>(collisionData));
-    addSystem(std::make_shared<ecs::ServerMovementInputSystem>());
-    addSystem(std::make_shared<ecs::ServerShootInputSystem>());
+    addSystem(ecs::systems::SERVER_MOVEMENT_INPUT_SYSTEM);
+    addSystem(ecs::systems::SERVER_SHOOT_INPUT_SYSTEM);
     addSystem(ecs::systems::AI_MOVEMENT_SYSTEM);
     addSystem(ecs::systems::AI_SHOOTING_SYSTEM);
     addSystem(ecs::systems::INPUT_TO_VELOCITY_SYSTEM);
@@ -70,7 +67,7 @@ void InGameState::enter() {
     addSystem(ecs::systems::DEATH_SYSTEM);
     addSystem(ecs::systems::SCORE_SYSTEM);
     addSystem(ecs::systems::SPAWN_SYSTEM);
-    addSystem(std::make_shared<ecs::EndOfMapDetectionSystem>());
+    addSystem(ecs::systems::END_OF_MAP_DETECTION_SYSTEM);
 }
 
 void InGameState::update(float deltaTime) {
