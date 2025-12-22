@@ -38,6 +38,7 @@
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
+#include "../../../../../common/systems/SystemNames.hpp"
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
 #include "../../../../../common/systems/interactions/InteractionSystem.hpp"
 #include "../../../../../common/constants.hpp"
@@ -57,6 +58,7 @@
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../../common/components/permanent/HealthComponent.hpp"
 #include "../../../../colors.hpp"
+#include "../../../../../common/systems/SystemNames.hpp"
 
 namespace gsm {
 
@@ -107,7 +109,7 @@ void DevState::enter() {
     addSystem(std::make_shared<ecs::LifetimeSystem>());
     addSystem(std::make_shared<ecs::HealthSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
-    addSystem("DeathSystem");
+    addSystem(ecs::systems::DEATH_SYSTEM);
     addSystem(std::make_shared<ecs::ScoreSystem>());
     addSystem(std::make_shared<ecs::GameZoneViewSystem>());
     addSystem(std::make_shared<ecs::MusicSystem>());

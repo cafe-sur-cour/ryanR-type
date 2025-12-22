@@ -23,6 +23,8 @@
 #include "../../../../systems/input/ServerShootInputSystem.hpp"
 #include "../../../../systems/gameEnd/EndOfMapDetectionSystem.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
+#include "../../../../../common/systems/SystemNames.hpp"
+#include "../../../../../common/systems/SystemNames.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/ECS/entity/registry/Registry.hpp"
@@ -64,7 +66,7 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::LifetimeSystem>());
     addSystem(std::make_shared<ecs::HealthSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
-    addSystem("DeathSystem");
+    addSystem(ecs::systems::DEATH_SYSTEM);
     addSystem(std::make_shared<ecs::ScoreSystem>());
     addSystem(std::make_shared<ecs::TriggerSystem>());
     addSystem(std::make_shared<ecs::InteractionSystem>());
