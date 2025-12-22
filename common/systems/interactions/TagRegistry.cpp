@@ -20,6 +20,7 @@
 #include "../../components/tags/ProjectilePassThroughTag.hpp"
 #include "../../components/tags/ShooterTag.hpp"
 #include "../../../client/components/tags/BackGroundMusicTag.hpp"
+#include "../../components/tags/PowerUpTag.hpp"
 #include "../../constants.hpp"
 
 const TagRegistry& TagRegistry::getInstance() {
@@ -68,4 +69,5 @@ void TagRegistry::initializeTags() {
     registerTag<ecs::ProjectilePassThroughTag>(constants::PROJECTILEPASSTHROUGHTAG);
     registerTag<ecs::ShooterTag>(constants::SHOOTERTAG);
     registerTag<ecs::BackGroundMusicTag>(constants::BACKGROUNDMUSICTAG);
+    registerTag<ecs::PowerUpTag>(constants::POWERUP_TAG);
 }
