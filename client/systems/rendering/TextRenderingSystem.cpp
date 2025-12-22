@@ -8,6 +8,7 @@
 #include <memory>
 #include <utility>
 #include "TextRenderingSystem.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 #include "../../components/rendering/TextComponent.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
@@ -42,3 +43,15 @@ void TextRenderingSystem::update(std::shared_ptr<ResourceManager>
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::TextRenderingSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::TEXT_RENDERING_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

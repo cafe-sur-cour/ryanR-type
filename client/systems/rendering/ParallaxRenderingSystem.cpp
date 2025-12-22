@@ -8,6 +8,7 @@
 #include "ParallaxRenderingSystem.hpp"
 #include <memory>
 #include <cmath>
+#include "../../../common/systems/SystemNames.hpp"
 #include <iostream>
 #include <algorithm>
 #include "../../components/rendering/ParallaxComponent.hpp"
@@ -127,3 +128,15 @@ void ParallaxRenderingSystem::renderLayer(const ParallaxLayer& layer,
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::ParallaxRenderingSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::PARALLAX_RENDERING_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

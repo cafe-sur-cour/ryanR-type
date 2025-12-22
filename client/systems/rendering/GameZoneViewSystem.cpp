@@ -8,6 +8,7 @@
 #include <memory>
 #include <cmath>
 #include <algorithm>
+#include "../../../common/systems/SystemNames.hpp"
 #include "GameZoneViewSystem.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
@@ -63,3 +64,15 @@ void GameZoneViewSystem::update(std::shared_ptr<ResourceManager>
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::GameZoneViewSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::GAME_ZONE_VIEW_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

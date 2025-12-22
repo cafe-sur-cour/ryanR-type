@@ -18,6 +18,7 @@
 #include "../../../libs/Multimedia/IWindow.hpp"
 #include "../../../common/Parser/Animation/AnimationConditionFactory.hpp"
 #include "../../../common/constants.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 
 namespace ecs {
 
@@ -134,3 +135,15 @@ void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::AnimationRenderingSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::ANIMATION_RENDERING_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

@@ -110,17 +110,17 @@ void DevState::enter() {
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
     addSystem(ecs::systems::DEATH_SYSTEM);
     addSystem(std::make_shared<ecs::ScoreSystem>());
-    addSystem(std::make_shared<ecs::GameZoneViewSystem>());
+    addSystem(ecs::systems::GAME_ZONE_VIEW_SYSTEM);
     addSystem(std::make_shared<ecs::MusicSystem>());
     addSystem(std::make_shared<ecs::TriggerSystem>());
     addSystem(std::make_shared<ecs::InteractionSystem>());
-    addSystem(std::make_shared<ecs::ParallaxRenderingSystem>());
-    addSystem(std::make_shared<ecs::SpriteRenderingSystem>());
-    addSystem(std::make_shared<ecs::RectangleRenderingSystem>());
-    addSystem(std::make_shared<ecs::AnimationRenderingSystem>());
-    addSystem(std::make_shared<ecs::HitboxRenderingSystem>());
-    addSystem(std::make_shared<ecs::HealthBarRenderingSystem>());
-    addSystem(std::make_shared<ecs::TextRenderingSystem>());
+    addSystem(ecs::systems::PARALLAX_RENDERING_SYSTEM);
+    addSystem(ecs::systems::SPRITE_RENDERING_SYSTEM);
+    addSystem(ecs::systems::RECTANGLE_RENDERING_SYSTEM);
+    addSystem(ecs::systems::ANIMATION_RENDERING_SYSTEM);
+    addSystem(ecs::systems::HITBOX_RENDERING_SYSTEM);
+    addSystem(ecs::systems::HEALTH_BAR_RENDERING_SYSTEM);
+    addSystem(ecs::systems::TEXT_RENDERING_SYSTEM);
     addSystem(std::make_shared<ecs::SpawnSystem>());
 
     auto audio = _resourceManager->get<gfx::IAudio>();

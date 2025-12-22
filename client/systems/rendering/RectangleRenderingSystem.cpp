@@ -8,6 +8,7 @@
 #include <memory>
 #include "RectangleRenderingSystem.hpp"
 #include "../../components/rendering/RectangleRenderComponent.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
@@ -50,3 +51,15 @@ void RectangleRenderingSystem::update(std::shared_ptr<ResourceManager>
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::RectangleRenderingSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::RECTANGLE_RENDERING_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

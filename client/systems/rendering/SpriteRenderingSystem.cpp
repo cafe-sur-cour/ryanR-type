@@ -12,6 +12,7 @@
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 
 
 namespace ecs {
@@ -42,3 +43,15 @@ void SpriteRenderingSystem::update(std::shared_ptr<ResourceManager>
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::SpriteRenderingSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::SPRITE_RENDERING_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

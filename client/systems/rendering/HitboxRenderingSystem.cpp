@@ -8,6 +8,7 @@
 #include <memory>
 #include "HitboxRenderingSystem.hpp"
 #include "../../components/rendering/HitboxRenderComponent.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/components/permanent/ColliderComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
@@ -53,3 +54,15 @@ void HitboxRenderingSystem::update(std::shared_ptr<ResourceManager>
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::HitboxRenderingSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::HITBOX_RENDERING_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}
