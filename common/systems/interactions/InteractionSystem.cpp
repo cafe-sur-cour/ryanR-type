@@ -14,6 +14,7 @@
 #include "../../components/permanent/InteractionConfigComponent.hpp"
 #include "ActionFactory.hpp"
 #include "TagRegistry.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -84,3 +85,15 @@ void InteractionSystem::update(
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::InteractionSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::INTERACTION_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

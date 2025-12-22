@@ -41,6 +41,8 @@ const std::string SCORE_SYSTEM = "ScoreSystem";
 const std::string LIFETIME_SYSTEM = "LifetimeSystem";
 const std::string MOVEMENT_SYSTEM = "MovementSystem";
 const std::string INPUT_TO_VELOCITY_SYSTEM = "InputToVelocitySystem";
+const std::string TRIGGER_SYSTEM = "TriggerSystem";
+const std::string INTERACTION_SYSTEM = "InteractionSystem";
 
 }  // namespace ecs::systems
 

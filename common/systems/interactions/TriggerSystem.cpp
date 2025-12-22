@@ -16,6 +16,7 @@
 #include "../../components/temporary/TriggerIntentComponent.hpp"
 #include "../../CollisionRules/CollisionRules.hpp"
 #include "../../constants.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -135,4 +136,16 @@ bool TriggerSystem::shouldCollide(
     return collisionRules->canCollide(colliderA.getType(), tagsA, tagsB);
 }
 
+}  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::TriggerSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::TRIGGER_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
 }

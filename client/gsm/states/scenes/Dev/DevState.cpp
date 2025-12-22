@@ -101,8 +101,8 @@ void DevState::enter() {
     addSystem(ecs::systems::INPUT_TO_VELOCITY_SYSTEM);
     addSystem(ecs::systems::MOVEMENT_SYSTEM);
     addSystem(ecs::systems::MOVEMENT_INPUT_SYSTEM);
-    addSystem(std::make_shared<ecs::InteractionSystem>());
-    addSystem(std::make_shared<ecs::TriggerSystem>());
+    addSystem(ecs::systems::INTERACTION_SYSTEM);
+    addSystem(ecs::systems::TRIGGER_SYSTEM);
     addSystem(ecs::systems::SOUND_SYSTEM);
     addSystem(ecs::systems::SHOOT_INPUT_SYSTEM);
     addSystem(ecs::systems::SHOOTING_SYSTEM);
