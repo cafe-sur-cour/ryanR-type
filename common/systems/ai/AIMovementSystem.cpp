@@ -12,6 +12,7 @@
 #include "../../components/temporary/InputIntentComponent.hpp"
 #include "../../components/tags/PlayerTag.hpp"
 #include "../../components/tags/AIMoverTag.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -151,3 +152,16 @@ std::optional<size_t> AIMovementSystem::findNearestPlayer(
 }
 
 }  // namespace ecs
+
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::AIMovementSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::AI_MOVEMENT_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

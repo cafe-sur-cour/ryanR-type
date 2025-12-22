@@ -96,8 +96,8 @@ void DevState::enter() {
     }
 
     addSystem(ecs::systems::NETWORK_INTERPOLATION_SYSTEM);
-    addSystem(std::make_shared<ecs::AIMovementSystem>());
-    addSystem(std::make_shared<ecs::AIShootingSystem>());
+    addSystem(ecs::systems::AI_MOVEMENT_SYSTEM);
+    addSystem(ecs::systems::AI_SHOOTING_SYSTEM);
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::MovementSystem>());
     addSystem(ecs::systems::MOVEMENT_INPUT_SYSTEM);

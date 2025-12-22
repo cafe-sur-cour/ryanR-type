@@ -57,8 +57,8 @@ void InGameState::enter() {
     ecs::CollisionRules::initWithData(collisionData);
     addSystem(std::make_shared<ecs::ServerMovementInputSystem>());
     addSystem(std::make_shared<ecs::ServerShootInputSystem>());
-    addSystem(std::make_shared<ecs::AIMovementSystem>());
-    addSystem(std::make_shared<ecs::AIShootingSystem>());
+    addSystem(ecs::systems::AI_MOVEMENT_SYSTEM);
+    addSystem(ecs::systems::AI_SHOOTING_SYSTEM);
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::MovementSystem>());
     addSystem(std::make_shared<ecs::ShootingSystem>());

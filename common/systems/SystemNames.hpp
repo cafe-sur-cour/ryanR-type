@@ -12,7 +12,7 @@
 
 namespace ecs::systems {
 
-const std::string DEATH_SYSTEM = "DeathSystem";
+/* Client Systems */
 const std::string SPRITE_RENDERING_SYSTEM = "SpriteRenderingSystem";
 const std::string ANIMATION_RENDERING_SYSTEM = "AnimationRenderingSystem";
 const std::string HITBOX_RENDERING_SYSTEM = "HitboxRenderingSystem";
@@ -28,6 +28,11 @@ const std::string CLIENT_EFFECT_CLEANUP_SYSTEM = "ClientEffectCleanupSystem";
 const std::string MOVEMENT_INPUT_SYSTEM = "MovementInputSystem";
 const std::string SHOOT_INPUT_SYSTEM = "ShootInputSystem";
 const std::string NETWORK_INTERPOLATION_SYSTEM = "NetworkInterpolationSystem";
+
+/* Common Systems */
+const std::string DEATH_SYSTEM = "DeathSystem";
+const std::string AI_MOVEMENT_SYSTEM = "AIMovementSystem";
+const std::string AI_SHOOTING_SYSTEM = "AIShootingSystem";
 
 }  // namespace ecs::systems
 
