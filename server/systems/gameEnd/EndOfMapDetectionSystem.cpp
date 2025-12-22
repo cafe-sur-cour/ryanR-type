@@ -13,6 +13,7 @@
 #include "../../../common/components/tags/GameEndTag.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/components/permanent/ColliderComponent.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 
 namespace ecs {
 
@@ -81,3 +82,14 @@ void EndOfMapDetectionSystem::update(
 
 }  // namespace ecs
 
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::EndOfMapDetectionSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::END_OF_MAP_DETECTION_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

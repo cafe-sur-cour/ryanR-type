@@ -35,10 +35,10 @@
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../../common/systems/shooting/ShootingSystem.hpp"
 #include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
-#include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
+#include "../../../../../common/systems/SystemNames.hpp"
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
 #include "../../../../../common/systems/interactions/InteractionSystem.hpp"
 #include "../../../../../common/constants.hpp"
@@ -78,7 +78,7 @@ void DevState::enter() {
 
     auto collisionData =
         ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
-    ecs::CollisionRules::initWithData(collisionData);
+    _resourceManager->add(std::make_shared<ecs::CollisionRules>(collisionData));
     auto existingParser = _resourceManager->get<Parser>();
     if (existingParser) {
         _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
@@ -95,33 +95,32 @@ void DevState::enter() {
         _parser->parseAllEntities(constants::CONFIG_PATH);
     }
 
-    addSystem(std::make_shared<ecs::NetworkInterpolationSystem>());
-    addSystem(std::make_shared<ecs::AIMovementSystem>());
-    addSystem(std::make_shared<ecs::AIShootingSystem>());
-    addSystem(std::make_shared<ecs::InputToVelocitySystem>());
-    addSystem(std::make_shared<ecs::MovementSystem>());
-    addSystem(std::make_shared<ecs::MovementInputSystem>());
-    addSystem(std::make_shared<ecs::InteractionSystem>());
-    addSystem(std::make_shared<ecs::SoundSystem>());
-    addSystem(std::make_shared<ecs::ShootInputSystem>());
-    addSystem(std::make_shared<ecs::ShootingSystem>());
-    addSystem(std::make_shared<ecs::LifetimeSystem>());
-    addSystem(std::make_shared<ecs::HealthSystem>());
-    addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
-    addSystem(std::make_shared<ecs::DeathSystem>());
-    addSystem(std::make_shared<ecs::ScoreSystem>());
-    addSystem(std::make_shared<ecs::GameZoneViewSystem>());
-    addSystem(std::make_shared<ecs::MusicSystem>());
-    addSystem(std::make_shared<ecs::TriggerSystem>());
-    addSystem(std::make_shared<ecs::InteractionSystem>());
-    addSystem(std::make_shared<ecs::ParallaxRenderingSystem>());
-    addSystem(std::make_shared<ecs::SpriteRenderingSystem>());
-    addSystem(std::make_shared<ecs::RectangleRenderingSystem>());
-    addSystem(std::make_shared<ecs::AnimationRenderingSystem>());
-    addSystem(std::make_shared<ecs::HitboxRenderingSystem>());
-    addSystem(std::make_shared<ecs::HealthBarRenderingSystem>());
-    addSystem(std::make_shared<ecs::TextRenderingSystem>());
-    addSystem(std::make_shared<ecs::SpawnSystem>());
+    addSystem(ecs::systems::NETWORK_INTERPOLATION_SYSTEM);
+    addSystem(ecs::systems::AI_MOVEMENT_SYSTEM);
+    addSystem(ecs::systems::AI_SHOOTING_SYSTEM);
+    addSystem(ecs::systems::INPUT_TO_VELOCITY_SYSTEM);
+    addSystem(ecs::systems::MOVEMENT_SYSTEM);
+    addSystem(ecs::systems::MOVEMENT_INPUT_SYSTEM);
+    addSystem(ecs::systems::INTERACTION_SYSTEM);
+    addSystem(ecs::systems::TRIGGER_SYSTEM);
+    addSystem(ecs::systems::SOUND_SYSTEM);
+    addSystem(ecs::systems::SHOOT_INPUT_SYSTEM);
+    addSystem(ecs::systems::SHOOTING_SYSTEM);
+    addSystem(ecs::systems::LIFETIME_SYSTEM);
+    addSystem(ecs::systems::HEALTH_SYSTEM);
+    addSystem(ecs::systems::OUT_OF_BOUNDS_SYSTEM);
+    addSystem(ecs::systems::DEATH_SYSTEM);
+    addSystem(ecs::systems::SCORE_SYSTEM);
+    addSystem(ecs::systems::GAME_ZONE_VIEW_SYSTEM);
+    addSystem(ecs::systems::MUSIC_SYSTEM);
+    addSystem(ecs::systems::PARALLAX_RENDERING_SYSTEM);
+    addSystem(ecs::systems::SPRITE_RENDERING_SYSTEM);
+    addSystem(ecs::systems::RECTANGLE_RENDERING_SYSTEM);
+    addSystem(ecs::systems::ANIMATION_RENDERING_SYSTEM);
+    addSystem(ecs::systems::HITBOX_RENDERING_SYSTEM);
+    addSystem(ecs::systems::HEALTH_BAR_RENDERING_SYSTEM);
+    addSystem(ecs::systems::TEXT_RENDERING_SYSTEM);
+    addSystem(ecs::systems::SPAWN_SYSTEM);
 
     auto audio = _resourceManager->get<gfx::IAudio>();
 

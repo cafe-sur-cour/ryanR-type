@@ -16,6 +16,7 @@
 #include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IWindow.hpp"
 #include "../../../common/constants.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 
 namespace ecs {
 
@@ -127,3 +128,15 @@ void ParallaxRenderingSystem::renderLayer(const ParallaxLayer& layer,
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::ParallaxRenderingSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::PARALLAX_RENDERING_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

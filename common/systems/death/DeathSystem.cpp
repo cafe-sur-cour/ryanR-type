@@ -23,6 +23,7 @@
 #include "../../constants.hpp"
 #include "../../ECS/entity/EntityCreationContext.hpp"
 #include "../../../client/components/temporary/SoundIntentComponent.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -68,3 +69,15 @@ void DeathSystem::update(
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::DeathSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::DEATH_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

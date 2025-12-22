@@ -1,3 +1,8 @@
+target_sources(${ECS_LIB_NAME} PUBLIC
+    SystemLoader.hpp
+    SystemLoader.cpp
+)
+
 add_subdirectory(base)
 add_subdirectory(movement)
 add_subdirectory(shooting)

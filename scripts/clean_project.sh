@@ -10,7 +10,7 @@ echo "Cleaning build directory..."
 rm -rf build/unix/*
 
 echo "Removing shared libraries..."
-rm -f libraries/*.so libraries/*.dll
+rm -f libraries/*.so libraries/*.dll systems/*.so systems/*.dll
 
 echo "Removing executables..."
 rm -f r-type_server

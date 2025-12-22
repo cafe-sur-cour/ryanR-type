@@ -12,22 +12,10 @@
 
 namespace ecs {
 
-const CollisionRules& CollisionRules::getInstance() {
-    static CollisionRules instance;
-    return instance;
-}
-
-void CollisionRules::initWithData(const CollisionRulesData& data) {
-    CollisionRules& instance = const_cast<CollisionRules&>(getInstance());
-    instance._solidAllowRules = data.solidAllowRules;
-    instance._triggerAllowRules = data.triggerAllowRules;
-    instance._pushAllowRules = data.pushAllowRules;
-}
-
-CollisionRules::CollisionRules() {
-    this->_solidAllowRules = nullptr;
-    this->_triggerAllowRules = nullptr;
-    this->_pushAllowRules = nullptr;
+CollisionRules::CollisionRules(const CollisionRulesData& data) {
+    this->_solidAllowRules = data.solidAllowRules;
+    this->_triggerAllowRules = data.triggerAllowRules;
+    this->_pushAllowRules = data.pushAllowRules;
 }
 
 const std::vector<CollisionRule>& CollisionRules::getAllowRules(

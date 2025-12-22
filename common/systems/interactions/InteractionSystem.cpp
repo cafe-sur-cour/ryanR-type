@@ -14,6 +14,7 @@
 #include "../../components/permanent/InteractionConfigComponent.hpp"
 #include "ActionFactory.hpp"
 #include "TagRegistry.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -25,8 +26,9 @@ void InteractionSystem::update(
     std::shared_ptr<Registry> registry,
     float deltaTime
 ) {
-    (void)resourceManager;
     (void)deltaTime;
+
+    auto tagRegistry = resourceManager->get<TagRegistry>();
 
     auto triggerIntentView = registry->view<TriggerIntentComponent>();
     for (auto entity : triggerIntentView) {
@@ -48,7 +50,7 @@ void InteractionSystem::update(
         for (const auto& mapping : interactionConfig->getMappings()) {
             bool hasRequiredTag = false;
             for (const auto& targetTag : mapping.targetTags) {
-                if (TagRegistry::getInstance().hasTag(registry, otherEntity, targetTag)) {
+                if (tagRegistry->hasTag(registry, otherEntity, targetTag)) {
                     hasRequiredTag = true;
                     break;
                 }
@@ -83,3 +85,15 @@ void InteractionSystem::update(
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::InteractionSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::INTERACTION_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

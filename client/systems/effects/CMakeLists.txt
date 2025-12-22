@@ -1,4 +1,4 @@
-target_sources(${CLIENT_BIN_NAME} PRIVATE
-    ClientEffectCleanupSystem.hpp
-    ClientEffectCleanupSystem.cpp
-)
+add_library(ClientEffectCleanupSystem SHARED ClientEffectCleanupSystem.cpp ClientEffectCleanupSystem.hpp)
+set_target_properties(ClientEffectCleanupSystem PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/systems)
+target_include_directories(ClientEffectCleanupSystem PUBLIC ${CMAKE_SOURCE_DIR}/common)
+target_link_libraries(ClientEffectCleanupSystem ${ECS_LIB_NAME})

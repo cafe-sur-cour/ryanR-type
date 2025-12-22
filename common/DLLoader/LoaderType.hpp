@@ -24,6 +24,7 @@ typedef void *(*createBuffer_t)();
 typedef void *(*createPacket_t)();
 
 #define pathLoad "./libraries"
+#define pathSystems "./systems"
 
 #ifdef _WIN32
     #define multimediaLib "Multimedia"

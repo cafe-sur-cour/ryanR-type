@@ -23,6 +23,7 @@ public:
     virtual void update(float deltaTime) = 0;
     virtual void exit() = 0;
     virtual void addSystem(std::shared_ptr<ecs::ISystem> system) = 0;
+    virtual void addSystem(const std::string& systemName) = 0;
     virtual std::vector<std::shared_ptr<ecs::ISystem>> getSystems() const = 0;
 };
 

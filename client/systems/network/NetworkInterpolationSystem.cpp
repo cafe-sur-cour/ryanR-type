@@ -7,6 +7,7 @@
 
 #include "NetworkInterpolationSystem.hpp"
 #include <memory>
+#include "../../../common/systems/SystemNames.hpp"
 
 namespace ecs {
 
@@ -60,3 +61,15 @@ void NetworkInterpolationSystem::interpolateTransform(
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::NetworkInterpolationSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::NETWORK_INTERPOLATION_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

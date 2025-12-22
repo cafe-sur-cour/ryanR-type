@@ -18,6 +18,7 @@
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/Parser/Parser.hpp"
 #include "../common/systems/systemManager/ISystemManager.hpp"
+#include "../common/systems/SystemLoader.hpp"
 #include "gsm/machine/GameStateMachine.hpp"
 #include "initResourcesManager/ServerInputProvider.hpp"
 
@@ -44,6 +45,7 @@ class Core {
         std::shared_ptr<rserv::Server> _server;
         std::thread _serverThread;
 
+        std::shared_ptr<ecs::SystemLoader> _systemLoader;
         std::shared_ptr<ResourceManager> _resourceManager;
         std::shared_ptr<ecs::Registry> _registry;
         std::shared_ptr<Parser> _parser;

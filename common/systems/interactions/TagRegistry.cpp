@@ -23,11 +23,6 @@
 #include "../../../client/components/tags/BackGroundMusicTag.hpp"
 #include "../../constants.hpp"
 
-const TagRegistry& TagRegistry::getInstance() {
-    static TagRegistry instance;
-    return instance;
-}
-
 TagRegistry::TagRegistry() {
     this->_tagCheckers = {};
     initializeTags();

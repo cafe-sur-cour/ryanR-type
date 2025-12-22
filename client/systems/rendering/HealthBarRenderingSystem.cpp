@@ -8,6 +8,7 @@
 #include <memory>
 #include "HealthBarRenderingSystem.hpp"
 #include "../../constants.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 #include "../../components/rendering/HealthBarComponent.hpp"
 #include "../../../common/components/permanent/HealthComponent.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
@@ -71,3 +72,15 @@ void HealthBarRenderingSystem::update(std::shared_ptr<ResourceManager>
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::HealthBarRenderingSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::HEALTH_BAR_RENDERING_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

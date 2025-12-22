@@ -15,6 +15,7 @@
 #include "../../../common/components/tags/PlayerTag.hpp"
 #include "../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../common/components/temporary/ShootIntentComponent.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 
 namespace ecs {
 
@@ -63,3 +64,15 @@ void ServerShootInputSystem::updateShootIntent(
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::ServerShootInputSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::SERVER_SHOOT_INPUT_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

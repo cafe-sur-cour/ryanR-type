@@ -10,9 +10,8 @@ namespace ecs {
 
 class CollisionRules {
     public:
-        static const CollisionRules& getInstance();
-
-        static void initWithData(const CollisionRulesData& data);
+        CollisionRules(const CollisionRulesData& data);
+        ~CollisionRules() = default;
 
         bool canCollide(
             CollisionType type,
@@ -21,11 +20,6 @@ class CollisionRules {
         ) const;
 
     private:
-        CollisionRules();
-        ~CollisionRules() = default;
-        CollisionRules(const CollisionRules&) = delete;
-        CollisionRules& operator=(const CollisionRules&) = delete;
-
         const std::vector<CollisionRule>& getAllowRules(CollisionType type) const;
 
         std::shared_ptr<std::vector<CollisionRule>> _solidAllowRules;

@@ -43,6 +43,7 @@ class TriggerSystem : public ASystem {
         );
 
         bool shouldCollide(
+            std::shared_ptr<ResourceManager> resourceManager,
             std::shared_ptr<Registry> registry,
             size_t entityA,
             const ColliderComponent& colliderA,

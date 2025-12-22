@@ -24,6 +24,7 @@
 #include "../../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../ECS/entity/EntityCreationContext.hpp"
+#include "../SystemNames.hpp"
 namespace ecs {
 
 ShootingSystem::ShootingSystem() {
@@ -155,3 +156,15 @@ math::Vector2f ShootingSystem::calculateProjectileVelocity(
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::ShootingSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::SHOOTING_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

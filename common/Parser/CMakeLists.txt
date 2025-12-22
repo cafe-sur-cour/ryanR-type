@@ -19,6 +19,8 @@ set(PARSER_HEADERS
 
 add_library(${PARSER_LIB} STATIC ${PARSER_SOURCES} ${PARSER_HEADERS})
 
+set_target_properties(${PARSER_LIB} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 target_include_directories(${PARSER_LIB} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/..
 )

@@ -53,6 +53,7 @@
 #include "../../../../systems/rendering/GameZoneViewSystem.hpp"
 #include "../../../../systems/audio/MusicSystem.hpp"
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
+#include "../../../../../common/systems/SystemNames.hpp"
 #include "../../../../../common/systems/ai/AIMovementSystem.hpp"
 #include "../../../../../common/systems/ai/AIShootingSystem.hpp"
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
@@ -76,24 +77,24 @@ void InGameState::enter() {
 
     auto collisionData =
         ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
-    ecs::CollisionRules::initWithData(collisionData);
+    _resourceManager->add(std::make_shared<ecs::CollisionRules>(collisionData));
 
 
-    addSystem(std::make_shared<ecs::MovementInputSystem>());
-    addSystem(std::make_shared<ecs::InputToVelocitySystem>());
-    addSystem(std::make_shared<ecs::ShootInputSystem>());
-    addSystem(std::make_shared<ecs::SoundSystem>());
-    addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
-    addSystem(std::make_shared<ecs::ClientEffectCleanupSystem>());
-    addSystem(std::make_shared<ecs::GameZoneViewSystem>());
-    addSystem(std::make_shared<ecs::MusicSystem>());
-    addSystem(std::make_shared<ecs::ParallaxRenderingSystem>());
-    addSystem(std::make_shared<ecs::SpriteRenderingSystem>());
-    addSystem(std::make_shared<ecs::RectangleRenderingSystem>());
-    addSystem(std::make_shared<ecs::AnimationRenderingSystem>());
-    addSystem(std::make_shared<ecs::HitboxRenderingSystem>());
-    addSystem(std::make_shared<ecs::HealthBarRenderingSystem>());
-    addSystem(std::make_shared<ecs::TextRenderingSystem>());
+    addSystem(ecs::systems::MOVEMENT_INPUT_SYSTEM);
+    addSystem(ecs::systems::INPUT_TO_VELOCITY_SYSTEM);
+    addSystem(ecs::systems::SHOOT_INPUT_SYSTEM);
+    addSystem(ecs::systems::SOUND_SYSTEM);
+    addSystem(ecs::systems::OUT_OF_BOUNDS_SYSTEM);
+    addSystem(ecs::systems::CLIENT_EFFECT_CLEANUP_SYSTEM);
+    addSystem(ecs::systems::GAME_ZONE_VIEW_SYSTEM);
+    addSystem(ecs::systems::MUSIC_SYSTEM);
+    addSystem(ecs::systems::PARALLAX_RENDERING_SYSTEM);
+    addSystem(ecs::systems::SPRITE_RENDERING_SYSTEM);
+    addSystem(ecs::systems::RECTANGLE_RENDERING_SYSTEM);
+    addSystem(ecs::systems::ANIMATION_RENDERING_SYSTEM);
+    addSystem(ecs::systems::HITBOX_RENDERING_SYSTEM);
+    addSystem(ecs::systems::HEALTH_BAR_RENDERING_SYSTEM);
+    addSystem(ecs::systems::TEXT_RENDERING_SYSTEM);
 
     auto audio = _resourceManager->get<gfx::IAudio>();
 

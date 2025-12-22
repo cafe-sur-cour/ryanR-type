@@ -7,8 +7,9 @@
 
 #include "ClientEffectCleanupSystem.hpp"
 #include <memory>
-#include "../../common/components/permanent/LifetimeComponent.hpp"
-#include "../../common/components/tags/ClientEffectTag.hpp"
+#include "../../../common/components/permanent/LifetimeComponent.hpp"
+#include "../../../common/components/tags/ClientEffectTag.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 
 namespace ecs {
 
@@ -37,4 +38,16 @@ void ClientEffectCleanupSystem::update(
     }
 }
 
+}
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::ClientEffectCleanupSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::CLIENT_EFFECT_CLEANUP_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
 }

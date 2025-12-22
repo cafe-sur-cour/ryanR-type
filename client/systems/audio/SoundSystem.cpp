@@ -13,6 +13,7 @@
 #include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IAudio.hpp"
 #include "../../../common/constants.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 #include "../../SettingsConfig.hpp"
 
 
@@ -56,3 +57,15 @@ void SoundSystem::update(std::shared_ptr<ResourceManager>
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::SoundSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::SOUND_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

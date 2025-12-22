@@ -16,14 +16,11 @@
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../../common/systems/shooting/ShootingSystem.hpp"
 #include "../../../../../common/systems/health/HealthSystem.hpp"
-#include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
 #include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
-#include "../../../../systems/input/ServerMovementInputSystem.hpp"
-#include "../../../../systems/input/ServerShootInputSystem.hpp"
-#include "../../../../systems/gameEnd/EndOfMapDetectionSystem.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
+#include "../../../../../common/systems/SystemNames.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/ECS/entity/registry/Registry.hpp"
@@ -54,23 +51,23 @@ void InGameState::enter() {
         "configs/rules/collision_rules.json"
     );
     *(_resourceManager->get<gsm::GameStateType>()) = gsm::IN_GAME;
-    ecs::CollisionRules::initWithData(collisionData);
-    addSystem(std::make_shared<ecs::ServerMovementInputSystem>());
-    addSystem(std::make_shared<ecs::ServerShootInputSystem>());
-    addSystem(std::make_shared<ecs::AIMovementSystem>());
-    addSystem(std::make_shared<ecs::AIShootingSystem>());
-    addSystem(std::make_shared<ecs::InputToVelocitySystem>());
-    addSystem(std::make_shared<ecs::MovementSystem>());
-    addSystem(std::make_shared<ecs::ShootingSystem>());
-    addSystem(std::make_shared<ecs::LifetimeSystem>());
-    addSystem(std::make_shared<ecs::HealthSystem>());
-    addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
-    addSystem(std::make_shared<ecs::DeathSystem>());
-    addSystem(std::make_shared<ecs::ScoreSystem>());
-    addSystem(std::make_shared<ecs::TriggerSystem>());
-    addSystem(std::make_shared<ecs::InteractionSystem>());
-    addSystem(std::make_shared<ecs::SpawnSystem>());
-    addSystem(std::make_shared<ecs::EndOfMapDetectionSystem>());
+    _resourceManager->add(std::make_shared<ecs::CollisionRules>(collisionData));
+    addSystem(ecs::systems::SERVER_MOVEMENT_INPUT_SYSTEM);
+    addSystem(ecs::systems::SERVER_SHOOT_INPUT_SYSTEM);
+    addSystem(ecs::systems::AI_MOVEMENT_SYSTEM);
+    addSystem(ecs::systems::AI_SHOOTING_SYSTEM);
+    addSystem(ecs::systems::INPUT_TO_VELOCITY_SYSTEM);
+    addSystem(ecs::systems::MOVEMENT_SYSTEM);
+    addSystem(ecs::systems::INTERACTION_SYSTEM);
+    addSystem(ecs::systems::TRIGGER_SYSTEM);
+    addSystem(ecs::systems::SHOOTING_SYSTEM);
+    addSystem(ecs::systems::LIFETIME_SYSTEM);
+    addSystem(ecs::systems::HEALTH_SYSTEM);
+    addSystem(ecs::systems::OUT_OF_BOUNDS_SYSTEM);
+    addSystem(ecs::systems::DEATH_SYSTEM);
+    addSystem(ecs::systems::SCORE_SYSTEM);
+    addSystem(ecs::systems::SPAWN_SYSTEM);
+    addSystem(ecs::systems::END_OF_MAP_DETECTION_SYSTEM);
 }
 
 void InGameState::update(float deltaTime) {

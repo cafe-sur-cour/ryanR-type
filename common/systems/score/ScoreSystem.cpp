@@ -12,6 +12,7 @@
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../ECS/view/View.hpp"
 #include "../../components/temporary/ScoreIntentComponent.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -43,3 +44,15 @@ void ScoreSystem::update(
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::ScoreSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::SCORE_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

@@ -24,6 +24,7 @@
 #include "../SettingsManager.hpp"
 #include "../constants.hpp"
 #include "../../common/Error/LibrairiesLoadError.hpp"
+#include "../../common/systems/interactions/TagRegistry.hpp"
 
 std::shared_ptr<ResourceManager> initResourcesManager(
     std::shared_ptr<DLLoader<gfx::createWindow_t>> windowLoader,
@@ -89,6 +90,7 @@ std::shared_ptr<ResourceManager> initResourcesManager(
         mappingManager);
     resourceManager->add<ecs::IInputProvider>(inputProvider);
     resourceManager->add<ecs::ISystemManager>(std::make_shared<ecs::SystemManager>());
+    resourceManager->add(std::make_shared<TagRegistry>());
 
     auto settingsConfig = std::make_shared<SettingsConfig>();
     resourceManager->add<SettingsConfig>(settingsConfig);

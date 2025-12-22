@@ -16,6 +16,7 @@
 #include "../../components/temporary/TriggerIntentComponent.hpp"
 #include "../../CollisionRules/CollisionRules.hpp"
 #include "../../constants.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -61,8 +62,9 @@ void TriggerSystem::update(
     std::shared_ptr<Registry> registry,
     float deltaTime
 ) {
-    (void)resourceManager;
     (void)deltaTime;
+
+    auto tagRegistry = resourceManager->get<TagRegistry>();
 
     buildSpatialGrid(registry);
 
@@ -93,8 +95,8 @@ void TriggerSystem::update(
                 continue;
 
             auto otherCollider = registry->getComponent<ColliderComponent>(colliderEntity);
-            if (otherCollider && shouldCollide(registry, triggerEntity, *triggerCollider,
-                    colliderEntity) &&
+            if (otherCollider && shouldCollide(resourceManager, registry, triggerEntity,
+                *triggerCollider, colliderEntity) &&
                     checkCollision(*triggerTransform, *triggerCollider,
                     *colliderTransform, *otherCollider)
             ) {
@@ -120,17 +122,30 @@ bool TriggerSystem::checkCollision(
 }
 
 bool TriggerSystem::shouldCollide(
+    std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<Registry> registry,
     size_t entityA,
     const ColliderComponent& colliderA,
     size_t entityB
 ) {
-    const TagRegistry& tagRegistry = TagRegistry::getInstance();
-    const CollisionRules& collisionRules = CollisionRules::getInstance();
-    std::vector<std::string> tagsA = tagRegistry.getTags(registry, entityA);
-    std::vector<std::string> tagsB = tagRegistry.getTags(registry, entityB);
+    auto tagRegistry = resourceManager->get<TagRegistry>();
+    auto collisionRules = resourceManager->get<CollisionRules>();
+    std::vector<std::string> tagsA = tagRegistry->getTags(registry, entityA);
+    std::vector<std::string> tagsB = tagRegistry->getTags(registry, entityB);
 
-    return collisionRules.canCollide(colliderA.getType(), tagsA, tagsB);
+    return collisionRules->canCollide(colliderA.getType(), tagsA, tagsB);
 }
 
+}  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::TriggerSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::TRIGGER_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
 }

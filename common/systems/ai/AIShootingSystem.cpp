@@ -9,6 +9,7 @@
 #include <memory>
 #include "../../components/temporary/ShootIntentComponent.hpp"
 #include "../../components/tags/AIShooterTag.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -34,3 +35,15 @@ void AIShootingSystem::update(
 
 }  // namespace ecs
 
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::AIShootingSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::AI_SHOOTING_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

@@ -22,6 +22,7 @@ Core::Core() {
 
     this->_registry = std::make_shared<ecs::Registry>();
     this->_systemsManager = std::make_shared<ecs::SystemManager>();
+    this->_systemLoader = std::make_shared<ecs::SystemLoader>();
     this->_gsm = std::make_shared<gsm::GameStateMachine>();
 
     auto entityPrefabManager = std::make_shared<EntityPrefabManager>();
@@ -46,6 +47,7 @@ Core::Core() {
     );
     this->_server->setResourceManager(this->_resourceManager);
 
+    this->_resourceManager->add<ecs::SystemLoader>(this->_systemLoader);
     this->_resourceManager->add<rserv::Server>(this->_server);
     this->_resourceManager->add<rserv::ServerConfig>(this->_server->getConfig());
 

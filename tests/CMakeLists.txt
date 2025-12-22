@@ -121,27 +121,27 @@ target_link_libraries(RegistryTests ECS PREFAB COLLISION_RULES GTest::gtest GTes
 add_test(NAME RegistryTests COMMAND RegistryTests)
 
 add_executable(MovementSystemTests common/ECS/system/MovementSystemTests.cpp)
-target_link_libraries(MovementSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(MovementSystemTests ECS PREFAB COLLISION_RULES InputToVelocitySystem MovementSystem GTest::gtest GTest::gtest_main)
 add_test(NAME MovementSystemTests COMMAND MovementSystemTests)
 
 add_executable(LifetimeSystemTests common/ECS/system/LifetimeSystemTests.cpp)
-target_link_libraries(LifetimeSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(LifetimeSystemTests ECS PREFAB COLLISION_RULES LifetimeSystem GTest::gtest GTest::gtest_main)
 add_test(NAME LifetimeSystemTests COMMAND LifetimeSystemTests)
 
 add_executable(HealthSystemTests common/ECS/system/HealthSystemTests.cpp)
-target_link_libraries(HealthSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(HealthSystemTests ECS PREFAB COLLISION_RULES HealthSystem GTest::gtest GTest::gtest_main)
 add_test(NAME HealthSystemTests COMMAND HealthSystemTests)
 
 add_executable(DeathSystemTests common/ECS/system/DeathSystemTests.cpp)
-target_link_libraries(DeathSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(DeathSystemTests ECS PREFAB COLLISION_RULES DeathSystem GTest::gtest GTest::gtest_main)
 add_test(NAME DeathSystemTests COMMAND DeathSystemTests)
 
 add_executable(OutOfBoundsSystemTests common/ECS/system/OutOfBoundsSystemTests.cpp)
-target_link_libraries(OutOfBoundsSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(OutOfBoundsSystemTests ECS PREFAB COLLISION_RULES OutOfBoundsSystem GTest::gtest GTest::gtest_main)
 add_test(NAME OutOfBoundsSystemTests COMMAND OutOfBoundsSystemTests)
 
 add_executable(ScoreSystemTests common/ECS/system/ScoreSystemTests.cpp)
-target_link_libraries(ScoreSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(ScoreSystemTests ECS PREFAB COLLISION_RULES ScoreSystem GTest::gtest GTest::gtest_main)
 add_test(NAME ScoreSystemTests COMMAND ScoreSystemTests)
 
 add_executable(BufferTests server/buffer/circularBufferTest.cpp)
@@ -176,7 +176,7 @@ target_link_libraries(InteractionConfigComponentTests ECS PREFAB COLLISION_RULES
 add_test(NAME InteractionConfigComponentTests COMMAND InteractionConfigComponentTests)
 
 add_executable(TriggerSystemTests common/ECS/system/TriggerSystemTests.cpp)
-target_link_libraries(TriggerSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(TriggerSystemTests ECS PREFAB COLLISION_RULES TriggerSystem GTest::gtest GTest::gtest_main)
 add_test(NAME TriggerSystemTests COMMAND TriggerSystemTests)
 
 add_executable(ParserTests common/Parser/ParserTests.cpp)
@@ -192,5 +192,5 @@ target_link_libraries(SpawnIntentComponentTests ECS PREFAB COLLISION_RULES GTest
 add_test(NAME SpawnIntentComponentTests COMMAND SpawnIntentComponentTests)
 
 add_executable(SpawnSystemTests common/ECS/system/SpawnSystemTests.cpp)
-target_link_libraries(SpawnSystemTests ECS PREFAB COLLISION_RULES ERROR GTest::gtest GTest::gtest_main)
+target_link_libraries(SpawnSystemTests ECS PREFAB COLLISION_RULES ERROR SpawnSystem GTest::gtest GTest::gtest_main)
 add_test(NAME SpawnSystemTests COMMAND SpawnSystemTests)

@@ -17,7 +17,10 @@
 
 class TagRegistry {
     public:
-        static const TagRegistry& getInstance();
+        TagRegistry();
+        ~TagRegistry() = default;
+        TagRegistry(const TagRegistry&) = delete;
+        TagRegistry& operator=(const TagRegistry&) = delete;
 
         template<typename T>
         void registerTag(const std::string& tagName) {
@@ -30,11 +33,6 @@ class TagRegistry {
         std::vector<std::string> getTags(std::shared_ptr<ecs::Registry> registry, ecs::Entity entity) const;
 
     private:
-        TagRegistry();
-        ~TagRegistry() = default;
-        TagRegistry(const TagRegistry&) = delete;
-        TagRegistry& operator=(const TagRegistry&) = delete;
-
         void initializeTags();
 
         std::unordered_map<std::string,

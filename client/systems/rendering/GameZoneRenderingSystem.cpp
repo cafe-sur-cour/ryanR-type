@@ -8,6 +8,7 @@
 #include <memory>
 #include "GameZoneRenderingSystem.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 #include "../../../common/components/permanent/ColliderComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
@@ -86,3 +87,15 @@ void GameZoneRenderingSystem::update(std::shared_ptr<ResourceManager>
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::GameZoneRenderingSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::GAME_ZONE_RENDERING_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

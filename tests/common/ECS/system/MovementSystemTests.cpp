@@ -14,6 +14,7 @@
 #include "../../../../common/components/permanent/ColliderComponent.hpp"
 #include "../../../../common/components/tags/ObstacleTag.hpp"
 #include "../../../../common/CollisionRules/CollisionRules.hpp"
+#include "../../../../common/systems/interactions/TagRegistry.hpp"
 
 using namespace ecs;
 
@@ -44,7 +45,8 @@ protected:
         allowAllSolid.groupA = {};
         allowAllSolid.groupB = {};
         testData.solidAllowRules->push_back(allowAllSolid);
-        CollisionRules::initWithData(testData);
+        resourceManager->add(std::make_shared<CollisionRules>(testData));
+        resourceManager->add(std::make_shared<TagRegistry>());
     }
 
     std::shared_ptr<Registry> registry;

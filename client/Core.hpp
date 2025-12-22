@@ -18,6 +18,7 @@
 #include "gsm/machine/GameStateMachine.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/Parser/Parser.hpp"
+#include "../common/systems/SystemLoader.hpp"
 
 class Core
 {
@@ -36,6 +37,7 @@ class Core
         std::shared_ptr<DLLoader<gfx::createEvent_t>> _eventLoader;
         std::shared_ptr<DLLoader<gfx::createAudio_t>> _audioLoader;
 
+        std::shared_ptr<ecs::SystemLoader> _systemLoader;
         std::shared_ptr<ResourceManager> _resourceManager;
         std::shared_ptr<gsm::GameStateMachine> _gsm;
         std::shared_ptr<ecs::Registry> _registry;

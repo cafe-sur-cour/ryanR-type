@@ -1,6 +1,6 @@
 set(SERVER_LIB_NAME r-type_server_lib)
 
-add_library(${SERVER_LIB_NAME}
+add_library(${SERVER_LIB_NAME} STATIC
     IServer.hpp
     ServerConfig.hpp
     ServerConfig.cpp
@@ -34,9 +34,7 @@ target_link_libraries(${SERVER_LIB_NAME}
         PARSER
         PREFAB
         InputNormalizer
-        ServerMovementInputSystem
-        ServerShootInputSystem
-        EndOfMapDetectionSystem
+        ServerInputLib
         Server::PacketHandlers
 )
 

@@ -6,9 +6,12 @@
 */
 
 #include "AGameState.hpp"
+#include <iostream>
+#include <string>
 #include <vector>
 #include <memory>
 #include <stdexcept>
+#include "../../../common/systems/SystemLoader.hpp"
 #include "../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../common/Error/ClientError.hpp"
@@ -19,6 +22,7 @@ AGameState::AGameState(std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager) {
     _gsm = gsm;
     _resourceManager = resourceManager;
+    _systemLoader = _resourceManager->get<ecs::SystemLoader>();
     this->_systems = std::vector<std::shared_ptr<ecs::ISystem>>();
 }
 
@@ -52,6 +56,15 @@ void AGameState::addSystem(std::shared_ptr<ecs::ISystem> system) {
         throw err::ClientError("ISystemManager not found in ResourceManager",
             err::ClientError::UNKNOWN);
     _systems.push_back(system);
+}
+
+void AGameState::addSystem(const std::string& systemName) {
+    auto system = _systemLoader->loadSystem(systemName);
+    if (system) {
+        addSystem(system);
+    } else {
+        std::cerr << "Failed to load system: " << systemName << std::endl;
+    }
 }
 
 std::vector<std::shared_ptr<ecs::ISystem>> AGameState::getSystems() const {
