@@ -33,6 +33,7 @@ Core::Core() {
         this->_registry
     );
     _parser->parseAllEntities(constants::CONFIG_PATH);
+    this->_systemLoader = std::make_shared<ecs::SystemLoader>();
     this->_resourceManager = initResourcesManager(
         this->_windowLoader,
         this->_eventLoader,
@@ -44,6 +45,7 @@ Core::Core() {
     this->_clientNetwork->setGameStateMachine(this->_gsm);
     this->_resourceManager->add<ecs::Registry>(this->_registry);
     this->_resourceManager->add<EntityPrefabManager>(entityPrefabManager);
+    this->_resourceManager->add<ecs::SystemLoader>(this->_systemLoader);
 }
 
 Core::~Core() {

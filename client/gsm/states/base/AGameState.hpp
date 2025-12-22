@@ -2,6 +2,7 @@
 
 #include "../../../../common/gsm/IGameState.hpp"
 #include "../../../../common/resourceManager/ResourceManager.hpp"
+#include "../../../../common/systems/SystemLoader.hpp"
 
 namespace gsm {
 
@@ -17,8 +18,10 @@ class AGameState : public IGameState {
 
     protected:
         void addSystem(std::shared_ptr<ecs::ISystem> system) override;
+        void addSystem(const std::string& systemName) override;
         std::weak_ptr<IGameStateMachine> _gsm;
         std::shared_ptr<ResourceManager> _resourceManager;
+        std::shared_ptr<ecs::SystemLoader> _systemLoader;
         std::vector<std::shared_ptr<ecs::ISystem>> _systems;
 };
 
