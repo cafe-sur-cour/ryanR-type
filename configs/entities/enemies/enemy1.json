@@ -48,11 +48,26 @@
             "initialState": "idle",
             "transitions": []
         },
-        "ColliderComponent": {
+        "ColliderComponent":
+        [
+            {
+                "target": "both",
+                "offset": { "x": -1.0, "y": -1.0 },
+                "size" : { "x": 35.0, "y": 38.0 },
+                "type": "Trigger"
+            },
+            {
+                "target": "both",
+                "offset": { "x": 0.0, "y": 0.0 },
+                "size" : { "x": 33.0, "y": 36.0 },
+                "type": "Solide"
+            }
+
+        ]
+        ,
+        "DamageComponent": {
             "target": "both",
-            "offset": { "x": 0.0, "y": 0.0 },
-            "size" : { "x": 33.0, "y": 36.0 },
-            "type": "Solid"
+            "damage": 25.0
         },
         "InteractionConfigComponent": {
             "target": "both",
@@ -60,7 +75,7 @@
                 {
                     "tags": ["PlayerTag"],
                     "toEntity": ["DealDamage"],
-                    "toSelf": []
+                    "toSelf": ["TakeDeath"]
                 },
                 {
                     "tags": ["PlayerProjectileTag"],
