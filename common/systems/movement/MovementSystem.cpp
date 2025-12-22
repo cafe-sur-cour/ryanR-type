@@ -372,19 +372,10 @@ bool MovementSystem::shouldCollide(
     std::vector<std::string> tagsA = tagRegistry->getTags(registry, entityA);
     std::vector<std::string> tagsB = tagRegistry->getTags(registry, entityB);
 
-    bool result = collisionRules->canCollide(colliderA.getType(), tagsA, tagsB);
-
-    // Debug print
-    std::cout << "shouldCollide: entityA=" << entityA << " tagsA=[";
-    for (const auto& tag : tagsA) std::cout << tag << ",";
-    std::cout << "] entityB=" << entityB << " tagsB=[";
-    for (const auto& tag : tagsB) std::cout << tag << ",";
-    std::cout << "] colliderType=" << static_cast<int>(colliderA.getType()) << " result=" << result << std::endl;
-
-    return result;
+    return collisionRules->canCollide(colliderA.getType(), tagsA, tagsB);
 }
 
-}
+}  // namespace ecs
 
 extern "C" ecs::ISystem* createSystem() {
     return new ecs::MovementSystem();
