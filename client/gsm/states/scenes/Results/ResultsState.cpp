@@ -8,9 +8,9 @@
 #include "ResultsState.hpp"
 #include <memory>
 #include <string>
-#include "../../../common/constants.hpp"
-#include "../../../libs/Multimedia/IEvent.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../../common/constants.hpp"
+#include "../../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../../libs/Multimedia/IEvent.hpp"
 #include "../../../../gsm/machine/AGameStateMachine.hpp"
 #include "../MainMenu/MainMenuState.hpp"
 
