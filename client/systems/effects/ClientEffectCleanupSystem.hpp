@@ -8,7 +8,7 @@
 #ifndef CLIENTEFFECTCLEANUPSYSTEM_HPP_
 #define CLIENTEFFECTCLEANUPSYSTEM_HPP_
 
-#include "../../common/systems/base/ASystem.hpp"
+#include "../../../common/systems/base/ASystem.hpp"
 
 namespace ecs {
 

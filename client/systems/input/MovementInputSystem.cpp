@@ -18,6 +18,7 @@
 #include "../../../common/components/temporary/InputIntentComponent.hpp"
 #include "../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../common/InputMapping/InputAction.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 #include "../../../common/systems/input/InputNormalizer.hpp"
 #include "../../ClientNetwork.hpp"
 
@@ -139,3 +140,15 @@ void MovementInputSystem::sendAxisEvents(
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::MovementInputSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::MOVEMENT_INPUT_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

@@ -22,6 +22,12 @@ const std::string PARALLAX_RENDERING_SYSTEM = "ParallaxRenderingSystem";
 const std::string GAME_ZONE_RENDERING_SYSTEM = "GameZoneRenderingSystem";
 const std::string GAME_ZONE_VIEW_SYSTEM = "GameZoneViewSystem";
 const std::string HEALTH_BAR_RENDERING_SYSTEM = "HealthBarRenderingSystem";
+const std::string SOUND_SYSTEM = "SoundSystem";
+const std::string MUSIC_SYSTEM = "MusicSystem";
+const std::string CLIENT_EFFECT_CLEANUP_SYSTEM = "ClientEffectCleanupSystem";
+const std::string MOVEMENT_INPUT_SYSTEM = "MovementInputSystem";
+const std::string SHOOT_INPUT_SYSTEM = "ShootInputSystem";
+const std::string NETWORK_INTERPOLATION_SYSTEM = "NetworkInterpolationSystem";
 
 }  // namespace ecs::systems
 

@@ -80,14 +80,14 @@ void InGameState::enter() {
     ecs::CollisionRules::initWithData(collisionData);
 
 
-    addSystem(std::make_shared<ecs::MovementInputSystem>());
+    addSystem(ecs::systems::MOVEMENT_INPUT_SYSTEM);
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
-    addSystem(std::make_shared<ecs::ShootInputSystem>());
-    addSystem(std::make_shared<ecs::SoundSystem>());
+    addSystem(ecs::systems::SHOOT_INPUT_SYSTEM);
+    addSystem(ecs::systems::SOUND_SYSTEM);
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
-    addSystem(std::make_shared<ecs::ClientEffectCleanupSystem>());
+    addSystem(ecs::systems::CLIENT_EFFECT_CLEANUP_SYSTEM);
     addSystem(ecs::systems::GAME_ZONE_VIEW_SYSTEM);
-    addSystem(std::make_shared<ecs::MusicSystem>());
+    addSystem(ecs::systems::MUSIC_SYSTEM);
     addSystem(ecs::systems::PARALLAX_RENDERING_SYSTEM);
     addSystem(ecs::systems::SPRITE_RENDERING_SYSTEM);
     addSystem(ecs::systems::RECTANGLE_RENDERING_SYSTEM);

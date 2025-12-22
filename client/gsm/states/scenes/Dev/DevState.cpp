@@ -95,15 +95,15 @@ void DevState::enter() {
         _parser->parseAllEntities(constants::CONFIG_PATH);
     }
 
-    addSystem(std::make_shared<ecs::NetworkInterpolationSystem>());
+    addSystem(ecs::systems::NETWORK_INTERPOLATION_SYSTEM);
     addSystem(std::make_shared<ecs::AIMovementSystem>());
     addSystem(std::make_shared<ecs::AIShootingSystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::MovementSystem>());
-    addSystem(std::make_shared<ecs::MovementInputSystem>());
+    addSystem(ecs::systems::MOVEMENT_INPUT_SYSTEM);
     addSystem(std::make_shared<ecs::InteractionSystem>());
-    addSystem(std::make_shared<ecs::SoundSystem>());
-    addSystem(std::make_shared<ecs::ShootInputSystem>());
+    addSystem(ecs::systems::SOUND_SYSTEM);
+    addSystem(ecs::systems::SHOOT_INPUT_SYSTEM);
     addSystem(std::make_shared<ecs::ShootingSystem>());
     addSystem(std::make_shared<ecs::LifetimeSystem>());
     addSystem(std::make_shared<ecs::HealthSystem>());
@@ -111,7 +111,7 @@ void DevState::enter() {
     addSystem(ecs::systems::DEATH_SYSTEM);
     addSystem(std::make_shared<ecs::ScoreSystem>());
     addSystem(ecs::systems::GAME_ZONE_VIEW_SYSTEM);
-    addSystem(std::make_shared<ecs::MusicSystem>());
+    addSystem(ecs::systems::MUSIC_SYSTEM);
     addSystem(std::make_shared<ecs::TriggerSystem>());
     addSystem(std::make_shared<ecs::InteractionSystem>());
     addSystem(ecs::systems::PARALLAX_RENDERING_SYSTEM);

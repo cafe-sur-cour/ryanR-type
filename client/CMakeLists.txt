@@ -1,15 +1,15 @@
 set(CLIENT_BIN_NAME r-type_client)
 
+add_library(ClientNetworkLib STATIC ClientNetwork.cpp ClientNetwork.hpp ClientReceivedPacket.cpp ClientSentPacket.cpp ClientGameStateConversions.cpp)
+set_target_properties(ClientNetworkLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_include_directories(ClientNetworkLib PUBLIC ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/client ${CMAKE_SOURCE_DIR}/libs)
+target_link_libraries(ClientNetworkLib PUBLIC Packet asio::asio nlohmann_json::nlohmann_json)
+
 add_executable(${CLIENT_BIN_NAME}
     main.cpp
     Utils.cpp
     Utils.hpp
-    ClientNetwork.cpp
     ClientLibLoading.cpp
-    ClientNetwork.hpp
-    ClientReceivedPacket.cpp
-    ClientSentPacket.cpp
-    ClientGameStateConversions.cpp
     Core.cpp
     SettingsConfig.cpp
     SettingsConfig.hpp
@@ -36,11 +36,14 @@ target_link_libraries(${CLIENT_BIN_NAME}
         DEBUG
         InputNormalizer
         NETWORK_INTERPOLATION
+        ClientNetworkLib
         asio::asio
         nlohmann_json::nlohmann_json
         Packet
         Client::PacketHandlers
 )
+
+set_target_properties(${CLIENT_BIN_NAME} PROPERTIES ENABLE_EXPORTS ON)
 
 target_include_directories(${CLIENT_BIN_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/common)
 target_include_directories(${CLIENT_BIN_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

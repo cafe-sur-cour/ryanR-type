@@ -8,11 +8,11 @@
 #ifndef NETWORKINTERPOLATIONSYSTEM_HPP_
 #define NETWORKINTERPOLATIONSYSTEM_HPP_
 
-#include "../../common/systems/base/ASystem.hpp"
-#include "../../common/ECS/entity/registry/Registry.hpp"
-#include "../interpolation/NetworkStateComponent.hpp"
-#include "../../common/components/permanent/TransformComponent.hpp"
-#include "../../common/components/permanent/HealthComponent.hpp"
+#include "../../../common/systems/base/ASystem.hpp"
+#include "../../../common/ECS/entity/registry/Registry.hpp"
+#include "../../interpolation/NetworkStateComponent.hpp"
+#include "../../../common/components/permanent/TransformComponent.hpp"
+#include "../../../common/components/permanent/HealthComponent.hpp"
 
 namespace ecs {
 

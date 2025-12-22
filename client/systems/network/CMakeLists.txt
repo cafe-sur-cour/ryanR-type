@@ -1,4 +1,4 @@
-target_sources(${CLIENT_BIN_NAME} PRIVATE
-    NetworkInterpolationSystem.hpp
-    NetworkInterpolationSystem.cpp
-)
+add_library(NetworkInterpolationSystem SHARED NetworkInterpolationSystem.cpp NetworkInterpolationSystem.hpp)
+set_target_properties(NetworkInterpolationSystem PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/systems)
+target_include_directories(NetworkInterpolationSystem PUBLIC ${CMAKE_SOURCE_DIR}/common)
+target_link_libraries(NetworkInterpolationSystem ${ECS_LIB_NAME})

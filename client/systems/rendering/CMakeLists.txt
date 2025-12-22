@@ -1,35 +1,44 @@
 add_library(SpriteRenderingSystem SHARED SpriteRenderingSystem.cpp SpriteRenderingSystem.hpp)
 set_target_properties(SpriteRenderingSystem PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/systems)
+target_include_directories(SpriteRenderingSystem PUBLIC ${CMAKE_SOURCE_DIR}/common)
 target_link_libraries(SpriteRenderingSystem ${ECS_LIB_NAME})
 
 add_library(AnimationRenderingSystem SHARED AnimationRenderingSystem.cpp AnimationRenderingSystem.hpp)
 set_target_properties(AnimationRenderingSystem PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/systems)
+target_include_directories(AnimationRenderingSystem PUBLIC ${CMAKE_SOURCE_DIR}/common)
 target_link_libraries(AnimationRenderingSystem ${ECS_LIB_NAME} PARSER)
 
 add_library(HitboxRenderingSystem SHARED HitboxRenderingSystem.cpp HitboxRenderingSystem.hpp)
 set_target_properties(HitboxRenderingSystem PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/systems)
+target_include_directories(HitboxRenderingSystem PUBLIC ${CMAKE_SOURCE_DIR}/common)
 target_link_libraries(HitboxRenderingSystem ${ECS_LIB_NAME})
 
 add_library(RectangleRenderingSystem SHARED RectangleRenderingSystem.cpp RectangleRenderingSystem.hpp)
 set_target_properties(RectangleRenderingSystem PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/systems)
+target_include_directories(RectangleRenderingSystem PUBLIC ${CMAKE_SOURCE_DIR}/common)
 target_link_libraries(RectangleRenderingSystem ${ECS_LIB_NAME})
 
 add_library(TextRenderingSystem SHARED TextRenderingSystem.cpp TextRenderingSystem.hpp)
 set_target_properties(TextRenderingSystem PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/systems)
+target_include_directories(TextRenderingSystem PUBLIC ${CMAKE_SOURCE_DIR}/common)
 target_link_libraries(TextRenderingSystem ${ECS_LIB_NAME})
 
 add_library(ParallaxRenderingSystem SHARED ParallaxRenderingSystem.cpp ParallaxRenderingSystem.hpp)
 set_target_properties(ParallaxRenderingSystem PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/systems)
+target_include_directories(ParallaxRenderingSystem PUBLIC ${CMAKE_SOURCE_DIR}/common)
 target_link_libraries(ParallaxRenderingSystem ${ECS_LIB_NAME})
 
 add_library(GameZoneRenderingSystem SHARED GameZoneRenderingSystem.cpp GameZoneRenderingSystem.hpp)
 set_target_properties(GameZoneRenderingSystem PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/systems)
+target_include_directories(GameZoneRenderingSystem PUBLIC ${CMAKE_SOURCE_DIR}/common)
 target_link_libraries(GameZoneRenderingSystem ${ECS_LIB_NAME})
 
 add_library(GameZoneViewSystem SHARED GameZoneViewSystem.cpp GameZoneViewSystem.hpp)
 set_target_properties(GameZoneViewSystem PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/systems)
+target_include_directories(GameZoneViewSystem PUBLIC ${CMAKE_SOURCE_DIR}/common)
 target_link_libraries(GameZoneViewSystem ${ECS_LIB_NAME})
 
 add_library(HealthBarRenderingSystem SHARED HealthBarRenderingSystem.cpp HealthBarRenderingSystem.hpp)
 set_target_properties(HealthBarRenderingSystem PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/systems)
+target_include_directories(HealthBarRenderingSystem PUBLIC ${CMAKE_SOURCE_DIR}/common)
 target_link_libraries(HealthBarRenderingSystem ${ECS_LIB_NAME})

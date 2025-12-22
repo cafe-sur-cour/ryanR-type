@@ -13,6 +13,7 @@
 #include "../../../common/components/tags/PlayerTag.hpp"
 #include "../../../common/components/tags/LocalPlayerTag.hpp"
 #include "../../../common/InputMapping/IInputProvider.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 #include "../../../common/components/temporary/ShootIntentComponent.hpp"
 #include "../../ClientNetwork.hpp"
 #include "../../constants.hpp"
@@ -53,4 +54,16 @@ void ShootInputSystem::update(
     }
 }
 
+}
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::ShootInputSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::SHOOT_INPUT_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
 }
