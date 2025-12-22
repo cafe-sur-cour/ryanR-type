@@ -102,6 +102,7 @@ void DevState::enter() {
     addSystem(ecs::systems::MOVEMENT_SYSTEM);
     addSystem(ecs::systems::MOVEMENT_INPUT_SYSTEM);
     addSystem(std::make_shared<ecs::InteractionSystem>());
+    addSystem(std::make_shared<ecs::TriggerSystem>());
     addSystem(ecs::systems::SOUND_SYSTEM);
     addSystem(ecs::systems::SHOOT_INPUT_SYSTEM);
     addSystem(ecs::systems::SHOOTING_SYSTEM);
@@ -112,8 +113,6 @@ void DevState::enter() {
     addSystem(ecs::systems::SCORE_SYSTEM);
     addSystem(ecs::systems::GAME_ZONE_VIEW_SYSTEM);
     addSystem(ecs::systems::MUSIC_SYSTEM);
-    addSystem(std::make_shared<ecs::TriggerSystem>());
-    addSystem(std::make_shared<ecs::InteractionSystem>());
     addSystem(ecs::systems::PARALLAX_RENDERING_SYSTEM);
     addSystem(ecs::systems::SPRITE_RENDERING_SYSTEM);
     addSystem(ecs::systems::RECTANGLE_RENDERING_SYSTEM);

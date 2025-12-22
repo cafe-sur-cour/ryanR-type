@@ -61,14 +61,14 @@ void InGameState::enter() {
     addSystem(ecs::systems::AI_SHOOTING_SYSTEM);
     addSystem(ecs::systems::INPUT_TO_VELOCITY_SYSTEM);
     addSystem(ecs::systems::MOVEMENT_SYSTEM);
+    addSystem(std::make_shared<ecs::InteractionSystem>());
+    addSystem(std::make_shared<ecs::TriggerSystem>());
     addSystem(ecs::systems::SHOOTING_SYSTEM);
     addSystem(ecs::systems::LIFETIME_SYSTEM);
     addSystem(ecs::systems::HEALTH_SYSTEM);
     addSystem(ecs::systems::OUT_OF_BOUNDS_SYSTEM);
     addSystem(ecs::systems::DEATH_SYSTEM);
     addSystem(ecs::systems::SCORE_SYSTEM);
-    addSystem(std::make_shared<ecs::TriggerSystem>());
-    addSystem(std::make_shared<ecs::InteractionSystem>());
     addSystem(ecs::systems::SPAWN_SYSTEM);
     addSystem(std::make_shared<ecs::EndOfMapDetectionSystem>());
 }
