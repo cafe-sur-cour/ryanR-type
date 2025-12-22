@@ -68,3 +68,15 @@ void DeathSystem::update(
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::DeathSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return "DeathSystem";
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}
