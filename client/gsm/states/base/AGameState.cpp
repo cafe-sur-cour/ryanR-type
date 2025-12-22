@@ -1,8 +1,16 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** AGameState
+*/
+
 #include "AGameState.hpp"
 #include <stdexcept>
 #include <memory>
 #include <vector>
 #include <iostream>
+#include <string>
 #include "../../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../../common/systems/SystemLoader.hpp"
 #include "../../../../common/Error/ClientError.hpp"

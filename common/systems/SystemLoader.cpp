@@ -7,6 +7,9 @@
 
 #include "SystemLoader.hpp"
 #include <iostream>
+#include <string>
+#include <utility>
+#include <memory>
 #include "../DLLoader/LoaderType.hpp"
 #include "../DLLoader/DLLoader.hpp"
 

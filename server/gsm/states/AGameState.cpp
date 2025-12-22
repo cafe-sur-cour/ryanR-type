@@ -6,6 +6,8 @@
 */
 
 #include "AGameState.hpp"
+#include <iostream>
+#include <string>
 #include <vector>
 #include <memory>
 #include <stdexcept>
@@ -13,7 +15,6 @@
 #include "../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../common/Error/ClientError.hpp"
-#include <iostream>
 
 namespace gsm {
 

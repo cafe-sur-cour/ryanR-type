@@ -58,7 +58,6 @@
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../../common/components/permanent/HealthComponent.hpp"
 #include "../../../../colors.hpp"
-#include "../../../../../common/systems/SystemNames.hpp"
 
 namespace gsm {
 

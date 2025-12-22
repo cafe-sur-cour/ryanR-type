@@ -24,7 +24,6 @@
 #include "../../../../systems/gameEnd/EndOfMapDetectionSystem.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
 #include "../../../../../common/systems/SystemNames.hpp"
-#include "../../../../../common/systems/SystemNames.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/ECS/entity/registry/Registry.hpp"
