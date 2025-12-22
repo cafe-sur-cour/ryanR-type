@@ -272,11 +272,11 @@ bool registerDefaultPacketHandlers(
         dst.insert(dst.end(), bytes.begin(), bytes.end());
     };
 
-    auto appendUChar = [ser, &pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
+    auto appendUChar = [ser, pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
         pushSerialized(dst, ser->serializeUChar(val));
     };
 
-    auto appendULong = [ser, &pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
+    auto appendULong = [ser, pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
         pushSerialized(dst, ser->serializeULong(val));
     };
 
@@ -352,7 +352,6 @@ bool registerDefaultPacketHandlers(
     packet->registerLengthCombEntry(LIFETIME, 9, 2);
     packet->registerLengthCombEntry(VELOCITY, 17, 3);
     packet->registerLengthCombEntry(PROJECTILE_PREFAB, 0, 2);
-    packet->registerLengthCombEntry(NETWORK_ID, 9, 2);
     packet->registerLengthCombEntry(GAME_ZONE, 33, 5);
 
     packet->registerLengthCombEntry(PLAYER_TAG, 1, 1);

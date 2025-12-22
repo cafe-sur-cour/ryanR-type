@@ -51,6 +51,9 @@ std::shared_ptr<sf::Texture> TextureManager::loadTexture
         return nullptr;
     }
     _textureCache[path] = texture;
+    if (asset != nullptr) {
+        asset.reset();
+    }
     return texture;
 }
 

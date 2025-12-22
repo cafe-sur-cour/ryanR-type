@@ -16,7 +16,6 @@
 #include "../common/ECS/entity/Entity.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/Parser/Parser.hpp"
-#include "../common/components/permanent/NetworkIdComponent.hpp"
 
 bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
@@ -43,12 +42,7 @@ bool rserv::Server::gameStatePacket() {
     for (auto& client : this->_clients) {
         uint8_t clientId = std::get<0>(client);
         for (ecs::Entity i = 0; i < registry->getMaxEntityId(); i++) {
-            if (!registry->hasComponent<ecs::NetworkIdComponent>(i)) {
-                continue;
-            }
-
-            auto netIdComp = registry->getComponent<ecs::NetworkIdComponent>(i);
-            uint32_t networkId = static_cast<uint32_t>(netIdComp->getNetworkId());
+            uint32_t entityId = static_cast<uint32_t>(i);
             std::vector<uint64_t> componentData;
             for (const auto& func : this->_convertFunctions) {
                 std::vector<uint64_t> compData = func(registry, i);
@@ -56,17 +50,17 @@ bool rserv::Server::gameStatePacket() {
             }
 
             EntitySnapshot snapshot = ComponentSerializer::createSnapshotFromComponents(
-                networkId, componentData
+                entityId, componentData
             );
 
             std::vector<uint64_t> delta = this->_deltaTracker.createEntityDelta(
-                clientId, networkId, snapshot);
+                clientId, entityId, snapshot);
             if (delta.empty()) {
                 continue;
             }
 
             std::vector<uint64_t> payload;
-            payload.push_back(networkId);
+            payload.push_back(entityId);
             payload.insert(payload.end(), componentData.begin(), componentData.end());
 
             std::vector<uint8_t> packet = this->_packet->pack(
@@ -109,14 +103,13 @@ bool rserv::Server::canStartPacket() {
             ecs::Entity playerEntity = prefabMgr->createEntityFromPrefab(
                 playerString,
                 registry,
-                ecs::EntityCreationContext::forServer(clientId)
+                ecs::EntityCreationContext::forServer()
             );
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER] Created player entity " + std::to_string(playerEntity) +
                 " for client " + std::to_string(static_cast<int>(clientId)),
                 debug::debugType::NETWORK, debug::debugLevel::INFO);
         }
-        prefabMgr->getEntityFactory()->setNextNetworkId(this->_clients.size() + 1);
 
         std::vector<uint64_t> payload;
         for (auto &client : this->_clients) {
@@ -156,11 +149,11 @@ bool rserv::Server::endGamePacket(bool isWin) {
 }
 
 std::vector<uint64_t> rserv::Server::spawnPacket(
-    size_t networkId,
+    size_t entityId,
     const std::string prefabName) {
     std::vector<uint64_t> payload;
 
-    payload.push_back(static_cast<uint64_t>(networkId));
+    payload.push_back(static_cast<uint64_t>(entityId));
     for (const auto &c : prefabName) {
         payload.push_back(static_cast<uint64_t>(c));
     }
@@ -170,10 +163,10 @@ std::vector<uint64_t> rserv::Server::spawnPacket(
     return payload;
 }
 
-std::vector<uint64_t> rserv::Server::deathPacket(size_t networkId) {
+std::vector<uint64_t> rserv::Server::deathPacket(size_t entityId) {
     std::vector<uint64_t> payload;
 
-    payload.push_back(static_cast<uint64_t>(networkId));
+    payload.push_back(static_cast<uint64_t>(entityId));
     return payload;
 }
 

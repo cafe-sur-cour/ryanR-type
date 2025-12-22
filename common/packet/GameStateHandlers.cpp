@@ -30,13 +30,13 @@ static void registerGameStatePackers(
     auto pushSerialized = [](std::vector<uint8_t> &dst, const std::vector<uint8_t> &bytes) {
         dst.insert(dst.end(), bytes.begin(), bytes.end());
     };
-    auto pushUChar = [ser, &pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
+    auto pushUChar = [ser, pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
         pushSerialized(dst, ser->serializeUChar(val));
     };
-    auto pushULong = [ser, &pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
+    auto pushULong = [ser, pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
         pushSerialized(dst, ser->serializeULong(val));
     };
-    auto pushUInt = [ser, &pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
+    auto pushUInt = [ser, pushSerialized](std::vector<uint8_t> &dst, uint64_t val) {
         pushSerialized(dst, ser->serializeUInt(val));
     };
 
@@ -235,19 +235,6 @@ static void registerGameStatePackers(
             pushUChar(packetData, payload.at(*i + 1));
             pushUChar(packetData, payload.at(*i + 2));
             *i += 3;
-        }
-        return packetData;
-    });
-
-    /* Network id component */
-    packet->registerGameStatePackFunction([pushUChar, pushULong](
-        std::vector<uint64_t> payload,
-        std::shared_ptr<unsigned int> i) -> std::vector<uint8_t> {
-        std::vector<uint8_t> packetData = {};
-        if (payload.at(*i) == NETWORK_ID) {
-            pushUChar(packetData, payload.at(*i));
-            pushULong(packetData, payload.at(*i + 1));
-            *i += 2;
         }
         return packetData;
     });
@@ -547,21 +534,6 @@ static void registerGameStateUnpackers(
             vals.push_back(static_cast<uint64_t>('\0'));
             packet->setPayload(vals);
             return j - i;
-        }
-        return 0;
-    });
-
-    /* Network id component */
-    packet->registerGameStateUnpackFunction([readULongAt, packet](
-        const std::vector<uint8_t> payload,
-        unsigned int i) -> unsigned int {
-        if (payload.at(i) == NETWORK_ID) {
-            auto vals = packet->getPayload();
-            vals.push_back(static_cast<uint64_t>(NETWORK_ID));
-            uint64_t networkId = readULongAt(payload, i + 1);
-            vals.push_back(networkId);
-            packet->setPayload(vals);
-            return 9;
         }
         return 0;
     });

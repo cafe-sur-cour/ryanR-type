@@ -121,8 +121,6 @@ class ClientNetwork {
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;
 
-        ecs::Entity findOrCreateNetworkEntity(std::shared_ptr<ecs::Registry> registry, size_t networkId);
-
         size_t parsePlayerTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseTransformComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseSpeedComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
@@ -146,7 +144,6 @@ class ClientNetwork {
         size_t parseShooterTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseProjectilePassThroughTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseProjectilePrefabComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseNetworkIdComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseGameZoneComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
 
         DLLoader<createNetworkLib_t> _networloader;
@@ -175,6 +172,8 @@ class ClientNetwork {
         std::queue<NetworkEvent> _eventQueue;
         std::mutex _queueMutex;
         std::condition_variable _queueCond;
+
+        std::unordered_map<size_t, ecs::Entity> _serverToLocalEntityMap;
 
         bool _shouldConnect;
 };

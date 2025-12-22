@@ -22,6 +22,7 @@
 #include "../components/tags/MobTag.hpp"
 #include "../components/tags/ObstacleTag.hpp"
 #include "../components/tags/GameZoneColliderTag.hpp"
+#include "../components/tags/ClientEffectTag.hpp"
 #include "../components/permanent/GameZoneComponent.hpp"
 #include "../components/tags/ProjectilePassThroughTag.hpp"
 #include "../components/permanent/ShootingStatsComponent.hpp"
@@ -106,6 +107,9 @@ void Parser::instanciateComponentDefinitions() {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
         {constants::GAMEZONECOLLIDERTAG, {std::type_index(typeid(ecs::GameZoneColliderTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::CLIENTEFFECTTAG, {std::type_index(typeid(ecs::ClientEffectTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}},
         {constants::PROJECTILEPASSTHROUGHTAG,
@@ -357,6 +361,11 @@ void Parser::instanciateComponentCreators() {
     registerComponent<ecs::GameZoneColliderTag>([]([[maybe_unused]] const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::GameZoneColliderTag>();
+    });
+
+    registerComponent<ecs::ClientEffectTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::ClientEffectTag>();
     });
 
     registerComponent<ecs::GameZoneComponent>([](const std::map<std::string,

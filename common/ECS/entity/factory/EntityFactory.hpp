@@ -15,7 +15,7 @@ namespace ecs {
 
 class EntityFactory : public IEntityFactory {
     public:
-        explicit EntityFactory(size_t startingNetworkId = 1);
+        explicit EntityFactory();
         ~EntityFactory() override;
 
         Entity createEntity(
@@ -23,12 +23,7 @@ class EntityFactory : public IEntityFactory {
             const EntityCreationContext& context = EntityCreationContext::forLocalClient()
         ) override;
 
-        size_t getNextNetworkId() const override;
-        void setNextNetworkId(size_t nextId) override;
-
     private:
-        size_t resolveNetworkId(const EntityCreationContext& context);
-        std::atomic<size_t> _nextNetworkId;
         std::atomic<size_t> _nextLocalId;
 };
 

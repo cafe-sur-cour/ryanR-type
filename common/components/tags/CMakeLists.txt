@@ -12,4 +12,5 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     AIMoverTag.hpp
     AIShooterTag.hpp
     PowerUpTag.hpp
+    ClientEffectTag.hpp
 )

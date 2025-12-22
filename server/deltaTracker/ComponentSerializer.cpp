@@ -85,10 +85,6 @@ std::vector<uint64_t> rserv::ComponentSerializer::serializeAIMovementPattern(
     return {patternId};
 }
 
-std::vector<uint64_t> rserv::ComponentSerializer::serializeNetworkId(uint32_t networkId) {
-    return {networkId};
-}
-
 std::vector<uint64_t> rserv::ComponentSerializer::serializeGameZone(uint32_t x, uint32_t y,
     uint32_t width, uint32_t height) {
     uint64_t pos = (static_cast<uint64_t>(x) << constants::BITMASK_INT) | y;
@@ -233,7 +229,7 @@ bool rserv::ComponentSerializer::isTagComponent(uint8_t component) {
 
 bool rserv::ComponentSerializer::isOneParamComponent(uint8_t component) {
     if (component == SPEED_COMP || component == DAMAGE || component == LIFETIME ||
-        component == SCORE || component == AI_MOVEMENT_PATTERN || component == NETWORK_ID) {
+        component == SCORE || component == AI_MOVEMENT_PATTERN) {
         return true;
     }
     return false;
