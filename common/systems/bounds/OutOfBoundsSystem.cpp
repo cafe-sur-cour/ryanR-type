@@ -14,6 +14,7 @@
 #include "../../components/tags/EnnemyProjectileTag.hpp"
 #include "../../components/tags/MobTag.hpp"
 #include "../../constants.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -73,4 +74,16 @@ void OutOfBoundsSystem::update(
     }
 }
 
+}  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::OutOfBoundsSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::OUT_OF_BOUNDS_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
 }

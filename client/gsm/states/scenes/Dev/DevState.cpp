@@ -106,8 +106,8 @@ void DevState::enter() {
     addSystem(ecs::systems::SHOOT_INPUT_SYSTEM);
     addSystem(std::make_shared<ecs::ShootingSystem>());
     addSystem(std::make_shared<ecs::LifetimeSystem>());
-    addSystem(std::make_shared<ecs::HealthSystem>());
-    addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
+    addSystem(ecs::systems::HEALTH_SYSTEM);
+    addSystem(ecs::systems::OUT_OF_BOUNDS_SYSTEM);
     addSystem(ecs::systems::DEATH_SYSTEM);
     addSystem(std::make_shared<ecs::ScoreSystem>());
     addSystem(ecs::systems::GAME_ZONE_VIEW_SYSTEM);

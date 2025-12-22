@@ -10,6 +10,7 @@
 #include "../../components/permanent/HealthComponent.hpp"
 #include "../../components/temporary/DamageIntentComponent.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -58,4 +59,16 @@ void HealthSystem::_handleHealthUpdates(std::shared_ptr<Registry> registry) {
     }
 }
 
+}  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::HealthSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::HEALTH_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
 }

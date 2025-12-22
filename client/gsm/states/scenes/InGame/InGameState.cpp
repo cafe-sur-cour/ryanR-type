@@ -84,7 +84,7 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(ecs::systems::SHOOT_INPUT_SYSTEM);
     addSystem(ecs::systems::SOUND_SYSTEM);
-    addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
+    addSystem(ecs::systems::OUT_OF_BOUNDS_SYSTEM);
     addSystem(ecs::systems::CLIENT_EFFECT_CLEANUP_SYSTEM);
     addSystem(ecs::systems::GAME_ZONE_VIEW_SYSTEM);
     addSystem(ecs::systems::MUSIC_SYSTEM);

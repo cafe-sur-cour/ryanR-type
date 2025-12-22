@@ -63,8 +63,8 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::MovementSystem>());
     addSystem(std::make_shared<ecs::ShootingSystem>());
     addSystem(std::make_shared<ecs::LifetimeSystem>());
-    addSystem(std::make_shared<ecs::HealthSystem>());
-    addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
+    addSystem(ecs::systems::HEALTH_SYSTEM);
+    addSystem(ecs::systems::OUT_OF_BOUNDS_SYSTEM);
     addSystem(ecs::systems::DEATH_SYSTEM);
     addSystem(std::make_shared<ecs::ScoreSystem>());
     addSystem(std::make_shared<ecs::TriggerSystem>());
