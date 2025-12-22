@@ -10,7 +10,6 @@
 #include <unordered_map>
 
 #include "Registry.hpp"
-#include "../../../components/permanent/NetworkIdComponent.hpp"
 
 namespace ecs {
 
@@ -22,6 +21,7 @@ Registry::~Registry() {
 }
 
 Entity Registry::getMaxEntityId() const {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     Entity maxId = 0;
     for (const auto& pair : _components) {
         Entity componentMaxId = pair.second->getMaxEntityId();
@@ -33,10 +33,12 @@ Entity Registry::getMaxEntityId() const {
 }
 
 Entity Registry::createEntity() {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     return _nextEntityId++;
 }
 
 void Registry::destroyEntity(Entity entityId) {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     if (_onEntityDestroyed) {
         _onEntityDestroyed(entityId);
     }
@@ -45,18 +47,8 @@ void Registry::destroyEntity(Entity entityId) {
     }
 }
 
-Entity Registry::getEntityByNetworkId(size_t networkId) {
-    auto view = this->view<ecs::NetworkIdComponent>();
-    for (auto entity : view) {
-        auto netIdComp = getComponent<ecs::NetworkIdComponent>(entity);
-        if (netIdComp && netIdComp->getNetworkId() == networkId) {
-            return entity;
-        }
-    }
-    return 0;
-}
-
 void Registry::setOnEntityDestroyed(std::function<void(Entity)> callback) {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     _onEntityDestroyed = callback;
 }
 

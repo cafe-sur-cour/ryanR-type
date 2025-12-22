@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <string>
 #include <functional>
+#include <mutex>
 
 namespace ecs {
 
@@ -55,14 +56,13 @@ class Registry : public std::enable_shared_from_this<Registry> {
         Entity createEntity();
         void destroyEntity(Entity entityId);
 
-        Entity getEntityByNetworkId(size_t networkId);
-
         void setOnEntityDestroyed(std::function<void(Entity)> callback);
     protected:
     private:
         Entity _nextEntityId;
         std::unordered_map<std::string, std::shared_ptr<IComponentArray>> _components;
         std::function<void(Entity)> _onEntityDestroyed;
+        mutable std::recursive_mutex _mutex;
 };
 
 } // namespace ecs
