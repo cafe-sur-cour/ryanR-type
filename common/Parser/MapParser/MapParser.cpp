@@ -147,10 +147,45 @@ void MapParser::createGameEndEntity(float mapLength) {
 }
 
 void MapParser::parsePowerUps(const nlohmann::json &powerUps) {
-    // TODO(anyone): create configs for power-up entities and parse them
     if (!powerUps.is_array()) {
         std::cerr << "Error: powerUps is not a valid array" << std::endl;
         return;
+    }
+
+    for (size_t index = 0; index < powerUps.size(); ++index) {
+        const auto &powerUp = powerUps[index];
+
+        if (!powerUp.contains(constants::NAME_FIELD) ||
+            !powerUp.contains(constants::POSITION_FIELD)) {
+            std::cerr << "Warning: PowerUp " << index <<
+                ": missing required fields (name/position), skipping" << std::endl;
+            continue;
+        }
+
+        const std::string &prefabName = powerUp[constants::NAME_FIELD].get<std::string>();
+        const auto &position = powerUp[constants::POSITION_FIELD];
+
+        if (!position.contains(constants::POSX_FIELD) ||
+            !position.contains(constants::POSY_FIELD)) {
+            std::cerr << "Warning: PowerUp " << index <<
+                ": position missing posX or posY, skipping" << std::endl;
+            continue;
+        }
+
+        float posX = position[constants::POSX_FIELD].get<float>();
+        float posY = position[constants::POSY_FIELD].get<float>();
+
+        if (_prefabManager->hasPrefab(prefabName)) {
+            try {
+                createEntityFromPrefab(prefabName, posX, posY);
+            } catch (const std::exception& e) {
+                std::cerr << "Error creating power-up entity '"
+                << prefabName << "': " << e.what() << std::endl;
+            }
+        } else {
+            std::cerr << "Warning: Power-up prefab '"
+            << prefabName << "' not found" << std::endl;
+        }
     }
 }
 

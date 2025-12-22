@@ -21,6 +21,7 @@
 #include "../../components/tags/ShooterTag.hpp"
 #include "../../components/tags/ClientEffectTag.hpp"
 #include "../../../client/components/tags/BackGroundMusicTag.hpp"
+#include "../../components/tags/PowerUpTag.hpp"
 #include "../../constants.hpp"
 
 const TagRegistry& TagRegistry::getInstance() {
@@ -70,4 +71,5 @@ void TagRegistry::initializeTags() {
     registerTag<ecs::ShooterTag>(constants::SHOOTERTAG);
     registerTag<ecs::ClientEffectTag>(constants::CLIENTEFFECTTAG);
     registerTag<ecs::BackGroundMusicTag>(constants::BACKGROUNDMUSICTAG);
+    registerTag<ecs::PowerUpTag>(constants::POWERUP_TAG);
 }
