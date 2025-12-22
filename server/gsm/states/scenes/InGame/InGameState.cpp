@@ -54,13 +54,13 @@ void InGameState::enter() {
         "configs/rules/collision_rules.json"
     );
     *(_resourceManager->get<gsm::GameStateType>()) = gsm::IN_GAME;
-    ecs::CollisionRules::initWithData(collisionData);
+    _resourceManager->add(std::make_shared<ecs::CollisionRules>(collisionData));
     addSystem(std::make_shared<ecs::ServerMovementInputSystem>());
     addSystem(std::make_shared<ecs::ServerShootInputSystem>());
     addSystem(ecs::systems::AI_MOVEMENT_SYSTEM);
     addSystem(ecs::systems::AI_SHOOTING_SYSTEM);
-    addSystem(std::make_shared<ecs::InputToVelocitySystem>());
-    addSystem(std::make_shared<ecs::MovementSystem>());
+    addSystem(ecs::systems::INPUT_TO_VELOCITY_SYSTEM);
+    addSystem(ecs::systems::MOVEMENT_SYSTEM);
     addSystem(ecs::systems::SHOOTING_SYSTEM);
     addSystem(ecs::systems::LIFETIME_SYSTEM);
     addSystem(ecs::systems::HEALTH_SYSTEM);

@@ -20,6 +20,7 @@ class TriggerSystemTests : public ::testing::Test {
     protected:
         void SetUp() override {
             registry = std::make_shared<Registry>();
+            resourceManager = std::make_shared<ResourceManager>();
             triggerSystem = std::make_shared<TriggerSystem>();
 
             // Initialize collision rules with rules allowing trigger collisions for tests
@@ -31,15 +32,18 @@ class TriggerSystemTests : public ::testing::Test {
             allowAllTrigger.groupA = {};
             allowAllTrigger.groupB = {};
             testData.triggerAllowRules->push_back(allowAllTrigger);
-            CollisionRules::initWithData(testData);
+            resourceManager->add(std::make_shared<CollisionRules>(testData));
+            resourceManager->add(std::make_shared<TagRegistry>());
         }
 
         void TearDown() override {
             registry.reset();
+            resourceManager.reset();
             triggerSystem.reset();
         }
 
         std::shared_ptr<Registry> registry;
+        std::shared_ptr<ResourceManager> resourceManager;
         std::shared_ptr<TriggerSystem> triggerSystem;
 };
 
@@ -59,7 +63,7 @@ TEST_F(TriggerSystemTests, NoTriggerEntities_NoTriggerIntents) {
     registry->addComponent<ColliderComponent>(entity2, std::make_shared<ColliderComponent>(
         math::Vector2f(0, 0), math::Vector2f(10, 10), CollisionType::Solid));
 
-    triggerSystem->update(nullptr, registry, 0.016f);
+    triggerSystem->update(resourceManager, registry, 0.016f);
 
     // Check that no TriggerIntentComponent was added
     auto triggerView = registry->view<TriggerIntentComponent>();
@@ -78,7 +82,7 @@ TEST_F(TriggerSystemTests, TriggerEntityWithoutCollision_NoTriggerIntent) {
     registry->addComponent<ColliderComponent>(triggerEntity, std::make_shared<ColliderComponent>(
         math::Vector2f(0, 0), math::Vector2f(10, 10), CollisionType::Trigger));
 
-    triggerSystem->update(nullptr, registry, 0.016f);
+    triggerSystem->update(resourceManager, registry, 0.016f);
 
     // Check that no TriggerIntentComponent was added
     auto triggerView = registry->view<TriggerIntentComponent>();
@@ -105,7 +109,7 @@ TEST_F(TriggerSystemTests, TriggerEntityWithNonCollidingEntity_NoTriggerIntent) 
     registry->addComponent<ColliderComponent>(otherEntity, std::make_shared<ColliderComponent>(
         math::Vector2f(0, 0), math::Vector2f(10, 10), CollisionType::Solid));
 
-    triggerSystem->update(nullptr, registry, 0.016f);
+    triggerSystem->update(resourceManager, registry, 0.016f);
 
     // Check that no TriggerIntentComponent was added
     auto triggerView = registry->view<TriggerIntentComponent>();
@@ -132,7 +136,7 @@ TEST_F(TriggerSystemTests, TriggerEntityWithCollidingEntity_AddsTriggerIntent) {
     registry->addComponent<ColliderComponent>(otherEntity, std::make_shared<ColliderComponent>(
         math::Vector2f(0, 0), math::Vector2f(10, 10), CollisionType::Solid));
 
-    triggerSystem->update(nullptr, registry, 0.016f);
+    triggerSystem->update(resourceManager, registry, 0.016f);
 
     // Check that TriggerIntentComponent was added to the trigger entity
     auto triggerIntent = registry->getComponent<TriggerIntentComponent>(triggerEntity);
@@ -162,7 +166,7 @@ TEST_F(TriggerSystemTests, MultipleCollisions_AddsMultipleTriggerIntents) {
     registry->addComponent<ColliderComponent>(otherEntity2, std::make_shared<ColliderComponent>(
         math::Vector2f(0, 0), math::Vector2f(10, 10), CollisionType::Solid));
 
-    triggerSystem->update(nullptr, registry, 0.016f);
+    triggerSystem->update(resourceManager, registry, 0.016f);
 
     // Check that TriggerIntentComponent was added to the trigger entity
     auto triggerIntent = registry->getComponent<TriggerIntentComponent>(triggerEntity);
@@ -186,7 +190,7 @@ TEST_F(TriggerSystemTests, TriggerDoesNotTriggerOnOtherTriggers) {
     registry->addComponent<ColliderComponent>(triggerEntity2, std::make_shared<ColliderComponent>(
         math::Vector2f(0, 0), math::Vector2f(10, 10), CollisionType::Trigger));
 
-    triggerSystem->update(nullptr, registry, 0.016f);
+    triggerSystem->update(resourceManager, registry, 0.016f);
 
     // Check that TriggerIntentComponent was added (triggers DO trigger on other triggers)
     auto triggerIntent1 = registry->getComponent<TriggerIntentComponent>(triggerEntity1);
@@ -207,7 +211,7 @@ TEST_F(TriggerSystemTests, EntityWithoutTransform_Ignored) {
     registry->addComponent<ColliderComponent>(otherEntity, std::make_shared<ColliderComponent>(
         math::Vector2f(0, 0), math::Vector2f(10, 10), CollisionType::Solid));
 
-    triggerSystem->update(nullptr, registry, 0.016f);
+    triggerSystem->update(resourceManager, registry, 0.016f);
 
     // Check that no TriggerIntentComponent was added
     auto triggerView = registry->view<TriggerIntentComponent>();
@@ -230,7 +234,7 @@ TEST_F(TriggerSystemTests, EntityWithoutCollider_Ignored) {
     registry->addComponent<ColliderComponent>(otherEntity, std::make_shared<ColliderComponent>(
         math::Vector2f(0, 0), math::Vector2f(10, 10), CollisionType::Solid));
 
-    triggerSystem->update(nullptr, registry, 0.016f);
+    triggerSystem->update(resourceManager, registry, 0.016f);
 
     // Check that no TriggerIntentComponent was added
     auto triggerView = registry->view<TriggerIntentComponent>();
@@ -257,7 +261,7 @@ TEST_F(TriggerSystemTests, ScaledColliders_CollisionDetection) {
     registry->addComponent<ColliderComponent>(otherEntity, std::make_shared<ColliderComponent>(
         math::Vector2f(0, 0), math::Vector2f(10, 10), CollisionType::Solid));
 
-    triggerSystem->update(nullptr, registry, 0.016f);
+    triggerSystem->update(resourceManager, registry, 0.016f);
 
     // Check that TriggerIntentComponent was added (collision should be detected with scaled collider)
     auto triggerIntent = registry->getComponent<TriggerIntentComponent>(triggerEntity);

@@ -22,6 +22,8 @@
 #include "../../components/tags/GameZoneColliderTag.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../CollisionRules/CollisionRules.hpp"
+#include "../interactions/TagRegistry.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -78,7 +80,6 @@ void MovementSystem::update(
     std::shared_ptr<Registry> registry,
     float deltaTime
 ) {
-    (void)resourceManager;
 
     buildSpatialGrid(registry);
 
@@ -101,16 +102,17 @@ void MovementSystem::update(
         }
 
         math::Vector2f finalPos = calculateSmoothSlidingPosition(
-            registry, entityId, currentPos, desiredPos);
+            resourceManager, registry, entityId, currentPos, desiredPos);
         transform->setPosition(finalPos);
 
         if (hasPushCollider) {
-            handlePushCollision(registry, entityId, finalPos, deltaTime);
+            handlePushCollision(resourceManager, registry, entityId, finalPos, deltaTime);
         }
     }
 }
 
 bool MovementSystem::checkCollisionWithBoundaries(
+    std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<Registry> registry,
     size_t entityId,
     math::Vector2f newPos) {
@@ -142,7 +144,7 @@ bool MovementSystem::checkCollisionWithBoundaries(
                     otherCollider->getType() != CollisionType::Push) continue;
 
                 if (!shouldCollide(
-                    registry, entityId, *movingCollider, boundaryEntityId)) {
+                    resourceManager, registry, entityId, *movingCollider, boundaryEntityId)) {
                     continue;
                 }
 
@@ -160,11 +162,12 @@ bool MovementSystem::checkCollisionWithBoundaries(
 }
 
 bool MovementSystem::checkCollision(
+    std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<Registry> registry,
     size_t entityId,
     math::Vector2f newPos) {
 
-    if (!checkCollisionWithBoundaries(registry, entityId, newPos)) {
+    if (!checkCollisionWithBoundaries(resourceManager, registry, entityId, newPos)) {
         return false;
     }
 
@@ -196,7 +199,7 @@ bool MovementSystem::checkCollision(
                     otherCollider->getType() != CollisionType::Push) continue;
 
                 if (!shouldCollide(
-                    registry, entityId, *movingCollider, otherEntityId)) {
+                    resourceManager, registry, entityId, *movingCollider, otherEntityId)) {
                     continue;
                 }
 
@@ -214,12 +217,13 @@ bool MovementSystem::checkCollision(
 }
 
 math::Vector2f MovementSystem::calculateSmoothMovement(
+    std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<Registry> registry,
     size_t entityId,
     math::Vector2f startPos,
     math::Vector2f desiredPos) {
 
-    if (checkCollision(registry, entityId, desiredPos)) {
+    if (checkCollision(resourceManager, registry, entityId, desiredPos)) {
         return desiredPos;
     }
 
@@ -242,7 +246,7 @@ math::Vector2f MovementSystem::calculateSmoothMovement(
         float testDist = (minDist + maxDist) / 2.0f;
         math::Vector2f testPos = startPos + direction * testDist;
 
-        if (checkCollision(registry, entityId, testPos)) {
+        if (checkCollision(resourceManager, registry, entityId, testPos)) {
             bestDist = testDist;
             minDist = testDist;
         } else {
@@ -254,6 +258,7 @@ math::Vector2f MovementSystem::calculateSmoothMovement(
 }
 
 math::Vector2f MovementSystem::calculateSlidingMovement(
+    std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<Registry> registry,
     size_t entityId,
     math::Vector2f basePos,
@@ -265,7 +270,7 @@ math::Vector2f MovementSystem::calculateSlidingMovement(
     if (std::abs(remainingMovement.getX()) > constants::EPS) {
         math::Vector2f horizontalSlide =
             basePos + math::Vector2f(remainingMovement.getX(), 0.0f);
-        if (checkCollision(registry, entityId, horizontalSlide)) {
+        if (checkCollision(resourceManager, registry, entityId, horizontalSlide)) {
             slidePos.setX(horizontalSlide.getX());
         }
     }
@@ -273,7 +278,7 @@ math::Vector2f MovementSystem::calculateSlidingMovement(
     if (std::abs(remainingMovement.getY()) > constants::EPS) {
         math::Vector2f verticalSlide =
             basePos + math::Vector2f(0.0f, remainingMovement.getY());
-        if (checkCollision(registry, entityId, verticalSlide)) {
+        if (checkCollision(resourceManager, registry, entityId, verticalSlide)) {
             slidePos.setY(verticalSlide.getY());
         }
     }
@@ -282,18 +287,20 @@ math::Vector2f MovementSystem::calculateSlidingMovement(
 }
 
 math::Vector2f MovementSystem::calculateSmoothSlidingPosition(
+    std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<Registry> registry,
     size_t entityId,
     math::Vector2f startPos,
     math::Vector2f desiredPos) {
 
     math::Vector2f smoothPos =
-        calculateSmoothMovement(registry, entityId, startPos, desiredPos);
+        calculateSmoothMovement(resourceManager, registry, entityId, startPos, desiredPos);
 
-    return calculateSlidingMovement(registry, entityId, smoothPos, desiredPos);
+    return calculateSlidingMovement(resourceManager, registry, entityId, smoothPos, desiredPos);
 }
 
 void MovementSystem::handlePushCollision(
+    std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<Registry> registry,
     size_t entityId,
     math::Vector2f finalPos,
@@ -326,7 +333,7 @@ void MovementSystem::handlePushCollision(
                 if (otherCollider->getType() == CollisionType::None) continue;
 
                 if (!shouldCollide(
-                    registry, entityId, *pushCollider, otherEntityId)) {
+                    resourceManager, registry, entityId, *pushCollider, otherEntityId)) {
                     continue;
                 }
 
@@ -341,7 +348,7 @@ void MovementSystem::handlePushCollision(
                     math::Vector2f pushAmount = pushVelocity * deltaTime;
                     math::Vector2f newOtherPos = currentOtherPos + pushAmount;
 
-                    if (checkCollision(registry, otherEntityId, newOtherPos)) {
+                    if (checkCollision(resourceManager, registry, otherEntityId, newOtherPos)) {
                         otherTransform->setPosition(newOtherPos);
                     } else {
                         registry->addComponent<DeathIntentComponent>(
@@ -354,17 +361,39 @@ void MovementSystem::handlePushCollision(
 }
 
 bool MovementSystem::shouldCollide(
+    std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<Registry> registry,
     size_t entityA,
     const ColliderComponent& colliderA,
     size_t entityB
 ) {
-    const TagRegistry& tagRegistry = TagRegistry::getInstance();
-    const CollisionRules& collisionRules = CollisionRules::getInstance();
-    std::vector<std::string> tagsA = tagRegistry.getTags(registry, entityA);
-    std::vector<std::string> tagsB = tagRegistry.getTags(registry, entityB);
+    auto tagRegistry = resourceManager->get<TagRegistry>();
+    auto collisionRules = resourceManager->get<CollisionRules>();
+    std::vector<std::string> tagsA = tagRegistry->getTags(registry, entityA);
+    std::vector<std::string> tagsB = tagRegistry->getTags(registry, entityB);
 
-    return collisionRules.canCollide(colliderA.getType(), tagsA, tagsB);
+    bool result = collisionRules->canCollide(colliderA.getType(), tagsA, tagsB);
+
+    // Debug print
+    std::cout << "shouldCollide: entityA=" << entityA << " tagsA=[";
+    for (const auto& tag : tagsA) std::cout << tag << ",";
+    std::cout << "] entityB=" << entityB << " tagsB=[";
+    for (const auto& tag : tagsB) std::cout << tag << ",";
+    std::cout << "] colliderType=" << static_cast<int>(colliderA.getType()) << " result=" << result << std::endl;
+
+    return result;
 }
 
+}
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::MovementSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::MOVEMENT_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
 }

@@ -25,8 +25,9 @@ void InteractionSystem::update(
     std::shared_ptr<Registry> registry,
     float deltaTime
 ) {
-    (void)resourceManager;
     (void)deltaTime;
+
+    auto tagRegistry = resourceManager->get<TagRegistry>();
 
     auto triggerIntentView = registry->view<TriggerIntentComponent>();
     for (auto entity : triggerIntentView) {
@@ -48,7 +49,7 @@ void InteractionSystem::update(
         for (const auto& mapping : interactionConfig->getMappings()) {
             bool hasRequiredTag = false;
             for (const auto& targetTag : mapping.targetTags) {
-                if (TagRegistry::getInstance().hasTag(registry, otherEntity, targetTag)) {
+                if (tagRegistry->hasTag(registry, otherEntity, targetTag)) {
                     hasRequiredTag = true;
                     break;
                 }

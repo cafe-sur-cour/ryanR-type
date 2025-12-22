@@ -36,41 +36,48 @@ class MovementSystem : public ASystem {
         void buildSpatialGrid(std::shared_ptr<Registry> registry);
 
         bool checkCollision(
+            std::shared_ptr<ResourceManager> resourceManager,
             std::shared_ptr<Registry> registry,
             size_t entityId,
             math::Vector2f newPos
         );
         math::Vector2f calculateSmoothMovement(
+            std::shared_ptr<ResourceManager> resourceManager,
             std::shared_ptr<Registry> registry,
             size_t entityId,
             math::Vector2f startPos,
             math::Vector2f desiredPos
         );
         math::Vector2f calculateSlidingMovement(
+            std::shared_ptr<ResourceManager> resourceManager,
             std::shared_ptr<Registry> registry,
             size_t entityId,
             math::Vector2f basePos,
             math::Vector2f desiredPos
         );
         math::Vector2f calculateSmoothSlidingPosition(
+            std::shared_ptr<ResourceManager> resourceManager,
             std::shared_ptr<Registry> registry,
             size_t entityId,
             math::Vector2f startPos,
             math::Vector2f desiredPos
         );
         void handlePushCollision(
+            std::shared_ptr<ResourceManager> resourceManager,
             std::shared_ptr<Registry> registry,
             size_t entityId,
             math::Vector2f finalPos,
             float deltaTime
         );
         bool shouldCollide(
+            std::shared_ptr<ResourceManager> resourceManager,
             std::shared_ptr<Registry> registry,
             size_t entityA,
             const ColliderComponent& colliderA,
             size_t entityB
         );
         bool checkCollisionWithBoundaries(
+            std::shared_ptr<ResourceManager> resourceManager,
             std::shared_ptr<Registry> registry,
             size_t entityId,
             math::Vector2f newPos

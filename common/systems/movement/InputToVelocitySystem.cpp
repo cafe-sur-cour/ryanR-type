@@ -11,6 +11,7 @@
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/SpeedComponent.hpp"
 #include "../../constants.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -50,3 +51,15 @@ void InputToVelocitySystem::update(
 }
 
 }  // namespace ecs
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::InputToVelocitySystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::INPUT_TO_VELOCITY_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
+}

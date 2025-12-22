@@ -78,7 +78,7 @@ void DevState::enter() {
 
     auto collisionData =
         ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
-    ecs::CollisionRules::initWithData(collisionData);
+    _resourceManager->add(std::make_shared<ecs::CollisionRules>(collisionData));
     auto existingParser = _resourceManager->get<Parser>();
     if (existingParser) {
         _parser = std::make_shared<Parser>(_prefabManager, ParsingType::CLIENT, _registry);
@@ -98,8 +98,8 @@ void DevState::enter() {
     addSystem(ecs::systems::NETWORK_INTERPOLATION_SYSTEM);
     addSystem(ecs::systems::AI_MOVEMENT_SYSTEM);
     addSystem(ecs::systems::AI_SHOOTING_SYSTEM);
-    addSystem(std::make_shared<ecs::InputToVelocitySystem>());
-    addSystem(std::make_shared<ecs::MovementSystem>());
+    addSystem(ecs::systems::INPUT_TO_VELOCITY_SYSTEM);
+    addSystem(ecs::systems::MOVEMENT_SYSTEM);
     addSystem(ecs::systems::MOVEMENT_INPUT_SYSTEM);
     addSystem(std::make_shared<ecs::InteractionSystem>());
     addSystem(ecs::systems::SOUND_SYSTEM);

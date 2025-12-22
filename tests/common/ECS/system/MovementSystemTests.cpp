@@ -44,7 +44,7 @@ protected:
         allowAllSolid.groupA = {};
         allowAllSolid.groupB = {};
         testData.solidAllowRules->push_back(allowAllSolid);
-        CollisionRules::initWithData(testData);
+        resourceManager->add(std::make_shared<CollisionRules>(testData));
     }
 
     std::shared_ptr<Registry> registry;
