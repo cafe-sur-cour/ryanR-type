@@ -8,7 +8,6 @@
 #include "ParallaxRenderingSystem.hpp"
 #include <memory>
 #include <cmath>
-#include "../../../common/systems/SystemNames.hpp"
 #include <iostream>
 #include <algorithm>
 #include "../../components/rendering/ParallaxComponent.hpp"
@@ -17,6 +16,7 @@
 #include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../libs/Multimedia/IWindow.hpp"
 #include "../../../common/constants.hpp"
+#include "../../../common/systems/SystemNames.hpp"
 
 namespace ecs {
 
