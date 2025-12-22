@@ -35,6 +35,10 @@ const std::string AI_MOVEMENT_SYSTEM = "AIMovementSystem";
 const std::string AI_SHOOTING_SYSTEM = "AIShootingSystem";
 const std::string HEALTH_SYSTEM = "HealthSystem";
 const std::string OUT_OF_BOUNDS_SYSTEM = "OutOfBoundsSystem";
+const std::string SPAWN_SYSTEM = "SpawnSystem";
+const std::string SHOOTING_SYSTEM = "ShootingSystem";
+const std::string SCORE_SYSTEM = "ScoreSystem";
+const std::string LIFETIME_SYSTEM = "LifetimeSystem";
 
 }  // namespace ecs::systems
 

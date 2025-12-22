@@ -12,6 +12,7 @@
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/GameZoneComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -66,4 +67,16 @@ void SpawnSystem::update(
     }
 }
 
+}
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::SpawnSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::SPAWN_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
 }

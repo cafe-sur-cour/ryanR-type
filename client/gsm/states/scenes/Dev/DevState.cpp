@@ -104,12 +104,12 @@ void DevState::enter() {
     addSystem(std::make_shared<ecs::InteractionSystem>());
     addSystem(ecs::systems::SOUND_SYSTEM);
     addSystem(ecs::systems::SHOOT_INPUT_SYSTEM);
-    addSystem(std::make_shared<ecs::ShootingSystem>());
-    addSystem(std::make_shared<ecs::LifetimeSystem>());
+    addSystem(ecs::systems::SHOOTING_SYSTEM);
+    addSystem(ecs::systems::LIFETIME_SYSTEM);
     addSystem(ecs::systems::HEALTH_SYSTEM);
     addSystem(ecs::systems::OUT_OF_BOUNDS_SYSTEM);
     addSystem(ecs::systems::DEATH_SYSTEM);
-    addSystem(std::make_shared<ecs::ScoreSystem>());
+    addSystem(ecs::systems::SCORE_SYSTEM);
     addSystem(ecs::systems::GAME_ZONE_VIEW_SYSTEM);
     addSystem(ecs::systems::MUSIC_SYSTEM);
     addSystem(std::make_shared<ecs::TriggerSystem>());
@@ -121,7 +121,7 @@ void DevState::enter() {
     addSystem(ecs::systems::HITBOX_RENDERING_SYSTEM);
     addSystem(ecs::systems::HEALTH_BAR_RENDERING_SYSTEM);
     addSystem(ecs::systems::TEXT_RENDERING_SYSTEM);
-    addSystem(std::make_shared<ecs::SpawnSystem>());
+    addSystem(ecs::systems::SPAWN_SYSTEM);
 
     auto audio = _resourceManager->get<gfx::IAudio>();
 

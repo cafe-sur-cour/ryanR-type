@@ -9,6 +9,7 @@
 #include <memory>
 #include "../../components/permanent/LifetimeComponent.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
+#include "../SystemNames.hpp"
 
 namespace ecs {
 
@@ -37,4 +38,16 @@ void LifetimeSystem::update(
     }
 }
 
+}
+
+extern "C" ecs::ISystem* createSystem() {
+    return new ecs::LifetimeSystem();
+}
+
+extern "C" const char* getSystemName() {
+    return ecs::systems::LIFETIME_SYSTEM.c_str();
+}
+
+extern "C" void destroySystem(ecs::ISystem* system) {
+    delete system;
 }
