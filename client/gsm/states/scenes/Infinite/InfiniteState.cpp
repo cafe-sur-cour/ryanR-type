@@ -168,7 +168,6 @@ void InfiniteState::update(float deltaTime) {
 
     _resourceManager->get<ecs::ISystemManager>()->updateAllSystems
         (_resourceManager, _registry, deltaTime);
-
 }
 
 void InfiniteState::exit() {
