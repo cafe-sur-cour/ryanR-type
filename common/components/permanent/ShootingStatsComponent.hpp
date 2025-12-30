@@ -46,6 +46,8 @@ class ShootingStatsComponent : public AComponent {
 
         bool canShoot() const { return _cooldownTimer <= 0.0f; };
 
+        bool isShooting() const { return _cooldownTimer > 0.0f; };
+
         void updateCooldown(float deltaTime) {
             if (_cooldownTimer > 0.0f) {
                 _cooldownTimer -= deltaTime;

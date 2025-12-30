@@ -1,0 +1,65 @@
+{
+    "name": "background1",
+    "components": {
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "ParallaxComponent": {
+            "target": "client",
+            "baseScrollSpeed": 50.0,
+            "direction": { "x": -1.0, "y": 0.0 },
+            "layers": [
+                {
+                    "name": "background",
+                    "filePath": "assets/sprites/backgrounds/lv2-2_backdrop_dark_bg_loop.png",
+                    "speedMultiplier": 0.1,
+                    "scale": { "x": 1.0, "y": 1.0 },
+                    "scaleMode": "FIT_SCREEN",
+                    "sourceSize": { "x": 1970.0, "y": 930.0 },
+                    "repeat": true,
+                    "zIndex": 0
+                },
+
+
+
+                {
+                    "name": "backgroundStars",
+                    "filePath": "assets/sprites/backgrounds/backgroundStars.png",
+                    "speedMultiplier": 0.2,
+                    "scale": { "x": 1.0, "y": 1.0 },
+                    "scaleMode": "FIT_SCREEN",
+                    "sourceSize": { "x": 5760.0, "y": 1080.0 },
+                    "repeat": true,
+                    "zIndex": 1
+                },
+
+
+                {
+                    "name": "stars",
+                    "filePath": "assets/sprites/backgrounds/starBackgroundLoop.png",
+                    "speedMultiplier": 0.4,
+                    "scale": { "x": 1.0, "y": 1.0 },
+                    "scaleMode": "FIT_SCREEN",
+                    "sourceSize": { "x": 7000.0, "y": 1080.0 },
+                    "repeat": true,
+                    "zIndex": 2
+                },
+
+
+                {
+                    "name": "clouds",
+                    "filePath": "assets/sprites/backgrounds/cloudsbackgroundLoop.png.png",
+                    "speedMultiplier": 0.6,
+                    "scale": { "x": 1.0, "y": 1.0 },
+                    "scaleMode": "FIT_SCREEN",
+                    "sourceSize": { "x": 5120.0, "y": 1080.0 },
+                    "repeat": true,
+                    "zIndex": 3
+                }
+            ]
+        }
+    }
+}

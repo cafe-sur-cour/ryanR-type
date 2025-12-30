@@ -136,6 +136,14 @@ void DevState::enter() {
     _registry->addComponent<ecs::HitboxRenderComponent>(
         playerEntity,
         std::make_shared<ecs::HitboxRenderComponent>());
+}
+
+void DevState::update(float deltaTime) {
+    auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
+    if (eventResult == gfx::EventType::CLOSE) {
+        _resourceManager->get<gfx::IWindow>()->closeWindow();
+        return;
+    }
 
     auto colliderView = _registry->view<ecs::ColliderComponent>();
     for (auto entityId : colliderView) {
@@ -149,14 +157,6 @@ void DevState::enter() {
         _registry->addComponent<ecs::HitboxRenderComponent>(
             entityId,
             std::make_shared<ecs::HitboxRenderComponent>(color));
-    }
-}
-
-void DevState::update(float deltaTime) {
-    auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
-    if (eventResult == gfx::EventType::CLOSE) {
-        _resourceManager->get<gfx::IWindow>()->closeWindow();
-        return;
     }
 
     if (_resourceManager->has<ecs::IInputProvider>()) {

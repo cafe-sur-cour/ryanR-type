@@ -69,6 +69,7 @@ namespace constants {
     const std::string HEALTHCOMPONENT = "HealthComponent";
     const std::string INTERACTIONCONFIGCOMPONENT = "InteractionConfigComponent";
     const std::string AIMOVEMENTPATTERNCOMPONENT = "AIMovementPatternComponent";
+    const std::string PREFABAFTERDEATHCOMPONENT = "PrefabAfterDeathComponent";
     const std::string SCORE_FIELD = "score";
     const std::string SCOREVALUE_FIELD = "scoreValue";
     const std::string DAMAGE_FIELD = "damage";
@@ -166,6 +167,8 @@ namespace constants {
     const std::string STOPPED_FIELD = "STOPPED";
     const std::string CHANGING_FIELD = "CHANGING";
 
+    const std::string IS_ANIMATION_FINISHED = "isAnimationFinished";
+    const std::string IS_SHOOTING_CONDITION = "isShooting";
     const float MAX_HEIGHT = 1080.0f;
     const float MAX_WIDTH = 1920.0f;
     const float GAME_ZONE_BOUNDARY_THICKNESS = 100.0f;
