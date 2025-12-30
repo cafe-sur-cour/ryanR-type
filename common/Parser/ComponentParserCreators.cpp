@@ -39,6 +39,7 @@
 #include "../../client/components/rendering/MusicComponent.hpp"
 #include "../../client/components/rendering/ParallaxComponent.hpp"
 #include "../../client/components/temporary/SoundIntentComponent.hpp"
+#include "../../client/components/rendering/PrefabAfterDeath.hpp"
 #include "../components/permanent/InteractionConfigComponent.hpp"
 #include "../components/permanent/HealthComponent.hpp"
 #include "../ECS/entity/Entity.hpp"
@@ -232,6 +233,11 @@ void Parser::instanciateComponentDefinitions() {
             {constants::VERTICALDEADZONE_FIELD, FieldType::FLOAT,
                 true, std::make_shared<FieldValue>(constants::DEFAULT_VERTICAL_DEADZONE)},
         }}},
+        {constants::PREFABAFTERDEATHCOMPONENT, {
+            std::type_index(typeid(ecs::PrefabAfterDeath)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::PREFABNAME_FIELD, FieldType::STRING}
+        }}}
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
         std::pair<std::type_index, std::vector<Field>>>>(std::move(componentDefinitions));
@@ -637,6 +643,11 @@ void Parser::instanciateComponentCreators() {
         component->setVerticalDeadzone(verticalDeadzone);
         component->setTimer(0.0f);
         return component;
+    });
+    registerComponent<ecs::PrefabAfterDeath>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        auto prefabName = std::get<std::string>(*fields.at(constants::PREFABNAME_FIELD));
+        return std::make_shared<ecs::PrefabAfterDeath>(prefabName);
     });
 }
 

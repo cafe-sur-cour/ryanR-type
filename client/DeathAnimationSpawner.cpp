@@ -17,26 +17,39 @@
 #include "../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../common/ECS/entity/EntityCreationContext.hpp"
 #include "../common/constants.hpp"
+#include "./components/rendering/PrefabAfterDeath.hpp"
+
+
+#include <iostream>
 
 void DeathAnimationSpawner::spawnDeathAnimation(
     std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<ecs::Registry> registry,
     ecs::Entity entity
 ) {
-    std::string explosionPrefab = "";
-    if (registry->hasComponent<ecs::MobTag>(entity)) {
-        explosionPrefab = constants::SMALL_EXPLOSION;
-    } else if (registry->hasComponent<ecs::PlayerTag>(entity)) {
-        explosionPrefab = constants::BIG_EXPLOSION;
+
+    std::string prefabAfterDeathName = "";
+
+    if (registry->hasComponent<ecs::PrefabAfterDeath>(entity)) {
+        auto prefabComp = registry->getComponent<ecs::PrefabAfterDeath>(entity);
+        std::cout << "Found PrefabAfterDeath component" << std::endl;
+        if (prefabComp) {
+            prefabAfterDeathName = prefabComp->getPrefabName();
+        }
+    } else {
+        std::cout << "No PrefabAfterDeath component found" << std::endl;
     }
-    if (explosionPrefab.empty()) return;
+
+    if (prefabAfterDeathName.empty())
+        return;
 
     auto prefabManager = resourceManager->get<EntityPrefabManager>();
-    if (!prefabManager) return;
+    if (!prefabManager)
+        return;
 
     try {
         ecs::Entity animationEntity =
-            prefabManager->createEntityFromPrefab(explosionPrefab, registry,
+            prefabManager->createEntityFromPrefab(prefabAfterDeathName, registry,
                 ecs::EntityCreationContext::forLocalClient());
 
         auto animationTransform =
