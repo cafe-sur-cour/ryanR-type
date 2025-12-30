@@ -19,25 +19,17 @@
 #include "../common/constants.hpp"
 #include "./components/rendering/PrefabAfterDeath.hpp"
 
-
-#include <iostream>
-
 void DeathAnimationSpawner::spawnDeathAnimation(
     std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<ecs::Registry> registry,
     ecs::Entity entity
 ) {
-
     std::string prefabAfterDeathName = "";
-
     if (registry->hasComponent<ecs::PrefabAfterDeath>(entity)) {
         auto prefabComp = registry->getComponent<ecs::PrefabAfterDeath>(entity);
-        std::cout << "Found PrefabAfterDeath component" << std::endl;
         if (prefabComp) {
             prefabAfterDeathName = prefabComp->getPrefabName();
         }
-    } else {
-        std::cout << "No PrefabAfterDeath component found" << std::endl;
     }
 
     if (prefabAfterDeathName.empty())

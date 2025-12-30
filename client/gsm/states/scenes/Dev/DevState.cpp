@@ -136,8 +136,6 @@ void DevState::enter() {
     _registry->addComponent<ecs::HitboxRenderComponent>(
         playerEntity,
         std::make_shared<ecs::HitboxRenderComponent>());
-
-
 }
 
 void DevState::update(float deltaTime) {
