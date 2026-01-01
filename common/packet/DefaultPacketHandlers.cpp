@@ -327,11 +327,15 @@ bool registerDefaultPacketHandlers(
 
     registerServerStatusPacket(packet, ser);
 
-    registerOptionalULongPacket(packet, ser, constants::PACKET_END_GAME);
+    registerOptionalULongPacket(packet, ser, END_GAME_PACKET);
 
     if (!registerGameStateHandlers(packet))
         return false;
+    registerOptionalULongPacket(packet, ser, REQUEST_LOBBY_PACKET);
+    registerMultiUCharPacket(packet, ser, SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
 
+    packet->registerLength(REQUEST_LOBBY_PACKET, LENGTH_REQUEST_LOBBY_PACKET);
+    packet->registerLength(SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
     packet->registerLength(CONNECTION_CLIENT_PACKET, LENGTH_CONNECTION_PACKET);
     packet->registerLength(ACCEPTATION_PACKET, LENGTH_ACCEPTATION_PACKET);
     packet->registerLength(DISCONNECTION_PACKET, LENGTH_DISCONNECTION_PACKET);
@@ -339,7 +343,7 @@ bool registerDefaultPacketHandlers(
     packet->registerLength(DEATH_PLAYER_PACKET, LENGTH_DEATH_PACKET);
     packet->registerLength(WHOAMI_PACKET, LENGTH_WHOAMI_PACKET);
     packet->registerLength(SERVER_STATUS_PACKET, LENGTH_SERVER_STATUS_PACKET);
-    packet->registerLength(constants::PACKET_END_GAME, 0);
+    packet->registerLength(END_GAME_PACKET, LENGTH_END_GAME_PACKET);
 
     packet->registerLengthCombEntry(TRANSFORM, 41, 6);
     packet->registerLengthCombEntry(SPEED_COMP, 9, 2);

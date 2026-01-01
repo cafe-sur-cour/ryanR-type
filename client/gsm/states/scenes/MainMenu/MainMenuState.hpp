@@ -40,6 +40,8 @@ private:
     std::shared_ptr<ui::Button> _settingsButton;
     std::shared_ptr<ui::Button> _quitButton;
     std::shared_ptr<ui::Button> _connectButton;
+    std::shared_ptr<ui::Button> _requestCodeButton;
+    std::shared_ptr<ui::Button> _lobbyConnectButton;
     std::unique_ptr<ui::UIManager> _uiManager;
     std::shared_ptr<ui::UILayout> _leftLayout;
     std::shared_ptr<ui::UILayout> _mainMenuLayout;
@@ -49,6 +51,7 @@ private:
 
     std::shared_ptr<ui::TextInput> _ipInput;
     std::shared_ptr<ui::TextInput> _portInput;
+    std::shared_ptr<ui::TextInput> _lobbyCodeInput;
 
     std::shared_ptr<ui::Text> _connectionStatusText;
     std::shared_ptr<ui::Text> _serverStatusText;
