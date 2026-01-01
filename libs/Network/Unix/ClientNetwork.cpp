@@ -13,12 +13,13 @@
 #include <utility>
 
 #include "ClientNetwork.hpp"
+#include "../AsioEventLoop.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
 
 namespace net {
 
 UnixClientNetwork::UnixClientNetwork() : _connected(false) {
-    _ioContext = std::make_shared<asio::io_context>();
+    _eventLoop = EventLoopFactory::create();
     _socket = nullptr;
     _onConnectCallback = nullptr;
     _onDisconnectCallback = nullptr;
@@ -38,8 +39,13 @@ UnixClientNetwork::~UnixClientNetwork() {
 void UnixClientNetwork::init(uint16_t port, const std::string host) {
     std::error_code ec;
 
+    auto asioLoop = std::dynamic_pointer_cast<AsioEventLoop>(_eventLoop);
+    if (!asioLoop) {
+        throw std::runtime_error("[CLIENT NETWORK] EventLoop is not an AsioEventLoop");
+    }
+
     if (!this->_socket) {
-        this->_socket = std::make_shared<asio::ip::udp::socket>(*_ioContext);
+        this->_socket = std::make_shared<asio::ip::udp::socket>(asioLoop->getIoContext());
     }
 
     if (!this->_socket->is_open()) {
@@ -50,7 +56,7 @@ void UnixClientNetwork::init(uint16_t port, const std::string host) {
         }
     }
     try {
-        asio::ip::udp::resolver resolver(*_ioContext);
+        asio::ip::udp::resolver resolver(asioLoop->getIoContext());
         asio::ip::udp::resolver::results_type endpoints =
             resolver.resolve(asio::ip::udp::v4(), host, std::to_string(port));
         if (endpoints.empty()) {
