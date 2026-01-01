@@ -6,9 +6,14 @@
 */
 
 #include "NetworkEndpoint.hpp"
+#include "NetworkAddress.hpp"
 #include <asio.hpp>
 
 namespace net {
+
+NetworkEndpoint::NetworkEndpoint(const NetworkAddress& address, uint16_t port)
+    : _address(address.toString()), _port(port) {
+}
 
 NetworkEndpoint::NetworkEndpoint(const asio::ip::udp_endpoint& asioEndpoint)
     : _address(asioEndpoint.address().to_string()),

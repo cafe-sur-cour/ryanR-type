@@ -6,6 +6,10 @@ add_library(${NETWORK_SERVER_LIB_NAME} SHARED
     ../ANetwork.cpp
     ../NetworkEndpoint.cpp
     ../AsioEventLoop.cpp
+    ../NetworkErrorCode.cpp
+    ../NetworkSocket.cpp
+    ../NetworkResolver.cpp
+    ../NetworkAddress.cpp
 )
 
 target_include_directories(${NETWORK_SERVER_LIB_NAME}
@@ -45,6 +49,10 @@ add_library(${NETWORK_CLIENT_LIB_NAME} SHARED
     ../ANetwork.cpp
     ../NetworkEndpoint.cpp
     ../AsioEventLoop.cpp
+    ../NetworkErrorCode.cpp
+    ../NetworkSocket.cpp
+    ../NetworkResolver.cpp
+    ../NetworkAddress.cpp
 )
 
 target_include_directories(${NETWORK_CLIENT_LIB_NAME}

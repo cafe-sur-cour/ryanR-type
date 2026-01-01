@@ -15,6 +15,10 @@
 #include <utility>
 
 #include "ServerNetwork.hpp"
+#include "../NetworkSocket.hpp"
+#include "../NetworkResolver.hpp"
+#include "../NetworkErrorCode.hpp"
+#include "../NetworkAddress.hpp"
 #include "../AsioEventLoop.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
 #include "../../Packet/PacketManager.hpp"
@@ -40,53 +44,50 @@ UnixServerNetwork::~UnixServerNetwork() {
 
 void UnixServerNetwork::init(uint16_t port, const std::string host) {
     _port = port;
-    
-    auto asioLoop = std::dynamic_pointer_cast<AsioEventLoop>(_eventLoop);
-    if (!asioLoop) {
-        throw std::runtime_error("[SERVER NETWORK] EventLoop is not an AsioEventLoop");
-    }
-    
-    _socket = std::make_shared<asio::ip::udp::socket>(asioLoop->getIoContext());
-
-    std::error_code ec;
-    _socket->open(asio::ip::udp::v4(), ec);
-    if (ec) {
+    _socket = NetworkSocketFactory::createUdpSocket(_eventLoop);
+    NetworkErrorCode ec;
+    if (!_socket->open(ec)) {
         throw std::runtime_error(std::string(
             "[SERVER NETWORK] Failed to open socket: ") + ec.message());
     }
 
-    asio::ip::address bindAddress;
+    NetworkAddress bindAddress;
     if (host.empty()) {
-        bindAddress = asio::ip::address_v4::any();
+        bindAddress = NetworkAddress::anyV4();
     } else {
-        try {
-            bindAddress = asio::ip::make_address(host);
-        } catch (const std::exception &) {
-            asio::ip::udp::resolver resolver(asioLoop->getIoContext());
-            auto results = resolver.resolve(host, std::to_string(_port), ec);
+        bindAddress = NetworkAddress::fromString(host);
+        if (bindAddress.toString().empty()) {
+            auto resolver = NetworkResolverFactory::createUdpResolver(_eventLoop);
+            auto results = resolver->resolve(host, std::to_string(_port), ec);
             if (ec || results.empty()) {
                 throw std::runtime_error(
                     std::string("[SERVER NETWORK] Failed to resolve host '")
-                    + host + "': " + (ec ? ec.message() : "no results"));
+                    + host + "': " + (ec.hasError() ? ec.message() : "no results"));
             }
-            bindAddress = results.begin()->endpoint().address();
+            bindAddress = NetworkAddress::fromString(results[0].getAddress());
         }
     }
 
-    _socket->bind(asio::ip::udp::endpoint(bindAddress, _port), ec);
-    if (ec) {
+    NetworkEndpoint bindEndpoint(bindAddress, _port);
+    if (!_socket->bind(bindEndpoint, ec)) {
         throw std::runtime_error(
             std::string("[SERVER NETWORK] Failed to bind socket: ") + ec.message());
     }
-    _socket->non_blocking(true, ec);
+
+    if (!_socket->setNonBlocking(true, ec)) {
+        throw std::runtime_error(
+            std::string("[SERVER NETWORK] Failed to set non-blocking: ") + ec.message());
+    }
+
     _isRunning = true;
 }
 
 void UnixServerNetwork::stop() {
-    if (_socket && _socket->is_open()) {
+    if (_socket && _socket->isOpen()) {
         try {
-            _socket->close();
-        } catch (const std::system_error&) {
+            NetworkErrorCode ec;
+            _socket->close(ec);
+        } catch (const std::exception&) {
         }
     }
     while (!_incomingPackets.empty()) {
@@ -96,14 +97,13 @@ void UnixServerNetwork::stop() {
 }
 
 bool UnixServerNetwork::sendTo(const NetworkEndpoint& endpoint, std::vector<uint8_t> packet) {
-    if (!_socket || !_socket->is_open()) {
+    if (!_socket || !_socket->isOpen()) {
         std::cerr << "[SERVER NETWORK] Socket is not open" << std::endl;
         return false;
     }
 
-    asio::error_code ec;
-    auto asioEndpoint = endpoint.toAsioEndpoint();
-    _socket->send_to(asio::buffer(packet), asioEndpoint, 0, ec);
+    NetworkErrorCode ec;
+    _socket->sendTo(packet, endpoint, 0, ec);
     if (ec) {
         std::cerr << "[SERVER NETWORK] Send error: " << ec.message() << std::endl;
         return false;
@@ -137,27 +137,21 @@ std::vector<uint8_t> UnixServerNetwork::receiveFrom(
 }
 
 std::pair<NetworkEndpoint, std::vector<uint8_t>> UnixServerNetwork::receiveAny() {
-    asio::error_code ec;
+    NetworkErrorCode ec;
 
-    std::size_t available = _socket->available(ec);
+    std::vector<uint8_t> buffer(65536);
+    NetworkEndpoint sender;
+    std::size_t bytes = _socket->receiveFrom(buffer, sender, 0, ec);
     if (ec) {
-        std::cerr << "[SERVER NETWORK] Available check error: " << ec.message() << std::endl;
-        return {};
-    }
-    if (available == 0) {
-        return {};
-    }
-
-    std::vector<uint8_t> buffer(available);
-    asio::ip::udp::endpoint sender;
-    std::size_t bytes = _socket->receive_from(asio::buffer(buffer), sender, 0, ec);
-    if (ec) {
+        if (ec == NetworkError::WOULD_BLOCK || ec == NetworkError::AGAIN) {
+            return {};
+        }
         std::cerr << "[SERVER NETWORK] Receive error: " << ec.message() << std::endl;
         return {};
     }
 
     buffer.resize(bytes);
-    return std::make_pair(NetworkEndpoint(sender), buffer);
+    return std::make_pair(sender, buffer);
 }
 
 }  // namespace net

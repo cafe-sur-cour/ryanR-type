@@ -5,6 +5,10 @@ add_library(${NETWORK_SERVER_LIB_NAME} SHARED
     ../ANetwork.cpp
     ../NetworkEndpoint.cpp
     ../AsioEventLoop.cpp
+    ../NetworkErrorCode.cpp
+    ../NetworkSocket.cpp
+    ../NetworkResolver.cpp
+    ../NetworkAddress.cpp
     ServerNetwork.cpp
 )
 
@@ -30,6 +34,10 @@ add_library(${NETWORK_CLIENT_LIB_NAME} SHARED
     ../ANetwork.cpp
     ../NetworkEndpoint.cpp
     ../AsioEventLoop.cpp
+    ../NetworkErrorCode.cpp
+    ../NetworkSocket.cpp
+    ../NetworkResolver.cpp
+    ../NetworkAddress.cpp
     ClientNetwork.cpp
 )
 
