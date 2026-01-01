@@ -89,7 +89,7 @@ Client and Server packet types (complete list used by the codebase):
    | Value  | Name                      | Description                            |
    +--------+---------------------------+----------------------------------------+
    | 0x00   | NO_OP_PACKET              | No operation / keep-alive              |
-   | 0x01   | CONNECTION_CLIENT_PACKET  | Client connection request (name)       |  // needs to send the lobby code now
+   | 0x01   | CONNECTION_CLIENT_PACKET  | Client connection request (name)       |
    | 0x02   | ACCEPTATION_PACKET        | Server acceptance / assign client ID   |
    | 0x03   | DISCONNECTION_PACKET      | Client disconnection                   |
    | 0x04   | EVENT_PACKET              | Client input/event                     |
