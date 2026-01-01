@@ -63,12 +63,11 @@ void Utils::helper() {
         << "  ./r-type_server -p 8080 -i 127.0.0.1\n";
 }
 
-
 std::string Utils::createAlphaNumericCode() {
-    static const char charset[] = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    static const std::string charset = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> dis(0, sizeof(charset) - 2);
+    static std::uniform_int_distribution<std::size_t> dis(0, charset.size() - 1);
 
     std::string code;
     code.reserve(8);
