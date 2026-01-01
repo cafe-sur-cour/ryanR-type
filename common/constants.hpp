@@ -258,6 +258,8 @@ namespace constants {
     constexpr std::uint8_t PACKET_SPAWN = 0x0B;
     constexpr std::uint8_t PACKET_DEATH = 0x0C;
     constexpr std::uint8_t PACKET_WHOAMI = 0x0D;
+    constexpr std::uint8_t PACKET_REQUEST_LOBBY = 0x0F;
+    constexpr std::uint8_t PACKET_SEND_LOBBY_CODE = 0x10;
 
     const int MAX_INDEX_PACKET_TYPE = 16;
 }
