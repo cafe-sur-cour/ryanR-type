@@ -15,7 +15,7 @@
 #include "../common/components/tags/PlayerTag.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 
-bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
+bool rserv::Server::processConnections(std::pair<net::NetworkEndpoint,
     std::vector<uint8_t>> client) {
     if (!_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -135,7 +135,7 @@ bool rserv::Server::processWhoAmI(uint8_t idClient) {
     std::vector<uint64_t> payload;
     payload.push_back(static_cast<uint64_t>(playerEntity));
 
-    asio::ip::udp::endpoint clientEndpoint;
+    net::NetworkEndpoint clientEndpoint;
     for (const auto &client : this->_clients) {
         if (std::get<0>(client) == idClient) {
             clientEndpoint = std::get<1>(client);
