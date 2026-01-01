@@ -40,6 +40,7 @@ private:
     std::shared_ptr<ui::Button> _settingsButton;
     std::shared_ptr<ui::Button> _quitButton;
     std::shared_ptr<ui::Button> _connectButton;
+    std::shared_ptr<ui::Button> _requestCodeButton;
     std::unique_ptr<ui::UIManager> _uiManager;
     std::shared_ptr<ui::UILayout> _leftLayout;
     std::shared_ptr<ui::UILayout> _mainMenuLayout;

@@ -124,6 +124,19 @@ MainMenuState::MainMenuState(
         }
     });
 
+    _requestCodeButton = std::make_shared<ui::Button>(_resourceManager);
+    _requestCodeButton->setText("Request Code");
+    _requestCodeButton->setSize(math::Vector2f(300.f, 50.f));
+    _requestCodeButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            std::cout << "Requesting code from server..." << std::endl;
+            network->requestCode();
+        } else {
+            std::cout << "Cannot request code: Not connected to server" << std::endl;
+        }
+    });
+
     _connectionStatusText = std::make_shared<ui::Text>(_resourceManager);
     _connectionStatusText->setText("Not connected to server");
     _connectionStatusText->setSize(math::Vector2f(300.f, 30.f));
@@ -140,6 +153,7 @@ MainMenuState::MainMenuState(
 
     _leftLayout->addElement(_ipInput);
     _leftLayout->addElement(_portInput);
+    _leftLayout->addElement(_requestCodeButton);
     _leftLayout->addElement(_connectButton);
     _leftLayout->addElement(_connectionStatusText);
     _leftLayout->addElement(_serverStatusText);
@@ -359,6 +373,7 @@ void MainMenuState::exit() {
     _settingsButton.reset();
     _quitButton.reset();
     _connectButton.reset();
+    _requestCodeButton.reset();
     _ipInput.reset();
     _portInput.reset();
     _connectionStatusText.reset();
