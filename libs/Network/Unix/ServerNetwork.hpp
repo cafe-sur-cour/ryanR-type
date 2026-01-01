@@ -8,12 +8,12 @@
 #ifndef UNIXSERVERNETWORK_HPP_
 #define UNIXSERVERNETWORK_HPP_
 
-#include <asio.hpp>
 #include <unordered_map>
 #include <memory>
 #include <queue>
 #include <functional>
 #include "../ANetwork.hpp"
+#include "../NetworkEndpoint.hpp"
 #include "../../Buffer/IBuffer.hpp"
 #include "../../Packet/IPacketManager.hpp"
 
@@ -27,11 +27,11 @@ class UnixServerNetwork : public ANetwork {
         void init(uint16_t port, const std::string host) override;
         void stop() override;
 
-        bool sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override;
-        bool broadcast(std::vector<asio::ip::udp::endpoint> endpoints, std::vector<uint8_t> data) override;
+        bool sendTo(const NetworkEndpoint& endpoint, std::vector<uint8_t> packet) override;
+        bool broadcast(const std::vector<NetworkEndpoint>& endpoints, std::vector<uint8_t> data) override;
         bool hasIncomingData() const override;
         std::vector<uint8_t> receiveFrom(const uint8_t &connectionId) override;
-        std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override;
+        std::pair<NetworkEndpoint, std::vector<uint8_t>> receiveAny() override;
 
     private:
         std::queue<std::pair<int, std::shared_ptr<pm::IPacketManager>>> _incomingPackets;
