@@ -17,7 +17,7 @@
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/Parser/Parser.hpp"
 
-bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
+bool rserv::Server::connectionPacket(const net::NetworkEndpoint& endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
         this->_sequenceNumber, constants::PACKET_ACCEPT, std::vector<uint64_t>{
         static_cast<uint64_t>(this->_nextClientId)});
@@ -25,7 +25,7 @@ bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
     if (!this->_network->sendTo(endpoint, packet)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER NETWORK] Failed to send connection acceptance header to "
-            + endpoint.address().to_string() + ":" + std::to_string(endpoint.port()),
+            + endpoint.getAddress() + ":" + std::to_string(endpoint.getPort()),
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
