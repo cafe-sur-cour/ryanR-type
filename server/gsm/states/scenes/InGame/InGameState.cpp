@@ -14,12 +14,14 @@
 #include "../../../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
+#include "../../../../../common/systems/movement/IntentToVelocitySystem.hpp"
 #include "../../../../../common/systems/shooting/ShootingSystem.hpp"
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
 #include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
+#include "../../../../../common/systems/scripting/ScriptingSystem.hpp"
 #include "../../../../systems/input/ServerMovementInputSystem.hpp"
 #include "../../../../systems/input/ServerShootInputSystem.hpp"
 #include "../../../../systems/gameEnd/EndOfMapDetectionSystem.hpp"
@@ -27,8 +29,6 @@
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/ECS/entity/registry/Registry.hpp"
-#include "../../../../../common/systems/ai/AIMovementSystem.hpp"
-#include "../../../../../common/systems/ai/AIShootingSystem.hpp"
 #include "../../../../../common/systems/interactions/InteractionSystem.hpp"
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
 #include "../../../../../common/Parser/CollisionRulesParser.hpp"
@@ -57,8 +57,8 @@ void InGameState::enter() {
     ecs::CollisionRules::initWithData(collisionData);
     addSystem(std::make_shared<ecs::ServerMovementInputSystem>());
     addSystem(std::make_shared<ecs::ServerShootInputSystem>());
-    addSystem(std::make_shared<ecs::AIMovementSystem>());
-    addSystem(std::make_shared<ecs::AIShootingSystem>());
+    addSystem(std::make_shared<ecs::ScriptingSystem>());
+    addSystem(std::make_shared<ecs::IntentToVelocitySystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::MovementSystem>());
     addSystem(std::make_shared<ecs::ShootingSystem>());
