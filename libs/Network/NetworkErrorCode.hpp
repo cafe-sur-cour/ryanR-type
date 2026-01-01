@@ -29,7 +29,7 @@ class NetworkErrorCode {
 
         void clear();
         bool hasError() const;
-        explicit operator bool() const { return hasError(); }
+        explicit operator bool() const;
         std::string message() const;
         NetworkError getError() const;
         void setError(NetworkError error, const std::string& msg = "");
