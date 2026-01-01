@@ -85,6 +85,7 @@ class ClientNetwork {
         size_t getReadyClients() const;
         uint8_t getClientId() const;
         bool getClientReadyStatus() const;
+        std::string getLobbyCode() const;
 
         std::atomic<bool> _isConnected;
         std::atomic<bool> _ready;
