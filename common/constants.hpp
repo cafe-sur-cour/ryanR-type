@@ -68,7 +68,9 @@ namespace constants {
     const std::string DAMAGECOMPONENT = "DamageComponent";
     const std::string HEALTHCOMPONENT = "HealthComponent";
     const std::string INTERACTIONCONFIGCOMPONENT = "InteractionConfigComponent";
-    const std::string AIMOVEMENTPATTERNCOMPONENT = "AIMovementPatternComponent";
+    const std::string SCRIPTINGCOMPONENT = "ScriptingComponent";
+    const std::string SCRIPT_PATH_FIELD = "scriptPath";
+    const std::string ADDITIONAL_FUNCTIONS_FIELD = "additionalFunctions";
     const std::string SCORE_FIELD = "score";
     const std::string SCOREVALUE_FIELD = "scoreValue";
     const std::string DAMAGE_FIELD = "damage";
@@ -224,8 +226,6 @@ namespace constants {
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
     const std::string OBSTACLETAG = "ObstacleTag";
     const std::string CLIENTEFFECTTAG = "ClientEffectTag";
-    const std::string AIMOVERTAG = "AIMoverTag";
-    const std::string AISHOOTERTAG = "AIShooterTag";
 
     /* Action constants */
     const std::string DEALDEATH_ACTION = "DealDeath";
@@ -238,11 +238,7 @@ namespace constants {
     const std::string SMALL_EXPLOSION = "small_explosion";
     const std::string BIG_EXPLOSION = "big_explosion";
 
-    /* AI Movement Pattern defaults */
-    constexpr float DEFAULT_ZIGZAG_AMPLITUDE = 80.0f;
-    constexpr float DEFAULT_ZIGZAG_FREQUENCY = 2.0f;
-    constexpr float DEFAULT_DETECTION_RANGE = 800.0f;
-    constexpr float DEFAULT_VERTICAL_DEADZONE = 10.0f;
+
     constexpr float DEFAULT_TIMER = 0.0f;
 
     /* Packet constants */
