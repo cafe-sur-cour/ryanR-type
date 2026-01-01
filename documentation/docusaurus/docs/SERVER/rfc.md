@@ -85,25 +85,27 @@ You can also download it in pdf format [here](../../static/pdfs/rfc-r-type.pdf)
 Client and Server packet types (complete list used by the codebase):
 
 ```
-   +--------+---------------------------+----------------------------------------+
-   | Value  | Name                      | Description                            |
-   +--------+---------------------------+----------------------------------------+
-   | 0x00   | NO_OP_PACKET              | No operation / keep-alive              |
-   | 0x01   | CONNECTION_CLIENT_PACKET  | Client connection request (name)       |  // needs to send the lobby code now
-   | 0x02   | ACCEPTATION_PACKET        | Server acceptance / assign client ID   |
-   | 0x03   | DISCONNECTION_PACKET      | Client disconnection                   |
-   | 0x04   | EVENT_PACKET              | Client input/event                     |
-   | 0x05   | GAME_STATE_PACKET         | Server game state update               |
-   | 0x06   | END_GAME_PACKET           | Server notifies end of game / winner   |
-   | 0x07   | CAN_START_PACKET          | Server tells clients they can start    |
-   | 0x08   | CLIENT_READY_PACKET       | Client signals ready state             |
-   | 0x09   | SPAWN_PLAYER_PACKET       | Server spawns a player/entity          |
-   | 0x0A   | DEATH_PLAYER_PACKET       | Server notifies a player/entity death  |
-   | 0x0B   | WHOAMI_PACKET             | Optional identification/resync packet  |
-   | 0x0C   | SERVER_STATUS_PACKET      | Server sends lobby status information  |
-   | 0X0D   | REQUEST_LOBBY_PACKET      | Client send request to create lobby    |
-   | 0xE    | SEND_LOBBY_CODE_PACKET    | Server sends the code to whom requested|
-   +--------+---------------------------+----------------------------------------+
+   +--------+---------------------------+-------------------------------------------+
+   | Value  | Name                      | Description                               |
+   +--------+---------------------------+-------------------------------------------+
+   | 0x00   | NO_OP_PACKET              | No operation / keep-alive                 |
+   | 0x01   | CONNECTION_CLIENT_PACKET  | Client connection request (name)          |
+   | 0x02   | ACCEPTATION_PACKET        | Server acceptance / assign client ID      |
+   | 0x03   | DISCONNECTION_PACKET      | Client disconnection                      |
+   | 0x04   | EVENT_PACKET              | Client input/event                        |
+   | 0x05   | GAME_STATE_PACKET         | Server game state update                  |
+   | 0x06   | END_GAME_PACKET           | Server notifies end of game / winner      |
+   | 0x07   | CAN_START_PACKET          | Server tells clients they can start       |
+   | 0x08   | CLIENT_READY_PACKET       | Client signals ready state                |
+   | 0x09   | SPAWN_PLAYER_PACKET       | Server spawns a player/entity             |
+   | 0x0A   | DEATH_PLAYER_PACKET       | Server notifies a player/entity death     |
+   | 0x0B   | WHOAMI_PACKET             | Optional identification/resync packet     |
+   | 0x0C   | SERVER_STATUS_PACKET      | Server sends lobby status information     |
+   | 0X0D   | REQUEST_LOBBY_PACKET      | Client send request to create lobby       |
+   | 0x0E   | SEND_LOBBY_CODE_PACKET    | Server sends the code to whom requested   |
+   | 0X0F   | CONNECT_TO_LOBBY          | Client connect to an existing lobby       |
+   | 0x10   | LOBBY_MASTER_REQUEST_START| Client that created lobby starts the game |
+   +--------+---------------------------+-------------------------------------------+
 ```
 
 **4. Packet Details**
