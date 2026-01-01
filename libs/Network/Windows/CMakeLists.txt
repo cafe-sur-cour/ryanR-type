@@ -1,6 +1,11 @@
+# Find ASIO library (confiné à ce module)
+find_package(asio CONFIG REQUIRED)
+
 add_library(${NETWORK_SERVER_LIB_NAME} SHARED
     ServerNetwork.cpp
     ../ANetwork.cpp
+    ../NetworkEndpoint.cpp
+    ../AsioEventLoop.cpp
 )
 
 target_include_directories(${NETWORK_SERVER_LIB_NAME}
@@ -38,6 +43,8 @@ add_custom_command(TARGET ${NETWORK_SERVER_LIB_NAME} POST_BUILD
 add_library(${NETWORK_CLIENT_LIB_NAME} SHARED
     ClientNetwork.cpp
     ../ANetwork.cpp
+    ../NetworkEndpoint.cpp
+    ../AsioEventLoop.cpp
 )
 
 target_include_directories(${NETWORK_CLIENT_LIB_NAME}
