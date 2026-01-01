@@ -326,3 +326,28 @@ void ClientNetwork::handleCode() {
         debug::debugLevel::INFO);
     _lobbyCode = lobbyCode;
 }
+
+void ClientNetwork::handleLobbyConnectValue() {
+    auto payload = _packet->getPayload();
+
+    if (payload.size() < 1) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] LOBBY_CONNECT_VALUE packet is invalid",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+    bool isSuccess = payload[0] != 0;
+    if (isSuccess) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Successfully connected to lobby",
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
+    } else {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Failed to connect to lobby",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        this->_lobbyCode = "";
+    }
+}
