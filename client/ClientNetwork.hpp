@@ -74,6 +74,7 @@ class ClientNetwork {
         void connectionPacket();
         void sendReady();
         void sendWhoAmI();
+        void requestCode();
 
         void addToEventQueue(const NetworkEvent &event);
 
@@ -110,7 +111,6 @@ class ClientNetwork {
         void handleNoOp();
         void handleConnectionAcceptation();
         void handleGameState();
-        void handleEndMap();
         void handleEndGame();
         void handleCanStart();
         void handleEntitySpawn();
