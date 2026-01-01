@@ -12,6 +12,7 @@
 #include <functional>
 #include <asio.hpp>
 #include "INetwork.hpp"
+#include "NetworkEndpoint.hpp"
 #include "../Packet/IPacketManager.hpp"
 #include "../Buffer/IBuffer.hpp"
 
@@ -23,11 +24,11 @@ class ANetwork : public INetwork {
         virtual ~ANetwork() override = default;
         virtual void init(uint16_t port, const std::string host) override = 0;
         virtual void stop() override = 0;
-        virtual bool sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) override = 0;
-        virtual bool broadcast(std::vector<asio::ip::udp::endpoint> endpoints, std::vector<uint8_t> data) override = 0;
+        virtual bool sendTo(const NetworkEndpoint& endpoint, std::vector<uint8_t> packet) override = 0;
+        virtual bool broadcast(const std::vector<NetworkEndpoint>& endpoints, std::vector<uint8_t> data) override = 0;
         virtual bool hasIncomingData() const override = 0;
         virtual std::vector<uint8_t> receiveFrom(const uint8_t &connectionId) override = 0;
-        virtual std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> receiveAny() override = 0;
+        virtual std::pair<NetworkEndpoint, std::vector<uint8_t>> receiveAny() override = 0;
 
         ConnectionState getConnectionState() const override;
         void setConnectionState(ConnectionState state) override;
