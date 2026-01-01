@@ -320,5 +320,9 @@ void ClientNetwork::handleCode() {
         char c = static_cast<char>(payload[i] & 0xFF);
         lobbyCode += c;
     }
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received lobby code: " + lobbyCode,
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
     _lobbyCode = lobbyCode;
 }
