@@ -64,6 +64,7 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_DEATH] = &ClientNetwork::handleEntityDeath;
     _packetHandlers[constants::PACKET_WHOAMI] = &ClientNetwork::handleWhoAmI;
     _packetHandlers[SERVER_STATUS_PACKET] = &ClientNetwork::handleServerStatus;
+    _packetHandlers[constants::PACKET_REQUEST_LOBBY] = &ClientNetwork::requestCode;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
