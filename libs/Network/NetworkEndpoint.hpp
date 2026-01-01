@@ -35,20 +35,11 @@ namespace net {
 class NetworkEndpoint {
     public:
         NetworkEndpoint() = default;
-
         NetworkEndpoint(const std::string& address, uint16_t port)
             : _address(address), _port(port) {}
 
-        /**
-         * @brief Constructeur depuis un endpoint ASIO (implémentation dans .cpp)
-         * @note Déclaré mais non défini ici pour éviter d'inclure <asio.hpp>
-         */
         explicit NetworkEndpoint(const asio::ip::udp_endpoint& asioEndpoint);
 
-        /**
-         * @brief Conversion vers un endpoint ASIO (implémentation dans .cpp)
-         * @note Déclaré mais non défini ici pour éviter d'inclure <asio.hpp>
-         */
         asio::ip::udp_endpoint toAsioEndpoint() const;
 
         const std::string& getAddress() const { return _address; }
