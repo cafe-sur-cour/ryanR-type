@@ -26,6 +26,10 @@ bool NetworkErrorCode::hasError() const {
     return static_cast<bool>(_impl->asioErrorCode);
 }
 
+NetworkErrorCode::operator bool() const {
+    return hasError();
+}
+
 std::string NetworkErrorCode::message() const {
     return _impl->asioErrorCode.message();
 }
