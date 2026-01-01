@@ -7,6 +7,8 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <random>
+#include <algorithm>
 
 #include "Utils.hpp"
 #include "../common/constants.hpp"
@@ -59,4 +61,18 @@ void Utils::helper() {
         << "\r-h               Display this help message\n"
         << "Example:\n"
         << "  ./r-type_server -p 8080 -i 127.0.0.1\n";
+}
+
+std::string Utils::createAlphaNumericCode() {
+    static const std::string charset = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<std::size_t> dis(0, charset.size() - 1);
+
+    std::string code;
+    code.reserve(8);
+    for (int i = 0; i < 8; ++i) {
+        code += charset[dis(gen)];
+    }
+    return code;
 }
