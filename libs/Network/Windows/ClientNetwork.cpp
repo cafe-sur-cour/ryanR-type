@@ -101,7 +101,7 @@ bool WindowsNetwork::isConnected() const {
     return this->_connected;
 }
 
-bool WindowsNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
+bool WindowsNetwork::sendTo(const NetworkEndpoint& endpoint, std::vector<uint8_t> packet) {
     try {
         if (!this->_socket || !this->_socket->is_open()) {
             std::cerr << "[CLIENT NETWORK] Socket is not open for sending." << std::endl;
@@ -111,7 +111,8 @@ bool WindowsNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> pac
             std::cerr << "[CLIENT NETWORK] No data to send." << std::endl;
             return false;
         }
-        _socket->send_to(asio::buffer(packet), id);
+        auto asioEndpoint = endpoint.toAsioEndpoint();
+        _socket->send_to(asio::buffer(packet), asioEndpoint);
         return true;
     } catch (const std::exception& e) {
         std::cerr << "[CLIENT NETWORK] Send error: " << e.what() << std::endl;
@@ -119,13 +120,13 @@ bool WindowsNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> pac
     }
 }
 
-bool WindowsNetwork::broadcast(std::vector<asio::ip::udp::endpoint> endpoints,
+bool WindowsNetwork::broadcast(const std::vector<NetworkEndpoint>& endpoints,
     std::vector<uint8_t> data) {
     try {
-        for (auto &endpoint : endpoints) {
+        for (const auto &endpoint : endpoints) {
             if (!this->sendTo(endpoint, data)) {
                 std::cerr << "[CLIENT NETWORK] Broadcast error to endpoint: "
-                    << endpoint.address().to_string() << ":" << endpoint.port() << std::endl;
+                    << endpoint.getAddress() << ":" << endpoint.getPort() << std::endl;
                 return false;
             }
             if (data.empty()) {
@@ -186,8 +187,8 @@ std::vector<uint8_t> WindowsNetwork::receiveFrom(
     return std::vector<uint8_t>();
 }
 
-std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> WindowsNetwork::receiveAny() {
-    return std::make_pair(asio::ip::udp::endpoint(), std::vector<uint8_t>());
+std::pair<NetworkEndpoint, std::vector<uint8_t>> WindowsNetwork::receiveAny() {
+    return {};
 }
 
 }
