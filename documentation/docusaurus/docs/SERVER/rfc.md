@@ -89,7 +89,7 @@ Client and Server packet types (complete list used by the codebase):
    | Value  | Name                      | Description                            |
    +--------+---------------------------+----------------------------------------+
    | 0x00   | NO_OP_PACKET              | No operation / keep-alive              |
-   | 0x01   | CONNECTION_CLIENT_PACKET  | Client connection request (name)       |
+   | 0x01   | CONNECTION_CLIENT_PACKET  | Client connection request (name)       |  // needs to send the lobby code now
    | 0x02   | ACCEPTATION_PACKET        | Server acceptance / assign client ID   |
    | 0x03   | DISCONNECTION_PACKET      | Client disconnection                   |
    | 0x04   | EVENT_PACKET              | Client input/event                     |
@@ -101,6 +101,8 @@ Client and Server packet types (complete list used by the codebase):
    | 0x0C   | DEATH_PLAYER_PACKET       | Server notifies a player/entity death  |
    | 0x0D   | WHOAMI_PACKET             | Optional identification/resync packet  |
    | 0x0E   | SERVER_STATUS_PACKET      | Server sends lobby status information  |
+   | 0X0F   | REQUEST_LOBBY_PACKET      | Client send request to create lobby    |
+   | 0x10   | SEND_LOBBY_CODE_PACKET           | Server sends the code to whom requested|
    +--------+---------------------------+----------------------------------------+
 ```
 
