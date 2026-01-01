@@ -12,6 +12,7 @@
 #include <memory>
 #include <queue>
 #include <functional>
+#include <asio.hpp>
 #include "../ANetwork.hpp"
 #include "../NetworkEndpoint.hpp"
 #include "../../Buffer/IBuffer.hpp"
@@ -39,6 +40,7 @@ class ServerNetwork :  public ANetwork {
         std::unordered_map<uint8_t, asio::ip::udp::endpoint> _clients;
         uint8_t _nextClientId;
         uint16_t _port;
+        std::shared_ptr<asio::ip::udp::socket> _socket;
 };
 
 } // namespace net

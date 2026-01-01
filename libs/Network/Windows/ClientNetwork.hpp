@@ -57,6 +57,7 @@ class WindowsNetwork : public ANetwork {
     private:
         asio::ip::udp::endpoint _serverEndpoint;
         bool _connected;
+        std::shared_ptr<asio::ip::udp::socket> _socket;
 };
 
 } // namespace net
