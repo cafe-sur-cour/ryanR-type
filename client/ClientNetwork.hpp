@@ -66,6 +66,9 @@ class ClientNetwork {
         uint8_t getIdClient() const;
         void setIdClient(uint8_t idClient);
 
+        std::string getLobbyCode() const;
+        void setLobbyCode(std::string lobbyCode);
+
         net::ConnectionState getConnectionState() const;
 
         /* Packet Handling */
@@ -86,7 +89,6 @@ class ClientNetwork {
         size_t getReadyClients() const;
         uint8_t getClientId() const;
         bool getClientReadyStatus() const;
-        std::string getLobbyCode() const;
 
         std::atomic<bool> _isConnected;
         std::atomic<bool> _ready;
