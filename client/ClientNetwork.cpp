@@ -72,7 +72,6 @@ ClientNetwork::ClientNetwork() {
     _componentParsers[COLLIDER] = &ClientNetwork::parseColliderComponent;
     _componentParsers[SHOOTING_STATS] = &ClientNetwork::parseShootingStatsComponent;
     _componentParsers[SCORE] = &ClientNetwork::parseScoreComponent;
-    _componentParsers[AI_MOVEMENT_PATTERN] = &ClientNetwork::parseAIMovementPatternComponent;
     _componentParsers[DAMAGE] = &ClientNetwork::parseDamageComponent;
     _componentParsers[LIFETIME] = &ClientNetwork::parseLifetimeComponent;
     _componentParsers[VELOCITY] = &ClientNetwork::parseVelocityComponent;

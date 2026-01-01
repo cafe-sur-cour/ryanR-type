@@ -128,12 +128,9 @@ class ClientNetwork {
         size_t parseColliderComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseShootingStatsComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseScoreComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseAIMovementPatternComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseDamageComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseLifetimeComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseVelocityComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseAIMoverTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseAIShooterTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseControllableTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseEnemyProjectileTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseGameZoneColliderTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
