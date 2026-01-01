@@ -43,6 +43,7 @@ ClientNetwork::ClientNetwork() {
     this->_gsm = nullptr;
     this->_clientNames = {};
     this->_serverEndpoint = {};
+    this->_lobbyCode = "";
 
     this->_shouldConnect = false;
 
@@ -336,6 +337,10 @@ uint8_t ClientNetwork::getClientId() const {
 
 bool ClientNetwork::getClientReadyStatus() const {
     return this->_clientReadyStatus.load();
+}
+
+std::string ClientNetwork::getLobbyCode() const {
+    return this->_lobbyCode;
 }
 
 void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
