@@ -10,13 +10,14 @@
 
 #include <memory>
 #include <string>
-#include <asio.hpp>
 #include "../ANetwork.hpp"
 #include "../NetworkEndpoint.hpp"
 #include "../../Buffer/IBuffer.hpp"
 #include "../../Packet/IPacketManager.hpp"
 
 namespace net {
+
+class INetworkSocket;
 
 class UnixClientNetwork : public ANetwork {
     public:
@@ -38,9 +39,9 @@ class UnixClientNetwork : public ANetwork {
         void disconnect();
         bool isConnected() const;
     private:
-        asio::ip::udp::endpoint _serverEndpoint;
+        NetworkEndpoint _serverEndpoint;
         bool _connected;
-        std::shared_ptr<asio::ip::udp::socket> _socket;
+        std::shared_ptr<INetworkSocket> _socket;
 };
 
 } // namespace net

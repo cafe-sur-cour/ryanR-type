@@ -13,6 +13,9 @@
 #include <utility>
 
 #include "ClientNetwork.hpp"
+#include "../NetworkSocket.hpp"
+#include "../NetworkResolver.hpp"
+#include "../NetworkErrorCode.hpp"
 #include "../AsioEventLoop.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
 
@@ -37,35 +40,28 @@ UnixClientNetwork::~UnixClientNetwork() {
 
 
 void UnixClientNetwork::init(uint16_t port, const std::string host) {
-    std::error_code ec;
-
-    auto asioLoop = std::dynamic_pointer_cast<AsioEventLoop>(_eventLoop);
-    if (!asioLoop) {
-        throw std::runtime_error("[CLIENT NETWORK] EventLoop is not an AsioEventLoop");
-    }
+    NetworkErrorCode ec;
 
     if (!this->_socket) {
-        this->_socket = std::make_shared<asio::ip::udp::socket>(asioLoop->getIoContext());
+        this->_socket = NetworkSocketFactory::createUdpSocket(_eventLoop);
     }
 
-    if (!this->_socket->is_open()) {
-        this->_socket->open(asio::ip::udp::v4(), ec);
-        if (ec) {
+    if (!this->_socket->isOpen()) {
+        if (!this->_socket->open(ec)) {
             throw std::runtime_error(
                 std::string("[CLIENT NETWORK] Failed to open socket: ") + ec.message());
         }
     }
     try {
-        asio::ip::udp::resolver resolver(asioLoop->getIoContext());
-        asio::ip::udp::resolver::results_type endpoints =
-            resolver.resolve(asio::ip::udp::v4(), host, std::to_string(port));
-        if (endpoints.empty()) {
+        auto resolver = NetworkResolverFactory::createUdpResolver(_eventLoop);
+        auto endpoints = resolver->resolve(host, std::to_string(port), ec);
+        if (ec || endpoints.empty()) {
             throw std::runtime_error(
-                "[CLIENT NETWORK] Failed to resolve host '" + host + "': no results");
+                "[CLIENT NETWORK] Failed to resolve host '" + host + "': " + 
+                (ec.hasError() ? ec.message() : "no results"));
         }
-        this->_serverEndpoint = *endpoints.begin();
-        this->_socket->non_blocking(true, ec);
-        if (ec) {
+        this->_serverEndpoint = endpoints[0];
+        if (!this->_socket->setNonBlocking(true, ec)) {
             throw std::runtime_error(
                 std::string("[CLIENT NETWORK] Failed to set non-blocking mode: ") +
                 ec.message());
@@ -79,10 +75,11 @@ void UnixClientNetwork::init(uint16_t port, const std::string host) {
 }
 
 void UnixClientNetwork::stop() {
-    if (_socket && _socket->is_open()) {
+    if (_socket && _socket->isOpen()) {
         try {
-            _socket->close();
-        } catch (const std::system_error&) {
+            NetworkErrorCode ec;
+            _socket->close(ec);
+        } catch (const std::exception&) {
         }
     }
     _connected = false;
@@ -90,10 +87,11 @@ void UnixClientNetwork::stop() {
 }
 
 void UnixClientNetwork::disconnect() {
-    if (_socket && _socket->is_open()) {
+    if (_socket && _socket->isOpen()) {
         try {
-            _socket->close();
-        } catch (const std::system_error&) {
+            NetworkErrorCode ec;
+            _socket->close(ec);
+        } catch (const std::exception&) {
         }
     }
     _connected = false;
@@ -109,7 +107,7 @@ bool UnixClientNetwork::isConnected() const {
 
 bool UnixClientNetwork::sendTo(const NetworkEndpoint& endpoint, std::vector<uint8_t> packet) {
     try {
-        if (!this->_socket || !this->_socket->is_open()) {
+        if (!this->_socket || !this->_socket->isOpen()) {
             std::cerr << "[CLIENT NETWORK] Socket is not open for sending." << std::endl;
             return false;
         }
@@ -117,8 +115,12 @@ bool UnixClientNetwork::sendTo(const NetworkEndpoint& endpoint, std::vector<uint
             std::cerr << "[CLIENT NETWORK] No data to send." << std::endl;
             return false;
         }
-        auto asioEndpoint = endpoint.toAsioEndpoint();
-        _socket->send_to(asio::buffer(packet), asioEndpoint);
+        NetworkErrorCode ec;
+        _socket->sendTo(packet, endpoint, 0, ec);
+        if (ec) {
+            std::cerr << "[CLIENT NETWORK] Send error: " << ec.message() << std::endl;
+            return false;
+        }
         return true;
     } catch (const std::exception& e) {
         std::cerr << "[CLIENT NETWORK] Send error: " << e.what() << std::endl;
@@ -139,7 +141,12 @@ bool UnixClientNetwork::broadcast(const std::vector<NetworkEndpoint>& endpoints,
             std::cerr << "[CLIENT NETWORK] No data to broadcast." << std::endl;
             return false;
         }
-        _socket->send_to(asio::buffer(data), this->_serverEndpoint);
+        NetworkErrorCode ec;
+        _socket->sendTo(data, this->_serverEndpoint, 0, ec);
+        if (ec) {
+            std::cerr << "[CLIENT NETWORK] Broadcast error: " << ec.message() << std::endl;
+            return false;
+        }
     }
     } catch (const std::exception& e) {
         std::cerr << "[CLIENT NETWORK] Broadcast error: " << e.what() << std::endl;
@@ -148,13 +155,12 @@ bool UnixClientNetwork::broadcast(const std::vector<NetworkEndpoint>& endpoints,
 }
 
 bool UnixClientNetwork::hasIncomingData() const {
-    if (!_socket || !_socket->is_open()) {
+    if (!_socket || !_socket->isOpen()) {
         return false;
     }
-
-    std::error_code ec;
-    size_t available = _socket->available(ec);
-    return !ec && available > 0;
+    // En mode non-bloquant, on peut tenter une lecture pour vérifier
+    // Pour simplifier, on retourne toujours false ici et on gère dans receiveFrom
+    return false;
 }
 
 
@@ -162,25 +168,14 @@ std::vector<uint8_t> UnixClientNetwork::receiveFrom(
     const uint8_t &connectionId) {
     (void)connectionId;
 
-    asio::error_code ec;
-    std::size_t available = _socket->available(ec);
+    NetworkErrorCode ec;
+    std::vector<uint8_t> buffer(65536); // Taille maximale UDP
+    NetworkEndpoint sender;
+
+    std::size_t bytesReceived = _socket->receiveFrom(buffer, sender, 0, ec);
 
     if (ec) {
-        std::cerr << "[CLIENT NETWORK] Error checking available data: "
-                  << ec.message() << std::endl;
-        return std::vector<uint8_t>();
-    }
-
-    if (available == 0) {
-        return std::vector<uint8_t>();
-    }
-    std::vector<uint8_t> buffer(available);
-
-    std::size_t bytesReceived = _socket->receive_from(
-        asio::buffer(buffer), this->_serverEndpoint, 0, ec);
-
-    if (ec) {
-        if (ec == asio::error::would_block || ec == asio::error::try_again) {
+        if (ec == NetworkError::WOULD_BLOCK || ec == NetworkError::AGAIN) {
             return std::vector<uint8_t>();
         }
         std::cerr << "[CLIENT NETWORK] Receive error: " << ec.message() << std::endl;
@@ -189,6 +184,7 @@ std::vector<uint8_t> UnixClientNetwork::receiveFrom(
 
     if (bytesReceived > 0) {
         buffer.resize(bytesReceived);
+        this->_serverEndpoint = sender;
         return buffer;
     }
     return std::vector<uint8_t>();

@@ -12,13 +12,14 @@
 #include <memory>
 #include <queue>
 #include <functional>
-#include <asio.hpp>
 #include "../ANetwork.hpp"
 #include "../NetworkEndpoint.hpp"
 #include "../../Buffer/IBuffer.hpp"
 #include "../../Packet/IPacketManager.hpp"
 
 namespace net {
+
+class INetworkSocket;
 
 class UnixServerNetwork : public ANetwork {
     public:
@@ -37,7 +38,7 @@ class UnixServerNetwork : public ANetwork {
     private:
         std::queue<std::pair<int, std::shared_ptr<pm::IPacketManager>>> _incomingPackets;
         uint16_t _port;
-        std::shared_ptr<asio::ip::udp::socket> _socket;
+        std::shared_ptr<INetworkSocket> _socket;
 };
 
 } // namespace net

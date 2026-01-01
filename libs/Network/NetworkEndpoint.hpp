@@ -11,7 +11,10 @@
 #include <string>
 #include <cstdint>
 
-// Forward declarations pour éviter d'exposer ASIO dans le header
+namespace net {
+    class NetworkAddress;
+}
+
 namespace asio {
     namespace ip {
         class address;
@@ -27,16 +30,12 @@ namespace asio {
 
 namespace net {
 
-/**
- * @brief Classe wrapper pour un endpoint réseau
- * Abstrait complètement la dépendance à ASIO
- * Aucun type ASIO n'est exposé dans ce header
- */
 class NetworkEndpoint {
     public:
         NetworkEndpoint() = default;
         NetworkEndpoint(const std::string& address, uint16_t port)
             : _address(address), _port(port) {}
+        NetworkEndpoint(const NetworkAddress& address, uint16_t port);
 
         explicit NetworkEndpoint(const asio::ip::udp_endpoint& asioEndpoint);
 
