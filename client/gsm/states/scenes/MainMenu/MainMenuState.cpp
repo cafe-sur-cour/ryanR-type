@@ -336,13 +336,10 @@ void MainMenuState::updateUIStatus() {
         return;
     }
 
-    // Update lobby code input with received code if available
     if (!network->getLobbyCode().empty()) {
         _lobbyCodeInput->setText(network->getLobbyCode());
-        // Hide request code button when lobby code is received
         _requestCodeButton->setVisible(false);
     } else {
-        // Show request code button when no lobby code
         _requestCodeButton->setVisible(true);
     }
 
