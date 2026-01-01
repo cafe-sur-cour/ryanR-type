@@ -180,6 +180,14 @@ void ClientNetwork::setIp(const std::string &ip) {
     _ip = ip;
 }
 
+std::string ClientNetwork::getLobbyCode() const {
+    return this->_lobbyCode;
+}
+
+void ClientNetwork::setLobbyCode(std::string lobbyCode) {
+    this->_lobbyCode = lobbyCode;
+}
+
 void ClientNetwork::redoServerEndpoint() {
     this->_serverEndpoint = asio::ip::udp::endpoint(
         asio::ip::address::from_string(this->_ip),
@@ -338,10 +346,6 @@ uint8_t ClientNetwork::getClientId() const {
 
 bool ClientNetwork::getClientReadyStatus() const {
     return this->_clientReadyStatus.load();
-}
-
-std::string ClientNetwork::getLobbyCode() const {
-    return this->_lobbyCode;
 }
 
 void ClientNetwork::addToEventQueue(const NetworkEvent &event) {

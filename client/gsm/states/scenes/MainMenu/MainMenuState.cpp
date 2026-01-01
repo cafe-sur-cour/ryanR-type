@@ -163,12 +163,12 @@ MainMenuState::MainMenuState(
     _lobbyConnectButton->setText("Connect to Lobby");
     _lobbyConnectButton->setSize(math::Vector2f(300.f, 50.f));
     _lobbyConnectButton->setOnRelease([this]() {
-        std::string lobbyCode = this->_lobbyCodeInput->getText();
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network) {
-            network->sendLobbyConnection(lobbyCode);
+            network->setLobbyCode(this->_lobbyCodeInput->getText());
+            network->sendLobbyConnection(network->getLobbyCode());
         }
-        std::cout << "Connecting to lobby with code: " << lobbyCode << std::endl;
+        std::cout << "Connecting to lobby with code: " << network->getLobbyCode() << std::endl;
     });
 
     _leftLayout->addElement(_ipInput);
