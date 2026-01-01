@@ -71,8 +71,8 @@ std::string Utils::createAlphaNumericCode() {
     static std::uniform_int_distribution<> dis(0, sizeof(charset) - 2);
 
     std::string code;
-    code.reserve(7);
-    for (int i = 0; i < 7; ++i) {
+    code.reserve(8);
+    for (int i = 0; i < 8; ++i) {
         code += charset[dis(gen)];
     }
     return code;
