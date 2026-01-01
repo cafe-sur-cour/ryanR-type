@@ -10,8 +10,9 @@
 
 #include <vector>
 #include <functional>
-#include <asio.hpp>
+#include <memory>
 #include "INetwork.hpp"
+#include "IEventLoop.hpp"
 #include "NetworkEndpoint.hpp"
 #include "../Packet/IPacketManager.hpp"
 #include "../Buffer/IBuffer.hpp"
@@ -36,8 +37,7 @@ class ANetwork : public INetwork {
         void setDisconnectionCallback(std::function<void(int)> onDisconnect) override;
 
     protected:
-        std::shared_ptr<asio::io_context> _ioContext;
-        std::shared_ptr<asio::ip::udp::socket> _socket;
+        std::shared_ptr<IEventLoop> _eventLoop;
         std::function<void(int)> _onConnectCallback;
         std::function<void(int)> _onDisconnectCallback;
         bool _isRunning;
