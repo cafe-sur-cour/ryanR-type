@@ -10,10 +10,28 @@
 
 #include <string>
 #include <cstdint>
-#include <asio.hpp>
+
+// Forward declarations pour éviter d'exposer ASIO dans le header
+namespace asio {
+    namespace ip {
+        class address;
+        namespace detail {
+            class udp_endpoint;
+        }
+        template <typename InternetProtocol>
+        class basic_endpoint;
+        class udp;
+        typedef basic_endpoint<udp> udp_endpoint;
+    }
+}
 
 namespace net {
 
+/**
+ * @brief Classe wrapper pour un endpoint réseau
+ * Abstrait complètement la dépendance à ASIO
+ * Aucun type ASIO n'est exposé dans ce header
+ */
 class NetworkEndpoint {
     public:
         NetworkEndpoint() = default;
@@ -21,16 +39,17 @@ class NetworkEndpoint {
         NetworkEndpoint(const std::string& address, uint16_t port)
             : _address(address), _port(port) {}
 
-        explicit NetworkEndpoint(const asio::ip::udp::endpoint& asioEndpoint)
-            : _address(asioEndpoint.address().to_string()),
-            _port(asioEndpoint.port()) {}
+        /**
+         * @brief Constructeur depuis un endpoint ASIO (implémentation dans .cpp)
+         * @note Déclaré mais non défini ici pour éviter d'inclure <asio.hpp>
+         */
+        explicit NetworkEndpoint(const asio::ip::udp_endpoint& asioEndpoint);
 
-        asio::ip::udp::endpoint toAsioEndpoint() const {
-            return asio::ip::udp::endpoint(
-                asio::ip::address::from_string(_address),
-                _port
-            );
-        }
+        /**
+         * @brief Conversion vers un endpoint ASIO (implémentation dans .cpp)
+         * @note Déclaré mais non défini ici pour éviter d'inclure <asio.hpp>
+         */
+        asio::ip::udp_endpoint toAsioEndpoint() const;
 
         const std::string& getAddress() const { return _address; }
         uint16_t getPort() const { return _port; }
