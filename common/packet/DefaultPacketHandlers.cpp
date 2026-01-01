@@ -335,7 +335,9 @@ bool registerDefaultPacketHandlers(
     registerMultiUCharPacket(packet, ser, SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
     registerMultiUCharPacket(packet, ser, CONNECT_TO_LOBBY, LENGTH_LOBBY_CODE_PACKET);
     registerMultiUCharPacket(packet, ser, LOBBY_MASTER_REQUEST_START, LENGTH_LOBBY_CODE_PACKET);
+    registerSingleUCharPacket(packet, ser, LOBBY_CONNECT_VALUE, LENGTH_CONNECT_TO_LOBBY_PACKET);
 
+    packet->registerLength(LOBBY_CONNECT_VALUE, LENGTH_CONNECT_TO_LOBBY_PACKET);
     packet->registerLength(REQUEST_LOBBY_PACKET, LENGTH_REQUEST_LOBBY_PACKET);
     packet->registerLength(SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
     packet->registerLength(CONNECT_TO_LOBBY, LENGTH_LOBBY_CODE_PACKET);

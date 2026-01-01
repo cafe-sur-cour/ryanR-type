@@ -263,6 +263,7 @@ namespace constants {
     constexpr std::uint8_t PACKET_SEND_LOBBY_CODE = 0x0E;
     constexpr std::uint8_t PACKET_CONNECT_TO_LOBBY = 0x0F;
     constexpr std::uint8_t PACKET_LOBBY_MASTER_REQUEST_START = 0x10;
+    constexpr std::uint8_t PACKET_LOBBY_CONNECT_VALUE = 0x11;
 
     const int MAX_INDEX_PACKET_TYPE = 18;
 }
