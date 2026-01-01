@@ -11,6 +11,7 @@
 #include <memory>
 #include "Server.hpp"
 #include "Constants.hpp"
+#include "Utils.hpp"
 #include "../common/debug.hpp"
 #include "../common/translationToECS.hpp"
 #include "../common/ECS/entity/Entity.hpp"
@@ -213,6 +214,34 @@ bool rserv::Server::serverStatusPacket() {
         }
     }
 
+    this->_sequenceNumber++;
+    return true;
+}
+
+
+bool rserv::Server::sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint) {
+    /* Create random code */
+    std::string lobbyCode = Utils::createAlphaNumericCode();
+    /* Pack */
+    std::vector<uint64_t> payload = this->_packet->formatString(lobbyCode);
+    std::vector<uint8_t> packet = this->_packet->pack(
+        constants::ID_SERVER,
+        this->_sequenceNumber,
+        SEND_LOBBY_CODE_PACKET,
+        payload
+    );
+
+    std::cout << "[SERVER] Generated lobby code: " << lobbyCode << std::endl;
+    /* Send to requested client*/
+    if (!this->_network->sendTo(endpoint, packet)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER NETWORK] Failed to send connection acceptance header to "
+            + endpoint.address().to_string() + ":" + std::to_string(endpoint.port()),
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    /* Add to lobby vector, code and cient endpoint */
+    this->lobbys.push_back(std::make_pair(lobbyCode, endpoint));
     this->_sequenceNumber++;
     return true;
 }
