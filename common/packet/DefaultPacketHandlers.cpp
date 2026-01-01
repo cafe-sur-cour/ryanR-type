@@ -331,7 +331,11 @@ bool registerDefaultPacketHandlers(
 
     if (!registerGameStateHandlers(packet))
         return false;
+    registerOptionalULongPacket(packet, ser, REQUEST_LOBBY_PACKET);
+    registerMultiUCharPacket(packet, ser, SEND_LOBBY_CODE_PACKET, 8);
 
+    packet->registerLength(REQUEST_LOBBY_PACKET, 0);
+    packet->registerLength(SEND_LOBBY_CODE_PACKET, 8);
     packet->registerLength(CONNECTION_CLIENT_PACKET, LENGTH_CONNECTION_PACKET);
     packet->registerLength(ACCEPTATION_PACKET, LENGTH_ACCEPTATION_PACKET);
     packet->registerLength(DISCONNECTION_PACKET, LENGTH_DISCONNECTION_PACKET);
