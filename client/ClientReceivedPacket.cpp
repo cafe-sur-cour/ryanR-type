@@ -303,3 +303,22 @@ void ClientNetwork::handleServerStatus() {
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
 }
+
+
+void ClientNetwork::handleCode() {
+    auto payload = _packet->getPayload();
+
+    if (payload.size() < 8) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] REQUEST_LOBBY packet is invalid",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+    std::string lobbyCode;
+    for (size_t i = 0; i < 8; ++i) {
+        char c = static_cast<char>(payload[i] & 0xFF);
+        lobbyCode += c;
+    }
+    _lobbyCode = lobbyCode;
+}

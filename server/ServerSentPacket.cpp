@@ -201,7 +201,7 @@ bool rserv::Server::serverStatusPacket() {
         std::vector<uint8_t> packet = this->_packet->pack(
             constants::ID_SERVER,
             this->_sequenceNumber,
-            SERVER_STATUS_PACKET,
+            constants::PACKET_SERVER_STATUS,
             payload
         );
 
@@ -249,7 +249,7 @@ bool rserv::Server::sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(
         constants::ID_SERVER,
         this->_sequenceNumber,
-        SEND_LOBBY_CODE_PACKET,
+        constants::PACKET_SEND_LOBBY_CODE,
         payload
     );
 
