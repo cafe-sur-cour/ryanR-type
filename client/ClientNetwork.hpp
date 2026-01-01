@@ -117,6 +117,7 @@ class ClientNetwork {
         void handleEntityDeath();
         void handleWhoAmI();
         void handleServerStatus();
+        void handleCode();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;
@@ -175,6 +176,7 @@ class ClientNetwork {
 
         std::unordered_map<size_t, ecs::Entity> _serverToLocalEntityMap;
 
+        std::string _lobbyCode;
         bool _shouldConnect;
 };
 

@@ -63,8 +63,8 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_SPAWN] = &ClientNetwork::handleEntitySpawn;
     _packetHandlers[constants::PACKET_DEATH] = &ClientNetwork::handleEntityDeath;
     _packetHandlers[constants::PACKET_WHOAMI] = &ClientNetwork::handleWhoAmI;
-    _packetHandlers[SERVER_STATUS_PACKET] = &ClientNetwork::handleServerStatus;
-    _packetHandlers[constants::PACKET_REQUEST_LOBBY] = &ClientNetwork::requestCode;
+    _packetHandlers[constants::PACKET_SERVER_STATUS] = &ClientNetwork::handleServerStatus;
+    _packetHandlers[constants::PACKET_SEND_LOBBY_CODE] = &ClientNetwork::handleCode;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
@@ -250,7 +250,6 @@ void ClientNetwork::handlePacketType(uint8_t type) {
             debug::debugLevel::INFO);
     }
 }
-
 
 std::pair<int, std::chrono::steady_clock::time_point> ClientNetwork::tryConnection(
     int maxRetries, int retryCount, std::chrono::steady_clock::time_point lastRetryTime) {
