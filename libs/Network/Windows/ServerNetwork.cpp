@@ -90,14 +90,15 @@ void ServerNetwork::stop() {
     _isRunning = false;
 }
 
-bool ServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> packet) {
+bool ServerNetwork::sendTo(const NetworkEndpoint& endpoint, std::vector<uint8_t> packet) {
     if (!_socket || !_socket->is_open()) {
         std::cerr << "[SERVER NETWORK] Socket is not open" << std::endl;
         return false;
     }
 
     asio::error_code ec;
-    _socket->send_to(asio::buffer(packet), id, 0, ec);
+    auto asioEndpoint = endpoint.toAsioEndpoint();
+    _socket->send_to(asio::buffer(packet), asioEndpoint, 0, ec);
     if (ec) {
         std::cerr << "[SERVER NETWORK] Send error: " << ec.message() << std::endl;
         return false;
@@ -105,12 +106,12 @@ bool ServerNetwork::sendTo(asio::ip::udp::endpoint id, std::vector<uint8_t> pack
     return true;
 }
 
-bool ServerNetwork::broadcast(std::vector<asio::ip::udp::endpoint> clients,
+bool ServerNetwork::broadcast(const std::vector<NetworkEndpoint>& endpoints,
     std::vector<uint8_t> data) {
-    for (auto &endpoint : clients) {
+    for (const auto &endpoint : endpoints) {
         if (!this->sendTo(endpoint, data)) {
             std::cerr << "[SERVER NETWORK] Broadcast error to endpoint: "
-                << endpoint.address().to_string() << ":" << endpoint.port() << std::endl;
+                << endpoint.getAddress() << ":" << endpoint.getPort() << std::endl;
             return false;
         }
     }
@@ -133,16 +134,16 @@ std::vector<uint8_t> ServerNetwork::receiveFrom(
     return std::vector<uint8_t>();
 }
 
-std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> ServerNetwork::receiveAny() {
+std::pair<NetworkEndpoint, std::vector<uint8_t>> ServerNetwork::receiveAny() {
     asio::error_code ec;
 
     std::size_t available = _socket->available(ec);
     if (ec) {
         std::cerr << "[SERVER NETWORK] Available check error: " << ec.message() << std::endl;
-        return std::make_pair(asio::ip::udp::endpoint(), std::vector<uint8_t>());
+        return {};
     }
     if (available == 0) {
-        return std::make_pair(asio::ip::udp::endpoint(), std::vector<uint8_t>());
+        return {};
     }
 
     std::vector<uint8_t> buffer(available);
@@ -150,11 +151,11 @@ std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> ServerNetwork::receiveA
     std::size_t bytes = _socket->receive_from(asio::buffer(buffer), sender, 0, ec);
     if (ec) {
         std::cerr << "[SERVER NETWORK] Receive error: " << ec.message() << std::endl;
-        return std::make_pair(asio::ip::udp::endpoint(), std::vector<uint8_t>());
+        return {};
     }
 
     buffer.resize(bytes);
-    return std::make_pair(sender, buffer);
+    return std::make_pair(NetworkEndpoint(sender), buffer);
 }
 
 }  // namespace net
