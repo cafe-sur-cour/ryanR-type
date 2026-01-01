@@ -1,0 +1,29 @@
+function init(entity)
+    _G["time_" .. entity] = 0
+end
+
+function update(entity, deltaTime)
+    _G["time_" .. entity] = (_G["time_" .. entity] or 0) + deltaTime
+    local t = _G["time_" .. entity]
+    local frequency = 2.0
+    local amplitude = 2.0
+    local vertical = math.sin(t * frequency) * amplitude
+
+    local speed = getEntitySpeed(entity)
+    local dirX = 1.0
+    local dirY = vertical
+    local length = math.sqrt(dirX * dirX + dirY * dirY)
+    if length > 0 then
+        dirX = (dirX / length) * speed
+        dirY = (dirY / length) * speed
+    end
+    createMoveIntent(entity, dirX, dirY)
+
+    local px, py = getPlayerPosition()
+    local ex, ey = getEntityPosition(entity)
+    if px > ex then
+        createShootIntent(entity, 0)
+    else
+        createShootIntent(entity, 180)
+    end
+end
