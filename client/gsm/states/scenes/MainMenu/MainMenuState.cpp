@@ -268,26 +268,6 @@ MainMenuState::MainMenuState(
     _rightLayout = std::make_shared<ui::UILayout>(_resourceManager, rightConfig);
     _rightLayout->setSize(math::Vector2f(300.f, 200.f));
 
-    // _devButton = std::make_shared<ui::Button>(_resourceManager);
-    // _devButton->setText("Dev Scene\n(Offline Mode)");
-    // _devButton->setSize(math::Vector2f(400.f, 108.f));
-    // _devButton->setNormalColor(colors::BUTTON_PRIMARY);
-    // _devButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
-    // _devButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
-    // _devButton->setOnRelease([this]() {
-    //     if (auto stateMachine = this->_gsm.lock()) {
-    //         stateMachine->requestStatePush(std::make_shared<DevState>(stateMachine,
-    //             this->_resourceManager));
-    //     }
-    // });
-    // _devButton->setOnActivated([this]() {
-    //     if (auto stateMachine = this->_gsm.lock()) {
-    //         stateMachine->requestStatePush(std::make_shared<DevState>(stateMachine,
-    //             this->_resourceManager));
-    //     }
-    // });
-    // _rightLayout->addElement(_devButton);
-
     _rightLayout->addElement(_requestCodeButton);
     _rightLayout->addElement(_lobbyCodeInput);
     _rightLayout->addElement(_lobbyConnectButton);
@@ -356,13 +336,10 @@ void MainMenuState::updateUIStatus() {
         return;
     }
 
-    // Update lobby code input with received code if available
     if (!network->getLobbyCode().empty()) {
         _lobbyCodeInput->setText(network->getLobbyCode());
-        // Hide request code button when lobby code is received
         _requestCodeButton->setVisible(false);
     } else {
-        // Show request code button when no lobby code
         _requestCodeButton->setVisible(true);
     }
 
