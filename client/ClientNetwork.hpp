@@ -75,6 +75,7 @@ class ClientNetwork {
         void sendReady();
         void sendWhoAmI();
         void requestCode();
+        void sendLobbyConnection(std::string lobbyCode);
 
         void addToEventQueue(const NetworkEvent &event);
 
@@ -119,6 +120,7 @@ class ClientNetwork {
         void handleWhoAmI();
         void handleServerStatus();
         void handleCode();
+        void handleLobbyConnectValue();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;
