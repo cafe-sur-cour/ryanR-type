@@ -167,7 +167,7 @@ class ClientNetwork {
 
 
         uint8_t _idClient;
-        asio::ip::udp::endpoint _serverEndpoint;
+        net::NetworkEndpoint _serverEndpoint;
 
         std::queue<NetworkEvent> _eventQueue;
         std::mutex _queueMutex;

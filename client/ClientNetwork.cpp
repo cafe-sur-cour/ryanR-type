@@ -141,10 +141,7 @@ void ClientNetwork::init() {
         this->_port,
         this->_ip
     );
-    this->_serverEndpoint = asio::ip::udp::endpoint(
-        asio::ip::address::from_string(this->_ip),
-        static_cast<uint16_t>(this->_port)
-    );
+    this->_serverEndpoint = net::NetworkEndpoint(this->_ip, static_cast<uint16_t>(this->_port));
 }
 
 void ClientNetwork::connect() {
@@ -183,10 +180,7 @@ void ClientNetwork::setIp(const std::string &ip) {
 }
 
 void ClientNetwork::redoServerEndpoint() {
-    this->_serverEndpoint = asio::ip::udp::endpoint(
-        asio::ip::address::from_string(this->_ip),
-        static_cast<uint16_t>(this->_port)
-    );
+    this->_serverEndpoint = net::NetworkEndpoint(this->_ip, static_cast<uint16_t>(this->_port));
 }
 
 void ClientNetwork::setDebugMode(bool isDebug) {
