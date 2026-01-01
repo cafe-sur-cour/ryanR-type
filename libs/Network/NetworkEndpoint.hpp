@@ -41,25 +41,15 @@ class NetworkEndpoint {
 
         asio::ip::udp_endpoint toAsioEndpoint() const;
 
-        const std::string& getAddress() const { return _address; }
-        uint16_t getPort() const { return _port; }
+        const std::string& getAddress() const;
+        uint16_t getPort() const;
 
-        void setAddress(const std::string& address) { _address = address; }
-        void setPort(uint16_t port) { _port = port; }
+        void setAddress(const std::string& address);
+        void setPort(uint16_t port);
 
-        bool operator==(const NetworkEndpoint& other) const {
-            return _address == other._address && _port == other._port;
-        }
-
-        bool operator!=(const NetworkEndpoint& other) const {
-            return !(*this == other);
-        }
-
-        bool operator<(const NetworkEndpoint& other) const {
-            if (_address != other._address)
-                return _address < other._address;
-            return _port < other._port;
-        }
+        bool operator==(const NetworkEndpoint& other) const;
+        bool operator!=(const NetworkEndpoint& other) const;
+        bool operator<(const NetworkEndpoint& other) const;
 
     private:
         std::string _address;

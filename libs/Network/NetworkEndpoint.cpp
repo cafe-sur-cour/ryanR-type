@@ -27,4 +27,34 @@ asio::ip::udp_endpoint NetworkEndpoint::toAsioEndpoint() const {
     );
 }
 
+const std::string& NetworkEndpoint::getAddress() const {
+    return _address;
+}
+
+uint16_t NetworkEndpoint::getPort() const {
+    return _port;
+}
+
+void NetworkEndpoint::setAddress(const std::string& address) {
+    _address = address;
+}
+
+void NetworkEndpoint::setPort(uint16_t port) {
+    _port = port;
+}
+
+bool NetworkEndpoint::operator==(const NetworkEndpoint& other) const {
+    return _address == other._address && _port == other._port;
+}
+
+bool NetworkEndpoint::operator!=(const NetworkEndpoint& other) const {
+    return !(*this == other);
+}
+
+bool NetworkEndpoint::operator<(const NetworkEndpoint& other) const {
+    if (_address != other._address)
+        return _address < other._address;
+    return _port < other._port;
+}
+
 } // namespace net
