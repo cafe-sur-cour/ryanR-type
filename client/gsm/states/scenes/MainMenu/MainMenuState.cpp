@@ -20,6 +20,7 @@
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../../common/InputMapping/IInputProvider.hpp"
 #include "../Settings/SettingsState.hpp"
+#include "../LobbyWaiting/LobbyWaitingState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -29,7 +30,8 @@ namespace gsm {
 MainMenuState::MainMenuState(
     std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager
-) : AGameState(gsm, resourceManager) {
+) : AGameState(gsm, resourceManager), _previousLobbyConnectedState(false),
+    _previousLobbyMasterState(false) {
     if (!_resourceManager->has<SettingsConfig>()) {
         _resourceManager->add(std::make_shared<SettingsConfig>());
     }
@@ -312,6 +314,11 @@ MainMenuState::MainMenuState(
 }
 
 void MainMenuState::enter() {
+    auto network = _resourceManager->get<ClientNetwork>();
+    if (network) {
+        _previousLobbyConnectedState = network->isConnectedToLobby();
+        _previousLobbyMasterState = network->isLobbyMaster();
+    }
 }
 
 void MainMenuState::update(float deltaTime) {
@@ -371,6 +378,7 @@ void MainMenuState::update(float deltaTime) {
     }
 
     _uiManager->update(deltaTime);
+    checkLobbyConnectionTransition();
     updateUIStatus();
     renderUI();
 }
@@ -425,6 +433,36 @@ void MainMenuState::updateUIStatus() {
         }
         _serverStatusText->setText(status);
     }
+}
+
+void MainMenuState::checkLobbyConnectionTransition() {
+    auto network = _resourceManager->get<ClientNetwork>();
+    if (!network) {
+        return;
+    }
+
+    bool currentLobbyConnected = network->isConnectedToLobby();
+    bool currentLobbyMaster = network->isLobbyMaster();
+
+    if (!_previousLobbyMasterState && currentLobbyMaster &&
+        !network->getLobbyCode().empty()) {
+        if (auto stateMachine = _gsm.lock()) {
+            auto lobbyWaitingState = std::make_shared<LobbyWaitingState>(
+                stateMachine, _resourceManager, true);
+            stateMachine->requestStateChange(lobbyWaitingState);
+            return;
+        }
+    }
+
+    if (!_previousLobbyConnectedState && currentLobbyConnected) {
+        if (auto stateMachine = _gsm.lock()) {
+            auto lobbyWaitingState = std::make_shared<LobbyWaitingState>(
+                stateMachine, _resourceManager, currentLobbyMaster);
+            stateMachine->requestStateChange(lobbyWaitingState);
+        }
+    }
+    _previousLobbyConnectedState = currentLobbyConnected;
+    _previousLobbyMasterState = currentLobbyMaster;
 }
 
 void MainMenuState::exit() {
