@@ -74,6 +74,7 @@ class ClientNetwork {
         void connectionPacket();
         void sendReady();
         void sendWhoAmI();
+        void requestCode();
 
         void addToEventQueue(const NetworkEvent &event);
 
@@ -84,6 +85,7 @@ class ClientNetwork {
         size_t getReadyClients() const;
         uint8_t getClientId() const;
         bool getClientReadyStatus() const;
+        std::string getLobbyCode() const;
 
         std::atomic<bool> _isConnected;
         std::atomic<bool> _ready;
@@ -110,13 +112,13 @@ class ClientNetwork {
         void handleNoOp();
         void handleConnectionAcceptation();
         void handleGameState();
-        void handleEndMap();
         void handleEndGame();
         void handleCanStart();
         void handleEntitySpawn();
         void handleEntityDeath();
         void handleWhoAmI();
         void handleServerStatus();
+        void handleCode();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;
@@ -175,6 +177,7 @@ class ClientNetwork {
 
         std::unordered_map<size_t, ecs::Entity> _serverToLocalEntityMap;
 
+        std::string _lobbyCode;
         bool _shouldConnect;
 };
 

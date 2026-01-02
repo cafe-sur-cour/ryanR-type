@@ -19,7 +19,6 @@
 #include "../../../../constants.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../../common/InputMapping/IInputProvider.hpp"
-#include "../Dev/DevState.hpp"
 #include "../Settings/SettingsState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
@@ -138,6 +137,36 @@ MainMenuState::MainMenuState(
     _serverStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
     _serverStatusText->setOutlineThickness(1.0f);
 
+    _requestCodeButton = std::make_shared<ui::Button>(_resourceManager);
+    _requestCodeButton->setText("Request Code");
+    _requestCodeButton->setSize(math::Vector2f(300.f, 50.f));
+    _requestCodeButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            std::cout << "Requesting code from server..." << std::endl;
+            network->requestCode();
+        } else {
+            std::cout << "Cannot request code: Not connected to server" << std::endl;
+        }
+    });
+
+    _lobbyCodeInput = std::make_shared<ui::TextInput>(_resourceManager);
+    _lobbyCodeInput->setPlaceholder("Enter lobby code");
+    _lobbyCodeInput->setSize(math::Vector2f(300.f, 50.f));
+    _lobbyCodeInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_lobbyCodeInput);
+    });
+
+    _lobbyConnectButton = std::make_shared<ui::Button>(_resourceManager);
+    _lobbyConnectButton->setText("Connect to Lobby");
+    _lobbyConnectButton->setSize(math::Vector2f(300.f, 50.f));
+    _lobbyConnectButton->setOnRelease([this]() {
+        std::string lobbyCode = this->_lobbyCodeInput->getText();
+        std::cout << "Connecting to lobby with code: " << lobbyCode << std::endl;
+    });
+
     _leftLayout->addElement(_ipInput);
     _leftLayout->addElement(_portInput);
     _leftLayout->addElement(_connectButton);
@@ -236,27 +265,11 @@ MainMenuState::MainMenuState(
     rightConfig.offset = math::Vector2f(-50.0f, 0.0f);
 
     _rightLayout = std::make_shared<ui::UILayout>(_resourceManager, rightConfig);
-    _rightLayout->setSize(math::Vector2f(400.f, 108.f));
+    _rightLayout->setSize(math::Vector2f(300.f, 200.f));
 
-    _devButton = std::make_shared<ui::Button>(_resourceManager);
-    _devButton->setText("Dev Scene\n(Offline Mode)");
-    _devButton->setSize(math::Vector2f(400.f, 108.f));
-    _devButton->setNormalColor(colors::BUTTON_PRIMARY);
-    _devButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
-    _devButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
-    _devButton->setOnRelease([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<DevState>(stateMachine,
-                this->_resourceManager));
-        }
-    });
-    _devButton->setOnActivated([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<DevState>(stateMachine,
-                this->_resourceManager));
-        }
-    });
-    _rightLayout->addElement(_devButton);
+    _rightLayout->addElement(_requestCodeButton);
+    _rightLayout->addElement(_lobbyCodeInput);
+    _rightLayout->addElement(_lobbyConnectButton);
 
     _uiManager->addElement(_leftLayout);
     _uiManager->addElement(_mainMenuLayout);
@@ -322,6 +335,13 @@ void MainMenuState::updateUIStatus() {
         return;
     }
 
+    if (!network->getLobbyCode().empty()) {
+        _lobbyCodeInput->setText(network->getLobbyCode());
+        _requestCodeButton->setVisible(false);
+    } else {
+        _requestCodeButton->setVisible(true);
+    }
+
     if (!network->isConnected()) {
         _playButton->setText("Not connected to server");
         _connectionStatusText->setText("Not connected to server");
@@ -359,8 +379,11 @@ void MainMenuState::exit() {
     _settingsButton.reset();
     _quitButton.reset();
     _connectButton.reset();
+    _requestCodeButton.reset();
+    _lobbyConnectButton.reset();
     _ipInput.reset();
     _portInput.reset();
+    _lobbyCodeInput.reset();
     _connectionStatusText.reset();
     _serverStatusText.reset();
     _mainMenuLayout.reset();
