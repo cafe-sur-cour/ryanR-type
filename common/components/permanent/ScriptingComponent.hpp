@@ -11,8 +11,9 @@
 #include "../base/AComponent.hpp"
 #include <string>
 #include <map>
-
 #include <sol/sol.hpp>
+#include "../../Error/ScriptingError.hpp"
+#include "../../constants.hpp"
 
 namespace ecs {
 
@@ -33,7 +34,7 @@ class ScriptingComponent : public AComponent {
                 sol::load_result script = lua.load_file(_scriptName);
                 if (!script.valid()) {
                     sol::error err = script;
-                    throw std::runtime_error("Failed to load script: " + std::string(err.what()) );
+                    throw err::ScriptingError("Failed to load script: " + std::string(err.what()), err::ScriptingError::LOAD_FAILED);
                 }
 
                 sol::table metatable = lua.create_table();
@@ -43,11 +44,11 @@ class ScriptingComponent : public AComponent {
                 sol::unsafe_function_result result = chunk(_env);
                 if (!result.valid()) {
                     sol::error err = result;
-                    throw std::runtime_error("Failed to run script: " + std::string(err.what()));
+                    throw err::ScriptingError("Failed to run script: " + std::string(err.what()), err::ScriptingError::RUN_FAILED);
                 }
             }
 
-            std::vector<std::string> defaults = {"init", "update", "on_event"};
+            std::vector<std::string> defaults = {constants::INIT_FUNCTION, constants::UPDATE_FUNCTION};
             defaults.insert(defaults.end(), _additionalFunctions.begin(), _additionalFunctions.end());
             for (const auto& def : defaults) {
                 sol::function fn = _env[def];
@@ -77,11 +78,11 @@ class ScriptingComponent : public AComponent {
         void setInitialized(bool value) { _initialized = value; };
     protected:
     private:
-    std::string _scriptName;
-    std::vector<std::string> _additionalFunctions;
-    sol::table _env;
-    std::map<std::string, sol::function> _functions;
-    bool _initialized = false;
+        std::string _scriptName;
+        std::vector<std::string> _additionalFunctions;
+        sol::table _env;
+        std::map<std::string, sol::function> _functions;
+        bool _initialized = false;
 };
 
 } // namespace ecs
