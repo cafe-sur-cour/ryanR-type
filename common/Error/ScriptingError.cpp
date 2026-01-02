@@ -6,6 +6,7 @@
 */
 
 #include "ScriptingError.hpp"
+#include <string>
 
 namespace err {
 
