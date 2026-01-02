@@ -77,7 +77,7 @@ namespace rserv {
             bool processEvents(uint8_t idClient) override;
             bool processEndOfGame(uint8_t idClient) override;
             bool processWhoAmI(uint8_t idClient);
-            bool requestCode(asio::ip::udp::endpoint endpoint);
+            bool requestCode(const net::INetworkEndpoint& endpoint);
 
             /* Sent Packet Handling */
             bool connectionPacket(const net::INetworkEndpoint& endpoint);
@@ -87,7 +87,7 @@ namespace rserv {
             std::vector<uint64_t> spawnPacket(size_t entity, const std::string prefabName);
             std::vector<uint64_t> deathPacket(size_t entity);
             bool serverStatusPacket();
-            bool sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint);
+            bool sendCodeLobbyPacket(const net::INetworkEndpoint& endpoint);
 
             bool isGameStarted() const;
             bool allClientsReady() const;

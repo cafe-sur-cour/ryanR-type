@@ -18,6 +18,7 @@
 #include "../common/ECS/entity/Entity.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/Parser/Parser.hpp"
+#include "../libs/Network/Asio/AsioEndpoint.hpp"
 
 bool rserv::Server::connectionPacket(const net::INetworkEndpoint& endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
@@ -219,7 +220,7 @@ bool rserv::Server::serverStatusPacket() {
     return true;
 }
 
-bool rserv::Server::sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint) {
+bool rserv::Server::sendCodeLobbyPacket(const net::INetworkEndpoint& endpoint) {
     /* Create random code */
     std::string lobbyCode;
     bool isUnique = false;
@@ -262,13 +263,14 @@ bool rserv::Server::sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint) {
     /* Send to requested client*/
     if (!this->_network->sendTo(endpoint, packet)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER NETWORK] Failed to send lobby code packet to "
-            + endpoint.address().to_string() + ":" + std::to_string(endpoint.port()),
+            "[SERVER NETWORK] Failed to send lobby code packet to " +
+            endpoint.getAddress() + ":" + std::to_string(endpoint.getPort()),
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
     /* Add to lobby vector, code and client endpoint */
-    this->lobbys.push_back(std::make_pair(lobbyCode, endpoint));
+    const auto& asioEndpoint = dynamic_cast<const net::AsioEndpoint&>(endpoint);
+    this->lobbys.push_back(std::make_pair(lobbyCode, asioEndpoint.toAsioEndpoint()));
     this->_sequenceNumber++;
     return true;
 }
