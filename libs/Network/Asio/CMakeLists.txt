@@ -2,20 +2,20 @@ set(ASIO_LIB_NAME AsioNetwork)
 
 # Fichiers sources pour la bibliothèque Asio
 set(ASIO_SOURCES
-    Address.cpp
-    Endpoint.cpp
-    ErrorCode.cpp
-    Resolver.cpp
-    Socket.cpp
+    AsioAddress.cpp
+    AsioEndpoint.cpp
+    AsioErrorCode.cpp
+    AsioResolver.cpp
+    AsioSocket.cpp
 )
 
 # Fichiers d'en-tête
 set(ASIO_HEADERS
-    Address.hpp
-    Endpoint.hpp
-    ErrorCode.hpp
-    Resolver.hpp
-    Socket.hpp
+    AsioAddress.hpp
+    AsioEndpoint.hpp
+    AsioErrorCode.hpp
+    AsioResolver.hpp
+    AsioSocket.hpp
 )
 
 # Création de la bibliothèque statique

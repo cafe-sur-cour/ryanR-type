@@ -5,9 +5,9 @@
 ** NetworkEndpoint implementation
 */
 
-#include "Endpoint.hpp"
-#include "Address.hpp"
 #include <asio.hpp>
+#include "AsioEndpoint.hpp"
+#include "AsioAddress.hpp"
 
 net::AsioEndpoint::AsioEndpoint(const net::AsioAddress& address, uint16_t port)
     : _address(address.toString()), _port(port) {

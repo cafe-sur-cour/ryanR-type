@@ -7,9 +7,9 @@
 
 #include <asio.hpp>
 #include <stdexcept>
-#include "Resolver.hpp"
-#include "ErrorCode.hpp"
-#include "EventLoop.hpp"
+#include "AsioResolver.hpp"
+#include "AsioErrorCode.hpp"
+#include "AsioEventLoop.hpp"
 
 class net::AsioResolver::Impl {
 public:

@@ -8,7 +8,7 @@
 #ifndef NETWORKENDPOINT_HPP_
 #define NETWORKENDPOINT_HPP_
 
-#include "Asio/Endpoint.hpp"
+#include "Asio/AsioEndpoint.hpp"
 
 namespace net {
     using NetworkEndpoint = AsioEndpoint;

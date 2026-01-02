@@ -10,7 +10,7 @@
 
 #include <string>
 #include <cstdint>
-#include "Address.hpp"
+#include "AsioAddress.hpp"
 #include "../INetworkEndpoint.hpp"
 
 namespace asio {

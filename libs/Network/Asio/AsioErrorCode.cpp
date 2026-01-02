@@ -5,7 +5,7 @@
 ** NetworkErrorCode implementation
 */
 
-#include "ErrorCode.hpp"
+#include "AsioErrorCode.hpp"
 #include <asio.hpp>
 
 namespace net {

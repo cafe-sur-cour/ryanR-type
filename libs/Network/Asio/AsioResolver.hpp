@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include "Endpoint.hpp"
+#include "AsioEndpoint.hpp"
 #include "../INetworkResolver.hpp"
 #include "../IEventLoop.hpp"
 
