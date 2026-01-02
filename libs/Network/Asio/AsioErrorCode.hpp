@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** NetworkErrorCode - Abstraction pour les codes d'erreur réseau
+** NetworkErrorCode
 */
 
 #ifndef NETWORK_ERROR_CODE_HPP

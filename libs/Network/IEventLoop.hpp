@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** IEventLoop - Interface abstraite pour la boucle d'événements (indépendant d'ASIO)
+** IEventLoop
 */
 
 #ifndef IEVENTLOOP_HPP_

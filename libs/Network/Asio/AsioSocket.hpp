@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** NetworkSocket - Abstraction pour les sockets UDP
+** NetworkSocket
 */
 
 #ifndef NETWORK_SOCKET_HPP

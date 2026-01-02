@@ -17,8 +17,6 @@
 
 namespace net {
 
-class AsioEndpoint; // Forward declaration
-
 enum class ConnectionState {
     DISCONNECTED,
     CONNECTING,

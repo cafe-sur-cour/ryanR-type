@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** NetworkResolver implementation avec ASIO
+** NetworkResolver
 */
 
 #include <stdexcept>
@@ -14,6 +14,9 @@
 #include "AsioResolver.hpp"
 #include "AsioErrorCode.hpp"
 #include "AsioEventLoop.hpp"
+#include "AsioEndpoint.hpp"
+#include "../INetworkEndpoint.hpp"
+#include "../INetworkErrorCode.hpp"
 
 class net::AsioResolver::Impl {
  public:
@@ -31,15 +34,15 @@ net::AsioResolver::AsioResolver(std::shared_ptr<IEventLoop> eventLoop) :
 
 net::AsioResolver::~AsioResolver() = default;
 
-std::vector<net::AsioEndpoint> net::AsioResolver::resolve(const std::string& host,
-    const std::string& port, INetworkErrorCode& ec) {
-    std::vector<AsioEndpoint> endpoints;
+std::vector<std::shared_ptr<net::INetworkEndpoint>> net::AsioResolver::resolve(
+    const std::string& host, const std::string& port, INetworkErrorCode& ec) {
+    std::vector<std::shared_ptr<net::INetworkEndpoint>> endpoints;
     auto asioEc = std::static_pointer_cast<asio::error_code>(ec.getInternalErrorCode());
     try {
         auto results = _impl->resolver->resolve(asio::ip::udp::v4(), host, port, *asioEc);
         if (!ec.hasError()) {
             for (const auto& entry : results) {
-                endpoints.emplace_back(AsioEndpoint(entry.endpoint()));
+                endpoints.push_back(std::make_shared<AsioEndpoint>(entry.endpoint()));
             }
         }
     } catch (const std::exception&) {

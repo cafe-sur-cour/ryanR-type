@@ -13,17 +13,12 @@
 #include <utility>
 
 #include "ClientNetwork.hpp"
+#include "../common.hpp"
 #include "../INetworkSocket.hpp"
 #include "../INetworkResolver.hpp"
 #include "../INetworkErrorCode.hpp"
-#include "../Asio/AsioSocket.hpp"
-#include "../Asio/AsioResolver.hpp"
-#include "../Asio/AsioErrorCode.hpp"
-#include "../Asio/AsioEndpoint.hpp"
-#include "../Asio/AsioEventLoop.hpp"
+#include "../INetworkEndpoint.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
-
-using NetworkErrorCode = net::AsioErrorCode;
 
 net::ClientNetwork::ClientNetwork() : _connected(false) {
     _eventLoop = EventLoopFactory::create();
@@ -43,10 +38,10 @@ net::ClientNetwork::~ClientNetwork() {
 
 
 void net::ClientNetwork::init(uint16_t port, const std::string host) {
-    net::AsioErrorCode ec;
+    NetworkErrorCode ec;
 
     if (!this->_socket) {
-        this->_socket = std::make_shared<net::AsioSocket>(_eventLoop);
+        this->_socket = std::make_shared<NetworkSocket>(_eventLoop);
     }
 
     if (!this->_socket->isOpen()) {
@@ -56,14 +51,14 @@ void net::ClientNetwork::init(uint16_t port, const std::string host) {
         }
     }
     try {
-        auto resolver = std::make_shared<net::AsioResolver>(_eventLoop);
+        auto resolver = std::make_shared<NetworkResolver>(_eventLoop);
         auto endpoints = resolver->resolve(host, std::to_string(port), ec);
         if (ec || endpoints.empty()) {
             throw std::runtime_error(
                 "[CLIENT NETWORK] Failed to resolve host '" + host + "': " +
                 (ec.hasError() ? ec.message() : "no results"));
         }
-        this->_serverEndpoint = std::make_shared<net::AsioEndpoint>(endpoints[0]);
+        this->_serverEndpoint = endpoints[0];
         if (!this->_socket->setNonBlocking(true, ec)) {
             throw std::runtime_error(
                 std::string("[CLIENT NETWORK] Failed to set non-blocking mode: ") +
@@ -180,7 +175,7 @@ std::vector<uint8_t> net::ClientNetwork::receiveFrom(
 
     NetworkErrorCode ec;
     std::vector<uint8_t> buffer(65536);
-    AsioEndpoint sender;
+    NetworkEndpoint sender;
 
     std::size_t bytesReceived = _socket->receiveFrom(buffer, sender, 0, ec);
 
@@ -194,7 +189,7 @@ std::vector<uint8_t> net::ClientNetwork::receiveFrom(
 
     if (bytesReceived > 0) {
         buffer.resize(bytesReceived);
-        this->_serverEndpoint = std::make_shared<AsioEndpoint>(sender);
+        this->_serverEndpoint = std::make_shared<NetworkEndpoint>(sender);
         return buffer;
     }
     return std::vector<uint8_t>();
@@ -202,7 +197,7 @@ std::vector<uint8_t> net::ClientNetwork::receiveFrom(
 
 std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>>
     net::ClientNetwork::receiveAny() {
-    return std::make_pair(std::make_shared<AsioEndpoint>(), std::vector<uint8_t>());
+    return std::make_pair(std::make_shared<NetworkEndpoint>(), std::vector<uint8_t>());
 }
 
 extern "C" {

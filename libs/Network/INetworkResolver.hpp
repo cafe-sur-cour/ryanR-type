@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** NetworkResolver - Abstraction pour la résolution DNS
+** NetworkResolver
 */
 
 #ifndef INETWORK_RESOLVER_HPP
@@ -12,15 +12,15 @@
 #include <string>
 #include <vector>
 
-#include "Asio/AsioEndpoint.hpp"
-#include "Asio/AsioErrorCode.hpp"
-
 namespace net {
+
+class INetworkEndpoint;
+class INetworkErrorCode;
 
 class INetworkResolver {
     public:
         virtual ~INetworkResolver() = default;
-        virtual std::vector<AsioEndpoint> resolve(const std::string& host,
+        virtual std::vector<std::shared_ptr<INetworkEndpoint>> resolve(const std::string& host,
             const std::string& port, INetworkErrorCode& ec) = 0;
 };
 

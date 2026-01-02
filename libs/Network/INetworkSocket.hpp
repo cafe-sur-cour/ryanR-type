@@ -13,10 +13,10 @@
 #include <vector>
 #include <cstdint>
 
-#include "Asio/AsioErrorCode.hpp"
-#include "Asio/AsioEndpoint.hpp"
-
 namespace net {
+
+class INetworkEndpoint;
+class INetworkErrorCode;
 
 class INetworkSocket {
     public:

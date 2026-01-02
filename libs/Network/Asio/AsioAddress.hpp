@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** NetworkAddress - Abstraction pour les adresses IP
+** NetworkAddress
 */
 
 #ifndef NETWORK_ADDRESS_HPP
