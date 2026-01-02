@@ -9,8 +9,10 @@
 #include <string>
 #include <iostream>
 #include <memory>
+#include <utility>
 #include "Server.hpp"
 #include "Constants.hpp"
+#include "Utils.hpp"
 #include "../common/debug.hpp"
 #include "../common/translationToECS.hpp"
 #include "../common/ECS/entity/Entity.hpp"
@@ -200,7 +202,7 @@ bool rserv::Server::serverStatusPacket() {
         std::vector<uint8_t> packet = this->_packet->pack(
             constants::ID_SERVER,
             this->_sequenceNumber,
-            SERVER_STATUS_PACKET,
+            constants::PACKET_SERVER_STATUS,
             payload
         );
 
@@ -213,6 +215,60 @@ bool rserv::Server::serverStatusPacket() {
         }
     }
 
+    this->_sequenceNumber++;
+    return true;
+}
+
+bool rserv::Server::sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint) {
+    /* Create random code */
+    std::string lobbyCode;
+    bool isUnique = false;
+    int maxAttempts = 20;
+    int attempts = 0;
+
+    while (!isUnique && attempts < maxAttempts) {
+        lobbyCode = Utils::createAlphaNumericCode();
+        isUnique = true;
+        for (const auto& lobby : this->lobbys) {
+            if (lobby.first == lobbyCode) {
+                isUnique = false;
+                break;
+            }
+        }
+        attempts++;
+    }
+
+    if (!isUnique) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Failed to generate unique lobby code after " +
+            std::to_string(maxAttempts) + " attempts",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    /* Pack */
+    std::vector<uint64_t> payload = this->_packet->formatString(lobbyCode);
+    std::vector<uint8_t> packet = this->_packet->pack(
+        constants::ID_SERVER,
+        this->_sequenceNumber,
+        constants::PACKET_SEND_LOBBY_CODE,
+        payload
+    );
+
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Generated unique lobby code: " + lobbyCode +
+        " (attempt " + std::to_string(attempts) + ")",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+    /* Send to requested client*/
+    if (!this->_network->sendTo(endpoint, packet)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER NETWORK] Failed to send lobby code packet to "
+            + endpoint.address().to_string() + ":" + std::to_string(endpoint.port()),
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    /* Add to lobby vector, code and client endpoint */
+    this->lobbys.push_back(std::make_pair(lobbyCode, endpoint));
     this->_sequenceNumber++;
     return true;
 }
