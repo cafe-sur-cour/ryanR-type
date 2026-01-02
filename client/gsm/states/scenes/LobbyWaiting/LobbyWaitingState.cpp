@@ -59,8 +59,8 @@ LobbyWaitingState::LobbyWaitingState(
 }
 
 void LobbyWaitingState::setupLobbyMasterUI() {
-    auto network = _resourceManager->get<ClientNetwork>();
-    std::string lobbyCode = network ? network->getLobbyCode() : "Unknown";
+    auto networkLobby = _resourceManager->get<ClientNetwork>();
+    std::string lobbyCode = networkLobby ? networkLobby->getLobbyCode() : "Unknown";
 
     _lobbyCodeText = std::make_shared<ui::Text>(_resourceManager);
     _lobbyCodeText->setText("Lobby Code: " + lobbyCode);
@@ -88,11 +88,24 @@ void LobbyWaitingState::setupLobbyMasterUI() {
     _startGameButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
 
     _startGameButton->setOnRelease([this]() {
-        std::cout << "Game Starting" << std::endl;
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->sendMasterStartGame();
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Master requested to start the game.",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
     });
-
     _startGameButton->setOnActivated([this]() {
-        std::cout << "Game Starting" << std::endl;
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->sendMasterStartGame();
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Master requested to start the game.",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
     });
 
     _centerLayout->addElement(_startGameButton);
