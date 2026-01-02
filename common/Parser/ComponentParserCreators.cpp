@@ -594,7 +594,8 @@ void Parser::instanciateComponentCreators() {
         auto scriptPath = std::get<std::string>(*fields.at(constants::SCRIPT_PATH_FIELD));
         std::vector<std::string> additionalFunctions;
         if (fields.find(constants::ADDITIONAL_FUNCTIONS_FIELD) != fields.end()) {
-            auto functionsJson = std::get<nlohmann::json>(*fields.at(constants::ADDITIONAL_FUNCTIONS_FIELD));
+            auto functionsJson = std::get<nlohmann::json>
+                (*fields.at(constants::ADDITIONAL_FUNCTIONS_FIELD));
             for (const auto& func : functionsJson) {
                 additionalFunctions.push_back(func);
             }

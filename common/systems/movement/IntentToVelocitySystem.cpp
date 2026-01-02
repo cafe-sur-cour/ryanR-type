@@ -51,4 +51,4 @@ void IntentToVelocitySystem::update(
     }
 }
 
-} // namespace ecs
+}  // namespace ecs
