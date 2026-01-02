@@ -47,6 +47,7 @@
 #include "../components/permanent/ScoreComponent.hpp"
 #include "../components/permanent/ScoreValueComponent.hpp"
 #include "../components/permanent/DamageComponent.hpp"
+#include "../components/tags/PowerUpTag.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -232,6 +233,10 @@ void Parser::instanciateComponentDefinitions() {
             {constants::VERTICALDEADZONE_FIELD, FieldType::FLOAT,
                 true, std::make_shared<FieldValue>(constants::DEFAULT_VERTICAL_DEADZONE)},
         }}},
+        {constants::POWERUP_TAG, {
+            std::type_index(typeid(ecs::PowerUpTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}}
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
         std::pair<std::type_index, std::vector<Field>>>>(std::move(componentDefinitions));
@@ -637,6 +642,11 @@ void Parser::instanciateComponentCreators() {
         component->setVerticalDeadzone(verticalDeadzone);
         component->setTimer(0.0f);
         return component;
+    });
+
+    registerComponent<ecs::PowerUpTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::PowerUpTag>();
     });
 }
 

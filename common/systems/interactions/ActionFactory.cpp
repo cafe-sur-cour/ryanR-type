@@ -8,11 +8,13 @@
 #include "ActionFactory.hpp"
 #include <memory>
 #include <string>
+#include <iostream>
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../components/temporary/DamageIntentComponent.hpp"
 #include "../../components/permanent/DamageComponent.hpp"
 #include "../../constants.hpp"
+#include "../../components/permanent/HealthComponent.hpp"
 
 const ActionFactory& ActionFactory::getInstance() {
     static ActionFactory instance;
@@ -88,6 +90,20 @@ void ActionFactory::initializeConditions() {
                 float damage = damageComp->getDamage();
                 reg->addComponent<ecs::DamageIntentComponent>(selfEntity,
                     std::make_shared<ecs::DamageIntentComponent>(damage, selfEntity));
+            }
+        });
+
+    registerAction(constants::ADDLIFE_ACTION,
+        [](std::shared_ptr<ecs::Registry> reg,
+            ecs::Entity selfEntity,
+            ecs::Entity otherEntity
+        ) {
+            auto lifeCompSelf = reg->getComponent<ecs::HealthComponent>(selfEntity);
+            auto lifeCompOther = reg->getComponent<ecs::HealthComponent>(otherEntity);
+
+            if (lifeCompSelf && lifeCompOther) {
+                lifeCompOther->increaseHealth(lifeCompSelf->getHealth());
+                lifeCompSelf->setHealth(0);
             }
         });
 }
