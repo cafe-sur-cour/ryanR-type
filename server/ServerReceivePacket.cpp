@@ -46,7 +46,7 @@ bool rserv::Server::processConnections(std::pair<std::shared_ptr<net::INetworkEn
 }
 
 
-bool rserv::Server::requestCode(asio::ip::udp::endpoint endpoint) {
+bool rserv::Server::requestCode(const net::INetworkEndpoint& endpoint) {
     if (!this->_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Network not initialized",

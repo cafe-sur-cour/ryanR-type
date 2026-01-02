@@ -246,7 +246,7 @@ void rserv::Server::processIncomingPackets() {
     } else if (this->_packet->getType() == constants::PACKET_WHOAMI) {
         this->processWhoAmI(this->_packet->getIdClient());
     } else if (this->_packet->getType() == constants::PACKET_REQUEST_LOBBY) {
-        this->requestCode(received.first);
+        this->requestCode(*received.first);
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "
