@@ -27,12 +27,6 @@ bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
     if (client.second.size() > HEADER_SIZE)
         name = std::string(client.second.begin() + HEADER_SIZE, client.second.end());
 
-    if (this->_nextClientId > constants::MAX_CLIENT) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Warning: Maximum clients reached",
-            debug::debugType::NETWORK, debug::debugLevel::WARNING);
-        return false;
-    }
     this->connectionPacket(client.first);
     this->_clients.push_back(std::make_tuple(this->_nextClientId, client.first, name));
     this->_clientsReady[this->_nextClientId] = false;
@@ -193,6 +187,12 @@ bool rserv::Server::processConnectToLobby(std::pair<asio::ip::udp::endpoint,
     bool lobbyExists = false;
     for (const auto &lobby : this->_lobbys) {
         if (lobby.first == lobbyCode) {
+            if (lobby.second.size() > constants::MAX_CLIENT_PER_LOBBY) {
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] Warning: Maximum clients reached for lobby",
+                    debug::debugType::NETWORK, debug::debugLevel::WARNING);
+                break;
+            }
             lobbyExists = true;
             break;
         }
@@ -203,12 +203,6 @@ bool rserv::Server::processConnectToLobby(std::pair<asio::ip::udp::endpoint,
     if (lobbyExists) {
         for (auto &lobby : this->_lobbys) {
             if (lobby.first == lobbyCode) {
-                if (lobby.second.size() >= constants::MAX_CLIENT_PER_LOBBY) {
-                    debug::Debug::printDebug(this->_config->getIsDebug(),
-                        "[SERVER] Lobby full: " + lobbyCode,
-                        debug::debugType::NETWORK, debug::debugLevel::WARNING);
-                    return false;
-                }
                 lobby.second.push_back(payload.first);
                 debug::Debug::printDebug(this->_config->getIsDebug(),
                     "[SERVER] Client added to lobby: " + lobbyCode,

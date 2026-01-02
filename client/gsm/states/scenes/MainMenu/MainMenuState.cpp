@@ -161,11 +161,44 @@ MainMenuState::MainMenuState(
     _lobbyConnectButton = std::make_shared<ui::Button>(_resourceManager);
     _lobbyConnectButton->setText("Connect to Lobby");
     _lobbyConnectButton->setSize(math::Vector2f(300.f, 50.f));
+
     _lobbyConnectButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network) {
-            network->setLobbyCode(this->_lobbyCodeInput->getText());
-            network->sendLobbyConnection(network->getLobbyCode());
+            std::string code = this->_lobbyCodeInput->getText();
+            if (!code.empty()) {
+                network->setLobbyCode(code);
+                network->sendLobbyConnection(code);
+                debug::Debug::printDebug(network->isDebugMode(),
+                    "[MainMenu] Connecting to lobby with code: " + code,
+                    debug::debugType::NETWORK,
+                    debug::debugLevel::INFO);
+            } else {
+                debug::Debug::printDebug(network->isDebugMode(),
+                    "[MainMenu] Cannot connect to lobby: Code is empty",
+                    debug::debugType::NETWORK,
+                    debug::debugLevel::WARNING);
+            }
+        }
+    });
+
+    _lobbyConnectButton->setOnActivated([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            std::string code = this->_lobbyCodeInput->getText();
+            if (!code.empty()) {
+                network->setLobbyCode(code);
+                network->sendLobbyConnection(code);
+                debug::Debug::printDebug(network->isDebugMode(),
+                    "[MainMenu] Connecting to lobby with code: " + code,
+                    debug::debugType::NETWORK,
+                    debug::debugLevel::INFO);
+            } else {
+                debug::Debug::printDebug(network->isDebugMode(),
+                    "[MainMenu] Cannot connect to lobby: Code is empty",
+                    debug::debugType::NETWORK,
+                    debug::debugLevel::WARNING);
+            }
         }
     });
 
