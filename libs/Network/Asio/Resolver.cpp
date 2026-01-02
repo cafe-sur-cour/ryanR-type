@@ -29,7 +29,7 @@ net::AsioResolver::~AsioResolver() = default;
 std::vector<net::AsioEndpoint> net::AsioResolver::resolve(const std::string& host,
     const std::string& port, INetworkErrorCode& ec) {
     std::vector<AsioEndpoint> endpoints;
-    auto* asioEc = static_cast<asio::error_code*>(ec.getInternalErrorCode());
+    auto asioEc = std::static_pointer_cast<asio::error_code>(ec.getInternalErrorCode());
     try {
         auto results = _impl->resolver->resolve(asio::ip::udp::v4(), host, port, *asioEc);
         if (!ec.hasError()) {

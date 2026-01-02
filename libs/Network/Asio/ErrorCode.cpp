@@ -106,16 +106,16 @@ bool net::AsioErrorCode::operator!=(NetworkError error) const {
     return getError() != error;
 }
 
-void* net::AsioErrorCode::getInternalErrorCode() {
-    return &(_impl->asioErrorCode);
+std::shared_ptr<void> net::AsioErrorCode::getInternalErrorCode() {
+    return std::shared_ptr<void>(&(_impl->asioErrorCode), [](void*){});
 }
 
-const void* net::AsioErrorCode::getInternalErrorCode() const {
-    return &(_impl->asioErrorCode);
+std::shared_ptr<const void> net::AsioErrorCode::getInternalErrorCode() const {
+    return std::shared_ptr<const void>(&(_impl->asioErrorCode), [](const void*){});
 }
 
-void net::AsioErrorCode::setFromInternal(void* internalEc) {
+void net::AsioErrorCode::setFromInternal(std::shared_ptr<void> internalEc) {
     if (internalEc) {
-        _impl->asioErrorCode = *static_cast<asio::error_code*>(internalEc);
+        _impl->asioErrorCode = *static_cast<asio::error_code*>(internalEc.get());
     }
 }

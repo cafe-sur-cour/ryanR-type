@@ -28,14 +28,14 @@ net::AsioSocket::AsioSocket(std::shared_ptr<IEventLoop> eventLoop) : _impl(std::
 net::AsioSocket::~AsioSocket() = default;
 
 bool net::AsioSocket::open(INetworkErrorCode& ec) {
-    auto* asioEc = static_cast<asio::error_code*>(ec.getInternalErrorCode());
+    auto asioEc = std::static_pointer_cast<asio::error_code>(ec.getInternalErrorCode());
     _impl->socket->open(asio::ip::udp::v4(), *asioEc);
     return !ec.hasError();
 }
 
 bool net::AsioSocket::bind(const INetworkEndpoint& endpoint, INetworkErrorCode& ec) {
     auto asioEndpoint = static_cast<const AsioEndpoint&>(endpoint);
-    auto* asioEc = static_cast<asio::error_code*>(ec.getInternalErrorCode());
+    auto asioEc = std::static_pointer_cast<asio::error_code>(ec.getInternalErrorCode());
     _impl->socket->bind(asioEndpoint.toAsioEndpoint(), *asioEc);
     return !ec.hasError();
 }
@@ -43,13 +43,13 @@ bool net::AsioSocket::bind(const INetworkEndpoint& endpoint, INetworkErrorCode& 
 std::size_t net::AsioSocket::sendTo(const std::vector<uint8_t>& data, const INetworkEndpoint& endpoint,
     int flags, INetworkErrorCode& ec) {
     auto asioEndpoint = static_cast<const AsioEndpoint&>(endpoint);
-    auto* asioEc = static_cast<asio::error_code*>(ec.getInternalErrorCode());
+    auto asioEc = std::static_pointer_cast<asio::error_code>(ec.getInternalErrorCode());
     return _impl->socket->send_to(asio::buffer(data), asioEndpoint.toAsioEndpoint(), flags, *asioEc);
 }
 
 std::size_t net::AsioSocket::receiveFrom(std::vector<uint8_t>& buffer, INetworkEndpoint& sender,
     int flags, INetworkErrorCode& ec) {
-    auto* asioEc = static_cast<asio::error_code*>(ec.getInternalErrorCode());
+    auto asioEc = std::static_pointer_cast<asio::error_code>(ec.getInternalErrorCode());
     asio::ip::udp::endpoint asioSender;
     std::size_t bytes = _impl->socket->receive_from(asio::buffer(buffer), asioSender, flags, *asioEc);
     if (!ec.hasError()) {
@@ -61,13 +61,13 @@ std::size_t net::AsioSocket::receiveFrom(std::vector<uint8_t>& buffer, INetworkE
 }
 
 bool net::AsioSocket::setNonBlocking(bool nonBlocking, INetworkErrorCode& ec) {
-    auto* asioEc = static_cast<asio::error_code*>(ec.getInternalErrorCode());
+    auto asioEc = std::static_pointer_cast<asio::error_code>(ec.getInternalErrorCode());
     _impl->socket->non_blocking(nonBlocking, *asioEc);
     return !ec.hasError();
 }
 
 bool net::AsioSocket::close(INetworkErrorCode& ec) {
-    auto* asioEc = static_cast<asio::error_code*>(ec.getInternalErrorCode());
+    auto asioEc = std::static_pointer_cast<asio::error_code>(ec.getInternalErrorCode());
     _impl->socket->close(*asioEc);
     return !ec.hasError();
 }

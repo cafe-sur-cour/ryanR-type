@@ -9,6 +9,7 @@
 #define INETWORK_ERROR_CODE_HPP
 
 #include <string>
+#include <memory>
 
 namespace net {
 
@@ -35,9 +36,9 @@ class INetworkErrorCode {
         virtual bool operator==(NetworkError error) const = 0;
         virtual bool operator!=(NetworkError error) const = 0;
 
-        virtual void* getInternalErrorCode() = 0;
-        virtual const void* getInternalErrorCode() const = 0;
-        virtual void setFromInternal(void* internalEc) = 0;
+        virtual std::shared_ptr<void> getInternalErrorCode() = 0;
+        virtual std::shared_ptr<const void> getInternalErrorCode() const = 0;
+        virtual void setFromInternal(std::shared_ptr<void> internalEc) = 0;
 };
 
 } // namespace net

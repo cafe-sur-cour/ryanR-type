@@ -28,9 +28,9 @@ class AsioErrorCode : public INetworkErrorCode {
         bool operator==(NetworkError error) const override;
         bool operator!=(NetworkError error) const override;
 
-        void* getInternalErrorCode() override;
-        const void* getInternalErrorCode() const override;
-        void setFromInternal(void* internalEc) override;
+        std::shared_ptr<void> getInternalErrorCode() override;
+        std::shared_ptr<const void> getInternalErrorCode() const override;
+        void setFromInternal(std::shared_ptr<void> internalEc) override;
 
         AsioErrorCode(const AsioErrorCode& other);
         AsioErrorCode& operator=(const AsioErrorCode& other);
