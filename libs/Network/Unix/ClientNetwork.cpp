@@ -24,9 +24,7 @@
 #include "../Asio/AsioEventLoop.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
 
-namespace net {
-
-UnixClientNetwork::UnixClientNetwork() : _connected(false) {
+net::UnixClientNetwork::UnixClientNetwork() : _connected(false) {
     _eventLoop = EventLoopFactory::create();
     _socket = nullptr;
     _serverEndpoint = nullptr;
@@ -36,14 +34,14 @@ UnixClientNetwork::UnixClientNetwork() : _connected(false) {
     _connectionState = ConnectionState::DISCONNECTED;
 }
 
-UnixClientNetwork::~UnixClientNetwork() {
+net::UnixClientNetwork::~UnixClientNetwork() {
     if (_connected) {
         disconnect();
     }
 }
 
 
-void UnixClientNetwork::init(uint16_t port, const std::string host) {
+void net::UnixClientNetwork::init(uint16_t port, const std::string host) {
     AsioErrorCode ec;
 
     if (!this->_socket) {
@@ -61,7 +59,7 @@ void UnixClientNetwork::init(uint16_t port, const std::string host) {
         auto endpoints = resolver->resolve(host, std::to_string(port), ec);
         if (ec || endpoints.empty()) {
             throw std::runtime_error(
-                "[CLIENT NETWORK] Failed to resolve host '" + host + "': " + 
+                "[CLIENT NETWORK] Failed to resolve host '" + host + "': " +
                 (ec.hasError() ? ec.message() : "no results"));
         }
         this->_serverEndpoint = std::make_shared<AsioEndpoint>(endpoints[0]);
@@ -78,17 +76,17 @@ void UnixClientNetwork::init(uint16_t port, const std::string host) {
     }
 }
 
-void UnixClientNetwork::stop() {
+void net::UnixClientNetwork::stop() {
     if (_socket && _socket->isOpen()) {
         try {
             AsioErrorCode ec;
             _socket->close(ec);
             if (ec) {
-                std::cerr << "[CLIENT NETWORK] Warning: Error closing socket: " 
+                std::cerr << "[CLIENT NETWORK] Warning: Error closing socket: "
                           << ec.message() << std::endl;
             }
         } catch (const std::exception& e) {
-            std::cerr << "[CLIENT NETWORK] Warning: Exception closing socket: " 
+            std::cerr << "[CLIENT NETWORK] Warning: Exception closing socket: "
                       << e.what() << std::endl;
         }
     }
@@ -96,17 +94,17 @@ void UnixClientNetwork::stop() {
     _isRunning = false;
 }
 
-void UnixClientNetwork::disconnect() {
+void net::UnixClientNetwork::disconnect() {
     if (_socket && _socket->isOpen()) {
         try {
             AsioErrorCode ec;
             _socket->close(ec);
             if (ec) {
-                std::cerr << "[CLIENT NETWORK] Warning: Error closing socket: " 
+                std::cerr << "[CLIENT NETWORK] Warning: Error closing socket: "
                           << ec.message() << std::endl;
             }
         } catch (const std::exception& e) {
-            std::cerr << "[CLIENT NETWORK] Warning: Exception closing socket: " 
+            std::cerr << "[CLIENT NETWORK] Warning: Exception closing socket: "
                       << e.what() << std::endl;
         }
     }
@@ -117,11 +115,12 @@ void UnixClientNetwork::disconnect() {
     }
 }
 
-bool UnixClientNetwork::isConnected() const {
+bool net::UnixClientNetwork::isConnected() const {
     return this->_connected;
 }
 
-bool UnixClientNetwork::sendTo(const INetworkEndpoint& endpoint, std::vector<uint8_t> packet) {
+bool net::UnixClientNetwork::sendTo(const INetworkEndpoint& endpoint,
+    std::vector<uint8_t> packet) {
     try {
         if (!this->_socket || !this->_socket->isOpen()) {
             std::cerr << "[CLIENT NETWORK] Socket is not open for sending." << std::endl;
@@ -144,8 +143,8 @@ bool UnixClientNetwork::sendTo(const INetworkEndpoint& endpoint, std::vector<uin
     }
 }
 
-bool UnixClientNetwork::broadcast(const std::vector<std::shared_ptr<INetworkEndpoint>>& endpoints,
-    const std::vector<uint8_t>& data) {
+bool net::UnixClientNetwork::broadcast(const std::vector<std::shared_ptr<
+    net::INetworkEndpoint>>& endpoints, const std::vector<uint8_t>& data) {
     if (data.empty()) {
         std::cerr << "[CLIENT NETWORK] No data to broadcast." << std::endl;
         return false;
@@ -166,22 +165,20 @@ bool UnixClientNetwork::broadcast(const std::vector<std::shared_ptr<INetworkEndp
     }
 }
 
-bool UnixClientNetwork::hasIncomingData() const {
+bool net::UnixClientNetwork::hasIncomingData() const {
     if (!_socket || !_socket->isOpen()) {
         return false;
     }
-    // En mode non-bloquant, on peut tenter une lecture pour vérifier
-    // Pour simplifier, on retourne toujours false ici et on gère dans receiveFrom
     return false;
 }
 
 
-std::vector<uint8_t> UnixClientNetwork::receiveFrom(
+std::vector<uint8_t> net::UnixClientNetwork::receiveFrom(
     const uint8_t &connectionId) {
     (void)connectionId;
 
     AsioErrorCode ec;
-    std::vector<uint8_t> buffer(65536); // Taille maximale UDP
+    std::vector<uint8_t> buffer(65536);
     AsioEndpoint sender;
 
     std::size_t bytesReceived = _socket->receiveFrom(buffer, sender, 0, ec);
@@ -202,12 +199,10 @@ std::vector<uint8_t> UnixClientNetwork::receiveFrom(
     return std::vector<uint8_t>();
 }
 
-std::pair<std::shared_ptr<INetworkEndpoint>, std::vector<uint8_t>> UnixClientNetwork::receiveAny() {
-    // TODO: Implement if needed for client
+std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>>
+    net::UnixClientNetwork::receiveAny() {
     return std::make_pair(std::make_shared<AsioEndpoint>(), std::vector<uint8_t>());
 }
-
-}  //  namespace net
 
 extern "C" {
     void *createNetworkInstance() {

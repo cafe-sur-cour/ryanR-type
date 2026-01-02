@@ -28,9 +28,7 @@
 #include "../../../common/DLLoader/LoaderType.hpp"
 #include "../../Packet/PacketManager.hpp"
 
-namespace net {
-
-UnixServerNetwork::UnixServerNetwork() : _port(0) {
+net::UnixServerNetwork::UnixServerNetwork() : _port(0) {
     _eventLoop = EventLoopFactory::create();
     _socket = nullptr;
     _onConnectCallback = nullptr;
@@ -41,13 +39,13 @@ UnixServerNetwork::UnixServerNetwork() : _port(0) {
     this->_incomingPackets = {};
 }
 
-UnixServerNetwork::~UnixServerNetwork() {
+net::UnixServerNetwork::~UnixServerNetwork() {
     if (_isRunning) {
         stop();
     }
 }
 
-void UnixServerNetwork::init(uint16_t port, const std::string host) {
+void net::UnixServerNetwork::init(uint16_t port, const std::string host) {
     _port = port;
     _socket = std::make_shared<AsioSocket>(_eventLoop);
     AsioErrorCode ec;
@@ -87,17 +85,17 @@ void UnixServerNetwork::init(uint16_t port, const std::string host) {
     _isRunning = true;
 }
 
-void UnixServerNetwork::stop() {
+void net::UnixServerNetwork::stop() {
     if (_socket && _socket->isOpen()) {
         try {
             AsioErrorCode ec;
             _socket->close(ec);
             if (ec) {
-                std::cerr << "[SERVER NETWORK] Warning: Error closing socket: " 
+                std::cerr << "[SERVER NETWORK] Warning: Error closing socket: "
                           << ec.message() << std::endl;
             }
         } catch (const std::exception& e) {
-            std::cerr << "[SERVER NETWORK] Warning: Exception closing socket: " 
+            std::cerr << "[SERVER NETWORK] Warning: Exception closing socket: "
                       << e.what() << std::endl;
         }
     }
@@ -107,7 +105,8 @@ void UnixServerNetwork::stop() {
     _isRunning = false;
 }
 
-bool UnixServerNetwork::sendTo(const INetworkEndpoint& endpoint, std::vector<uint8_t> packet) {
+bool net::UnixServerNetwork::sendTo(const INetworkEndpoint& endpoint,
+    std::vector<uint8_t> packet) {
     if (!_socket || !_socket->isOpen()) {
         std::cerr << "[SERVER NETWORK] Socket is not open" << std::endl;
         return false;
@@ -122,8 +121,8 @@ bool UnixServerNetwork::sendTo(const INetworkEndpoint& endpoint, std::vector<uin
     return true;
 }
 
-bool UnixServerNetwork::broadcast(const std::vector<std::shared_ptr<INetworkEndpoint>>& endpoints,
-    const std::vector<uint8_t>& data) {
+bool net::UnixServerNetwork::broadcast(const std::vector<std::shared_ptr<
+    net::INetworkEndpoint>>& endpoints, const std::vector<uint8_t>& data) {
     if (data.empty()) {
         std::cerr << "[SERVER NETWORK] No data to broadcast." << std::endl;
         return false;
@@ -139,20 +138,21 @@ bool UnixServerNetwork::broadcast(const std::vector<std::shared_ptr<INetworkEndp
     return true;
 }
 
-bool UnixServerNetwork::hasIncomingData() const {
+bool net::UnixServerNetwork::hasIncomingData() const {
     if (_incomingPackets.empty())
         return false;
     return true;
 }
 
 
-std::vector<uint8_t> UnixServerNetwork::receiveFrom(
+std::vector<uint8_t> net::UnixServerNetwork::receiveFrom(
     const uint8_t &connectionId) {
     (void)connectionId;
     return std::vector<uint8_t>();
 }
 
-std::pair<std::shared_ptr<INetworkEndpoint>, std::vector<uint8_t>> UnixServerNetwork::receiveAny() {
+std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>>
+    net::UnixServerNetwork::receiveAny() {
     AsioErrorCode ec;
 
     std::vector<uint8_t> buffer(65536);
@@ -169,8 +169,6 @@ std::pair<std::shared_ptr<INetworkEndpoint>, std::vector<uint8_t>> UnixServerNet
     buffer.resize(bytes);
     return std::make_pair(std::make_shared<AsioEndpoint>(sender), buffer);
 }
-
-}  // namespace net
 
 extern "C" {
     void *createNetworkInstance() {

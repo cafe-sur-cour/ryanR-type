@@ -5,40 +5,38 @@
 ** AsioEventLoop implementation
 */
 
+#include <utility>
+#include <memory>
+
 #include "AsioEventLoop.hpp"
 
-namespace net {
-
-AsioEventLoop::AsioEventLoop() : _ioContext() {
+net::AsioEventLoop::AsioEventLoop() : _ioContext() {
 }
 
-void AsioEventLoop::run() {
+void net::AsioEventLoop::run() {
     _ioContext.run();
 }
 
-void AsioEventLoop::runOne() {
+void net::AsioEventLoop::runOne() {
     _ioContext.run_one();
 }
 
-void AsioEventLoop::stop() {
+void net::AsioEventLoop::stop() {
     _ioContext.stop();
 }
 
-bool AsioEventLoop::stopped() const {
+bool net::AsioEventLoop::stopped() const {
     return _ioContext.stopped();
 }
 
-void AsioEventLoop::post(std::function<void()> task) {
+void net::AsioEventLoop::post(std::function<void()> task) {
     asio::post(_ioContext, std::move(task));
 }
 
-void AsioEventLoop::restart() {
+void net::AsioEventLoop::restart() {
     _ioContext.restart();
 }
 
-// Factory implementation
-std::shared_ptr<IEventLoop> EventLoopFactory::create() {
-    return std::make_shared<AsioEventLoop>();
+std::shared_ptr<net::IEventLoop> net::EventLoopFactory::create() {
+    return std::make_shared<net::AsioEventLoop>();
 }
-
-} // namespace net
