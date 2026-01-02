@@ -30,7 +30,7 @@ asio::ip::udp_endpoint net::AsioEndpoint::toAsioEndpoint() const {
             asio::ip::make_address(_address),
             _port
         );
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         return asio::ip::udp_endpoint(asio::ip::udp::v4(), _port);
     }
 }
