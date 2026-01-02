@@ -26,7 +26,7 @@
 #include "deltaTracker/ComponentDeltaTracker.hpp"
 #include "deltaTracker/ComponentSerializer.hpp"
 #include "../libs/Network/INetwork.hpp"
-#include "../libs/Network/NetworkEndpoint.hpp"
+#include "../libs/Network/common.hpp"
 #include "../libs/Buffer/IBuffer.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"

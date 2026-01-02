@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** AsioEventLoop - Implémentation ASIO de IEventLoop
+** AsioEventLoop
 */
 
 #ifndef ASIOEVENTLOOP_HPP_

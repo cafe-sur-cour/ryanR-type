@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** NetworkEndpoint - Wrapper pour endpoint réseau (indépendant d'ASIO)
+** NetworkEndpoint
 */
 
 #ifndef ASIO_ENDPOINT_HPP_

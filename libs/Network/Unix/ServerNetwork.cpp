@@ -15,20 +15,14 @@
 #include <utility>
 
 #include "ServerNetwork.hpp"
+#include "../common.hpp"
 #include "../INetworkSocket.hpp"
 #include "../INetworkResolver.hpp"
 #include "../INetworkErrorCode.hpp"
 #include "../INetworkAddress.hpp"
-#include "../Asio/AsioSocket.hpp"
-#include "../Asio/AsioResolver.hpp"
-#include "../Asio/AsioErrorCode.hpp"
-#include "../Asio/AsioAddress.hpp"
-#include "../Asio/AsioEndpoint.hpp"
-#include "../Asio/AsioEventLoop.hpp"
+#include "../INetworkEndpoint.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
 #include "../../Packet/PacketManager.hpp"
-
-using NetworkErrorCode = net::AsioErrorCode;
 
 net::UnixServerNetwork::UnixServerNetwork() : _port(0) {
     _eventLoop = EventLoopFactory::create();
@@ -49,31 +43,31 @@ net::UnixServerNetwork::~UnixServerNetwork() {
 
 void net::UnixServerNetwork::init(uint16_t port, const std::string host) {
     _port = port;
-    _socket = std::make_shared<AsioSocket>(_eventLoop);
+    _socket = std::make_shared<NetworkSocket>(_eventLoop);
     NetworkErrorCode ec;
     if (!_socket->open(ec)) {
         throw std::runtime_error(std::string(
             "[SERVER NETWORK] Failed to open socket: ") + ec.message());
     }
 
-    AsioAddress bindAddress;
+    NetworkAddress bindAddress;
     if (host.empty()) {
-        bindAddress = AsioAddress::anyV4();
+        bindAddress = NetworkAddress::anyV4();
     } else {
-        bindAddress = AsioAddress::fromString(host);
+        bindAddress = NetworkAddress::fromString(host);
         if (bindAddress.toString().empty()) {
-            auto resolver = std::make_shared<AsioResolver>(_eventLoop);
+            auto resolver = std::make_shared<NetworkResolver>(_eventLoop);
             auto results = resolver->resolve(host, std::to_string(_port), ec);
             if (ec || results.empty()) {
                 throw std::runtime_error(
                     std::string("[SERVER NETWORK] Failed to resolve host '")
                     + host + "': " + (ec.hasError() ? ec.message() : "no results"));
             }
-            bindAddress = AsioAddress::fromString(results[0].getAddress());
+            bindAddress = NetworkAddress::fromString(results[0]->getAddress());
         }
     }
 
-    AsioEndpoint bindEndpoint(bindAddress, _port);
+    NetworkEndpoint bindEndpoint(bindAddress, _port);
     if (!_socket->bind(bindEndpoint, ec)) {
         throw std::runtime_error(
             std::string("[SERVER NETWORK] Failed to bind socket: ") + ec.message());
@@ -158,7 +152,7 @@ std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>>
     NetworkErrorCode ec;
 
     std::vector<uint8_t> buffer(65536);
-    AsioEndpoint sender;
+    NetworkEndpoint sender;
     std::size_t bytes = _socket->receiveFrom(buffer, sender, 0, ec);
     if (ec) {
         if (ec == NetworkError::WOULD_BLOCK || ec == NetworkError::AGAIN) {
@@ -169,7 +163,7 @@ std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>>
     }
 
     buffer.resize(bytes);
-    return std::make_pair(std::make_shared<AsioEndpoint>(sender), buffer);
+    return std::make_pair(std::make_shared<NetworkEndpoint>(sender), buffer);
 }
 
 extern "C" {

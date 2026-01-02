@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** NetworkSocket implementation avec ASIO
+** NetworkSocket
 */
 
 #include <stdexcept>
