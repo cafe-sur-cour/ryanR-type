@@ -46,6 +46,22 @@ bool rserv::Server::processConnections(std::pair<std::shared_ptr<net::INetworkEn
 }
 
 
+bool rserv::Server::requestCode(asio::ip::udp::endpoint endpoint) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    if (this->sendCodeLobbyPacket(endpoint) == false) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Failed to send lobby code",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    return true;
+}
+
 bool rserv::Server::processDisconnections(uint8_t idClient) {
     for (auto &client : this->_clients) {
         if (std::get<0>(client) == idClient) {
