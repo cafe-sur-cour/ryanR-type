@@ -13,7 +13,7 @@
 #include <memory>
 #include "INetwork.hpp"
 #include "IEventLoop.hpp"
-#include "NetworkEndpoint.hpp"
+#include "INetworkEndpoint.hpp"
 #include "../Packet/IPacketManager.hpp"
 #include "../Buffer/IBuffer.hpp"
 
@@ -25,11 +25,11 @@ class ANetwork : public INetwork {
         virtual ~ANetwork() override = default;
         virtual void init(uint16_t port, const std::string host) override = 0;
         virtual void stop() override = 0;
-        virtual bool sendTo(const NetworkEndpoint& endpoint, std::vector<uint8_t> packet) override = 0;
-        virtual bool broadcast(const std::vector<NetworkEndpoint>& endpoints, std::vector<uint8_t> data) override = 0;
+        virtual bool sendTo(const INetworkEndpoint& endpoint, std::vector<uint8_t> packet) override = 0;
+        virtual bool broadcast(const std::vector<std::shared_ptr<INetworkEndpoint>>& endpoints, const std::vector<uint8_t>& data) override = 0;
         virtual bool hasIncomingData() const override = 0;
         virtual std::vector<uint8_t> receiveFrom(const uint8_t &connectionId) override = 0;
-        virtual std::pair<NetworkEndpoint, std::vector<uint8_t>> receiveAny() override = 0;
+        virtual std::pair<std::shared_ptr<INetworkEndpoint>, std::vector<uint8_t>> receiveAny() override = 0;
 
         ConnectionState getConnectionState() const override;
         void setConnectionState(ConnectionState state) override;
