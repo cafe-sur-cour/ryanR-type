@@ -66,7 +66,8 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_WHOAMI] = &ClientNetwork::handleWhoAmI;
     _packetHandlers[constants::PACKET_SERVER_STATUS] = &ClientNetwork::handleServerStatus;
     _packetHandlers[constants::PACKET_SEND_LOBBY_CODE] = &ClientNetwork::handleCode;
-    _packetHandlers[constants::PACKET_LOBBY_CONNECT_VALUE] = &ClientNetwork::handleLobbyConnectValue;
+    _packetHandlers[constants::PACKET_LOBBY_CONNECT_VALUE] =
+        &ClientNetwork::handleLobbyConnectValue;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;

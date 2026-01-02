@@ -177,7 +177,8 @@ bool rserv::Server::requestCode(asio::ip::udp::endpoint endpoint) {
     return true;
 }
 
-bool rserv::Server::processConnectToLobby(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> payload) {
+bool rserv::Server::processConnectToLobby(std::pair<asio::ip::udp::endpoint,
+    std::vector<uint8_t>> payload) {
     /* Verify Network */
     if (!this->_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -202,6 +203,12 @@ bool rserv::Server::processConnectToLobby(std::pair<asio::ip::udp::endpoint, std
     if (lobbyExists) {
         for (auto &lobby : this->_lobbys) {
             if (lobby.first == lobbyCode) {
+                if (lobby.second.size() >= constants::MAX_CLIENT_PER_LOBBY) {
+                    debug::Debug::printDebug(this->_config->getIsDebug(),
+                        "[SERVER] Lobby full: " + lobbyCode,
+                        debug::debugType::NETWORK, debug::debugLevel::WARNING);
+                    return false;
+                }
                 lobby.second.push_back(payload.first);
                 debug::Debug::printDebug(this->_config->getIsDebug(),
                     "[SERVER] Client added to lobby: " + lobbyCode,

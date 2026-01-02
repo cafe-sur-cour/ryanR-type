@@ -268,7 +268,8 @@ bool rserv::Server::sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint) {
         return false;
     }
     /* Add to lobby vector, code and client endpoint */
-    this->_lobbys.push_back(std::make_pair(lobbyCode, std::vector<asio::ip::udp::endpoint>{endpoint}));
+    this->_lobbys.push_back(std::make_pair(lobbyCode,
+        std::vector<asio::ip::udp::endpoint>{endpoint}));
     this->_sequenceNumber++;
     return true;
 }
@@ -280,8 +281,10 @@ bool rserv::Server::lobbyConnectValuePacket(asio::ip::udp::endpoint endpoint, bo
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
+    std::cout << "Bool isSucess: " << isSucess << std::endl;
     std::vector<uint64_t> payload;
     payload.push_back(static_cast<uint64_t>(isSucess ? 't' : 'f'));
+    std::cout << "Payload " << payload[0] << std::endl;
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
         this->_sequenceNumber, constants::PACKET_LOBBY_CONNECT_VALUE, payload);
     if (!this->_network->sendTo(endpoint, packet)) {
@@ -294,6 +297,7 @@ bool rserv::Server::lobbyConnectValuePacket(asio::ip::udp::endpoint endpoint, bo
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "[SERVER] Sent LOBBY_CONNECT_VALUE response to client: " +
         std::string(isSucess ? "success" : "failure"),
-        debug::debugType::NETWORK, debug::debugLevel::INFO);
+        debug::debugType::NETWORK, (isSucess ? debug::debugLevel::INFO :
+            debug::debugLevel::WARNING));
     return true;
 }

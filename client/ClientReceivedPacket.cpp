@@ -337,7 +337,10 @@ void ClientNetwork::handleLobbyConnectValue() {
             debug::debugLevel::WARNING);
         return;
     }
-    bool isSuccess = payload[0] != 0;
+    bool isSuccess = false;
+    if (payload[0] == static_cast<uint64_t>('t')) {
+        isSuccess = true;
+    }
     if (isSuccess) {
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Successfully connected to lobby",
