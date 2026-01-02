@@ -15,7 +15,7 @@
 #include "../common/components/tags/PlayerTag.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 
-bool rserv::Server::processConnections(std::pair<net::NetworkEndpoint,
+bool rserv::Server::processConnections(std::pair<std::shared_ptr<net::INetworkEndpoint>,
     std::vector<uint8_t>> client) {
     if (!_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -33,7 +33,7 @@ bool rserv::Server::processConnections(std::pair<net::NetworkEndpoint,
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
-    this->connectionPacket(client.first);
+    this->connectionPacket(*client.first);
     this->_clients.push_back(std::make_tuple(this->_nextClientId, client.first, name));
     this->_clientsReady[this->_nextClientId] = false;
     debug::Debug::printDebug(this->_config->getIsDebug(), "[SERVER] Set client " +
@@ -135,7 +135,7 @@ bool rserv::Server::processWhoAmI(uint8_t idClient) {
     std::vector<uint64_t> payload;
     payload.push_back(static_cast<uint64_t>(playerEntity));
 
-    net::NetworkEndpoint clientEndpoint;
+    std::shared_ptr<net::INetworkEndpoint> clientEndpoint;
     for (const auto &client : this->_clients) {
         if (std::get<0>(client) == idClient) {
             clientEndpoint = std::get<1>(client);
@@ -146,7 +146,7 @@ bool rserv::Server::processWhoAmI(uint8_t idClient) {
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
         this->_sequenceNumber, constants::PACKET_WHOAMI, payload);
 
-    if (!this->_network->sendTo(clientEndpoint, packet)) {
+    if (!this->_network->sendTo(*clientEndpoint, packet)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Failed to send WHOAMI response to client " + std::to_string(idClient),
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
