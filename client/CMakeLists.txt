@@ -36,6 +36,7 @@ target_link_libraries(${CLIENT_BIN_NAME}
         DEBUG
         InputNormalizer
         NETWORK_INTERPOLATION
+        AsioNetwork
         nlohmann_json::nlohmann_json
         Packet
         Client::PacketHandlers
