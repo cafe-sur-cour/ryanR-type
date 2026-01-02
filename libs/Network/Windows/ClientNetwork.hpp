@@ -11,7 +11,7 @@
 #include <memory>
 #include <string>
 #include "../ANetwork.hpp"
-#include "../NetworkEndpoint.hpp"
+#include "../INetworkEndpoint.hpp"
 #include "../../Buffer/IBuffer.hpp"
 #include "../../Packet/IPacketManager.hpp"
 
@@ -26,17 +26,19 @@ class ClientNetwork : public ANetwork {
 
         void init(uint16_t port, const std::string host) override;
         void stop() override;
-        void disconnect() override;
-        bool isConnected() const override;
 
-        bool sendTo(const NetworkEndpoint& endpoint, std::vector<uint8_t> packet) override;
-        bool broadcast(const std::vector<NetworkEndpoint>& endpoints, std::vector<uint8_t> data) override;
+        bool sendTo(const INetworkEndpoint& endpoint, std::vector<uint8_t> packet) override;
+        bool broadcast(const std::vector<std::shared_ptr<INetworkEndpoint>>& endpoints, const std::vector<uint8_t>& data) override;
         bool hasIncomingData() const override;
         std::vector<uint8_t> receiveFrom(const uint8_t &connectionId) override;
-        std::pair<NetworkEndpoint, std::vector<uint8_t>> receiveAny() override;
+        std::pair<std::shared_ptr<INetworkEndpoint>, std::vector<uint8_t>> receiveAny() override;
+
+    protected:
+        void disconnect();
+        bool isConnected() const;
 
     private:
-        NetworkEndpoint _serverEndpoint;
+        std::shared_ptr<INetworkEndpoint> _serverEndpoint;
         bool _connected;
         std::shared_ptr<INetworkSocket> _socket;
 };
@@ -49,24 +51,3 @@ extern "C" {
 }
 
 #endif /* !CLIENTNETWORK_HPP_ */
-
-        std::pair<NetworkEndpoint, std::vector<uint8_t>> receiveAny() override;
-
-    protected:
-        void disconnect();
-        bool isConnected() const;
-
-    private:
-        asio::ip::udp::endpoint _serverEndpoint;
-        bool _connected;
-        std::shared_ptr<asio::ip::udp::socket> _socket;
-};
-
-} // namespace net
-
-extern "C" {
-    NETWORK_API void *createNetworkInstance();
-    NETWORK_API int getType();
-}
-
-#endif /* !WINDOWSNETWORK_HPP_ */
