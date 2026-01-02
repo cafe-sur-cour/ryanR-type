@@ -256,6 +256,18 @@ namespace constants {
     constexpr std::uint8_t PACKET_WHOAMI = 0x0D;
 
     const int MAX_INDEX_PACKET_TYPE = 16;
+
+    /* Scripting constant */
+    const std::string INIT_FUNCTION = "init";
+    const std::string UPDATE_FUNCTION = "update";
+
+    /* Constants for Scripting API */
+    const std::string PRINT_FUNCTION = "print";
+    const std::string CREATE_MOVE_INTENT_FUNCTION = "createMoveIntent";
+    const std::string GET_ENTITY_POSITION_FUNCTION = "getEntityPosition";
+    const std::string GET_PLAYER_POSITION_FUNCTION = "getPlayerPosition";
+    const std::string GET_ENTITY_SPEED_FUNCTION = "getEntitySpeed";
+    const std::string CREATE_SHOOT_INTENT_FUNCTION = "createShootIntent";
 }
 
 #endif /* !CONSTANTS_HPP_ */
