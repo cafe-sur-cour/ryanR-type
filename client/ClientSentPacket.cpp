@@ -8,6 +8,7 @@
 #include <cstring>
 #include <iostream>
 #include <vector>
+#include <string>
 
 #include "ClientNetwork.hpp"
 #include "../common/Error/ClientNetworkError.hpp"

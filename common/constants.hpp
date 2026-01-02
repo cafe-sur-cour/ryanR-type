@@ -266,6 +266,7 @@ namespace constants {
     constexpr std::uint8_t PACKET_LOBBY_CONNECT_VALUE = 0x11;
 
     const int MAX_INDEX_PACKET_TYPE = 18;
+    const int MAX_CLIENT_PER_LOBBY = 4;
 }
 
 #endif /* !CONSTANTS_HPP_ */

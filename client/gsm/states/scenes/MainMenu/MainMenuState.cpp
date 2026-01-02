@@ -143,7 +143,6 @@ MainMenuState::MainMenuState(
     _requestCodeButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            std::cout << "Requesting code from server..." << std::endl;
             network->requestCode();
         } else {
             std::cout << "Cannot request code: Not connected to server" << std::endl;
@@ -168,7 +167,6 @@ MainMenuState::MainMenuState(
             network->setLobbyCode(this->_lobbyCodeInput->getText());
             network->sendLobbyConnection(network->getLobbyCode());
         }
-        std::cout << "Connecting to lobby with code: " << network->getLobbyCode() << std::endl;
     });
 
     _leftLayout->addElement(_ipInput);
