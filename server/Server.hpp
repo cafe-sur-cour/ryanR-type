@@ -26,6 +26,7 @@
 #include "deltaTracker/ComponentDeltaTracker.hpp"
 #include "deltaTracker/ComponentSerializer.hpp"
 #include "../libs/Network/INetwork.hpp"
+#include "../libs/Network/NetworkEndpoint.hpp"
 #include "../libs/Buffer/IBuffer.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
@@ -63,7 +64,7 @@ namespace rserv {
             void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet) override;
 
             std::vector<uint8_t> getConnectedClients() const override;
-            std::vector<net::NetworkEndpoint> getConnectedClientEndpoints() const override;
+            std::vector<std::shared_ptr<net::INetworkEndpoint>> getConnectedClientEndpoints() const override;
             size_t getClientCount() const override;
 
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> getEventQueue() override;
@@ -71,14 +72,14 @@ namespace rserv {
 
             /* Received Packet Handling */
             void processIncomingPackets() override;
-            bool processConnections(std::pair<net::NetworkEndpoint, std::vector<uint8_t>> client) override;
+            bool processConnections(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> client) override;
             bool processDisconnections(uint8_t idClient) override;
             bool processEvents(uint8_t idClient) override;
             bool processEndOfGame(uint8_t idClient) override;
             bool processWhoAmI(uint8_t idClient);
 
             /* Sent Packet Handling */
-            bool connectionPacket(const net::NetworkEndpoint& endpoint);
+            bool connectionPacket(const net::INetworkEndpoint& endpoint);
             bool gameStatePacket();
             bool canStartPacket();
             bool endGamePacket(bool isWin);
@@ -102,7 +103,7 @@ namespace rserv {
             DLLoader<createPacket_t> _packetloader;
             uint8_t _nextClientId;
             uint32_t _sequenceNumber;
-            std::vector<std::tuple<uint8_t, net::NetworkEndpoint, std::string>> _clients;
+            std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> _clients;
             std::map<uint8_t, bool> _clientsReady;
 
             std::shared_ptr<ServerConfig> _config;

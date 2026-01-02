@@ -17,7 +17,7 @@
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/Parser/Parser.hpp"
 
-bool rserv::Server::connectionPacket(const net::NetworkEndpoint& endpoint) {
+bool rserv::Server::connectionPacket(const net::INetworkEndpoint& endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
         this->_sequenceNumber, constants::PACKET_ACCEPT, std::vector<uint64_t>{
         static_cast<uint64_t>(this->_nextClientId)});
@@ -70,7 +70,7 @@ bool rserv::Server::gameStatePacket() {
                 payload
             );
 
-            if (!this->_network->sendTo(std::get<1>(client), packet)) {
+            if (!this->_network->sendTo(*std::get<1>(client), packet)) {
                 debug::Debug::printDebug(this->_config->getIsDebug(),
                     "[SERVER NETWORK] Failed to send game state packet to client " +
                     std::to_string(static_cast<int>(clientId)),
@@ -204,7 +204,7 @@ bool rserv::Server::serverStatusPacket() {
             payload
         );
 
-        if (!this->_network->sendTo(std::get<1>(client), packet)) {
+        if (!this->_network->sendTo(*std::get<1>(client), packet)) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER NETWORK] Failed to send server status packet to client " +
                 std::to_string(static_cast<int>(clientId)),
