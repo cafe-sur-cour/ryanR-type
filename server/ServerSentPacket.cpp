@@ -281,10 +281,8 @@ bool rserv::Server::lobbyConnectValuePacket(asio::ip::udp::endpoint endpoint, bo
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
-    std::cout << "Bool isSucess: " << isSucess << std::endl;
     std::vector<uint64_t> payload;
     payload.push_back(static_cast<uint64_t>(isSucess ? 't' : 'f'));
-    std::cout << "Payload " << payload[0] << std::endl;
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
         this->_sequenceNumber, constants::PACKET_LOBBY_CONNECT_VALUE, payload);
     if (!this->_network->sendTo(endpoint, packet)) {
