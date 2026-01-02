@@ -28,6 +28,8 @@
 #include "../../../common/DLLoader/LoaderType.hpp"
 #include "../../Packet/PacketManager.hpp"
 
+using NetworkErrorCode = net::AsioErrorCode;
+
 net::UnixServerNetwork::UnixServerNetwork() : _port(0) {
     _eventLoop = EventLoopFactory::create();
     _socket = nullptr;
@@ -48,7 +50,7 @@ net::UnixServerNetwork::~UnixServerNetwork() {
 void net::UnixServerNetwork::init(uint16_t port, const std::string host) {
     _port = port;
     _socket = std::make_shared<AsioSocket>(_eventLoop);
-    AsioErrorCode ec;
+    NetworkErrorCode ec;
     if (!_socket->open(ec)) {
         throw std::runtime_error(std::string(
             "[SERVER NETWORK] Failed to open socket: ") + ec.message());
@@ -88,7 +90,7 @@ void net::UnixServerNetwork::init(uint16_t port, const std::string host) {
 void net::UnixServerNetwork::stop() {
     if (_socket && _socket->isOpen()) {
         try {
-            AsioErrorCode ec;
+            NetworkErrorCode ec;
             _socket->close(ec);
             if (ec) {
                 std::cerr << "[SERVER NETWORK] Warning: Error closing socket: "
@@ -112,7 +114,7 @@ bool net::UnixServerNetwork::sendTo(const INetworkEndpoint& endpoint,
         return false;
     }
 
-    AsioErrorCode ec;
+    NetworkErrorCode ec;
     _socket->sendTo(packet, endpoint, 0, ec);
     if (ec) {
         std::cerr << "[SERVER NETWORK] Send error: " << ec.message() << std::endl;
@@ -153,7 +155,7 @@ std::vector<uint8_t> net::UnixServerNetwork::receiveFrom(
 
 std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>>
     net::UnixServerNetwork::receiveAny() {
-    AsioErrorCode ec;
+    NetworkErrorCode ec;
 
     std::vector<uint8_t> buffer(65536);
     AsioEndpoint sender;

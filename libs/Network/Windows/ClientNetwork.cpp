@@ -23,6 +23,8 @@
 #include "../Asio/AsioEventLoop.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
 
+using NetworkErrorCode = net::AsioErrorCode;
+
 net::ClientNetwork::ClientNetwork() : _connected(false) {
     _eventLoop = EventLoopFactory::create();
     _socket = nullptr;
@@ -78,7 +80,7 @@ void net::ClientNetwork::init(uint16_t port, const std::string host) {
 void net::ClientNetwork::stop() {
     if (_socket && _socket->isOpen()) {
         try {
-            AsioErrorCode ec;
+            NetworkErrorCode ec;
             _socket->close(ec);
             if (ec) {
                 std::cerr << "[CLIENT NETWORK] Warning: Error closing socket: "
@@ -96,7 +98,7 @@ void net::ClientNetwork::stop() {
 void net::ClientNetwork::disconnect() {
     if (_socket && _socket->isOpen()) {
         try {
-            AsioErrorCode ec;
+            NetworkErrorCode ec;
             _socket->close(ec);
             if (ec) {
                 std::cerr << "[CLIENT NETWORK] Warning: Error closing socket: "
@@ -129,7 +131,7 @@ bool net::ClientNetwork::sendTo(const net::INetworkEndpoint& endpoint,
             std::cerr << "[CLIENT NETWORK] No data to send." << std::endl;
             return false;
         }
-        AsioErrorCode ec;
+        NetworkErrorCode ec;
         _socket->sendTo(packet, endpoint, 0, ec);
         if (ec) {
             std::cerr << "[CLIENT NETWORK] Send error: " << ec.message() << std::endl;
@@ -176,7 +178,7 @@ std::vector<uint8_t> net::ClientNetwork::receiveFrom(
     const uint8_t &connectionId) {
     (void)connectionId;
 
-    AsioErrorCode ec;
+    NetworkErrorCode ec;
     std::vector<uint8_t> buffer(65536);
     AsioEndpoint sender;
 
