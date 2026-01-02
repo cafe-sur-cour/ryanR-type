@@ -37,9 +37,9 @@ class AsioAddress : public INetworkAddress {
         AsioAddress& operator=(const AsioAddress& other);
         INetworkAddress& operator=(const INetworkAddress& other) override;
 
-        void* getInternalAddress() override;
-        const void* getInternalAddress() const override;
-        void setFromInternal(void* internalAddr) override;
+        std::shared_ptr<void> getInternalAddress() override;
+        std::shared_ptr<const void> getInternalAddress() const override;
+        void setFromInternal(std::shared_ptr<void> internalAddr) override;
 
     private:
         class Impl;

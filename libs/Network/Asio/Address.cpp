@@ -78,25 +78,25 @@ std::string net::AsioAddress::toString() const {
     return _impl->address.to_string();
 }
 
-void* net::AsioAddress::getInternalAddress() {
-    return &(_impl->address);
+std::shared_ptr<void> net::AsioAddress::getInternalAddress() {
+    return std::shared_ptr<void>(&(_impl->address), [](void*){});
 }
 
-const void* net::AsioAddress::getInternalAddress() const {
-    return &(_impl->address);
+std::shared_ptr<const void> net::AsioAddress::getInternalAddress() const {
+    return std::shared_ptr<const void>(&(_impl->address), [](const void*){});
 }
 
-void net::AsioAddress::setFromInternal(void* internalAddr) {
+void net::AsioAddress::setFromInternal(std::shared_ptr<void> internalAddr) {
     if (internalAddr) {
-        _impl->address = *static_cast<asio::ip::address*>(internalAddr);
+        _impl->address = *static_cast<asio::ip::address*>(internalAddr.get());
     }
 }
 
 net::INetworkAddress& net::AsioAddress::operator=(const INetworkAddress& other) {
     if (this != &other) {
-        auto* otherInternal = const_cast<INetworkAddress&>(other).getInternalAddress();
+        auto otherInternal = const_cast<INetworkAddress&>(other).getInternalAddress();
         if (otherInternal) {
-            _impl->address = *static_cast<asio::ip::address*>(otherInternal);
+            _impl->address = *static_cast<asio::ip::address*>(otherInternal.get());
         }
     }
     return *this;

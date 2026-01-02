@@ -9,6 +9,7 @@
 #define INETWORK_ADDRESS_HPP
 
 #include <string>
+#include <memory>
 
 namespace net {
 
@@ -20,9 +21,9 @@ class INetworkAddress {
 
         virtual ~INetworkAddress() = default;
         virtual INetworkAddress& operator=(const INetworkAddress& other) = 0;
-        virtual void* getInternalAddress() = 0;
-        virtual const void* getInternalAddress() const = 0;
-        virtual void setFromInternal(void* internalAddr) = 0;
+        virtual std::shared_ptr<void> getInternalAddress() = 0;
+        virtual std::shared_ptr<const void> getInternalAddress() const = 0;
+        virtual void setFromInternal(std::shared_ptr<void> internalAddr) = 0;
 };
 
 } // namespace net
