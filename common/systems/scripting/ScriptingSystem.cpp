@@ -27,16 +27,17 @@ ScriptingSystem::ScriptingSystem() : lua(), registry(nullptr) {
 }
 
 void ScriptingSystem::bindAPI() {
-    lua.set_function("print", [](const std::string& msg) {
+    // mettre en constant
+    lua.set_function(constants::PRINT_FUNCTION, [](const std::string& msg) {
         std::cout << "[Lua] " << msg << std::endl;
     });
 
-    lua.set_function("createMoveIntent", [this](Entity e, float x, float y) {
+    lua.set_function(constants::CREATE_MOVE_INTENT_FUNCTION, [this](Entity e, float x, float y) {
         auto intent = std::make_shared<ecs::MovementIntentComponent>(math::Vector2f(x, y), true);
         registry->addComponent<ecs::MovementIntentComponent>(e, intent);
     });
 
-    lua.set_function("getEntityPosition", [this](Entity e) -> std::tuple<float, float> {
+    lua.set_function(constants::GET_ENTITY_POSITION_FUNCTION, [this](Entity e) -> std::tuple<float, float> {
         if (registry->hasComponent<TransformComponent>(e)) {
             auto transform = registry->getComponent<TransformComponent>(e);
             auto pos = transform->getPosition();
@@ -45,7 +46,7 @@ void ScriptingSystem::bindAPI() {
         return {0.0f, 0.0f};
     });
 
-    lua.set_function("getPlayerPosition", [this]() -> std::tuple<float, float> {
+    lua.set_function(constants::GET_PLAYER_POSITION_FUNCTION, [this]() -> std::tuple<float, float> {
         auto view = registry->view<PlayerTag, TransformComponent>();
         for (auto entityId : view) {
             auto transform = registry->getComponent<TransformComponent>(entityId);
@@ -55,7 +56,7 @@ void ScriptingSystem::bindAPI() {
         return {0.0f, 0.0f};
     });
 
-    lua.set_function("getEntitySpeed", [this](Entity e) -> float {
+    lua.set_function(constants::GET_ENTITY_SPEED_FUNCTION, [this](Entity e) -> float {
         if (registry->hasComponent<SpeedComponent>(e)) {
             auto speedComp = registry->getComponent<SpeedComponent>(e);
             return speedComp->getSpeed();
@@ -63,22 +64,10 @@ void ScriptingSystem::bindAPI() {
         return 0.0f;
     });
 
-    lua.set_function("createShootIntent", [this](Entity e, float angleDegrees) {
+    lua.set_function(constants::CREATE_SHOOT_INTENT_FUNCTION, [this](Entity e, float angleDegrees) {
         auto intent = std::make_shared<ecs::ShootIntentComponent>(angleDegrees);
         registry->addComponent<ecs::ShootIntentComponent>(e, intent);
     });
-}
-
-void ScriptingSystem::callInitForEntity(Entity entity, std::shared_ptr<ecs::ScriptingComponent> comp) {
-    if (comp->hasFunction("init") && !comp->isInitialized()) {
-        sol::protected_function initFunc(comp->getFunction("init"));
-        sol::protected_function_result result = initFunc(entity);
-        if (!result.valid()) {
-            sol::error err = result;
-            std::cerr << "Init error for entity " << entity << ": " << err.what() << std::endl;
-        }
-        comp->setInitialized(true);
-    }
 }
 
 void ScriptingSystem::update(
@@ -103,13 +92,13 @@ void ScriptingSystem::update(
         if (!scriptingComp->isInitialized())
             scriptingComp->init(this->lua);
 
-        callInitForEntity(entityId, scriptingComp);
-
-        if (scriptingComp->hasFunction("update")) {
-            sol::protected_function updateFunc(scriptingComp->getFunction("update"));
+        if (scriptingComp->hasFunction(constants::UPDATE_FUNCTION)) {
+            sol::protected_function updateFunc(scriptingComp->getFunction(constants::UPDATE_FUNCTION));
             sol::protected_function_result result = updateFunc(entityId, deltaTime);
             if (!result.valid()) {
                 sol::error err = result;
+                std::cerr << "[ScriptingSystem] Error in 'update' function for entity "
+                    << entityId << ": " << err.what() << std::endl;
             }
         }
     }

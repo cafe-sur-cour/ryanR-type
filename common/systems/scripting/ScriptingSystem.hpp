@@ -32,7 +32,6 @@ class ScriptingSystem : public ASystem {
     protected:
     private:
         void bindAPI();
-        void callInitForEntity(Entity entity, std::shared_ptr<ecs::ScriptingComponent> comp);
 
         sol::state lua;
         std::shared_ptr<Registry> registry;
