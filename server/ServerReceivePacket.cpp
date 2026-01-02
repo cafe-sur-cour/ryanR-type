@@ -218,3 +218,55 @@ bool rserv::Server::processConnectToLobby(std::pair<asio::ip::udp::endpoint,
     }
     return true;
 }
+
+bool rserv::Server::processMasterStart(std::pair<asio::ip::udp::endpoint,
+    std::vector<uint8_t>> payload) {
+    /* Verify Network */
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    /* Verify that client is lobby master */
+    std::string lobbyCode = "";
+    if (payload.second.size() > HEADER_SIZE)
+        lobbyCode = std::string(payload.second.begin() + HEADER_SIZE, payload.second.end());
+    bool lobbyExists = false;
+    for (const auto &lobby : this->_lobbys) {
+        if (lobby.first == lobbyCode) {
+            lobbyExists = true;
+            break;
+        }
+    }
+    if (!lobbyExists) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Lobby code not found for master start: " + lobbyCode,
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Lobby master requested game start for lobby: " + lobbyCode,
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+    for (const auto &lobby : this->_lobbys) {
+        if (lobby.first == lobbyCode) {
+            for (const auto &lobbyEndpoint : lobby.second) {
+                for (const auto &client : this->_clients) {
+                    if (std::get<1>(client) == lobbyEndpoint) {
+                        uint8_t clientId = std::get<0>(client);
+                        this->_clientsReady[clientId] = true;
+                        debug::Debug::printDebug(this->_config->getIsDebug(),
+                            "[SERVER] Set client " + std::to_string(static_cast<int>
+                            (clientId)) + " ready for lobby start",
+                            debug::debugType::NETWORK, debug::debugLevel::INFO);
+                    }
+                }
+            }
+            break;
+        }
+    }
+    this->canStartPacket();
+    return true;
+}

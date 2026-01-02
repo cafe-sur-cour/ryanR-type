@@ -79,6 +79,7 @@ class ClientNetwork {
         void sendWhoAmI();
         void requestCode();
         void sendLobbyConnection(std::string lobbyCode);
+        void sendMasterStartGame();
 
         void addToEventQueue(const NetworkEvent &event);
 

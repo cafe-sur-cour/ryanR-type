@@ -78,6 +78,7 @@ namespace rserv {
             bool processWhoAmI(uint8_t idClient);
             bool requestCode(asio::ip::udp::endpoint endpoint);
             bool processConnectToLobby(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> payload);
+            bool processMasterStart(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> payload);
 
             /* Sent Packet Handling */
             bool connectionPacket(asio::ip::udp::endpoint endpoint);

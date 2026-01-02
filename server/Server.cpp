@@ -248,6 +248,8 @@ void rserv::Server::processIncomingPackets() {
         this->requestCode(received.first);
     } else if (this->_packet->getType() == constants::PACKET_CONNECT_TO_LOBBY) {
         this->processConnectToLobby(std::make_pair(received.first, received.second));
+    } else if (this->_packet->getType() == constants::PACKET_LOBBY_MASTER_REQUEST_START) {
+        this->processMasterStart(std::make_pair(received.first, received.second));
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "
