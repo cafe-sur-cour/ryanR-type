@@ -3,12 +3,12 @@ find_package(asio CONFIG REQUIRED)
 
 add_library(${NETWORK_SERVER_LIB_NAME} SHARED
     ../ANetwork.cpp
-    ../NetworkEndpoint.cpp
-    ../AsioEventLoop.cpp
-    ../NetworkErrorCode.cpp
-    ../NetworkSocket.cpp
-    ../NetworkResolver.cpp
-    ../NetworkAddress.cpp
+    ../Asio/EventLoop.cpp
+    ../Asio/Endpoint.cpp
+    ../Asio/ErrorCode.cpp
+    ../Asio/Socket.cpp
+    ../Asio/Resolver.cpp
+    ../Asio/Address.cpp
     ServerNetwork.cpp
 )
 
@@ -32,12 +32,12 @@ add_custom_command(TARGET ${NETWORK_SERVER_LIB_NAME} POST_BUILD
 
 add_library(${NETWORK_CLIENT_LIB_NAME} SHARED
     ../ANetwork.cpp
-    ../NetworkEndpoint.cpp
-    ../AsioEventLoop.cpp
-    ../NetworkErrorCode.cpp
-    ../NetworkSocket.cpp
-    ../NetworkResolver.cpp
-    ../NetworkAddress.cpp
+    ../Asio/EventLoop.cpp
+    ../Asio/Endpoint.cpp
+    ../Asio/ErrorCode.cpp
+    ../Asio/Socket.cpp
+    ../Asio/Resolver.cpp
+    ../Asio/Address.cpp
     ClientNetwork.cpp
 )
 
