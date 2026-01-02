@@ -72,6 +72,8 @@ void ScriptingSystem::bindAPI() {
 
     lua.set_function(constants::CREATE_SHOOT_INTENT_FUNCTION,
         [this](Entity e, float angleDegrees) {
+        if (registry->hasComponent<ShootIntentComponent>(e))
+            return;
         auto intent = std::make_shared<ecs::ShootIntentComponent>(angleDegrees);
         registry->addComponent<ecs::ShootIntentComponent>(e, intent);
     });
