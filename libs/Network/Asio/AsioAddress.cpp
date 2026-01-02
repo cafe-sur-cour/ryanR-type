@@ -5,14 +5,16 @@
 ** NetworkAddress implementation
 */
 
+#include <memory>
+#include <string>
 #include <asio.hpp>
 #include "AsioAddress.hpp"
 
 namespace net {
 
 class AsioAddress::Impl {
-public:
-    asio::ip::address address;
+ public:
+        asio::ip::address address;
 };
 
 }

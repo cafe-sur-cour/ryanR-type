@@ -5,14 +5,18 @@
 ** NetworkErrorCode implementation
 */
 
-#include "AsioErrorCode.hpp"
+#include <memory>
+#include <string>
+#include <utility>
 #include <asio.hpp>
+
+#include "AsioErrorCode.hpp"
 
 namespace net {
 
 class AsioErrorCode::Impl {
-public:
-    asio::error_code asioErrorCode;
+ public:
+        asio::error_code asioErrorCode;
 };
 
 }
@@ -93,7 +97,8 @@ void net::AsioErrorCode::setError(NetworkError error, const std::string& msg) {
             _impl->asioErrorCode = asio::error::timed_out;
             break;
         default:
-            _impl->asioErrorCode = asio::error::make_error_code(asio::error::basic_errors::fault);
+            _impl->asioErrorCode = asio::error::make_error_code(
+                asio::error::basic_errors::fault);
             break;
     }
 }
