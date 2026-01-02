@@ -67,14 +67,14 @@ Core::~Core() {
         this->_gsm.reset();
     }
 
-    if (this->_systemsManager != nullptr) {
-        this->_systemsManager.reset();
-    }
     if (this->_parser != nullptr) {
         this->_parser.reset();
     }
     if (this->_registry != nullptr) {
         this->_registry.reset();
+    }
+    if (this->_systemsManager != nullptr) {
+        this->_systemsManager.reset();
     }
     if (this->_server != nullptr) {
         this->_server.reset();

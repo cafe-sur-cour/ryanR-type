@@ -16,7 +16,6 @@
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ShootingStatsComponent.hpp"
 #include "../../components/permanent/ProjectilePrefabComponent.hpp"
-#include "../../components/tags/AIShooterTag.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/permanent/SpeedComponent.hpp"
 #include "../../components/permanent/OwnerComponent.hpp"

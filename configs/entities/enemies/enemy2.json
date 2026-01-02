@@ -9,14 +9,9 @@
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "both" },
-        "SpeedComponent": { "target": "both", "speed": 150.0 },
+        "SpeedComponent": { "target": "both", "speed": 100.0 },
         "HealthComponent": { "target": "both", "health": 50.0 },
         "ScoreValueComponent": { "target": "both", "scoreValue": 150 },
-        "AIMovementPatternComponent": {
-            "target": "both",
-            "defaultBehavior": "FollowRight",
-            "verticalDeadzone": 10.0
-        },
         "ProjectilePrefabComponent": {
             "target": "both",
             "prefabName": "enemy_basic_shot"
@@ -29,8 +24,6 @@
             "angleOffset": 0.0,
             "spreadAngle": 0.0
         },
-        "AIMoverTag": { "target": "both" },
-        "AIShooterTag": { "target": "both" },
         "AnimationComponent": {
             "target": "client",
             "states": {
@@ -70,6 +63,10 @@
             ]
         },
         "ShooterTag": { "target": "both" },
-        "HealthBarComponent": { "target": "client" }
+        "HealthBarComponent": { "target": "client" },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/enemy_follow_border.lua"
+        }
     }
 }

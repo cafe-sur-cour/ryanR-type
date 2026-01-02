@@ -21,4 +21,6 @@ target_sources(${ERROR_LIB} PUBLIC
     LibrairiesLoadError.hpp
     ClientError.cpp
     ClientError.hpp
+    ScriptingError.cpp
+    ScriptingError.hpp
 )
