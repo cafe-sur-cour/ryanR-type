@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** NetworkAddress
+** INetworkAddress - Interface for IP address representation
 */
 
 #ifndef INETWORK_ADDRESS_HPP
