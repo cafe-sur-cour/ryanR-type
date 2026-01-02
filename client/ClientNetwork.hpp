@@ -90,8 +90,13 @@ class ClientNetwork {
         uint8_t getClientId() const;
         bool getClientReadyStatus() const;
 
+        bool isConnectedToLobby() const;
+        bool isLobbyMaster() const;
+
         std::atomic<bool> _isConnected;
         std::atomic<bool> _ready;
+        std::atomic<bool> _isConnectedToLobby;
+        std::atomic<bool> _isLobbyMaster;
 
         std::atomic<size_t> _connectedClients;
         std::atomic<size_t> _readyClients;

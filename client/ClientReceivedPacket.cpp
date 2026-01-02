@@ -325,6 +325,8 @@ void ClientNetwork::handleCode() {
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
     _lobbyCode = lobbyCode;
+    _isLobbyMaster = true;
+    _isConnectedToLobby = true;
 }
 
 void ClientNetwork::handleLobbyConnectValue() {
@@ -346,11 +348,14 @@ void ClientNetwork::handleLobbyConnectValue() {
             "[CLIENT] Successfully connected to lobby",
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
+        _isConnectedToLobby = true;
     } else {
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Failed to connect to lobby",
             debug::debugType::NETWORK,
             debug::debugLevel::WARNING);
         this->_lobbyCode = "";
+        _isConnectedToLobby = false;
+        _isLobbyMaster = false;
     }
 }
