@@ -12,8 +12,8 @@
 #include <string>
 #include <vector>
 
-#include "Asio/Endpoint.hpp"
-#include "Asio/ErrorCode.hpp"
+#include "Asio/AsioEndpoint.hpp"
+#include "Asio/AsioErrorCode.hpp"
 
 namespace net {
 

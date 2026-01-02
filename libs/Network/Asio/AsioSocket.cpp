@@ -7,10 +7,10 @@
 
 #include <asio.hpp>
 #include <stdexcept>
-#include "Socket.hpp"
-#include "Endpoint.hpp"
-#include "ErrorCode.hpp"
-#include "EventLoop.hpp"
+#include "AsioSocket.hpp"
+#include "AsioEndpoint.hpp"
+#include "AsioErrorCode.hpp"
+#include "AsioEventLoop.hpp"
 
 class net::AsioSocket::Impl {
 public:

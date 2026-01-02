@@ -3,12 +3,12 @@ find_package(asio CONFIG REQUIRED)
 
 add_library(${NETWORK_SERVER_LIB_NAME} SHARED
     ../ANetwork.cpp
-    ../Asio/EventLoop.cpp
-    ../Asio/Endpoint.cpp
-    ../Asio/ErrorCode.cpp
-    ../Asio/Socket.cpp
-    ../Asio/Resolver.cpp
-    ../Asio/Address.cpp
+    ../Asio/AsioEventLoop.cpp
+    ../Asio/AsioEndpoint.cpp
+    ../Asio/AsioErrorCode.cpp
+    ../Asio/AsioSocket.cpp
+    ../Asio/AsioResolver.cpp
+    ../Asio/AsioAddress.cpp
     ServerNetwork.cpp
 )
 
@@ -32,12 +32,12 @@ add_custom_command(TARGET ${NETWORK_SERVER_LIB_NAME} POST_BUILD
 
 add_library(${NETWORK_CLIENT_LIB_NAME} SHARED
     ../ANetwork.cpp
-    ../Asio/EventLoop.cpp
-    ../Asio/Endpoint.cpp
-    ../Asio/ErrorCode.cpp
-    ../Asio/Socket.cpp
-    ../Asio/Resolver.cpp
-    ../Asio/Address.cpp
+    ../Asio/AsioEventLoop.cpp
+    ../Asio/AsioEndpoint.cpp
+    ../Asio/AsioErrorCode.cpp
+    ../Asio/AsioSocket.cpp
+    ../Asio/AsioResolver.cpp
+    ../Asio/AsioAddress.cpp
     ClientNetwork.cpp
 )
 
@@ -51,10 +51,10 @@ target_compile_definitions(${NETWORK_CLIENT_LIB_NAME}
 
 # Disable sign-conversion warnings for ASIO library
 if(APPLE OR UNIX)
-    target_compile_options(${NETWORK_CLIENT_LIB_NAME} PRIVATE 
-        -Wno-sign-conversion 
-        -Wno-implicit-int-conversion 
-        -Wno-shorten-64-to-32 
+    target_compile_options(${NETWORK_CLIENT_LIB_NAME} PRIVATE
+        -Wno-sign-conversion
+        -Wno-implicit-int-conversion
+        -Wno-shorten-64-to-32
         -Wno-shadow
     )
 endif()

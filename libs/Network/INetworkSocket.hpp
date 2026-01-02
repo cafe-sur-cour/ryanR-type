@@ -13,8 +13,8 @@
 #include <vector>
 #include <cstdint>
 
-#include "Asio/ErrorCode.hpp"
-#include "Asio/Endpoint.hpp"
+#include "Asio/AsioErrorCode.hpp"
+#include "Asio/AsioEndpoint.hpp"
 
 namespace net {
 

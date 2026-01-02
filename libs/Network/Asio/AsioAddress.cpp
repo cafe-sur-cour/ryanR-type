@@ -6,7 +6,7 @@
 */
 
 #include <asio.hpp>
-#include "Address.hpp"
+#include "AsioAddress.hpp"
 
 namespace net {
 

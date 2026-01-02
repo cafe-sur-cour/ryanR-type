@@ -16,11 +16,11 @@
 #include "../INetworkSocket.hpp"
 #include "../INetworkResolver.hpp"
 #include "../INetworkErrorCode.hpp"
-#include "../Asio/Socket.hpp"
-#include "../Asio/Resolver.hpp"
-#include "../Asio/ErrorCode.hpp"
-#include "../Asio/Endpoint.hpp"
-#include "../Asio/EventLoop.hpp"
+#include "../Asio/AsioSocket.hpp"
+#include "../Asio/AsioResolver.hpp"
+#include "../Asio/AsioErrorCode.hpp"
+#include "../Asio/AsioEndpoint.hpp"
+#include "../Asio/AsioEventLoop.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
 
 namespace net {

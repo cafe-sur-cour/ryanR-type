@@ -10,14 +10,14 @@
 
 #include <string>
 #include <cstdint>
-#include "Asio/Address.hpp"
+#include "Asio/AsioAddress.hpp"
 
 namespace net {
 
 class INetworkEndpoint {
     public:
         virtual ~INetworkEndpoint() noexcept = default;
-        
+
         virtual const std::string& getAddress() const = 0;
         virtual uint16_t getPort() const = 0;
 

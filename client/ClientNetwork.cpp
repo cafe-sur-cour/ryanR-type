@@ -142,7 +142,8 @@ void ClientNetwork::init() {
         this->_port,
         this->_ip
     );
-    this->_serverEndpoint = std::make_shared<net::AsioEndpoint>(this->_ip, static_cast<uint16_t>(this->_port));
+    this->_serverEndpoint = std::make_shared<net::AsioEndpoint>(this->_ip,
+        static_cast<uint16_t>(this->_port));
 }
 
 void ClientNetwork::connect() {
@@ -181,7 +182,8 @@ void ClientNetwork::setIp(const std::string &ip) {
 }
 
 void ClientNetwork::redoServerEndpoint() {
-    this->_serverEndpoint = std::make_shared<net::AsioEndpoint>(this->_ip, static_cast<uint16_t>(this->_port));
+    this->_serverEndpoint = std::make_shared<net::AsioEndpoint>(this->_ip,
+        static_cast<uint16_t>(this->_port));
 }
 
 void ClientNetwork::setDebugMode(bool isDebug) {
