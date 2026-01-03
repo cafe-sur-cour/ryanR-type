@@ -21,9 +21,6 @@ foreach(asset_file ${EMBEDDED_ASSET_FILES})
 endforeach()
 
 add_library(${MULTIMEDIA_LIB_NAME} SHARED
-    IAudio.hpp
-    IEvent.hpp
-    IWindow.hpp
     EventTypes.hpp
     ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
     ${EMBEDDED_ASSET_FILES}
