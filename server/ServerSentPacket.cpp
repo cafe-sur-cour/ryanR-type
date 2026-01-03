@@ -229,7 +229,7 @@ bool rserv::Server::sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint) {
     while (!isUnique && attempts < maxAttempts) {
         lobbyCode = Utils::createAlphaNumericCode();
         isUnique = true;
-        for (const auto& lobby : this->lobbys) {
+        for (const auto& lobby : this->_lobbys) {
             if (lobby.first == lobbyCode) {
                 isUnique = false;
                 break;
@@ -268,7 +268,34 @@ bool rserv::Server::sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint) {
         return false;
     }
     /* Add to lobby vector, code and client endpoint */
-    this->lobbys.push_back(std::make_pair(lobbyCode, endpoint));
+    this->_lobbys.push_back(std::make_pair(lobbyCode,
+        std::vector<asio::ip::udp::endpoint>{endpoint}));
     this->_sequenceNumber++;
+    return true;
+}
+
+bool rserv::Server::lobbyConnectValuePacket(asio::ip::udp::endpoint endpoint, bool isSucess) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    std::vector<uint64_t> payload;
+    payload.push_back(static_cast<uint64_t>(isSucess ? 't' : 'f'));
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_LOBBY_CONNECT_VALUE, payload);
+    if (!this->_network->sendTo(endpoint, packet)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Failed to send LOBBY_CONNECT_VALUE response to client",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    this->_sequenceNumber++;
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Sent LOBBY_CONNECT_VALUE response to client: " +
+        std::string(isSucess ? "success" : "failure"),
+        debug::debugType::NETWORK, (isSucess ? debug::debugLevel::INFO :
+            debug::debugLevel::WARNING));
     return true;
 }

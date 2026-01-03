@@ -27,12 +27,6 @@ bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
     if (client.second.size() > HEADER_SIZE)
         name = std::string(client.second.begin() + HEADER_SIZE, client.second.end());
 
-    if (this->_nextClientId > constants::MAX_CLIENT) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Warning: Maximum clients reached",
-            debug::debugType::NETWORK, debug::debugLevel::WARNING);
-        return false;
-    }
     this->connectionPacket(client.first);
     this->_clients.push_back(std::make_tuple(this->_nextClientId, client.first, name));
     this->_clientsReady[this->_nextClientId] = false;
@@ -41,23 +35,6 @@ bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
         debug::debugType::NETWORK, debug::debugLevel::INFO);
     this->canStartPacket();
     this->_nextClientId++;
-    return true;
-}
-
-
-bool rserv::Server::requestCode(asio::ip::udp::endpoint endpoint) {
-    if (!this->_network) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Warning: Network not initialized",
-            debug::debugType::NETWORK, debug::debugLevel::WARNING);
-        return false;
-    }
-    if (this->sendCodeLobbyPacket(endpoint) == false) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Warning: Failed to send lobby code",
-            debug::debugType::NETWORK, debug::debugLevel::WARNING);
-        return false;
-    }
     return true;
 }
 
@@ -175,5 +152,121 @@ bool rserv::Server::processWhoAmI(uint8_t idClient) {
         + " with entity ID " + std::to_string(playerEntity),
         debug::debugType::NETWORK, debug::debugLevel::INFO);
 
+    return true;
+}
+
+bool rserv::Server::requestCode(asio::ip::udp::endpoint endpoint) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    if (this->sendCodeLobbyPacket(endpoint) == false) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Failed to send lobby code",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    return true;
+}
+
+bool rserv::Server::processConnectToLobby(std::pair<asio::ip::udp::endpoint,
+    std::vector<uint8_t>> payload) {
+    /* Verify Network */
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    /* Verify that lobby exists */
+    std::string lobbyCode = "";
+    if (payload.second.size() > HEADER_SIZE)
+        lobbyCode = std::string(payload.second.begin() + HEADER_SIZE, payload.second.end());
+    bool lobbyExists = false;
+    for (const auto &lobby : this->_lobbys) {
+        if (lobby.first == lobbyCode) {
+            if (lobby.second.size() > constants::MAX_CLIENT_PER_LOBBY) {
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] Warning: Maximum clients reached for lobby",
+                    debug::debugType::NETWORK, debug::debugLevel::WARNING);
+                break;
+            }
+            lobbyExists = true;
+            break;
+        }
+    }
+    /* Send succesfull or fail connect */
+    this->lobbyConnectValuePacket(payload.first, lobbyExists);
+    /* Add client to lobby */
+    if (lobbyExists) {
+        for (auto &lobby : this->_lobbys) {
+            if (lobby.first == lobbyCode) {
+                lobby.second.push_back(payload.first);
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] Client added to lobby: " + lobbyCode,
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+                break;
+            }
+        }
+    } else {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Lobby code not found: " + lobbyCode,
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    return true;
+}
+
+bool rserv::Server::processMasterStart(std::pair<asio::ip::udp::endpoint,
+    std::vector<uint8_t>> payload) {
+    /* Verify Network */
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    /* Verify that client is lobby master */
+    std::string lobbyCode = "";
+    if (payload.second.size() > HEADER_SIZE)
+        lobbyCode = std::string(payload.second.begin() + HEADER_SIZE, payload.second.end());
+    bool lobbyExists = false;
+    for (const auto &lobby : this->_lobbys) {
+        if (lobby.first == lobbyCode) {
+            lobbyExists = true;
+            break;
+        }
+    }
+    if (!lobbyExists) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Lobby code not found for master start: " + lobbyCode,
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Lobby master requested game start for lobby: " + lobbyCode,
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+    for (const auto &lobby : this->_lobbys) {
+        if (lobby.first == lobbyCode) {
+            for (const auto &lobbyEndpoint : lobby.second) {
+                for (const auto &client : this->_clients) {
+                    if (std::get<1>(client) == lobbyEndpoint) {
+                        uint8_t clientId = std::get<0>(client);
+                        this->_clientsReady[clientId] = true;
+                        debug::Debug::printDebug(this->_config->getIsDebug(),
+                            "[SERVER] Set client " + std::to_string(static_cast<int>
+                            (clientId)) + " ready for lobby start",
+                            debug::debugType::NETWORK, debug::debugLevel::INFO);
+                    }
+                }
+            }
+            break;
+        }
+    }
+    this->canStartPacket();
     return true;
 }
