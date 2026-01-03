@@ -1,4 +1,3 @@
-# Find ASIO library (confiné à ce module)
 find_package(asio CONFIG REQUIRED)
 
 add_library(${NETWORK_SERVER_LIB_NAME} SHARED
