@@ -148,7 +148,7 @@ void ClientNetwork::handleCanStart() {
     std::vector<uint64_t> whoamiPayload;
     std::vector<uint8_t> whoamiPacket = _packet->pack(_idClient, _sequenceNumber,
         constants::PACKET_WHOAMI, whoamiPayload);
-    this->_network->sendTo(_serverEndpoint, whoamiPacket);
+    this->_network->sendTo(*_serverEndpoint, whoamiPacket);
     _sequenceNumber++;
 
     if (this->_gsm) {

@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <cstring>
 #include "ClientNetwork.hpp"
 #include "../common/debug.hpp"
 #include "../common/translationToECS.hpp"
