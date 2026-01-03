@@ -10,13 +10,13 @@
 
 #include <memory>
 #include <SFML/Graphics.hpp>
-#include "IWindow.hpp"
+#include "../IWindow.hpp"
 #include "TextureManager.hpp"
 #include "FontManager.hpp"
 #include "ShaderManager.hpp"
 #include "RoundedRectangleShape.hpp"
-#include "../../common/types/FRect.hpp"
-#include "AssetManager/AssetManager.hpp"
+#include "../../../common/types/FRect.hpp"
+#include "../AssetManager/AssetManager.hpp"
 
 class SfmlWindow : public gfx::IWindow {
     public:

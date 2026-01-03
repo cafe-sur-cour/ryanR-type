@@ -6,13 +6,13 @@
 */
 
 #include <memory>
-#include "IWindow.hpp"
+#include "../IWindow.hpp"
 #include "SfmlWindow.hpp"
 #include "SfmlEvent.hpp"
 #include "SfmlAudio.hpp"
-#include "../../common/resourceManager/ResourceManager.hpp"
-#include "../../common/DLLoader/LoaderType.hpp"
-#include "../../client/constants.hpp"
+#include "../../../common/resourceManager/ResourceManager.hpp"
+#include "../../../common/DLLoader/LoaderType.hpp"
+#include "../../../client/constants.hpp"
 
 extern "C" {
     void* createWindow() {
