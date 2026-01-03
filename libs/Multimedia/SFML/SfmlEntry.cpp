@@ -6,7 +6,7 @@
 */
 
 #include <memory>
-#include "../IWindow.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 #include "SfmlWindow.hpp"
 #include "SfmlEvent.hpp"
 #include "SfmlAudio.hpp"

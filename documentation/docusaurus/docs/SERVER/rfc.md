@@ -175,7 +175,7 @@ Client and Server packet types (complete list used by the codebase):
    - Used when there is nothing to send; helps keep sequence numbers in sync
 
 Notes:
-- The canonical constant names and packet lengths are defined in `libs/Packet/IPacketManager.hpp`.
+- The canonical constant names and packet lengths are defined in `common/interfaces/IPacketManager.hpp`.
 - The RFC tables above were aligned to match the names used in the codebase (both client and server). Where the original RFC used a different label (for example `CONNECTIONS`), the equivalent code name `ACCEPTATION_PACKET` is used here for clarity.
 
 

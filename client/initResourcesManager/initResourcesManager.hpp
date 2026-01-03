@@ -12,9 +12,9 @@
 #include <memory>
 #include "../../common/Parser/Parser.hpp"
 #include "../../common/DLLoader/DLLoader.hpp"
-#include "../../libs/Multimedia/IWindow.hpp"
-#include "../../libs/Multimedia/IEvent.hpp"
-#include "../../libs/Multimedia/IAudio.hpp"
+#include "../../common/interfaces/IWindow.hpp"
+#include "../../common/interfaces/IEvent.hpp"
+#include "../../common/interfaces/IAudio.hpp"
 
 std::shared_ptr<ResourceManager> initResourcesManager(
     std::shared_ptr<DLLoader<gfx::createWindow_t>>,

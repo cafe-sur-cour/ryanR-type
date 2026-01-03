@@ -12,8 +12,8 @@
 #include <map>
 #include <chrono>
 #include <string>
-#include "../IEvent.hpp"
-#include "../IWindow.hpp"
+#include "../../../common/interfaces/IEvent.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 #include "SfmlKeyMappings.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
 
