@@ -78,6 +78,14 @@ MainMenuState::MainMenuState(
     _leftLayout = std::make_shared<ui::UILayout>(_resourceManager, leftConfig);
     _leftLayout->setSize(math::Vector2f(300.f, 300.f));
 
+    _usernameDisplayText = std::make_shared<ui::Text>(_resourceManager);
+    _usernameDisplayText->setText(config->getUsername());
+    _usernameDisplayText->setSize(math::Vector2f(300.f, 40.f));
+    _usernameDisplayText->setTextColor(gfx::color_t{255, 255, 255, 255});
+    _usernameDisplayText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
+    _usernameDisplayText->setOutlineThickness(2.0f);
+    _usernameDisplayText->setFontSize(28);
+
     _connectButton = std::make_shared<ui::Button>(_resourceManager);
     _connectButton->setText("Connect");
     _connectButton->setSize(math::Vector2f(300.f, 108.f));
@@ -167,6 +175,7 @@ MainMenuState::MainMenuState(
         std::cout << "Connecting to lobby with code: " << lobbyCode << std::endl;
     });
 
+    _leftLayout->addElement(_usernameDisplayText);
     _leftLayout->addElement(_ipInput);
     _leftLayout->addElement(_portInput);
     _leftLayout->addElement(_connectButton);
@@ -183,7 +192,7 @@ MainMenuState::MainMenuState(
     menuConfig.offset = math::Vector2f(0.0f, 0.0f);
 
     _mainMenuLayout = std::make_shared<ui::UILayout>(_resourceManager, menuConfig);
-    _mainMenuLayout->setSize(math::Vector2f(576.f, 400.f));
+    _mainMenuLayout->setSize(math::Vector2f(576.f, 450.f));
     _playButton = std::make_shared<ui::Button>(resourceManager);
     _playButton->setText("Not connected");
     _playButton->setSize(math::Vector2f(576.f, 108.f));
@@ -324,6 +333,11 @@ void MainMenuState::renderUI() {
 }
 
 void MainMenuState::updateUIStatus() {
+    auto config = _resourceManager->get<SettingsConfig>();
+    if (config && _usernameDisplayText) {
+        _usernameDisplayText->setText(config->getUsername());
+    }
+
     auto network = this->_resourceManager->get<ClientNetwork>();
     if (!network) {
         _playButton->setText("Not connected");
@@ -386,6 +400,7 @@ void MainMenuState::exit() {
     _lobbyCodeInput.reset();
     _connectionStatusText.reset();
     _serverStatusText.reset();
+    _usernameDisplayText.reset();
     _mainMenuLayout.reset();
     _rightLayout.reset();
     _leftLayout.reset();

@@ -16,6 +16,7 @@
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../ui/elements/Background.hpp"
 #include "../../../../ui/elements/focusable/TextInput.hpp"
+#include "../../../../ui/elements/focusable/CharacterBoxInput.hpp"
 #include "../../../../ui/elements/Text.hpp"
 
 
@@ -55,6 +56,7 @@ private:
 
     std::shared_ptr<ui::Text> _connectionStatusText;
     std::shared_ptr<ui::Text> _serverStatusText;
+    std::shared_ptr<ui::Text> _usernameDisplayText;
 
     std::shared_ptr<ui::Background> _background;
 };

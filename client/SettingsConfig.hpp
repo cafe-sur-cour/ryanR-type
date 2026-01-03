@@ -51,6 +51,9 @@ public:
     float getRenderQuality() const { return _renderQuality; }
     void setRenderQuality(float quality) { _renderQuality = quality; }
 
+    std::string getUsername() const { return _username; }
+    void setUsername(const std::string& username) { _username = username; }
+
     std::string getScreenResolutionName(ScreenResolution resolution) const;
     std::pair<int, int> getScreenResolutionSize(ScreenResolution resolution) const;
     bool isFullscreen(ScreenResolution resolution) const;
@@ -71,6 +74,7 @@ private:
     ScreenResolution _screenResolution = ScreenResolution::RES_1920x1080;
     int _targetFPS = 60;
     float _renderQuality = 1.0f;
+    std::string _username = "Player";
 };
 
 #endif  // SETTINGSCONFIG_HPP_
