@@ -12,15 +12,6 @@
 
 #include "AsioErrorCode.hpp"
 
-namespace net {
-
-class AsioErrorCode::Impl {
- public:
-        asio::error_code asioErrorCode;
-};
-
-}
-
 net::AsioErrorCode::AsioErrorCode() : _impl(std::make_unique<Impl>()) {
 }
 

@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <asio.hpp>
 
 #include "../INetworkSocket.hpp"
 #include "../IEventLoop.hpp"
@@ -19,6 +20,12 @@
 namespace net {
 
 class AsioSocket : public INetworkSocket {
+
+    class Impl {
+        public:
+            std::shared_ptr<asio::ip::udp::socket> socket;
+    };
+
     public:
         explicit AsioSocket(std::shared_ptr<IEventLoop> eventLoop);
         ~AsioSocket() override;
@@ -31,7 +38,6 @@ class AsioSocket : public INetworkSocket {
         bool isOpen() const override;
 
     private:
-        class Impl;
         std::unique_ptr<Impl> _impl;
 };
 

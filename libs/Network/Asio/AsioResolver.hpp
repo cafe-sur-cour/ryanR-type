@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <asio.hpp>
 
 #include "AsioEndpoint.hpp"
 #include "../INetworkResolver.hpp"
@@ -21,13 +22,18 @@
 namespace net {
 
 class AsioResolver : public INetworkResolver {
+
+    class Impl {
+        public:
+            std::shared_ptr<asio::ip::udp::resolver> resolver;
+    };
+
     public:
         AsioResolver(std::shared_ptr<IEventLoop> eventLoop);
         ~AsioResolver() override;
         std::vector<std::shared_ptr<INetworkEndpoint>> resolve(const std::string& host, const std::string& port, INetworkErrorCode& ec) override;
 
     private:
-        class Impl;
         std::unique_ptr<Impl> _impl;
 };
 
