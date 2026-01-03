@@ -12,7 +12,7 @@
 #include <string>
 #include <functional>
 #include "../../../../libs/Multimedia/EventTypes.hpp"
-#include "../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../common/interfaces/IWindow.hpp"
 #include "../../../colors.hpp"
 
 namespace ui {

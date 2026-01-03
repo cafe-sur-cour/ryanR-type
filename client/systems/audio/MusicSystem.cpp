@@ -14,7 +14,7 @@
 #include "../../components/tags/BackGroundMusicTag.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
-#include "../../../libs/Multimedia/IAudio.hpp"
+#include "../../../common/interfaces/IAudio.hpp"
 #include "../../../common/constants.hpp"
 #include "../../SettingsConfig.hpp"
 

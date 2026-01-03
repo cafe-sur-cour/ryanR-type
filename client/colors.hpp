@@ -8,7 +8,7 @@
 #ifndef COLORS_HPP_
 #define COLORS_HPP_
 
-#include "../libs/Multimedia/IWindow.hpp"
+#include "../common/interfaces/IWindow.hpp"
 
 namespace colors {
     const gfx::color_t BLACK = {0, 0, 0};

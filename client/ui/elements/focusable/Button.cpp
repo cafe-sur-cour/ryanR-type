@@ -7,7 +7,7 @@
 
 #include "Button.hpp"
 #include <string>
-#include "../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../common/interfaces/IWindow.hpp"
 #include "../../../constants.hpp"
 
 namespace ui {

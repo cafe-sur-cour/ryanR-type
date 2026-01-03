@@ -1,7 +1,6 @@
 set(BUFFER_LIB_NAME Buffer)
 
 add_library(${BUFFER_LIB_NAME} SHARED
-    IBuffer.hpp
     CircularBuffer.hpp
     CircularBuffer.cpp
 )

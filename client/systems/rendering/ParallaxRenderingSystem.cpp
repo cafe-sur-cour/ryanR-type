@@ -14,7 +14,7 @@
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 #include "../../../common/constants.hpp"
 
 namespace ecs {

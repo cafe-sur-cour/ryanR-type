@@ -9,7 +9,7 @@
 #define HITBOXRENDERCOMPONENT_HPP_
 
 #include "../../../common/components/base/AComponent.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 
 namespace ecs {
 

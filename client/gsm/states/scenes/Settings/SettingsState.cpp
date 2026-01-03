@@ -10,8 +10,8 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "../../../../../libs/Multimedia/IWindow.hpp"
-#include "../../../../../libs/Multimedia/IEvent.hpp"
+#include "../../../../../common/interfaces/IWindow.hpp"
+#include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../constants.hpp"
@@ -20,7 +20,7 @@
 #include "../../../../../common/InputMapping/InputMappingManager.hpp"
 #include "../../../../initResourcesManager/GraphicalInputProvider.hpp"
 #include "../../../../SettingsConfig.hpp"
-#include "../../../../../libs/Multimedia/IAudio.hpp"
+#include "../../../../../common/interfaces/IAudio.hpp"
 
 namespace gsm {
 

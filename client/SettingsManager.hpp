@@ -12,7 +12,7 @@
 #include "../../common/InputMapping/InputMappingManager.hpp"
 #include "../../common/InputMapping/IInputProvider.hpp"
 #include "SettingsConfig.hpp"
-#include "../../libs/Multimedia/IWindow.hpp"
+#include "../../common/interfaces/IWindow.hpp"
 
 class SettingsManager {
 public:

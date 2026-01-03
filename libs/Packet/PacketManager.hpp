@@ -13,8 +13,8 @@
 #include <vector>
 #include <functional>
 
-#include "IPacketManager.hpp"
-#include "../Buffer/IBuffer.hpp"
+#include "../../common/interfaces/IPacketManager.hpp"
+#include "../../common/interfaces/IBuffer.hpp"
 #include "serializer/ISerializer.hpp"
 
 

@@ -11,7 +11,7 @@
 #include <utility>
 #include <string>
 #include <memory>
-#include "../../common/constants.hpp"
+#include "../../../common/constants.hpp"
 
 SfmlWindow::SfmlWindow(std::string title, size_t width, size_t height)
     : _window(std::make_shared<sf::RenderWindow>(

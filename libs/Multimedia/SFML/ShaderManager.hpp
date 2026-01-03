@@ -15,7 +15,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <SFML/Graphics.hpp>
-#include "AssetManager/AssetManager.hpp"
+#include "../AssetManager/AssetManager.hpp"
 
 class ShaderManager {
     public:

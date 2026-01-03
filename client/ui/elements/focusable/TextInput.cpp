@@ -8,7 +8,7 @@
 #include "TextInput.hpp"
 #include <algorithm>
 #include <string>
-#include "../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../common/interfaces/IWindow.hpp"
 #include "../../../constants.hpp"
 #include "../../../../libs/Multimedia/EventTypes.hpp"
 

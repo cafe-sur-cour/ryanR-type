@@ -12,7 +12,7 @@
 #include <cstdint>
 #include <functional>
 #include <string>
-#include "../Buffer/IBuffer.hpp"
+#include "IBuffer.hpp"
 
 #define MAGIC_NUMBER 0x93
 #define HEADER_SIZE 11

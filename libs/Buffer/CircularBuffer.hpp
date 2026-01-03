@@ -11,7 +11,7 @@
 #include <vector>
 #include <memory>
 
-#include "IBuffer.hpp"
+#include "../../common/interfaces/IBuffer.hpp"
 
 
 enum class OverflowPolicy {

@@ -11,7 +11,7 @@
 #include <sstream>
 #include <string>
 #include <iomanip>
-#include "../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../common/interfaces/IWindow.hpp"
 #include "../../../constants.hpp"
 #include "../../../../common/constants.hpp"
 

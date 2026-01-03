@@ -10,7 +10,7 @@
 
 #include "../../base/AGameState.hpp"
 #include "resourceManager/ResourceManager.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../../common/interfaces/IWindow.hpp"
 #include "ui/manager/UIManager.hpp"
 #include "ui/elements/Text.hpp"
 #include "../../../../colors.hpp"
