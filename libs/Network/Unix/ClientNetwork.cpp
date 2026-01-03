@@ -59,7 +59,7 @@ void net::UnixClientNetwork::init(uint16_t port, const std::string host) {
                 "[CLIENT NETWORK] Failed to resolve host '" + host + "': " +
                 (ec.hasError() ? ec.message() : "no results"));
         }
-        this->_serverEndpoint = endpoints[0];
+        this->_serverEndpoint = endpoints.front();
         if (!this->_socket->setNonBlocking(true, ec)) {
             throw std::runtime_error(
                 std::string("[CLIENT NETWORK] Failed to set non-blocking mode: ") +

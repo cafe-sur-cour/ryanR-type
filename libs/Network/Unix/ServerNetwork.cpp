@@ -151,7 +151,7 @@ std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>>
     net::UnixServerNetwork::receiveAny() {
     NetworkErrorCode ec;
 
-    std::vector<uint8_t> buffer(65536);
+    std::vector<uint8_t> buffer(MAX_UDP_PACKET_SIZE);
     NetworkEndpoint sender;
     std::size_t bytes = _socket->receiveFrom(buffer, sender, 0, ec);
     if (ec) {

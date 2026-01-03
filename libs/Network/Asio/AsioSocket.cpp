@@ -15,11 +15,6 @@
 #include "AsioErrorCode.hpp"
 #include "AsioEventLoop.hpp"
 
-class net::AsioSocket::Impl {
- public:
-            std::shared_ptr<asio::ip::udp::socket> socket;
-};
-
 net::AsioSocket::AsioSocket(std::shared_ptr<IEventLoop> eventLoop) :
     _impl(std::make_unique<Impl>()) {
     auto asioLoop = std::dynamic_pointer_cast<AsioEventLoop>(eventLoop);

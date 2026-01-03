@@ -10,11 +10,18 @@
 
 #include <string>
 #include <memory>
+#include <asio.hpp>
 #include "../INetworkErrorCode.hpp"
 
 namespace net {
 
 class AsioErrorCode : public INetworkErrorCode {
+
+    class Impl {
+        public:
+            asio::error_code asioErrorCode;
+    };
+
     public:
         AsioErrorCode();
         ~AsioErrorCode() override;
@@ -39,7 +46,6 @@ class AsioErrorCode : public INetworkErrorCode {
         AsioErrorCode& operator=(AsioErrorCode&& other) noexcept;
 
     private:
-        class Impl;
         std::unique_ptr<Impl> _impl;
 };
 

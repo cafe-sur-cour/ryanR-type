@@ -18,11 +18,6 @@
 #include "../INetworkEndpoint.hpp"
 #include "../INetworkErrorCode.hpp"
 
-class net::AsioResolver::Impl {
- public:
-        std::shared_ptr<asio::ip::udp::resolver> resolver;
-};
-
 net::AsioResolver::AsioResolver(std::shared_ptr<IEventLoop> eventLoop) :
     _impl(std::make_unique<Impl>()) {
     auto asioLoop = std::dynamic_pointer_cast<AsioEventLoop>(eventLoop);

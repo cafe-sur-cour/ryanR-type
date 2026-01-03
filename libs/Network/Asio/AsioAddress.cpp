@@ -10,15 +10,6 @@
 #include <asio.hpp>
 #include "AsioAddress.hpp"
 
-namespace net {
-
-class AsioAddress::Impl {
- public:
-        asio::ip::address address;
-};
-
-}
-
 net::AsioAddress::AsioAddress() : _impl(std::make_unique<Impl>()) {
 }
 

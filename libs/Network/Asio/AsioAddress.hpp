@@ -10,17 +10,18 @@
 
 #include <string>
 #include <memory>
+#include <asio.hpp>
 #include "../INetworkAddress.hpp"
-
-namespace asio {
-    namespace ip {
-        class address;
-    }
-}
 
 namespace net {
 
 class AsioAddress : public INetworkAddress {
+
+    class Impl {
+        public:
+            asio::ip::address address;
+    };
+
     public:
         static AsioAddress fromString(const std::string& address);
         static AsioAddress anyV4();
@@ -42,7 +43,6 @@ class AsioAddress : public INetworkAddress {
         void setFromInternal(std::shared_ptr<void> internalAddr) override;
 
     private:
-        class Impl;
         std::unique_ptr<Impl> _impl;
 };
 
