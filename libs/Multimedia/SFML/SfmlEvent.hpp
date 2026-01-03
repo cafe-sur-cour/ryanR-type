@@ -12,10 +12,10 @@
 #include <map>
 #include <chrono>
 #include <string>
-#include "IEvent.hpp"
-#include "IWindow.hpp"
+#include "../IEvent.hpp"
+#include "../IWindow.hpp"
 #include "SfmlKeyMappings.hpp"
-#include "../../common/resourceManager/ResourceManager.hpp"
+#include "../../../common/resourceManager/ResourceManager.hpp"
 
 class SfmlEvent : public gfx::IEvent {
     public:

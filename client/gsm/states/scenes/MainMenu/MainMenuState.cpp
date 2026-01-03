@@ -12,7 +12,6 @@
 #include <iostream>
 #include <optional>
 #include "../../../../../libs/Multimedia/IWindow.hpp"
-#include "../../../../../libs/Multimedia/SfmlWindow.hpp"
 #include "../../../../../libs/Multimedia/IEvent.hpp"
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../../common/constants.hpp"

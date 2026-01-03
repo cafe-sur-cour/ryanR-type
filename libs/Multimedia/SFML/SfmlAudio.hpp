@@ -14,8 +14,8 @@
 #include <string>
 #include <map>
 
-#include "IAudio.hpp"
-#include "AssetManager/AssetManager.hpp"
+#include "../IAudio.hpp"
+#include "../AssetManager/AssetManager.hpp"
 
 namespace gfx
 {

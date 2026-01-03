@@ -10,8 +10,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <map>
-#include "IEvent.hpp"
-#include "EventTypes.hpp"
+#include "../IEvent.hpp"
+#include "../EventTypes.hpp"
 
 namespace gfx {
 
