@@ -30,7 +30,7 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
     this->_network = nullptr;
     this->_buffer = nullptr;
     this->_packet = nullptr;
-    this->lobbys = {};
+    this->_lobbys = {};
     this->_eventQueue = std::make_shared<std::queue<std::tuple<uint8_t,
         constants::EventType, double>>>();
     this->_config = std::make_shared<rserv::ServerConfig>();
@@ -246,6 +246,10 @@ void rserv::Server::processIncomingPackets() {
         this->processWhoAmI(this->_packet->getIdClient());
     } else if (this->_packet->getType() == constants::PACKET_REQUEST_LOBBY) {
         this->requestCode(received.first);
+    } else if (this->_packet->getType() == constants::PACKET_CONNECT_TO_LOBBY) {
+        this->processConnectToLobby(std::make_pair(received.first, received.second));
+    } else if (this->_packet->getType() == constants::PACKET_LOBBY_MASTER_REQUEST_START) {
+        this->processMasterStart(std::make_pair(received.first, received.second));
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "

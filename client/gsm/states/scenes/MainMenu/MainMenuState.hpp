@@ -34,6 +34,7 @@ public:
 private:
     void renderUI();
     void updateUIStatus();
+    void checkLobbyConnectionTransition();
 
 private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
@@ -59,6 +60,9 @@ private:
     std::shared_ptr<ui::Text> _usernameDisplayText;
 
     std::shared_ptr<ui::Background> _background;
+
+    bool _previousLobbyConnectedState;
+    bool _previousLobbyMasterState;
 };
 
 }  // namespace gsm

@@ -77,6 +77,8 @@ namespace rserv {
             bool processEndOfGame(uint8_t idClient) override;
             bool processWhoAmI(uint8_t idClient);
             bool requestCode(asio::ip::udp::endpoint endpoint);
+            bool processConnectToLobby(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> payload);
+            bool processMasterStart(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> payload);
 
             /* Sent Packet Handling */
             bool connectionPacket(asio::ip::udp::endpoint endpoint);
@@ -87,6 +89,7 @@ namespace rserv {
             std::vector<uint64_t> deathPacket(size_t entity);
             bool serverStatusPacket();
             bool sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint);
+            bool lobbyConnectValuePacket(asio::ip::udp::endpoint endpoint, bool isSuccess);
 
             bool isGameStarted() const;
             bool allClientsReady() const;
@@ -117,7 +120,7 @@ namespace rserv {
             std::shared_ptr<ResourceManager> _resourceManager;
             std::chrono::steady_clock::time_point _lastGameStateTime;
 
-            std::vector<std::pair<std::string, asio::ip::udp::endpoint>> lobbys;
+            std::vector<std::pair<std::string, std::vector<asio::ip::udp::endpoint>>> _lobbys;
             ComponentDeltaTracker _deltaTracker;
 
             /* Functions to build game state packets */

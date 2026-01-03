@@ -85,30 +85,33 @@ You can also download it in pdf format [here](../../static/pdfs/rfc-r-type.pdf)
 Client and Server packet types (complete list used by the codebase):
 
 ```
-   +--------+---------------------------+----------------------------------------+
-   | Value  | Name                      | Description                            |
-   +--------+---------------------------+----------------------------------------+
-   | 0x00   | NO_OP_PACKET              | No operation / keep-alive              |
-   | 0x01   | CONNECTION_CLIENT_PACKET  | Client connection request (name)       |
-   | 0x02   | ACCEPTATION_PACKET        | Server acceptance / assign client ID   |
-   | 0x03   | DISCONNECTION_PACKET      | Client disconnection                   |
-   | 0x04   | EVENT_PACKET              | Client input/event                     |
-   | 0x05   | GAME_STATE_PACKET         | Server game state update               |
-   | 0x06   | END_GAME_PACKET           | Server notifies end of game / winner   |
-   | 0x07   | CAN_START_PACKET          | Server tells clients they can start    |
-   | 0x08   | CLIENT_READY_PACKET       | Client signals ready state             |
-   | 0x09   | SPAWN_PLAYER_PACKET       | Server spawns a player/entity          |
-   | 0x0A   | DEATH_PLAYER_PACKET       | Server notifies a player/entity death  |
-   | 0x0B   | WHOAMI_PACKET             | Optional identification/resync packet  |
-   | 0x0C   | SERVER_STATUS_PACKET      | Server sends lobby status information  |
-   | 0X0D   | REQUEST_LOBBY_PACKET      | Client send request to create lobby    |
-   | 0xE    | SEND_LOBBY_CODE_PACKET    | Server sends the code to whom requested|
-   +--------+---------------------------+----------------------------------------+
+   +--------+---------------------------+-------------------------------------------+
+   | Value  | Name                      | Description                               |
+   +--------+---------------------------+-------------------------------------------+
+   | 0x00   | NO_OP_PACKET              | No operation / keep-alive                 |
+   | 0x01   | CONNECTION_CLIENT_PACKET  | Client connection request (name)          |
+   | 0x02   | ACCEPTATION_PACKET        | Server acceptance / assign client ID      |
+   | 0x03   | DISCONNECTION_PACKET      | Client disconnection                      |
+   | 0x04   | EVENT_PACKET              | Client input/event                        |
+   | 0x05   | GAME_STATE_PACKET         | Server game state update                  |
+   | 0x06   | END_GAME_PACKET           | Server notifies end of game / winner      |
+   | 0x07   | CAN_START_PACKET          | Server tells clients they can start       |
+   | 0x08   | CLIENT_READY_PACKET       | Client signals ready state                |
+   | 0x09   | SPAWN_PLAYER_PACKET       | Server spawns a player/entity             |
+   | 0x0A   | DEATH_PLAYER_PACKET       | Server notifies a player/entity death     |
+   | 0x0B   | WHOAMI_PACKET             | Optional identification/resync packet     |
+   | 0x0C   | SERVER_STATUS_PACKET      | Server sends lobby status information     |
+   | 0X0D   | REQUEST_LOBBY_PACKET      | Client send request to create lobby       |
+   | 0x0E   | SEND_LOBBY_CODE_PACKET    | Server sends the code to whom requested   |
+   | 0X0F   | CONNECT_TO_LOBBY          | Client connect to an existing lobby       |
+   | 0x10   | LOBBY_MASTER_REQUEST_START| Client that created lobby starts the game |
+   | 0x11   | LOBBY_CONNECT_VALUE       | Return sucess or failure of connection    |
+   +--------+---------------------------+-------------------------------------------+
 ```
 
 **4. Packet Details**
 
-4.1 Client Details
+**4.1 Client Details**
 
 4.1.1 CONNECTION_CLIENT_PACKET (0x01) – Sent from client to server
 
@@ -121,15 +124,31 @@ Client and Server packet types (complete list used by the codebase):
    - Fixed length: `LENGTH_DISCONNECTION_PACKET` (1 byte)
 
 4.1.3 EVENT_PACKET (0x04) – Client notifies input
+
    - Event type (1 byte, e.g., Up, Down, Left, Right, Space)
    - Additional event data (e.g., movement depth)
    - Fixed length: `LENGTH_EVENT_PACKET` (9 bytes)
 
-4.1.4 CLIENT_READY_PACKET (0x0A) – Client signals it is ready
+4.1.4 CLIENT_READY_PACKET (0x08) – Client signals it is ready
+
    - Used by client to indicate readiness prior to start
 
+4.1.5 REQUEST_LOBBY_PACKET (0x0D) - Client request a game code
 
-4.2 Server Details
+   - Payload empty
+   - Can be sent once
+
+4.1.6 CONNECT_TO_LOBBY (0x0F) - Client send a request to connect to a lobby
+
+   - Payload contains the lobby code
+   - Fixed length `LENGTH_LOBBY_CODE_PACKET` (8 bytes)
+
+4.1.7 LOBBY_MASTER_REQUEST_START (0x10) - Client that created the lobby can start the game
+
+   - Payload contains the lobby code
+   - Fixed length `LENGTH_LOBBY_CODE_PACKET` (8 bytes)
+
+**4.2 Server Details**
 
 4.2.1 ACCEPTATION_PACKET (0x02) – Sent from Server to Client (connection accept)
 
@@ -140,28 +159,28 @@ Client and Server packet types (complete list used by the codebase):
 
    - Contains state of entities (position, velocity, state...) serialized
 
-4.2.3 END_GAME_PACKET (0x08) – Server notifies end of game and winner
+4.2.3 END_GAME_PACKET (0x06) – Server notifies end of game and winner
 
    - Player ID who won (1 byte)
    - Fixed length: `LENGTH_END_GAME_PACKET` (1 byte)
 
-4.2.4 CAN_START_PACKET (0x09) – Server tells clients the game can start
+4.2.4 CAN_START_PACKET (0x07) – Server tells clients the game can start
 
-4.2.5 SPAWN_PLAYER_PACKET (0x0B) – Server spawns a player/entity
+4.2.5 SPAWN_PLAYER_PACKET (0x08) – Server spawns a player/entity
 
    - Payload includes entity data required for client to instantiate the entity
 
-4.2.8 DEATH_PLAYER_PACKET (0x0C) – Server notifies a player/entity death
+4.2.8 DEATH_PLAYER_PACKET (0x0A) – Server notifies a player/entity death
 
    - Payload describing the dead entity (identified, e.g., by ID)
    - Fixed length: `LENGTH_DEATH_PACKET` (8 bytes)
 
-4.2.9 WHOAMI_PACKET (0x0D) – Optional identification / resynchronization packet
+4.2.9 WHOAMI_PACKET (0x0B) – Optional identification / resynchronization packet
 
    - May be used to request/confirm identification or small resync actions
    - Fixed length: `LENGTH_WHOAMI_PACKET` (0 bytes)
 
-4.2.10 SERVER_STATUS_PACKET (0x0E) – Server sends lobby status information
+4.2.10 SERVER_STATUS_PACKET (0x0C) – Server sends lobby status information
 
    - Connected clients count (8 bytes, uint64_t)
    - Ready clients count (8 bytes, uint64_t)
@@ -170,7 +189,17 @@ Client and Server packet types (complete list used by the codebase):
    - Fixed length: `LENGTH_SERVER_STATUS_PACKET` (32 bytes)
    - Sent periodically to keep clients updated on lobby state
 
-4.2.11 NO_OP_PACKET (0x00) – No operation / keep-alive
+4.2.11 SEND_LOBBY_CODE_PACKET (0x0E) Server sends the lobby code to the 'master' of the game
+
+   - Payload contains the lobby code
+   - Fixed length `LENGTH_LOBBY_CODE_PACKET` (8 bytes)
+
+4.2.12 LOBBY_CONNECT_VALUE (0x11) Server says to the client if the connection to the lobby was succesfull or not
+
+   - Payload contains char, t or f
+   - Fixed length `LENGTH_LOBBY_CONNECT_VALLUE` (1 bytes)
+
+4.2.13 NO_OP_PACKET (0x00) – No operation / keep-alive
 
    - Used when there is nothing to send; helps keep sequence numbers in sync
 
@@ -255,7 +284,7 @@ After connection establishment, clients must signal readiness before the game be
 
    - Encoding: UTF-8 text
    - Number format: Network order (big-endian)
-   - Frequency: ?
+
 
 **8. Map Format Protocol**
 

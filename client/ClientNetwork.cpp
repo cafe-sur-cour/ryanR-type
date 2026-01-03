@@ -44,6 +44,8 @@ ClientNetwork::ClientNetwork() {
     this->_clientNames = {};
     this->_serverEndpoint = {};
     this->_lobbyCode = "";
+    this->_isConnectedToLobby = false;
+    this->_isLobbyMaster = false;
 
     this->_shouldConnect = false;
 
@@ -66,6 +68,8 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_WHOAMI] = &ClientNetwork::handleWhoAmI;
     _packetHandlers[constants::PACKET_SERVER_STATUS] = &ClientNetwork::handleServerStatus;
     _packetHandlers[constants::PACKET_SEND_LOBBY_CODE] = &ClientNetwork::handleCode;
+    _packetHandlers[constants::PACKET_LOBBY_CONNECT_VALUE] =
+        &ClientNetwork::handleLobbyConnectValue;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
@@ -99,8 +103,6 @@ ClientNetwork::~ClientNetwork() {
     if (this->_networloader.getHandler() != nullptr) {
         this->_networloader.Close();
     }
-    // Note: ResourceManager is owned by Core, so we don't clear it here
-    // Core::~Core() will handle clearing the ResourceManager
     if (this->_packet != nullptr) {
         this->_packet->clearAllHandlers();
         this->_packet.reset();
@@ -179,6 +181,14 @@ void ClientNetwork::setIp(const std::string &ip) {
     _ip = ip;
 }
 
+std::string ClientNetwork::getLobbyCode() const {
+    return this->_lobbyCode;
+}
+
+void ClientNetwork::setLobbyCode(std::string lobbyCode) {
+    this->_lobbyCode = lobbyCode;
+}
+
 void ClientNetwork::redoServerEndpoint() {
     this->_serverEndpoint = asio::ip::udp::endpoint(
         asio::ip::address::from_string(this->_ip),
@@ -236,6 +246,14 @@ bool ClientNetwork::isConnected() const {
 
 bool ClientNetwork::isReady() const {
     return this->_ready.load();
+}
+
+bool ClientNetwork::isConnectedToLobby() const {
+    return this->_isConnectedToLobby.load();
+}
+
+bool ClientNetwork::isLobbyMaster() const {
+    return this->_isLobbyMaster.load();
 }
 
 void ClientNetwork::handlePacketType(uint8_t type) {
@@ -337,10 +355,6 @@ uint8_t ClientNetwork::getClientId() const {
 
 bool ClientNetwork::getClientReadyStatus() const {
     return this->_clientReadyStatus.load();
-}
-
-std::string ClientNetwork::getLobbyCode() const {
-    return this->_lobbyCode;
 }
 
 void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
