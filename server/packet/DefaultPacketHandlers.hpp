@@ -9,7 +9,7 @@
 #define DEFAULT_PACKET_HANDLERS_HPP_
 
 #include <memory>
-#include "../../libs/Packet/IPacketManager.hpp"
+#include "../../common/interfaces/IPacketManager.hpp"
 
 namespace rserv::packet {
     bool registerDefaultPacketHandlers(std::shared_ptr<pm::IPacketManager> packet);

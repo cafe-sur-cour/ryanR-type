@@ -9,7 +9,7 @@
 #define COMMON_DEFAULT_PACKET_HANDLERS_HPP_
 
 #include <memory>
-#include "../../libs/Packet/IPacketManager.hpp"
+#include "../interfaces/IPacketManager.hpp"
 
 namespace common::packet {
     bool registerDefaultPacketHandlers(std::shared_ptr<pm::IPacketManager> packet);

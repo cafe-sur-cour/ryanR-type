@@ -10,7 +10,7 @@
 
 #include <memory>
 #include <SFML/Graphics.hpp>
-#include "../IWindow.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 #include "TextureManager.hpp"
 #include "FontManager.hpp"
 #include "ShaderManager.hpp"

@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include "../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../common/interfaces/IWindow.hpp"
 #include "../../../constants.hpp"
 
 namespace ui {
