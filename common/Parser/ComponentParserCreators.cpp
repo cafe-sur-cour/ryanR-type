@@ -613,7 +613,8 @@ void Parser::instanciateComponentCreators() {
         return std::make_shared<ecs::ScriptingComponent>(scriptPath, additionalFunctions);
     });
 
-    registerComponent<ecs::EntityPartsComponent>([]([[maybe_unused]] const std::map<std::string,
+    registerComponent<ecs::EntityPartsComponent>([]([[maybe_unused]]
+        const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::EntityPartsComponent>();
     });

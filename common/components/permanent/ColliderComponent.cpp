@@ -6,6 +6,9 @@
 */
 
 #include "ColliderComponent.hpp"
+#include <algorithm>
+#include <limits>
+#include <vector>
 
 namespace ecs {
 
@@ -33,29 +36,36 @@ void ColliderComponent::setType(CollisionType type) {
     _type = type;
 }
 
-math::FRect ColliderComponent::getHitbox(math::Vector2f entityPosition, math::Vector2f scale) const {
-    return math::FRect(entityPosition.getX() + _offset.getX(), entityPosition.getY() + _offset.getY(), _size.getX() * scale.getX(), _size.getY() * scale.getY());
+math::FRect ColliderComponent::getHitbox(math::Vector2f entityPosition,
+    math::Vector2f scale) const {
+    return math::FRect(entityPosition.getX() + _offset.getX(), entityPosition.getY() +
+        _offset.getY(), _size.getX() * scale.getX(), _size.getY() * scale.getY());
 }
 
-math::FRect ColliderComponent::getScaledHitbox(math::Vector2f entityPosition, math::Vector2f scale) const {
+math::FRect ColliderComponent::getScaledHitbox(math::Vector2f entityPosition,
+    math::Vector2f scale) const {
     return getHitbox(entityPosition, scale);
 }
 
-math::OrientedRect ColliderComponent::getOrientedHitbox(math::Vector2f entityPosition, math::Vector2f scale, float rotation) const {
-    math::Vector2f scaledSize = math::Vector2f(_size.getX() * scale.getX(), _size.getY() * scale.getY());
+math::OrientedRect ColliderComponent::getOrientedHitbox(math::Vector2f entityPosition,
+    math::Vector2f scale, float rotation) const {
+    math::Vector2f scaledSize = math::Vector2f(_size.getX() *
+        scale.getX(), _size.getY() * scale.getY());
     math::Vector2f topLeft = entityPosition + _offset;
     math::Vector2f center = topLeft + scaledSize * 0.5f;
     return math::OrientedRect(center, scaledSize, rotation);
 }
 
-math::FRect ColliderComponent::getHitbox(math::Vector2f entityPosition, math::Vector2f scale, float rotation) const {
+math::FRect ColliderComponent::getHitbox(math::Vector2f entityPosition,
+    math::Vector2f scale, float rotation) const {
     if (std::abs(rotation) < 0.1f) {
         return getHitbox(entityPosition, scale);
     }
     double theta = static_cast<double>(rotation) * acos(-1.0) / 180.0;
     double cos_theta = std::cos(theta);
     double sin_theta = std::sin(theta);
-    math::Vector2f scaled_size = math::Vector2f(_size.getX() * scale.getX(), _size.getY() * scale.getY());
+    math::Vector2f scaled_size = math::Vector2f(_size.getX() *
+        scale.getX(), _size.getY() * scale.getY());
     math::Vector2f top_left = entityPosition + _offset;
     math::Vector2f center = top_left + scaled_size * 0.5f;
     math::Vector2f half_size = scaled_size * 0.5f;

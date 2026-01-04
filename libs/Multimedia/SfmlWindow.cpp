@@ -253,8 +253,10 @@ void SfmlWindow::drawSprite(const std::string& texturePath,
 
     sf::Sprite sprite(*texture);
     sf::Vector2u texSize = texture->getSize();
-    sprite.setOrigin(sf::Vector2f(static_cast<float>(texSize.x) / 2.0f, static_cast<float>(texSize.y) / 2.0f));
-    sprite.setPosition(sf::Vector2f(x + (static_cast<float>(texSize.x) * scaleX) / 2.0f, y + (static_cast<float>(texSize.y) * scaleY) / 2.0f));
+    sprite.setOrigin(sf::Vector2f(static_cast<float>(texSize.x) / 2.0f,
+        static_cast<float>(texSize.y) / 2.0f));
+    sprite.setPosition(sf::Vector2f(x + (static_cast<float>(texSize.x) * scaleX) / 2.0f, y +
+        (static_cast<float>(texSize.y) * scaleY) / 2.0f));
     sprite.setScale(sf::Vector2f(scaleX, scaleY));
     sprite.setRotation(sf::degrees(rotation));
     _renderTexture.draw(sprite);
@@ -276,7 +278,8 @@ void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y,
             static_cast<int>(frameRect.getHeight())));
     sprite.setTextureRect(textureRect);
     sprite.setOrigin(sf::Vector2f(frameRect.getWidth() / 2.0f, frameRect.getHeight() / 2.0f));
-    sprite.setPosition(sf::Vector2f(x + (frameRect.getWidth() * scaleX) / 2.0f, y + (frameRect.getHeight() * scaleY) / 2.0f));
+    sprite.setPosition(sf::Vector2f(x + (frameRect.getWidth() * scaleX) / 2.0f, y +
+        (frameRect.getHeight() * scaleY) / 2.0f));
     sprite.setScale(sf::Vector2f(scaleX, scaleY));
     sprite.setRotation(sf::degrees(rotation));
     _renderTexture.draw(sprite);
