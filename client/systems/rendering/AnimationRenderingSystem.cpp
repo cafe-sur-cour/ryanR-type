@@ -127,8 +127,8 @@ void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
             auto window = resourceManager->get<gfx::IWindow>();
             const math::Vector2f& pos = transform->getPosition();
             const math::Vector2f& scale = transform->getScale();
-            window->drawSprite(clip->texturePath,
-                pos.getX(), pos.getY(), frameRect, scale.getX(), scale.getY());
+            window->drawSprite(clip->texturePath, pos.getX(), pos.getY(),
+                frameRect, scale.getX(), scale.getY(), transform->getRotation());
         }
     }
 }
