@@ -35,11 +35,17 @@
             "initialState": "idle",
             "transitions": []
         },
-        "ColliderComponent": {
+        "ColliderComponent":
+            {
+                "target": "both",
+                "offset": { "x": -1.0, "y": -1.0 },
+                "size" : { "x": 63.0, "y": 33.0 },
+                "type": "Trigger"
+            }
+        ,
+        "DamageComponent": {
             "target": "both",
-            "offset": { "x": 0.0, "y": 0.0 },
-            "size" : { "x": 62.0, "y": 33.0 },
-            "type": "Trigger"
+            "damage": 1.0
         },
         "InteractionConfigComponent": {
             "target": "both",
