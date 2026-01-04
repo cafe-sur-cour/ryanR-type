@@ -31,6 +31,7 @@
 #include "../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../client/components/rendering/TextComponent.hpp"
 #include "../../client/components/rendering/HealthBarComponent.hpp"
+#include "../../client/components/rendering/HitboxRenderComponent.hpp"
 #include "../components/permanent/LifetimeComponent.hpp"
 #include "../../client/components/rendering/AnimationComponent.hpp"
 #include "../../client/components/rendering/MusicComponent.hpp"
@@ -45,6 +46,7 @@
 #include "../components/permanent/ScoreValueComponent.hpp"
 #include "../components/permanent/DamageComponent.hpp"
 #include "../components/permanent/ScriptingComponent.hpp"
+#include "../components/permanent/EntityPartsComponent.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -217,6 +219,14 @@ void Parser::instanciateComponentDefinitions() {
             {constants::SCRIPT_PATH_FIELD, FieldType::STRING},
             {constants::ADDITIONAL_FUNCTIONS_FIELD, FieldType::JSON,
                 true, std::make_shared<FieldValue>(nlohmann::json::array())}
+        }}},
+        {constants::ENTITYPARTSCOMPONENT, {
+            std::type_index(typeid(ecs::EntityPartsComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::HITBOXRENDERCOMPONENT, {
+            std::type_index(typeid(ecs::HitboxRenderComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
         }}}
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
@@ -601,6 +611,17 @@ void Parser::instanciateComponentCreators() {
             }
         }
         return std::make_shared<ecs::ScriptingComponent>(scriptPath, additionalFunctions);
+    });
+
+    registerComponent<ecs::EntityPartsComponent>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::EntityPartsComponent>();
+    });
+
+    registerComponent<ecs::HitboxRenderComponent>([]([[maybe_unused]]
+        const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::HitboxRenderComponent>();
     });
 }
 
