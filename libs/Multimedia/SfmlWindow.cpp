@@ -245,20 +245,23 @@ std::shared_ptr<sf::RenderWindow> SfmlWindow::getSfmlWindow() {
 }
 
 void SfmlWindow::drawSprite(const std::string& texturePath,
-    float x, float y, float scaleX, float scaleY) {
+    float x, float y, float scaleX, float scaleY, float rotation) {
     auto texture = _textureManager.loadTexture(texturePath);
     if (!texture)
         return drawFilledRectangle({255, 0, 0}, {static_cast<size_t>(x),
             static_cast<size_t>(y)}, {static_cast<size_t>(50), static_cast<size_t>(50)});
 
     sf::Sprite sprite(*texture);
-    sprite.setPosition(sf::Vector2f(x, y));
+    sf::Vector2u texSize = texture->getSize();
+    sprite.setOrigin(sf::Vector2f(static_cast<float>(texSize.x) / 2.0f, static_cast<float>(texSize.y) / 2.0f));
+    sprite.setPosition(sf::Vector2f(x + (static_cast<float>(texSize.x) * scaleX) / 2.0f, y + (static_cast<float>(texSize.y) * scaleY) / 2.0f));
     sprite.setScale(sf::Vector2f(scaleX, scaleY));
+    sprite.setRotation(sf::degrees(rotation));
     _renderTexture.draw(sprite);
 }
 
 void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y,
-    const math::FRect frameRect, float scaleX, float scaleY) {
+    const math::FRect frameRect, float scaleX, float scaleY, float rotation) {
     auto texture = _textureManager.loadTexture(texturePath);
     if (!texture)
         return drawFilledRectangle({255, 0, 0}, {static_cast<size_t>(x),
@@ -272,8 +275,10 @@ void SfmlWindow::drawSprite(const std::string& texturePath, float x, float y,
         sf::Vector2i(static_cast<int>(frameRect.getWidth()),
             static_cast<int>(frameRect.getHeight())));
     sprite.setTextureRect(textureRect);
-    sprite.setPosition(sf::Vector2f(x, y));
+    sprite.setOrigin(sf::Vector2f(frameRect.getWidth() / 2.0f, frameRect.getHeight() / 2.0f));
+    sprite.setPosition(sf::Vector2f(x + (frameRect.getWidth() * scaleX) / 2.0f, y + (frameRect.getHeight() * scaleY) / 2.0f));
     sprite.setScale(sf::Vector2f(scaleX, scaleY));
+    sprite.setRotation(sf::degrees(rotation));
     _renderTexture.draw(sprite);
 }
 
