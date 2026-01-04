@@ -26,11 +26,22 @@
 #include "../../../client/components/temporary/SoundIntentComponent.hpp"
 
 // Disable sign-conversion warning for Sol2 include
+#ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 5321)
+#endif
 #include "../../components/permanent/ScriptingComponent.hpp"
 #include <sol/sol.hpp>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+#ifdef __GNUC__
 #pragma GCC diagnostic pop
+#endif
 
 namespace ecs {
 

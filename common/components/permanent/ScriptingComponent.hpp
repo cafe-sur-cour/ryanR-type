@@ -15,10 +15,21 @@
 #include "../../constants.hpp"
 
 // To suppress warnings from sol2 includes
+#ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 5321)
+#endif
 #include <sol/sol.hpp>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+#ifdef __GNUC__
 #pragma GCC diagnostic pop
+#endif
 
 namespace ecs {
 
