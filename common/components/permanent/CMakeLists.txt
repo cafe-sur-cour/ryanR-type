@@ -14,4 +14,6 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     GameZoneComponent.hpp
     InteractionConfigComponent.hpp
     ScriptingComponent.hpp
+    EntityPartsComponent.hpp
+    CompositeEntityComponent.hpp
 )
