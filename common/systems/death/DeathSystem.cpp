@@ -13,7 +13,6 @@
 
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../components/tags/MobTag.hpp"
-#include "../../components/tags/MobTag.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/permanent/OwnerComponent.hpp"

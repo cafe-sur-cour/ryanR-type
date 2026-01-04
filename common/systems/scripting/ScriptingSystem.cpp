@@ -10,8 +10,8 @@
 #include <memory>
 #include <string>
 #include <tuple>
-#include <sol/sol.hpp>
 #include <algorithm>
+#include <sol/sol.hpp>
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../ECS/view/View.hpp"
 

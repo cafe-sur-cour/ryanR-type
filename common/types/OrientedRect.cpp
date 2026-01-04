@@ -6,6 +6,9 @@
 */
 
 #include "OrientedRect.hpp"
+#include <vector>
+#include <limits>
+#include <algorithm>
 
 namespace math {
 
@@ -104,4 +107,4 @@ OrientedRect &OrientedRect::operator=(OrientedRect const &other) {
     return *this;
 }
 
-} // namespace math
+}  // namespace math

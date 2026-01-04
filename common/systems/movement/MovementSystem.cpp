@@ -344,7 +344,8 @@ void MovementSystem::handlePushCollision(
 
                 math::Vector2f otherScale = otherTransform->getScale();
                 math::Vector2f currentOtherPos = otherTransform->getPosition();
-                math::OrientedRect otherOriented = otherCollider->getOrientedHitbox(currentOtherPos, otherScale,
+                math::OrientedRect otherOriented = otherCollider->
+                    getOrientedHitbox(currentOtherPos, otherScale,
                     otherTransform->getRotation());
 
                 if (pushOriented.intersects(otherOriented)) {

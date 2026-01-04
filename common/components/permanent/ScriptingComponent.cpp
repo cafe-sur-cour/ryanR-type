@@ -6,6 +6,8 @@
 */
 
 #include "ScriptingComponent.hpp"
+#include <vector>
+#include <string>
 
 void ecs::ScriptingComponent::init(sol::state& lua, size_t entityId) {
     if (_initialized) return;
@@ -14,7 +16,8 @@ void ecs::ScriptingComponent::init(sol::state& lua, size_t entityId) {
         sol::load_result script = lua.load_file(_scriptName);
         if (!script.valid()) {
             sol::error err = script;
-            throw err::ScriptingError("Failed to load script: " + std::string(err.what()), err::ScriptingError::LOAD_FAILED);
+            throw err::ScriptingError("Failed to load script: " +
+                std::string(err.what()), err::ScriptingError::LOAD_FAILED);
         }
 
         sol::table metatable = lua.create_table();
@@ -24,7 +27,8 @@ void ecs::ScriptingComponent::init(sol::state& lua, size_t entityId) {
         sol::unsafe_function_result result = chunk(_env);
         if (!result.valid()) {
             sol::error err = result;
-            throw err::ScriptingError("Failed to run script: " + std::string(err.what()), err::ScriptingError::RUN_FAILED);
+            throw err::ScriptingError("Failed to run script: " +
+                std::string(err.what()), err::ScriptingError::RUN_FAILED);
         }
     }
 
@@ -40,7 +44,8 @@ void ecs::ScriptingComponent::init(sol::state& lua, size_t entityId) {
         sol::unsafe_function_result result = initFunc(entityId);
         if (!result.valid()) {
             sol::error err = result;
-            throw err::ScriptingError("Failed to run init function: " + std::string(err.what()), err::ScriptingError::RUN_FAILED);
+            throw err::ScriptingError("Failed to run init function: " +
+                std::string(err.what()), err::ScriptingError::RUN_FAILED);
         }
     }
     _initialized = true;

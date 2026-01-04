@@ -5,15 +5,16 @@
 ** ScriptingApiFunctions
 */
 
-#include "ScriptingSystem.hpp"
 #include <iostream>
 #include <memory>
 #include <string>
 #include <tuple>
-#include <sol/sol.hpp>
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <vector>
+#include <sol/sol.hpp>
+#include "ScriptingSystem.hpp"
 #include "../../components/permanent/EntityPartsComponent.hpp"
 #include "../../components/permanent/CompositeEntityComponent.hpp"
 #include "../../components/temporary/SpawnIntentComponent.hpp"
@@ -50,7 +51,8 @@ void ScriptingSystem::bindAPI() {
         return {0.0f, 0.0f};
     });
 
-    lua.set_function(constants::SET_ENTITY_ROTATION_FUNCTION, [this](size_t entityId, float rotation) {
+    lua.set_function(constants::SET_ENTITY_ROTATION_FUNCTION,
+        [this](size_t entityId, float rotation) {
         Entity e = static_cast<Entity>(entityId);
         if (registry->hasComponent<TransformComponent>(e)) {
             auto transform = registry->getComponent<TransformComponent>(e);
@@ -148,7 +150,8 @@ void ScriptingSystem::bindAPI() {
         return static_cast<size_t>(newEntity);
     });
 
-    lua.set_function(constants::GET_ENTITY_PARTS_FUNCTION, [this](size_t entityId) -> std::vector<size_t> {
+    lua.set_function(constants::GET_ENTITY_PARTS_FUNCTION,
+        [this](size_t entityId) -> std::vector<size_t> {
         Entity e = static_cast<Entity>(entityId);
         std::vector<size_t> partIds;
         if (registry->hasComponent<EntityPartsComponent>(e)) {
@@ -157,7 +160,8 @@ void ScriptingSystem::bindAPI() {
         }
         return partIds;
     });
-    lua.set_function(constants::CREATE_DEATH_INTENT_FUNCTION, [this](size_t entityId, size_t sourceId) {
+    lua.set_function(constants::CREATE_DEATH_INTENT_FUNCTION,
+        [this](size_t entityId, size_t sourceId) {
         Entity e = static_cast<Entity>(entityId);
         Entity source = static_cast<Entity>(sourceId);
         auto deathIntent = std::make_shared<DeathIntentComponent>(source);
@@ -178,7 +182,8 @@ void ScriptingSystem::bindAPI() {
         return 0;
     });
 
-    lua.set_function(constants::REMOVE_PART_ID_FUNCTION, [this](size_t entityId, size_t partId) {
+    lua.set_function(constants::REMOVE_PART_ID_FUNCTION,
+        [this](size_t entityId, size_t partId) {
         Entity e = static_cast<Entity>(entityId);
         if (registry->hasComponent<EntityPartsComponent>(e)) {
             auto comp = registry->getComponent<EntityPartsComponent>(e);
