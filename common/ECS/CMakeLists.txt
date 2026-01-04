@@ -8,8 +8,8 @@ find_package(Lua REQUIRED)
 target_include_directories(${ECS_LIB_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../
-    PRIVATE ${SOL2_INCLUDE_DIRS}
-    PRIVATE ${LUA_INCLUDE_DIR}
+    PUBLIC ${SOL2_INCLUDE_DIRS}
+    PUBLIC ${LUA_INCLUDE_DIR}
 )
 
 add_subdirectory(entity)

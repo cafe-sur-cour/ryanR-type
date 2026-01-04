@@ -9,9 +9,11 @@
 #include <memory>
 #include <exception>
 #include <string>
+#include <iostream>
+
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../components/tags/MobTag.hpp"
-#include "../../components/tags/PlayerTag.hpp"
+#include "../../components/tags/MobTag.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/permanent/OwnerComponent.hpp"
@@ -23,6 +25,13 @@
 #include "../../constants.hpp"
 #include "../../ECS/entity/EntityCreationContext.hpp"
 #include "../../../client/components/temporary/SoundIntentComponent.hpp"
+
+// Disable sign-conversion warning for Sol2 include
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#include "../../components/permanent/ScriptingComponent.hpp"
+#include <sol/sol.hpp>
+#pragma GCC diagnostic pop
 
 namespace ecs {
 
@@ -62,7 +71,18 @@ void DeathSystem::update(
                 }
             }
         }
-
+        if (registry->hasComponent<ecs::ScriptingComponent>(entityId)) {
+            auto scriptingComp = registry->getComponent<ecs::ScriptingComponent>(entityId);
+            if (scriptingComp->hasFunction(constants::DEATH_FUNCTION)) {
+                sol::protected_function deathFunc =
+                    scriptingComp->getFunction(constants::DEATH_FUNCTION);
+                sol::protected_function_result result = deathFunc(entityId);
+                if (!result.valid()) {
+                    sol::error err = result;
+                    std::string what = err.what();
+                }
+            }
+        }
         registry->destroyEntity(entityId);
     }
 }
