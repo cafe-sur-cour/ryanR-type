@@ -19,15 +19,15 @@ namespace ecs {
 
 class ScriptingComponent : public AComponent {
     public:
-        ScriptingComponent(std::string script_name = "", std::vector<std::string> additionalFunctions = std::vector<std::string>(), sol::state* lua = nullptr)
+        ScriptingComponent(std::string script_name = "", std::vector<std::string> additionalFunctions = std::vector<std::string>(), sol::state* lua = nullptr, Entity entityId = 0)
             : _scriptName(script_name), _additionalFunctions(additionalFunctions), _initialized(false) {
                 if (lua != nullptr) {
-                    init(*lua);
+                    init(*lua, entityId);
                 }
             };
         ~ScriptingComponent() = default;
 
-        void init(sol::state& lua) {
+        void init(sol::state& lua, Entity entityId) {
             if (_initialized) return;
             _env = lua.create_table();
             if (!_scriptName.empty()) {
@@ -54,6 +54,14 @@ class ScriptingComponent : public AComponent {
                 sol::function fn = _env[def];
                 if (fn.valid())
                     _functions[def] = fn;
+            }
+            sol::function initFunc = _env[constants::INIT_FUNCTION];
+            if (initFunc.valid()) {
+                sol::unsafe_function_result result = initFunc(entityId);
+                if (!result.valid()) {
+                    sol::error err = result;
+                    throw err::ScriptingError("Failed to run init function: " + std::string(err.what()), err::ScriptingError::RUN_FAILED);
+                }
             }
             _initialized = true;
         }
