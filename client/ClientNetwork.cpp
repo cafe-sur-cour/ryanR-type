@@ -83,33 +83,14 @@ ClientNetwork::ClientNetwork() {
 
 ClientNetwork::~ClientNetwork() {
     this->stop();
-    if (this->_receptionBuffer != nullptr) {
-            this->_receptionBuffer.reset();
-    }
-    if (this->_sendBuffer != nullptr) {
-            this->_sendBuffer.reset();
-    }
-    if (this->_bufferloader.getHandler() != nullptr) {
-        this->_bufferloader.Close();
-    }
-    if (this->_packetloader.getHandler() != nullptr) {
-        this->_packetloader.Close();
-    }
-    if (this->_networloader.getHandler() != nullptr) {
-        this->_networloader.Close();
-    }
-    // Note: ResourceManager is owned by Core, so we don't clear it here
-    // Core::~Core() will handle clearing the ResourceManager
+    this->_gsm.reset();
+    this->_network.reset();
     if (this->_packet != nullptr) {
-        this->_packet->clearAllHandlers();
+            this->_packet->clearAllHandlers();
         this->_packet.reset();
     }
-    if (this->_network != nullptr) {
-        this->_network.reset();
-    }
-    if (this->_gsm != nullptr) {
-        this->_gsm.reset();
-    }
+    this->_receptionBuffer.reset();
+    this->_sendBuffer.reset();
 }
 
 void ClientNetwork::setResourceManager(std::shared_ptr<ResourceManager> resourceManager) {
@@ -155,6 +136,9 @@ void ClientNetwork::connect() {
 }
 
 void ClientNetwork::stop() {
+    if (this->_network == nullptr) {
+        return;
+    }
     this->_network->stop();
     this->_network->setConnectionState(net::ConnectionState::DISCONNECTED);
     this->_isConnected = false;
