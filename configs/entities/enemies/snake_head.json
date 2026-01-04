@@ -1,0 +1,61 @@
+{
+    "name": "snake_head",
+    "components": {
+        "MobTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 2.5, "y": 2.5 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 120.0 },
+        "HealthComponent": { "target": "both", "health": 200.0 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 500 },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/snake_behavior.lua",
+            "additionalFunctions": ["death"]
+        },
+        "EntityPartsComponent": { "target": "both" },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/ennemies/snake_head.png",
+                    "frameWidth": 62.0,
+                    "frameHeight": 33.0,
+                    "frameCount": 1,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                }
+            },
+            "initialState": "idle",
+            "transitions": []
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size" : { "x": 62.0, "y": 33.0 },
+            "type": "Trigger"
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": []
+                },
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDamage"]
+                }
+            ]
+        },
+        "HealthBarComponent": { "target": "client" }
+    }
+}
