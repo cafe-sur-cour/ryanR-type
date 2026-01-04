@@ -17,6 +17,7 @@
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/permanent/GameZoneComponent.hpp"
 #include "../../types/FRect.hpp"
+#include "../../types/OrientedRect.hpp"
 #include "../../constants.hpp"
 #include "../../components/tags/ObstacleTag.hpp"
 #include "../../components/tags/GameZoneColliderTag.hpp"
@@ -66,7 +67,7 @@ void MovementSystem::buildSpatialGrid(std::shared_ptr<Registry> registry) {
             if (collider->getType() == CollisionType::Solid ||
                 collider->getType() == CollisionType::Push) {
                 math::FRect hitbox = collider->getHitbox(
-                    transform->getPosition(), transform->getScale());
+                    transform->getPosition(), transform->getScale(), transform->getRotation());
                 _spatialGrid.insert(entityId, hitbox);
             }
         }
@@ -126,7 +127,10 @@ bool MovementSystem::checkCollisionWithBoundaries(
     for (auto& movingCollider : movingColliders) {
         if (movingCollider->getType() != CollisionType::Solid) continue;
 
-        math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale);
+        math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale,
+            movingTransform->getRotation());
+        math::OrientedRect movingOriented = movingCollider->
+            getOrientedHitbox(newPos, movingScale, movingTransform->getRotation());
 
         for (auto boundaryEntityId : _boundaryEntities) {
             if (boundaryEntityId == entityId) continue;
@@ -147,10 +151,11 @@ bool MovementSystem::checkCollisionWithBoundaries(
                 }
 
                 math::Vector2f otherScale = otherTransform->getScale();
-                math::FRect otherHitbox =
-                    otherCollider->getHitbox(otherTransform->getPosition(), otherScale);
+                math::OrientedRect otherOriented = otherCollider->
+                    getOrientedHitbox(otherTransform->getPosition(), otherScale,
+                    otherTransform->getRotation());
 
-                if (movingHitbox.intersects(otherHitbox)) {
+                if (movingOriented.intersects(otherOriented)) {
                     return false;
                 }
             }
@@ -179,7 +184,10 @@ bool MovementSystem::checkCollision(
     for (auto& movingCollider : movingColliders) {
         if (movingCollider->getType() != CollisionType::Solid) continue;
 
-        math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale);
+        math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale,
+            movingTransform->getRotation());
+        math::OrientedRect movingOriented = movingCollider->getOrientedHitbox(newPos,
+            movingScale, movingTransform->getRotation());
         auto nearbyEntities = _spatialGrid.query(movingHitbox);
 
         for (auto otherEntityId : nearbyEntities) {
@@ -201,10 +209,11 @@ bool MovementSystem::checkCollision(
                 }
 
                 math::Vector2f otherScale = otherTransform->getScale();
-                math::FRect otherHitbox =
-                    otherCollider->getHitbox(otherTransform->getPosition(), otherScale);
+                math::OrientedRect otherOriented = otherCollider->
+                    getOrientedHitbox(otherTransform->getPosition(), otherScale,
+                    otherTransform->getRotation());
 
-                if (movingHitbox.intersects(otherHitbox)) {
+                if (movingOriented.intersects(otherOriented)) {
                     return false;
                 }
             }
@@ -310,7 +319,10 @@ void MovementSystem::handlePushCollision(
     for (auto& pushCollider : pushColliders) {
         if (pushCollider->getType() != CollisionType::Push) continue;
 
-        math::FRect pushHitbox = pushCollider->getHitbox(finalPos, entityScale);
+        math::FRect pushHitbox = pushCollider->getHitbox(finalPos,
+            entityScale, entityTransform->getRotation());
+        math::OrientedRect pushOriented = pushCollider->getOrientedHitbox(finalPos,
+            entityScale, entityTransform->getRotation());
 
         auto allEntities = registry->view<TransformComponent, ColliderComponent>();
         for (auto otherEntityId : allEntities) {
@@ -332,10 +344,10 @@ void MovementSystem::handlePushCollision(
 
                 math::Vector2f otherScale = otherTransform->getScale();
                 math::Vector2f currentOtherPos = otherTransform->getPosition();
-                math::FRect otherHitbox =
-                    otherCollider->getHitbox(currentOtherPos, otherScale);
+                math::OrientedRect otherOriented = otherCollider->getOrientedHitbox(currentOtherPos, otherScale,
+                    otherTransform->getRotation());
 
-                if (pushHitbox.intersects(otherHitbox)) {
+                if (pushOriented.intersects(otherOriented)) {
                     auto pusherVelocity = registry->getComponent<VelocityComponent>(entityId);
                     math::Vector2f pushVelocity = pusherVelocity->getVelocity();
                     math::Vector2f pushAmount = pushVelocity * deltaTime;
