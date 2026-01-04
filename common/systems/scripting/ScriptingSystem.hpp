@@ -12,6 +12,8 @@
 #include "../../components/permanent/ScriptingComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/SpeedComponent.hpp"
+#include "../../components/permanent/EntityPartsComponent.hpp"
+#include "../../components/permanent/CompositeEntityComponent.hpp"
 #include "../../components/tags/LocalPlayerTag.hpp"
 
 #include <sol/sol.hpp>
@@ -35,6 +37,7 @@ class ScriptingSystem : public ASystem {
 
         sol::state lua;
         std::shared_ptr<Registry> registry;
+        std::shared_ptr<ResourceManager> resourceManager;
 };
 
 }  // namespace ecs
