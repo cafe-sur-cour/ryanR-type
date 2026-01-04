@@ -12,6 +12,8 @@
 #include <tuple>
 #include <sol/sol.hpp>
 #include <algorithm>
+#include <cmath>
+#include <limits>
 #include "../../components/permanent/EntityPartsComponent.hpp"
 #include "../../components/permanent/CompositeEntityComponent.hpp"
 #include "../../components/temporary/SpawnIntentComponent.hpp"
@@ -57,15 +59,33 @@ void ScriptingSystem::bindAPI() {
     });
 
 
-    lua.set_function(constants::GET_PLAYER_POSITION_FUNCTION,
-            [this]() -> std::tuple<float, float> {
+    lua.set_function(constants::GET_NEAREST_PLAYER_POSITION_FUNCTION,
+            [this](size_t e) -> std::tuple<float, float> {
+        Entity entity = static_cast<Entity>(e);
+        if (!registry->hasComponent<TransformComponent>(entity)) {
+            return {0.0f, 0.0f};
+        }
+        auto myTransform = registry->getComponent<TransformComponent>(entity);
+        auto myPos = myTransform->getPosition();
         auto view = registry->view<PlayerTag, TransformComponent>();
+        float minDist = std::numeric_limits<float>::max();
+        math::Vector2f closestPos(0.0f, 0.0f);
+        bool found = false;
         for (auto entityId : view) {
             auto transform = registry->getComponent<TransformComponent>(entityId);
             auto pos = transform->getPosition();
-            return {pos.getX(), pos.getY()};
+            float dx = pos.getX() - myPos.getX();
+            float dy = pos.getY() - myPos.getY();
+            float dist = std::sqrt(dx * dx + dy * dy);
+            if (dist < minDist) {
+                minDist = dist;
+                closestPos = pos;
+                found = true;
+            }
         }
-        return {0.0f, 0.0f};
+        if (!found)
+            return {0.0f, 0.0f};
+        return {closestPos.getX(), closestPos.getY()};
     });
 
     lua.set_function(constants::GET_ENTITY_SPEED_FUNCTION, [this](Entity e) -> float {

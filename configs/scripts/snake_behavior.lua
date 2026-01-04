@@ -31,7 +31,7 @@ function update(entity, deltaTime)
         end
     end
 
-    local px, py = getPlayerPosition()
+    local px, py = getNearestPlayerPosition(entity)
     local hx, hy = getEntityPosition(entity)
     local dx = px - hx
     local dy = py - hy
