@@ -14,8 +14,8 @@
 #include "gsm/states/scenes/MainMenu/MainMenuState.hpp"
 #include "../common/debug.hpp"
 #include "../../common/Signal/Signal.hpp"
-#include "../../libs/Multimedia/IWindow.hpp"
-#include "../../libs/Multimedia/IEvent.hpp"
+#include "../../common/interfaces/IWindow.hpp"
+#include "../../common/interfaces/IEvent.hpp"
 #include "../../common/DLLoader/DLLoader.hpp"
 #include "../../common/Error/LibrairiesLoadError.hpp"
 

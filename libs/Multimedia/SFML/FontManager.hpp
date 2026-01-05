@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
-#include "AssetManager/AssetManager.hpp"
+#include "../AssetManager/AssetManager.hpp"
 
 namespace gfx {
 
