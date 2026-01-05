@@ -98,6 +98,11 @@ void ClientNetwork::handleGameState() {
                 debug::debugLevel::WARNING);
         }
     }
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Applied game state updates for entity " +
+        std::to_string(entityId),
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
 }
 
 void ClientNetwork::handleEndGame() {
@@ -195,6 +200,19 @@ void ClientNetwork::handleEntitySpawn() {
                 " mapped to local " + std::to_string(newEntity),
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
+
+        // If this is the local player's entity, add LocalPlayerTag
+        if (clientId == this->_idClient) {
+            auto registry = _resourceManager->get<ecs::Registry>();
+            registry->registerComponent<ecs::LocalPlayerTag>();
+            if (!registry->hasComponent<ecs::LocalPlayerTag>(newEntity)) {
+                registry->addComponent<ecs::LocalPlayerTag>(newEntity, std::make_shared<ecs::LocalPlayerTag>());
+            }
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Added LocalPlayerTag to entity " + std::to_string(newEntity) + " for local client " + std::to_string(clientId),
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
     } catch (const std::exception& e) {
         debug::Debug::printDebug(this->_isDebug,
             std::string("[CLIENT] Error creating entity from prefab '")
@@ -289,7 +307,6 @@ void ClientNetwork::handleServerStatus() {
             debug::debugLevel::WARNING);
         return;
     }
-
     this->_connectedClients = static_cast<size_t>(payload.at(0));
     this->_readyClients = static_cast<size_t>(payload.at(1));
     this->_clientId = static_cast<uint8_t>(payload.at(2));

@@ -94,31 +94,6 @@ void ClientNetwork::disconnectionPacket() {
     this->_sequenceNumber++;
 }
 
-void ClientNetwork::sendReady() {
-    if (!_network) {
-        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
-            err::ClientNetworkError::INTERNAL_ERROR);
-    }
-    if (this->_idClient == 0) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[Client] Warning: Client ID is 0, cannot send ready packet",
-            debug::debugType::NETWORK,
-            debug::debugLevel::WARNING);
-        return;
-    }
-    std::vector<uint64_t> payload = {};
-    std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
-        this->_sequenceNumber, constants::PACKET_CLIENT_READY, payload);
-
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Sending ready packet",
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
-
-    this->_network->sendTo(this->_serverEndpoint, packet);
-    this->_sequenceNumber++;
-}
-
 void ClientNetwork::sendWhoAmI() {
     if (!_network) {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",

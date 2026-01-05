@@ -75,7 +75,6 @@ class ClientNetwork {
         void eventPacket(const constants::EventType &eventType, double depth);
         void disconnectionPacket();
         void connectionPacket();
-        void sendReady();
         void sendWhoAmI();
         void requestCode();
         void sendLobbyConnection(std::string lobbyCode);
