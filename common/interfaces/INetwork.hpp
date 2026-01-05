@@ -12,8 +12,8 @@
 #include <functional>
 #include <memory>
 #include "INetworkEndpoint.hpp"
-#include "../Packet/IPacketManager.hpp"
-#include "../Buffer/IBuffer.hpp"
+#include "IPacketManager.hpp"
+#include "IBuffer.hpp"
 
 namespace net {
 
