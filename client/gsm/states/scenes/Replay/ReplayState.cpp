@@ -8,6 +8,7 @@
 #include "ReplayState.hpp"
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 #include <nlohmann/json.hpp>
 #include <cmath>
 #include <algorithm>
@@ -167,7 +168,8 @@ void ReplayState::renderUI() {
 }
 
 void ReplayState::loadReplay() {
-    std::ifstream file("replay.json");
+    std::filesystem::path replayFile = "saves/replays/replay.json";
+    std::ifstream file(replayFile);
     if (!file.is_open()) {
         _statusText->setText("Replay file not found");
         return;
@@ -182,7 +184,7 @@ void ReplayState::loadReplay() {
         if (line.empty()) continue;
         try {
             nlohmann::json frame = nlohmann::json::parse(line);
-            if (frame.contains("totalTime")) {
+            if (frame.contains(constants::REPLAY_TOTAL_TIME)) {
                 _frames.push_back(frame);
                 frameCount++;
             }
@@ -194,7 +196,7 @@ void ReplayState::loadReplay() {
     file.close();
 
     if (frameCount > 0) {
-        _totalReplayTime = _frames.back()["totalTime"].get<float>();
+        _totalReplayTime = _frames.back()[constants::REPLAY_TOTAL_TIME].get<float>();
         _statusText->setText("Replay loaded: " + std::to_string(frameCount) + " frames (" + std::to_string(_totalReplayTime) + "s)");
         std::cout << "Replay loaded: " << frameCount << " frames (" << _totalReplayTime << "s)" << std::endl;
         _replayTime = 0.0f;
@@ -222,7 +224,7 @@ void ReplayState::playReplay(float deltaTime) {
 
     while (left <= right) {
         size_t mid = left + (right - left) / 2;
-        float frameTime = _frames[mid]["totalTime"].get<float>();
+        float frameTime = _frames[mid][constants::REPLAY_TOTAL_TIME].get<float>();
 
         if (frameTime <= _replayTime) {
             targetIndex = mid;
@@ -355,10 +357,10 @@ void ReplayState::renderParallaxBackground(const nlohmann::json& parallaxData, s
     math::Vector2f viewCenter = window->getViewCenter();
     float viewLeft = viewCenter.getX() - screenWidth / 2.0f;
 
-    if (parallax.contains("layers")) {
+    if (parallax.contains(constants::REPLAY_LAYERS)) {
         std::vector<std::pair<int, const nlohmann::json*>> sortedLayers;
-        for (const auto& layerData : parallax["layers"]) {
-            int zIndex = layerData["zIndex"];
+        for (const auto& layerData : parallax[constants::REPLAY_LAYERS]) {
+            int zIndex = layerData[constants::REPLAY_Z_INDEX];
             sortedLayers.emplace_back(zIndex, &layerData);
         }
         std::sort(sortedLayers.begin(), sortedLayers.end(),
