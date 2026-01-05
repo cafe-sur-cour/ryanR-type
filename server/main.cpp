@@ -8,7 +8,8 @@
 #include <iostream>
 #include <memory>
 
-#include "Core.hpp"
+// #include "Core.hpp"
+#include "Server.hpp"
 #include "Utils.hpp"
 #include "Constants.hpp"
 
@@ -17,7 +18,8 @@
 
 int main(int ac, char **av) {
     Utils utils;
-    Core core;
+    // Core core;
+    rserv::Server core;
 
     utils.parsCli(ac, av, core.getConfig());
     std::cout << "[Server] RTYPE SERVER" << std::endl;
@@ -28,7 +30,7 @@ int main(int ac, char **av) {
     std::cout << std::endl << "------------------------" << std::endl;
     try {
         core.init();
-        core.loop();
+        core.start();
     } catch (const err::IError &e) {
         std::cerr << e.getDetails() << std::endl;
         return (84);
