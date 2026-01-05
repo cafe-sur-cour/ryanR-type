@@ -130,12 +130,9 @@ namespace rserv {
             std::vector<uint64_t> convertColliderComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertShootStatComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertScoreComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertAIMovementPatternComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertDamageComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertLifetimeComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertVelocityComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertAIMoverTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertAIShooterTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertControllableTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertEnemyProjectileTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertGameZoneColliderTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
