@@ -23,6 +23,7 @@
 #include "../LobbyWaiting/LobbyWaitingState.hpp"
 #include "../Register/RegisterState.hpp"
 #include "../Login/LoginState.hpp"
+#include "../Profile/ProfileState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -226,6 +227,18 @@ MainMenuState::MainMenuState(
     _usernameButton = std::make_shared<ui::Button>(_resourceManager);
     _usernameButton->setText("Not connected");
     _usernameButton->setSize(math::Vector2f(576.f, 108.f));
+    _usernameButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<ProfileState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _usernameButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<ProfileState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
 
     _settingsButton = std::make_shared<ui::Button>(resourceManager);
     _settingsButton->setText("Settings");
@@ -278,6 +291,18 @@ MainMenuState::MainMenuState(
     _rightLayout->addElement(_requestCodeButton);
     _rightLayout->addElement(_lobbyCodeInput);
     _rightLayout->addElement(_lobbyConnectButton);
+
+    ui::LayoutConfig topLeftConfig;
+    topLeftConfig.direction = ui::LayoutDirection::Horizontal;
+    topLeftConfig.alignment = ui::LayoutAlignment::Center;
+    topLeftConfig.spacing = 20.0f;
+    topLeftConfig.padding = math::Vector2f(0.0f, 0.0f);
+    topLeftConfig.anchorX = ui::AnchorX::Left;
+    topLeftConfig.anchorY = ui::AnchorY::Top;
+    topLeftConfig.offset = math::Vector2f(20.0f, 20.0f);
+
+    _topLeftLayout = std::make_shared<ui::UILayout>(_resourceManager, topLeftConfig);
+    _topLeftLayout->setSize(math::Vector2f(320.f, 80.f));
 
     ui::LayoutConfig headerConfig;
     headerConfig.direction = ui::LayoutDirection::Horizontal;
@@ -368,16 +393,21 @@ MainMenuState::MainMenuState(
         }
     });
 
-    _headerLayout->addElement(_registerButton);
-    _headerLayout->addElement(_loginButton);
     _headerLayout->addElement(_leaderboardButton);
     _headerLayout->addElement(_howToPlayButton);
     _headerLayout->addElement(_disconnectButton);
 
+    _topLeftLayout->addElement(_registerButton);
+    _topLeftLayout->addElement(_loginButton);
+
     _uiManager->addElement(_leftLayout);
     _uiManager->addElement(_mainMenuLayout);
     _uiManager->addElement(_rightLayout);
+    _uiManager->addElement(_topLeftLayout);
     _uiManager->addElement(_headerLayout);
+    
+    // Initialiser l'état des boutons selon si l'utilisateur est connecté ou non
+    updateUIStatus();
 }
 
 void MainMenuState::enter() {
@@ -458,17 +488,35 @@ void MainMenuState::updateUIStatus() {
     auto config = _resourceManager->get<SettingsConfig>();
     bool isUserLoggedIn = config && config->getUsername() != "Player";
 
-    if (_usernameButton) {
-        _usernameButton->setState(isUserLoggedIn ? ui::UIState::Normal : ui::UIState::Disabled);
-    }
-    if (_connectButton) {
-        _connectButton->setState(isUserLoggedIn ? ui::UIState::Normal : ui::UIState::Disabled);
-    }
-    if (_requestCodeButton) {
-        _requestCodeButton->setState(isUserLoggedIn ? ui::UIState::Normal : ui::UIState::Disabled);
-    }
-    if (_lobbyConnectButton) {
-        _lobbyConnectButton->setState(isUserLoggedIn ? ui::UIState::Normal : ui::UIState::Disabled);
+    // Si l'utilisateur n'est pas connecté, on désactive les boutons
+    // Si l'utilisateur est connecté ET que le bouton est Disabled, on le réactive à Normal
+    if (!isUserLoggedIn) {
+        if (_usernameButton && _usernameButton->getState() != ui::UIState::Disabled) {
+            _usernameButton->setState(ui::UIState::Disabled);
+        }
+        if (_connectButton && _connectButton->getState() != ui::UIState::Disabled) {
+            _connectButton->setState(ui::UIState::Disabled);
+        }
+        if (_requestCodeButton && _requestCodeButton->getState() != ui::UIState::Disabled) {
+            _requestCodeButton->setState(ui::UIState::Disabled);
+        }
+        if (_lobbyConnectButton && _lobbyConnectButton->getState() != ui::UIState::Disabled) {
+            _lobbyConnectButton->setState(ui::UIState::Disabled);
+        }
+    } else {
+        // Réactiver les boutons s'ils sont Disabled
+        if (_usernameButton && _usernameButton->getState() == ui::UIState::Disabled) {
+            _usernameButton->setState(ui::UIState::Normal);
+        }
+        if (_connectButton && _connectButton->getState() == ui::UIState::Disabled) {
+            _connectButton->setState(ui::UIState::Normal);
+        }
+        if (_requestCodeButton && _requestCodeButton->getState() == ui::UIState::Disabled) {
+            _requestCodeButton->setState(ui::UIState::Normal);
+        }
+        if (_lobbyConnectButton && _lobbyConnectButton->getState() == ui::UIState::Disabled) {
+            _lobbyConnectButton->setState(ui::UIState::Normal);
+        }
     }
 
     auto network = this->_resourceManager->get<ClientNetwork>();
@@ -565,6 +613,32 @@ void MainMenuState::exit() {
     if (_uiManager) {
         _uiManager->clearElements();
     }
+
+    // Libération explicite des ressources
+    _background.reset();
+    _leftLayout.reset();
+    _mainMenuLayout.reset();
+    _rightLayout.reset();
+    _topLeftLayout.reset();
+    _headerLayout.reset();
+    _usernameButton.reset();
+    _settingsButton.reset();
+    _quitButton.reset();
+    _connectButton.reset();
+    _requestCodeButton.reset();
+    _lobbyConnectButton.reset();
+    _howToPlayButton.reset();
+    _leaderboardButton.reset();
+    _registerButton.reset();
+    _loginButton.reset();
+    _disconnectButton.reset();
+    _ipInput.reset();
+    _portInput.reset();
+    _lobbyCodeInput.reset();
+    _connectionStatusText.reset();
+    _serverStatusText.reset();
+    _uiManager.reset();
+    _mouseHandler.reset();
 }
 
 }  // namespace gsm

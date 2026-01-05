@@ -120,6 +120,10 @@ RegisterState::RegisterState(
         nlohmann::json newUser;
         newUser["username"] = username;
         newUser["password"] = password;
+        newUser["wins"] = 0;
+        newUser["highScore"] = 0;
+        newUser["gamesPlayed"] = 0;
+        newUser["timeSpent"] = 0;
         users.push_back(newUser);
 
         std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
@@ -170,6 +174,10 @@ RegisterState::RegisterState(
         nlohmann::json newUser;
         newUser["username"] = username;
         newUser["password"] = password;
+        newUser["wins"] = 0;
+        newUser["highScore"] = 0;
+        newUser["gamesPlayed"] = 0;
+        newUser["timeSpent"] = 0;
         users.push_back(newUser);
 
         std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
