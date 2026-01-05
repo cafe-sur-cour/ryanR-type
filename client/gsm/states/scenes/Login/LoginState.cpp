@@ -2,10 +2,10 @@
 ** EPITECH PROJECT, 2026
 ** R-Type
 ** File description:
-** Register State
+** Login State
 */
 
-#include "RegisterState.hpp"
+#include "LoginState.hpp"
 #include <memory>
 #include <string>
 #include <fstream>
@@ -22,7 +22,7 @@
 
 namespace gsm {
 
-RegisterState::RegisterState(
+LoginState::LoginState(
     std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager
 ) : AGameState(gsm, resourceManager) {
@@ -70,132 +70,119 @@ RegisterState::RegisterState(
         navMan->setFocus(this->_passwordInput);
     });
 
-    _confirmPasswordInput = std::make_shared<ui::TextInput>(_resourceManager);
-    _confirmPasswordInput->setPlaceholder("Confirm Password");
-    _confirmPasswordInput->setSize(math::Vector2f(400.f, 60.f));
-    _confirmPasswordInput->setOnRelease([this]() {
-        auto navMan = this->_uiManager->getNavigationManager();
-        navMan->enableFocus();
-        navMan->setFocus(this->_confirmPasswordInput);
-    });
-
-    _registerButton = std::make_shared<ui::Button>(_resourceManager);
-    _registerButton->setText("Register");
-    _registerButton->setSize(math::Vector2f(400.f, 60.f));
-    _registerButton->setOnRelease([this]() {
+    _loginButton = std::make_shared<ui::Button>(_resourceManager);
+    _loginButton->setText("Login");
+    _loginButton->setSize(math::Vector2f(400.f, 60.f));
+    _loginButton->setOnRelease([this]() {
         std::string username = this->_usernameInput->getText();
         std::string password = this->_passwordInput->getText();
-        std::string confirmPassword = this->_confirmPasswordInput->getText();
 
-        if (username.empty() || password.empty() || confirmPassword.empty()) {
-            std::cout << "All fields are required!" << std::endl;
-            return;
-        }
-
-        if (password != confirmPassword) {
-            std::cout << "Passwords do not match!" << std::endl;
+        if (username.empty() || password.empty()) {
+            std::cout << "Username and password are required!" << std::endl;
             return;
         }
 
         const std::string filepath = "saves/users.json";
-        nlohmann::json users;
-
-        if (std::filesystem::exists(filepath)) {
-            std::ifstream file(filepath);
-            if (file.is_open()) {
-                try {
-                    file >> users;
-                } catch (const std::exception& e) {
-                    users = nlohmann::json::array();
-                }
-                file.close();
-            }
-        } else {
-            users = nlohmann::json::array();
-        }
-
-        for (const auto& user : users) {
-            if (user.contains("username") && user["username"] == username) {
-                std::cout << "Username already exists!" << std::endl;
-                return;
-            }
-        }
-
-        nlohmann::json newUser;
-        newUser["username"] = username;
-        newUser["password"] = password;
-        users.push_back(newUser);
-
-        std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
-        std::ofstream file(filepath);
-        if (file.is_open()) {
-            file << users.dump(4);
-            file.close();
-            std::cout << "User registered successfully!" << std::endl;
-            
-            if (auto stateMachine = this->_gsm.lock()) {
-                stateMachine->requestStatePop();
-            }
-        } else {
-            std::cout << "Failed to save user data!" << std::endl;
-        }
-    });
-    _registerButton->setOnActivated([this]() {
-        std::string username = this->_usernameInput->getText();
-        std::string password = this->_passwordInput->getText();
-        std::string confirmPassword = this->_confirmPasswordInput->getText();
-
-        if (username.empty() || password.empty() || confirmPassword.empty()) {
-            std::cout << "All fields are required!" << std::endl;
+        
+        if (!std::filesystem::exists(filepath)) {
+            std::cout << "No users registered yet!" << std::endl;
             return;
         }
 
-        if (password != confirmPassword) {
-            std::cout << "Passwords do not match!" << std::endl;
+        std::ifstream file(filepath);
+        if (!file.is_open()) {
+            std::cout << "Failed to read user data!" << std::endl;
+            return;
+        }
+
+        nlohmann::json users;
+        try {
+            file >> users;
+        } catch (const std::exception& e) {
+            std::cout << "Failed to parse user data!" << std::endl;
+            file.close();
+            return;
+        }
+        file.close();
+
+        bool found = false;
+        for (const auto& user : users) {
+            if (user.contains("username") && user.contains("password") &&
+                user["username"] == username && user["password"] == password) {
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            auto config = this->_resourceManager->get<SettingsConfig>();
+            if (config) {
+                config->setUsername(username);
+                config->saveSettings();
+                std::cout << "Login successful! Welcome " << username << "!" << std::endl;
+                
+                if (auto stateMachine = this->_gsm.lock()) {
+                    stateMachine->requestStatePop();
+                }
+            }
+        } else {
+            std::cout << "Invalid username or password!" << std::endl;
+        }
+    });
+    _loginButton->setOnActivated([this]() {
+        std::string username = this->_usernameInput->getText();
+        std::string password = this->_passwordInput->getText();
+
+        if (username.empty() || password.empty()) {
+            std::cout << "Username and password are required!" << std::endl;
             return;
         }
 
         const std::string filepath = "saves/users.json";
+        
+        if (!std::filesystem::exists(filepath)) {
+            std::cout << "No users registered yet!" << std::endl;
+            return;
+        }
+
+        std::ifstream file(filepath);
+        if (!file.is_open()) {
+            std::cout << "Failed to read user data!" << std::endl;
+            return;
+        }
+
         nlohmann::json users;
-
-        if (std::filesystem::exists(filepath)) {
-            std::ifstream file(filepath);
-            if (file.is_open()) {
-                try {
-                    file >> users;
-                } catch (const std::exception& e) {
-                    users = nlohmann::json::array();
-                }
-                file.close();
-            }
-        } else {
-            users = nlohmann::json::array();
-        }
-
-        for (const auto& user : users) {
-            if (user.contains("username") && user["username"] == username) {
-                std::cout << "Username already exists!" << std::endl;
-                return;
-            }
-        }
-
-        nlohmann::json newUser;
-        newUser["username"] = username;
-        newUser["password"] = password;
-        users.push_back(newUser);
-
-        std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
-        std::ofstream file(filepath);
-        if (file.is_open()) {
-            file << users.dump(4);
+        try {
+            file >> users;
+        } catch (const std::exception& e) {
+            std::cout << "Failed to parse user data!" << std::endl;
             file.close();
-            std::cout << "User registered successfully!" << std::endl;
-            
-            if (auto stateMachine = this->_gsm.lock()) {
-                stateMachine->requestStatePop();
+            return;
+        }
+        file.close();
+
+        bool found = false;
+        for (const auto& user : users) {
+            if (user.contains("username") && user.contains("password") &&
+                user["username"] == username && user["password"] == password) {
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            auto config = this->_resourceManager->get<SettingsConfig>();
+            if (config) {
+                config->setUsername(username);
+                config->saveSettings();
+                std::cout << "Login successful! Welcome " << username << "!" << std::endl;
+                
+                if (auto stateMachine = this->_gsm.lock()) {
+                    stateMachine->requestStatePop();
+                }
             }
         } else {
-            std::cout << "Failed to save user data!" << std::endl;
+            std::cout << "Invalid username or password!" << std::endl;
         }
     });
 
@@ -218,17 +205,16 @@ RegisterState::RegisterState(
 
     _mainLayout->addElement(_usernameInput);
     _mainLayout->addElement(_passwordInput);
-    _mainLayout->addElement(_confirmPasswordInput);
-    _mainLayout->addElement(_registerButton);
+    _mainLayout->addElement(_loginButton);
     _mainLayout->addElement(_backButton);
 
     _uiManager->addElement(_mainLayout);
 }
 
-void RegisterState::enter() {
+void LoginState::enter() {
 }
 
-void RegisterState::update(float deltaTime) {
+void LoginState::update(float deltaTime) {
     auto config = _resourceManager->get<SettingsConfig>();
     if (config && _uiManager->getGlobalScale() != config->getUIScale()) {
         _uiManager->setGlobalScale(config->getUIScale());
@@ -288,16 +274,16 @@ void RegisterState::update(float deltaTime) {
     renderUI();
 }
 
-void RegisterState::renderUI() {
+void LoginState::renderUI() {
     _uiManager->render();
 }
 
-void RegisterState::exit() {
+void LoginState::exit() {
     auto window = _resourceManager->get<gfx::IWindow>();
     if (window) {
         window->setCursor(false);
     }
-    
+
     if (_uiManager) {
         _uiManager->clearElements();
     }
