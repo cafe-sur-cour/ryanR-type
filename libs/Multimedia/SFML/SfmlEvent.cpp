@@ -11,7 +11,7 @@
 #include <iostream>
 #include "SfmlWindow.hpp"
 #include "SfmlEvent.hpp"
-#include "../../common/constants.hpp"
+#include "../../../common/constants.hpp"
 
 using event_t = gfx::IEvent::event_t;
 
