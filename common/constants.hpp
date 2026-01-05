@@ -67,8 +67,11 @@ namespace constants {
     const std::string SCOREVALUECOMPONENT = "ScoreValueComponent";
     const std::string DAMAGECOMPONENT = "DamageComponent";
     const std::string HEALTHCOMPONENT = "HealthComponent";
+    const std::string HITBOXRENDERCOMPONENT = "HitboxRenderComponent";
     const std::string INTERACTIONCONFIGCOMPONENT = "InteractionConfigComponent";
-    const std::string AIMOVEMENTPATTERNCOMPONENT = "AIMovementPatternComponent";
+    const std::string SCRIPTINGCOMPONENT = "ScriptingComponent";
+    const std::string SCRIPT_PATH_FIELD = "scriptPath";
+    const std::string ADDITIONAL_FUNCTIONS_FIELD = "additionalFunctions";
     const std::string SCORE_FIELD = "score";
     const std::string SCOREVALUE_FIELD = "scoreValue";
     const std::string DAMAGE_FIELD = "damage";
@@ -132,12 +135,11 @@ namespace constants {
     const std::string SCALEMODE_FITSCREEN = "FIT_SCREEN";
     const std::string SCALEMODE_STRETCH = "STRETCH";
     const std::string SCALEMODE_MANUAL = "MANUAL";
-
+    const std::string ENTITYPARTSCOMPONENT = "EntityPartsComponent";
     const std::string COLLISION_TYPE_SOLID = "Solid";
     const std::string COLLISION_TYPE_TRIGGER = "Trigger";
     const std::string COLLISION_TYPE_PUSH = "Push";
     const std::string COLLISION_TYPE_NONE = "None";
-
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";
 
@@ -224,8 +226,6 @@ namespace constants {
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
     const std::string OBSTACLETAG = "ObstacleTag";
     const std::string CLIENTEFFECTTAG = "ClientEffectTag";
-    const std::string AIMOVERTAG = "AIMoverTag";
-    const std::string AISHOOTERTAG = "AIShooterTag";
 
     /* Action constants */
     const std::string DEALDEATH_ACTION = "DealDeath";
@@ -239,11 +239,7 @@ namespace constants {
     const std::string BIG_EXPLOSION = "big_explosion";
     const std::string OBSTACLE_1 = "obstacle1";
 
-    /* AI Movement Pattern defaults */
-    constexpr float DEFAULT_ZIGZAG_AMPLITUDE = 80.0f;
-    constexpr float DEFAULT_ZIGZAG_FREQUENCY = 2.0f;
-    constexpr float DEFAULT_DETECTION_RANGE = 800.0f;
-    constexpr float DEFAULT_VERTICAL_DEADZONE = 10.0f;
+
     constexpr float DEFAULT_TIMER = 0.0f;
 
     /* Packet constants */
@@ -264,6 +260,29 @@ namespace constants {
     constexpr std::uint8_t PACKET_SEND_LOBBY_CODE = 0x0E;
 
     const int MAX_INDEX_PACKET_TYPE = 16;
+
+    /* Scripting constant */
+    const std::string INIT_FUNCTION = "init";
+    const std::string UPDATE_FUNCTION = "update";
+    const std::string DEATH_FUNCTION = "death";
+
+    /* Constants for Scripting API */
+    const std::string PRINT_FUNCTION = "print";
+    const std::string CREATE_MOVE_INTENT_FUNCTION = "createMoveIntent";
+    const std::string GET_ENTITY_POSITION_FUNCTION = "getEntityPosition";
+    const std::string GET_NEAREST_PLAYER_POSITION_FUNCTION = "getNearestPlayerPosition";
+    const std::string GET_ENTITY_SPEED_FUNCTION = "getEntitySpeed";
+    const std::string CREATE_SHOOT_INTENT_FUNCTION = "createShootIntent";
+    const std::string SPAWN_ENTITY_FUNCTION = "spawnEntity";
+    const std::string GET_ENTITY_ID_FUNCTION = "getEntityId";
+    const std::string ADD_PART_ID_FUNCTION = "addPartId";
+    const std::string SET_PARENT_ID_FUNCTION = "setParentId";
+    const std::string SET_ENTITY_ROTATION_FUNCTION = "setEntityRotation";
+    const std::string GET_ENTITY_PARTS_FUNCTION = "getEntityParts";
+    const std::string CREATE_DEATH_INTENT_FUNCTION = "createDeathIntent";
+    const std::string IS_ENTITY_ALIVE_FUNCTION = "isEntityAlive";
+    const std::string GET_PARENT_ID_FUNCTION = "getParentId";
+    const std::string REMOVE_PART_ID_FUNCTION = "removePartId";
 }
 
 #endif /* !CONSTANTS_HPP_ */
