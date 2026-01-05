@@ -45,8 +45,8 @@ class IWindow {
         virtual bool isMouseOver(std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) = 0;
         virtual std::pair<int, int> getWindowSize() = 0;
 
-        virtual void drawSprite(const std::string& texturePath, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f) = 0;
-        virtual void drawSprite(const std::string& texturePath, float x, float y, const math::FRect frameRect, float scaleX = 1.0f, float scaleY = 1.0f) = 0;
+        virtual void drawSprite(const std::string& texturePath, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f, float rotation = 0.0f) = 0;
+        virtual void drawSprite(const std::string& texturePath, float x, float y, const math::FRect frameRect, float scaleX = 1.0f, float scaleY = 1.0f, float rotation = 0.0f) = 0;
 
         virtual void updateView() = 0;
         virtual void setViewCenter(float x, float y) = 0;
