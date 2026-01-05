@@ -225,36 +225,6 @@ MainMenuState::MainMenuState(
     _playButton->setText("Not connected");
     _playButton->setSize(math::Vector2f(576.f, 108.f));
 
-    // _playButton->setOnRelease([this]() {
-    //     auto network = this->_resourceManager->get<ClientNetwork>();
-    //     if (network && network->isConnected()) {
-    //         network->sendReady();
-    //         debug::Debug::printDebug(network->isDebugMode(),
-    //             "[MainMenu] Sent ready signal to server.",
-    //             debug::debugType::NETWORK,
-    //             debug::debugLevel::INFO);
-    //     } else {
-    //         debug::Debug::printDebug(network ? network->isDebugMode() : false,
-    //             "[MainMenu] Cannot send ready: Not connected to server.",
-    //             debug::debugType::NETWORK,
-    //             debug::debugLevel::WARNING);
-    //     }
-    // });
-    // _playButton->setOnActivated([this]() {
-    //     auto network = this->_resourceManager->get<ClientNetwork>();
-    //     if (network && network->isConnected()) {
-    //         network->sendReady();
-    //         debug::Debug::printDebug(network->isDebugMode(),
-    //             "[MainMenu] Sent ready signal to server.",
-    //             debug::debugType::NETWORK,
-    //             debug::debugLevel::INFO);
-    //     } else {
-    //         debug::Debug::printDebug(network ? network->isDebugMode() : false,
-    //             "[MainMenu] Cannot send ready: Not connected to server.",
-    //             debug::debugType::NETWORK,
-    //             debug::debugLevel::WARNING);
-    //     }
-    // });
 
     _settingsButton = std::make_shared<ui::Button>(resourceManager);
     _settingsButton->setText("Settings");
