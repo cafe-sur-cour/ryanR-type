@@ -64,7 +64,8 @@ void GameZoneRenderingSystem::update(std::shared_ptr<ResourceManager>
             math::Vector2f entityPos = transform->getPosition();
 
             for (auto& collider : colliders) {
-                math::FRect hitbox = collider->getHitbox(entityPos, entityScale);
+                math::FRect hitbox = collider->getHitbox(entityPos, entityScale,
+                    transform->getRotation());
 
                 gfx::color_t colliderColor;
                 if (collider->getType() == CollisionType::Push) {
