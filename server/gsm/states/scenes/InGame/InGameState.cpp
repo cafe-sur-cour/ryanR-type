@@ -102,7 +102,7 @@ void InGameState::exit() {
             }
         }
     }
-    
+
     auto systemManager = _resourceManager->get<ecs::ISystemManager>();
     for (auto& sys : _systems) {
         systemManager->removeSystem(sys);

@@ -74,7 +74,9 @@ Core::~Core() {
     if (this->_registry != nullptr) {
         auto scriptingView = this->_registry->view<ecs::ScriptingComponent>();
         for (auto entityId : scriptingView) {
-            auto scriptingComp = this->_registry->getComponent<ecs::ScriptingComponent>(entityId);
+            auto scriptingComp = this->_registry->getComponent<ecs::ScriptingComponent>(
+                entityId
+            );
             if (scriptingComp) {
                 scriptingComp->clearLuaReferences();
             }
