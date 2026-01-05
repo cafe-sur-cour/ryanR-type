@@ -62,8 +62,11 @@ private:
 
     std::shared_ptr<ui::Button> _playPauseButton;
     std::shared_ptr<ui::Button> _replayBackButton;
+    std::shared_ptr<ui::Button> _increaseSpeedButton;
+    std::shared_ptr<ui::Button> _decreaseSpeedButton;
     std::shared_ptr<ui::Slider> _progressSlider;
     std::shared_ptr<ui::Text> _timeText;
+    std::shared_ptr<ui::Text> _speedText;
     std::shared_ptr<ui::UILayout> _playbackLayout;
 
     std::vector<nlohmann::json> _frames;
@@ -74,6 +77,7 @@ private:
     bool _isPaused;
     bool _shouldSwitch;
     float _spacePressCooldown;
+    float _playbackSpeed;
 
     float _renderOffsetX;
     float _renderOffsetY;
