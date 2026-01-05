@@ -16,7 +16,7 @@ Vector2f::Vector2f(float x, float y) : _x(x), _y(y) {
 }
 
 Vector2f::Vector2f(Vector2f const &other) {
-    if (std::isnan(other._x) || std::isnan(other._y) || std::isinf(other._x) // HERE
+    if (std::isnan(other._x) || std::isnan(other._y) || std::isinf(other._x)
         || std::isinf(other._y)) {
         _x = 0.f;
         _y = 0.f;

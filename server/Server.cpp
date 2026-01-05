@@ -226,7 +226,8 @@ void rserv::Server::processIncomingPackets() {
             it->second->enqueuePacket(received);
         } else {
             debug::Debug::printDebug(this->_config->getIsDebug(),
-                "[SERVER] Received event packet from unknown client: " + std::to_string(idClient),
+                "[SERVER] Received event packet from unknown client: " +
+                std::to_string(idClient),
                 debug::debugType::NETWORK, debug::debugLevel::WARNING);
         }
     } else {
@@ -266,7 +267,6 @@ void rserv::Server::onClientConnected(uint8_t idClient) {
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "Client " + std::to_string(idClient) + " connected",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-
 }
 
 void rserv::Server::onClientDisconnected(uint8_t idClient) {
@@ -281,7 +281,6 @@ void rserv::Server::onPacketReceived(
         "Packet received from client " + std::to_string(idClient)
         + " of type " + std::to_string(static_cast<int>(packet.getType())),
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-
 }
 
 uint32_t rserv::Server::getSequenceNumber() const {
@@ -299,14 +298,18 @@ void rserv::Server::incrementSequenceNumber() {
 std::shared_ptr<pm::IPacketManager> rserv::Server::createNewPacketManager() {
     createPacket_t createPacket = _packetloader.getSymbol("createPacketInstance");
     if (!createPacket) {
-        throw err::ServerError("[Server] Cannot get createPacketInstance symbol", err::ServerError::LIBRARY_LOAD_FAILED);
+        throw err::ServerError("[Server] Cannot get createPacketInstance symbol",
+            err::ServerError::LIBRARY_LOAD_FAILED);
     }
-    auto packet = std::shared_ptr<pm::IPacketManager>(reinterpret_cast<pm::IPacketManager *>(createPacket()));
+    auto packet = std::shared_ptr<pm::IPacketManager>
+        (reinterpret_cast<pm::IPacketManager *>(createPacket()));
     if (!packet) {
-        throw err::ServerError("[Server] Creating packet instance failed", err::ServerError::LIBRARY_LOAD_FAILED);
+        throw err::ServerError("[Server] Creating packet instance failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
     }
     if (!rserv::packet::registerDefaultPacketHandlers(packet)) {
-        throw err::ServerError("[Server] Registering default packet handlers failed", err::ServerError::LIBRARY_LOAD_FAILED);
+        throw err::ServerError("[Server] Registering default packet handlers failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
     }
     return packet;
 }

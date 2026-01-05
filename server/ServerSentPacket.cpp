@@ -35,7 +35,8 @@ bool rserv::Server::connectionPacket(const net::INetworkEndpoint& endpoint) {
     return true;
 }
 
-bool rserv::Server::canStartPacket(std::vector<std::shared_ptr<net::INetworkEndpoint>> endpoints) {
+bool rserv::Server::canStartPacket(std::vector<std::shared_ptr<net::INetworkEndpoint>>
+    endpoints) {
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "[SERVER] Sending canStart packet to " + std::to_string(endpoints.size()) + " clients",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
@@ -184,7 +185,8 @@ bool rserv::Server::sendCodeLobbyPacket(const net::INetworkEndpoint &endpoint) {
     return true;
 }
 
-bool rserv::Server::lobbyConnectValuePacket(const net::INetworkEndpoint &endpoint, bool isSucess) {
+bool rserv::Server::lobbyConnectValuePacket(const net::INetworkEndpoint &endpoint,
+    bool isSucess) {
     if (!this->_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Network not initialized",

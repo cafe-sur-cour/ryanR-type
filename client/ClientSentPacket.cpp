@@ -139,7 +139,6 @@ void ClientNetwork::requestCode() {
         "[CLIENT] Sending request code packet",
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
-    std::cout << std::endl;
     this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }

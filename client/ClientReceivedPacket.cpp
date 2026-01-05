@@ -201,15 +201,16 @@ void ClientNetwork::handleEntitySpawn() {
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
 
-        // If this is the local player's entity, add LocalPlayerTag
         if (clientId == this->_idClient) {
             auto registry = _resourceManager->get<ecs::Registry>();
             registry->registerComponent<ecs::LocalPlayerTag>();
             if (!registry->hasComponent<ecs::LocalPlayerTag>(newEntity)) {
-                registry->addComponent<ecs::LocalPlayerTag>(newEntity, std::make_shared<ecs::LocalPlayerTag>());
+                registry->addComponent<ecs::LocalPlayerTag>(newEntity,
+                    std::make_shared<ecs::LocalPlayerTag>());
             }
             debug::Debug::printDebug(this->_isDebug,
-                "[CLIENT] Added LocalPlayerTag to entity " + std::to_string(newEntity) + " for local client " + std::to_string(clientId),
+                "[CLIENT] Added LocalPlayerTag to entity " + std::to_string(newEntity) +
+                " for local client " + std::to_string(clientId),
                 debug::debugType::NETWORK,
                 debug::debugLevel::INFO);
         }

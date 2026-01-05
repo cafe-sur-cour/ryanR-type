@@ -10,6 +10,7 @@
 #include <string>
 #include <memory>
 #include <thread>
+#include <tuple>
 
 #include "Server.hpp"
 #include "Constants.hpp"
@@ -31,12 +32,6 @@ bool rserv::Server::processConnections(std::pair<std::shared_ptr<net::INetworkEn
 
     this->connectionPacket(*client.first);
     this->_clients.push_back(std::make_tuple(this->_nextClientId, client.first, name));
-    std::cout << "[SERVER] New client connected: ID="
-        << static_cast<int>(this->_nextClientId)
-        << ", Address=" << client.first->getAddress()
-        << ", Port=" << client.first->getPort()
-        << ", Name=" << name << std::endl;
-    std::cout << "Endpoint list size: " << this->_clients.size() << std::endl;
     this->_clientsReady[this->_nextClientId] = false;
     debug::Debug::printDebug(this->_config->getIsDebug(), "[SERVER] Set client " +
         std::to_string(this->_nextClientId) + " ready to false",
@@ -132,17 +127,6 @@ bool rserv::Server::processConnectToLobby(std::pair<std::shared_ptr<net::INetwor
                     "[SERVER] Client " + std::to_string(static_cast<int>
                     (std::get<0>(clientToAdd))) + " added to lobby: " + lobbyCode,
                     debug::debugType::NETWORK, debug::debugLevel::INFO);
-                std::cout << "Lobby code: " << lobby->_lobbyCode << std::endl;
-                std::cout << "Clients in lobby: " << lobby->_clients.size() << std::endl;
-                for (const auto &client : lobby->_clients) {
-                    if (std::get<1>(client)) {  // Null check before accessing
-                        std::cout << " - Client ID: " << static_cast<int>(std::get<0>(client))
-                                  << ", Address: " << std::get<1>(client)->getAddress() << std::endl;
-                    } else {
-                        std::cout << " - Client ID: " << static_cast<int>(std::get<0>(client))
-                                  << ", Address: [NULL ENDPOINT]" << std::endl;
-                    }
-                }
                 break;
             }
         }
@@ -187,14 +171,9 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
         "[SERVER] Lobby master requested game start for lobby: " + lobbyCode,
         debug::debugType::NETWORK, debug::debugLevel::INFO);
 
-    std::cout << "Endpoint list size in process master: " << this->_clients.size() << std::endl;
     for (const auto &lobby : this->_lobbyThreads) {
         if (lobby->_lobbyCode == lobbyCode) {
-            std::cout << "Lobby endpoints size " << lobby->_clients.size() << std::endl;
             for (const auto &lobbyEndpoint : lobby->_clients) {
-                std::cout << "Processing lobby endpoint: "
-                          << std::get<1>(lobbyEndpoint)->getAddress() << ":"
-                          << std::get<1>(lobbyEndpoint)->getPort() << std::endl;
                 for (const auto &client : this->_clients) {
                     if (std::get<1>(client) == std::get<1>(lobbyEndpoint)) {
                         uint8_t clientId = std::get<0>(client);
@@ -210,7 +189,8 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
         }
     }
 
-    std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> _clientInfo;
+    std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>,
+        std::string>> _clientInfo;
     std::vector<std::shared_ptr<net::INetworkEndpoint>> endpoints;
     for (const auto &lobby : this->_lobbyThreads) {
         if (lobby->_lobbyCode == lobbyCode) {
@@ -228,8 +208,6 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
         this->_config->getIsDebug()
     ));
     auto lobby = this->_lobbies.back();
-    if (lobby == nullptr)
-        std::cerr << "Lobby is null" << std::endl;
     for (const auto& client : _clientInfo) {
         uint8_t clientId = std::get<0>(client);
         this->_clientToLobby[clientId] = lobby;

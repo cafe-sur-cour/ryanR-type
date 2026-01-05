@@ -25,8 +25,8 @@
 #include "initResourcesManager.hpp"
 #include "../gsm/gsmStates.hpp"
 
-std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Server> server,
-    std::shared_ptr<rserv::Lobby> lobby) {
+std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Server>
+    server, std::shared_ptr<rserv::Lobby> lobby) {
     std::shared_ptr<ResourceManager> resourceManager =
         std::make_shared<ResourceManager>();
 
@@ -36,9 +36,12 @@ std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Ser
     }
 
     std::shared_ptr<ecs::Registry> registry = std::make_shared<ecs::Registry>(nextEntityId);
-    std::shared_ptr<ecs::ISystemManager> systemsManager = std::make_shared<ecs::SystemManager>();
-    std::shared_ptr<gsm::GameStateMachine> gameStateMachine = std::make_shared<gsm::GameStateMachine>();
-    std::shared_ptr<ecs::IInputProvider> inputProvider = std::make_shared<ecs::ServerInputProvider>();
+    std::shared_ptr<ecs::ISystemManager> systemsManager =
+        std::make_shared<ecs::SystemManager>();
+    std::shared_ptr<gsm::GameStateMachine> gameStateMachine =
+        std::make_shared<gsm::GameStateMachine>();
+    std::shared_ptr<ecs::IInputProvider> inputProvider =
+        std::make_shared<ecs::ServerInputProvider>();
 
     auto entityPrefabManager = std::make_shared<EntityPrefabManager>();
     std::shared_ptr<Parser> parser = std::make_shared<Parser>(
@@ -65,11 +68,13 @@ std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Ser
         auto weakLobby = std::weak_ptr<rserv::Lobby>(lobby);
         auto weakRegistry = std::weak_ptr<ecs::Registry>(registry);
         entityPrefabManager->setOnEntityCreated(
-            [weakServer, weakLobby, weakRegistry](ecs::Entity entity, const std::string& prefabName) {
+            [weakServer, weakLobby, weakRegistry](ecs::Entity entity,
+                    const std::string& prefabName) {
                 auto lockedServer = weakServer.lock();
                 auto lockedLobby = weakLobby.lock();
                 auto lockedRegistry = weakRegistry.lock();
-                if (lockedServer && lockedLobby && lockedRegistry && lockedServer->getNetwork() != nullptr
+                if (lockedServer && lockedLobby && lockedRegistry &&
+                    lockedServer->getNetwork() != nullptr
                     && lockedLobby->getPacketManager() != nullptr) {
                     size_t entityId = entity;
                     debug::Debug::printDebug(lockedServer->getConfig()->getIsDebug(),
@@ -97,7 +102,8 @@ std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Ser
                 auto lockedServer = weakServer.lock();
                 auto lockedLobby = weakLobby.lock();
                 auto lockedRegistry = weakRegistry.lock();
-                if (lockedServer && lockedLobby && lockedRegistry && lockedServer->getNetwork() != nullptr
+                if (lockedServer && lockedLobby && lockedRegistry &&
+                    lockedServer->getNetwork() != nullptr
                     && lockedServer->getPacketManager() != nullptr) {
                     size_t entityId = entity;
                     std::vector<uint64_t> deathData =
@@ -119,6 +125,7 @@ std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Ser
     resourceManager->add<Parser>(parser);
     resourceManager->add<ecs::ISystemManager>(systemsManager);
     resourceManager->add<gsm::GameStateMachine>(gameStateMachine);
-    resourceManager->add<gsm::GameStateType>(std::make_shared<gsm::GameStateType>(gsm::BOOT));
+    resourceManager->add<gsm::GameStateType>(
+        std::make_shared<gsm::GameStateType>(gsm::BOOT));
     return resourceManager;
 }
