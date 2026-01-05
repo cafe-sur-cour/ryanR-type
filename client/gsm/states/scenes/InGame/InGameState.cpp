@@ -58,6 +58,7 @@
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../../common/components/permanent/HealthComponent.hpp"
 #include "../../../../ClientNetwork.hpp"
+#include "../../../../../common/Parser/Parser.hpp"
 
 namespace gsm {
 
@@ -66,13 +67,25 @@ InGameState::InGameState(
     std::shared_ptr<ResourceManager> resourceManager)
     : AGameState(gsm, resourceManager), _previousScore(-1), _previousHealth(-1) {
     _registry = resourceManager->get<ecs::Registry>();
-    _prefabManager = resourceManager->get<EntityPrefabManager>();
+    if (resourceManager->has<Parser>()) {
+        _prefabManager = resourceManager->get<Parser>()->getPrefabManager();
+    } else {
+        _prefabManager = resourceManager->get<EntityPrefabManager>();
+    }
     this->_parser = nullptr;
 }
 
 void InGameState::enter() {
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
     _resourceManager->add<ecs::Registry>(_registry);
+
+    if (_resourceManager->has<gfx::IWindow>()) {
+        auto window = _resourceManager->get<gfx::IWindow>();
+        window->setViewCenter(
+            constants::MAX_WIDTH / 2.0f,
+            constants::MAX_HEIGHT / 2.0f
+        );
+    }
 
     auto collisionData =
         ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
@@ -294,8 +307,6 @@ void InGameState::exit() {
         systemManager->removeSystem(sys);
     }
     _systems.clear();
-    _resourceManager->remove<ecs::Registry>();
-    _resourceManager->remove<EntityPrefabManager>();
 }
 
 }  // namespace gsm
