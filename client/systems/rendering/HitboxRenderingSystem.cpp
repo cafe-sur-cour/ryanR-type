@@ -12,7 +12,7 @@
 #include "../../../common/components/permanent/ColliderComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 
 
 namespace ecs {

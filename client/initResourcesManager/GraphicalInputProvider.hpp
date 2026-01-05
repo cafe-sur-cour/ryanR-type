@@ -6,7 +6,7 @@
 */
 
 #include "../../common/InputMapping/IInputProvider.hpp"
-#include "../../libs/Multimedia/IEvent.hpp"
+#include "../../common/interfaces/IEvent.hpp"
 #include "../../common/InputMapping/InputMappingManager.hpp"
 #include <memory>
 

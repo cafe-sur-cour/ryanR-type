@@ -16,6 +16,7 @@
 #include <memory>
 
 #include "ClientNetwork.hpp"
+#include "../libs/Network/common.hpp"
 #include "constants.hpp"
 #include "../common/Error/ClientNetworkError.hpp"
 #include "../common/translationToECS.hpp"
@@ -78,7 +79,6 @@ ClientNetwork::ClientNetwork() {
     _componentParsers[COLLIDER] = &ClientNetwork::parseColliderComponent;
     _componentParsers[SHOOTING_STATS] = &ClientNetwork::parseShootingStatsComponent;
     _componentParsers[SCORE] = &ClientNetwork::parseScoreComponent;
-    _componentParsers[AI_MOVEMENT_PATTERN] = &ClientNetwork::parseAIMovementPatternComponent;
     _componentParsers[DAMAGE] = &ClientNetwork::parseDamageComponent;
     _componentParsers[LIFETIME] = &ClientNetwork::parseLifetimeComponent;
     _componentParsers[VELOCITY] = &ClientNetwork::parseVelocityComponent;
@@ -88,30 +88,37 @@ ClientNetwork::ClientNetwork() {
 
 ClientNetwork::~ClientNetwork() {
     this->stop();
-    if (this->_receptionBuffer != nullptr) {
-            this->_receptionBuffer.reset();
+    if (this->_gsm != nullptr) {
+        this->_gsm.reset();
     }
-    if (this->_sendBuffer != nullptr) {
-            this->_sendBuffer.reset();
-    }
-    if (this->_bufferloader.getHandler() != nullptr) {
-        this->_bufferloader.Close();
-    }
-    if (this->_packetloader.getHandler() != nullptr) {
-        this->_packetloader.Close();
-    }
-    if (this->_networloader.getHandler() != nullptr) {
-        this->_networloader.Close();
-    }
+
+    this->_resourceManager.reset();
     if (this->_packet != nullptr) {
         this->_packet->clearAllHandlers();
         this->_packet.reset();
     }
+
     if (this->_network != nullptr) {
         this->_network.reset();
     }
-    if (this->_gsm != nullptr) {
-        this->_gsm.reset();
+
+    if (this->_receptionBuffer != nullptr) {
+        this->_receptionBuffer.reset();
+    }
+    if (this->_sendBuffer != nullptr) {
+        this->_sendBuffer.reset();
+    }
+
+    if (this->_bufferloader.getHandler() != nullptr) {
+        this->_bufferloader.Close();
+    }
+
+    if (this->_packetloader.getHandler() != nullptr) {
+        this->_packetloader.Close();
+    }
+
+    if (this->_networloader.getHandler() != nullptr) {
+        this->_networloader.Close();
     }
 }
 
@@ -140,10 +147,8 @@ void ClientNetwork::init() {
         this->_port,
         this->_ip
     );
-    this->_serverEndpoint = asio::ip::udp::endpoint(
-        asio::ip::address::from_string(this->_ip),
-        static_cast<uint16_t>(this->_port)
-    );
+    this->_serverEndpoint = std::make_shared<NetworkEndpoint>(this->_ip,
+        static_cast<uint16_t>(this->_port));
 }
 
 void ClientNetwork::connect() {
@@ -190,10 +195,8 @@ void ClientNetwork::setLobbyCode(std::string lobbyCode) {
 }
 
 void ClientNetwork::redoServerEndpoint() {
-    this->_serverEndpoint = asio::ip::udp::endpoint(
-        asio::ip::address::from_string(this->_ip),
-        static_cast<uint16_t>(this->_port)
-    );
+    this->_serverEndpoint = std::make_shared<NetworkEndpoint>(this->_ip,
+        static_cast<uint16_t>(this->_port));
 }
 
 void ClientNetwork::setDebugMode(bool isDebug) {
@@ -213,7 +216,7 @@ void ClientNetwork::sendConnectionData(std::vector<uint8_t> packet) {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);
     }
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, packet);
 }
 
 std::string ClientNetwork::getName() const {

@@ -27,8 +27,9 @@
 #include "ServerConfig.hpp"
 #include "deltaTracker/ComponentDeltaTracker.hpp"
 #include "deltaTracker/ComponentSerializer.hpp"
-#include "../libs/Network/INetwork.hpp"
-#include "../libs/Buffer/IBuffer.hpp"
+#include "../common/interfaces/INetwork.hpp"
+#include "../common/interfaces/IBuffer.hpp"
+#include "../libs/Network/common.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
 #include "../common/constants.hpp"
@@ -71,26 +72,29 @@ namespace rserv {
             void onClientDisconnected(uint8_t idClient);
             void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet);
 
-            std::vector<uint8_t> getConnectedClients() const;
-            std::vector<asio::ip::udp::endpoint> getConnectedClientEndpoints() const;
-            size_t getClientCount() const;
+            std::vector<uint8_t> getConnectedClients() const override;
+            std::vector<std::shared_ptr<net::INetworkEndpoint>> getConnectedClientEndpoints() const override;
+            size_t getClientCount() const override;
 
 
             /* Received Packet Handling */
-            void processIncomingPackets();
-            bool processConnections(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> client);
-            bool processDisconnections(uint8_t idClient);
-            bool requestCode(asio::ip::udp::endpoint endpoint);
-            bool processConnectToLobby(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> payload);
-            bool processMasterStart(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> payload);
+            void processIncomingPackets() override;
+            bool processConnections(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> client) override;
+            bool processDisconnections(uint8_t idClient) override;
+            bool processEvents(uint8_t idClient) override;
+            bool processEndOfGame(uint8_t idClient) override;
+            bool processWhoAmI(uint8_t idClient);
+            bool requestCode(const net::INetworkEndpoint& endpoint);
 
             /* Sent Packet Handling */
-            bool connectionPacket(asio::ip::udp::endpoint endpoint);
-            bool canStartPacket(std::vector<asio::ip::udp::endpoint> endpoints);
+            bool connectionPacket(const net::INetworkEndpoint& endpoint);
+            bool gameStatePacket();
+            bool canStartPacket();
+            bool endGamePacket(bool isWin);
+            std::vector<uint64_t> spawnPacket(size_t entity, const std::string prefabName);
+            std::vector<uint64_t> deathPacket(size_t entity);
             bool serverStatusPacket();
-            bool sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint);
-            bool lobbyConnectValuePacket(asio::ip::udp::endpoint endpoint, bool isSuccess);
-
+            bool sendCodeLobbyPacket(const net::INetworkEndpoint& endpoint);
 
             uint32_t getSequenceNumber() const;
             std::shared_ptr<pm::IPacketManager> getPacketManager() const;
@@ -117,7 +121,7 @@ namespace rserv {
             uint32_t _nextEntityId;
 
             /* Lobby handling variables */
-            std::vector<std::tuple<uint8_t, asio::ip::udp::endpoint, std::string>> _clients;
+            std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> _clients;
             std::map<uint8_t, bool> _clientsReady;
             std::vector<std::shared_ptr<LobbyStruct>> _lobbyThreads;
             std::vector<std::shared_ptr<Lobby>> _lobbies;
