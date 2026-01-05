@@ -9,6 +9,8 @@
 #include <memory>
 #include <string>
 #include <algorithm>
+#include <ctime>
+#include <chrono>
 #include "../../common/components/permanent/TransformComponent.hpp"
 #include "../../common/components/permanent/GameZoneComponent.hpp"
 #include "../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
@@ -21,6 +23,9 @@ MapGeneratorSystem::MapGeneratorSystem(unsigned int seed)
     : _seed(seed), _rng(seed), _lastGeneratedX(0.0f),
     _generationStep(50.0f), _startGenerationX(500.0f) {
     _lastGeneratedX = _startGenerationX - _generationStep;
+    auto now = std::chrono::high_resolution_clock::now();
+    _seed = static_cast<unsigned int>(now.time_since_epoch().count());
+    _rng.seed(_seed);
 }
 
 void MapGeneratorSystem::update(
@@ -45,8 +50,10 @@ void MapGeneratorSystem::update(
 }
 
 float MapGeneratorSystem::noise(float x) {
-    return (sinf(x * 0.01f) + cosf(x * 0.007f) +
-        sinf(x * 0.03f) * 0.3f + cosf(x * 0.05f) * 0.2f) * 0.4f + 0.5f;
+    // Add seed-dependent offset to make it random
+    float seedOffset = static_cast<float>(_seed) * 0.001f;
+    return (sinf((x + seedOffset) * 0.01f) + cosf((x + seedOffset) * 0.007f) +
+        sinf((x + seedOffset) * 0.03f) * 0.3f + cosf((x + seedOffset) * 0.05f) * 0.2f) * 0.4f + 0.5f;
 }
 
 void MapGeneratorSystem::generateObstaclesAt(
