@@ -45,8 +45,6 @@ class Lobby {
                 std::vector<std::tuple<uint8_t, asio::ip::udp::endpoint, std::string>> lobbyPlayerInfo,
                 std::string lobbyCode, bool debug);
             ~Lobby();
-
-            void loop();
             void stop();
 
             void startNetworkThread();
