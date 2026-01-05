@@ -9,9 +9,9 @@
 #include <memory>
 #include <string>
 #include <iostream>
-#include "../../../../../libs/Multimedia/IWindow.hpp"
-#include "../../../../../libs/Multimedia/SfmlWindow.hpp"
-#include "../../../../../libs/Multimedia/IEvent.hpp"
+#include "../../../../../common/interfaces/IWindow.hpp"
+#include "../../../../../common/interfaces/IEvent.hpp"
+#include "../../../../../libs/Multimedia/SFML/SfmlWindow.hpp"
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../constants.hpp"

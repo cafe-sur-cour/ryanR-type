@@ -26,8 +26,8 @@
 #include "ServerConfig.hpp"
 #include "deltaTracker/ComponentDeltaTracker.hpp"
 #include "deltaTracker/ComponentSerializer.hpp"
-#include "../libs/Network/INetwork.hpp"
-#include "../libs/Buffer/IBuffer.hpp"
+#include "../common/interfaces/INetwork.hpp"
+#include "../common/interfaces/IBuffer.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
 #include "../common/constants.hpp"
@@ -42,7 +42,7 @@ namespace rserv {
 class Lobby {
         public:
             Lobby(std::shared_ptr<net::INetwork> network,
-                std::vector<std::tuple<uint8_t, asio::ip::udp::endpoint, std::string>> lobbyPlayerInfo,
+                std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> lobbyPlayerInfo,
                 std::string lobbyCode, bool debug);
             ~Lobby();
             void stop();
@@ -56,7 +56,7 @@ class Lobby {
             bool getIsDebug() const;
 
             std::vector<uint8_t> getConnectedClients() const;
-            std::vector<asio::ip::udp::endpoint> getConnectedClientEndpoints() const;
+            std::vector<std::shared_ptr<net::INetworkEndpoint>> getConnectedClientEndpoints() const;
             size_t getClientCount() const;
             std::string getLobbyCode() const;
             std::shared_ptr<net::INetwork> getNetwork() const;
@@ -64,7 +64,7 @@ class Lobby {
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> getEventQueue();
             bool hasEvents() const;
 
-            void enqueuePacket(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> packet);
+            void enqueuePacket(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> packet);
 
             /* Received Packet Handling */
             void processIncomingPackets();
@@ -98,15 +98,16 @@ class Lobby {
 
             /* Network handling variable*/
             std::shared_ptr<net::INetwork> _network;
-            std::vector<std::tuple<uint8_t, asio::ip::udp::endpoint, std::string>> _clients;
+            std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> _clients;
             std::string _lobbyCode;
             std::map<uint8_t, bool> _clientsReady;
+            // std::map<uint8_t, bool> _clientsAlive;
             std::shared_ptr<pm::IPacketManager> _packet;
             uint32_t _sequenceNumber;
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> _eventQueue;
 
             /* Packet queue for incoming packets */
-            std::queue<std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>>> _incomingPackets;
+            std::queue<std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>>> _incomingPackets;
             std::mutex _packetMutex;
 
             /* ECS/Game handling variable */
@@ -133,12 +134,11 @@ class Lobby {
             std::vector<uint64_t> convertColliderComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertShootStatComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertScoreComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertAIMovementPatternComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertDamageComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertLifetimeComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertVelocityComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertAIMoverTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertAIShooterTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            // std::vector<uint64_t> convertAIMoverTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            // std::vector<uint64_t> convertAIShooterTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertControllableTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertEnemyProjectileTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertGameZoneColliderTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);

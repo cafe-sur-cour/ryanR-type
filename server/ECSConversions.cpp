@@ -142,24 +142,6 @@ std::vector<uint64_t> rserv::Lobby::convertScoreComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Lobby::convertAIMovementPatternComponent(
-    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
-    std::vector<uint64_t> data;
-    if (registry && registry->hasComponent<ecs::AIMovementPatternComponent>(i)) {
-        auto pattern = registry->getComponent<ecs::AIMovementPatternComponent>(i);
-        if (pattern) {
-            data.push_back(static_cast<uint64_t>(AI_MOVEMENT_PATTERN));
-            data.push_back(static_cast<uint64_t>(pattern->getPattern()));
-            data.push_back(packFloat(pattern->getZigzagAmplitude()));
-            data.push_back(packFloat(pattern->getZigzagFrequency()));
-            data.push_back(packFloat(pattern->getDetectionRange()));
-            data.push_back(packFloat(pattern->getVerticalDeadzone()));
-            data.push_back(packFloat(pattern->getTimer()));
-        }
-    }
-    return data;
-}
-
 std::vector<uint64_t> rserv::Lobby::convertDamageComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
@@ -200,23 +182,23 @@ std::vector<uint64_t> rserv::Lobby::convertVelocityComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertAIMoverTagComponent(
-    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
-    std::vector<uint64_t> data;
-    if (registry && registry->hasComponent<ecs::AIMoverTag>(i)) {
-        data.push_back(static_cast<uint64_t>(AI_MOVER_TAG));
-    }
-    return data;
-}
+// std::vector<uint64_t> rserv::Server::convertAIMoverTagComponent(
+//     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+//     std::vector<uint64_t> data;
+//     if (registry && registry->hasComponent<ecs::AIMoverTag>(i)) {
+//         data.push_back(static_cast<uint64_t>(AI_MOVER_TAG));
+//     }
+//     return data;
+// }
 
-std::vector<uint64_t> rserv::Server::convertAIShooterTagComponent(
-    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
-    std::vector<uint64_t> data;
-    if (registry && registry->hasComponent<ecs::AIShooterTag>(i)) {
-        data.push_back(static_cast<uint64_t>(AI_SHOOTER_TAG));
-    }
-    return data;
-}
+// std::vector<uint64_t> rserv::Server::convertAIShooterTagComponent(
+//     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+//     std::vector<uint64_t> data;
+//     if (registry && registry->hasComponent<ecs::AIShooterTag>(i)) {
+//         data.push_back(static_cast<uint64_t>(AI_SHOOTER_TAG));
+//     }
+//     return data;
+// }
 
 std::vector<uint64_t> rserv::Lobby::convertControllableTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {

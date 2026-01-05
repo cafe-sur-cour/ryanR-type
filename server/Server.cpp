@@ -214,7 +214,7 @@ void rserv::Server::processIncomingPackets() {
     } else if (this->_packet->getType() == constants::PACKET_CLIENT_READY) {
         this->onPacketReceived(this->_packet->getIdClient(), *this->_packet);
     } else if (this->_packet->getType() == constants::PACKET_REQUEST_LOBBY) {
-        this->requestCode(received.first);
+        this->requestCode(*received.first);
     } else if (this->_packet->getType() == constants::PACKET_CONNECT_TO_LOBBY) {
         this->processConnectToLobby(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_LOBBY_MASTER_REQUEST_START) {

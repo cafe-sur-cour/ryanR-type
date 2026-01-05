@@ -72,29 +72,25 @@ namespace rserv {
             void onClientDisconnected(uint8_t idClient);
             void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet);
 
-            std::vector<uint8_t> getConnectedClients() const override;
-            std::vector<std::shared_ptr<net::INetworkEndpoint>> getConnectedClientEndpoints() const override;
-            size_t getClientCount() const override;
+            std::vector<uint8_t> getConnectedClients() const;
+            std::vector<std::shared_ptr<net::INetworkEndpoint>> getConnectedClientEndpoints() const;
+            size_t getClientCount() const;
 
 
             /* Received Packet Handling */
-            void processIncomingPackets() override;
-            bool processConnections(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> client) override;
-            bool processDisconnections(uint8_t idClient) override;
-            bool processEvents(uint8_t idClient) override;
-            bool processEndOfGame(uint8_t idClient) override;
-            bool processWhoAmI(uint8_t idClient);
-            bool requestCode(const net::INetworkEndpoint& endpoint);
+            void processIncomingPackets();
+            bool processConnections(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> client);
+            bool processDisconnections(uint8_t idClient);
+            bool requestCode(const net::INetworkEndpoint &endpoint);
+            bool processConnectToLobby(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> payload);
+            bool processMasterStart(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> payload);
 
             /* Sent Packet Handling */
             bool connectionPacket(const net::INetworkEndpoint& endpoint);
-            bool gameStatePacket();
-            bool canStartPacket();
-            bool endGamePacket(bool isWin);
-            std::vector<uint64_t> spawnPacket(size_t entity, const std::string prefabName);
-            std::vector<uint64_t> deathPacket(size_t entity);
+            bool canStartPacket(std::vector<std::shared_ptr<net::INetworkEndpoint>> endpoints);
             bool serverStatusPacket();
-            bool sendCodeLobbyPacket(const net::INetworkEndpoint& endpoint);
+            bool sendCodeLobbyPacket(const net::INetworkEndpoint &endpoint);
+            bool lobbyConnectValuePacket(const net::INetworkEndpoint &endpoint, bool canConnect);
 
             uint32_t getSequenceNumber() const;
             std::shared_ptr<pm::IPacketManager> getPacketManager() const;

@@ -169,7 +169,7 @@ void ClientNetwork::sendLobbyConnection(std::string lobbyCode) {
         debug::debugLevel::INFO);
 
     this->_lobbyCode = lobbyCode;
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
 
@@ -196,6 +196,6 @@ void ClientNetwork::sendMasterStartGame() {
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
 
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
