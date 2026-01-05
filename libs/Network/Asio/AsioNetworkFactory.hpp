@@ -8,10 +8,10 @@
 #ifndef ASIO_NETWORK_FACTORY_HPP_
     #define ASIO_NETWORK_FACTORY_HPP_
 
-#include "../INetworkFactory.hpp"
 #include "AsioSocket.hpp"
 #include "AsioResolver.hpp"
 #include "AsioEventLoop.hpp"
+#include "../../../common/interfaces/INetworkFactory.hpp"
 
 namespace net {
 

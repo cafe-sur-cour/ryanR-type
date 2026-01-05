@@ -11,7 +11,7 @@
 #include <memory>
 #include <string>
 #include "../ANetwork.hpp"
-#include "../INetworkEndpoint.hpp"
+#include "../../../common/interfaces/INetworkEndpoint.hpp"
 #include "../../../common/interfaces/IBuffer.hpp"
 #include "../../../common/interfaces/IPacketManager.hpp"
 

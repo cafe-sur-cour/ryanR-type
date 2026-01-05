@@ -8,9 +8,9 @@
 #ifndef ASIOEVENTLOOP_HPP_
 #define ASIOEVENTLOOP_HPP_
 
-#include "../IEventLoop.hpp"
 #include <asio.hpp>
 #include <memory>
+#include "../../../common/interfaces/IEventLoop.hpp"
 
 namespace net {
 

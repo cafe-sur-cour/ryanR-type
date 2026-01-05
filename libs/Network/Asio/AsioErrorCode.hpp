@@ -11,7 +11,7 @@
 #include <string>
 #include <memory>
 #include <asio.hpp>
-#include "../INetworkErrorCode.hpp"
+#include "../../../common/interfaces/INetworkErrorCode.hpp"
 
 namespace net {
 

@@ -18,7 +18,6 @@
 #include "../common/ECS/entity/Entity.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/Parser/Parser.hpp"
-#include "../libs/Network/Asio/AsioEndpoint.hpp"
 
 bool rserv::Server::connectionPacket(const net::INetworkEndpoint& endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,

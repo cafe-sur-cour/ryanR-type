@@ -8,8 +8,8 @@
 #ifndef NETWORK_FACTORY_HPP_
     #define NETWORK_FACTORY_HPP_
 
-#include "INetworkFactory.hpp"
-#include "NetworkConfig.hpp"
+    #include "NetworkConfig.hpp"
+    #include "../../common/interfaces/INetworkFactory.hpp"
 
 #ifdef NETWORK_USE_ASIO
     #include "Asio/AsioNetworkFactory.hpp"
