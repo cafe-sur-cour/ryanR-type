@@ -21,6 +21,7 @@
 #include "../../../../../common/InputMapping/IInputProvider.hpp"
 #include "../Settings/SettingsState.hpp"
 #include "../LobbyWaiting/LobbyWaitingState.hpp"
+#include "../Register/RegisterState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -322,6 +323,18 @@ MainMenuState::MainMenuState(
     _registerButton->setNormalColor(colors::BUTTON_PRIMARY);
     _registerButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
     _registerButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _registerButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<RegisterState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _registerButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<RegisterState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
 
     _loginButton = std::make_shared<ui::Button>(_resourceManager);
     _loginButton->setText("Log In");
