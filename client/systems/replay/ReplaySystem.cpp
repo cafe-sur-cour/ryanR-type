@@ -12,14 +12,15 @@
 #include <memory>
 #include <unordered_set>
 #include <string>
+#include <vector>
+#include <algorithm>
 #include "../../../common/ECS/view/View.hpp"
 #include "../../constants.hpp"
 
 namespace ecs {
 
 ReplaySystem::ReplaySystem() : _totalElapsedTime(0.0f) {
-    std::filesystem::path replayDir = "saves/replays";
-    std::filesystem::path replayFile = replayDir / "replay.json";
+    std::filesystem::path replayDir = constants::REPLAY_DIRECTORY;
 
     try {
         std::filesystem::create_directories(replayDir);
@@ -28,7 +29,8 @@ ReplaySystem::ReplaySystem() : _totalElapsedTime(0.0f) {
         return;
     }
 
-    std::ofstream file(replayFile, std::ios::trunc);
+    _currentReplayFile = getNextReplayFile();
+    std::ofstream file(_currentReplayFile, std::ios::trunc);
     file.close();
 }
 
@@ -366,22 +368,38 @@ void ReplaySystem::update(
 }
 
 void ReplaySystem::saveReplayToFile(const nlohmann::json& frameData) {
-    std::filesystem::path replayDir = "saves/replays";
-    std::filesystem::path replayFile = replayDir / "replay.json";
-
-    try {
-        std::filesystem::create_directories(replayDir);
-    } catch (const std::filesystem::filesystem_error& e) {
-        std::cerr << "Failed to create replay directories: " << e.what() << std::endl;
-        return;
-    }
-
-    std::ofstream file(replayFile, std::ios::app);
+    std::ofstream file(_currentReplayFile, std::ios::app);
     if (file.is_open()) {
         file << frameData.dump() << std::endl;
         file.close();
     } else {
-        std::cerr << "Failed to save frame to " << replayFile << std::endl;
+        std::cerr << "Failed to save frame to " << _currentReplayFile << std::endl;
+    }
+}
+
+std::filesystem::path ReplaySystem::getNextReplayFile() {
+    std::filesystem::path replayDir = constants::REPLAY_DIRECTORY;
+
+    std::vector<std::filesystem::path> existingReplays;
+    if (std::filesystem::exists(replayDir)) {
+        for (const auto& entry : std::filesystem::directory_iterator(replayDir)) {
+            if (entry.is_regular_file() && entry.path().extension() == ".json" &&
+                entry.path().stem().string().find(constants::REPLAY_FILE_PREFIX) == 0) {
+                existingReplays.push_back(entry.path());
+            }
+        }
+    }
+
+    if (existingReplays.size() < constants::MAX_REPLAY_FILES) {
+        return replayDir / (constants::REPLAY_FILE_PREFIX +
+            std::to_string(existingReplays.size() + 1) + ".json");
+    } else {
+        std::sort(existingReplays.begin(), existingReplays.end(),
+            [](const std::filesystem::path& a, const std::filesystem::path& b) {
+                return std::filesystem::last_write_time(a) <
+                    std::filesystem::last_write_time(b);
+            });
+        return existingReplays[0];
     }
 }
 

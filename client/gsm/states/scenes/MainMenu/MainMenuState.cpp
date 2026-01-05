@@ -240,7 +240,7 @@ MainMenuState::MainMenuState(
     });
 
     _replayButton = std::make_shared<ui::Button>(resourceManager);
-    _replayButton->setText("Replay");
+    _replayButton->setText(constants::REPLAY_BUTTON_TEXT);
     _replayButton->setSize(math::Vector2f(576.f, 108.f));
     _replayButton->setNormalColor(colors::BUTTON_SECONDARY);
     _replayButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);

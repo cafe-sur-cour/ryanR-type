@@ -61,34 +61,11 @@ ReplayState::ReplayState(
         }
     });
 
-    _playButton = std::make_shared<ui::Button>(_resourceManager);
-    _playButton->setText("Play Replay");
-    _playButton->setSize(math::Vector2f(300.f, 50.f));
-    _playButton->setOnRelease([this]() {
-        loadReplay();
-        _isPlaying = true;
-    });
-
     _statusText = std::make_shared<ui::Text>(_resourceManager);
-    _statusText->setText("Replay not loaded");
+    _statusText->setText("Select a replay to load");
     _statusText->setSize(math::Vector2f(400.f, 50.f));
 
-    ui::LayoutConfig layoutConfig;
-    layoutConfig.direction = ui::LayoutDirection::Vertical;
-    layoutConfig.alignment = ui::LayoutAlignment::Center;
-    layoutConfig.spacing = 20.0f;
-    layoutConfig.padding = math::Vector2f(0.0f, 0.0f);
-    layoutConfig.anchorX = ui::AnchorX::Center;
-    layoutConfig.anchorY = ui::AnchorY::Center;
-    layoutConfig.offset = math::Vector2f(0.0f, 0.0f);
-
-    auto layout = std::make_shared<ui::UILayout>(_resourceManager, layoutConfig);
-    layout->setSize(math::Vector2f(400.f, 200.f));
-    layout->addElement(_playButton);
-    layout->addElement(_statusText);
-    layout->addElement(_backButton);
-
-    _uiManager->addElement(layout);
+    createReplaySelectionUI();
 }
 
 void ReplayState::enter() {
@@ -153,7 +130,6 @@ void ReplayState::exit() {
     window->setViewCenter(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
     _uiManager->clearElements();
     _backButton.reset();
-    _playButton.reset();
     _statusText.reset();
     _background.reset();
     _mouseHandler.reset();
@@ -168,45 +144,6 @@ void ReplayState::renderUI() {
 
     if (_isPlaying && !_frames.empty()) {
         renderReplaySprites();
-    }
-}
-
-void ReplayState::loadReplay() {
-    std::filesystem::path replayFile = "saves/replays/replay.json";
-    std::ifstream file(replayFile);
-    if (!file.is_open()) {
-        _statusText->setText("Replay file not found");
-        return;
-    }
-
-    std::string line;
-    size_t frameCount = 0;
-    _frames.clear();
-    _totalReplayTime = 0.0f;
-
-    while (std::getline(file, line)) {
-        if (line.empty()) continue;
-        try {
-            nlohmann::json frame = nlohmann::json::parse(line);
-            if (frame.contains(constants::REPLAY_TOTAL_TIME)) {
-                _frames.push_back(frame);
-                frameCount++;
-            }
-        } catch (const std::exception& e) {
-            std::cout << "Error parsing line: " << e.what() << std::endl;
-        }
-    }
-
-    file.close();
-
-    if (frameCount > 0) {
-        _totalReplayTime = _frames.back()[constants::REPLAY_TOTAL_TIME].get<float>();
-        _statusText->setText("Replay loaded: " + std::to_string(frameCount) +
-            " frames (" + std::to_string(_totalReplayTime) + "s)");
-        _replayTime = 0.0f;
-        _currentFrameIndex = 0;
-    } else {
-        _statusText->setText("No valid frames in replay file");
     }
 }
 
@@ -637,6 +574,130 @@ void ReplayState::processAudioForFrame(const nlohmann::json& frame) {
                 audio->playSound(soundPath, volume);
             }
         }
+    }
+}
+
+std::vector<std::filesystem::path> ReplayState::getAvailableReplays() {
+    std::vector<std::filesystem::path> replays;
+    std::filesystem::path replayDir = constants::REPLAY_DIRECTORY;
+
+    if (std::filesystem::exists(replayDir) && std::filesystem::is_directory(replayDir)) {
+        for (const auto& entry : std::filesystem::directory_iterator(replayDir)) {
+            if (entry.is_regular_file() && entry.path().extension() == ".json" &&
+                entry.path().stem().string().find(constants::REPLAY_FILE_PREFIX) == 0) {
+                replays.push_back(entry.path());
+            }
+        }
+
+        std::sort(replays.begin(), replays.end(),
+            [](const std::filesystem::path& a, const std::filesystem::path& b) {
+                return std::filesystem::last_write_time(a) >
+                    std::filesystem::last_write_time(b);
+            });
+    }
+
+    return replays;
+}
+
+void ReplayState::createReplaySelectionUI() {
+    auto availableReplays = getAvailableReplays();
+
+    ui::LayoutConfig layoutConfig;
+    layoutConfig.direction = ui::LayoutDirection::Vertical;
+    layoutConfig.alignment = ui::LayoutAlignment::Center;
+    layoutConfig.spacing = 15.0f;
+    layoutConfig.padding = math::Vector2f(20.0f, 20.0f);
+    layoutConfig.anchorX = ui::AnchorX::Center;
+    layoutConfig.anchorY = ui::AnchorY::Center;
+    layoutConfig.offset = math::Vector2f(0.0f, 0.0f);
+
+    auto layout = std::make_shared<ui::UILayout>(_resourceManager, layoutConfig);
+    layout->setSize(math::Vector2f(500.f, 400.f));
+
+    auto titleText = std::make_shared<ui::Text>(_resourceManager);
+    titleText->setText("Select Replay");
+    titleText->setSize(math::Vector2f(300.f, 40.f));
+    layout->addElement(titleText);
+
+    if (availableReplays.empty()) {
+        auto noReplaysText = std::make_shared<ui::Text>(_resourceManager);
+        noReplaysText->setText("No replays available");
+        noReplaysText->setSize(math::Vector2f(300.f, 30.f));
+        layout->addElement(noReplaysText);
+    } else {
+        for (size_t i = 0; i < availableReplays.size() && i < 5; ++i) {
+            const auto& replayPath = availableReplays[i];
+
+            auto writeTime = std::filesystem::last_write_time(replayPath);
+            auto timeT = std::chrono::system_clock::to_time_t(
+                std::chrono::system_clock::from_time_t(0) +
+                std::chrono::duration_cast<std::chrono::system_clock::duration>(
+                    writeTime - std::filesystem::file_time_type::clock::now() +
+                    std::chrono::system_clock::now().time_since_epoch()
+                )
+            );
+
+            std::stringstream ss;
+            ss << std::put_time(std::localtime(&timeT), "%Y-%m-%d %H:%M");
+
+            auto replayButton = std::make_shared<ui::Button>(_resourceManager);
+            replayButton->setText("Replay " + std::to_string(i + 1) + " (" + ss.str() + ")");
+            replayButton->setSize(math::Vector2f(400.f, 40.f));
+            replayButton->setNormalColor(colors::BUTTON_PRIMARY);
+            replayButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+            replayButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+
+            replayButton->setOnRelease([this, replayPath]() {
+                loadReplay(replayPath);
+                _isPlaying = true;
+            });
+
+            _replayButtons.push_back(replayButton);
+            layout->addElement(replayButton);
+        }
+    }
+
+    layout->addElement(_statusText);
+    layout->addElement(_backButton);
+
+    _uiManager->addElement(layout);
+}
+
+void ReplayState::loadReplay(const std::filesystem::path& replayFile) {
+    std::ifstream file(replayFile);
+    if (!file.is_open()) {
+        _statusText->setText("Failed to open replay file");
+        return;
+    }
+
+    std::string line;
+    size_t frameCount = 0;
+    _frames.clear();
+    _totalReplayTime = 0.0f;
+
+    while (std::getline(file, line)) {
+        if (line.empty()) continue;
+        try {
+            nlohmann::json frame = nlohmann::json::parse(line);
+            if (frame.contains(constants::REPLAY_TOTAL_TIME)) {
+                _frames.push_back(frame);
+                frameCount++;
+            }
+        } catch (const std::exception& e) {
+            std::cout << "Error parsing line: " << e.what() << std::endl;
+        }
+    }
+
+    file.close();
+
+    if (frameCount > 0) {
+        _totalReplayTime = _frames.back()[constants::REPLAY_TOTAL_TIME].get<float>();
+        _statusText->setText("Replay loaded: " + std::to_string(frameCount) +
+            " frames (" + std::to_string(_totalReplayTime) + "s)");
+        _replayTime = 0.0f;
+        _currentFrameIndex = 0;
+    } else {
+        _statusText->setText("No valid frames in replay file");
     }
 }
 
