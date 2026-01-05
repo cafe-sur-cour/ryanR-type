@@ -53,8 +53,6 @@
 #include "../../../../systems/rendering/GameZoneViewSystem.hpp"
 #include "../../../../systems/audio/MusicSystem.hpp"
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
-#include "../../../../../common/systems/ai/AIMovementSystem.hpp"
-#include "../../../../../common/systems/ai/AIShootingSystem.hpp"
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../../common/components/permanent/HealthComponent.hpp"
 #include "../../../../ClientNetwork.hpp"
