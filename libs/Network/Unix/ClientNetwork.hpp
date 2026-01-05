@@ -12,8 +12,8 @@
 #include <memory>
 #include <string>
 #include "../ANetwork.hpp"
-#include "../../Buffer/IBuffer.hpp"
-#include "../../Packet/IPacketManager.hpp"
+#include "../../../common/interfaces/IBuffer.hpp"
+#include "../../../common/interfaces/IPacketManager.hpp"
 
 namespace net {
 

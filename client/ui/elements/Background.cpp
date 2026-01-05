@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <string>
 #include "../../../common/constants.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 
 namespace ui {
 
