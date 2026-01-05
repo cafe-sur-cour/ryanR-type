@@ -237,6 +237,7 @@ namespace constants {
     const std::string GAME_ZONE_PREFAB = "gamezone";
     const std::string SMALL_EXPLOSION = "small_explosion";
     const std::string BIG_EXPLOSION = "big_explosion";
+    const std::string OBSTACLE_1 = "obstacle1";
 
 
     constexpr float DEFAULT_TIMER = 0.0f;
