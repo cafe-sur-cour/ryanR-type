@@ -19,7 +19,7 @@
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/Parser/Parser.hpp"
 
-bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
+bool rserv::Server::connectionPacket(const net::INetworkEndpoint& endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
         this->_sequenceNumber, constants::PACKET_ACCEPT, std::vector<uint64_t>{
         static_cast<uint64_t>(this->_nextClientId)});
@@ -27,7 +27,7 @@ bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
     if (!this->_network->sendTo(endpoint, packet)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER NETWORK] Failed to send connection acceptance header to "
-            + endpoint.address().to_string() + ":" + std::to_string(endpoint.port()),
+            + endpoint.getAddress() + ":" + std::to_string(endpoint.getPort()),
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
@@ -72,7 +72,7 @@ bool rserv::Server::gameStatePacket() {
                 payload
             );
 
-            if (!this->_network->sendTo(std::get<1>(client), packet)) {
+            if (!this->_network->sendTo(*std::get<1>(client), packet)) {
                 debug::Debug::printDebug(this->_config->getIsDebug(),
                     "[SERVER NETWORK] Failed to send game state packet to client " +
                     std::to_string(static_cast<int>(clientId)),
@@ -206,7 +206,7 @@ bool rserv::Server::serverStatusPacket() {
             payload
         );
 
-        if (!this->_network->sendTo(std::get<1>(client), packet)) {
+        if (!this->_network->sendTo(*std::get<1>(client), packet)) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER NETWORK] Failed to send server status packet to client " +
                 std::to_string(static_cast<int>(clientId)),
@@ -219,7 +219,7 @@ bool rserv::Server::serverStatusPacket() {
     return true;
 }
 
-bool rserv::Server::sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint) {
+bool rserv::Server::sendCodeLobbyPacket(const net::INetworkEndpoint& endpoint) {
     /* Create random code */
     std::string lobbyCode;
     bool isUnique = false;
@@ -262,13 +262,15 @@ bool rserv::Server::sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint) {
     /* Send to requested client*/
     if (!this->_network->sendTo(endpoint, packet)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER NETWORK] Failed to send lobby code packet to "
-            + endpoint.address().to_string() + ":" + std::to_string(endpoint.port()),
+            "[SERVER NETWORK] Failed to send lobby code packet to " +
+            endpoint.getAddress() + ":" + std::to_string(endpoint.getPort()),
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
     /* Add to lobby vector, code and client endpoint */
-    this->lobbys.push_back(std::make_pair(lobbyCode, endpoint));
+    auto endpointCopy = std::make_shared<net::NetworkEndpoint>(
+        dynamic_cast<const net::NetworkEndpoint&>(endpoint));
+    this->lobbys.push_back(std::make_pair(lobbyCode, endpointCopy));
     this->_sequenceNumber++;
     return true;
 }
