@@ -17,6 +17,8 @@
 #include "../InGame/InGameState.hpp"
 #include "../GameEnd/GameEndState.hpp"
 #include "../../../gsmStates.hpp"
+#include "../../../../../common/components/tags/PlayerTag.hpp"
+#include "../../../../../common/components/permanent/ScoreComponent.hpp"
 
 namespace gsm {
 
@@ -40,6 +42,20 @@ void LevelCompleteState::update(float deltaTime) {
 
         if (hasNextMap) {
             auto registry = _resourceManager->get<ecs::Registry>();
+
+            _savedPlayerScores.clear();
+            if (registry) {
+                auto playerView = registry->view<ecs::PlayerTag>();
+                for (auto entity : playerView) {
+                    if (registry->hasComponent<ecs::ScoreComponent>(entity)) {
+                        auto scoreComp = registry->getComponent<ecs::ScoreComponent>(entity);
+                        _savedPlayerScores.push_back(scoreComp->getScore());
+                    } else {
+                        _savedPlayerScores.push_back(0);
+                    }
+                }
+            }
+
             if (registry) {
                 registry->clearAllEntities();
             }
@@ -54,12 +70,21 @@ void LevelCompleteState::update(float deltaTime) {
             if (server && prefabMgr && registry) {
                 std::string playerPrefab = "player";
                 auto clientIds = server->getConnectedClients();
+                size_t playerIndex = 0;
                 for (auto _ : clientIds) {
-                    prefabMgr->createEntityFromPrefab(
+                    auto newEntity = prefabMgr->createEntityFromPrefab(
                         playerPrefab,
                         registry,
                         ecs::EntityCreationContext::forServer()
                     );
+
+                    if (playerIndex < _savedPlayerScores.size()) {
+                        if (registry->hasComponent<ecs::ScoreComponent>(newEntity)) {
+                            registry->getComponent<ecs::ScoreComponent>(newEntity)
+                                ->setScore(_savedPlayerScores[playerIndex]);
+                        }
+                    }
+                    playerIndex++;
                 }
             }
 
