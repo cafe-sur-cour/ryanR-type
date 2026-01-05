@@ -14,6 +14,7 @@
 #include "../../../../libs/Multimedia/EventTypes.hpp"
 #include "../../../../common/interfaces/IWindow.hpp"
 #include "../../../colors.hpp"
+#include "../../../constants.hpp"
 
 namespace ui {
 
