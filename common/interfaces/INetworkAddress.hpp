@@ -20,7 +20,7 @@ class INetworkAddress {
         virtual std::string toString() const = 0;
 
         virtual ~INetworkAddress() = default;
-        virtual INetworkAddress& operator=(const INetworkAddress& other) = 0;
+        virtual std::shared_ptr<INetworkAddress> operator=(const INetworkAddress& other) = 0;
         virtual std::shared_ptr<void> getInternalAddress() = 0;
         virtual std::shared_ptr<const void> getInternalAddress() const = 0;
         virtual void setFromInternal(std::shared_ptr<void> internalAddr) = 0;

@@ -268,8 +268,8 @@ bool rserv::Server::sendCodeLobbyPacket(const net::INetworkEndpoint& endpoint) {
         return false;
     }
     /* Add to lobby vector, code and client endpoint */
-    const auto& asioEndpoint = dynamic_cast<const net::AsioEndpoint&>(endpoint);
-    this->lobbys.push_back(std::make_pair(lobbyCode, asioEndpoint.toAsioEndpoint()));
+    auto endpointCopy = std::make_shared<net::NetworkEndpoint>(dynamic_cast<const net::NetworkEndpoint&>(endpoint));
+    this->lobbys.push_back(std::make_pair(lobbyCode, endpointCopy));
     this->_sequenceNumber++;
     return true;
 }

@@ -26,8 +26,8 @@ class AsioEventLoop : public IEventLoop {
         void post(std::function<void()> task) override;
         void restart() override;
 
-        asio::io_context& getIoContext() { return _ioContext; }
-        const asio::io_context& getIoContext() const { return _ioContext; }
+        std::shared_ptr<asio::io_context> getIoContext() { return std::shared_ptr<asio::io_context>(&_ioContext, [](asio::io_context*){}); }
+        std::shared_ptr<const asio::io_context> getIoContext() const { return std::shared_ptr<const asio::io_context>(&_ioContext, [](const asio::io_context*){}); }
 
     private:
         asio::io_context _ioContext;

@@ -22,24 +22,25 @@ net::AsioResolver::AsioResolver(std::shared_ptr<IEventLoop> eventLoop) :
     if (!asioLoop) {
         throw std::runtime_error("EventLoop is not an AsioEventLoop");
     }
-    _impl->resolver = std::make_shared<asio::ip::udp::resolver>(asioLoop->getIoContext());
+    auto ioContext = asioLoop->getIoContext();
+    _impl->resolver = std::make_shared<asio::ip::udp::resolver>(*ioContext);
 }
 
 net::AsioResolver::~AsioResolver() = default;
 
 std::vector<std::shared_ptr<net::INetworkEndpoint>> net::AsioResolver::resolve(
-    const std::string& host, const std::string& port, INetworkErrorCode& ec) {
+    const std::string& host, const std::string& port, std::shared_ptr<INetworkErrorCode> ec) {
     std::vector<std::shared_ptr<net::INetworkEndpoint>> endpoints;
-    auto asioEc = std::static_pointer_cast<asio::error_code>(ec.getInternalErrorCode());
+    auto asioEc = std::static_pointer_cast<asio::error_code>(ec->getInternalErrorCode());
     try {
         auto results = _impl->resolver->resolve(asio::ip::udp::v4(), host, port, *asioEc);
-        if (!ec.hasError()) {
+        if (!ec->hasError()) {
             for (const auto& entry : results) {
                 endpoints.push_back(std::make_shared<AsioEndpoint>(entry.endpoint()));
             }
         }
     } catch (const std::exception&) {
-        ec.setError(NetworkError::OTHER, "Resolution failed");
+        ec->setError(NetworkError::OTHER, "Resolution failed");
     }
     return endpoints;
 }

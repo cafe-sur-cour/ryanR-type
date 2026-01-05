@@ -85,12 +85,13 @@ void net::AsioAddress::setFromInternal(std::shared_ptr<void> internalAddr) {
     }
 }
 
-net::INetworkAddress& net::AsioAddress::operator=(const INetworkAddress& other) {
+std::shared_ptr<net::INetworkAddress> net::AsioAddress::operator=(
+    const INetworkAddress& other) {
     if (this != &other) {
         auto otherInternal = const_cast<INetworkAddress&>(other).getInternalAddress();
         if (otherInternal) {
             _impl->address = *static_cast<asio::ip::address*>(otherInternal.get());
         }
     }
-    return *this;
+    return std::shared_ptr<INetworkAddress>(this, [](INetworkAddress*){});
 }

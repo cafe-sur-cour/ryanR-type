@@ -21,7 +21,7 @@ class INetworkResolver {
     public:
         virtual ~INetworkResolver() = default;
         virtual std::vector<std::shared_ptr<INetworkEndpoint>> resolve(const std::string& host,
-            const std::string& port, INetworkErrorCode& ec) = 0;
+            const std::string& port, std::shared_ptr<INetworkErrorCode> ec) = 0;
 };
 
 } // namespace net

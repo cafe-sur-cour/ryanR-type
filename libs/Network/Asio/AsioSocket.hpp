@@ -29,12 +29,12 @@ class AsioSocket : public INetworkSocket {
     public:
         explicit AsioSocket(std::shared_ptr<IEventLoop> eventLoop);
         ~AsioSocket() override;
-        bool open(INetworkErrorCode& ec) override;
-        bool bind(const INetworkEndpoint& endpoint, INetworkErrorCode& ec) override;
-        std::size_t sendTo(const std::vector<uint8_t>& data, const INetworkEndpoint& endpoint, int flags, INetworkErrorCode& ec) override;
-        std::size_t receiveFrom(std::vector<uint8_t>& buffer, INetworkEndpoint& sender, int flags, INetworkErrorCode& ec) override;
-        bool setNonBlocking(bool nonBlocking, INetworkErrorCode& ec) override;
-        bool close(INetworkErrorCode& ec) override;
+        bool open(std::shared_ptr<INetworkErrorCode> ec) override;
+        bool bind(const INetworkEndpoint& endpoint, std::shared_ptr<INetworkErrorCode> ec) override;
+        std::size_t sendTo(const std::vector<uint8_t>& data, const INetworkEndpoint& endpoint, int flags, std::shared_ptr<INetworkErrorCode> ec) override;
+        std::size_t receiveFrom(std::shared_ptr<std::vector<uint8_t>> buffer, std::shared_ptr<INetworkEndpoint> sender, int flags, std::shared_ptr<INetworkErrorCode> ec) override;
+        bool setNonBlocking(bool nonBlocking, std::shared_ptr<INetworkErrorCode> ec) override;
+        bool close(std::shared_ptr<INetworkErrorCode> ec) override;
         bool isOpen() const override;
 
     private:

@@ -118,7 +118,7 @@ namespace rserv {
             std::shared_ptr<ResourceManager> _resourceManager;
             std::chrono::steady_clock::time_point _lastGameStateTime;
 
-            std::vector<std::pair<std::string, asio::ip::udp::endpoint>> lobbys;
+            std::vector<std::pair<std::string, std::shared_ptr<net::INetworkEndpoint>>> lobbys;
             ComponentDeltaTracker _deltaTracker;
 
             /* Functions to build game state packets */

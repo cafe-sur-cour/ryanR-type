@@ -45,10 +45,10 @@ net::ServerNetwork::~ServerNetwork() {
 void net::ServerNetwork::init(uint16_t port, const std::string host) {
     _port = port;
     _socket = std::make_shared<NetworkSocket>(_eventLoop);
-    NetworkErrorCode ec;
+    auto ec = std::make_shared<NetworkErrorCode>();
     if (!_socket->open(ec)) {
         throw std::runtime_error(std::string(
-            "[SERVER NETWORK] Failed to open socket: ") + ec.message());
+            "[SERVER NETWORK] Failed to open socket: ") + ec->message());
     }
 
     NetworkAddress bindAddress;
@@ -59,10 +59,10 @@ void net::ServerNetwork::init(uint16_t port, const std::string host) {
         if (bindAddress.toString().empty()) {
             auto resolver = std::make_shared<NetworkResolver>(_eventLoop);
             auto results = resolver->resolve(host, std::to_string(_port), ec);
-            if (ec || results.empty()) {
+            if (*ec || results.empty()) {
                 throw std::runtime_error(
                     std::string("[SERVER NETWORK] Failed to resolve host '")
-                    + host + "': " + (ec.hasError() ? ec.message() : "no results"));
+                    + host + "': " + (ec->hasError() ? ec->message() : "no results"));
             }
             bindAddress = NetworkAddress::fromString(results[0]->getAddress());
         }
@@ -71,12 +71,12 @@ void net::ServerNetwork::init(uint16_t port, const std::string host) {
     NetworkEndpoint bindEndpoint(bindAddress, _port);
     if (!_socket->bind(bindEndpoint, ec)) {
         throw std::runtime_error(
-            std::string("[SERVER NETWORK] Failed to bind socket: ") + ec.message());
+            std::string("[SERVER NETWORK] Failed to bind socket: ") + ec->message());
     }
 
     if (!_socket->setNonBlocking(true, ec)) {
         throw std::runtime_error(
-            std::string("[SERVER NETWORK] Failed to set non-blocking: ") + ec.message());
+            std::string("[SERVER NETWORK] Failed to set non-blocking: ") + ec->message());
     }
 
     _isRunning = true;
@@ -85,11 +85,11 @@ void net::ServerNetwork::init(uint16_t port, const std::string host) {
 void net::ServerNetwork::stop() {
     if (_socket && _socket->isOpen()) {
         try {
-            NetworkErrorCode ec;
+            auto ec = std::make_shared<NetworkErrorCode>();
             _socket->close(ec);
-            if (ec) {
+            if (*ec) {
                 std::cerr << "[SERVER NETWORK] Warning: Error closing socket: "
-                          << ec.message() << std::endl;
+                          << ec->message() << std::endl;
             }
         } catch (const std::exception& e) {
             std::cerr << "[SERVER NETWORK] Warning: Exception closing socket: "
@@ -110,10 +110,10 @@ bool net::ServerNetwork::sendTo(const net::INetworkEndpoint& endpoint,
         return false;
     }
 
-    NetworkErrorCode ec;
+    auto ec = std::make_shared<NetworkErrorCode>();
     _socket->sendTo(packet, endpoint, 0, ec);
-    if (ec) {
-        std::cerr << "[SERVER NETWORK] Send error: " << ec.message() << std::endl;
+    if (*ec) {
+        std::cerr << "[SERVER NETWORK] Send error: " << ec->message() << std::endl;
         return false;
     }
     return true;
@@ -151,21 +151,21 @@ std::vector<uint8_t> net::ServerNetwork::receiveFrom(
 
 std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>>
     net::ServerNetwork::receiveAny() {
-    NetworkErrorCode ec;
+    auto ec = std::make_shared<NetworkErrorCode>();
 
-    std::vector<uint8_t> buffer(MAX_UDP_PACKET_SIZE);
-    NetworkEndpoint sender;
+    auto buffer = std::make_shared<std::vector<uint8_t>>(MAX_UDP_PACKET_SIZE);
+    auto sender = std::make_shared<NetworkEndpoint>();
     std::size_t bytes = _socket->receiveFrom(buffer, sender, 0, ec);
-    if (ec) {
-        if (ec == net::NetworkError::WOULD_BLOCK || ec == net::NetworkError::AGAIN) {
+    if (*ec) {
+        if (*ec == net::NetworkError::WOULD_BLOCK || *ec == net::NetworkError::AGAIN) {
             return {};
         }
-        std::cerr << "[SERVER NETWORK] Receive error: " << ec.message() << std::endl;
+        std::cerr << "[SERVER NETWORK] Receive error: " << ec->message() << std::endl;
         return {};
     }
 
-    buffer.resize(bytes);
-    return std::make_pair(std::make_shared<NetworkEndpoint>(sender), buffer);
+    buffer->resize(bytes);
+    return std::make_pair(std::make_shared<NetworkEndpoint>(*sender), *buffer);
 }
 
 extern "C" {

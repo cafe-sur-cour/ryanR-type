@@ -21,12 +21,12 @@ class INetworkErrorCode;
 class INetworkSocket {
     public:
         virtual ~INetworkSocket() = default;
-        virtual bool open(INetworkErrorCode& ec) = 0;
-        virtual bool bind(const INetworkEndpoint& endpoint, INetworkErrorCode& ec) = 0;
-        virtual std::size_t sendTo(const std::vector<uint8_t>& data, const INetworkEndpoint& endpoint, int flags, INetworkErrorCode& ec) = 0;
-        virtual std::size_t receiveFrom(std::vector<uint8_t>& buffer, INetworkEndpoint& sender, int flags, INetworkErrorCode& ec) = 0;
-        virtual bool setNonBlocking(bool nonBlocking, INetworkErrorCode& ec) = 0;
-        virtual bool close(INetworkErrorCode& ec) = 0;
+        virtual bool open(std::shared_ptr<INetworkErrorCode> ec) = 0;
+        virtual bool bind(const INetworkEndpoint& endpoint, std::shared_ptr<INetworkErrorCode> ec) = 0;
+        virtual std::size_t sendTo(const std::vector<uint8_t>& data, const INetworkEndpoint& endpoint, int flags, std::shared_ptr<INetworkErrorCode> ec) = 0;
+        virtual std::size_t receiveFrom(std::shared_ptr<std::vector<uint8_t>> buffer, std::shared_ptr<INetworkEndpoint> sender, int flags, std::shared_ptr<INetworkErrorCode> ec) = 0;
+        virtual bool setNonBlocking(bool nonBlocking, std::shared_ptr<INetworkErrorCode> ec) = 0;
+        virtual bool close(std::shared_ptr<INetworkErrorCode> ec) = 0;
         virtual bool isOpen() const = 0;
 };
 

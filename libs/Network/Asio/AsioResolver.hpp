@@ -31,7 +31,7 @@ class AsioResolver : public INetworkResolver {
     public:
         AsioResolver(std::shared_ptr<IEventLoop> eventLoop);
         ~AsioResolver() override;
-        std::vector<std::shared_ptr<INetworkEndpoint>> resolve(const std::string& host, const std::string& port, INetworkErrorCode& ec) override;
+        std::vector<std::shared_ptr<INetworkEndpoint>> resolve(const std::string& host, const std::string& port, std::shared_ptr<INetworkErrorCode> ec) override;
 
     private:
         std::unique_ptr<Impl> _impl;
