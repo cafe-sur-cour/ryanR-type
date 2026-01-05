@@ -19,7 +19,7 @@
 
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
-#include "../libs/Network/INetwork.hpp"
+#include "../common/interfaces/INetwork.hpp"
 #include "../common/constants.hpp"
 #include "../common/resourceManager/ResourceManager.hpp"
 #include "../common/gsm/IGameStateMachine.hpp"

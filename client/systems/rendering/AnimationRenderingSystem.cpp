@@ -15,7 +15,7 @@
 #include "../../../common/components/permanent/VelocityComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/ECS/entity/Entity.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 #include "../../../common/Parser/Animation/AnimationConditionFactory.hpp"
 #include "../../../common/constants.hpp"
 

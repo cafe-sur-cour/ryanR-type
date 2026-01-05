@@ -7,7 +7,7 @@
 
 #include "Text.hpp"
 #include <string>
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 
 namespace ui {
 
