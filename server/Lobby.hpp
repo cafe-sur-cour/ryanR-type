@@ -34,6 +34,7 @@
 #include "../common/InputMapping/InputAction.hpp"
 #include "../common/resourceManager/ResourceManager.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
+#include "gsm/machine/GameStateMachine.hpp"
 #include "Signal.hpp"
 
 namespace rserv {
@@ -113,6 +114,7 @@ class Lobby {
             /* ECS/Game handling variable */
             bool _gameStarted;
             std::shared_ptr<ResourceManager> _resourceManager;
+            std::shared_ptr<gsm::GameStateMachine> _gsm;
             std::chrono::steady_clock::time_point _lastGameStateTime;
             float _statusUpdateTimer;
 

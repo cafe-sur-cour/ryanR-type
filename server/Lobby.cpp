@@ -37,6 +37,7 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
     this->_lastGameStateTime = std::chrono::steady_clock::now();
     this->_statusUpdateTimer = 0.0f;
     this->_running = true;
+    this->_gsm = nullptr;
 
     this->_convertFunctions = {
         std::bind(&rserv::Lobby::convertTagComponent, this,
@@ -318,15 +319,10 @@ bool rserv::Lobby::gameStatePacket() {
     }
 
     auto registry = this->_resourceManager->get<ecs::Registry>();
-    
-    // Use a view to iterate only active entities (those with TransformComponent)
-    // instead of iterating through all possible entity IDs up to getMaxEntityId()
     auto entityView = registry->view<ecs::TransformComponent>();
-    
+
     for (auto& client : this->_clients) {
         uint8_t clientId = std::get<0>(client);
-        
-        // Iterate only active entities
         for (auto entityId : entityView) {
             uint32_t entityIdU32 = static_cast<uint32_t>(entityId);
             std::vector<uint64_t> componentData;
@@ -511,6 +507,7 @@ void rserv::Lobby::setResourceManager(std::shared_ptr<ResourceManager> resourceM
         );
         gsm->changeState(bootState);
         this->createPlayerEntities();
+        this->_gsm = gsm;
         this->_gameStarted = true;
     } else {
         std::cerr << "Warning: Resource manager does not contain GSM" << std::endl;
@@ -544,13 +541,15 @@ void rserv::Lobby::processLobbyEvents() {
     }
     {
         std::lock_guard<std::mutex> lock(_eventMutex);
-        while (!_eventQueue->empty()) {
-            auto event = _eventQueue->front();
-            _eventQueue->pop();
+        auto eventQueue = this->getEventQueue();
+        while (!eventQueue->empty()) {
+            auto event = eventQueue->front();
+            eventQueue->pop();
             uint8_t clientId = std::get<0>(event);
             constants::EventType eventType = std::get<1>(event);
             double param1 = std::get<2>(event);
-            inputProvider->updateInputFromEvent(clientId, eventType, static_cast<float>(param1));
+            inputProvider->updateInputFromEvent
+                (clientId, eventType, static_cast<float>(param1));
         }
     }
 }
@@ -670,10 +669,7 @@ void rserv::Lobby::gameLoop() {
         previousTime = currentTime;
 
         this->processLobbyEvents();
-        if (this->_resourceManager && this->_resourceManager->has<gsm::GameStateMachine>()) {
-            auto gsm = this->_resourceManager->get<gsm::GameStateMachine>();
-            gsm->update(deltaTime);
-        }
+        this->_gsm->update(deltaTime);
         this->_statusUpdateTimer += deltaTime;
         if (this->_statusUpdateTimer >= 2.0f) {
             this->serverStatusPacket();
