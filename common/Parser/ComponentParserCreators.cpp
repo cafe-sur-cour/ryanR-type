@@ -47,6 +47,7 @@
 #include "../components/permanent/DamageComponent.hpp"
 #include "../components/permanent/ScriptingComponent.hpp"
 #include "../components/permanent/EntityPartsComponent.hpp"
+#include "../components/tags/PowerUpTag.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -226,6 +227,10 @@ void Parser::instanciateComponentDefinitions() {
         }}},
         {constants::HITBOXRENDERCOMPONENT, {
             std::type_index(typeid(ecs::HitboxRenderComponent)), {
+            {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::POWERUP_TAG, {
+            std::type_index(typeid(ecs::PowerUpTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
         }}}
     };
@@ -623,6 +628,11 @@ void Parser::instanciateComponentCreators() {
         const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::HitboxRenderComponent>();
+    });
+
+    registerComponent<ecs::PowerUpTag>([]([[maybe_unused]] const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        return std::make_shared<ecs::PowerUpTag>();
     });
 }
 
