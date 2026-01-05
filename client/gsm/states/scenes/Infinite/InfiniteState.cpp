@@ -51,8 +51,6 @@
 #include "../../../../systems/rendering/GameZoneViewSystem.hpp"
 #include "../../../../systems/audio/MusicSystem.hpp"
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
-#include "../../../../../common/systems/ai/AIMovementSystem.hpp"
-#include "../../../../../common/systems/ai/AIShootingSystem.hpp"
 #include "../../../../../common/systems/spawn/SpawnSystem.hpp"
 #include "../../../../systems/map/MapGeneratorSystem.hpp"
 
@@ -91,8 +89,6 @@ void InfiniteState::enter() {
     }
 
     addSystem(std::make_shared<ecs::NetworkInterpolationSystem>());
-    addSystem(std::make_shared<ecs::AIMovementSystem>());
-    addSystem(std::make_shared<ecs::AIShootingSystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::MovementSystem>());
     addSystem(std::make_shared<ecs::MovementInputSystem>());
