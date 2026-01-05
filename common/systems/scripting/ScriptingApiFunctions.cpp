@@ -106,7 +106,7 @@ void ScriptingSystem::bindAPI() {
         registry->addComponent<ecs::ShootIntentComponent>(e, intent);
     });
 
-    lua.set_function(constants::GET_ENTITY_ID_FUNCTION, [this](Entity e) -> size_t {
+    lua.set_function(constants::GET_ENTITY_ID_FUNCTION, [](Entity e) -> size_t {
         return static_cast<size_t>(e);
     });
 

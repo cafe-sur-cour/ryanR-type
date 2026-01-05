@@ -50,7 +50,7 @@ gfx::IEvent::event_t SfmlEvent::pollEvents() {
     if (!sfmlWindow)
         return event_t::NOTHING;
     auto window = sfmlWindow->getSfmlWindow();
-
+    bool isFocused = window->hasFocus();
     event_t lastEvent = event_t::NOTHING;
 
     while (auto event = window->pollEvent()) {
@@ -59,6 +59,7 @@ gfx::IEvent::event_t SfmlEvent::pollEvents() {
         } else if (event->is<sf::Event::Resized>()) {
             sfmlWindow->updateView();
         } else if (auto textEntered = event->getIf<sf::Event::TextEntered>()) {
+            if (!isFocused) continue;
             auto now = std::chrono::steady_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
                 now - _lastTextTime
@@ -69,15 +70,18 @@ gfx::IEvent::event_t SfmlEvent::pollEvents() {
                 lastEvent = event_t::TEXT_INPUT;
             }
         } else if (auto keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+            if (!isFocused)
+                continue;
             lastEvent = processKeyboardEvent(*keyPressed);
         } else if (auto mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+            if (!isFocused) continue;
             lastEvent = processMouseEvent(*mousePressed);
         } else if (auto mouseReleased = event->getIf<sf::Event::MouseButtonReleased>()) {
+            if (!isFocused) continue;
             lastEvent = processMouseReleaseEvent(*mouseReleased);
         } else if (auto joystickPressed = event->getIf<sf::Event::JoystickButtonPressed>()) {
+            if (!isFocused) continue;
             lastEvent = processJoystickButtonEvent(*joystickPressed);
-        } else if (auto joystickMoved = event->getIf<sf::Event::JoystickMoved>()) {
-            lastEvent = processJoystickAxisEvent(*joystickMoved);
         }
     }
     return lastEvent;
@@ -181,6 +185,9 @@ std::pair<int, int> SfmlEvent::getMousePos() {
 }
 
 bool SfmlEvent::isKeyPressed(event_t key) {
+    auto sfmlWindow = std::dynamic_pointer_cast<SfmlWindow>(_window);
+    if (!sfmlWindow || !sfmlWindow->getSfmlWindow()->hasFocus())
+        return false;
     auto it = _keyMap.find(key);
     if (it != _keyMap.end())
         return sf::Keyboard::isKeyPressed(it->second);
@@ -265,6 +272,9 @@ bool SfmlEvent::isJoystickAxisPressed(event_t key) {
 }
 
 bool SfmlEvent::isMouseButtonPressed(int button) {
+    auto sfmlWindow = std::dynamic_pointer_cast<SfmlWindow>(_window);
+    if (!sfmlWindow || !sfmlWindow->getSfmlWindow()->hasFocus())
+        return false;
     if (button == 0)
         return sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
     else if (button == 1)
@@ -273,6 +283,9 @@ bool SfmlEvent::isMouseButtonPressed(int button) {
 }
 
 float SfmlEvent::getAxisValue(event_t axis) {
+    auto sfmlWindow = std::dynamic_pointer_cast<SfmlWindow>(_window);
+    if (!sfmlWindow || !sfmlWindow->getSfmlWindow()->hasFocus())
+        return 0.0f;
     switch (axis) {
         case event_t::GAMEPAD_LEFT_STICK_LEFT:
         case event_t::GAMEPAD_LEFT_STICK_RIGHT:

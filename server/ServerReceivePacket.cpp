@@ -9,6 +9,8 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <thread>
+#include <tuple>
 
 #include "Server.hpp"
 #include "Constants.hpp"
@@ -28,37 +30,13 @@ bool rserv::Server::processConnections(std::pair<std::shared_ptr<net::INetworkEn
     if (client.second.size() > HEADER_SIZE)
         name = std::string(client.second.begin() + HEADER_SIZE, client.second.end());
 
-    if (this->_nextClientId > constants::MAX_CLIENT) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Warning: Maximum clients reached",
-            debug::debugType::NETWORK, debug::debugLevel::WARNING);
-        return false;
-    }
     this->connectionPacket(*client.first);
     this->_clients.push_back(std::make_tuple(this->_nextClientId, client.first, name));
     this->_clientsReady[this->_nextClientId] = false;
     debug::Debug::printDebug(this->_config->getIsDebug(), "[SERVER] Set client " +
         std::to_string(this->_nextClientId) + " ready to false",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    this->canStartPacket();
     this->_nextClientId++;
-    return true;
-}
-
-
-bool rserv::Server::requestCode(const net::INetworkEndpoint& endpoint) {
-    if (!this->_network) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Warning: Network not initialized",
-            debug::debugType::NETWORK, debug::debugLevel::WARNING);
-        return false;
-    }
-    if (this->sendCodeLobbyPacket(endpoint) == false) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Warning: Failed to send lobby code",
-            debug::debugType::NETWORK, debug::debugLevel::WARNING);
-        return false;
-    }
     return true;
 }
 
@@ -79,102 +57,168 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
     return false;
 }
 
-bool rserv::Server::processEndOfGame(uint8_t idClient) {
-    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
-        this->_sequenceNumber, constants::PACKET_END_GAME,
-        std::vector<uint64_t>{static_cast<uint64_t>(idClient)});
-    if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
+bool rserv::Server::requestCode(const net::INetworkEndpoint &endpoint) {
+    if (!this->_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER NETWORK] Failed to broadcast end of game packet",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    if (this->sendCodeLobbyPacket(endpoint) == false) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Failed to send lobby code",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
     return true;
 }
 
-
-bool rserv::Server::processEvents(uint8_t idClient) {
-    debug::Debug::printDebug(this->_config->getIsDebug(),
-        "[SERVER] Processing event packet from client: "
-        + std::to_string(idClient),
-        debug::debugType::NETWORK, debug::debugLevel::INFO);
-
-    auto payload = this->_packet->getPayload();
-    if (payload.size() < 2) {
+bool rserv::Server::processConnectToLobby(std::pair<std::shared_ptr<net::INetworkEndpoint>,
+    std::vector<uint8_t>> payload) {
+    /* Verify Network */
+    if (!this->_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Invalid event packet payload size: " + std::to_string(payload.size()),
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
-
-    constants::EventType eventType =
-        static_cast<constants::EventType>(payload.at(0));
-
-    uint64_t param1Bits = payload.at(1);
-    double param1;
-    std::memcpy(&param1, &param1Bits, sizeof(double));
-
-    this->_eventQueue->push(std::tuple(idClient, eventType, param1));
-    return true;
-}
-
-bool rserv::Server::processWhoAmI(uint8_t idClient) {
-    debug::Debug::printDebug(this->_config->getIsDebug(),
-        "[SERVER] Processing WHOAMI request from client: "
-        + std::to_string(idClient),
-        debug::debugType::NETWORK, debug::debugLevel::INFO);
-
-    if (!this->_resourceManager->has<ecs::Registry>()) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Registry not found, cannot process WHOAMI",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
-        return false;
-    }
-
-    auto registry = this->_resourceManager->get<ecs::Registry>();
-    auto playerView = registry->view<ecs::PlayerTag>();
-
-    ecs::Entity playerEntity = 0;
-    for (auto entityId : playerView) {
-        if (entityId == idClient) {
-            playerEntity = entityId;
+    /* Verify that lobby exists */
+    std::string lobbyCode = "";
+    if (payload.second.size() > HEADER_SIZE)
+        lobbyCode = std::string(payload.second.begin() + HEADER_SIZE, payload.second.end());
+    bool lobbyExists = false;
+    for (const auto &lobby : this->_lobbyThreads) {
+        if (lobby->_lobbyCode == lobbyCode) {
+            if (lobby->_clients.size() > constants::MAX_CLIENT_PER_LOBBY) {
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] Warning: Maximum clients reached for lobby",
+                    debug::debugType::NETWORK, debug::debugLevel::WARNING);
+                break;
+            }
+            lobbyExists = true;
             break;
         }
     }
-
-    if (playerEntity == 0) {
+    /* Send successful or fail connect */
+    this->lobbyConnectValuePacket(*payload.first, lobbyExists);
+    /* Add client to lobby */
+    std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string> clientToAdd;
+    bool clientFound = false;
+    for (const auto &client : this->_clients) {
+        if (std::get<1>(client) && payload.first &&
+            std::get<1>(client)->getAddress() == payload.first->getAddress() &&
+            std::get<1>(client)->getPort() == payload.first->getPort()) {
+            clientToAdd = client;
+            clientFound = true;
+            break;
+        }
+    }
+    if (!clientFound) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] No player entity found for client " + std::to_string(idClient),
+            "[SERVER] Error: Client not found in _clients list for lobby connection",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    if (lobbyExists) {
+        for (auto &lobby : this->_lobbyThreads) {
+            if (lobby->_lobbyCode == lobbyCode) {
+                lobby->_clients.push_back(clientToAdd);
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] Client " + std::to_string(static_cast<int>
+                    (std::get<0>(clientToAdd))) + " added to lobby: " + lobbyCode,
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+                break;
+            }
+        }
+    } else {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Lobby code not found: " + lobbyCode,
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    return true;
+}
+
+
+bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEndpoint>,
+    std::vector<uint8_t>> payload) {
+    /* Verify Network */
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    /* Verify that client is lobby master */
+    std::string lobbyCode = "";
+    if (payload.second.size() > HEADER_SIZE)
+        lobbyCode = std::string(payload.second.begin() + HEADER_SIZE, payload.second.end());
+    bool lobbyExists = false;
+    for (const auto &lobby : this->_lobbyThreads) {
+        if (lobby->_lobbyCode == lobbyCode) {
+            lobbyExists = true;
+            break;
+        }
+    }
+    if (!lobbyExists) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Lobby code not found for master start: " + lobbyCode,
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
 
-    std::vector<uint64_t> payload;
-    payload.push_back(static_cast<uint64_t>(playerEntity));
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Lobby master requested game start for lobby: " + lobbyCode,
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
 
-    std::shared_ptr<net::INetworkEndpoint> clientEndpoint;
-    for (const auto &client : this->_clients) {
-        if (std::get<0>(client) == idClient) {
-            clientEndpoint = std::get<1>(client);
+    for (const auto &lobby : this->_lobbyThreads) {
+        if (lobby->_lobbyCode == lobbyCode) {
+            for (const auto &lobbyEndpoint : lobby->_clients) {
+                for (const auto &client : this->_clients) {
+                    if (std::get<1>(client) == std::get<1>(lobbyEndpoint)) {
+                        uint8_t clientId = std::get<0>(client);
+                        this->_clientsReady[clientId] = true;
+                        debug::Debug::printDebug(this->_config->getIsDebug(),
+                            "[SERVER] Set client " + std::to_string(static_cast<int>
+                            (clientId)) + " ready for lobby start",
+                            debug::debugType::NETWORK, debug::debugLevel::INFO);
+                    }
+                }
+            }
             break;
         }
     }
 
-    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
-        this->_sequenceNumber, constants::PACKET_WHOAMI, payload);
-
-    if (!this->_network->sendTo(*clientEndpoint, packet)) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Failed to send WHOAMI response to client " + std::to_string(idClient),
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
-        return false;
+    std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>,
+        std::string>> _clientInfo;
+    std::vector<std::shared_ptr<net::INetworkEndpoint>> endpoints;
+    for (const auto &lobby : this->_lobbyThreads) {
+        if (lobby->_lobbyCode == lobbyCode) {
+            _clientInfo = lobby->_clients;
+            break;
+        }
     }
-
-    this->_sequenceNumber++;
+    for (const auto &client : _clientInfo) {
+        endpoints.push_back(std::get<1>(client));
+    }
+    this->_lobbies.push_back(std::make_shared<Lobby>(
+        this->_network,
+        _clientInfo,
+        lobbyCode,
+        this->_config->getIsDebug()
+    ));
+    auto lobby = this->_lobbies.back();
+    for (const auto& client : _clientInfo) {
+        uint8_t clientId = std::get<0>(client);
+        this->_clientToLobby[clientId] = lobby;
+    }
+    lobby->setPacketManager(this->createNewPacketManager());
+    this->initRessourceManager(lobby);
+    this->canStartPacket(endpoints);
+    lobby->startNetworkThread();
+    lobby->startGameThread();
     debug::Debug::printDebug(this->_config->getIsDebug(),
-        "[SERVER] Sent WHOAMI response to client " + std::to_string(idClient)
-        + " with entity ID " + std::to_string(playerEntity),
+        "[SERVER] Started lobby threads for lobby: " + lobbyCode,
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-
     return true;
 }

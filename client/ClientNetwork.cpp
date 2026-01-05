@@ -45,6 +45,8 @@ ClientNetwork::ClientNetwork() {
     this->_clientNames = {};
     this->_serverEndpoint = {};
     this->_lobbyCode = "";
+    this->_isConnectedToLobby = false;
+    this->_isLobbyMaster = false;
 
     this->_shouldConnect = false;
 
@@ -67,6 +69,8 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_WHOAMI] = &ClientNetwork::handleWhoAmI;
     _packetHandlers[constants::PACKET_SERVER_STATUS] = &ClientNetwork::handleServerStatus;
     _packetHandlers[constants::PACKET_SEND_LOBBY_CODE] = &ClientNetwork::handleCode;
+    _packetHandlers[constants::PACKET_LOBBY_CONNECT_VALUE] =
+        &ClientNetwork::handleLobbyConnectValue;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
@@ -161,6 +165,14 @@ void ClientNetwork::setIp(const std::string &ip) {
     _ip = ip;
 }
 
+std::string ClientNetwork::getLobbyCode() const {
+    return this->_lobbyCode;
+}
+
+void ClientNetwork::setLobbyCode(std::string lobbyCode) {
+    this->_lobbyCode = lobbyCode;
+}
+
 void ClientNetwork::redoServerEndpoint() {
     this->_serverEndpoint = std::make_shared<NetworkEndpoint>(this->_ip,
         static_cast<uint16_t>(this->_port));
@@ -216,6 +228,14 @@ bool ClientNetwork::isConnected() const {
 
 bool ClientNetwork::isReady() const {
     return this->_ready.load();
+}
+
+bool ClientNetwork::isConnectedToLobby() const {
+    return this->_isConnectedToLobby.load();
+}
+
+bool ClientNetwork::isLobbyMaster() const {
+    return this->_isLobbyMaster.load();
 }
 
 void ClientNetwork::handlePacketType(uint8_t type) {
@@ -317,10 +337,6 @@ uint8_t ClientNetwork::getClientId() const {
 
 bool ClientNetwork::getClientReadyStatus() const {
     return this->_clientReadyStatus.load();
-}
-
-std::string ClientNetwork::getLobbyCode() const {
-    return this->_lobbyCode;
 }
 
 void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
