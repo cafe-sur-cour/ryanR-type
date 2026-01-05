@@ -30,7 +30,7 @@ void ClientNetwork::connectionPacket() {
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
 
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
 
@@ -59,7 +59,7 @@ void ClientNetwork::eventPacket(const constants::EventType &eventType,
         + ", Depth=" + std::to_string(depth),
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
 
@@ -89,7 +89,7 @@ void ClientNetwork::disconnectionPacket() {
     std::vector<uint8_t> header = this->_packet->pack(this->_idClient,
         this->_sequenceNumber, constants::PACKET_DISC, payload);
 
-    this->_network->sendTo(this->_serverEndpoint, header);
+    this->_network->sendTo(*this->_serverEndpoint, header);
     this->_sequenceNumber++;
 }
 
@@ -114,7 +114,7 @@ void ClientNetwork::sendReady() {
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
 
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
 
@@ -139,7 +139,7 @@ void ClientNetwork::sendWhoAmI() {
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
 
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
 
@@ -164,6 +164,6 @@ void ClientNetwork::requestCode() {
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
     std::cout << std::endl;
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
