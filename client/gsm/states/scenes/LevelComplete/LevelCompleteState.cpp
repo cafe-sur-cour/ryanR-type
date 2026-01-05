@@ -31,7 +31,7 @@ void LevelCompleteState::enter() {
     _titleText->setText(titleText);
     _titleText->setTextColor(colors::GREEN);
     _titleText->setFontSize(120);
-    _titleText->setOutlineColor(gfx::color_t{0, 0, 0});
+    _titleText->setOutlineColor(colors::BLACK);
     _titleText->setOutlineThickness(2.0f);
 
     auto window = _resourceManager->get<gfx::IWindow>();
@@ -46,7 +46,7 @@ void LevelCompleteState::enter() {
     _subtitleText->setText(subtitleText);
     _subtitleText->setTextColor(colors::WHITE);
     _subtitleText->setFontSize(40);
-    _subtitleText->setOutlineColor(gfx::color_t{0, 0, 0});
+    _subtitleText->setOutlineColor(colors::BLACK);
     _subtitleText->setOutlineThickness(1.0f);
 
     auto subtitleSize = window->getTextSize(
