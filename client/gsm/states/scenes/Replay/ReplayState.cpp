@@ -61,10 +61,6 @@ ReplayState::ReplayState(
         }
     });
 
-    _statusText = std::make_shared<ui::Text>(_resourceManager);
-    _statusText->setText("Select a replay to load");
-    _statusText->setSize(math::Vector2f(400.f, 50.f));
-
     createReplaySelectionUI();
 }
 
@@ -130,7 +126,6 @@ void ReplayState::exit() {
     window->setViewCenter(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
     _uiManager->clearElements();
     _backButton.reset();
-    _statusText.reset();
     _background.reset();
     _mouseHandler.reset();
     _uiManager.reset();
@@ -152,7 +147,6 @@ void ReplayState::playReplay(float deltaTime) {
 
     if (_currentFrameIndex >= _frames.size()) {
         _isPlaying = false;
-        _statusText->setText("Replay finished");
         return;
     }
 
@@ -179,16 +173,12 @@ void ReplayState::playReplay(float deltaTime) {
 
     if (_replayTime >= _totalReplayTime) {
         _isPlaying = false;
-        _statusText->setText("Replay finished");
         _currentFrameIndex = _frames.size() - 1;
 
         auto window = _resourceManager->get<gfx::IWindow>();
         if (window) {
             window->setViewCenter(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
         }
-    } else {
-        _statusText->setText("Playing replay: " + std::to_string(_replayTime) +
-            "s / " + std::to_string(_totalReplayTime) + "s");
     }
 
     processAudioForFrame(_frames[_currentFrameIndex]);
@@ -657,7 +647,6 @@ void ReplayState::createReplaySelectionUI() {
         }
     }
 
-    layout->addElement(_statusText);
     layout->addElement(_backButton);
 
     _uiManager->addElement(layout);
@@ -666,7 +655,6 @@ void ReplayState::createReplaySelectionUI() {
 void ReplayState::loadReplay(const std::filesystem::path& replayFile) {
     std::ifstream file(replayFile);
     if (!file.is_open()) {
-        _statusText->setText("Failed to open replay file");
         return;
     }
 
@@ -692,12 +680,8 @@ void ReplayState::loadReplay(const std::filesystem::path& replayFile) {
 
     if (frameCount > 0) {
         _totalReplayTime = _frames.back()[constants::REPLAY_TOTAL_TIME].get<float>();
-        _statusText->setText("Replay loaded: " + std::to_string(frameCount) +
-            " frames (" + std::to_string(_totalReplayTime) + "s)");
         _replayTime = 0.0f;
         _currentFrameIndex = 0;
-    } else {
-        _statusText->setText("No valid frames in replay file");
     }
 }
 
