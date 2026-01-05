@@ -35,6 +35,7 @@
 #include "../../../../../common/Parser/CollisionRulesParser.hpp"
 #include "../../../../../common/systems/spawn/SpawnSystem.hpp"
 #include "../../../../../common/components/tags/PlayerTag.hpp"
+#include "../../../../../common/components/permanent/ScriptingComponent.hpp"
 #include "../../../gsmStates.hpp"
 #include "../GameEnd/GameEndState.hpp"
 #include "../LevelComplete/LevelCompleteState.hpp"
@@ -91,6 +92,17 @@ void InGameState::enter() {
 }
 
 void InGameState::exit() {
+    auto registry = _resourceManager->get<ecs::Registry>();
+    if (registry) {
+        auto scriptingView = registry->view<ecs::ScriptingComponent>();
+        for (auto entityId : scriptingView) {
+            auto scriptingComp = registry->getComponent<ecs::ScriptingComponent>(entityId);
+            if (scriptingComp) {
+                scriptingComp->clearLuaReferences();
+            }
+        }
+    }
+    
     auto systemManager = _resourceManager->get<ecs::ISystemManager>();
     for (auto& sys : _systems) {
         systemManager->removeSystem(sys);

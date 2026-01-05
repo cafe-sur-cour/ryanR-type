@@ -16,6 +16,7 @@
 #include "../common/debug.hpp"
 #include "../../common/systems/systemManager/SystemManager.hpp"
 #include "../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
+#include "../common/components/permanent/ScriptingComponent.hpp"
 
 Core::Core() {
     this->_utils = std::make_shared<Utils>();
@@ -69,6 +70,15 @@ Core::~Core() {
 
     if (this->_parser != nullptr) {
         this->_parser.reset();
+    }
+    if (this->_registry != nullptr) {
+        auto scriptingView = this->_registry->view<ecs::ScriptingComponent>();
+        for (auto entityId : scriptingView) {
+            auto scriptingComp = this->_registry->getComponent<ecs::ScriptingComponent>(entityId);
+            if (scriptingComp) {
+                scriptingComp->clearLuaReferences();
+            }
+        }
     }
     if (this->_registry != nullptr) {
         this->_registry.reset();
