@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include "../../../common/ECS/view/View.hpp"
+#include "../../constants.hpp"
 
 namespace ecs {
 
@@ -24,8 +25,8 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
     _totalElapsedTime += deltaTime;
 
     nlohmann::json frameData;
-    frameData["totalTime"] = _totalElapsedTime;
-    frameData["renderables"] = nlohmann::json::array();
+    frameData[constants::REPLAY_TOTAL_TIME] = _totalElapsedTime;
+    frameData[constants::REPLAY_RENDERABLES] = nlohmann::json::array();
 
     auto gameZoneView = registry->view<GameZoneComponent, TransformComponent>();
     auto gameZoneEntity = *gameZoneView.begin();
@@ -33,11 +34,11 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
     auto gameZoneTransform = registry->getComponent<TransformComponent>(gameZoneEntity);
 
     math::FRect gameZone = gameZoneComp->getZone();
-    frameData["gamezone"] = nlohmann::json{
-        {"x", gameZoneTransform->getPosition().getX()},
-        {"y", gameZoneTransform->getPosition().getY()},
-        {"width", gameZone.getWidth()},
-        {"height", gameZone.getHeight()}
+    frameData[constants::REPLAY_GAMEZONE] = nlohmann::json{
+        {constants::REPLAY_X, gameZoneTransform->getPosition().getX()},
+        {constants::REPLAY_Y, gameZoneTransform->getPosition().getY()},
+        {constants::REPLAY_WIDTH, gameZone.getWidth()},
+        {constants::REPLAY_HEIGHT, gameZone.getHeight()}
     };
 
     math::FRect gameZoneBounds = gameZone;
@@ -77,22 +78,22 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
         const math::FRect& frameRect = animation->getFrameRect();
 
         nlohmann::json renderable;
-        renderable["transform"] = nlohmann::json{
-            {"x", transform->getPosition().getX()},
-            {"y", transform->getPosition().getY()},
-            {"r", transform->getRotation()},
-            {"sx", transform->getScale().getX()},
-            {"sy", transform->getScale().getY()}
+        renderable[constants::REPLAY_TRANSFORM] = nlohmann::json{
+            {constants::REPLAY_X, transform->getPosition().getX()},
+            {constants::REPLAY_Y, transform->getPosition().getY()},
+            {constants::REPLAY_ROTATION, transform->getRotation()},
+            {constants::REPLAY_SCALE_X, transform->getScale().getX()},
+            {constants::REPLAY_SCALE_Y, transform->getScale().getY()}
         };
-        renderable["sprite"] = nlohmann::json{
-            {"texture", getSpriteId(currentClip->texturePath)},
-            {"offsetX", frameRect.getLeft()},
-            {"offsetY", frameRect.getTop()},
-            {"width", frameRect.getWidth()},
-            {"height", frameRect.getHeight()}
+        renderable[constants::REPLAY_SPRITE] = nlohmann::json{
+            {constants::REPLAY_TEXTURE, getSpriteId(currentClip->texturePath)},
+            {constants::REPLAY_OFFSET_X, frameRect.getLeft()},
+            {constants::REPLAY_OFFSET_Y, frameRect.getTop()},
+            {constants::REPLAY_WIDTH, frameRect.getWidth()},
+            {constants::REPLAY_HEIGHT, frameRect.getHeight()}
         };
 
-        frameData["renderables"].push_back(renderable);
+        frameData[constants::REPLAY_RENDERABLES].push_back(renderable);
         processedEntities.insert(entity);
     }
 
@@ -123,22 +124,22 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
         }
 
         nlohmann::json renderable;
-        renderable["transform"] = nlohmann::json{
-            {"x", transform->getPosition().getX()},
-            {"y", transform->getPosition().getY()},
-            {"r", transform->getRotation()},
-            {"sx", transform->getScale().getX()},
-            {"sy", transform->getScale().getY()}
+        renderable[constants::REPLAY_TRANSFORM] = nlohmann::json{
+            {constants::REPLAY_X, transform->getPosition().getX()},
+            {constants::REPLAY_Y, transform->getPosition().getY()},
+            {constants::REPLAY_ROTATION, transform->getRotation()},
+            {constants::REPLAY_SCALE_X, transform->getScale().getX()},
+            {constants::REPLAY_SCALE_Y, transform->getScale().getY()}
         };
-        renderable["sprite"] = nlohmann::json{
-            {"texture", getSpriteId(sprite->getTexturePath())},
-            {"offsetX", 0.0f},
-            {"offsetY", 0.0f},
-            {"width", 0.0f},
-            {"height", 0.0f}
+        renderable[constants::REPLAY_SPRITE] = nlohmann::json{
+            {constants::REPLAY_TEXTURE, getSpriteId(sprite->getTexturePath())},
+            {constants::REPLAY_OFFSET_X, 0.0f},
+            {constants::REPLAY_OFFSET_Y, 0.0f},
+            {constants::REPLAY_WIDTH, 0.0f},  // Will be determined at playback
+            {constants::REPLAY_HEIGHT, 0.0f}
         };
 
-        frameData["renderables"].push_back(renderable);
+        frameData[constants::REPLAY_RENDERABLES].push_back(renderable);
     }
 
     auto parallaxView = registry->view<ParallaxComponent, TransformComponent>();
@@ -149,48 +150,48 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
         if (!parallax || !transform) continue;
 
         nlohmann::json parallaxData;
-        parallaxData["type"] = "parallax";
-        parallaxData["transform"] = nlohmann::json{
-            {"x", transform->getPosition().getX()},
-            {"y", transform->getPosition().getY()},
-            {"r", transform->getRotation()},
-            {"sx", transform->getScale().getX()},
-            {"sy", transform->getScale().getY()}
+        parallaxData[constants::REPLAY_TYPE] = constants::REPLAY_TYPE_PARALLAX;
+        parallaxData[constants::REPLAY_TRANSFORM] = nlohmann::json{
+            {constants::REPLAY_X, transform->getPosition().getX()},
+            {constants::REPLAY_Y, transform->getPosition().getY()},
+            {constants::REPLAY_ROTATION, transform->getRotation()},
+            {constants::REPLAY_SCALE_X, transform->getScale().getX()},
+            {constants::REPLAY_SCALE_Y, transform->getScale().getY()}
         };
-        parallaxData["parallax"] = nlohmann::json{
-            {"baseScrollSpeed", parallax->getBaseScrollSpeed()},
-            {"direction", nlohmann::json{
-                {"x", parallax->getDirection().getX()},
-                {"y", parallax->getDirection().getY()}
+        parallaxData[constants::REPLAY_PARALLAX] = nlohmann::json{
+            {constants::REPLAY_BASE_SCROLL_SPEED, parallax->getBaseScrollSpeed()},
+            {constants::REPLAY_DIRECTION, nlohmann::json{
+                {constants::REPLAY_X, parallax->getDirection().getX()},
+                {constants::REPLAY_Y, parallax->getDirection().getY()}
             }}
         };
 
         nlohmann::json layersArray = nlohmann::json::array();
         for (const auto& layer : parallax->getLayers()) {
             nlohmann::json layerData;
-            layerData["name"] = layer.name;
-            layerData["filePath"] = layer.filePath;
-            layerData["speedMultiplier"] = layer.speedMultiplier;
-            layerData["scale"] = nlohmann::json{
-                {"x", layer.scale.getX()},
-                {"y", layer.scale.getY()}
+            layerData[constants::REPLAY_NAME] = layer.name;
+            layerData[constants::REPLAY_FILE_PATH] = layer.filePath;
+            layerData[constants::REPLAY_SPEED_MULTIPLIER] = layer.speedMultiplier;
+            layerData[constants::REPLAY_SCALE] = nlohmann::json{
+                {constants::REPLAY_X, layer.scale.getX()},
+                {constants::REPLAY_Y, layer.scale.getY()}
             };
-            layerData["scaleMode"] = static_cast<int>(layer.scaleMode);
-            layerData["sourceSize"] = nlohmann::json{
-                {"x", layer.sourceSize.getX()},
-                {"y", layer.sourceSize.getY()}
+            layerData[constants::REPLAY_SCALE_MODE] = static_cast<int>(layer.scaleMode);
+            layerData[constants::REPLAY_SOURCE_SIZE] = nlohmann::json{
+                {constants::REPLAY_X, layer.sourceSize.getX()},
+                {constants::REPLAY_Y, layer.sourceSize.getY()}
             };
-            layerData["repeat"] = layer.repeat;
-            layerData["zIndex"] = layer.zIndex;
-            layerData["currentOffset"] = nlohmann::json{
-                {"x", layer.currentOffset.getX()},
-                {"y", layer.currentOffset.getY()}
+            layerData[constants::REPLAY_REPEAT] = layer.repeat;
+            layerData[constants::REPLAY_Z_INDEX] = layer.zIndex;
+            layerData[constants::REPLAY_CURRENT_OFFSET] = nlohmann::json{
+                {constants::REPLAY_X, layer.currentOffset.getX()},
+                {constants::REPLAY_Y, layer.currentOffset.getY()}
             };
             layersArray.push_back(layerData);
         }
-        parallaxData["parallax"]["layers"] = layersArray;
+        parallaxData[constants::REPLAY_PARALLAX][constants::REPLAY_LAYERS] = layersArray;
 
-        frameData["renderables"].push_back(parallaxData);
+        frameData[constants::REPLAY_RENDERABLES].push_back(parallaxData);
     }
 
     auto healthBarView = registry->view<HealthBarComponent, HealthComponent, TransformComponent, ColliderComponent>();
@@ -203,26 +204,26 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
         if (!healthBar || !health || !transform || !collider) continue;
 
         nlohmann::json healthBarData;
-        healthBarData["type"] = "healthbar";
-        healthBarData["transform"] = nlohmann::json{
-            {"x", transform->getPosition().getX()},
-            {"y", transform->getPosition().getY()},
-            {"r", transform->getRotation()},
-            {"sx", transform->getScale().getX()},
-            {"sy", transform->getScale().getY()}
+        healthBarData[constants::REPLAY_TYPE] = constants::REPLAY_TYPE_HEALTHBAR;
+        healthBarData[constants::REPLAY_TRANSFORM] = nlohmann::json{
+            {constants::REPLAY_X, transform->getPosition().getX()},
+            {constants::REPLAY_Y, transform->getPosition().getY()},
+            {constants::REPLAY_ROTATION, transform->getRotation()},
+            {constants::REPLAY_SCALE_X, transform->getScale().getX()},
+            {constants::REPLAY_SCALE_Y, transform->getScale().getY()}
         };
-        healthBarData["health"] = nlohmann::json{
-            {"current", health->getHealth()},
-            {"max", health->getBaseHealth()}
+        healthBarData[constants::REPLAY_HEALTH] = nlohmann::json{
+            {constants::REPLAY_CURRENT, health->getHealth()},
+            {constants::REPLAY_MAX, health->getBaseHealth()}
         };
-        healthBarData["collider"] = nlohmann::json{
-            {"offsetX", collider->getOffset().getX()},
-            {"offsetY", collider->getOffset().getY()},
-            {"sizeX", collider->getSize().getX()},
-            {"sizeY", collider->getSize().getY()}
+        healthBarData[constants::REPLAY_COLLIDER] = nlohmann::json{
+            {constants::REPLAY_OFFSET_X, collider->getOffset().getX()},
+            {constants::REPLAY_OFFSET_Y, collider->getOffset().getY()},
+            {constants::REPLAY_SIZE_X, collider->getSize().getX()},
+            {constants::REPLAY_SIZE_Y, collider->getSize().getY()}
         };
 
-        frameData["renderables"].push_back(healthBarData);
+        frameData[constants::REPLAY_RENDERABLES].push_back(healthBarData);
     }
 
     auto textView = registry->view<TextComponent, TransformComponent>();
@@ -233,26 +234,26 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
         if (!text || !transform) continue;
 
         nlohmann::json textData;
-        textData["type"] = "text";
-        textData["transform"] = nlohmann::json{
-            {"x", transform->getPosition().getX()},
-            {"y", transform->getPosition().getY()},
-            {"r", transform->getRotation()},
-            {"sx", transform->getScale().getX()},
-            {"sy", transform->getScale().getY()}
+        textData[constants::REPLAY_TYPE] = constants::REPLAY_TYPE_TEXT;
+        textData[constants::REPLAY_TRANSFORM] = nlohmann::json{
+            {constants::REPLAY_X, transform->getPosition().getX()},
+            {constants::REPLAY_Y, transform->getPosition().getY()},
+            {constants::REPLAY_ROTATION, transform->getRotation()},
+            {constants::REPLAY_SCALE_X, transform->getScale().getX()},
+            {constants::REPLAY_SCALE_Y, transform->getScale().getY()}
         };
-        textData["text"] = nlohmann::json{
-            {"content", text->getText()},
-            {"color", nlohmann::json{
-                {"r", text->getColor().r},
-                {"g", text->getColor().g},
-                {"b", text->getColor().b},
-                {"a", text->getColor().a}
+        textData[constants::REPLAY_TEXT] = nlohmann::json{
+            {constants::REPLAY_CONTENT, text->getText()},
+            {constants::REPLAY_COLOR, nlohmann::json{
+                {constants::REPLAY_RED, text->getColor().r},
+                {constants::REPLAY_GREEN, text->getColor().g},
+                {constants::REPLAY_BLUE, text->getColor().b},
+                {constants::REPLAY_ALPHA, text->getColor().a}
             }},
-            {"fontPath", text->getFontPath()}
+            {constants::REPLAY_FONT_PATH, text->getFontPath()}
         };
 
-        frameData["renderables"].push_back(textData);
+        frameData[constants::REPLAY_RENDERABLES].push_back(textData);
     }
 
     auto rectangleView = registry->view<RectangleRenderComponent, TransformComponent>();
@@ -263,20 +264,20 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
         if (!rectangle || !transform) continue;
 
         nlohmann::json rectangleData;
-        rectangleData["type"] = "rectangle";
-        rectangleData["transform"]["x"] = transform->getPosition().getX();
-        rectangleData["transform"]["y"] = transform->getPosition().getY();
-        rectangleData["transform"]["r"] = transform->getRotation();
-        rectangleData["transform"]["sx"] = transform->getScale().getX();
-        rectangleData["transform"]["sy"] = transform->getScale().getY();
-        rectangleData["rectangle"]["width"] = rectangle->getWidth();
-        rectangleData["rectangle"]["height"] = rectangle->getHeight();
-        rectangleData["rectangle"]["color"]["r"] = rectangle->getColor().r;
-        rectangleData["rectangle"]["color"]["g"] = rectangle->getColor().g;
-        rectangleData["rectangle"]["color"]["b"] = rectangle->getColor().b;
-        rectangleData["rectangle"]["color"]["a"] = rectangle->getColor().a;
+        rectangleData[constants::REPLAY_TYPE] = constants::REPLAY_TYPE_RECTANGLE;
+        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_X] = transform->getPosition().getX();
+        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_Y] = transform->getPosition().getY();
+        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_ROTATION] = transform->getRotation();
+        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_SCALE_X] = transform->getScale().getX();
+        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_SCALE_Y] = transform->getScale().getY();
+        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_WIDTH] = rectangle->getWidth();
+        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_HEIGHT] = rectangle->getHeight();
+        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_COLOR][constants::REPLAY_RED] = rectangle->getColor().r;
+        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_COLOR][constants::REPLAY_GREEN] = rectangle->getColor().g;
+        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_COLOR][constants::REPLAY_BLUE] = rectangle->getColor().b;
+        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_COLOR][constants::REPLAY_ALPHA] = rectangle->getColor().a;
 
-        frameData["renderables"].push_back(rectangleData);
+        frameData[constants::REPLAY_RENDERABLES].push_back(rectangleData);
     }
 
     auto hitboxView = registry->view<HitboxRenderComponent, TransformComponent, ColliderComponent>();
@@ -288,22 +289,22 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
         if (!hitbox || !transform || !collider) continue;
 
         nlohmann::json hitboxData;
-        hitboxData["type"] = "hitbox";
-        hitboxData["transform"]["x"] = transform->getPosition().getX();
-        hitboxData["transform"]["y"] = transform->getPosition().getY();
-        hitboxData["transform"]["r"] = transform->getRotation();
-        hitboxData["transform"]["sx"] = transform->getScale().getX();
-        hitboxData["transform"]["sy"] = transform->getScale().getY();
-        hitboxData["hitbox"]["color"]["r"] = hitbox->getColor().r;
-        hitboxData["hitbox"]["color"]["g"] = hitbox->getColor().g;
-        hitboxData["hitbox"]["color"]["b"] = hitbox->getColor().b;
-        hitboxData["hitbox"]["color"]["a"] = hitbox->getColor().a;
-        hitboxData["collider"]["offsetX"] = collider->getOffset().getX();
-        hitboxData["collider"]["offsetY"] = collider->getOffset().getY();
-        hitboxData["collider"]["sizeX"] = collider->getSize().getX();
-        hitboxData["collider"]["sizeY"] = collider->getSize().getY();
+        hitboxData[constants::REPLAY_TYPE] = constants::REPLAY_TYPE_HITBOX;
+        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_X] = transform->getPosition().getX();
+        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_Y] = transform->getPosition().getY();
+        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_ROTATION] = transform->getRotation();
+        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_SCALE_X] = transform->getScale().getX();
+        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_SCALE_Y] = transform->getScale().getY();
+        hitboxData[constants::REPLAY_HITBOX][constants::REPLAY_COLOR][constants::REPLAY_RED] = hitbox->getColor().r;
+        hitboxData[constants::REPLAY_HITBOX][constants::REPLAY_COLOR][constants::REPLAY_GREEN] = hitbox->getColor().g;
+        hitboxData[constants::REPLAY_HITBOX][constants::REPLAY_COLOR][constants::REPLAY_BLUE] = hitbox->getColor().b;
+        hitboxData[constants::REPLAY_HITBOX][constants::REPLAY_COLOR][constants::REPLAY_ALPHA] = hitbox->getColor().a;
+        hitboxData[constants::REPLAY_COLLIDER][constants::REPLAY_OFFSET_X] = collider->getOffset().getX();
+        hitboxData[constants::REPLAY_COLLIDER][constants::REPLAY_OFFSET_Y] = collider->getOffset().getY();
+        hitboxData[constants::REPLAY_COLLIDER][constants::REPLAY_SIZE_X] = collider->getSize().getX();
+        hitboxData[constants::REPLAY_COLLIDER][constants::REPLAY_SIZE_Y] = collider->getSize().getY();
 
-        frameData["renderables"].push_back(hitboxData);
+        frameData[constants::REPLAY_RENDERABLES].push_back(hitboxData);
     }
 
     auto soundView = registry->view<SoundIntentComponent>();
@@ -311,10 +312,10 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
         auto soundIntent = registry->getComponent<SoundIntentComponent>(entity);
         if (soundIntent) {
             nlohmann::json soundData;
-            soundData["type"] = "sound";
-            soundData["soundPath"] = soundIntent->getSoundPath();
-            soundData["volume"] = soundIntent->getVolume();
-            frameData["audio"].push_back(soundData);
+            soundData[constants::REPLAY_TYPE] = constants::REPLAY_TYPE_SOUND;
+            soundData[constants::REPLAY_SOUND_PATH] = soundIntent->getSoundPath();
+            soundData[constants::REPLAY_VOLUME] = soundIntent->getVolume();
+            frameData[constants::REPLAY_AUDIO].push_back(soundData);
         }
     }
 
