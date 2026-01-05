@@ -34,7 +34,7 @@ class SfmlAudio : public IAudio
         float getMusicVolume() const override;
         bool isMusicPlaying() const override;
 
-        void playSound(const std::string& soundPath, float volume = 100.0f) override;
+        void playSound(const std::string& soundPath, float volume = 100.0f, float pitch = 1.0f) override;
         void setSoundVolume(float volume) override;
         float getSoundVolume() const override;
         void stopAllSounds() override;

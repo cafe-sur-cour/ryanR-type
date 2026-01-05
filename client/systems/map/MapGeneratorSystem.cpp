@@ -86,7 +86,7 @@ void MapGeneratorSystem::generateObstaclesAt(
 
         if ((y < floorY || y > ceilingY) && (y < floorY2 || y > ceilingY2)) {
             ecs::Entity obstacle = prefabManager->createEntityFromPrefab(
-                "obstacle1", registry, ecs::EntityCreationContext::forServer());
+                constants::OBSTACLE_1, registry, ecs::EntityCreationContext::forServer());
             auto transform = registry->getComponent<ecs::TransformComponent>(obstacle);
             if (transform) {
                 transform->setPosition(math::Vector2f(x, y));
