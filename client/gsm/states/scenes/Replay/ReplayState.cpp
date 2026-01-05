@@ -252,19 +252,19 @@ void ReplayState::playReplay(float deltaTime) {
 }
 
 void ReplayState::updateViewForFrame(const nlohmann::json& frame) {
-    if (!frame.contains("gamezone")) {
+    if (!frame.contains(constants::REPLAY_GAMEZONE)) {
         return;
     }
 
-    const auto& gamezone = frame["gamezone"];
-    if (!gamezone.contains("x") || !gamezone.contains("y") || !gamezone.contains("width") || !gamezone.contains("height")) {
+    const auto& gamezone = frame[constants::REPLAY_GAMEZONE];
+    if (!gamezone.contains(constants::REPLAY_X) || !gamezone.contains(constants::REPLAY_Y) || !gamezone.contains(constants::REPLAY_WIDTH) || !gamezone.contains(constants::REPLAY_HEIGHT)) {
         return;
     }
 
-    float gamezoneX = gamezone["x"];
-    float gamezoneY = gamezone["y"];
-    float gamezoneWidth = gamezone["width"];
-    float gamezoneHeight = gamezone["height"];
+    float gamezoneX = gamezone[constants::REPLAY_X];
+    float gamezoneY = gamezone[constants::REPLAY_Y];
+    float gamezoneWidth = gamezone[constants::REPLAY_WIDTH];
+    float gamezoneHeight = gamezone[constants::REPLAY_HEIGHT];
 
     float centerX = gamezoneX + gamezoneWidth / 2.0f;
     float centerY = gamezoneY + gamezoneHeight / 2.0f;
@@ -282,51 +282,51 @@ void ReplayState::renderReplaySprites() {
 
     updateViewForFrame(frame);
 
-    if (!frame.contains("renderables")) return;
+    if (!frame.contains(constants::REPLAY_RENDERABLES)) return;
 
     auto window = _resourceManager->get<gfx::IWindow>();
     if (!window) return;
 
-    for (const auto& renderable : frame["renderables"]) {
-        if (renderable.contains("type") && renderable["type"] == "parallax" &&
-            renderable.contains("transform") && renderable.contains("parallax")) {
+    for (const auto& renderable : frame[constants::REPLAY_RENDERABLES]) {
+        if (renderable.contains(constants::REPLAY_TYPE) && renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_PARALLAX &&
+            renderable.contains(constants::REPLAY_TRANSFORM) && renderable.contains(constants::REPLAY_PARALLAX)) {
             renderParallaxBackground(renderable, window);
         }
-        else if (renderable.contains("type") && renderable["type"] == "healthbar" &&
-                 renderable.contains("transform") && renderable.contains("health") && renderable.contains("collider")) {
+        else if (renderable.contains(constants::REPLAY_TYPE) && renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_HEALTHBAR &&
+                 renderable.contains(constants::REPLAY_TRANSFORM) && renderable.contains(constants::REPLAY_HEALTH) && renderable.contains(constants::REPLAY_COLLIDER)) {
             renderHealthBar(renderable, window);
         }
-        else if (renderable.contains("type") && renderable["type"] == "text" &&
-                 renderable.contains("transform") && renderable.contains("text")) {
+        else if (renderable.contains(constants::REPLAY_TYPE) && renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_TEXT &&
+                 renderable.contains(constants::REPLAY_TRANSFORM) && renderable.contains(constants::REPLAY_TEXT)) {
             renderText(renderable, window);
         }
-        else if (renderable.contains("type") && renderable["type"] == "rectangle" &&
-                 renderable.contains("transform") && renderable.contains("rectangle")) {
+        else if (renderable.contains(constants::REPLAY_TYPE) && renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_RECTANGLE &&
+                 renderable.contains(constants::REPLAY_TRANSFORM) && renderable.contains(constants::REPLAY_RECTANGLE)) {
             renderRectangle(renderable, window);
         }
-        else if (renderable.contains("type") && renderable["type"] == "hitbox" &&
-                 renderable.contains("transform") && renderable.contains("hitbox") && renderable.contains("collider")) {
+        else if (renderable.contains(constants::REPLAY_TYPE) && renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_HITBOX &&
+                 renderable.contains(constants::REPLAY_TRANSFORM) && renderable.contains(constants::REPLAY_HITBOX) && renderable.contains(constants::REPLAY_COLLIDER)) {
             renderHitbox(renderable, window);
         }
     }
 
-    for (const auto& renderable : frame["renderables"]) {
-        if (renderable.contains("transform") && renderable.contains("sprite")) {
-            const auto& transform = renderable["transform"];
-            const auto& sprite = renderable["sprite"];
+    for (const auto& renderable : frame[constants::REPLAY_RENDERABLES]) {
+        if (renderable.contains(constants::REPLAY_TRANSFORM) && renderable.contains(constants::REPLAY_SPRITE)) {
+            const auto& transform = renderable[constants::REPLAY_TRANSFORM];
+            const auto& sprite = renderable[constants::REPLAY_SPRITE];
 
-            float x = transform["x"];
-            float y = transform["y"];
-            float scaleX = transform["sx"];
-            float scaleY = transform["sy"];
+            float x = transform[constants::REPLAY_X];
+            float y = transform[constants::REPLAY_Y];
+            float scaleX = transform[constants::REPLAY_SCALE_X];
+            float scaleY = transform[constants::REPLAY_SCALE_Y];
 
-            std::string textureName = sprite["texture"];
+            std::string textureName = sprite[constants::REPLAY_TEXTURE];
             std::string texturePath = textureName;
 
-            float offsetX = sprite["offsetX"];
-            float offsetY = sprite["offsetY"];
-            float width = sprite["width"];
-            float height = sprite["height"];
+            float offsetX = sprite[constants::REPLAY_OFFSET_X];
+            float offsetY = sprite[constants::REPLAY_OFFSET_Y];
+            float width = sprite[constants::REPLAY_WIDTH];
+            float height = sprite[constants::REPLAY_HEIGHT];
 
             if (width > 0 && height > 0) {
                 math::FRect frameRect(offsetX, offsetY, width, height);
@@ -341,13 +341,13 @@ void ReplayState::renderReplaySprites() {
 
 
 void ReplayState::renderParallaxBackground(const nlohmann::json& parallaxData, std::shared_ptr<gfx::IWindow> window) {
-    if (!parallaxData.contains("transform") || !parallaxData.contains("parallax")) return;
+    if (!parallaxData.contains(constants::REPLAY_TRANSFORM) || !parallaxData.contains(constants::REPLAY_PARALLAX)) return;
 
-    const auto& transform = parallaxData["transform"];
-    const auto& parallax = parallaxData["parallax"];
+    const auto& transform = parallaxData[constants::REPLAY_TRANSFORM];
+    const auto& parallax = parallaxData[constants::REPLAY_PARALLAX];
 
-    float baseX = transform["x"];
-    float baseY = transform["y"];
+    float baseX = transform[constants::REPLAY_X];
+    float baseY = transform[constants::REPLAY_Y];
 
     float screenWidth = constants::MAX_WIDTH;
     float screenHeight = constants::MAX_HEIGHT;
@@ -368,12 +368,12 @@ void ReplayState::renderParallaxBackground(const nlohmann::json& parallaxData, s
 
         for (const auto& [zIndex, layerDataPtr] : sortedLayers) {
             const auto& layerData = *layerDataPtr;
-            std::string filePath = layerData["filePath"];
-            math::Vector2f scale(layerData["scale"]["x"], layerData["scale"]["y"]);
-            int scaleModeInt = layerData["scaleMode"];
-            math::Vector2f sourceSize(layerData["sourceSize"]["x"], layerData["sourceSize"]["y"]);
-            bool repeat = layerData["repeat"];
-            math::Vector2f currentOffset(layerData["currentOffset"]["x"], layerData["currentOffset"]["y"]);
+            std::string filePath = layerData[constants::REPLAY_FILE_PATH];
+            math::Vector2f scale(layerData[constants::REPLAY_SCALE][constants::REPLAY_X], layerData[constants::REPLAY_SCALE][constants::REPLAY_Y]);
+            int scaleModeInt = layerData[constants::REPLAY_SCALE_MODE];
+            math::Vector2f sourceSize(layerData[constants::REPLAY_SOURCE_SIZE][constants::REPLAY_X], layerData[constants::REPLAY_SOURCE_SIZE][constants::REPLAY_Y]);
+            bool repeat = layerData[constants::REPLAY_REPEAT];
+            math::Vector2f currentOffset(layerData[constants::REPLAY_CURRENT_OFFSET][constants::REPLAY_X], layerData[constants::REPLAY_CURRENT_OFFSET][constants::REPLAY_Y]);
 
             math::Vector2f finalScale = scale;
             if (scaleModeInt == 0) {
@@ -422,24 +422,24 @@ void ReplayState::renderParallaxBackground(const nlohmann::json& parallaxData, s
 }
 
 void ReplayState::renderHealthBar(const nlohmann::json& healthBarData, std::shared_ptr<gfx::IWindow> window) {
-    if (!healthBarData.contains("transform") || !healthBarData.contains("health") || !healthBarData.contains("collider")) return;
+    if (!healthBarData.contains(constants::REPLAY_TRANSFORM) || !healthBarData.contains(constants::REPLAY_HEALTH) || !healthBarData.contains(constants::REPLAY_COLLIDER)) return;
 
-    const auto& transform = healthBarData["transform"];
-    const auto& health = healthBarData["health"];
-    const auto& collider = healthBarData["collider"];
+    const auto& transform = healthBarData[constants::REPLAY_TRANSFORM];
+    const auto& health = healthBarData[constants::REPLAY_HEALTH];
+    const auto& collider = healthBarData[constants::REPLAY_COLLIDER];
 
-    float posX = transform["x"];
-    float posY = transform["y"];
-    float scaleX = transform["sx"];
-    float scaleY = transform["sy"];
+    float posX = transform[constants::REPLAY_X];
+    float posY = transform[constants::REPLAY_Y];
+    float scaleX = transform[constants::REPLAY_SCALE_X];
+    float scaleY = transform[constants::REPLAY_SCALE_Y];
 
-    float currentHealth = health["current"];
-    float maxHealth = health["max"];
+    float currentHealth = health[constants::REPLAY_CURRENT];
+    float maxHealth = health[constants::REPLAY_MAX];
 
-    float offsetX = collider["offsetX"];
-    float offsetY = collider["offsetY"];
-    float sizeX = collider["sizeX"];
-    float sizeY = collider["sizeY"];
+    float offsetX = collider[constants::REPLAY_OFFSET_X];
+    float offsetY = collider[constants::REPLAY_OFFSET_Y];
+    float sizeX = collider[constants::REPLAY_SIZE_X];
+    float sizeY = collider[constants::REPLAY_SIZE_Y];
 
     math::FRect hitbox = math::FRect(
         posX + offsetX,
@@ -474,46 +474,46 @@ void ReplayState::renderHealthBar(const nlohmann::json& healthBarData, std::shar
 }
 
 void ReplayState::renderText(const nlohmann::json& textData, std::shared_ptr<gfx::IWindow> window) {
-    if (!textData.contains("transform") || !textData.contains("text")) return;
+    if (!textData.contains(constants::REPLAY_TRANSFORM) || !textData.contains(constants::REPLAY_TEXT)) return;
 
-    const auto& transform = textData["transform"];
-    const auto& text = textData["text"];
+    const auto& transform = textData[constants::REPLAY_TRANSFORM];
+    const auto& text = textData[constants::REPLAY_TEXT];
 
-    float x = transform["x"];
-    float y = transform["y"];
+    float x = transform[constants::REPLAY_X];
+    float y = transform[constants::REPLAY_Y];
 
-    std::string content = text["content"];
-    std::string fontPath = text["fontPath"];
+    std::string content = text[constants::REPLAY_CONTENT];
+    std::string fontPath = text[constants::REPLAY_FONT_PATH];
 
-    const auto& color = text["color"];
+    const auto& color = text[constants::REPLAY_COLOR];
     gfx::color_t textColor = {
-        static_cast<uint8_t>(color["r"]),
-        static_cast<uint8_t>(color["g"]),
-        static_cast<uint8_t>(color["b"]),
-        static_cast<uint8_t>(color["a"])
+        static_cast<uint8_t>(color[constants::REPLAY_RED]),
+        static_cast<uint8_t>(color[constants::REPLAY_GREEN]),
+        static_cast<uint8_t>(color[constants::REPLAY_BLUE]),
+        static_cast<uint8_t>(color[constants::REPLAY_ALPHA])
     };
 
     window->drawText(content, textColor, {static_cast<size_t>(x), static_cast<size_t>(y)}, fontPath);
 }
 
 void ReplayState::renderRectangle(const nlohmann::json& rectangleData, std::shared_ptr<gfx::IWindow> window) {
-    if (!rectangleData.contains("transform") || !rectangleData.contains("rectangle")) return;
+    if (!rectangleData.contains(constants::REPLAY_TRANSFORM) || !rectangleData.contains(constants::REPLAY_RECTANGLE)) return;
 
-    const auto& transform = rectangleData["transform"];
-    const auto& rectangle = rectangleData["rectangle"];
+    const auto& transform = rectangleData[constants::REPLAY_TRANSFORM];
+    const auto& rectangle = rectangleData[constants::REPLAY_RECTANGLE];
 
-    float x = transform["x"];
-    float y = transform["y"];
+    float x = transform[constants::REPLAY_X];
+    float y = transform[constants::REPLAY_Y];
 
-    float width = rectangle["width"];
-    float height = rectangle["height"];
+    float width = rectangle[constants::REPLAY_WIDTH];
+    float height = rectangle[constants::REPLAY_HEIGHT];
 
-    const auto& color = rectangle["color"];
+    const auto& color = rectangle[constants::REPLAY_COLOR];
     gfx::color_t rectColor = {
-        static_cast<uint8_t>(color["r"]),
-        static_cast<uint8_t>(color["g"]),
-        static_cast<uint8_t>(color["b"]),
-        static_cast<uint8_t>(color["a"])
+        static_cast<uint8_t>(color[constants::REPLAY_RED]),
+        static_cast<uint8_t>(color[constants::REPLAY_GREEN]),
+        static_cast<uint8_t>(color[constants::REPLAY_BLUE]),
+        static_cast<uint8_t>(color[constants::REPLAY_ALPHA])
     };
 
     window->drawFilledRectangle(rectColor,
@@ -522,21 +522,21 @@ void ReplayState::renderRectangle(const nlohmann::json& rectangleData, std::shar
 }
 
 void ReplayState::renderHitbox(const nlohmann::json& hitboxData, std::shared_ptr<gfx::IWindow> window) {
-    if (!hitboxData.contains("transform") || !hitboxData.contains("hitbox") || !hitboxData.contains("collider")) return;
+    if (!hitboxData.contains(constants::REPLAY_TRANSFORM) || !hitboxData.contains(constants::REPLAY_HITBOX) || !hitboxData.contains(constants::REPLAY_COLLIDER)) return;
 
-    const auto& transform = hitboxData["transform"];
-    const auto& hitbox = hitboxData["hitbox"];
-    const auto& collider = hitboxData["collider"];
+    const auto& transform = hitboxData[constants::REPLAY_TRANSFORM];
+    const auto& hitbox = hitboxData[constants::REPLAY_HITBOX];
+    const auto& collider = hitboxData[constants::REPLAY_COLLIDER];
 
-    float posX = transform["x"];
-    float posY = transform["y"];
-    float scaleX = transform["sx"];
-    float scaleY = transform["sy"];
+    float posX = transform[constants::REPLAY_X];
+    float posY = transform[constants::REPLAY_Y];
+    float scaleX = transform[constants::REPLAY_SCALE_X];
+    float scaleY = transform[constants::REPLAY_SCALE_Y];
 
-    float offsetX = collider["offsetX"];
-    float offsetY = collider["offsetY"];
-    float sizeX = collider["sizeX"];
-    float sizeY = collider["sizeY"];
+    float offsetX = collider[constants::REPLAY_OFFSET_X];
+    float offsetY = collider[constants::REPLAY_OFFSET_Y];
+    float sizeX = collider[constants::REPLAY_SIZE_X];
+    float sizeY = collider[constants::REPLAY_SIZE_Y];
 
     math::FRect hitboxRect = math::FRect(
         posX + offsetX,
@@ -545,12 +545,12 @@ void ReplayState::renderHitbox(const nlohmann::json& hitboxData, std::shared_ptr
         sizeY * scaleY
     );
 
-    const auto& color = hitbox["color"];
+    const auto& color = hitbox[constants::REPLAY_COLOR];
     gfx::color_t hitboxColor = {
-        static_cast<uint8_t>(color["r"]),
-        static_cast<uint8_t>(color["g"]),
-        static_cast<uint8_t>(color["b"]),
-        static_cast<uint8_t>(color["a"])
+        static_cast<uint8_t>(color[constants::REPLAY_RED]),
+        static_cast<uint8_t>(color[constants::REPLAY_GREEN]),
+        static_cast<uint8_t>(color[constants::REPLAY_BLUE]),
+        static_cast<uint8_t>(color[constants::REPLAY_ALPHA])
     };
 
     window->drawRectangleOutline(hitboxColor,
@@ -559,20 +559,20 @@ void ReplayState::renderHitbox(const nlohmann::json& hitboxData, std::shared_ptr
 }
 
 void ReplayState::processAudioForFrame(const nlohmann::json& frame) {
-    if (!frame.contains("audio")) return;
+    if (!frame.contains(constants::REPLAY_AUDIO)) return;
 
     auto audio = _resourceManager->get<gfx::IAudio>();
     if (!audio) return;
 
-    for (const auto& audioData : frame["audio"]) {
-        if (!audioData.contains("type")) continue;
+    for (const auto& audioData : frame[constants::REPLAY_AUDIO]) {
+        if (!audioData.contains(constants::REPLAY_TYPE)) continue;
 
-        std::string type = audioData["type"];
+        std::string type = audioData[constants::REPLAY_TYPE];
 
-        if (type == "sound") {
-            if (audioData.contains("soundPath") && audioData.contains("volume")) {
-                std::string soundPath = audioData["soundPath"];
-                float volume = audioData["volume"];
+        if (type == constants::REPLAY_TYPE_SOUND) {
+            if (audioData.contains(constants::REPLAY_SOUND_PATH) && audioData.contains(constants::REPLAY_VOLUME)) {
+                std::string soundPath = audioData[constants::REPLAY_SOUND_PATH];
+                float volume = audioData[constants::REPLAY_VOLUME];
 
                 if (_resourceManager->has<SettingsConfig>()) {
                     auto settings = _resourceManager->get<SettingsConfig>();
