@@ -9,8 +9,6 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     ControllableTag.hpp
     ShooterTag.hpp
     GameZoneColliderTag.hpp
-    AIMoverTag.hpp
-    AIShooterTag.hpp
-    PowerUpTag.hpp
     ClientEffectTag.hpp
+    PowerUpTag.hpp
 )

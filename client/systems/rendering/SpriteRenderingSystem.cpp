@@ -36,7 +36,8 @@ void SpriteRenderingSystem::update(std::shared_ptr<ResourceManager>
             const math::Vector2f& pos = transform->getPosition();
             const math::Vector2f& scale = transform->getScale();
             window->drawSprite(sprite->getTexturePath(),
-                pos.getX(), pos.getY(), scale.getX(), scale.getY());
+                pos.getX(), pos.getY(), scale.getX(), scale.getY(),
+                transform->getRotation());
         }
     }
 }

@@ -40,8 +40,8 @@ class SfmlWindow : public gfx::IWindow {
         bool isMouseOver(std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
         std::pair<int, int> getWindowSize() override;
 
-        void drawSprite(const std::string& texturePath, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f) override;
-        void drawSprite(const std::string& texturePath, float x, float y, const math::FRect frameRect, float scaleX = 1.0f, float scaleY = 1.0f) override;
+        void drawSprite(const std::string& texturePath, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f, float rotation = 0.0f) override;
+        void drawSprite(const std::string& texturePath, float x, float y, const math::FRect frameRect, float scaleX = 1.0f, float scaleY = 1.0f, float rotation = 0.0f) override;
         std::shared_ptr<sf::RenderWindow> getSfmlWindow();
         void updateView() override;
         void setViewCenter(float x, float y) override;
