@@ -142,3 +142,28 @@ void ClientNetwork::sendWhoAmI() {
     this->_network->sendTo(this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
+
+void ClientNetwork::requestCode() {
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
+    }
+    if (this->_idClient == 0) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[Client] Warning: Client ID is 0, cannot send request code packet",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+    std::vector<uint64_t> payload = {};
+    std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
+        this->_sequenceNumber, constants::PACKET_REQUEST_LOBBY, payload);
+
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Sending request code packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+    std::cout << std::endl;
+    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_sequenceNumber++;
+}

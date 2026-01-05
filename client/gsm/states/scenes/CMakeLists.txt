@@ -1,4 +1,3 @@
-add_subdirectory(Dev)
 add_subdirectory(Boot)
 add_subdirectory(MainMenu)
 add_subdirectory(Settings)
