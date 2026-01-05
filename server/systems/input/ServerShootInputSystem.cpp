@@ -35,19 +35,14 @@ void ServerShootInputSystem::update(
 
     auto view = registry->view<ControllableTag, ShooterTag, PlayerTag>();
 
-    std::vector<size_t> connectedClients = serverInputProvider->getConnectedClients();
-    if (connectedClients.empty())
-        return;
-
-    size_t clientIndex = 0;
+    // Use entity ID as client ID directly (entity ID == client ID by design)
     for (auto entityId : view) {
-        size_t clientID = connectedClients[clientIndex];
+        size_t clientID = static_cast<size_t>(entityId);
         float value = serverInputProvider->getActionAxis(InputAction::SHOOT, clientID);
         if (value > 0.0f) {
             updateShootIntent(registry, entityId);
             serverInputProvider->setAxisValue(InputAction::SHOOT, 0.0f, clientID);
         }
-        clientIndex++;
     }
 }
 
