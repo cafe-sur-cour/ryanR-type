@@ -33,7 +33,12 @@ ReplayState::ReplayState(
     _replayTime(0.0f),
     _totalReplayTime(0.0f),
     _currentFrameIndex(0),
-    _isPlaying(false) {
+    _isPlaying(false),
+    _isPaused(false),
+    _shouldSwitch(false),
+    _spacePressCooldown(0.0f),
+    _renderOffsetX(0.0f),
+    _renderOffsetY(0.0f) {
     if (!_resourceManager->has<SettingsConfig>()) {
         _resourceManager->add(std::make_shared<SettingsConfig>());
     }
@@ -66,8 +71,10 @@ ReplayState::ReplayState(
 
 void ReplayState::enter() {
     _uiManager->setOnBack([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePop();
+        if (!_isPlaying) {
+            if (auto stateMachine = this->_gsm.lock()) {
+                stateMachine->requestStatePop();
+            }
         }
     });
 
@@ -112,8 +119,74 @@ void ReplayState::update(float deltaTime) {
 
     _uiManager->update(deltaTime);
 
+    if (_shouldSwitch) {
+        if (!_isPlaying) {
+            _uiManager->clearElements();
+            _replayButtons.clear();
+            _isPlaying = true;
+        } else {
+            auto window = _resourceManager->get<gfx::IWindow>();
+            if (window) {
+                window->setViewCenter(
+                    constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
+            }
+
+            if (_playbackUIManager) {
+                _playbackUIManager->clearElements();
+                _playbackUIManager.reset();
+            }
+            _playPauseButton.reset();
+            _replayBackButton.reset();
+            _progressSlider.reset();
+            _timeText.reset();
+            _playbackLayout.reset();
+
+            _isPlaying = false;
+            createReplaySelectionUI();
+        }
+        _shouldSwitch = false;
+    }
+
     if (_isPlaying) {
-        playReplay(deltaTime);
+        if (_spacePressCooldown > 0.0f) {
+            _spacePressCooldown -= deltaTime;
+        }
+
+        auto event = _resourceManager->get<gfx::IEvent>();
+
+        bool spacePressed = event->isKeyPressed(gfx::EventType::SPACE);
+        bool gamepadAPressed = event->isKeyPressed(gfx::EventType::GAMEPAD_A);
+        if ((spacePressed || gamepadAPressed) && _spacePressCooldown <= 0.0f) {
+            _isPaused = !_isPaused;
+            _spacePressCooldown = 0.25f;
+        }
+
+        bool gamepadBPressed = event->isKeyPressed(gfx::EventType::GAMEPAD_B);
+        if (gamepadBPressed && _spacePressCooldown <= 0.0f) {
+            _shouldSwitch = true;
+            _isPaused = false;
+            _spacePressCooldown = 0.25f;
+        }
+
+        bool leftPressed = event->isKeyPressed(gfx::EventType::LEFT) ||
+                          event->isKeyPressed(gfx::EventType::GAMEPAD_DPAD_LEFT) ||
+                          event->isKeyPressed(gfx::EventType::GAMEPAD_LEFT_STICK_LEFT);
+        bool rightPressed = event->isKeyPressed(gfx::EventType::RIGHT) ||
+                           event->isKeyPressed(gfx::EventType::GAMEPAD_DPAD_RIGHT) ||
+                           event->isKeyPressed(gfx::EventType::GAMEPAD_LEFT_STICK_RIGHT);
+
+        if (leftPressed) {
+            _replayTime = std::max(0.0f, _replayTime - deltaTime * 5.0f);
+        }
+        if (rightPressed) {
+            _replayTime = std::min(_totalReplayTime, _replayTime + deltaTime * 5.0f);
+        }
+
+        if (!_isPaused) {
+            playReplay(deltaTime);
+        }
+
+        updatePlaybackControls();
     }
 
     renderUI();
@@ -129,6 +202,16 @@ void ReplayState::exit() {
     _background.reset();
     _mouseHandler.reset();
     _uiManager.reset();
+
+    if (_playbackUIManager) {
+        _playbackUIManager->clearElements();
+        _playbackUIManager.reset();
+    }
+    _playPauseButton.reset();
+    _replayBackButton.reset();
+    _progressSlider.reset();
+    _timeText.reset();
+    _playbackLayout.reset();
 }
 
 void ReplayState::renderUI() {
@@ -139,6 +222,9 @@ void ReplayState::renderUI() {
 
     if (_isPlaying && !_frames.empty()) {
         renderReplaySprites();
+        if (_playbackUIManager) {
+            _playbackUIManager->render();
+        }
     }
 }
 
@@ -172,13 +258,9 @@ void ReplayState::playReplay(float deltaTime) {
     _currentFrameIndex = targetIndex;
 
     if (_replayTime >= _totalReplayTime) {
-        _isPlaying = false;
+        _shouldSwitch = true;
+        _isPaused = false;
         _currentFrameIndex = _frames.size() - 1;
-
-        auto window = _resourceManager->get<gfx::IWindow>();
-        if (window) {
-            window->setViewCenter(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
-        }
     }
 
     processAudioForFrame(_frames[_currentFrameIndex]);
@@ -186,6 +268,8 @@ void ReplayState::playReplay(float deltaTime) {
 
 void ReplayState::updateViewForFrame(const nlohmann::json& frame) {
     if (!frame.contains(constants::REPLAY_GAMEZONE)) {
+        _renderOffsetX = 0.0f;
+        _renderOffsetY = 0.0f;
         return;
     }
 
@@ -193,6 +277,8 @@ void ReplayState::updateViewForFrame(const nlohmann::json& frame) {
     if (!gamezone.contains(constants::REPLAY_X) || !gamezone.contains(constants::REPLAY_Y) ||
         !gamezone.contains(constants::REPLAY_WIDTH) ||
         !gamezone.contains(constants::REPLAY_HEIGHT)) {
+        _renderOffsetX = 0.0f;
+        _renderOffsetY = 0.0f;
         return;
     }
 
@@ -204,10 +290,8 @@ void ReplayState::updateViewForFrame(const nlohmann::json& frame) {
     float centerX = gamezoneX + gamezoneWidth / 2.0f;
     float centerY = gamezoneY + gamezoneHeight / 2.0f;
 
-    auto window = _resourceManager->get<gfx::IWindow>();
-    if (window) {
-        window->setViewCenter(centerX, centerY);
-    }
+    _renderOffsetX = constants::MAX_WIDTH / 2.0f - centerX;
+    _renderOffsetY = constants::MAX_HEIGHT / 2.0f - centerY;
 }
 
 void ReplayState::renderReplaySprites() {
@@ -259,8 +343,8 @@ void ReplayState::renderReplaySprites() {
             const auto& transform = renderable[constants::REPLAY_TRANSFORM];
             const auto& sprite = renderable[constants::REPLAY_SPRITE];
 
-            float x = transform[constants::REPLAY_X];
-            float y = transform[constants::REPLAY_Y];
+            float x = transform[constants::REPLAY_X].get<float>() + _renderOffsetX;
+            float y = transform[constants::REPLAY_Y].get<float>() + _renderOffsetY;
             float scaleX = transform[constants::REPLAY_SCALE_X];
             float scaleY = transform[constants::REPLAY_SCALE_Y];
 
@@ -294,15 +378,13 @@ void ReplayState::renderParallaxBackground(
     const auto& transform = parallaxData[constants::REPLAY_TRANSFORM];
     const auto& parallax = parallaxData[constants::REPLAY_PARALLAX];
 
-    float baseX = transform[constants::REPLAY_X];
-    float baseY = transform[constants::REPLAY_Y];
+    float baseX = transform[constants::REPLAY_X].get<float>() + _renderOffsetX;
+    float baseY = transform[constants::REPLAY_Y].get<float>() + _renderOffsetY;
 
     float screenWidth = constants::MAX_WIDTH;
     float screenHeight = constants::MAX_HEIGHT;
 
-    math::Vector2f viewCenter = window->getViewCenter();
-    float viewLeft = viewCenter.getX() - screenWidth / 2.0f;
-
+    float viewLeft = 0.0f;
     if (parallax.contains(constants::REPLAY_LAYERS)) {
         std::vector<std::pair<int, const nlohmann::json*>> sortedLayers;
         for (const auto& layerData : parallax[constants::REPLAY_LAYERS]) {
@@ -393,8 +475,8 @@ void ReplayState::renderHealthBar(
     const auto& health = healthBarData[constants::REPLAY_HEALTH];
     const auto& collider = healthBarData[constants::REPLAY_COLLIDER];
 
-    float posX = transform[constants::REPLAY_X];
-    float posY = transform[constants::REPLAY_Y];
+    float posX = transform[constants::REPLAY_X].get<float>() + _renderOffsetX;
+    float posY = transform[constants::REPLAY_Y].get<float>() + _renderOffsetY;
     float scaleX = transform[constants::REPLAY_SCALE_X];
     float scaleY = transform[constants::REPLAY_SCALE_Y];
 
@@ -448,8 +530,8 @@ void ReplayState::renderText(
     const auto& transform = textData[constants::REPLAY_TRANSFORM];
     const auto& text = textData[constants::REPLAY_TEXT];
 
-    float x = transform[constants::REPLAY_X];
-    float y = transform[constants::REPLAY_Y];
+    float x = transform[constants::REPLAY_X].get<float>() + _renderOffsetX;
+    float y = transform[constants::REPLAY_Y].get<float>() + _renderOffsetY;
 
     std::string content = text[constants::REPLAY_CONTENT];
     std::string fontPath = text[constants::REPLAY_FONT_PATH];
@@ -476,8 +558,8 @@ void ReplayState::renderRectangle(
     const auto& transform = rectangleData[constants::REPLAY_TRANSFORM];
     const auto& rectangle = rectangleData[constants::REPLAY_RECTANGLE];
 
-    float x = transform[constants::REPLAY_X];
-    float y = transform[constants::REPLAY_Y];
+    float x = transform[constants::REPLAY_X].get<float>() + _renderOffsetX;
+    float y = transform[constants::REPLAY_Y].get<float>() + _renderOffsetY;
 
     float width = rectangle[constants::REPLAY_WIDTH];
     float height = rectangle[constants::REPLAY_HEIGHT];
@@ -507,8 +589,8 @@ void ReplayState::renderHitbox(
     const auto& hitbox = hitboxData[constants::REPLAY_HITBOX];
     const auto& collider = hitboxData[constants::REPLAY_COLLIDER];
 
-    float posX = transform[constants::REPLAY_X];
-    float posY = transform[constants::REPLAY_Y];
+    float posX = transform[constants::REPLAY_X].get<float>() + _renderOffsetX;
+    float posY = transform[constants::REPLAY_Y].get<float>() + _renderOffsetY;
     float scaleX = transform[constants::REPLAY_SCALE_X];
     float scaleY = transform[constants::REPLAY_SCALE_Y];
 
@@ -590,6 +672,10 @@ std::vector<std::filesystem::path> ReplayState::getAvailableReplays() {
 }
 
 void ReplayState::createReplaySelectionUI() {
+    _uiManager->clearElements();
+    _uiManager->addElement(_background);
+    _replayButtons.clear();
+
     auto availableReplays = getAvailableReplays();
 
     ui::LayoutConfig layoutConfig;
@@ -638,8 +724,12 @@ void ReplayState::createReplaySelectionUI() {
             replayButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
 
             replayButton->setOnRelease([this, replayPath]() {
+                _shouldSwitch = true;
                 loadReplay(replayPath);
-                _isPlaying = true;
+            });
+            replayButton->setOnActivated([this, replayPath]() {
+                _shouldSwitch = true;
+                loadReplay(replayPath);
             });
 
             _replayButtons.push_back(replayButton);
@@ -682,7 +772,147 @@ void ReplayState::loadReplay(const std::filesystem::path& replayFile) {
         _totalReplayTime = _frames.back()[constants::REPLAY_TOTAL_TIME].get<float>();
         _replayTime = 0.0f;
         _currentFrameIndex = 0;
+        _isPaused = false;
+
+        createPlaybackControlsUI();
     }
+}
+
+void ReplayState::createPlaybackControlsUI() {
+    if (!_playbackUIManager) {
+        _playbackUIManager = std::make_unique<ui::UIManager>();
+        auto config = _resourceManager->get<SettingsConfig>();
+        _playbackUIManager->setGlobalScale(config->getUIScale());
+    }
+
+    _playbackUIManager->clearElements();
+
+    ui::LayoutConfig mainLayoutConfig;
+    mainLayoutConfig.direction = ui::LayoutDirection::Vertical;
+    mainLayoutConfig.alignment = ui::LayoutAlignment::Start;
+    mainLayoutConfig.spacing = 70.0f;
+    mainLayoutConfig.padding = math::Vector2f(20.0f, 20.0f);
+    mainLayoutConfig.anchorX = ui::AnchorX::Left;
+    mainLayoutConfig.anchorY = ui::AnchorY::Bottom;
+    mainLayoutConfig.offset = math::Vector2f(20.0f, -50.0f);
+
+    _playbackLayout = std::make_shared<ui::UILayout>(_resourceManager, mainLayoutConfig);
+    _playbackLayout->setSize(math::Vector2f(900.f, 170.f));
+
+    auto buttonsLayout = std::make_shared<ui::UILayout>(_resourceManager);
+    buttonsLayout->setDirection(ui::LayoutDirection::Horizontal);
+    buttonsLayout->setAlignment(ui::LayoutAlignment::Start);
+    buttonsLayout->setSpacing(25.0f);
+    buttonsLayout->setPadding(math::Vector2f(0.0f, 0.0f));
+
+    _replayBackButton = std::make_shared<ui::Button>(_resourceManager);
+    _replayBackButton->setText("Back");
+    _replayBackButton->setSize(math::Vector2f(100.f, 50.f));
+    _replayBackButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _replayBackButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _replayBackButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _replayBackButton->setOnRelease([this]() {
+        _shouldSwitch = true;
+        _isPaused = false;
+    });
+    _replayBackButton->setOnActivated([this]() {
+        _shouldSwitch = true;
+        _isPaused = false;
+    });
+
+    _playPauseButton = std::make_shared<ui::Button>(_resourceManager);
+    _playPauseButton->setText("Pause");
+    _playPauseButton->setSize(math::Vector2f(120.f, 50.f));
+    _playPauseButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _playPauseButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _playPauseButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _playPauseButton->setOnRelease([this]() {
+        _isPaused = !_isPaused;
+    });
+    _playPauseButton->setOnActivated([this]() {
+        _isPaused = !_isPaused;
+    });
+
+    buttonsLayout->addElement(_replayBackButton);
+    buttonsLayout->addElement(_playPauseButton);
+
+    auto progressLayout = std::make_shared<ui::UILayout>(_resourceManager);
+    progressLayout->setDirection(ui::LayoutDirection::Vertical);
+    progressLayout->setAlignment(ui::LayoutAlignment::Start);
+    progressLayout->setSpacing(0.0f);
+    progressLayout->setPadding(math::Vector2f(0.0f, 0.0f));
+
+    _timeText = std::make_shared<ui::Text>(_resourceManager);
+    _timeText->setText(" 0:00 / 0:00");
+    _timeText->setSize(math::Vector2f(850.f, 15.f));
+
+    _progressSlider = std::make_shared<ui::Slider>(_resourceManager);
+    _progressSlider->setMinValue(0.0f);
+    _progressSlider->setMaxValue(_totalReplayTime);
+    _progressSlider->setValue(_replayTime);
+    _progressSlider->setShowPercentage(false);
+    _progressSlider->setSize(math::Vector2f(850.0f, 40.0f));
+    _progressSlider->setStep(0.016f);
+    _progressSlider->setOnValueChanged([this](float value) {
+        _replayTime = value;
+
+        size_t targetIndex = 0;
+        for (size_t i = 0; i < _frames.size(); ++i) {
+            float frameTime = _frames[i][constants::REPLAY_TOTAL_TIME].get<float>();
+            if (frameTime <= _replayTime) {
+                targetIndex = i;
+            } else {
+                break;
+            }
+        }
+        _currentFrameIndex = targetIndex;
+    });
+
+    progressLayout->addElement(_timeText);
+    progressLayout->addElement(_progressSlider);
+
+    _playbackLayout->addElement(progressLayout);
+    _playbackLayout->addElement(buttonsLayout);
+
+    _playbackUIManager->addElement(_playbackLayout);
+}
+
+void ReplayState::updatePlaybackControls() {
+    if (!_playbackUIManager || !_progressSlider || !_timeText) {
+        return;
+    }
+
+    auto config = _resourceManager->get<SettingsConfig>();
+    if (_playbackUIManager->getGlobalScale() != config->getUIScale()) {
+        _playbackUIManager->setGlobalScale(config->getUIScale());
+    }
+
+    _progressSlider->setValue(_replayTime);
+
+    int currentMinutes = static_cast<int>(_replayTime) / 60;
+    int currentSeconds = static_cast<int>(_replayTime) % 60;
+    int totalMinutes = static_cast<int>(_totalReplayTime) / 60;
+    int totalSeconds = static_cast<int>(_totalReplayTime) % 60;
+
+    std::string timeString = std::to_string(currentMinutes) + ":";
+    if (currentSeconds < 10) timeString += "0";
+    timeString += std::to_string(currentSeconds);
+    timeString += " / " + std::to_string(totalMinutes) + ":";
+    if (totalSeconds < 10) timeString += "0";
+    timeString += std::to_string(totalSeconds);
+
+    _timeText->setText(" " + timeString);
+
+    if (_playPauseButton) {
+        _playPauseButton->setText(_isPaused ? "Play" : "Pause");
+    }
+
+    math::Vector2f mousePos = _mouseHandler->getWorldMousePosition();
+    bool mousePressed = _mouseHandler->isMouseButtonPressed(
+        static_cast<int>(constants::MouseButton::LEFT));
+
+    _playbackUIManager->handleMouseInput(mousePos, mousePressed);
+    _playbackUIManager->update(0.016f);
 }
 
 }  // namespace gsm
