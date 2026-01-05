@@ -17,6 +17,12 @@ Registry::Registry() : _nextEntityId(1), _onEntityDestroyed(nullptr) {
     this->_components = std::unordered_map<std::string, std::shared_ptr<IComponentArray>>();
 }
 
+Registry::Registry(Entity nextEntityId) : _nextEntityId(nextEntityId),
+    _onEntityDestroyed(nullptr) {
+    this->_components = std::unordered_map<std::string,
+        std::shared_ptr<IComponentArray>>();
+}
+
 Registry::~Registry() {
 }
 

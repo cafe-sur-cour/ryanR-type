@@ -9,7 +9,7 @@
 #include <memory>
 #include <iostream>
 #include "../../../machine/GameStateMachine.hpp"
-#include "../../../../Server.hpp"
+#include "../../../../Lobby.hpp"
 #include "../../../../../common/gsm/IGameState.hpp"
 #include "../../../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
@@ -131,7 +131,7 @@ void InGameState::update(float deltaTime) {
 
             if (players.begin() != players.end())
                 isWin = true;
-            _resourceManager->get<rserv::Server>()->endGamePacket(isWin);
+            _resourceManager->get<rserv::Lobby>()->endGamePacket(isWin);
 
             if (auto gsmPtr = _gsm.lock()) {
                 if (auto gsm = std::dynamic_pointer_cast<GameStateMachine>(gsmPtr)) {

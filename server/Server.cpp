@@ -17,86 +17,55 @@
 
 #include "Server.hpp"
 #include "Constants.hpp"
+#include "packet/DefaultPacketHandlers.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
+#include "../../common/systems/systemManager/SystemManager.hpp"
+#include "initResourcesManager/initResourcesManager.hpp"
 #include "../common/Error/ServerErrror.hpp"
 #include "../common/debug.hpp"
 #include "../common/constants.hpp"
 #include "Signal.hpp"
 
-rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
-    _nextClientId(1), _sequenceNumber(1) {
+rserv::Server::Server() :
+    _nextClientId(1), _sequenceNumber(1), _nextEntityId(1) {
     this->_clients = {};
     this->_config = nullptr;
     this->_network = nullptr;
     this->_buffer = nullptr;
     this->_packet = nullptr;
-    this->lobbys = {};
-    this->_eventQueue = std::make_shared<std::queue<std::tuple<uint8_t,
-        constants::EventType, double>>>();
+    this->_lobbyThreads = {};
+    this->_lobbies = {};
     this->_config = std::make_shared<rserv::ServerConfig>();
-    this->_gameStarted = false;
-    this->_resourceManager = resourceManager;
-    this->_lastGameStateTime = std::chrono::steady_clock::now();
-
-    this->_convertFunctions = {
-        std::bind(&rserv::Server::convertTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertTransformComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertSpeedComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertHealthComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertColliderComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertShootStatComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertScoreComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertDamageComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertLifetimeComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertVelocityComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertControllableTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertEnemyProjectileTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertGameZoneColliderTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertMobTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertObstacleTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertPlayerProjectileTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertShooterTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertProjectilePassThroughTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertProjectilePrefabComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertGameZoneComponent, this,
-            std::placeholders::_1, std::placeholders::_2)
-    };
 }
 
 rserv::Server::~Server() {
-    if (this->getState() == 1)
-        this->stop();
-    this->_resourceManager->clear();
+    if (this->getState() == 1) {
+        try {
+            this->stop();
+        } catch (...) {
+            std::cerr << "Error in destructor while stopping server" << std::endl;
+        }
+    }
+    for (auto& lobbyStruct : this->_lobbyThreads) {
+        if (lobbyStruct && lobbyStruct->_lobby) {
+            try {
+                lobbyStruct->_lobby->stop();
+            } catch (...) {
+                // Ignore exceptions in destructor
+            }
+        }
+    }
+    this->_lobbyThreads.clear();
+    this->_lobbies.clear();
+}
 
-    if (this->_network != nullptr) {
-        this->_network.reset();
-    }
-    if (this->_buffer != nullptr) {
-        this->_buffer.reset();
-    }
-    if (this->_packet != nullptr) {
-        this->_packet->clearAllHandlers();
-        this->_packet.reset();
-    }
+
+void rserv::Server::initRessourceManager(std::shared_ptr<Lobby> lobby) {
+    auto lobbyResourceManager = initResourcesManager(
+        std::shared_ptr<rserv::Server>(this),
+        lobby
+    );
+    lobby->setResourceManager(lobbyResourceManager);
 }
 
 void rserv::Server::init() {
@@ -133,15 +102,7 @@ void rserv::Server::start() {
     Signal::setupSignalHandlers();
     while (this->getState() == 1 && !Signal::stopFlag) {
         this->processIncomingPackets();
-        if (this->_clients.size() > 0) {
-            auto now = std::chrono::steady_clock::now();
-            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
-                now - this->_lastGameStateTime).count();
-            if (elapsed >= constants::CD_TPS) {
-                this->gameStatePacket();
-                this->_lastGameStateTime = now;
-            }
-        }
+        /* Replace the game stat packet by the monitoring of the threads and call lobby loop*/
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         if (std::cin.eof()) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -170,7 +131,24 @@ void rserv::Server::stop() {
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return;
     }
-    _network->stop();
+    Signal::stopFlag = true;
+    for (auto lobby : this->_lobbies) {
+        if (lobby) {
+            try {
+                lobby->stop();
+            } catch (const std::exception& e) {
+                std::cerr << "Error stopping lobby: " << e.what() << std::endl;
+            } catch (...) {
+                std::cerr << "Unknown error stopping lobby" << std::endl;
+            }
+        }
+    }
+    this->_lobbyThreads.clear();
+    this->_lobbies.clear();
+    this->_clientToLobby.clear();
+    if (_network) {
+        _network->stop();
+    }
     this->setState(0);
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "[SERVER] Server stopped.",
@@ -233,14 +211,25 @@ void rserv::Server::processIncomingPackets() {
     this->_packet->unpack(received.second);
     if (this->_packet->getType() == constants::PACKET_CONNECTION) {
             this->processConnections(std::make_pair(received.first, received.second));
-    } else if (this->_packet->getType() == constants::PACKET_EVENT) {
-        this->processEvents(this->_packet->getIdClient());
     } else if (this->_packet->getType() == constants::PACKET_CLIENT_READY) {
         this->onPacketReceived(this->_packet->getIdClient(), *this->_packet);
-    } else if (this->_packet->getType() == constants::PACKET_WHOAMI) {
-        this->processWhoAmI(this->_packet->getIdClient());
     } else if (this->_packet->getType() == constants::PACKET_REQUEST_LOBBY) {
         this->requestCode(*received.first);
+    } else if (this->_packet->getType() == constants::PACKET_CONNECT_TO_LOBBY) {
+        this->processConnectToLobby(std::make_pair(received.first, received.second));
+    } else if (this->_packet->getType() == constants::PACKET_LOBBY_MASTER_REQUEST_START) {
+        this->processMasterStart(std::make_pair(received.first, received.second));
+    } else if (this->_packet->getType() == constants::PACKET_EVENT) {
+        uint8_t idClient = this->_packet->getIdClient();
+        auto it = this->_clientToLobby.find(idClient);
+        if (it != this->_clientToLobby.end()) {
+            it->second->enqueuePacket(received);
+        } else {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Received event packet from unknown client: " +
+                std::to_string(idClient),
+                debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        }
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "
@@ -273,27 +262,17 @@ size_t rserv::Server::getClientCount() const {
     return this->_clients.size();
 }
 
-std::shared_ptr<std::queue<std::tuple<uint8_t,
-    constants::EventType, double>>> rserv::Server::getEventQueue() {
-    return this->_eventQueue;
-}
-
-bool rserv::Server::hasEvents() const {
-    return !this->_eventQueue->empty();
-}
 
 void rserv::Server::onClientConnected(uint8_t idClient) {
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "Client " + std::to_string(idClient) + " connected",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    // Add game-specific logic here
 }
 
 void rserv::Server::onClientDisconnected(uint8_t idClient) {
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "Client " + std::to_string(idClient) + " disconnected",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    this->_deltaTracker.clearClientCache(idClient);
 }
 
 void rserv::Server::onPacketReceived(
@@ -302,34 +281,6 @@ void rserv::Server::onPacketReceived(
         "Packet received from client " + std::to_string(idClient)
         + " of type " + std::to_string(static_cast<int>(packet.getType())),
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-
-    switch (packet.getType()) {
-        case constants::PACKET_CLIENT_READY:
-            this->_clientsReady[idClient] = true;
-            this->canStartPacket();
-            break;
-        default:
-            break;
-    }
-}
-
-bool rserv::Server::isGameStarted() const {
-    return this->_gameStarted;
-}
-
-bool rserv::Server::allClientsReady() const {
-    if (this->_clients.empty()) {
-        return false;
-    }
-
-    for (const auto &client : this->_clients) {
-        uint8_t clientId = std::get<0>(client);
-        auto it = this->_clientsReady.find(clientId);
-        if (it == this->_clientsReady.end() || !it->second) {
-            return false;
-        }
-    }
-    return true;
 }
 
 uint32_t rserv::Server::getSequenceNumber() const {
@@ -344,16 +295,27 @@ void rserv::Server::incrementSequenceNumber() {
     this->_sequenceNumber++;
 }
 
-void rserv::Server::setResourceManager(std::shared_ptr<ResourceManager> resourceManager) {
-    if (this->_resourceManager != nullptr) {
-        this->_resourceManager.reset();
-        this->_resourceManager = nullptr;
+std::shared_ptr<pm::IPacketManager> rserv::Server::createNewPacketManager() {
+    createPacket_t createPacket = _packetloader.getSymbol("createPacketInstance");
+    if (!createPacket) {
+        throw err::ServerError("[Server] Cannot get createPacketInstance symbol",
+            err::ServerError::LIBRARY_LOAD_FAILED);
     }
-    this->_resourceManager = resourceManager;
+    auto packet = std::shared_ptr<pm::IPacketManager>
+        (reinterpret_cast<pm::IPacketManager *>(createPacket()));
+    if (!packet) {
+        throw err::ServerError("[Server] Creating packet instance failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
+    if (!rserv::packet::registerDefaultPacketHandlers(packet)) {
+        throw err::ServerError("[Server] Registering default packet handlers failed",
+            err::ServerError::LIBRARY_LOAD_FAILED);
+    }
+    return packet;
 }
 
-void rserv::Server::clearEntityDeltaCache(uint8_t clientId, uint32_t entityId) {
-    this->_deltaTracker.clearEntityCache(clientId, entityId);
+uint32_t rserv::Server::getNextEntityId() {
+    return this->_nextEntityId++;
 }
 
 void rserv::Server::clearDeltaTrackerCaches() {

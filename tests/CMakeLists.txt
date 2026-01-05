@@ -156,6 +156,10 @@ add_executable(AdditionalPacketTests server/packet/AdditionalPacketTests.cpp)
 target_link_libraries(AdditionalPacketTests Packet Buffer CommonPacketHandlers GTest::gtest GTest::gtest_main)
 add_test(NAME AdditionalPacketTests COMMAND AdditionalPacketTests)
 
+add_executable(EcsConversionTests server/packet/EcsConversionTests.cpp)
+target_link_libraries(EcsConversionTests r-type_server_lib ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME EcsConversionTests COMMAND EcsConversionTests)
+
 add_executable(AdditionalServerConfigTests server/AdditionalServerConfigTests.cpp)
 target_link_libraries(AdditionalServerConfigTests r-type_server_lib GTest::gtest GTest::gtest_main)
 add_test(NAME AdditionalServerConfigTests COMMAND AdditionalServerConfigTests)
