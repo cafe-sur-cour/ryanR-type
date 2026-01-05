@@ -1,0 +1,85 @@
+/*
+** EPITECH PROJECT, 2025
+** ryanR-type
+** File description:
+** LevelCompleteState
+*/
+
+#include "LevelCompleteState.hpp"
+#include <memory>
+#include <string>
+#include "../../../machine/GameStateMachine.hpp"
+#include "../../../../Server.hpp"
+#include "../../../../../common/Parser/MapParser/MapHandler.hpp"
+#include "../../../../../common/ECS/entity/registry/Registry.hpp"
+#include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
+#include "../../../../../common/ECS/entity/EntityCreationContext.hpp"
+#include "../InGame/InGameState.hpp"
+#include "../GameEnd/GameEndState.hpp"
+#include "../../../gsmStates.hpp"
+
+namespace gsm {
+
+LevelCompleteState::LevelCompleteState(std::shared_ptr<IGameStateMachine> gsm,
+    std::shared_ptr<ResourceManager> resourceManager)
+    : AGameState(gsm, resourceManager), _transitionTimer(0.0f) {
+}
+
+void LevelCompleteState::enter() {
+    *(_resourceManager->get<gsm::GameStateType>()) = gsm::LEVEL_COMPLETE;
+    _transitionTimer = 0.0f;
+}
+
+void LevelCompleteState::update(float deltaTime) {
+    _transitionTimer += deltaTime;
+
+    if (_transitionTimer >= TRANSITION_DELAY) {
+        auto mapHandler = _resourceManager->get<MapHandler>();
+
+        bool hasNextMap = mapHandler && mapHandler->advanceToNextMap();
+
+        if (hasNextMap) {
+            auto registry = _resourceManager->get<ecs::Registry>();
+            if (registry) {
+                registry->clearAllEntities();
+            }
+
+            auto server = _resourceManager->get<rserv::Server>();
+
+            server->clearDeltaTrackerCaches();
+
+            server->nextLevelPacket();
+
+            auto prefabMgr = _resourceManager->get<EntityPrefabManager>();
+            if (server && prefabMgr && registry) {
+                std::string playerPrefab = "player";
+                auto clientIds = server->getConnectedClients();
+                for (auto _ : clientIds) {
+                    prefabMgr->createEntityFromPrefab(
+                        playerPrefab,
+                        registry,
+                        ecs::EntityCreationContext::forServer()
+                    );
+                }
+            }
+
+            if (auto gsmPtr = _gsm.lock()) {
+                if (auto gsm = std::dynamic_pointer_cast<GameStateMachine>(gsmPtr)) {
+                    *(_resourceManager->get<gsm::GameStateType>()) = gsm::IN_GAME;
+                    gsm->requestStateChange(std::make_shared<gsm::InGameState>
+                        (gsmPtr, _resourceManager));
+                }
+            }
+        } else {
+            if (auto gsmPtr = _gsm.lock()) {
+                if (auto gsm = std::dynamic_pointer_cast<GameStateMachine>(gsmPtr)) {
+                    *(_resourceManager->get<gsm::GameStateType>()) = gsm::GAME_END;
+                    gsm->requestStateChange(std::make_shared<gsm::GameEndState>
+                        (gsmPtr, _resourceManager));
+                }
+            }
+        }
+    }
+}
+
+}  // namespace gsm
