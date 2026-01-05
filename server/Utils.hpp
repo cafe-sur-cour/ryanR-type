@@ -20,6 +20,7 @@ class Utils {
 
         void helper();
         void parsCli(int ac, char **av, std::shared_ptr<rserv::ServerConfig> config);
+        static std::string createAlphaNumericCode();
     protected:
     private:
 };

@@ -30,6 +30,7 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
     this->_network = nullptr;
     this->_buffer = nullptr;
     this->_packet = nullptr;
+    this->lobbys = {};
     this->_eventQueue = std::make_shared<std::queue<std::tuple<uint8_t,
         constants::EventType, double>>>();
     this->_config = std::make_shared<rserv::ServerConfig>();
@@ -52,17 +53,11 @@ rserv::Server::Server(std::shared_ptr<ResourceManager> resourceManager) :
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertScoreComponent, this,
             std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertAIMovementPatternComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertDamageComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertLifetimeComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertVelocityComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertAIMoverTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Server::convertAIShooterTagComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Server::convertControllableTagComponent, this,
             std::placeholders::_1, std::placeholders::_2),
@@ -243,6 +238,8 @@ void rserv::Server::processIncomingPackets() {
         this->onPacketReceived(this->_packet->getIdClient(), *this->_packet);
     } else if (this->_packet->getType() == constants::PACKET_WHOAMI) {
         this->processWhoAmI(this->_packet->getIdClient());
+    } else if (this->_packet->getType() == constants::PACKET_REQUEST_LOBBY) {
+        this->requestCode(received.first);
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "

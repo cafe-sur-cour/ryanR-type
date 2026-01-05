@@ -43,6 +43,7 @@ ClientNetwork::ClientNetwork() {
     this->_gsm = nullptr;
     this->_clientNames = {};
     this->_serverEndpoint = {};
+    this->_lobbyCode = "";
 
     this->_shouldConnect = false;
 
@@ -63,7 +64,8 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_SPAWN] = &ClientNetwork::handleEntitySpawn;
     _packetHandlers[constants::PACKET_DEATH] = &ClientNetwork::handleEntityDeath;
     _packetHandlers[constants::PACKET_WHOAMI] = &ClientNetwork::handleWhoAmI;
-    _packetHandlers[SERVER_STATUS_PACKET] = &ClientNetwork::handleServerStatus;
+    _packetHandlers[constants::PACKET_SERVER_STATUS] = &ClientNetwork::handleServerStatus;
+    _packetHandlers[constants::PACKET_SEND_LOBBY_CODE] = &ClientNetwork::handleCode;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
@@ -72,7 +74,6 @@ ClientNetwork::ClientNetwork() {
     _componentParsers[COLLIDER] = &ClientNetwork::parseColliderComponent;
     _componentParsers[SHOOTING_STATS] = &ClientNetwork::parseShootingStatsComponent;
     _componentParsers[SCORE] = &ClientNetwork::parseScoreComponent;
-    _componentParsers[AI_MOVEMENT_PATTERN] = &ClientNetwork::parseAIMovementPatternComponent;
     _componentParsers[DAMAGE] = &ClientNetwork::parseDamageComponent;
     _componentParsers[LIFETIME] = &ClientNetwork::parseLifetimeComponent;
     _componentParsers[VELOCITY] = &ClientNetwork::parseVelocityComponent;
@@ -82,33 +83,14 @@ ClientNetwork::ClientNetwork() {
 
 ClientNetwork::~ClientNetwork() {
     this->stop();
-    if (this->_receptionBuffer != nullptr) {
-            this->_receptionBuffer.reset();
-    }
-    if (this->_sendBuffer != nullptr) {
-            this->_sendBuffer.reset();
-    }
-    if (this->_bufferloader.getHandler() != nullptr) {
-        this->_bufferloader.Close();
-    }
-    if (this->_packetloader.getHandler() != nullptr) {
-        this->_packetloader.Close();
-    }
-    if (this->_networloader.getHandler() != nullptr) {
-        this->_networloader.Close();
-    }
-    // Note: ResourceManager is owned by Core, so we don't clear it here
-    // Core::~Core() will handle clearing the ResourceManager
+    this->_gsm.reset();
+    this->_network.reset();
     if (this->_packet != nullptr) {
-        this->_packet->clearAllHandlers();
+            this->_packet->clearAllHandlers();
         this->_packet.reset();
     }
-    if (this->_network != nullptr) {
-        this->_network.reset();
-    }
-    if (this->_gsm != nullptr) {
-        this->_gsm.reset();
-    }
+    this->_receptionBuffer.reset();
+    this->_sendBuffer.reset();
 }
 
 void ClientNetwork::setResourceManager(std::shared_ptr<ResourceManager> resourceManager) {
@@ -154,6 +136,9 @@ void ClientNetwork::connect() {
 }
 
 void ClientNetwork::stop() {
+    if (this->_network == nullptr) {
+        return;
+    }
     this->_network->stop();
     this->_network->setConnectionState(net::ConnectionState::DISCONNECTED);
     this->_isConnected = false;
@@ -250,7 +235,6 @@ void ClientNetwork::handlePacketType(uint8_t type) {
     }
 }
 
-
 std::pair<int, std::chrono::steady_clock::time_point> ClientNetwork::tryConnection(
     int maxRetries, int retryCount, std::chrono::steady_clock::time_point lastRetryTime) {
     auto currentTime = std::chrono::steady_clock::now();
@@ -336,6 +320,10 @@ uint8_t ClientNetwork::getClientId() const {
 
 bool ClientNetwork::getClientReadyStatus() const {
     return this->_clientReadyStatus.load();
+}
+
+std::string ClientNetwork::getLobbyCode() const {
+    return this->_lobbyCode;
 }
 
 void ClientNetwork::addToEventQueue(const NetworkEvent &event) {

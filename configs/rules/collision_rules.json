@@ -34,6 +34,10 @@
             [["PlayerProjectileTag"], ["MobTag"]],
             [["MobTag"], ["PlayerProjectileTag"]],
 
+            [["PlayerTag"], ["MobTag"]],
+            [["MobTag"], ["PlayerTag"]],
+
+
             [["PlayerProjectileTag"], ["ObstacleTag"]],
             [["ObstacleTag"], ["PlayerProjectileTag"]],
 

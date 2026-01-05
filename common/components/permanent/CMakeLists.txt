@@ -3,6 +3,7 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     VelocityComponent.hpp
     SpeedComponent.hpp
     ColliderComponent.hpp
+    ColliderComponent.cpp
     ShootingStatsComponent.hpp
     ProjectilePrefabComponent.hpp
     LifetimeComponent.hpp
@@ -13,5 +14,8 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     DamageComponent.hpp
     GameZoneComponent.hpp
     InteractionConfigComponent.hpp
-    AIMovementPatternComponent.hpp
+    ScriptingComponent.hpp
+    ScriptingComponent.cpp
+    EntityPartsComponent.hpp
+    CompositeEntityComponent.hpp
 )
