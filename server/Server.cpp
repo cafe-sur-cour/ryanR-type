@@ -197,7 +197,8 @@ void rserv::Server::processIncomingPackets() {
         return;
     }
 
-    std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> received = _network->receiveAny();
+    std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> received =
+        _network->receiveAny();
     if (received.second.empty()) {
         return;
     }
@@ -247,8 +248,9 @@ std::vector<uint8_t> rserv::Server::getConnectedClients() const {
     return clientIds;
 }
 
-std::vector<asio::ip::udp::endpoint> rserv::Server::getConnectedClientEndpoints() const {
-    std::vector<asio::ip::udp::endpoint> endpoints;
+std::vector<std::shared_ptr<net::INetworkEndpoint>>
+    rserv::Server::getConnectedClientEndpoints() const {
+    std::vector<std::shared_ptr<net::INetworkEndpoint>> endpoints;
     for (const auto &client : this->_clients) {
         endpoints.push_back(std::get<1>(client));
     }

@@ -18,12 +18,9 @@
 #include "../common/components/permanent/ColliderComponent.hpp"
 #include "../common/components/permanent/ShootingStatsComponent.hpp"
 #include "../common/components/permanent/ScoreComponent.hpp"
-#include "../common/components/permanent/AIMovementPatternComponent.hpp"
 #include "../common/components/permanent/DamageComponent.hpp"
 #include "../common/components/permanent/LifetimeComponent.hpp"
 #include "../common/components/permanent/VelocityComponent.hpp"
-#include "../common/components/tags/AIMoverTag.hpp"
-#include "../common/components/tags/AIShooterTag.hpp"
 #include "../common/components/tags/ControllableTag.hpp"
 #include "../common/components/tags/EnnemyProjectileTag.hpp"
 #include "../common/components/tags/GameZoneColliderTag.hpp"
@@ -203,7 +200,7 @@ std::vector<uint64_t> rserv::Lobby::convertVelocityComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Lobby::convertAIMoverTagComponent(
+std::vector<uint64_t> rserv::Server::convertAIMoverTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::AIMoverTag>(i)) {
@@ -212,7 +209,7 @@ std::vector<uint64_t> rserv::Lobby::convertAIMoverTagComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Lobby::convertAIShooterTagComponent(
+std::vector<uint64_t> rserv::Server::convertAIShooterTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::AIShooterTag>(i)) {

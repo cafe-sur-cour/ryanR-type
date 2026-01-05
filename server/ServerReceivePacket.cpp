@@ -17,7 +17,7 @@
 #include "../common/components/tags/PlayerTag.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 
-bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
+bool rserv::Server::processConnections(std::pair<std::shared_ptr<net::INetworkEndpoint>,
     std::vector<uint8_t>> client) {
     if (!_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -29,7 +29,7 @@ bool rserv::Server::processConnections(std::pair<asio::ip::udp::endpoint,
     if (client.second.size() > HEADER_SIZE)
         name = std::string(client.second.begin() + HEADER_SIZE, client.second.end());
 
-    this->connectionPacket(client.first);
+    this->connectionPacket(*client.first);
     this->_clients.push_back(std::make_tuple(this->_nextClientId, client.first, name));
     this->_clientsReady[this->_nextClientId] = false;
     debug::Debug::printDebug(this->_config->getIsDebug(), "[SERVER] Set client " +
@@ -56,7 +56,7 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
     return false;
 }
 
-bool rserv::Server::requestCode(asio::ip::udp::endpoint endpoint) {
+bool rserv::Server::requestCode(const net::INetworkEndpoint &endpoint) {
     if (!this->_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Network not initialized",
@@ -72,7 +72,7 @@ bool rserv::Server::requestCode(asio::ip::udp::endpoint endpoint) {
     return true;
 }
 
-bool rserv::Server::processConnectToLobby(std::pair<asio::ip::udp::endpoint,
+bool rserv::Server::processConnectToLobby(std::pair<std::shared_ptr<net::INetworkEndpoint>,
     std::vector<uint8_t>> payload) {
     /* Verify Network */
     if (!this->_network) {
@@ -99,9 +99,9 @@ bool rserv::Server::processConnectToLobby(std::pair<asio::ip::udp::endpoint,
         }
    }
     /* Send succesfull or fail connect */
-    this->lobbyConnectValuePacket(payload.first, lobbyExists);
+    this->lobbyConnectValuePacket(*payload.first, lobbyExists);
     /* Add client to lobby */
-    std::tuple<uint8_t, asio::ip::udp::endpoint, std::string> clientToAdd;
+    std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string> clientToAdd;
     for (const auto &client : this->_clients) {
         if (std::get<1>(client) == payload.first) {
             clientToAdd = client;
@@ -128,7 +128,7 @@ bool rserv::Server::processConnectToLobby(std::pair<asio::ip::udp::endpoint,
     return true;
 }
 
-bool rserv::Server::processMasterStart(std::pair<asio::ip::udp::endpoint,
+bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEndpoint>,
     std::vector<uint8_t>> payload) {
     /* Verify Network */
     if (!this->_network) {
@@ -177,8 +177,8 @@ bool rserv::Server::processMasterStart(std::pair<asio::ip::udp::endpoint,
         }
     }
 
-    std::vector<std::tuple<uint8_t, asio::ip::udp::endpoint, std::string>> _clientInfo;
-    std::vector<asio::ip::udp::endpoint> endpoints;
+    std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> _clientInfo;
+    std::vector<std::shared_ptr<net::INetworkEndpoint>> endpoints;
     for (const auto &lobby : this->_lobbyThreads) {
         if (lobby->_lobbyCode == lobbyCode) {
             _clientInfo = lobby->_clients;

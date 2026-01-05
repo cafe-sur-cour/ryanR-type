@@ -16,8 +16,6 @@ add_library(${SERVER_LIB_NAME}
     LobbyStruct.hpp
 )
 
-find_package(asio CONFIG REQUIRED)
-
 target_link_libraries(${SERVER_LIB_NAME}
     PUBLIC
         ECS
@@ -29,7 +27,6 @@ target_link_libraries(${SERVER_LIB_NAME}
         NetworkClient
         DEBUG
         Packet
-        asio::asio
         nlohmann_json::nlohmann_json
         PARSER
         PREFAB
