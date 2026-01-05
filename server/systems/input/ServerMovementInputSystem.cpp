@@ -39,23 +39,14 @@ void ServerMovementInputSystem::update(
 
     auto serverInputProvider = resourceManager->get<ecs::ServerInputProvider>();
 
-    // plus tard metre un composant qui lie au clientID pour mieux identifier
     auto view = registry->view<ControllableTag, PlayerTag>();
 
-    std::vector<size_t> connectedClients = serverInputProvider->getConnectedClients();
-    if (connectedClients.empty())
-        return;
-
-    size_t clientIndex = 0;
     for (auto entityId : view) {
-        if (clientIndex >= connectedClients.size())
-            break;
-        size_t clientID = connectedClients[clientIndex];
+        size_t clientID = static_cast<size_t>(entityId);
         float axisX = serverInputProvider->getActionAxis(InputAction::MOVE_X, clientID);
         float axisY = serverInputProvider->getActionAxis(InputAction::MOVE_Y, clientID);
         math::Vector2f movementDirection(axisX, axisY);
         updateInputIntent(registry, entityId, movementDirection);
-        clientIndex++;
     }
 }
 

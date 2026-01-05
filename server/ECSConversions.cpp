@@ -8,7 +8,7 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include "Server.hpp"
+#include "Lobby.hpp"
 #include "../common/translationToECS.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
@@ -42,7 +42,7 @@ inline uint64_t packFloat(float value) {
 
 }
 
-std::vector<uint64_t> rserv::Server::convertTagComponent(
+std::vector<uint64_t> rserv::Lobby::convertTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::PlayerTag>(i)) {
@@ -51,7 +51,7 @@ std::vector<uint64_t> rserv::Server::convertTagComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertTransformComponent(
+std::vector<uint64_t> rserv::Lobby::convertTransformComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::TransformComponent>(i)) {
@@ -68,7 +68,7 @@ std::vector<uint64_t> rserv::Server::convertTransformComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertSpeedComponent(
+std::vector<uint64_t> rserv::Lobby::convertSpeedComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::SpeedComponent>(i)) {
@@ -81,7 +81,7 @@ std::vector<uint64_t> rserv::Server::convertSpeedComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertHealthComponent(
+std::vector<uint64_t> rserv::Lobby::convertHealthComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::HealthComponent>(i)) {
@@ -95,7 +95,7 @@ std::vector<uint64_t> rserv::Server::convertHealthComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertColliderComponent(
+std::vector<uint64_t> rserv::Lobby::convertColliderComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::ColliderComponent>(i)) {
@@ -112,7 +112,7 @@ std::vector<uint64_t> rserv::Server::convertColliderComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertShootStatComponent(
+std::vector<uint64_t> rserv::Lobby::convertShootStatComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::ShootingStatsComponent>(i)) {
@@ -129,7 +129,7 @@ std::vector<uint64_t> rserv::Server::convertShootStatComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertScoreComponent(
+std::vector<uint64_t> rserv::Lobby::convertScoreComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::ScoreComponent>(i)) {
@@ -142,7 +142,7 @@ std::vector<uint64_t> rserv::Server::convertScoreComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertDamageComponent(
+std::vector<uint64_t> rserv::Lobby::convertDamageComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::DamageComponent>(i)) {
@@ -155,7 +155,7 @@ std::vector<uint64_t> rserv::Server::convertDamageComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertLifetimeComponent(
+std::vector<uint64_t> rserv::Lobby::convertLifetimeComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::LifetimeComponent>(i)) {
@@ -168,7 +168,7 @@ std::vector<uint64_t> rserv::Server::convertLifetimeComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertVelocityComponent(
+std::vector<uint64_t> rserv::Lobby::convertVelocityComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::VelocityComponent>(i)) {
@@ -182,7 +182,7 @@ std::vector<uint64_t> rserv::Server::convertVelocityComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertControllableTagComponent(
+std::vector<uint64_t> rserv::Lobby::convertControllableTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::ControllableTag>(i)) {
@@ -191,7 +191,7 @@ std::vector<uint64_t> rserv::Server::convertControllableTagComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertEnemyProjectileTagComponent(
+std::vector<uint64_t> rserv::Lobby::convertEnemyProjectileTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::EnnemyProjectileTag>(i)) {
@@ -200,7 +200,7 @@ std::vector<uint64_t> rserv::Server::convertEnemyProjectileTagComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertGameZoneColliderTagComponent(
+std::vector<uint64_t> rserv::Lobby::convertGameZoneColliderTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::GameZoneColliderTag>(i)) {
@@ -209,7 +209,7 @@ std::vector<uint64_t> rserv::Server::convertGameZoneColliderTagComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertMobTagComponent(
+std::vector<uint64_t> rserv::Lobby::convertMobTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::MobTag>(i)) {
@@ -218,7 +218,7 @@ std::vector<uint64_t> rserv::Server::convertMobTagComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertObstacleTagComponent(
+std::vector<uint64_t> rserv::Lobby::convertObstacleTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::ObstacleTag>(i)) {
@@ -227,7 +227,7 @@ std::vector<uint64_t> rserv::Server::convertObstacleTagComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertPlayerProjectileTagComponent(
+std::vector<uint64_t> rserv::Lobby::convertPlayerProjectileTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::PlayerProjectileTag>(i)) {
@@ -236,7 +236,7 @@ std::vector<uint64_t> rserv::Server::convertPlayerProjectileTagComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertShooterTagComponent(
+std::vector<uint64_t> rserv::Lobby::convertShooterTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::ShooterTag>(i)) {
@@ -245,7 +245,7 @@ std::vector<uint64_t> rserv::Server::convertShooterTagComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertProjectilePassThroughTagComponent(
+std::vector<uint64_t> rserv::Lobby::convertProjectilePassThroughTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::ProjectilePassThroughTag>(i)) {
@@ -254,7 +254,7 @@ std::vector<uint64_t> rserv::Server::convertProjectilePassThroughTagComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertProjectilePrefabComponent(
+std::vector<uint64_t> rserv::Lobby::convertProjectilePrefabComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::ProjectilePrefabComponent>(i)) {
@@ -273,7 +273,7 @@ std::vector<uint64_t> rserv::Server::convertProjectilePrefabComponent(
     return data;
 }
 
-std::vector<uint64_t> rserv::Server::convertGameZoneComponent(
+std::vector<uint64_t> rserv::Lobby::convertGameZoneComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;
     if (registry && registry->hasComponent<ecs::GameZoneComponent>(i)) {
