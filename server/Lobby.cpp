@@ -21,7 +21,7 @@
 #include "../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 
 rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
-    std::vector<std::tuple<uint8_t, asio::ip::udp::endpoint, std::string>> lobbyPlayerInfo,
+    std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> lobbyPlayerInfo,
     std::string lobbyCode, bool debug) {
     this->_network = network;
     this->_clients = lobbyPlayerInfo;
@@ -29,6 +29,14 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
     this->_isDebug = debug;
 
     this->_clientsReady = std::map<uint8_t, bool>();
+    // this->_clientsAlive = std::map<uint8_t, bool>();
+
+    // for (const auto &client : this->_clients) {
+    //     uint8_t clientId = std::get<0>(client);
+    //     this->_clientsAlive[clientId] = true;
+    //     this->_clientsReady[clientId] = true;
+    // }
+
     this->_packet = nullptr;
     this->_sequenceNumber = 0;
     this->_resourceManager = nullptr;
@@ -55,18 +63,16 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertScoreComponent, this,
             std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Lobby::convertAIMovementPatternComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertDamageComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertLifetimeComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertVelocityComponent, this,
             std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Lobby::convertAIMoverTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Lobby::convertAIShooterTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
+        // std::bind(&rserv::Lobby::convertAIMoverTagComponent, this,
+        //     std::placeholders::_1, std::placeholders::_2),
+        // std::bind(&rserv::Lobby::convertAIShooterTagComponent, this,
+        //     std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertControllableTagComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertEnemyProjectileTagComponent, this,
@@ -104,8 +110,8 @@ std::vector<uint8_t> rserv::Lobby::getConnectedClients() const {
     return clientIds;
 }
 
-std::vector<asio::ip::udp::endpoint> rserv::Lobby::getConnectedClientEndpoints() const {
-    std::vector<asio::ip::udp::endpoint> endpoints;
+std::vector<std::shared_ptr<net::INetworkEndpoint>> rserv::Lobby::getConnectedClientEndpoints() const {
+    std::vector<std::shared_ptr<net::INetworkEndpoint>> endpoints;
     for (const auto &client : this->_clients) {
         endpoints.push_back(std::get<1>(client));
     }
@@ -149,7 +155,7 @@ bool rserv::Lobby::getIsDebug() const {
 /* Packet Processing */
 
 void rserv::Lobby::processIncomingPackets() {
-    std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> received;
+    std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> received;
     {
         std::lock_guard<std::mutex> lock(_packetMutex);
         if (_incomingPackets.empty()) {
@@ -276,7 +282,7 @@ bool rserv::Lobby::processWhoAmI(uint8_t idClient) {
     std::vector<uint64_t> payload;
     payload.push_back(static_cast<uint64_t>(playerEntity));
 
-    asio::ip::udp::endpoint clientEndpoint;
+    std::shared_ptr<net::INetworkEndpoint> clientEndpoint;
     for (const auto &client : this->_clients) {
         if (std::get<0>(client) == idClient) {
             clientEndpoint = std::get<1>(client);
@@ -284,10 +290,17 @@ bool rserv::Lobby::processWhoAmI(uint8_t idClient) {
         }
     }
 
+    if (!clientEndpoint) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[SERVER] No endpoint found for client " + std::to_string(idClient),
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
         this->_sequenceNumber, constants::PACKET_WHOAMI, payload);
 
-    if (!this->_network->sendTo(clientEndpoint, packet)) {
+    if (!this->_network->sendTo(*clientEndpoint, packet)) {
         debug::Debug::printDebug(this->getIsDebug(),
             "[SERVER] Failed to send WHOAMI response to client " + std::to_string(idClient),
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
@@ -377,7 +390,7 @@ bool rserv::Lobby::gameStatePacket() {
                 payload
             );
 
-            if (!this->_network->sendTo(std::get<1>(client), packet)) {
+            if (!this->_network->sendTo(*std::get<1>(client), packet)) {
                 debug::Debug::printDebug(this->getIsDebug(),
                     "[SERVER NETWORK] Failed to send game state packet to client " +
                     std::to_string(static_cast<int>(clientId)),
@@ -386,8 +399,6 @@ bool rserv::Lobby::gameStatePacket() {
             }
         }
     }
-    
-    // Note: sequence number already incremented in the loop above
     return true;
 }
 
@@ -462,7 +473,7 @@ bool rserv::Lobby::serverStatusPacket() {
             payload
         );
 
-        if (!this->_network->sendTo(std::get<1>(client), packet)) {
+        if (!this->_network->sendTo(*std::get<1>(client), packet)) {
             debug::Debug::printDebug(this->getIsDebug(),
                 "[LOBBY NETWORK] Failed to send server status packet to client " +
                 std::to_string(static_cast<int>(clientId)),
@@ -571,6 +582,8 @@ void rserv::Lobby::processLobbyEvents() {
             eventQueue->pop();
             uint8_t clientId = std::get<0>(event);
             constants::EventType eventType = std::get<1>(event);
+            std::cout << "Processing event from client " << static_cast<int>(clientId)
+                      << " of type " << static_cast<int>(eventType) << std::endl;
             double param1 = std::get<2>(event);
             inputProvider->updateInputFromEvent
                 (clientId, eventType, static_cast<float>(param1));
@@ -642,7 +655,7 @@ void rserv::Lobby::stop() {
     }
 }
 
-void rserv::Lobby::enqueuePacket(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> packet) {
+void rserv::Lobby::enqueuePacket(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> packet) {
     std::lock_guard<std::mutex> lock(_packetMutex);
     _incomingPackets.push(packet);
 }
