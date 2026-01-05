@@ -10,6 +10,7 @@
 
 #include "../../AGameState.hpp"
 #include "resourceManager/ResourceManager.hpp"
+#include <vector>
 
 namespace gsm {
 
@@ -24,6 +25,7 @@ public:
 
 private:
     float _transitionTimer;
+    std::vector<int> _savedPlayerScores;
     static constexpr float TRANSITION_DELAY = 2.0f;
 };
 
