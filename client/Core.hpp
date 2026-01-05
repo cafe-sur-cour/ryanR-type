@@ -12,9 +12,9 @@
 #include <thread>
 #include "../common/resourceManager/ResourceManager.hpp"
 #include "ClientNetwork.hpp"
-#include "../libs/Multimedia/IWindow.hpp"
-#include "../libs/Multimedia/IEvent.hpp"
-#include "../libs/Multimedia/IAudio.hpp"
+#include "../common/interfaces/IWindow.hpp"
+#include "../common/interfaces/IEvent.hpp"
+#include "../common/interfaces/IAudio.hpp"
 #include "gsm/machine/GameStateMachine.hpp"
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/Parser/Parser.hpp"

@@ -13,8 +13,8 @@
 #include <queue>
 
 #include "ServerConfig.hpp"
-#include "../libs/Packet/IPacketManager.hpp"
-#include "../libs/Network/INetwork.hpp"
+#include "../common/interfaces/IPacketManager.hpp"
+#include "../common/interfaces/INetwork.hpp"
 #include "../libs/Network/INetworkEndpoint.hpp"
 #include "../common/constants.hpp"
 

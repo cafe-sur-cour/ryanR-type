@@ -11,11 +11,11 @@
 #include <vector>
 #include <functional>
 #include <memory>
-#include "INetwork.hpp"
 #include "IEventLoop.hpp"
 #include "INetworkEndpoint.hpp"
-#include "../Packet/IPacketManager.hpp"
-#include "../Buffer/IBuffer.hpp"
+#include "../../common/interfaces/INetwork.hpp"
+#include "../../common/interfaces/IPacketManager.hpp"
+#include "../../common/interfaces/IBuffer.hpp"
 
 namespace net {
 
