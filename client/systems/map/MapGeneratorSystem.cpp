@@ -50,10 +50,10 @@ void MapGeneratorSystem::update(
 }
 
 float MapGeneratorSystem::noise(float x) {
-    // Add seed-dependent offset to make it random
     float seedOffset = static_cast<float>(_seed) * 0.001f;
     return (sinf((x + seedOffset) * 0.01f) + cosf((x + seedOffset) * 0.007f) +
-        sinf((x + seedOffset) * 0.03f) * 0.3f + cosf((x + seedOffset) * 0.05f) * 0.2f) * 0.4f + 0.5f;
+        sinf((x + seedOffset) * 0.03f) *
+            0.3f + cosf((x + seedOffset) * 0.05f) * 0.2f) * 0.4f + 0.5f;
 }
 
 void MapGeneratorSystem::generateObstaclesAt(
