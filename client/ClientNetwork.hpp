@@ -19,7 +19,7 @@
 
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
-#include "../libs/Network/INetwork.hpp"
+#include "../common/interfaces/INetwork.hpp"
 #include "../common/constants.hpp"
 #include "../common/resourceManager/ResourceManager.hpp"
 #include "../common/gsm/IGameStateMachine.hpp"
@@ -75,7 +75,6 @@ class ClientNetwork {
         void eventPacket(const constants::EventType &eventType, double depth);
         void disconnectionPacket();
         void connectionPacket();
-        void sendReady();
         void sendWhoAmI();
         void requestCode();
         void sendLobbyConnection(std::string lobbyCode);
@@ -140,12 +139,9 @@ class ClientNetwork {
         size_t parseColliderComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseShootingStatsComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseScoreComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseAIMovementPatternComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseDamageComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseLifetimeComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseVelocityComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseAIMoverTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseAIShooterTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseControllableTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseEnemyProjectileTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseGameZoneColliderTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
@@ -179,7 +175,7 @@ class ClientNetwork {
 
 
         uint8_t _idClient;
-        asio::ip::udp::endpoint _serverEndpoint;
+        std::shared_ptr<net::INetworkEndpoint> _serverEndpoint;
 
         std::queue<NetworkEvent> _eventQueue;
         std::mutex _queueMutex;

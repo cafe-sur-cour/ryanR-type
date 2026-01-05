@@ -19,7 +19,7 @@
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/Parser/Parser.hpp"
 
-bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
+bool rserv::Server::connectionPacket(const net::INetworkEndpoint& endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
         this->_sequenceNumber, constants::PACKET_ACCEPT, std::vector<uint64_t>{
         static_cast<uint64_t>(this->_nextClientId)});
@@ -27,7 +27,7 @@ bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
     if (!this->_network->sendTo(endpoint, packet)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER NETWORK] Failed to send connection acceptance header to "
-            + endpoint.address().to_string() + ":" + std::to_string(endpoint.port()),
+            + endpoint.getAddress() + ":" + std::to_string(endpoint.getPort()),
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
@@ -35,141 +35,51 @@ bool rserv::Server::connectionPacket(asio::ip::udp::endpoint endpoint) {
     return true;
 }
 
-bool rserv::Server::gameStatePacket() {
-    if (!this->_resourceManager->has<ecs::Registry>()) {
-        return false;
-    }
-
-    auto registry = this->_resourceManager->get<ecs::Registry>();
-    for (auto& client : this->_clients) {
-        uint8_t clientId = std::get<0>(client);
-        for (ecs::Entity i = 0; i < registry->getMaxEntityId(); i++) {
-            uint32_t entityId = static_cast<uint32_t>(i);
-            std::vector<uint64_t> componentData;
-            for (const auto& func : this->_convertFunctions) {
-                std::vector<uint64_t> compData = func(registry, i);
-                componentData.insert(componentData.end(), compData.begin(), compData.end());
-            }
-
-            EntitySnapshot snapshot = ComponentSerializer::createSnapshotFromComponents(
-                entityId, componentData
-            );
-
-            std::vector<uint64_t> delta = this->_deltaTracker.createEntityDelta(
-                clientId, entityId, snapshot);
-            if (delta.empty()) {
-                continue;
-            }
-
-            std::vector<uint64_t> payload;
-            payload.push_back(entityId);
-            payload.insert(payload.end(), componentData.begin(), componentData.end());
-
-            std::vector<uint8_t> packet = this->_packet->pack(
-                constants::ID_SERVER,
-                this->_sequenceNumber,
-                constants::PACKET_GAME_STATE,
-                payload
-            );
-
-            if (!this->_network->sendTo(std::get<1>(client), packet)) {
-                debug::Debug::printDebug(this->_config->getIsDebug(),
-                    "[SERVER NETWORK] Failed to send game state packet to client " +
-                    std::to_string(static_cast<int>(clientId)),
-                    debug::debugType::NETWORK, debug::debugLevel::ERROR);
-                return false;
-            }
-        }
-    }
-    this->_sequenceNumber++;
-    return true;
-}
-
-bool rserv::Server::canStartPacket() {
+bool rserv::Server::canStartPacket(std::vector<std::shared_ptr<net::INetworkEndpoint>>
+    endpoints) {
     debug::Debug::printDebug(this->_config->getIsDebug(),
-        "[SERVER] Checking canStart: clients=" +
-        std::to_string(this->_clients.size()) + ", allReady=" +
-        std::to_string(this->allClientsReady()),
+        "[SERVER] Sending canStart packet to " + std::to_string(endpoints.size()) + " clients",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
-    if (this->_clients.size() > 0 && this->allClientsReady()) {
+
+    if (endpoints.empty()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] All connected clients are ready, starting game",
-            debug::debugType::NETWORK, debug::debugLevel::INFO);
-
-        this->_gameStarted = true;
-        std::string playerString = "player";
-        auto prefabMgr = _resourceManager->get<EntityPrefabManager>();
-        auto registry = _resourceManager->get<ecs::Registry>();
-        for (const auto &client : this->_clients) {
-            uint8_t clientId = std::get<0>(client);
-            ecs::Entity playerEntity = prefabMgr->createEntityFromPrefab(
-                playerString,
-                registry,
-                ecs::EntityCreationContext::forServer()
-            );
-            debug::Debug::printDebug(this->_config->getIsDebug(),
-                "[SERVER] Created player entity " + std::to_string(playerEntity) +
-                " for client " + std::to_string(static_cast<int>(clientId)),
-                debug::debugType::NETWORK, debug::debugLevel::INFO);
-        }
-
-        std::vector<uint64_t> payload;
-        for (auto &client : this->_clients) {
-            std::vector<uint64_t> name = this->_packet->formatString(std::get<2>(client));
-            payload.insert(payload.end(), name.begin(), name.end());
-        }
-        std::vector<uint8_t> packetStart = this->_packet->pack(constants::ID_SERVER,
-            this->_sequenceNumber, constants::PACKET_CAN_START, payload);
-
-        if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packetStart)) {
-            debug::Debug::printDebug(this->_config->getIsDebug(),
-                "[SERVER NETWORK] Failed to broadcast can start packet",
-                debug::debugType::NETWORK, debug::debugLevel::ERROR);
-            return false;
-        }
-        this->_sequenceNumber++;
-        return true;
+            "[SERVER] No endpoints provided for canStart packet",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
     }
-    return false;
-}
 
-bool rserv::Server::endGamePacket(bool isWin) {
     std::vector<uint64_t> payload;
-    payload.push_back(isWin ? 1 : 0);
-    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
-        this->_sequenceNumber, constants::PACKET_END_GAME, payload);
+    for (const auto& endpoint : endpoints) {
+        for (const auto& client : this->_clients) {
+            if (std::get<1>(client) == endpoint) {
+                std::string clientName = std::get<2>(client);
+                std::vector<uint64_t> name = this->_packet->formatString(clientName);
+                payload.insert(payload.end(), name.begin(), name.end());
+                break;
+            }
+        }
+    }
 
-    if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
-        std::cout << "[SERVER NETWORK] Failed to broadcast end game packet" << std::endl;
+    std::vector<uint8_t> packetStart = this->_packet->pack(
+        constants::ID_SERVER,
+        this->_sequenceNumber,
+        constants::PACKET_CAN_START,
+        payload
+    );
+
+    if (!this->_network->broadcast(endpoints, packetStart)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER NETWORK] Failed to broadcast end game packet",
+            "[SERVER NETWORK] Failed to broadcast can start packet to lobby clients",
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
+
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Successfully sent canStart packet to lobby clients",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+
     this->_sequenceNumber++;
     return true;
-}
-
-std::vector<uint64_t> rserv::Server::spawnPacket(
-    size_t entityId,
-    const std::string prefabName) {
-    std::vector<uint64_t> payload;
-
-    payload.push_back(static_cast<uint64_t>(entityId));
-    for (const auto &c : prefabName) {
-        payload.push_back(static_cast<uint64_t>(c));
-    }
-    payload.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
-    payload.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
-    payload.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
-    return payload;
-}
-
-std::vector<uint64_t> rserv::Server::deathPacket(size_t entityId) {
-    std::vector<uint64_t> payload;
-
-    payload.push_back(static_cast<uint64_t>(entityId));
-    return payload;
 }
 
 bool rserv::Server::serverStatusPacket() {
@@ -206,7 +116,7 @@ bool rserv::Server::serverStatusPacket() {
             payload
         );
 
-        if (!this->_network->sendTo(std::get<1>(client), packet)) {
+        if (!this->_network->sendTo(*std::get<1>(client), packet)) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER NETWORK] Failed to send server status packet to client " +
                 std::to_string(static_cast<int>(clientId)),
@@ -219,7 +129,7 @@ bool rserv::Server::serverStatusPacket() {
     return true;
 }
 
-bool rserv::Server::sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint) {
+bool rserv::Server::sendCodeLobbyPacket(const net::INetworkEndpoint &endpoint) {
     /* Create random code */
     std::string lobbyCode;
     bool isUnique = false;
@@ -229,8 +139,8 @@ bool rserv::Server::sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint) {
     while (!isUnique && attempts < maxAttempts) {
         lobbyCode = Utils::createAlphaNumericCode();
         isUnique = true;
-        for (const auto& lobby : this->_lobbys) {
-            if (lobby.first == lobbyCode) {
+        for (const auto& lobby : this->_lobbyThreads) {
+            if (lobby->_lobbyCode == lobbyCode) {
                 isUnique = false;
                 break;
             }
@@ -262,19 +172,21 @@ bool rserv::Server::sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint) {
     /* Send to requested client*/
     if (!this->_network->sendTo(endpoint, packet)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER NETWORK] Failed to send lobby code packet to "
-            + endpoint.address().to_string() + ":" + std::to_string(endpoint.port()),
+            "[SERVER NETWORK] Failed to send lobby code packet to " +
+            endpoint.getAddress() + ":" + std::to_string(endpoint.getPort()),
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
     /* Add to lobby vector, code and client endpoint */
-    this->_lobbys.push_back(std::make_pair(lobbyCode,
-        std::vector<asio::ip::udp::endpoint>{endpoint}));
+    auto newLobby = std::make_shared<LobbyStruct>();
+    newLobby->_lobbyCode = lobbyCode;
+    this->_lobbyThreads.push_back(newLobby);
     this->_sequenceNumber++;
     return true;
 }
 
-bool rserv::Server::lobbyConnectValuePacket(asio::ip::udp::endpoint endpoint, bool isSucess) {
+bool rserv::Server::lobbyConnectValuePacket(const net::INetworkEndpoint &endpoint,
+    bool isSucess) {
     if (!this->_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Network not initialized",

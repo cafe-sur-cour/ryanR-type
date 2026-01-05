@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <cstring>
 #include "ClientNetwork.hpp"
 #include "../common/debug.hpp"
 #include "../common/translationToECS.hpp"
@@ -175,27 +176,6 @@ size_t ClientNetwork::parseScoreComponent(const std::vector<uint64_t> &payload, 
     return index;
 }
 
-size_t ClientNetwork::parseAIMovementPatternComponent(const std::vector<uint64_t> &payload,
-    size_t index, ecs::Entity entityId) {
-    if (index + 6 <= payload.size()) {
-        uint8_t pattern = static_cast<uint8_t>(payload[index++]);
-        float amplitude = unpackFloat(payload[index++]);
-        float frequency = unpackFloat(payload[index++]);
-        float detectionRange = unpackFloat(payload[index++]);
-        float deadzone = unpackFloat(payload[index++]);
-        float timer = unpackFloat(payload[index++]);
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Entity " + std::to_string(entityId) + " AIMovementPattern: pattern(" +
-            std::to_string(pattern) + ") amplitude(" + std::to_string(amplitude) +
-            ") frequency(" + std::to_string(frequency) + ") detectionRange(" +
-            std::to_string(detectionRange) + ") deadzone(" + std::to_string(deadzone) +
-            ") timer(" + std::to_string(timer) + ")",
-            debug::debugType::NETWORK,
-            debug::debugLevel::INFO);
-    }
-    return index;
-}
-
 size_t ClientNetwork::parseDamageComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     if (index + 1 <= payload.size()) {
@@ -243,25 +223,6 @@ size_t ClientNetwork::parseVelocityComponent(const std::vector<uint64_t> &payloa
     return index;
 }
 
-size_t ClientNetwork::parseAIMoverTagComponent(const std::vector<uint64_t> &payload,
-    size_t index, ecs::Entity entityId) {
-    (void)payload;
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Entity " + std::to_string(entityId) + " has AIMoverTag",
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
-    return index;
-}
-
-size_t ClientNetwork::parseAIShooterTagComponent(const std::vector<uint64_t> &payload,
-    size_t index, ecs::Entity entityId) {
-    (void)payload;
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Entity " + std::to_string(entityId) + " has AIShooterTag",
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
-    return index;
-}
 
 size_t ClientNetwork::parseControllableTagComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {

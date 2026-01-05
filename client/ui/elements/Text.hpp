@@ -10,7 +10,7 @@
 
 #include "base/UIElement.hpp"
 #include "../../../common/types/Vector2f.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 #include "resourceManager/ResourceManager.hpp"
 #include <memory>
 #include <string>

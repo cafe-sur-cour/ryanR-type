@@ -14,7 +14,7 @@
 #include "../../../common/components/permanent/ColliderComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 
 namespace ecs {
 
@@ -40,7 +40,8 @@ void HealthBarRenderingSystem::update(std::shared_ptr<ResourceManager>
             auto window = resourceManager->get<gfx::IWindow>();
             const math::Vector2f& pos = transform->getPosition();
 
-            math::FRect hitbox = collider->getHitbox(pos, transform->getScale());
+            math::FRect hitbox = collider->getHitbox(pos, transform->getScale(),
+                transform->getRotation());
 
             float barX = hitbox.getLeft();
             float barY = hitbox.getTop() + constants::HEALTH_BAR_OFFSET_Y;
