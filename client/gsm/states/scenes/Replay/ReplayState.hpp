@@ -16,6 +16,7 @@
 #include "../../../../ui/elements/Background.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
+#include "../../../../ui/elements/focusable/Slider.hpp"
 #include "../../../../../common/types/Vector2f.hpp"
 #include "../../../../../common/interfaces/IAudio.hpp"
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
@@ -48,19 +49,34 @@ private:
     void processAudioForFrame(const nlohmann::json& frame);
     std::vector<std::filesystem::path> getAvailableReplays();
     void createReplaySelectionUI();
+    void createPlaybackControlsUI();
+    void updatePlaybackControls();
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::unique_ptr<ui::UIManager> _uiManager;
+    std::unique_ptr<ui::UIManager> _playbackUIManager;
 
     std::shared_ptr<ui::Background> _background;
     std::shared_ptr<ui::Button> _backButton;
     std::vector<std::shared_ptr<ui::Button>> _replayButtons;
+
+    std::shared_ptr<ui::Button> _playPauseButton;
+    std::shared_ptr<ui::Button> _replayBackButton;
+    std::shared_ptr<ui::Slider> _progressSlider;
+    std::shared_ptr<ui::Text> _timeText;
+    std::shared_ptr<ui::UILayout> _playbackLayout;
 
     std::vector<nlohmann::json> _frames;
     float _replayTime;
     float _totalReplayTime;
     size_t _currentFrameIndex;
     bool _isPlaying;
+    bool _isPaused;
+    bool _shouldSwitch;
+    float _spacePressCooldown;
+
+    float _renderOffsetX;
+    float _renderOffsetY;
 };
 
 }  // namespace gsm
