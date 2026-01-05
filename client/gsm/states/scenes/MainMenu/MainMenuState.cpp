@@ -22,6 +22,7 @@
 #include "../Settings/SettingsState.hpp"
 #include "../LobbyWaiting/LobbyWaitingState.hpp"
 #include "../Register/RegisterState.hpp"
+#include "../Login/LoginState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -342,6 +343,18 @@ MainMenuState::MainMenuState(
     _loginButton->setNormalColor(colors::BUTTON_SECONDARY);
     _loginButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _loginButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _loginButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<LoginState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _loginButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<LoginState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
 
     _headerLayout->addElement(_registerButton);
     _headerLayout->addElement(_loginButton);
