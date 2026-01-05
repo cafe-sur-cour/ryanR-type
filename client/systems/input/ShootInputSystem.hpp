@@ -25,6 +25,7 @@ class ShootInputSystem : public ASystem {
         ) override;
 
     private:
+        bool isPlayerAlive(std::shared_ptr<Registry> registry, Entity entityId) const;
 };
 
 }
