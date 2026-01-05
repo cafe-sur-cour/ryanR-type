@@ -230,9 +230,9 @@ MainMenuState::MainMenuState(
 
     _mainMenuLayout = std::make_shared<ui::UILayout>(_resourceManager, menuConfig);
     _mainMenuLayout->setSize(math::Vector2f(576.f, 450.f));
-    _playButton = std::make_shared<ui::Button>(resourceManager);
-    _playButton->setText("Not connected");
-    _playButton->setSize(math::Vector2f(576.f, 108.f));
+    _usernameButton = std::make_shared<ui::Button>(_resourceManager);
+    _usernameButton->setText("Not connected");
+    _usernameButton->setSize(math::Vector2f(576.f, 108.f));
 
     _settingsButton = std::make_shared<ui::Button>(resourceManager);
     _settingsButton->setText("Settings");
@@ -266,7 +266,7 @@ MainMenuState::MainMenuState(
         _resourceManager->get<gfx::IWindow>()->closeWindow();
     });
 
-    _mainMenuLayout->addElement(_playButton);
+    _mainMenuLayout->addElement(_usernameButton);
     _mainMenuLayout->addElement(_settingsButton);
     _mainMenuLayout->addElement(_quitButton);
 
@@ -298,16 +298,42 @@ MainMenuState::MainMenuState(
     _headerLayout = std::make_shared<ui::UILayout>(_resourceManager, headerConfig);
     _headerLayout->setSize(math::Vector2f(80.f, 80.f));
 
-    _topRightButton = std::make_shared<ui::Button>(_resourceManager);
-    _topRightButton->setText("");
-    _topRightButton->setSize(math::Vector2f(80.f, 80.f));
-    _topRightButton->setIconPath(constants::HOW_TO_PLAY_PATH);
-    _topRightButton->setIconSize(math::Vector2f(500.f, 500.f));
-    _topRightButton->setNormalColor(colors::BUTTON_SECONDARY);
-    _topRightButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _topRightButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _howToPlayButton = std::make_shared<ui::Button>(_resourceManager);
+    _howToPlayButton->setText("");
+    _howToPlayButton->setSize(math::Vector2f(80.f, 80.f));
+    _howToPlayButton->setIconPath(constants::HOW_TO_PLAY_PATH);
+    _howToPlayButton->setIconSize(math::Vector2f(500.f, 500.f));
+    _howToPlayButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _howToPlayButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _howToPlayButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
 
-    _headerLayout->addElement(_topRightButton);
+    _leaderboardButton = std::make_shared<ui::Button>(_resourceManager);
+    _leaderboardButton->setText("");
+    _leaderboardButton->setSize(math::Vector2f(80.f, 80.f));
+    _leaderboardButton->setIconPath(constants::LEADERBOARD_PATH);
+    _leaderboardButton->setIconSize(math::Vector2f(500.f, 500.f));
+    _leaderboardButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _leaderboardButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _leaderboardButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+
+    _registerButton = std::make_shared<ui::Button>(_resourceManager);
+    _registerButton->setText("Register");
+    _registerButton->setSize(math::Vector2f(150.f, 80.f));
+    _registerButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _registerButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _registerButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+
+    _loginButton = std::make_shared<ui::Button>(_resourceManager);
+    _loginButton->setText("Log In");
+    _loginButton->setSize(math::Vector2f(150.f, 80.f));
+    _loginButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _loginButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _loginButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+
+    _headerLayout->addElement(_registerButton);
+    _headerLayout->addElement(_loginButton);
+    _headerLayout->addElement(_leaderboardButton);
+    _headerLayout->addElement(_howToPlayButton);
 
     _uiManager->addElement(_leftLayout);
     _uiManager->addElement(_mainMenuLayout);
@@ -397,7 +423,7 @@ void MainMenuState::updateUIStatus() {
 
     auto network = this->_resourceManager->get<ClientNetwork>();
     if (!network) {
-        _playButton->setText("Not connected");
+        _usernameButton->setText("Not connected");
         _connectionStatusText->setText("Not connected");
         _connectionStatusText->setTextColor(gfx::color_t{255, 100, 100, 255});
         _connectionStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
@@ -414,7 +440,7 @@ void MainMenuState::updateUIStatus() {
     }
 
     if (!network->isConnected()) {
-        _playButton->setText("Not connected to server");
+        _usernameButton->setText("Not connected to server");
         _connectionStatusText->setText("Not connected to server");
         _connectionStatusText->setTextColor(gfx::color_t{255, 100, 100, 255});
         _connectionStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
@@ -422,9 +448,9 @@ void MainMenuState::updateUIStatus() {
         _serverStatusText->setText("");
     } else {
         if (network->isReady()) {
-            _playButton->setText("Waiting for players...");
+            _usernameButton->setText("Waiting for players...");
         } else {
-            _playButton->setText("Ready ?");
+            _usernameButton->setText("Ready ?");
         }
 
         _connectionStatusText->setText("Connected");
