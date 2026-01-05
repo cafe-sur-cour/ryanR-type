@@ -23,7 +23,7 @@ void ecs::ScriptingComponent::init(sol::state& lua, size_t entityId) {
         sol::table metatable = lua.create_table();
         metatable["__index"] = lua["_G"];
         _env[sol::metatable_key] = metatable;
-        sol::protected_function chunk(script);
+        sol::protected_function chunk = script.get<sol::protected_function>();
         sol::protected_function_result result = chunk(_env);
         if (!result.valid()) {
             sol::error err = result;
