@@ -5,6 +5,8 @@
     "sfml",
     "asio",
     "gtest",
-    "nlohmann-json"
+    "nlohmann-json",
+    "lua",
+    "sol2"
   ]
 }
