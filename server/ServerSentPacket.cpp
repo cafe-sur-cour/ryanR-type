@@ -10,6 +10,8 @@
 #include <iostream>
 #include <memory>
 #include <utility>
+#include <thread>
+#include <chrono>
 #include "Server.hpp"
 #include "Constants.hpp"
 #include "Utils.hpp"
@@ -143,6 +145,38 @@ bool rserv::Server::endGamePacket(bool isWin) {
         std::cout << "[SERVER NETWORK] Failed to broadcast end game packet" << std::endl;
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER NETWORK] Failed to broadcast end game packet",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    this->_sequenceNumber++;
+    return true;
+}
+
+bool rserv::Server::levelCompletePacket() {
+    std::vector<uint64_t> payload;
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_LEVEL_COMPLETE, payload);
+
+    if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
+        std::cout << "[SERVER NETWORK] Failed to broadcast level complete packet" << std::endl;
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER NETWORK] Failed to broadcast level complete packet",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    this->_sequenceNumber++;
+    return true;
+}
+
+bool rserv::Server::nextLevelPacket() {
+    std::vector<uint64_t> payload;
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_NEXT_LEVEL, payload);
+
+    if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
+        std::cout << "[SERVER NETWORK] Failed to broadcast next level packet" << std::endl;
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER NETWORK] Failed to broadcast next level packet",
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
