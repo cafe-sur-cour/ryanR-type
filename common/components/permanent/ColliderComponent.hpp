@@ -11,6 +11,11 @@
 #include "../base/AComponent.hpp"
 #include "../../types/FRect.hpp"
 #include "../../types/Vector2f.hpp"
+#include "../../types/OrientedRect.hpp"
+#include <cmath>
+#include <algorithm>
+#include <limits>
+#include <vector>
 
 namespace ecs {
 
@@ -27,22 +32,22 @@ class ColliderComponent : public AComponent {
             : _offset(offset), _size(size), _type(type) {};
         ~ColliderComponent() = default;
 
-        math::Vector2f getOffset() const { return _offset; };
-        void setOffset(math::Vector2f offset) { _offset = offset; };
+        math::Vector2f getOffset() const;
+        void setOffset(math::Vector2f offset);
 
-        math::Vector2f getSize() const { return _size; };
-        void setSize(math::Vector2f size) { _size = size; };
+        math::Vector2f getSize() const;
+        void setSize(math::Vector2f size);
 
-        CollisionType getType() const { return _type; };
-        void setType(CollisionType type) { _type = type; };
+        CollisionType getType() const;
+        void setType(CollisionType type);
 
-        math::FRect getHitbox(math::Vector2f entityPosition, math::Vector2f scale = math::Vector2f(1.0f, 1.0f)) const {
-            return math::FRect(entityPosition.getX() + _offset.getX(), entityPosition.getY() + _offset.getY(), _size.getX() * scale.getX(), _size.getY() * scale.getY());
-        };
+        math::FRect getHitbox(math::Vector2f entityPosition, math::Vector2f scale = math::Vector2f(1.0f, 1.0f)) const;
 
-        math::FRect getScaledHitbox(math::Vector2f entityPosition, math::Vector2f scale) const {
-            return getHitbox(entityPosition, scale);
-        };
+        math::FRect getScaledHitbox(math::Vector2f entityPosition, math::Vector2f scale) const;
+
+        math::OrientedRect getOrientedHitbox(math::Vector2f entityPosition, math::Vector2f scale, float rotation) const;
+
+        math::FRect getHitbox(math::Vector2f entityPosition, math::Vector2f scale, float rotation) const;
 
     private:
         math::Vector2f _offset;
