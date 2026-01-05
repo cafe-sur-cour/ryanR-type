@@ -1,6 +1,7 @@
 add_subdirectory(Boot)
 add_subdirectory(MainMenu)
 add_subdirectory(Settings)
+add_subdirectory(Replay)
 add_subdirectory(LobbyBrowser)
 add_subdirectory(Lobby)
 add_subdirectory(Loading)
