@@ -237,7 +237,7 @@ void InGameState::drawHealthHUD(
     std::pair<size_t, size_t> healthTextPosition =
         {barX, static_cast<size_t>(barY - textOffsetY)};
     window->drawText(healthText, colors::WHITE, healthTextPosition,
-        "assets/fonts/abduction2002.ttf", 20, colors::BLACK, 1.0f);
+        constants::MAIN_FONT, 20, colors::BLACK, 1.0f);
 
     for (const auto& feedback : _healthFeedbacks) {
         uint8_t alpha =
@@ -250,7 +250,7 @@ void InGameState::drawHealthHUD(
         std::pair<size_t, size_t> feedbackPosition = {x, y};
         window->drawText(
             feedback.text, feedbackColor, feedbackPosition,
-            "assets/fonts/abduction2002.ttf", 28
+            constants::MAIN_FONT, 28
         );
     }
 }
@@ -265,7 +265,7 @@ void InGameState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) 
 
     std::pair<size_t, size_t> labelPosition = {barX, barY - textOffsetY};
     window->drawText("Score", colors::WHITE, labelPosition,
-        "assets/fonts/abduction2002.ttf", 20, colors::BLACK, 1.0f);
+        constants::MAIN_FONT, 20, colors::BLACK, 1.0f);
 
     std::pair<size_t, size_t> rectPosition = {barX, barY};
     window->drawRoundedRectangleFilled(
@@ -279,7 +279,7 @@ void InGameState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) 
     std::pair<size_t, size_t> scorePosition = {barX + 10, barY - 2};
     window->drawText(
         scoreText, colors::YELLOW, scorePosition,
-        "assets/fonts/abduction2002.ttf", 20
+        constants::MAIN_FONT, 20
     );
 
     for (const auto& feedback : _scoreFeedbacks) {
@@ -294,7 +294,7 @@ void InGameState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) 
         std::pair<size_t, size_t> feedbackPosition = {x, y};
         window->drawText(
             feedback.text, feedbackColor, feedbackPosition,
-            "assets/fonts/abduction2002.ttf", 28
+            constants::MAIN_FONT, 28
         );
     }
 }
