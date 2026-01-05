@@ -78,20 +78,16 @@ LoginState::LoginState(
         std::string password = this->_passwordInput->getText();
 
         if (username.empty() || password.empty()) {
-            std::cout << "Username and password are required!" << std::endl;
             return;
         }
 
         const std::string filepath = "saves/users.json";
-        
         if (!std::filesystem::exists(filepath)) {
-            std::cout << "No users registered yet!" << std::endl;
             return;
         }
 
         std::ifstream file(filepath);
         if (!file.is_open()) {
-            std::cout << "Failed to read user data!" << std::endl;
             return;
         }
 
@@ -99,7 +95,6 @@ LoginState::LoginState(
         try {
             file >> users;
         } catch (const std::exception& e) {
-            std::cout << "Failed to parse user data!" << std::endl;
             file.close();
             return;
         }
@@ -119,14 +114,10 @@ LoginState::LoginState(
             if (config) {
                 config->setUsername(username);
                 config->saveSettings();
-                std::cout << "Login successful! Welcome " << username << "!" << std::endl;
-                
                 if (auto stateMachine = this->_gsm.lock()) {
                     stateMachine->requestStatePop();
                 }
             }
-        } else {
-            std::cout << "Invalid username or password!" << std::endl;
         }
     });
     _loginButton->setOnActivated([this]() {
@@ -134,20 +125,16 @@ LoginState::LoginState(
         std::string password = this->_passwordInput->getText();
 
         if (username.empty() || password.empty()) {
-            std::cout << "Username and password are required!" << std::endl;
             return;
         }
 
         const std::string filepath = "saves/users.json";
-        
         if (!std::filesystem::exists(filepath)) {
-            std::cout << "No users registered yet!" << std::endl;
             return;
         }
 
         std::ifstream file(filepath);
         if (!file.is_open()) {
-            std::cout << "Failed to read user data!" << std::endl;
             return;
         }
 
@@ -155,7 +142,6 @@ LoginState::LoginState(
         try {
             file >> users;
         } catch (const std::exception& e) {
-            std::cout << "Failed to parse user data!" << std::endl;
             file.close();
             return;
         }
@@ -175,14 +161,10 @@ LoginState::LoginState(
             if (config) {
                 config->setUsername(username);
                 config->saveSettings();
-                std::cout << "Login successful! Welcome " << username << "!" << std::endl;
-                
                 if (auto stateMachine = this->_gsm.lock()) {
                     stateMachine->requestStatePop();
                 }
             }
-        } else {
-            std::cout << "Invalid username or password!" << std::endl;
         }
     });
 

@@ -82,14 +82,6 @@ MainMenuState::MainMenuState(
     _leftLayout = std::make_shared<ui::UILayout>(_resourceManager, leftConfig);
     _leftLayout->setSize(math::Vector2f(300.f, 300.f));
 
-    _usernameDisplayText = std::make_shared<ui::Text>(_resourceManager);
-    _usernameDisplayText->setText(config->getUsername());
-    _usernameDisplayText->setSize(math::Vector2f(300.f, 40.f));
-    _usernameDisplayText->setTextColor(gfx::color_t{255, 255, 255, 255});
-    _usernameDisplayText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
-    _usernameDisplayText->setOutlineThickness(2.0f);
-    _usernameDisplayText->setFontSize(28);
-
     _connectButton = std::make_shared<ui::Button>(_resourceManager);
     _connectButton->setText("Connect");
     _connectButton->setSize(math::Vector2f(300.f, 108.f));
@@ -214,7 +206,6 @@ MainMenuState::MainMenuState(
         }
     });
 
-    _leftLayout->addElement(_usernameDisplayText);
     _leftLayout->addElement(_ipInput);
     _leftLayout->addElement(_portInput);
     _leftLayout->addElement(_connectButton);
@@ -356,10 +347,32 @@ MainMenuState::MainMenuState(
         }
     });
 
+    _disconnectButton = std::make_shared<ui::Button>(_resourceManager);
+    _disconnectButton->setText("Q");
+    _disconnectButton->setSize(math::Vector2f(80.f, 80.f));
+    _disconnectButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _disconnectButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _disconnectButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _disconnectButton->setOnRelease([this]() {
+        auto config = this->_resourceManager->get<SettingsConfig>();
+        if (config) {
+            config->setUsername("Player");
+            config->saveSettings();
+        }
+    });
+    _disconnectButton->setOnActivated([this]() {
+        auto config = this->_resourceManager->get<SettingsConfig>();
+        if (config) {
+            config->setUsername("Player");
+            config->saveSettings();
+        }
+    });
+
     _headerLayout->addElement(_registerButton);
     _headerLayout->addElement(_loginButton);
     _headerLayout->addElement(_leaderboardButton);
     _headerLayout->addElement(_howToPlayButton);
+    _headerLayout->addElement(_disconnectButton);
 
     _uiManager->addElement(_leftLayout);
     _uiManager->addElement(_mainMenuLayout);
@@ -443,16 +456,31 @@ void MainMenuState::renderUI() {
 
 void MainMenuState::updateUIStatus() {
     auto config = _resourceManager->get<SettingsConfig>();
-    if (config && _usernameDisplayText) {
-        _usernameDisplayText->setText(config->getUsername());
+    bool isUserLoggedIn = config && config->getUsername() != "Player";
+
+    if (_usernameButton) {
+        _usernameButton->setState(isUserLoggedIn ? ui::UIState::Normal : ui::UIState::Disabled);
+    }
+    if (_connectButton) {
+        _connectButton->setState(isUserLoggedIn ? ui::UIState::Normal : ui::UIState::Disabled);
+    }
+    if (_requestCodeButton) {
+        _requestCodeButton->setState(isUserLoggedIn ? ui::UIState::Normal : ui::UIState::Disabled);
+    }
+    if (_lobbyConnectButton) {
+        _lobbyConnectButton->setState(isUserLoggedIn ? ui::UIState::Normal : ui::UIState::Disabled);
     }
 
     auto network = this->_resourceManager->get<ClientNetwork>();
     if (!network) {
-        _usernameButton->setText("Not connected");
+        if (isUserLoggedIn) {
+            _usernameButton->setText(config->getUsername());
+        } else {
+            _usernameButton->setText("Not connected");
+        }
         _connectionStatusText->setText("Not connected");
         _connectionStatusText->setTextColor(gfx::color_t{255, 100, 100, 255});
-        _connectionStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
+        _connectionStatusText->setOutlineColor(gfx::color_t{100, 100, 100, 255});
         _connectionStatusText->setOutlineThickness(2.0f);
         _serverStatusText->setText("to server");
         return;
@@ -466,7 +494,11 @@ void MainMenuState::updateUIStatus() {
     }
 
     if (!network->isConnected()) {
-        _usernameButton->setText("Not connected to server");
+        if (isUserLoggedIn) {
+            _usernameButton->setText(config->getUsername());
+        } else {
+            _usernameButton->setText("Not connected to server");
+        }
         _connectionStatusText->setText("Not connected to server");
         _connectionStatusText->setTextColor(gfx::color_t{255, 100, 100, 255});
         _connectionStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
