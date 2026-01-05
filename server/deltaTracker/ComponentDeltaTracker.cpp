@@ -167,3 +167,18 @@ std::vector<uint64_t> rserv::ComponentDeltaTracker::serializeDelta(uint32_t enti
     }
     return payload;
 }
+
+void rserv::ComponentDeltaTracker::clearDeadEntities(const std::set<uint32_t>& aliveEntityIds) {
+    for (auto& [clientId, entityCache] : _clientEntityCache) {
+        auto entityIt = entityCache.begin();
+        while (entityIt != entityCache.end()) {
+            uint32_t entityId = entityIt->first;
+            // If entity is not in alive list, remove it from cache
+            if (aliveEntityIds.find(entityId) == aliveEntityIds.end()) {
+                entityIt = entityCache.erase(entityIt);
+            } else {
+                ++entityIt;
+            }
+        }
+    }
+}

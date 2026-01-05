@@ -7,6 +7,7 @@
 
 #include "Lobby.hpp"
 
+#include <set>
 #include "Constants.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
@@ -321,28 +322,53 @@ bool rserv::Lobby::gameStatePacket() {
     auto registry = this->_resourceManager->get<ecs::Registry>();
     auto entityView = registry->view<ecs::TransformComponent>();
 
+    static int cleanupCounter = 0;
+    if (++cleanupCounter >= 1200) {
+        cleanupCounter = 0;
+        std::set<uint32_t> aliveEntityIds;
+        for (auto entityId : entityView) {
+            aliveEntityIds.insert(static_cast<uint32_t>(entityId));
+        }
+        this->_deltaTracker.clearDeadEntities(aliveEntityIds);
+    }
+
+    struct EntityData {
+        uint32_t entityId;
+        std::vector<uint64_t> componentData;
+        EntitySnapshot snapshot;
+    };
+
+    std::vector<EntityData> serializedEntities;
+    serializedEntities.reserve(256);
+    for (auto entityId : entityView) {
+        EntityData entityData;
+        entityData.entityId = static_cast<uint32_t>(entityId);
+        entityData.componentData.reserve(64);
+        for (const auto& func : this->_convertFunctions) {
+            std::vector<uint64_t> compData = func(registry, entityId);
+            entityData.componentData.insert(entityData.componentData.end(), compData.begin(), compData.end());
+        }
+
+        entityData.snapshot = ComponentSerializer::createSnapshotFromComponents(
+            entityData.entityId, entityData.componentData
+        );
+
+        serializedEntities.push_back(std::move(entityData));
+    }
     for (auto& client : this->_clients) {
         uint8_t clientId = std::get<0>(client);
-        for (auto entityId : entityView) {
-            uint32_t entityIdU32 = static_cast<uint32_t>(entityId);
-            std::vector<uint64_t> componentData;
-            for (const auto& func : this->_convertFunctions) {
-                std::vector<uint64_t> compData = func(registry, entityId);
-                componentData.insert(componentData.end(), compData.begin(), compData.end());
-            }
-            EntitySnapshot snapshot = ComponentSerializer::createSnapshotFromComponents(
-                entityIdU32, componentData
-            );
 
+        for (const auto& entityData : serializedEntities) {
             std::vector<uint64_t> delta = this->_deltaTracker.createEntityDelta(
-                clientId, entityIdU32, snapshot);
+                clientId, entityData.entityId, entityData.snapshot);
             if (delta.empty()) {
                 continue;
             }
 
             std::vector<uint64_t> payload;
-            payload.push_back(entityIdU32);
-            payload.insert(payload.end(), componentData.begin(), componentData.end());
+            payload.reserve(entityData.componentData.size() + 1);
+            payload.push_back(entityData.entityId);
+            payload.insert(payload.end(), entityData.componentData.begin(), entityData.componentData.end());
 
             std::vector<uint8_t> packet = this->_packet->pack(
                 constants::ID_SERVER,
@@ -360,9 +386,7 @@ bool rserv::Lobby::gameStatePacket() {
             }
         }
     }
-    debug::Debug::printDebug(this->getIsDebug(),
-        "[SERVER] Successfully sent game state packets to all clients",
-        debug::debugType::NETWORK, debug::debugLevel::INFO);
+
     this->_sequenceNumber++;
     return true;
 }
