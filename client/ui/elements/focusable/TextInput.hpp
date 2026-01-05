@@ -52,7 +52,7 @@ class TextInput : public AFocusableElement {
 
         gfx::color_t _textColor = {0, 0, 0};
         gfx::color_t _placeholderColor = {128, 128, 128};
-        std::string _fontPath = "assets/fonts/abduction2002.ttf";
+        std::string _fontPath = constants::MAIN_FONT;
         size_t _baseFontSize = 24;
 
         std::function<void(const std::string&)> _onTextChanged;

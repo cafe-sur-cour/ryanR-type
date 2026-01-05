@@ -24,8 +24,8 @@ LevelCompleteState::LevelCompleteState(
 }
 
 void LevelCompleteState::enter() {
-    std::string titleText = "LEVEL COMPLETE!";
-    std::string subtitleText = "Going to the next level...";
+    std::string titleText = constants::LEVEL_COMPLETE_TITLE_TEXT;
+    std::string subtitleText = constants::LEVEL_COMPLETE_SUB_TITLE_TEXT;
 
     _titleText = std::make_shared<ui::Text>(_resourceManager);
     _titleText->setText(titleText);
@@ -35,7 +35,7 @@ void LevelCompleteState::enter() {
     _titleText->setOutlineThickness(2.0f);
 
     auto window = _resourceManager->get<gfx::IWindow>();
-    auto titleSize = window->getTextSize(titleText, "assets/fonts/abduction2002.ttf", 120);
+    auto titleSize = window->getTextSize(titleText, constants::MAIN_FONT, 120);
     float titleX = (constants::MAX_WIDTH - static_cast<float>(titleSize.first)) / 2.0f;
     float titleY = (
         constants::MAX_HEIGHT - static_cast<float>(titleSize.second)
@@ -50,7 +50,7 @@ void LevelCompleteState::enter() {
     _subtitleText->setOutlineThickness(1.0f);
 
     auto subtitleSize = window->getTextSize(
-        subtitleText, "assets/fonts/abduction2002.ttf", 40
+        subtitleText, constants::MAIN_FONT, 40
     );
     float subtitleX = (constants::MAX_WIDTH - static_cast<float>(subtitleSize.first)) / 2.0f;
     float subtitleY = titleY + static_cast<float>(titleSize.second) + 40.0f;
