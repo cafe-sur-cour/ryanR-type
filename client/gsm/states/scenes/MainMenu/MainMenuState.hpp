@@ -48,6 +48,7 @@ private:
 
     std::shared_ptr<ui::UILayout> _rightLayout;
     std::shared_ptr<ui::Button> _devButton;
+    std::shared_ptr<ui::Button> _infiniteButton;
 
     std::shared_ptr<ui::TextInput> _ipInput;
     std::shared_ptr<ui::TextInput> _portInput;
