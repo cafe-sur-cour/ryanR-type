@@ -181,6 +181,214 @@
                     "count": 5
                 }
             ]
+        },
+        {
+            "gameXTrigger": 1800.0,
+            "enemies": [
+                {
+                    "type": "enemy3",
+                    "distributionX": {
+                        "min": 20,
+                        "max": 25,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 4
+                },
+                {
+                    "type": "enemy1",
+                    "distributionX": {
+                        "min": 75,
+                        "max": 80,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 4
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 2300.0,
+            "enemies": [
+                {
+                    "type": "enemy2",
+                    "distributionX": {
+                        "min": 45,
+                        "max": 50,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 6
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 2800.0,
+            "enemies": [
+                {
+                    "type": "enemy3",
+                    "distributionX": {
+                        "min": 5,
+                        "max": 10,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 4
+                },
+                {
+                    "type": "enemy1",
+                    "distributionX": {
+                        "min": 90,
+                        "max": 95,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 3
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 3300.0,
+            "enemies": [
+                {
+                    "type": "enemy2",
+                    "distributionX": {
+                        "min": 40,
+                        "max": 45,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 5
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 3800.0,
+            "enemies": [
+                {
+                    "type": "enemy3",
+                    "distributionX": {
+                        "min": 15,
+                        "max": 20,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 5
+                },
+                {
+                    "type": "enemy1",
+                    "distributionX": {
+                        "min": 80,
+                        "max": 85,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 4
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 4300.0,
+            "enemies": [
+                {
+                    "type": "enemy2",
+                    "distributionX": {
+                        "min": 35,
+                        "max": 40,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 6
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 4800.0,
+            "enemies": [
+                {
+                    "type": "enemy3",
+                    "distributionX": {
+                        "min": 25,
+                        "max": 30,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 4
+                },
+                {
+                    "type": "enemy1",
+                    "distributionX": {
+                        "min": 50,
+                        "max": 55,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 4
+                }
+            ]
+        },
+        {
+            "gameXTrigger": 5300.0,
+            "enemies": [
+                {
+                    "type": "enemy3",
+                    "distributionX": {
+                        "min": 20,
+                        "max": 25,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "min": 10,
+                        "max": 90,
+                        "type": "uniform"
+                    },
+                    "count": 6
+                }
+            ]
         }
     ]
 }
