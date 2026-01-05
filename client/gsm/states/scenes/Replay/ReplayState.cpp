@@ -37,6 +37,7 @@ ReplayState::ReplayState(
     _isPaused(false),
     _shouldSwitch(false),
     _spacePressCooldown(0.0f),
+    _playbackSpeed(1.0f),
     _renderOffsetX(0.0f),
     _renderOffsetY(0.0f) {
     if (!_resourceManager->has<SettingsConfig>()) {
@@ -137,8 +138,11 @@ void ReplayState::update(float deltaTime) {
             }
             _playPauseButton.reset();
             _replayBackButton.reset();
+            _increaseSpeedButton.reset();
+            _decreaseSpeedButton.reset();
             _progressSlider.reset();
             _timeText.reset();
+            _speedText.reset();
             _playbackLayout.reset();
 
             _isPlaying = false;
@@ -175,11 +179,27 @@ void ReplayState::update(float deltaTime) {
                            event->isKeyPressed(gfx::EventType::GAMEPAD_DPAD_RIGHT) ||
                            event->isKeyPressed(gfx::EventType::GAMEPAD_LEFT_STICK_RIGHT);
 
+        bool upPressed = event->isKeyPressed(gfx::EventType::UP) ||
+                        event->isKeyPressed(gfx::EventType::GAMEPAD_DPAD_UP) ||
+                        event->isKeyPressed(gfx::EventType::GAMEPAD_LEFT_STICK_UP);
+        bool downPressed = event->isKeyPressed(gfx::EventType::DOWN) ||
+                          event->isKeyPressed(gfx::EventType::GAMEPAD_DPAD_DOWN) ||
+                          event->isKeyPressed(gfx::EventType::GAMEPAD_LEFT_STICK_DOWN);
+
         if (leftPressed) {
             _replayTime = std::max(0.0f, _replayTime - deltaTime * 5.0f);
         }
         if (rightPressed) {
             _replayTime = std::min(_totalReplayTime, _replayTime + deltaTime * 5.0f);
+        }
+
+        if (upPressed && _spacePressCooldown <= 0.0f) {
+            _playbackSpeed = std::min(2.0f, _playbackSpeed + 0.1f);
+            _spacePressCooldown = 0.15f;
+        }
+        if (downPressed && _spacePressCooldown <= 0.0f) {
+            _playbackSpeed = std::max(0.1f, _playbackSpeed - 0.1f);
+            _spacePressCooldown = 0.15f;
         }
 
         if (!_isPaused) {
@@ -209,8 +229,11 @@ void ReplayState::exit() {
     }
     _playPauseButton.reset();
     _replayBackButton.reset();
+    _increaseSpeedButton.reset();
+    _decreaseSpeedButton.reset();
     _progressSlider.reset();
     _timeText.reset();
+    _speedText.reset();
     _playbackLayout.reset();
 }
 
@@ -236,7 +259,7 @@ void ReplayState::playReplay(float deltaTime) {
         return;
     }
 
-    _replayTime += deltaTime;
+    _replayTime += deltaTime * _playbackSpeed;
 
     size_t left = 0;
     size_t right = _frames.size() - 1;
@@ -643,7 +666,7 @@ void ReplayState::processAudioForFrame(const nlohmann::json& frame) {
                     volume = (volume / 100.0f) * settings->getSoundVolume();
                 }
 
-                audio->playSound(soundPath, volume);
+                audio->playSound(soundPath, volume, _playbackSpeed);
             }
         }
     }
@@ -833,8 +856,36 @@ void ReplayState::createPlaybackControlsUI() {
         _isPaused = !_isPaused;
     });
 
+    _decreaseSpeedButton = std::make_shared<ui::Button>(_resourceManager);
+    _decreaseSpeedButton->setText("-");
+    _decreaseSpeedButton->setSize(math::Vector2f(50.f, 50.f));
+    _decreaseSpeedButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _decreaseSpeedButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _decreaseSpeedButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _decreaseSpeedButton->setOnRelease([this]() {
+        _playbackSpeed = std::max(0.1f, _playbackSpeed - 0.1f);
+    });
+    _decreaseSpeedButton->setOnActivated([this]() {
+        _playbackSpeed = std::max(0.1f, _playbackSpeed - 0.1f);
+    });
+
+    _increaseSpeedButton = std::make_shared<ui::Button>(_resourceManager);
+    _increaseSpeedButton->setText("+");
+    _increaseSpeedButton->setSize(math::Vector2f(50.f, 50.f));
+    _increaseSpeedButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _increaseSpeedButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _increaseSpeedButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _increaseSpeedButton->setOnRelease([this]() {
+        _playbackSpeed = std::min(2.0f, _playbackSpeed + 0.1f);
+    });
+    _increaseSpeedButton->setOnActivated([this]() {
+        _playbackSpeed = std::min(2.0f, _playbackSpeed + 0.1f);
+    });
+
     buttonsLayout->addElement(_replayBackButton);
     buttonsLayout->addElement(_playPauseButton);
+    buttonsLayout->addElement(_decreaseSpeedButton);
+    buttonsLayout->addElement(_increaseSpeedButton);
 
     auto progressLayout = std::make_shared<ui::UILayout>(_resourceManager);
     progressLayout->setDirection(ui::LayoutDirection::Vertical);
@@ -843,7 +894,7 @@ void ReplayState::createPlaybackControlsUI() {
     progressLayout->setPadding(math::Vector2f(0.0f, 0.0f));
 
     _timeText = std::make_shared<ui::Text>(_resourceManager);
-    _timeText->setText(" 0:00 / 0:00");
+    _timeText->setText(" 0:00 / 0:00               Speed: 100%");
     _timeText->setSize(math::Vector2f(850.f, 15.f));
 
     _progressSlider = std::make_shared<ui::Slider>(_resourceManager);
@@ -901,7 +952,14 @@ void ReplayState::updatePlaybackControls() {
     if (totalSeconds < 10) timeString += "0";
     timeString += std::to_string(totalSeconds);
 
-    _timeText->setText(" " + timeString);
+    int speedPercent = static_cast<int>(std::round(_playbackSpeed * 100.0f));
+    std::string speedString = "Speed: " + std::to_string(speedPercent) + "%";
+
+    std::string paddedTimeString = " " + timeString;
+    while (paddedTimeString.length() < 15) {
+        paddedTimeString += " ";
+    }
+    _timeText->setText(paddedTimeString + speedString);
 
     if (_playPauseButton) {
         _playPauseButton->setText(_isPaused ? "Play" : "Pause");

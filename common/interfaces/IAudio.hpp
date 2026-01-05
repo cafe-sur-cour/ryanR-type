@@ -26,7 +26,7 @@ class IAudio
         virtual float getMusicVolume() const = 0;
         virtual bool isMusicPlaying() const = 0;
 
-        virtual void playSound(const std::string& soundPath, float volume = 100.0f) = 0;
+        virtual void playSound(const std::string& soundPath, float volume = 100.0f, float pitch = 1.0f) = 0;
         virtual void setSoundVolume(float volume) = 0;
         virtual float getSoundVolume() const = 0;
         virtual void stopAllSounds() = 0;
