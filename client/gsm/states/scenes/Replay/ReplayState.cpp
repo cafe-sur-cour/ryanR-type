@@ -737,7 +737,13 @@ void ReplayState::createReplaySelectionUI() {
             );
 
             std::stringstream ss;
-            ss << std::put_time(std::localtime(&timeT), "%Y-%m-%d %H:%M");
+            #ifdef _WIN32
+                std::tm timeInfo;
+                localtime_s(&timeInfo, &timeT);
+                ss << std::put_time(&timeInfo, "%Y-%m-%d %H:%M");
+            #else
+                ss << std::put_time(std::localtime(&timeT), "%Y-%m-%d %H:%M");
+            #endif
 
             auto replayButton = std::make_shared<ui::Button>(_resourceManager);
             replayButton->setText("Replay " + std::to_string(i + 1) + " (" + ss.str() + ")");
