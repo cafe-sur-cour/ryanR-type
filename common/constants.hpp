@@ -159,6 +159,8 @@ namespace constants {
     const std::string TOENTITY_FIELD = "toEntity";
     const std::string TOSELF_FIELD = "toSelf";
 
+    const std::string POWERUP_TAG = "PowerUpTag";
+
     const std::string MUSICCOMPONENT = "MusicComponent";
     const std::string MUSICFILE_FIELD = "musicFile";
     const std::string VOLUME_FIELD = "volume";
@@ -232,6 +234,7 @@ namespace constants {
     const std::string TAKEDEATH_ACTION = "TakeDeath";
     const std::string DEALDAMAGE_ACTION = "DealDamage";
     const std::string TAKEDAMAGE_ACTION = "TakeDamage";
+    const std::string ADDLIFE_ACTION = "AddLife";
 
     /* Prefabs */
     const std::string GAME_ZONE_PREFAB = "gamezone";
