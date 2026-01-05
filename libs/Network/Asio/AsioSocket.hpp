@@ -14,8 +14,8 @@
 #include <cstdint>
 #include <asio.hpp>
 
-#include "../INetworkSocket.hpp"
-#include "../IEventLoop.hpp"
+#include "../../../common/interfaces/INetworkSocket.hpp"
+#include "../../../common/interfaces/IEventLoop.hpp"
 
 namespace net {
 

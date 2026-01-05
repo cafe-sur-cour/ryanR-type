@@ -15,7 +15,7 @@
 #include "ServerConfig.hpp"
 #include "../common/interfaces/IPacketManager.hpp"
 #include "../common/interfaces/INetwork.hpp"
-#include "../libs/Network/INetworkEndpoint.hpp"
+#include "../common/interfaces/INetworkEndpoint.hpp"
 #include "../common/constants.hpp"
 
 namespace rserv {

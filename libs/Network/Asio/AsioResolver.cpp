@@ -15,8 +15,6 @@
 #include "AsioErrorCode.hpp"
 #include "AsioEventLoop.hpp"
 #include "AsioEndpoint.hpp"
-#include "../INetworkEndpoint.hpp"
-#include "../INetworkErrorCode.hpp"
 
 net::AsioResolver::AsioResolver(std::shared_ptr<IEventLoop> eventLoop) :
     _impl(std::make_unique<Impl>()) {

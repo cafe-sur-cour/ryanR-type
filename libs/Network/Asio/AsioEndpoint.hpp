@@ -11,7 +11,7 @@
 #include <string>
 #include <cstdint>
 #include "AsioAddress.hpp"
-#include "../INetworkEndpoint.hpp"
+#include "../../../common/interfaces/INetworkEndpoint.hpp"
 
 namespace asio {
     namespace ip {

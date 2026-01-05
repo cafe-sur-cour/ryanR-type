@@ -14,10 +14,10 @@
 #include <asio.hpp>
 
 #include "AsioEndpoint.hpp"
-#include "../INetworkResolver.hpp"
-#include "../INetworkErrorCode.hpp"
-#include "../INetworkEndpoint.hpp"
-#include "../IEventLoop.hpp"
+#include "../../../common/interfaces/INetworkResolver.hpp"
+#include "../../../common/interfaces/INetworkErrorCode.hpp"
+#include "../../../common/interfaces/INetworkEndpoint.hpp"
+#include "../../../common/interfaces/IEventLoop.hpp"
 
 namespace net {
 

@@ -11,7 +11,7 @@
 #include <string>
 #include <memory>
 #include <asio.hpp>
-#include "../INetworkAddress.hpp"
+#include "../../../common/interfaces/INetworkAddress.hpp"
 
 namespace net {
 

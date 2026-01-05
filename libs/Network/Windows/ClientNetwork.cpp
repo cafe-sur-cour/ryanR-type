@@ -14,10 +14,10 @@
 
 #include "ClientNetwork.hpp"
 #include "../common.hpp"
-#include "../INetworkSocket.hpp"
-#include "../INetworkResolver.hpp"
-#include "../INetworkErrorCode.hpp"
-#include "../INetworkEndpoint.hpp"
+#include "../../../common/interfaces/INetworkSocket.hpp"
+#include "../../../common/interfaces/INetworkResolver.hpp"
+#include "../../../common/interfaces/INetworkErrorCode.hpp"
+#include "../../../common/interfaces/INetworkEndpoint.hpp"
 #include "../../../common/DLLoader/LoaderType.hpp"
 
 net::ClientNetwork::ClientNetwork() : _connected(false) {

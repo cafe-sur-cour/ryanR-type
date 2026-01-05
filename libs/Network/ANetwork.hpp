@@ -11,8 +11,8 @@
 #include <vector>
 #include <functional>
 #include <memory>
-#include "IEventLoop.hpp"
-#include "INetworkEndpoint.hpp"
+#include "../../common/interfaces/IEventLoop.hpp"
+#include "../../common/interfaces/INetworkEndpoint.hpp"
 #include "../../common/interfaces/INetwork.hpp"
 #include "../../common/interfaces/IPacketManager.hpp"
 #include "../../common/interfaces/IBuffer.hpp"
