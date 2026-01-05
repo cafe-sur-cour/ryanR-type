@@ -53,6 +53,7 @@ private:
     std::shared_ptr<ui::Button> _leaderboardButton;
     std::shared_ptr<ui::Button> _registerButton;
     std::shared_ptr<ui::Button> _loginButton;
+    std::shared_ptr<ui::Button> _disconnectButton;
 
     std::shared_ptr<ui::TextInput> _ipInput;
     std::shared_ptr<ui::TextInput> _portInput;
@@ -60,7 +61,6 @@ private:
 
     std::shared_ptr<ui::Text> _connectionStatusText;
     std::shared_ptr<ui::Text> _serverStatusText;
-    std::shared_ptr<ui::Text> _usernameDisplayText;
 
     std::shared_ptr<ui::Background> _background;
 

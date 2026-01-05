@@ -88,18 +88,15 @@ RegisterState::RegisterState(
         std::string confirmPassword = this->_confirmPasswordInput->getText();
 
         if (username.empty() || password.empty() || confirmPassword.empty()) {
-            std::cout << "All fields are required!" << std::endl;
             return;
         }
 
         if (password != confirmPassword) {
-            std::cout << "Passwords do not match!" << std::endl;
             return;
         }
 
         const std::string filepath = "saves/users.json";
         nlohmann::json users;
-
         if (std::filesystem::exists(filepath)) {
             std::ifstream file(filepath);
             if (file.is_open()) {
@@ -116,7 +113,6 @@ RegisterState::RegisterState(
 
         for (const auto& user : users) {
             if (user.contains("username") && user["username"] == username) {
-                std::cout << "Username already exists!" << std::endl;
                 return;
             }
         }
@@ -131,13 +127,9 @@ RegisterState::RegisterState(
         if (file.is_open()) {
             file << users.dump(4);
             file.close();
-            std::cout << "User registered successfully!" << std::endl;
-            
             if (auto stateMachine = this->_gsm.lock()) {
                 stateMachine->requestStatePop();
             }
-        } else {
-            std::cout << "Failed to save user data!" << std::endl;
         }
     });
     _registerButton->setOnActivated([this]() {
@@ -146,18 +138,15 @@ RegisterState::RegisterState(
         std::string confirmPassword = this->_confirmPasswordInput->getText();
 
         if (username.empty() || password.empty() || confirmPassword.empty()) {
-            std::cout << "All fields are required!" << std::endl;
             return;
         }
 
         if (password != confirmPassword) {
-            std::cout << "Passwords do not match!" << std::endl;
             return;
         }
 
         const std::string filepath = "saves/users.json";
         nlohmann::json users;
-
         if (std::filesystem::exists(filepath)) {
             std::ifstream file(filepath);
             if (file.is_open()) {
@@ -174,7 +163,6 @@ RegisterState::RegisterState(
 
         for (const auto& user : users) {
             if (user.contains("username") && user["username"] == username) {
-                std::cout << "Username already exists!" << std::endl;
                 return;
             }
         }
@@ -189,13 +177,9 @@ RegisterState::RegisterState(
         if (file.is_open()) {
             file << users.dump(4);
             file.close();
-            std::cout << "User registered successfully!" << std::endl;
-            
             if (auto stateMachine = this->_gsm.lock()) {
                 stateMachine->requestStatePop();
             }
-        } else {
-            std::cout << "Failed to save user data!" << std::endl;
         }
     });
 
@@ -297,7 +281,7 @@ void RegisterState::exit() {
     if (window) {
         window->setCursor(false);
     }
-    
+
     if (_uiManager) {
         _uiManager->clearElements();
     }
