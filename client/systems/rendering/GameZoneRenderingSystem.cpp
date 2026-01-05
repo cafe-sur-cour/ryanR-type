@@ -11,7 +11,7 @@
 #include "../../../common/components/permanent/ColliderComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 #include "../../../common/constants.hpp"
 
 namespace ecs {
@@ -64,7 +64,8 @@ void GameZoneRenderingSystem::update(std::shared_ptr<ResourceManager>
             math::Vector2f entityPos = transform->getPosition();
 
             for (auto& collider : colliders) {
-                math::FRect hitbox = collider->getHitbox(entityPos, entityScale);
+                math::FRect hitbox = collider->getHitbox(entityPos, entityScale,
+                    transform->getRotation());
 
                 gfx::color_t colliderColor;
                 if (collider->getType() == CollisionType::Push) {

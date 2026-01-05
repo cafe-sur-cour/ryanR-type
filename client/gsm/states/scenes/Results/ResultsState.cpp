@@ -13,8 +13,8 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include "../../../common/constants.hpp"
-#include "../../../libs/Multimedia/IEvent.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../../common/interfaces/IEvent.hpp"
+#include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../gsm/machine/AGameStateMachine.hpp"
 #include "../MainMenu/MainMenuState.hpp"
 #include "../../../../SettingsConfig.hpp"

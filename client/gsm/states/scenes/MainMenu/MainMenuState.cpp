@@ -11,14 +11,14 @@
 #include <vector>
 #include <iostream>
 #include <optional>
-#include "../../../../../libs/Multimedia/IWindow.hpp"
-#include "../../../../../libs/Multimedia/SfmlWindow.hpp"
-#include "../../../../../libs/Multimedia/IEvent.hpp"
+#include "../../../../../common/interfaces/IWindow.hpp"
+#include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../constants.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../../common/InputMapping/IInputProvider.hpp"
+#include "../Infinite/InfiniteState.hpp"
 #include "../Settings/SettingsState.hpp"
 #include "../LobbyWaiting/LobbyWaitingState.hpp"
 #include "../Register/RegisterState.hpp"
@@ -279,14 +279,14 @@ MainMenuState::MainMenuState(
     ui::LayoutConfig rightConfig;
     rightConfig.direction = ui::LayoutDirection::Vertical;
     rightConfig.alignment = ui::LayoutAlignment::Center;
-    rightConfig.spacing = 50.0f;
+    rightConfig.spacing = 20.0f;
     rightConfig.padding = math::Vector2f(0.0f, 0.0f);
     rightConfig.anchorX = ui::AnchorX::Right;
     rightConfig.anchorY = ui::AnchorY::Center;
     rightConfig.offset = math::Vector2f(-50.0f, 0.0f);
 
     _rightLayout = std::make_shared<ui::UILayout>(_resourceManager, rightConfig);
-    _rightLayout->setSize(math::Vector2f(300.f, 200.f));
+    _rightLayout->setSize(math::Vector2f(400.f, 236.f));
 
     _rightLayout->addElement(_requestCodeButton);
     _rightLayout->addElement(_lobbyCodeInput);
@@ -399,6 +399,25 @@ MainMenuState::MainMenuState(
 
     _topLeftLayout->addElement(_registerButton);
     _topLeftLayout->addElement(_loginButton);
+    _infiniteButton = std::make_shared<ui::Button>(_resourceManager);
+    _infiniteButton->setText("Infinite Scene");
+    _infiniteButton->setSize(math::Vector2f(400.f, 108.f));
+    _infiniteButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _infiniteButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _infiniteButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _infiniteButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<InfiniteState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _infiniteButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<InfiniteState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _rightLayout->addElement(_infiniteButton);
 
     _uiManager->addElement(_leftLayout);
     _uiManager->addElement(_mainMenuLayout);

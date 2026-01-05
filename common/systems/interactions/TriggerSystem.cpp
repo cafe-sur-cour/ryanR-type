@@ -49,8 +49,8 @@ void TriggerSystem::buildSpatialGrid(std::shared_ptr<Registry> registry) {
             continue;
 
         for (auto& collider : colliders) {
-            math::FRect hitbox = collider->getScaledHitbox(
-                transform->getPosition(), transform->getScale());
+            math::FRect hitbox = collider->getHitbox(
+                transform->getPosition(), transform->getScale(), transform->getRotation());
             _spatialGrid.insert(entityId, hitbox);
         }
     }
@@ -77,8 +77,10 @@ void TriggerSystem::update(
         if (!triggerTransform)
             continue;
 
-        math::FRect triggerHitbox = triggerCollider->getScaledHitbox(
-            triggerTransform->getPosition(), triggerTransform->getScale());
+        math::FRect triggerHitbox = triggerCollider->getHitbox(
+            triggerTransform->getPosition(),
+            triggerTransform->getScale(),
+            triggerTransform->getRotation());
 
         auto nearbyEntities = _spatialGrid.query(triggerHitbox);
 
@@ -111,10 +113,10 @@ bool TriggerSystem::checkCollision(
     const TransformComponent& transformB,
     const ColliderComponent& colliderB
 ) {
-    math::FRect hitboxA = colliderA.getScaledHitbox(transformA.getPosition(),
-        transformA.getScale());
-    math::FRect hitboxB = colliderB.getScaledHitbox(transformB.getPosition(),
-        transformB.getScale());
+    math::OrientedRect hitboxA = colliderA.getOrientedHitbox(transformA.getPosition(),
+        transformA.getScale(), transformA.getRotation());
+    math::OrientedRect hitboxB = colliderB.getOrientedHitbox(transformB.getPosition(),
+        transformB.getScale(), transformB.getRotation());
 
     return hitboxA.intersects(hitboxB);
 }

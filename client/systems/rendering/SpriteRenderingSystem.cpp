@@ -11,7 +11,7 @@
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 
 
 namespace ecs {
@@ -36,7 +36,8 @@ void SpriteRenderingSystem::update(std::shared_ptr<ResourceManager>
             const math::Vector2f& pos = transform->getPosition();
             const math::Vector2f& scale = transform->getScale();
             window->drawSprite(sprite->getTexturePath(),
-                pos.getX(), pos.getY(), scale.getX(), scale.getY());
+                pos.getX(), pos.getY(), scale.getX(), scale.getY(),
+                transform->getRotation());
         }
     }
 }

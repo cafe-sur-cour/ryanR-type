@@ -14,8 +14,8 @@
 #include "gsm/states/scenes/MainMenu/MainMenuState.hpp"
 #include "../common/debug.hpp"
 #include "../../common/Signal/Signal.hpp"
-#include "../../libs/Multimedia/IWindow.hpp"
-#include "../../libs/Multimedia/IEvent.hpp"
+#include "../../common/interfaces/IWindow.hpp"
+#include "../../common/interfaces/IEvent.hpp"
 #include "../../common/DLLoader/DLLoader.hpp"
 #include "../../common/Error/LibrairiesLoadError.hpp"
 
@@ -50,8 +50,17 @@ Core::~Core() {
     if (this->_clientNetwork != nullptr) {
         this->_clientNetwork->stop();
     }
+
     if (this->_networkThread.joinable()) {
         this->_networkThread.join();
+    }
+
+    if (this->_clientNetwork != nullptr) {
+        this->_clientNetwork.reset();
+    }
+
+    if (this->_registry != nullptr) {
+        this->_registry.reset();
     }
 
     if (this->_gsm != nullptr) {
@@ -64,26 +73,22 @@ Core::~Core() {
 
     if (this->_resourceManager != nullptr) {
         this->_resourceManager->clear();
-    }
-
-    if (this->_clientNetwork != nullptr) {
-        this->_clientNetwork.reset();
+        this->_resourceManager.reset();
     }
 
     if (this->_windowLoader != nullptr) {
         this->_windowLoader->Close();
         this->_windowLoader.reset();
     }
+
     if (this->_eventLoader != nullptr) {
         this->_eventLoader->Close();
+        this->_eventLoader.reset();
     }
+
     if (this->_audioLoader != nullptr) {
         this->_audioLoader->Close();
         this->_audioLoader.reset();
-    }
-
-    if (this->_registry != nullptr) {
-        this->_registry.reset();
     }
 }
 

@@ -12,7 +12,7 @@
 #include "resourceManager/ResourceManager.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
-#include "../../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../../common/interfaces/IWindow.hpp"
 #include <vector>
 #include <string>
 #include <memory>

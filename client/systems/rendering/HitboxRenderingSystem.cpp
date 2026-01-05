@@ -12,7 +12,7 @@
 #include "../../../common/components/permanent/ColliderComponent.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
 
 
 namespace ecs {
@@ -37,7 +37,7 @@ void HitboxRenderingSystem::update(std::shared_ptr<ResourceManager>
 
         auto collider = colliders[0];
         math::FRect hitboxRect = collider->getHitbox(transform->getPosition(),
-            transform->getScale());
+            transform->getScale(), transform->getRotation());
 
         if (resourceManager->has<gfx::IWindow>()) {
             auto window = resourceManager->get<gfx::IWindow>();
