@@ -45,6 +45,7 @@ class Parser {
         bool shouldParseComponent(std::map<std::string, std::shared_ptr<FieldValue>> fields) const;
 
         void parseMapFromFile(const std::string& filePath);
+        void parseMapFromJson(const nlohmann::json& mapJson);
 
         std::shared_ptr<MapParser> getMapParser() const;
         void setRegistry(std::shared_ptr<ecs::Registry> registry);
