@@ -16,7 +16,7 @@
 #include "../../../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
-#include "../../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../../common/interfaces/IWindow.hpp"
 
 namespace gsm {
 
