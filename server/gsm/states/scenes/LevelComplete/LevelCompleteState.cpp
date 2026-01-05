@@ -60,16 +60,16 @@ void LevelCompleteState::update(float deltaTime) {
                 registry->clearAllEntities();
             }
 
-            auto server = _resourceManager->get<rserv::Server>();
+            auto lobby = _resourceManager->get<rserv::Lobby>();
 
-            server->clearDeltaTrackerCaches();
+            lobby->clearDeltaTrackerCaches();
 
-            server->nextLevelPacket();
+            lobby->nextLevelPacket();
 
             auto prefabMgr = _resourceManager->get<EntityPrefabManager>();
-            if (server && prefabMgr && registry) {
+            if (lobby && prefabMgr && registry) {
                 std::string playerPrefab = "player";
-                auto clientIds = server->getConnectedClients();
+                auto clientIds = lobby->getConnectedClients();
                 size_t playerIndex = 0;
                 for (size_t i = 0; i < clientIds.size(); i++) {
                     auto newEntity = prefabMgr->createEntityFromPrefab(

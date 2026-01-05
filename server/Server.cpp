@@ -317,7 +317,3 @@ std::shared_ptr<pm::IPacketManager> rserv::Server::createNewPacketManager() {
 uint32_t rserv::Server::getNextEntityId() {
     return this->_nextEntityId++;
 }
-
-void rserv::Server::clearDeltaTrackerCaches() {
-    this->_deltaTracker.clearAllCaches();
-}

@@ -117,7 +117,7 @@ void InGameState::update(float deltaTime) {
         gsm::GameStateType currentState = *(_resourceManager->get<gsm::GameStateType>());
 
         if (currentState == gsm::LEVEL_COMPLETE) {
-            _resourceManager->get<rserv::Server>()->levelCompletePacket();
+            _resourceManager->get<rserv::Lobby>()->levelCompletePacket();
 
             if (auto gsmPtr = _gsm.lock()) {
                 if (auto gsm = std::dynamic_pointer_cast<GameStateMachine>(gsmPtr)) {
