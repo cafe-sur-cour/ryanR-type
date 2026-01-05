@@ -21,7 +21,9 @@
 #include <queue>
 #include <map>
 #include <memory>
-#include "IServer.hpp"
+
+#include "LobbyStruct.hpp"
+#include "Lobby.hpp"
 #include "ServerConfig.hpp"
 #include "deltaTracker/ComponentDeltaTracker.hpp"
 #include "deltaTracker/ComponentSerializer.hpp"
@@ -33,71 +35,69 @@
 #include "../common/InputMapping/InputAction.hpp"
 #include "../common/resourceManager/ResourceManager.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
+#include "../common/resourceManager/ResourceManager.hpp"
+#include <thread>
+#include "../common/Parser/Parser.hpp"
+#include "../common/systems/systemManager/ISystemManager.hpp"
+#include "gsm/machine/GameStateMachine.hpp"
+#include "initResourcesManager/ServerInputProvider.hpp"
 #include "Signal.hpp"
 
 namespace rserv {
-    class Server : public IServer {
+    class Server {
         public:
-            Server(std::shared_ptr<ResourceManager> resourceManager);
+            Server();
             ~Server();
 
-            void init() override;
-            void start() override;
-            void stop() override;
+            void init();
+            void start();
+            void stop();
 
-            void setConfig(std::shared_ptr<ServerConfig> config) override;
-            std::shared_ptr<ServerConfig> getConfig() const override;
-            uint16_t getPort() const override;
-            void setPort(uint16_t port) override;
+            void setConfig(std::shared_ptr<ServerConfig> config);
+            std::shared_ptr<ServerConfig> getConfig() const;
+            uint16_t getPort() const;
+            void setPort(uint16_t port);
 
-            int getState() const override;
-            void setState(int state) override;
+            int getState() const;
+            void setState(int state);
 
-            operator int() const noexcept override;
+            void initRessourceManager(std::shared_ptr<Lobby> lobby);
+            operator int() const noexcept;
 
-            std::shared_ptr<net::INetwork> getNetwork() const override;
-            void setNetwork(std::shared_ptr<net::INetwork> network) override;
+            std::shared_ptr<net::INetwork> getNetwork() const;
+            void setNetwork(std::shared_ptr<net::INetwork> network);
 
-            void onClientConnected(uint8_t idClient) override;
-            void onClientDisconnected(uint8_t idClient) override;
-            void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet) override;
+            void onClientConnected(uint8_t idClient);
+            void onClientDisconnected(uint8_t idClient);
+            void onPacketReceived(uint8_t idClient, const pm::IPacketManager &packet);
 
-            std::vector<uint8_t> getConnectedClients() const override;
-            std::vector<asio::ip::udp::endpoint> getConnectedClientEndpoints() const override;
-            size_t getClientCount() const override;
+            std::vector<uint8_t> getConnectedClients() const;
+            std::vector<asio::ip::udp::endpoint> getConnectedClientEndpoints() const;
+            size_t getClientCount() const;
 
-            std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> getEventQueue() override;
-            bool hasEvents() const override;
 
             /* Received Packet Handling */
-            void processIncomingPackets() override;
-            bool processConnections(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> client) override;
-            bool processDisconnections(uint8_t idClient) override;
-            bool processEvents(uint8_t idClient) override;
-            bool processEndOfGame(uint8_t idClient) override;
-            bool processWhoAmI(uint8_t idClient);
+            void processIncomingPackets();
+            bool processConnections(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> client);
+            bool processDisconnections(uint8_t idClient);
             bool requestCode(asio::ip::udp::endpoint endpoint);
             bool processConnectToLobby(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> payload);
             bool processMasterStart(std::pair<asio::ip::udp::endpoint, std::vector<uint8_t>> payload);
 
             /* Sent Packet Handling */
             bool connectionPacket(asio::ip::udp::endpoint endpoint);
-            bool gameStatePacket();
-            bool canStartPacket();
-            bool endGamePacket(bool isWin);
-            std::vector<uint64_t> spawnPacket(size_t entity, const std::string prefabName);
-            std::vector<uint64_t> deathPacket(size_t entity);
+            bool canStartPacket(std::vector<asio::ip::udp::endpoint> endpoints);
             bool serverStatusPacket();
             bool sendCodeLobbyPacket(asio::ip::udp::endpoint endpoint);
             bool lobbyConnectValuePacket(asio::ip::udp::endpoint endpoint, bool isSuccess);
 
-            bool isGameStarted() const;
-            bool allClientsReady() const;
+
             uint32_t getSequenceNumber() const;
             std::shared_ptr<pm::IPacketManager> getPacketManager() const;
+            std::shared_ptr<pm::IPacketManager> createNewPacketManager();
+            uint32_t getNextEntityId();
             void incrementSequenceNumber();
-            void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
-            void clearEntityDeltaCache(uint8_t clientId, uint32_t entityId);
+
         private:
             void loadNetworkLibrary();
             void loadBufferLibrary();
@@ -105,49 +105,24 @@ namespace rserv {
             DLLoader<createNetworkLib_t> _networloader;
             DLLoader<createBuffer_t> _bufferloader;
             DLLoader<createPacket_t> _packetloader;
-            uint8_t _nextClientId;
-            uint32_t _sequenceNumber;
-            std::vector<std::tuple<uint8_t, asio::ip::udp::endpoint, std::string>> _clients;
-            std::map<uint8_t, bool> _clientsReady;
 
             std::shared_ptr<ServerConfig> _config;
             std::shared_ptr<net::INetwork> _network;
             std::shared_ptr<IBuffer> _buffer;
             std::shared_ptr<pm::IPacketManager> _packet;
-            std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> _eventQueue;
 
-            bool _gameStarted;
-            std::shared_ptr<ResourceManager> _resourceManager;
-            std::chrono::steady_clock::time_point _lastGameStateTime;
+            /* Network handling variables */
+            uint8_t _nextClientId;
+            uint32_t _sequenceNumber;
+            uint32_t _nextEntityId;
 
-            std::vector<std::pair<std::string, std::vector<asio::ip::udp::endpoint>>> _lobbys;
-            ComponentDeltaTracker _deltaTracker;
+            /* Lobby handling variables */
+            std::vector<std::tuple<uint8_t, asio::ip::udp::endpoint, std::string>> _clients;
+            std::map<uint8_t, bool> _clientsReady;
+            std::vector<std::shared_ptr<LobbyStruct>> _lobbyThreads;
+            std::vector<std::shared_ptr<Lobby>> _lobbies;
+            std::map<uint8_t, std::shared_ptr<Lobby>> _clientToLobby;
 
-            /* Functions to build game state packets */
-            std::vector<std::function<std::vector<uint64_t>(std::shared_ptr<ecs::Registry>, ecs::Entity)>> _convertFunctions;
-            std::vector<uint64_t> convertTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertTransformComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertSpeedComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertHealthComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertColliderComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertShootStatComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertScoreComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertAIMovementPatternComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertDamageComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertLifetimeComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertVelocityComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertAIMoverTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertAIShooterTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertControllableTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertEnemyProjectileTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertGameZoneColliderTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertMobTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertObstacleTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertPlayerProjectileTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertShooterTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertProjectilePassThroughTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertProjectilePrefabComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            std::vector<uint64_t> convertGameZoneComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
     };
 } // namespace rserv = r-type server
 
