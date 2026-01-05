@@ -8,14 +8,24 @@
 #include "ReplaySystem.hpp"
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 #include "../../../common/ECS/view/View.hpp"
 #include "../../constants.hpp"
 
 namespace ecs {
 
 ReplaySystem::ReplaySystem() : _totalElapsedTime(0.0f) {
-    // Clear the replay file at startup
-    std::ofstream file("replay.json", std::ios::trunc);
+    std::filesystem::path replayDir = "saves/replays";
+    std::filesystem::path replayFile = replayDir / "replay.json";
+
+    try {
+        std::filesystem::create_directories(replayDir);
+    } catch (const std::filesystem::filesystem_error& e) {
+        std::cerr << "Failed to create replay directories: " << e.what() << std::endl;
+        return;
+    }
+
+    std::ofstream file(replayFile, std::ios::trunc);
     file.close();
 }
 
@@ -323,12 +333,22 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
 }
 
 void ReplaySystem::saveReplayToFile(const nlohmann::json& frameData) {
-    std::ofstream file("replay.json", std::ios::app);
+    std::filesystem::path replayDir = "saves/replays";
+    std::filesystem::path replayFile = replayDir / "replay.json";
+
+    try {
+        std::filesystem::create_directories(replayDir);
+    } catch (const std::filesystem::filesystem_error& e) {
+        std::cerr << "Failed to create replay directories: " << e.what() << std::endl;
+        return;
+    }
+
+    std::ofstream file(replayFile, std::ios::app);
     if (file.is_open()) {
         file << frameData.dump() << std::endl;
         file.close();
     } else {
-        std::cerr << "Failed to save frame" << std::endl;
+        std::cerr << "Failed to save frame to " << replayFile << std::endl;
     }
 }
 
