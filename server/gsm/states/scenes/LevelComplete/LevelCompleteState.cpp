@@ -71,7 +71,7 @@ void LevelCompleteState::update(float deltaTime) {
                 std::string playerPrefab = "player";
                 auto clientIds = server->getConnectedClients();
                 size_t playerIndex = 0;
-                for (size_t i; i < clientIds.size(); i++) {
+                for (size_t i = 0; i < clientIds.size(); i++) {
                     auto newEntity = prefabMgr->createEntityFromPrefab(
                         playerPrefab,
                         registry,
