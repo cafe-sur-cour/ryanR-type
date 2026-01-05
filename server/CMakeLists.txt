@@ -1,19 +1,19 @@
 set(SERVER_LIB_NAME r-type_server_lib)
 
 add_library(${SERVER_LIB_NAME}
-    IServer.hpp
     ServerConfig.hpp
     ServerConfig.cpp
     Server.hpp
     Server.cpp
+    Lobby.cpp
+    Lobby.hpp
     ServerLibsLoading.cpp
     ServerReceivePacket.cpp
     ServerSentPacket.cpp
     ECSConversions.cpp
     Utils.cpp
     Utils.hpp
-    Core.cpp
-    Core.hpp
+    LobbyStruct.hpp
 )
 
 find_package(asio CONFIG REQUIRED)
