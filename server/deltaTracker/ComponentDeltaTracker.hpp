@@ -12,6 +12,7 @@
 #include <vector>
 #include <cstdint>
 #include <map>
+#include <set>
 #include "../../common/translationToECS.hpp"
 
 namespace rserv {
@@ -32,6 +33,7 @@ class ComponentDeltaTracker {
         void clearClientCache(uint8_t clientId);
         void clearEntityCache(uint8_t clientId, uint32_t entityId);
         void clearAllCaches();
+        void clearDeadEntities(const std::set<uint32_t>& aliveEntityIds);
 
     private:
         std::unordered_map<uint8_t, std::unordered_map<uint32_t, EntitySnapshot>> _clientEntityCache;
