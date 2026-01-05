@@ -1,0 +1,10 @@
+{
+    "name": "Infinite",
+    "background": "background",
+    "scrollSpeed": 100.0,
+    "music": "music",
+    "powerUps": [],
+    "mapLength": 1000000.0,
+    "obstacles": [],
+    "waves": []
+}
