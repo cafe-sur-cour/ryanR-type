@@ -13,6 +13,7 @@
 #include <regex>
 #include <string>
 #include <vector>
+#include "../../constants.hpp"
 
 MapHandler::MapHandler() : _currentMapIndex(0), _completedAllMaps(false) {
 }
@@ -50,8 +51,8 @@ void MapHandler::parseAllLevels(const std::string& directoryPath) {
                 mapData.filePath = entry.path().string();
                 mapData.jsonData = jsonData;
 
-                if (jsonData.contains("index")) {
-                    mapData.index = jsonData["index"].get<int>();
+                if (jsonData.contains(constants::INDEX_FIELD)) {
+                    mapData.index = jsonData[constants::INDEX_FIELD].get<int>();
                 } else {
                     std::regex indexExtractor("level([0-9]+)\\.json");
                     std::smatch match;
@@ -62,8 +63,8 @@ void MapHandler::parseAllLevels(const std::string& directoryPath) {
                     }
                 }
 
-                if (jsonData.contains("name")) {
-                    mapData.name = jsonData["name"].get<std::string>();
+                if (jsonData.contains(constants::NAME_FIELD)) {
+                    mapData.name = jsonData[constants::NAME_FIELD].get<std::string>();
                 } else {
                     mapData.name = "Level " + std::to_string(mapData.index);
                 }

@@ -123,6 +123,7 @@ namespace constants {
     const std::string LAYERS_FIELD = "layers";
     const std::string ZONERECT_FIELD = "zoneRect";
     const std::string NAME_FIELD = "name";
+    const std::string INDEX_FIELD = "index";
     const std::string SPEEDMULTIPLIER_FIELD = "speedMultiplier";
     const std::string SCALEMODE_FIELD = "scaleMode";
     const std::string SOURCESIZE_FIELD = "sourceSize";
