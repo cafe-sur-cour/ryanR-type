@@ -65,6 +65,7 @@ InputMapping ServerInputProvider::getInputMapping(size_t clientID) const {
 
 void ServerInputProvider::setAxisValue(ecs::InputAction action, float value, size_t clientID) {
     _clientAxisValues[clientID][action] = value;
+    _clientInputTimestamps[clientID][action] = std::chrono::steady_clock::now();
 }
 
 void ServerInputProvider::handleUp(size_t clientID, float value) {
@@ -104,15 +105,10 @@ void ServerInputProvider::updateInputFromEvent
 }
 
 std::vector<size_t> ServerInputProvider::getConnectedClients() const {
-    std::vector<size_t> clients;
-    for (const auto& [clientID, axisMap] : _clientAxisValues) {
-        clients.push_back(clientID);
-    }
-    return clients;
+    return std::vector<size_t>(_registeredClients.begin(), _registeredClients.end());
 }
 
-void ServerInputProvider::addClientInputMapping
-(size_t clientID, size_t identity, const InputMapping& mapping) {
-    _inputMapping.emplace_back(clientID, identity, mapping);
+void ServerInputProvider::registerClient(size_t clientID) {
+    _registeredClients.insert(clientID);
 }
 }  // namespace ecs
