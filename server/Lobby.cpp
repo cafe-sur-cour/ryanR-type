@@ -372,7 +372,7 @@ bool rserv::Lobby::gameStatePacket() {
 
             std::vector<uint8_t> packet = this->_packet->pack(
                 constants::ID_SERVER,
-                this->_sequenceNumber,
+                this->_sequenceNumber++, // FIX: Increment sequence number for EACH packet
                 constants::PACKET_GAME_STATE,
                 payload
             );
@@ -386,8 +386,8 @@ bool rserv::Lobby::gameStatePacket() {
             }
         }
     }
-
-    this->_sequenceNumber++;
+    
+    // Note: sequence number already incremented in the loop above
     return true;
 }
 
