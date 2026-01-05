@@ -78,6 +78,10 @@ namespace constants {
     const std::string PORT_PLACEHOLDER = "Enter a port";
 
      /* Replay Constants */
+     constexpr int MAX_REPLAY_FILES = 5;
+    const std::string REPLAY_DIRECTORY = "saves/replays";
+    const std::string REPLAY_FILE_PREFIX = "replay";
+    const std::string REPLAY_BUTTON_TEXT = "Replay";
     const std::string REPLAY_TOTAL_TIME = "totalTime";
     const std::string REPLAY_RENDERABLES = "renderables";
     const std::string REPLAY_GAMEZONE = "gamezone";

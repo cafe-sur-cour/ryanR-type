@@ -42,8 +42,10 @@ class ReplaySystem : public ASystem {
         void saveReplayToFile(const nlohmann::json& frameData);
 
         std::string getSpriteId(const std::string& texturePath);
+        std::filesystem::path getNextReplayFile();
 
         float _totalElapsedTime;
+        std::filesystem::path _currentReplayFile;
 };
 
 } // namespace ecs
