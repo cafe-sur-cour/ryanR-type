@@ -26,6 +26,7 @@
 #include "../common/debug.hpp"
 #include "../../common/systems/systemManager/SystemManager.hpp"
 #include "../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
+#include "../common/components/permanent/ScriptingComponent.hpp"
 
 rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
     std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>,
@@ -94,6 +95,27 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
 
 rserv::Lobby::~Lobby() {
     this->stop();
+
+    if (!this->_resourceManager->has<ecs::Registry>()) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[SERVER] Registry not found, cannot process WHOAMI",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return;
+    }
+
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+
+    if (registry != nullptr) {
+        auto scriptingView = registry->view<ecs::ScriptingComponent>();
+        for (auto entityId : scriptingView) {
+            auto scriptingComp = registry->getComponent<ecs::ScriptingComponent>(
+                entityId
+            );
+            if (scriptingComp) {
+                scriptingComp->clearLuaReferences();
+            }
+        }
+    }
 }
 
 
@@ -418,6 +440,38 @@ bool rserv::Lobby::endGamePacket(bool isWin) {
     return true;
 }
 
+bool rserv::Lobby::levelCompletePacket() {
+    std::vector<uint64_t> payload;
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_LEVEL_COMPLETE, payload);
+
+    if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
+        std::cout << "[SERVER NETWORK] Failed to broadcast level complete packet" << std::endl;
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[SERVER NETWORK] Failed to broadcast level complete packet",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    this->_sequenceNumber++;
+    return true;
+}
+
+bool rserv::Lobby::nextLevelPacket() {
+    std::vector<uint64_t> payload;
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_NEXT_LEVEL, payload);
+
+    if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
+        std::cout << "[SERVER NETWORK] Failed to broadcast next level packet" << std::endl;
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[SERVER NETWORK] Failed to broadcast next level packet",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    this->_sequenceNumber++;
+    return true;
+}
+
 std::vector<uint64_t> rserv::Lobby::spawnPacket(size_t entityId,
     const std::string prefabName) {
     std::vector<uint64_t> payload;
@@ -551,6 +605,10 @@ void rserv::Lobby::setResourceManager(std::shared_ptr<ResourceManager> resourceM
 
 void rserv::Lobby::clearEntityDeltaCache(uint8_t clientId, uint32_t entityId) {
     this->_deltaTracker.clearEntityCache(clientId, entityId);
+}
+
+void rserv::Lobby::clearDeltaTrackerCaches() {
+    this->_deltaTracker.clearAllCaches();
 }
 
 /* Game loops */
