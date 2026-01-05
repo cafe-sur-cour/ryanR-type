@@ -35,7 +35,7 @@ namespace ecs {
 
 class ScriptingComponent : public AComponent {
     public:
-        ScriptingComponent(std::string script_name = "", std::vector<std::string> additionalFunctions = std::vector<std::string>(), sol::state* lua = nullptr, size_t entityId = 0)
+        ScriptingComponent(std::string script_name = "", std::vector<std::string> additionalFunctions = std::vector<std::string>(), std::shared_ptr<sol::state> lua = nullptr, size_t entityId = 0)
             : _scriptName(script_name), _additionalFunctions(additionalFunctions), _initialized(false) {
                 if (lua != nullptr) {
                     init(*lua, entityId);
