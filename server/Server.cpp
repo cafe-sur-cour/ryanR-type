@@ -359,3 +359,7 @@ void rserv::Server::setResourceManager(std::shared_ptr<ResourceManager> resource
 void rserv::Server::clearEntityDeltaCache(uint8_t clientId, uint32_t entityId) {
     this->_deltaTracker.clearEntityCache(clientId, entityId);
 }
+
+void rserv::Server::clearDeltaTrackerCaches() {
+    this->_deltaTracker.clearAllCaches();
+}
