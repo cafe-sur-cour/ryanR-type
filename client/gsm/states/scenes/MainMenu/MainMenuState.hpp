@@ -16,7 +16,6 @@
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../ui/elements/Background.hpp"
 #include "../../../../ui/elements/focusable/TextInput.hpp"
-#include "../../../../ui/elements/focusable/CharacterBoxInput.hpp"
 #include "../../../../ui/elements/Text.hpp"
 
 
@@ -47,9 +46,10 @@ private:
     std::unique_ptr<ui::UIManager> _uiManager;
     std::shared_ptr<ui::UILayout> _leftLayout;
     std::shared_ptr<ui::UILayout> _mainMenuLayout;
-
+    std::shared_ptr<ui::UILayout> _headerLayout;
     std::shared_ptr<ui::UILayout> _rightLayout;
     std::shared_ptr<ui::Button> _devButton;
+    std::shared_ptr<ui::Button> _topRightButton;
 
     std::shared_ptr<ui::TextInput> _ipInput;
     std::shared_ptr<ui::TextInput> _portInput;
