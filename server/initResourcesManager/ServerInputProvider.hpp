@@ -14,6 +14,9 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <chrono>
+#include <map>
+#include <set>
 
 namespace ecs {
 
@@ -31,6 +34,7 @@ class ServerInputProvider : public IInputProvider {
         void setAxisValue(ecs::InputAction action, float value, size_t clientID = 0);
 
         void addClientInputMapping(size_t clientID, size_t identity, const InputMapping& mapping);
+        void registerClient(size_t clientID);
         void updateInputFromEvent(size_t clientID, constants::EventType eventType, float value);
         std::vector<size_t> getConnectedClients() const;
 
@@ -38,6 +42,10 @@ class ServerInputProvider : public IInputProvider {
     private:
         std::vector<std::tuple<size_t, size_t, InputMapping>> _inputMapping;
         std::map<size_t, std::map<ecs::InputAction, float>> _clientAxisValues;
+        std::map<size_t, std::map<ecs::InputAction, std::chrono::steady_clock::time_point>> _clientInputTimestamps;
+        std::set<size_t> _registeredClients;
+
+        static constexpr std::chrono::milliseconds INPUT_TIMEOUT = std::chrono::milliseconds(200);
 
         using InputHandler = void (ServerInputProvider::*)(size_t, float);
         std::vector<InputHandler> _inputHandlers;

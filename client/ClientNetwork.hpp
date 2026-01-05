@@ -66,15 +66,19 @@ class ClientNetwork {
         uint8_t getIdClient() const;
         void setIdClient(uint8_t idClient);
 
+        std::string getLobbyCode() const;
+        void setLobbyCode(std::string lobbyCode);
+
         net::ConnectionState getConnectionState() const;
 
         /* Packet Handling */
         void eventPacket(const constants::EventType &eventType, double depth);
         void disconnectionPacket();
         void connectionPacket();
-        void sendReady();
         void sendWhoAmI();
         void requestCode();
+        void sendLobbyConnection(std::string lobbyCode);
+        void sendMasterStartGame();
 
         void addToEventQueue(const NetworkEvent &event);
 
@@ -85,10 +89,14 @@ class ClientNetwork {
         size_t getReadyClients() const;
         uint8_t getClientId() const;
         bool getClientReadyStatus() const;
-        std::string getLobbyCode() const;
+
+        bool isConnectedToLobby() const;
+        bool isLobbyMaster() const;
 
         std::atomic<bool> _isConnected;
         std::atomic<bool> _ready;
+        std::atomic<bool> _isConnectedToLobby;
+        std::atomic<bool> _isLobbyMaster;
 
         std::atomic<size_t> _connectedClients;
         std::atomic<size_t> _readyClients;
@@ -119,6 +127,7 @@ class ClientNetwork {
         void handleWhoAmI();
         void handleServerStatus();
         void handleCode();
+        void handleLobbyConnectValue();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;
