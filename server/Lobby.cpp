@@ -602,8 +602,7 @@ void rserv::Lobby::createPlayerEntities() {
 
     if (prefabMgr == nullptr || registry == nullptr) {
         debug::Debug::printDebug(this->getIsDebug(),
-            "[LOBBY] Cannot create player entities: missing required" <<
-            " components in resource manager",
+            "[LOBBY] Cannot create player entities: missing required components",
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return;
     }
@@ -624,7 +623,6 @@ void rserv::Lobby::createPlayerEntities() {
     }
 
     std::string playerString = "player";
-        << std::endl;
     for (const auto &client : this->_clients) {
         uint8_t clientId = std::get<0>(client);
         ecs::Entity playerEntity = prefabMgr->createEntityFromPrefab(
