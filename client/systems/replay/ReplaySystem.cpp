@@ -8,7 +8,10 @@
 #include "ReplaySystem.hpp"
 #include <fstream>
 #include <iostream>
-#include <filesystem>
+#include <filesystem>  // NOLINT(build/c++17)
+#include <memory>
+#include <unordered_set>
+#include <string>
 #include "../../../common/ECS/view/View.hpp"
 #include "../../constants.hpp"
 
@@ -29,7 +32,11 @@ ReplaySystem::ReplaySystem() : _totalElapsedTime(0.0f) {
     file.close();
 }
 
-void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<Registry> registry, float deltaTime) {
+void ReplaySystem::update(
+    std::shared_ptr<ResourceManager> resourceManager,
+    std::shared_ptr<Registry> registry,
+    float deltaTime
+) {
     (void)resourceManager;
 
     _totalElapsedTime += deltaTime;
@@ -145,7 +152,7 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
             {constants::REPLAY_TEXTURE, getSpriteId(sprite->getTexturePath())},
             {constants::REPLAY_OFFSET_X, 0.0f},
             {constants::REPLAY_OFFSET_Y, 0.0f},
-            {constants::REPLAY_WIDTH, 0.0f},  // Will be determined at playback
+            {constants::REPLAY_WIDTH, 0.0f},
             {constants::REPLAY_HEIGHT, 0.0f}
         };
 
@@ -204,7 +211,8 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
         frameData[constants::REPLAY_RENDERABLES].push_back(parallaxData);
     }
 
-    auto healthBarView = registry->view<HealthBarComponent, HealthComponent, TransformComponent, ColliderComponent>();
+    auto healthBarView = registry->view<
+        HealthBarComponent, HealthComponent, TransformComponent, ColliderComponent>();
     for (auto entity : healthBarView) {
         auto healthBar = registry->getComponent<HealthBarComponent>(entity);
         auto health = registry->getComponent<HealthComponent>(entity);
@@ -275,22 +283,34 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
 
         nlohmann::json rectangleData;
         rectangleData[constants::REPLAY_TYPE] = constants::REPLAY_TYPE_RECTANGLE;
-        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_X] = transform->getPosition().getX();
-        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_Y] = transform->getPosition().getY();
-        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_ROTATION] = transform->getRotation();
-        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_SCALE_X] = transform->getScale().getX();
-        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_SCALE_Y] = transform->getScale().getY();
-        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_WIDTH] = rectangle->getWidth();
-        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_HEIGHT] = rectangle->getHeight();
-        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_COLOR][constants::REPLAY_RED] = rectangle->getColor().r;
-        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_COLOR][constants::REPLAY_GREEN] = rectangle->getColor().g;
-        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_COLOR][constants::REPLAY_BLUE] = rectangle->getColor().b;
-        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_COLOR][constants::REPLAY_ALPHA] = rectangle->getColor().a;
+        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_X] =
+            transform->getPosition().getX();
+        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_Y] =
+            transform->getPosition().getY();
+        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_ROTATION] =
+            transform->getRotation();
+        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_SCALE_X] =
+            transform->getScale().getX();
+        rectangleData[constants::REPLAY_TRANSFORM][constants::REPLAY_SCALE_Y] =
+            transform->getScale().getY();
+        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_WIDTH] =
+            rectangle->getWidth();
+        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_HEIGHT] =
+            rectangle->getHeight();
+        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_COLOR]
+            [constants::REPLAY_RED] = rectangle->getColor().r;
+        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_COLOR]
+            [constants::REPLAY_GREEN] = rectangle->getColor().g;
+        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_COLOR]
+            [constants::REPLAY_BLUE] = rectangle->getColor().b;
+        rectangleData[constants::REPLAY_RECTANGLE][constants::REPLAY_COLOR]
+            [constants::REPLAY_ALPHA] = rectangle->getColor().a;
 
         frameData[constants::REPLAY_RENDERABLES].push_back(rectangleData);
     }
 
-    auto hitboxView = registry->view<HitboxRenderComponent, TransformComponent, ColliderComponent>();
+    auto hitboxView = registry->view<
+        HitboxRenderComponent, TransformComponent, ColliderComponent>();
     for (auto entity : hitboxView) {
         auto hitbox = registry->getComponent<HitboxRenderComponent>(entity);
         auto transform = registry->getComponent<TransformComponent>(entity);
@@ -300,19 +320,32 @@ void ReplaySystem::update(std::shared_ptr<ResourceManager> resourceManager, std:
 
         nlohmann::json hitboxData;
         hitboxData[constants::REPLAY_TYPE] = constants::REPLAY_TYPE_HITBOX;
-        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_X] = transform->getPosition().getX();
-        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_Y] = transform->getPosition().getY();
-        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_ROTATION] = transform->getRotation();
-        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_SCALE_X] = transform->getScale().getX();
-        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_SCALE_Y] = transform->getScale().getY();
-        hitboxData[constants::REPLAY_HITBOX][constants::REPLAY_COLOR][constants::REPLAY_RED] = hitbox->getColor().r;
-        hitboxData[constants::REPLAY_HITBOX][constants::REPLAY_COLOR][constants::REPLAY_GREEN] = hitbox->getColor().g;
-        hitboxData[constants::REPLAY_HITBOX][constants::REPLAY_COLOR][constants::REPLAY_BLUE] = hitbox->getColor().b;
-        hitboxData[constants::REPLAY_HITBOX][constants::REPLAY_COLOR][constants::REPLAY_ALPHA] = hitbox->getColor().a;
-        hitboxData[constants::REPLAY_COLLIDER][constants::REPLAY_OFFSET_X] = collider->getOffset().getX();
-        hitboxData[constants::REPLAY_COLLIDER][constants::REPLAY_OFFSET_Y] = collider->getOffset().getY();
-        hitboxData[constants::REPLAY_COLLIDER][constants::REPLAY_SIZE_X] = collider->getSize().getX();
-        hitboxData[constants::REPLAY_COLLIDER][constants::REPLAY_SIZE_Y] = collider->getSize().getY();
+        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_X] =
+            transform->getPosition().getX();
+        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_Y] =
+            transform->getPosition().getY();
+        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_ROTATION] =
+            transform->getRotation();
+        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_SCALE_X] =
+            transform->getScale().getX();
+        hitboxData[constants::REPLAY_TRANSFORM][constants::REPLAY_SCALE_Y] =
+            transform->getScale().getY();
+        hitboxData[constants::REPLAY_HITBOX][constants::REPLAY_COLOR]
+            [constants::REPLAY_RED] = hitbox->getColor().r;
+        hitboxData[constants::REPLAY_HITBOX][constants::REPLAY_COLOR]
+            [constants::REPLAY_GREEN] = hitbox->getColor().g;
+        hitboxData[constants::REPLAY_HITBOX][constants::REPLAY_COLOR]
+            [constants::REPLAY_BLUE] = hitbox->getColor().b;
+        hitboxData[constants::REPLAY_HITBOX][constants::REPLAY_COLOR]
+            [constants::REPLAY_ALPHA] = hitbox->getColor().a;
+        hitboxData[constants::REPLAY_COLLIDER][constants::REPLAY_OFFSET_X] =
+            collider->getOffset().getX();
+        hitboxData[constants::REPLAY_COLLIDER][constants::REPLAY_OFFSET_Y] =
+            collider->getOffset().getY();
+        hitboxData[constants::REPLAY_COLLIDER][constants::REPLAY_SIZE_X] =
+            collider->getSize().getX();
+        hitboxData[constants::REPLAY_COLLIDER][constants::REPLAY_SIZE_Y] =
+            collider->getSize().getY();
 
         frameData[constants::REPLAY_RENDERABLES].push_back(hitboxData);
     }

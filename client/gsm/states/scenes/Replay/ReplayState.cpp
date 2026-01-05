@@ -8,10 +8,14 @@
 #include "ReplayState.hpp"
 #include <fstream>
 #include <iostream>
-#include <filesystem>
-#include <nlohmann/json.hpp>
+#include <filesystem>  // NOLINT(build/c++17)
 #include <cmath>
 #include <algorithm>
+#include <vector>
+#include <utility>
+#include <memory>
+#include <string>
+#include <nlohmann/json.hpp>
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/constants.hpp"
@@ -197,13 +201,12 @@ void ReplayState::loadReplay() {
 
     if (frameCount > 0) {
         _totalReplayTime = _frames.back()[constants::REPLAY_TOTAL_TIME].get<float>();
-        _statusText->setText("Replay loaded: " + std::to_string(frameCount) + " frames (" + std::to_string(_totalReplayTime) + "s)");
-        std::cout << "Replay loaded: " << frameCount << " frames (" << _totalReplayTime << "s)" << std::endl;
+        _statusText->setText("Replay loaded: " + std::to_string(frameCount) +
+            " frames (" + std::to_string(_totalReplayTime) + "s)");
         _replayTime = 0.0f;
         _currentFrameIndex = 0;
     } else {
         _statusText->setText("No valid frames in replay file");
-        std::cout << "No valid frames in replay file" << std::endl;
     }
 }
 
@@ -247,7 +250,8 @@ void ReplayState::playReplay(float deltaTime) {
             window->setViewCenter(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
         }
     } else {
-        _statusText->setText("Playing replay: " + std::to_string(_replayTime) + "s / " + std::to_string(_totalReplayTime) + "s");
+        _statusText->setText("Playing replay: " + std::to_string(_replayTime) +
+            "s / " + std::to_string(_totalReplayTime) + "s");
     }
 
     processAudioForFrame(_frames[_currentFrameIndex]);
@@ -259,7 +263,9 @@ void ReplayState::updateViewForFrame(const nlohmann::json& frame) {
     }
 
     const auto& gamezone = frame[constants::REPLAY_GAMEZONE];
-    if (!gamezone.contains(constants::REPLAY_X) || !gamezone.contains(constants::REPLAY_Y) || !gamezone.contains(constants::REPLAY_WIDTH) || !gamezone.contains(constants::REPLAY_HEIGHT)) {
+    if (!gamezone.contains(constants::REPLAY_X) || !gamezone.contains(constants::REPLAY_Y) ||
+        !gamezone.contains(constants::REPLAY_WIDTH) ||
+        !gamezone.contains(constants::REPLAY_HEIGHT)) {
         return;
     }
 
@@ -290,30 +296,39 @@ void ReplayState::renderReplaySprites() {
     if (!window) return;
 
     for (const auto& renderable : frame[constants::REPLAY_RENDERABLES]) {
-        if (renderable.contains(constants::REPLAY_TYPE) && renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_PARALLAX &&
-            renderable.contains(constants::REPLAY_TRANSFORM) && renderable.contains(constants::REPLAY_PARALLAX)) {
+        if (renderable.contains(constants::REPLAY_TYPE) &&
+            renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_PARALLAX &&
+            renderable.contains(constants::REPLAY_TRANSFORM) &&
+            renderable.contains(constants::REPLAY_PARALLAX)) {
             renderParallaxBackground(renderable, window);
-        }
-        else if (renderable.contains(constants::REPLAY_TYPE) && renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_HEALTHBAR &&
-                 renderable.contains(constants::REPLAY_TRANSFORM) && renderable.contains(constants::REPLAY_HEALTH) && renderable.contains(constants::REPLAY_COLLIDER)) {
+        } else if (renderable.contains(constants::REPLAY_TYPE) &&
+                renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_HEALTHBAR &&
+                renderable.contains(constants::REPLAY_TRANSFORM) &&
+                renderable.contains(constants::REPLAY_HEALTH) &&
+                renderable.contains(constants::REPLAY_COLLIDER)) {
             renderHealthBar(renderable, window);
-        }
-        else if (renderable.contains(constants::REPLAY_TYPE) && renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_TEXT &&
-                 renderable.contains(constants::REPLAY_TRANSFORM) && renderable.contains(constants::REPLAY_TEXT)) {
+        } else if (renderable.contains(constants::REPLAY_TYPE) &&
+                renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_TEXT &&
+                renderable.contains(constants::REPLAY_TRANSFORM) &&
+                renderable.contains(constants::REPLAY_TEXT)) {
             renderText(renderable, window);
-        }
-        else if (renderable.contains(constants::REPLAY_TYPE) && renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_RECTANGLE &&
-                 renderable.contains(constants::REPLAY_TRANSFORM) && renderable.contains(constants::REPLAY_RECTANGLE)) {
+        } else if (renderable.contains(constants::REPLAY_TYPE) &&
+                renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_RECTANGLE &&
+                renderable.contains(constants::REPLAY_TRANSFORM) &&
+                renderable.contains(constants::REPLAY_RECTANGLE)) {
             renderRectangle(renderable, window);
-        }
-        else if (renderable.contains(constants::REPLAY_TYPE) && renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_HITBOX &&
-                 renderable.contains(constants::REPLAY_TRANSFORM) && renderable.contains(constants::REPLAY_HITBOX) && renderable.contains(constants::REPLAY_COLLIDER)) {
+        } else if (renderable.contains(constants::REPLAY_TYPE) &&
+                renderable[constants::REPLAY_TYPE] == constants::REPLAY_TYPE_HITBOX &&
+                renderable.contains(constants::REPLAY_TRANSFORM) &&
+                renderable.contains(constants::REPLAY_HITBOX) &&
+                renderable.contains(constants::REPLAY_COLLIDER)) {
             renderHitbox(renderable, window);
         }
     }
 
     for (const auto& renderable : frame[constants::REPLAY_RENDERABLES]) {
-        if (renderable.contains(constants::REPLAY_TRANSFORM) && renderable.contains(constants::REPLAY_SPRITE)) {
+        if (renderable.contains(constants::REPLAY_TRANSFORM) &&
+            renderable.contains(constants::REPLAY_SPRITE)) {
             const auto& transform = renderable[constants::REPLAY_TRANSFORM];
             const auto& sprite = renderable[constants::REPLAY_SPRITE];
 
@@ -342,8 +357,12 @@ void ReplayState::renderReplaySprites() {
 
 
 
-void ReplayState::renderParallaxBackground(const nlohmann::json& parallaxData, std::shared_ptr<gfx::IWindow> window) {
-    if (!parallaxData.contains(constants::REPLAY_TRANSFORM) || !parallaxData.contains(constants::REPLAY_PARALLAX)) return;
+void ReplayState::renderParallaxBackground(
+    const nlohmann::json& parallaxData,
+    std::shared_ptr<gfx::IWindow> window
+) {
+    if (!parallaxData.contains(constants::REPLAY_TRANSFORM) ||
+        !parallaxData.contains(constants::REPLAY_PARALLAX)) return;
 
     const auto& transform = parallaxData[constants::REPLAY_TRANSFORM];
     const auto& parallax = parallaxData[constants::REPLAY_PARALLAX];
@@ -364,18 +383,24 @@ void ReplayState::renderParallaxBackground(const nlohmann::json& parallaxData, s
             sortedLayers.emplace_back(zIndex, &layerData);
         }
         std::sort(sortedLayers.begin(), sortedLayers.end(),
-            [](const std::pair<int, const nlohmann::json*>& a, const std::pair<int, const nlohmann::json*>& b) {
+            [](const std::pair<int, const nlohmann::json*>& a,
+                const std::pair<int, const nlohmann::json*>& b) {
                 return a.first < b.first;
             });
 
         for (const auto& [zIndex, layerDataPtr] : sortedLayers) {
             const auto& layerData = *layerDataPtr;
             std::string filePath = layerData[constants::REPLAY_FILE_PATH];
-            math::Vector2f scale(layerData[constants::REPLAY_SCALE][constants::REPLAY_X], layerData[constants::REPLAY_SCALE][constants::REPLAY_Y]);
+            math::Vector2f scale(layerData[constants::REPLAY_SCALE][constants::REPLAY_X],
+                layerData[constants::REPLAY_SCALE][constants::REPLAY_Y]);
             int scaleModeInt = layerData[constants::REPLAY_SCALE_MODE];
-            math::Vector2f sourceSize(layerData[constants::REPLAY_SOURCE_SIZE][constants::REPLAY_X], layerData[constants::REPLAY_SOURCE_SIZE][constants::REPLAY_Y]);
+            math::Vector2f sourceSize(layerData[constants::REPLAY_SOURCE_SIZE]
+                [constants::REPLAY_X],
+                layerData[constants::REPLAY_SOURCE_SIZE][constants::REPLAY_Y]);
             bool repeat = layerData[constants::REPLAY_REPEAT];
-            math::Vector2f currentOffset(layerData[constants::REPLAY_CURRENT_OFFSET][constants::REPLAY_X], layerData[constants::REPLAY_CURRENT_OFFSET][constants::REPLAY_Y]);
+            math::Vector2f currentOffset(layerData[constants::REPLAY_CURRENT_OFFSET]
+                [constants::REPLAY_X], layerData[constants::REPLAY_CURRENT_OFFSET]
+                [constants::REPLAY_Y]);
 
             math::Vector2f finalScale = scale;
             if (scaleModeInt == 0) {
@@ -402,29 +427,40 @@ void ReplayState::renderParallaxBackground(const nlohmann::json& parallaxData, s
                 startY = std::fmod(startY, textureHeight);
                 if (startY > 0) startY -= textureHeight;
 
-                int tilesX = static_cast<int>(std::ceil((screenWidth - startX) / textureWidth)) + 1;
-                int tilesY = static_cast<int>(std::ceil((screenHeight - startY) / textureHeight)) + 1;
+                int tilesX = static_cast<int>(
+                    std::ceil((screenWidth - startX) / textureWidth)) + 1;
+                int tilesY = static_cast<int>(
+                    std::ceil((screenHeight - startY) / textureHeight)) + 1;
 
                 for (int y = 0; y < tilesY; ++y) {
                     for (int x = 0; x < tilesX; ++x) {
-                        float drawX = startX + (static_cast<float>(x) * textureWidth) + viewLeft;
-                        float drawY = startY + (static_cast<float>(y) * textureHeight);
+                        float drawX =
+                            startX + (static_cast<float>(x) * textureWidth) + viewLeft;
+                        float drawY =
+                            startY + (static_cast<float>(y) * textureHeight);
 
-                        window->drawSprite(filePath, drawX, drawY, finalScale.getX(), finalScale.getY());
+                        window->drawSprite(
+                            filePath, drawX, drawY, finalScale.getX(), finalScale.getY());
                     }
                 }
             } else {
                 float drawX = currentOffset.getX() + baseX;
                 float drawY = currentOffset.getY() + baseY;
 
-                window->drawSprite(filePath, drawX, drawY, finalScale.getX(), finalScale.getY());
+                window->drawSprite(
+                    filePath, drawX, drawY, finalScale.getX(), finalScale.getY());
             }
         }
     }
 }
 
-void ReplayState::renderHealthBar(const nlohmann::json& healthBarData, std::shared_ptr<gfx::IWindow> window) {
-    if (!healthBarData.contains(constants::REPLAY_TRANSFORM) || !healthBarData.contains(constants::REPLAY_HEALTH) || !healthBarData.contains(constants::REPLAY_COLLIDER)) return;
+void ReplayState::renderHealthBar(
+    const nlohmann::json& healthBarData,
+    std::shared_ptr<gfx::IWindow> window
+) {
+    if (!healthBarData.contains(constants::REPLAY_TRANSFORM) ||
+        !healthBarData.contains(constants::REPLAY_HEALTH) ||
+        !healthBarData.contains(constants::REPLAY_COLLIDER)) return;
 
     const auto& transform = healthBarData[constants::REPLAY_TRANSFORM];
     const auto& health = healthBarData[constants::REPLAY_HEALTH];
@@ -475,8 +511,12 @@ void ReplayState::renderHealthBar(const nlohmann::json& healthBarData, std::shar
         {static_cast<size_t>(fillWidth), static_cast<size_t>(barHeight)});
 }
 
-void ReplayState::renderText(const nlohmann::json& textData, std::shared_ptr<gfx::IWindow> window) {
-    if (!textData.contains(constants::REPLAY_TRANSFORM) || !textData.contains(constants::REPLAY_TEXT)) return;
+void ReplayState::renderText(
+    const nlohmann::json& textData,
+    std::shared_ptr<gfx::IWindow> window
+) {
+    if (!textData.contains(constants::REPLAY_TRANSFORM) ||
+        !textData.contains(constants::REPLAY_TEXT)) return;
 
     const auto& transform = textData[constants::REPLAY_TRANSFORM];
     const auto& text = textData[constants::REPLAY_TEXT];
@@ -495,11 +535,16 @@ void ReplayState::renderText(const nlohmann::json& textData, std::shared_ptr<gfx
         static_cast<uint8_t>(color[constants::REPLAY_ALPHA])
     };
 
-    window->drawText(content, textColor, {static_cast<size_t>(x), static_cast<size_t>(y)}, fontPath);
+    window->drawText(
+        content, textColor, {static_cast<size_t>(x), static_cast<size_t>(y)}, fontPath);
 }
 
-void ReplayState::renderRectangle(const nlohmann::json& rectangleData, std::shared_ptr<gfx::IWindow> window) {
-    if (!rectangleData.contains(constants::REPLAY_TRANSFORM) || !rectangleData.contains(constants::REPLAY_RECTANGLE)) return;
+void ReplayState::renderRectangle(
+    const nlohmann::json& rectangleData,
+    std::shared_ptr<gfx::IWindow> window
+) {
+    if (!rectangleData.contains(constants::REPLAY_TRANSFORM) ||
+        !rectangleData.contains(constants::REPLAY_RECTANGLE)) return;
 
     const auto& transform = rectangleData[constants::REPLAY_TRANSFORM];
     const auto& rectangle = rectangleData[constants::REPLAY_RECTANGLE];
@@ -523,8 +568,13 @@ void ReplayState::renderRectangle(const nlohmann::json& rectangleData, std::shar
         {static_cast<size_t>(width), static_cast<size_t>(height)});
 }
 
-void ReplayState::renderHitbox(const nlohmann::json& hitboxData, std::shared_ptr<gfx::IWindow> window) {
-    if (!hitboxData.contains(constants::REPLAY_TRANSFORM) || !hitboxData.contains(constants::REPLAY_HITBOX) || !hitboxData.contains(constants::REPLAY_COLLIDER)) return;
+void ReplayState::renderHitbox(
+    const nlohmann::json& hitboxData,
+    std::shared_ptr<gfx::IWindow> window
+) {
+    if (!hitboxData.contains(constants::REPLAY_TRANSFORM) ||
+    !hitboxData.contains(constants::REPLAY_HITBOX) ||
+    !hitboxData.contains(constants::REPLAY_COLLIDER)) return;
 
     const auto& transform = hitboxData[constants::REPLAY_TRANSFORM];
     const auto& hitbox = hitboxData[constants::REPLAY_HITBOX];
@@ -556,8 +606,10 @@ void ReplayState::renderHitbox(const nlohmann::json& hitboxData, std::shared_ptr
     };
 
     window->drawRectangleOutline(hitboxColor,
-        {static_cast<size_t>(hitboxRect.getLeft()), static_cast<size_t>(hitboxRect.getTop())},
-        {static_cast<size_t>(hitboxRect.getWidth()), static_cast<size_t>(hitboxRect.getHeight())});
+        {static_cast<size_t>(
+            hitboxRect.getLeft()), static_cast<size_t>(hitboxRect.getTop())},
+        {static_cast<size_t>(
+            hitboxRect.getWidth()), static_cast<size_t>(hitboxRect.getHeight())});
 }
 
 void ReplayState::processAudioForFrame(const nlohmann::json& frame) {
@@ -572,7 +624,8 @@ void ReplayState::processAudioForFrame(const nlohmann::json& frame) {
         std::string type = audioData[constants::REPLAY_TYPE];
 
         if (type == constants::REPLAY_TYPE_SOUND) {
-            if (audioData.contains(constants::REPLAY_SOUND_PATH) && audioData.contains(constants::REPLAY_VOLUME)) {
+            if (audioData.contains(constants::REPLAY_SOUND_PATH) &&
+                audioData.contains(constants::REPLAY_VOLUME)) {
                 std::string soundPath = audioData[constants::REPLAY_SOUND_PATH];
                 float volume = audioData[constants::REPLAY_VOLUME];
 
