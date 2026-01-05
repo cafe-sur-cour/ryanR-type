@@ -11,7 +11,7 @@
 #include "../../core/AFocusableElement.hpp"
 #include <string>
 #include <functional>
-#include "../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../common/interfaces/IWindow.hpp"
 #include "../../../constants.hpp"
 #include "../../../colors.hpp"
 
