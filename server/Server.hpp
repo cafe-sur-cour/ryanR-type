@@ -83,6 +83,8 @@ namespace rserv {
             bool gameStatePacket();
             bool canStartPacket();
             bool endGamePacket(bool isWin);
+            bool levelCompletePacket();
+            bool nextLevelPacket();
             std::vector<uint64_t> spawnPacket(size_t entity, const std::string prefabName);
             std::vector<uint64_t> deathPacket(size_t entity);
             bool serverStatusPacket();
@@ -95,6 +97,7 @@ namespace rserv {
             void incrementSequenceNumber();
             void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
             void clearEntityDeltaCache(uint8_t clientId, uint32_t entityId);
+            void clearDeltaTrackerCaches();
         private:
             void loadNetworkLibrary();
             void loadBufferLibrary();
