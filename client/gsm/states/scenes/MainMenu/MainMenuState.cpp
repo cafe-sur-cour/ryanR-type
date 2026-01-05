@@ -20,6 +20,7 @@
 #include "../../../../../common/InputMapping/IInputProvider.hpp"
 #include "../Infinite/InfiniteState.hpp"
 #include "../Settings/SettingsState.hpp"
+#include "../Replay/ReplayState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -238,6 +239,25 @@ MainMenuState::MainMenuState(
         }
     });
 
+    _replayButton = std::make_shared<ui::Button>(resourceManager);
+    _replayButton->setText("Replay");
+    _replayButton->setSize(math::Vector2f(576.f, 108.f));
+    _replayButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _replayButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _replayButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _replayButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<ReplayState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _replayButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<ReplayState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+
     _quitButton = std::make_shared<ui::Button>(resourceManager);
     _quitButton->setText("Quit");
     _quitButton->setSize(math::Vector2f(576.f, 108.f));
@@ -253,6 +273,7 @@ MainMenuState::MainMenuState(
 
     _mainMenuLayout->addElement(_playButton);
     _mainMenuLayout->addElement(_settingsButton);
+    _mainMenuLayout->addElement(_replayButton);
     _mainMenuLayout->addElement(_quitButton);
 
     ui::LayoutConfig rightConfig;
