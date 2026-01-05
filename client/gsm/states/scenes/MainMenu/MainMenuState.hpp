@@ -16,7 +16,6 @@
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../ui/elements/Background.hpp"
 #include "../../../../ui/elements/focusable/TextInput.hpp"
-#include "../../../../ui/elements/focusable/CharacterBoxInput.hpp"
 #include "../../../../ui/elements/Text.hpp"
 
 
