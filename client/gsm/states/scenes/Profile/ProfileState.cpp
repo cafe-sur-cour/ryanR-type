@@ -11,8 +11,8 @@
 #include <fstream>
 #include <filesystem>
 #include <nlohmann/json.hpp>
-#include "../../../../../libs/Multimedia/IWindow.hpp"
-#include "../../../../../libs/Multimedia/IEvent.hpp"
+#include "../../../../../common/interfaces/IWindow.hpp"
+#include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../constants.hpp"
 #include "../../../../colors.hpp"
