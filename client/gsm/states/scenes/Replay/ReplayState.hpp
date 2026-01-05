@@ -54,7 +54,6 @@ private:
 
     std::shared_ptr<ui::Background> _background;
     std::shared_ptr<ui::Button> _backButton;
-    std::shared_ptr<ui::Text> _statusText;
     std::vector<std::shared_ptr<ui::Button>> _replayButtons;
 
     std::vector<nlohmann::json> _frames;
