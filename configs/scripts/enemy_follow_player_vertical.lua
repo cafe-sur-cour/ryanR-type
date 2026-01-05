@@ -2,8 +2,8 @@ function init(entity)
 end
 
 function update(entity, deltaTime)
-    local px, py = getPlayerPosition()
     local ex, ey = getEntityPosition(entity)
+    local px, py = getNearestPlayerPosition(entity)
     local speed = getEntitySpeed(entity)
 
     move(entity, speed, 0, py - ey)

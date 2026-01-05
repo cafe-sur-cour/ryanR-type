@@ -11,52 +11,39 @@
 #include "../base/AComponent.hpp"
 #include <string>
 #include <map>
-#include <sol/sol.hpp>
 #include "../../Error/ScriptingError.hpp"
 #include "../../constants.hpp"
+
+// To suppress warnings from sol2 includes
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 5321)
+#endif
+#include <sol/sol.hpp>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 namespace ecs {
 
 class ScriptingComponent : public AComponent {
     public:
-        ScriptingComponent(std::string script_name = "", std::vector<std::string> additionalFunctions = std::vector<std::string>(), sol::state* lua = nullptr)
+        ScriptingComponent(std::string script_name = "", std::vector<std::string> additionalFunctions = std::vector<std::string>(), std::shared_ptr<sol::state> lua = nullptr, size_t entityId = 0)
             : _scriptName(script_name), _additionalFunctions(additionalFunctions), _initialized(false) {
                 if (lua != nullptr) {
-                    init(*lua);
+                    init(*lua, entityId);
                 }
             };
         ~ScriptingComponent() = default;
 
-        void init(sol::state& lua) {
-            if (_initialized) return;
-            _env = lua.create_table();
-            if (!_scriptName.empty()) {
-                sol::load_result script = lua.load_file(_scriptName);
-                if (!script.valid()) {
-                    sol::error err = script;
-                    throw err::ScriptingError("Failed to load script: " + std::string(err.what()), err::ScriptingError::LOAD_FAILED);
-                }
-
-                sol::table metatable = lua.create_table();
-                metatable["__index"] = lua["_G"];
-                _env[sol::metatable_key] = metatable;
-                sol::function chunk = script;
-                sol::unsafe_function_result result = chunk(_env);
-                if (!result.valid()) {
-                    sol::error err = result;
-                    throw err::ScriptingError("Failed to run script: " + std::string(err.what()), err::ScriptingError::RUN_FAILED);
-                }
-            }
-
-            std::vector<std::string> defaults = {constants::INIT_FUNCTION, constants::UPDATE_FUNCTION};
-            defaults.insert(defaults.end(), _additionalFunctions.begin(), _additionalFunctions.end());
-            for (const auto& def : defaults) {
-                sol::function fn = _env[def];
-                if (fn.valid())
-                    _functions[def] = fn;
-            }
-            _initialized = true;
-        }
+        void init(sol::state& lua, size_t entityId);
 
         const std::string& getScriptName() const;
 

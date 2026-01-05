@@ -19,7 +19,7 @@ function update(entity, deltaTime)
     end
     createMoveIntent(entity, dirX, dirY)
 
-    local px, py = getPlayerPosition()
+    local px, py = getNearestPlayerPosition(entity)
     local ex, ey = getEntityPosition(entity)
     if px > ex then
         createShootIntent(entity, 0)
