@@ -8,7 +8,6 @@
 #include <iostream>
 #include <memory>
 
-// #include "Core.hpp"
 #include "Server.hpp"
 #include "Utils.hpp"
 #include "Constants.hpp"
@@ -18,7 +17,6 @@
 
 int main(int ac, char **av) {
     Utils utils;
-    // Core core;
     rserv::Server core;
 
     utils.parsCli(ac, av, core.getConfig());

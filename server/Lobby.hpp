@@ -101,7 +101,6 @@ class Lobby {
             std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> _clients;
             std::string _lobbyCode;
             std::map<uint8_t, bool> _clientsReady;
-            // std::map<uint8_t, bool> _clientsAlive;
             std::shared_ptr<pm::IPacketManager> _packet;
             uint32_t _sequenceNumber;
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> _eventQueue;
@@ -138,8 +137,6 @@ class Lobby {
             std::vector<uint64_t> convertDamageComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertLifetimeComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertVelocityComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            // std::vector<uint64_t> convertAIMoverTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
-            // std::vector<uint64_t> convertAIShooterTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertControllableTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertEnemyProjectileTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertGameZoneColliderTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
