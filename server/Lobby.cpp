@@ -5,9 +5,16 @@
 ** Lobby
 */
 
-#include "Lobby.hpp"
 
 #include <set>
+#include <map>
+#include <utility>
+#include <memory>
+#include <string>
+#include <vector>
+#include <iostream>
+
+#include "Lobby.hpp"
 #include "Constants.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
@@ -21,7 +28,8 @@
 #include "../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 
 rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
-    std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> lobbyPlayerInfo,
+    std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>,
+    std::string>> lobbyPlayerInfo,
     std::string lobbyCode, bool debug) {
     this->_network = network;
     this->_clients = lobbyPlayerInfo;
@@ -29,14 +37,6 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
     this->_isDebug = debug;
 
     this->_clientsReady = std::map<uint8_t, bool>();
-    // this->_clientsAlive = std::map<uint8_t, bool>();
-
-    // for (const auto &client : this->_clients) {
-    //     uint8_t clientId = std::get<0>(client);
-    //     this->_clientsAlive[clientId] = true;
-    //     this->_clientsReady[clientId] = true;
-    // }
-
     this->_packet = nullptr;
     this->_sequenceNumber = 0;
     this->_resourceManager = nullptr;
@@ -69,10 +69,6 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertVelocityComponent, this,
             std::placeholders::_1, std::placeholders::_2),
-        // std::bind(&rserv::Lobby::convertAIMoverTagComponent, this,
-        //     std::placeholders::_1, std::placeholders::_2),
-        // std::bind(&rserv::Lobby::convertAIShooterTagComponent, this,
-        //     std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertControllableTagComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertEnemyProjectileTagComponent, this,
@@ -110,7 +106,8 @@ std::vector<uint8_t> rserv::Lobby::getConnectedClients() const {
     return clientIds;
 }
 
-std::vector<std::shared_ptr<net::INetworkEndpoint>> rserv::Lobby::getConnectedClientEndpoints() const {
+std::vector<std::shared_ptr<net::INetworkEndpoint>>
+    rserv::Lobby::getConnectedClientEndpoints() const {
     std::vector<std::shared_ptr<net::INetworkEndpoint>> endpoints;
     for (const auto &client : this->_clients) {
         endpoints.push_back(std::get<1>(client));
@@ -132,7 +129,8 @@ std::string rserv::Lobby::getLobbyCode() const {
 
 
 /* Event Queue hadling */
-std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> rserv::Lobby::getEventQueue() {
+std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>>
+    rserv::Lobby::getEventQueue() {
     return this->_eventQueue;
 }
 
@@ -324,7 +322,7 @@ bool rserv::Lobby::processWhoAmI(uint8_t idClient) {
 
 bool rserv::Lobby::gameStatePacket() {
     if (this->_resourceManager == nullptr) {
-        std::cout << "Ressourve manager not set in lobby, cannot send game state packet"
+        std::cerr << "Ressource manager not set in lobby, cannot send game state packet"
             << std::endl;
         exit(84);
     }
@@ -359,7 +357,8 @@ bool rserv::Lobby::gameStatePacket() {
         entityData.componentData.reserve(64);
         for (const auto& func : this->_convertFunctions) {
             std::vector<uint64_t> compData = func(registry, entityId);
-            entityData.componentData.insert(entityData.componentData.end(), compData.begin(), compData.end());
+            entityData.componentData.insert(entityData.componentData.end(),
+                compData.begin(), compData.end());
         }
 
         entityData.snapshot = ComponentSerializer::createSnapshotFromComponents(
@@ -381,11 +380,12 @@ bool rserv::Lobby::gameStatePacket() {
             std::vector<uint64_t> payload;
             payload.reserve(entityData.componentData.size() + 1);
             payload.push_back(entityData.entityId);
-            payload.insert(payload.end(), entityData.componentData.begin(), entityData.componentData.end());
+            payload.insert(payload.end(), entityData.componentData.begin(),
+                entityData.componentData.end());
 
             std::vector<uint8_t> packet = this->_packet->pack(
                 constants::ID_SERVER,
-                this->_sequenceNumber++, // FIX: Increment sequence number for EACH packet
+                this->_sequenceNumber++,
                 constants::PACKET_GAME_STATE,
                 payload
             );
@@ -409,7 +409,6 @@ bool rserv::Lobby::endGamePacket(bool isWin) {
         this->_sequenceNumber, constants::PACKET_END_GAME, payload);
 
     if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
-        std::cout << "[SERVER NETWORK] Failed to broadcast end game packet" << std::endl;
         debug::Debug::printDebug(this->getIsDebug(),
             "[SERVER NETWORK] Failed to broadcast end game packet",
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
@@ -419,7 +418,8 @@ bool rserv::Lobby::endGamePacket(bool isWin) {
     return true;
 }
 
-std::vector<uint64_t> rserv::Lobby::spawnPacket(size_t entityId, const std::string prefabName) {
+std::vector<uint64_t> rserv::Lobby::spawnPacket(size_t entityId,
+    const std::string prefabName) {
     std::vector<uint64_t> payload;
 
     payload.push_back(static_cast<uint64_t>(entityId));
@@ -582,8 +582,6 @@ void rserv::Lobby::processLobbyEvents() {
             eventQueue->pop();
             uint8_t clientId = std::get<0>(event);
             constants::EventType eventType = std::get<1>(event);
-            std::cout << "Processing event from client " << static_cast<int>(clientId)
-                      << " of type " << static_cast<int>(eventType) << std::endl;
             double param1 = std::get<2>(event);
             inputProvider->updateInputFromEvent
                 (clientId, eventType, static_cast<float>(param1));
@@ -604,7 +602,8 @@ void rserv::Lobby::createPlayerEntities() {
 
     if (prefabMgr == nullptr || registry == nullptr) {
         debug::Debug::printDebug(this->getIsDebug(),
-            "[LOBBY] Cannot create player entities: missing required components in resource manager",
+            "[LOBBY] Cannot create player entities: missing required" <<
+            " components in resource manager",
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return;
     }
@@ -616,7 +615,8 @@ void rserv::Lobby::createPlayerEntities() {
                 uint8_t clientId = std::get<0>(client);
                 inputProvider->registerClient(clientId);
                 debug::Debug::printDebug(this->getIsDebug(),
-                    "[LOBBY] Registered client " + std::to_string(static_cast<int>(clientId)) +
+                    "[LOBBY] Registered client " +
+                    std::to_string(static_cast<int>(clientId)) +
                     " with input provider",
                     debug::debugType::NETWORK, debug::debugLevel::INFO);
             }
@@ -624,8 +624,7 @@ void rserv::Lobby::createPlayerEntities() {
     }
 
     std::string playerString = "player";
-
-    std::cout << "Before creating player entities for lobby " << this->getLobbyCode() << std::endl;
+        << std::endl;
     for (const auto &client : this->_clients) {
         uint8_t clientId = std::get<0>(client);
         ecs::Entity playerEntity = prefabMgr->createEntityFromPrefab(
@@ -638,10 +637,7 @@ void rserv::Lobby::createPlayerEntities() {
             "[LOBBY] Created player entity " + std::to_string(playerEntity) +
             " for client " + std::to_string(static_cast<int>(clientId)),
             debug::debugType::NETWORK, debug::debugLevel::INFO);
-        std::cout << "[LOBBY] Created player entity " << playerEntity
-                  << " for client " << static_cast<int>(clientId) << std::endl;
     }
-    std::cout << "After creating player entities" << std::endl;
 }
 
 void rserv::Lobby::stop() {
@@ -655,7 +651,8 @@ void rserv::Lobby::stop() {
     }
 }
 
-void rserv::Lobby::enqueuePacket(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> packet) {
+void rserv::Lobby::enqueuePacket(std::pair<std::shared_ptr<net::INetworkEndpoint>,
+    std::vector<uint8_t>> packet) {
     std::lock_guard<std::mutex> lock(_packetMutex);
     _incomingPackets.push(packet);
 }

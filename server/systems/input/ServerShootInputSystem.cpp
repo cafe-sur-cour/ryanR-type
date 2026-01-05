@@ -35,7 +35,6 @@ void ServerShootInputSystem::update(
 
     auto view = registry->view<ControllableTag, ShooterTag, PlayerTag>();
 
-    // Use entity ID as client ID directly (entity ID == client ID by design)
     for (auto entityId : view) {
         size_t clientID = static_cast<size_t>(entityId);
         float value = serverInputProvider->getActionAxis(InputAction::SHOOT, clientID);
