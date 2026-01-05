@@ -228,7 +228,7 @@ void Parser::instanciateComponentDefinitions() {
         {constants::HITBOXRENDERCOMPONENT, {
             std::type_index(typeid(ecs::HitboxRenderComponent)), {
             {constants::TARGET_FIELD, FieldType::STRING}
-        }}}
+        }}},
         {constants::POWERUP_TAG, {
             std::type_index(typeid(ecs::PowerUpTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
