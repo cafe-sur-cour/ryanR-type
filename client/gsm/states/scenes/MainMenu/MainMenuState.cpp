@@ -234,37 +234,6 @@ MainMenuState::MainMenuState(
     _playButton->setText("Not connected");
     _playButton->setSize(math::Vector2f(576.f, 108.f));
 
-    // _playButton->setOnRelease([this]() {
-    //     auto network = this->_resourceManager->get<ClientNetwork>();
-    //     if (network && network->isConnected()) {
-    //         network->sendReady();
-    //         debug::Debug::printDebug(network->isDebugMode(),
-    //             "[MainMenu] Sent ready signal to server.",
-    //             debug::debugType::NETWORK,
-    //             debug::debugLevel::INFO);
-    //     } else {
-    //         debug::Debug::printDebug(network ? network->isDebugMode() : false,
-    //             "[MainMenu] Cannot send ready: Not connected to server.",
-    //             debug::debugType::NETWORK,
-    //             debug::debugLevel::WARNING);
-    //     }
-    // });
-    // _playButton->setOnActivated([this]() {
-    //     auto network = this->_resourceManager->get<ClientNetwork>();
-    //     if (network && network->isConnected()) {
-    //         network->sendReady();
-    //         debug::Debug::printDebug(network->isDebugMode(),
-    //             "[MainMenu] Sent ready signal to server.",
-    //             debug::debugType::NETWORK,
-    //             debug::debugLevel::INFO);
-    //     } else {
-    //         debug::Debug::printDebug(network ? network->isDebugMode() : false,
-    //             "[MainMenu] Cannot send ready: Not connected to server.",
-    //             debug::debugType::NETWORK,
-    //             debug::debugLevel::WARNING);
-    //     }
-    // });
-
     _settingsButton = std::make_shared<ui::Button>(resourceManager);
     _settingsButton->setText("Settings");
     _settingsButton->setSize(math::Vector2f(576.f, 108.f));
@@ -317,9 +286,33 @@ MainMenuState::MainMenuState(
     _rightLayout->addElement(_lobbyCodeInput);
     _rightLayout->addElement(_lobbyConnectButton);
 
+    ui::LayoutConfig headerConfig;
+    headerConfig.direction = ui::LayoutDirection::Horizontal;
+    headerConfig.alignment = ui::LayoutAlignment::Center;
+    headerConfig.spacing = 20.0f;
+    headerConfig.padding = math::Vector2f(0.0f, 0.0f);
+    headerConfig.anchorX = ui::AnchorX::Right;
+    headerConfig.anchorY = ui::AnchorY::Top;
+    headerConfig.offset = math::Vector2f(-20.0f, 20.0f);
+
+    _headerLayout = std::make_shared<ui::UILayout>(_resourceManager, headerConfig);
+    _headerLayout->setSize(math::Vector2f(80.f, 80.f));
+
+    _topRightButton = std::make_shared<ui::Button>(_resourceManager);
+    _topRightButton->setText("");
+    _topRightButton->setSize(math::Vector2f(80.f, 80.f));
+    _topRightButton->setIconPath(constants::HOW_TO_PLAY_PATH);
+    _topRightButton->setIconSize(math::Vector2f(500.f, 500.f));
+    _topRightButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _topRightButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _topRightButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+
+    _headerLayout->addElement(_topRightButton);
+
     _uiManager->addElement(_leftLayout);
     _uiManager->addElement(_mainMenuLayout);
     _uiManager->addElement(_rightLayout);
+    _uiManager->addElement(_headerLayout);
 }
 
 void MainMenuState::enter() {
@@ -481,26 +474,13 @@ void MainMenuState::checkLobbyConnectionTransition() {
 
 void MainMenuState::exit() {
     auto window = _resourceManager->get<gfx::IWindow>();
-    window->setCursor(false);
-    _uiManager->clearElements();
-    _playButton.reset();
-    _settingsButton.reset();
-    _quitButton.reset();
-    _connectButton.reset();
-    _requestCodeButton.reset();
-    _lobbyConnectButton.reset();
-    _ipInput.reset();
-    _portInput.reset();
-    _lobbyCodeInput.reset();
-    _connectionStatusText.reset();
-    _serverStatusText.reset();
-    _usernameDisplayText.reset();
-    _mainMenuLayout.reset();
-    _rightLayout.reset();
-    _leftLayout.reset();
-    _background.reset();
-    _mouseHandler.reset();
-    _uiManager.reset();
+    if (window) {
+        window->setCursor(false);
+    }
+
+    if (_uiManager) {
+        _uiManager->clearElements();
+    }
 }
 
 }  // namespace gsm

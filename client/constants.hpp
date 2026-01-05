@@ -69,6 +69,7 @@ namespace constants {
     const std::string ACCESSIBILITY_FILE_PATH = "saves/accessibility.json";
     const std::string SETTINGS_FILE_PATH = "saves/settings.json";
     const std::string UI_BACKGROUND_EARTH_PATH = "assets/ui/earth.jpg";
+    const std::string HOW_TO_PLAY_PATH = "assets/sprites/how_to_play.png";
 
     const std::string WIN_TEXT = "YOU WIN!";
     const std::string LOSE_TEXT = "YOU LOSE!";
