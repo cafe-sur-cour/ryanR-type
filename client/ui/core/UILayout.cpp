@@ -366,13 +366,11 @@ void UILayout::render() {
         return;
     }
 
-    // Draw background if enabled
     if (_config.background.enabled) {
         auto window = _resourceManager.lock()->get<IWindow>();
         math::Vector2f absSize = getAbsoluteSize();
         math::Vector2f absPos = getAbsolutePosition();
 
-        // Draw filled background
         if (_config.background.fillColor.a > 0) {
             window->drawRoundedRectangleFilled(
                 _config.background.fillColor,
@@ -382,7 +380,6 @@ void UILayout::render() {
             );
         }
 
-        // Draw outline
         if (_config.background.outlineColor.a > 0) {
             window->drawRoundedRectangleOutline(
                 _config.background.outlineColor,
