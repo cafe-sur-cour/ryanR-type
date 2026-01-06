@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <limits>
 #include <vector>
+#include "../../Parser/ComponentRegistry/ComponentRegistrar.hpp"
+#include "../../constants.hpp"
 
 namespace ecs {
 
@@ -95,3 +97,33 @@ math::FRect ColliderComponent::getHitbox(math::Vector2f entityPosition,
 }
 
 }  // namespace ecs
+
+REGISTER_COMPONENT(
+    ecs::ColliderComponent,
+    constants::COLLIDERCOMPONENT,
+    {
+        Field{constants::TARGET_FIELD, FieldType::STRING},
+        Field{constants::OFFSET_FIELD, FieldType::VECTOR2F, true, 
+              std::make_shared<FieldValue>(math::Vector2f(0.0f, 0.0f))},
+        Field{constants::SIZE_FIELD, FieldType::VECTOR2F},
+        Field{constants::TYPE_FIELD, FieldType::STRING}
+    },
+    [](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) {
+        auto offset = std::get<math::Vector2f>(*fields.at(constants::OFFSET_FIELD));
+        auto size = std::get<math::Vector2f>(*fields.at(constants::SIZE_FIELD));
+        auto typeStr = std::get<std::string>(*fields.at(constants::TYPE_FIELD));
+
+        ecs::CollisionType type = ecs::CollisionType::Solid;
+        if (typeStr == constants::COLLISION_TYPE_SOLID) {
+            type = ecs::CollisionType::Solid;
+        } else if (typeStr == constants::COLLISION_TYPE_TRIGGER) {
+            type = ecs::CollisionType::Trigger;
+        } else if (typeStr == constants::COLLISION_TYPE_PUSH) {
+            type = ecs::CollisionType::Push;
+        } else if (typeStr == constants::COLLISION_TYPE_NONE) {
+            type = ecs::CollisionType::None;
+        }
+
+        return std::make_shared<ecs::ColliderComponent>(offset, size, type);
+    }
+)

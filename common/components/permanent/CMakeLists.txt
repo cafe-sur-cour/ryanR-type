@@ -1,21 +1,34 @@
 target_sources(${ECS_LIB_NAME} PUBLIC
     TransformComponent.hpp
+    TransformComponent.cpp
     VelocityComponent.hpp
+    VelocityComponent.cpp
     SpeedComponent.hpp
+    SpeedComponent.cpp
     ColliderComponent.hpp
     ColliderComponent.cpp
     ShootingStatsComponent.hpp
+    ShootingStatsComponent.cpp
     ProjectilePrefabComponent.hpp
+    ProjectilePrefabComponent.cpp
     LifetimeComponent.hpp
+    LifetimeComponent.cpp
     HealthComponent.hpp
+    HealthComponent.cpp
     ScoreComponent.hpp
+    ScoreComponent.cpp
     ScoreValueComponent.hpp
+    ScoreValueComponent.cpp
     OwnerComponent.hpp
     DamageComponent.hpp
+    DamageComponent.cpp
     GameZoneComponent.hpp
+    GameZoneComponent.cpp
     InteractionConfigComponent.hpp
+    InteractionConfigComponent.cpp
     ScriptingComponent.hpp
     ScriptingComponent.cpp
     EntityPartsComponent.hpp
+    EntityPartsComponent.cpp
     CompositeEntityComponent.hpp
 )
