@@ -234,7 +234,7 @@ jobs:
 
   push_to_mirror:
     name: push to target repository
-    needs: [run_all_tests, check_windows_compilation, check_ubuntu_compilation]
+    needs: [run_all_tests, check_windows_compilation, check_ubuntu_compilation, check_coding_style]
     if: ${{ github.event_name == 'push' }}
     environment: RTYPE
     runs-on: ubuntu-latest
@@ -251,7 +251,7 @@ jobs:
 
   calculate_version:
     name: calculate semantic version
-    needs: [run_all_tests, check_windows_compilation, check_ubuntu_compilation]
+    needs: [run_all_tests, check_windows_compilation, check_ubuntu_compilation, check_coding_style]
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     outputs:
