@@ -420,6 +420,10 @@ bool LevelEditorState::validateFields() {
         return false;
     }
 
+    std::string selectedMusic = _musicDropdown->getSelectedOption();
+    if (selectedMusic.empty()) {
+        return false;
+    }
     return true;
 }
 
