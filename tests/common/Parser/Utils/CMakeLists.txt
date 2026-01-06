@@ -4,7 +4,7 @@ add_executable(parser_utils_tests
 )
 
 target_link_libraries(parser_utils_tests
-    parser_utils
+    PARSER_UTILS
     ERROR
     GTest::gtest
     GTest::gtest_main
