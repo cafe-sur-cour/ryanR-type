@@ -29,6 +29,7 @@ class AComponentArray : public IComponentArray {
         bool has(Entity entityId) const;
 
         Entity getMaxEntityId() const override;
+        void clear() override;
 
     private:
         std::vector<std::vector<std::shared_ptr<T>>> _components;
