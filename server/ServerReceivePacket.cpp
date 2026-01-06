@@ -17,6 +17,7 @@
 
 #include "Server.hpp"
 #include "Constants.hpp"
+#include "../../../common/utils/SecureJsonManager.hpp"
 #include "../common/debug.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
@@ -262,25 +263,7 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
     }
 
     const std::string filepath = "saves/users.json";
-    nlohmann::json users;
-    try {
-        if (std::filesystem::exists(filepath) && std::filesystem::file_size(filepath) > 0) {
-            std::ifstream file(filepath);
-            if (file.is_open()) {
-                file >> users;
-                file.close();
-            } else {
-                users = nlohmann::json::array();
-            }
-        } else {
-            users = nlohmann::json::array();
-        }
-    } catch (const std::exception& e) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Error reading users file: " + std::string(e.what()),
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
-        users = nlohmann::json::array();
-    }
+    nlohmann::json users = utils::SecureJsonManager::readSecureJson(filepath);
 
     if (!users.is_array()) {
         users = nlohmann::json::array();
@@ -304,31 +287,20 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
     newUser["gamesPlayed"] = 0;
     newUser["timeSpent"] = 0;
     users.push_back(newUser);
-    try {
-        std::filesystem::create_directories("saves");
-        std::ofstream file(filepath);
-        if (file.is_open()) {
-            file << users.dump(4);
-            file.close();
+    if (utils::SecureJsonManager::writeSecureJson(filepath, users)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] User registered successfully: " + username,
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+        if (!this->connectUserPacket(*client.first, username)) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
-                "[SERVER] User registered successfully: " + username,
-                debug::debugType::NETWORK, debug::debugLevel::INFO);
-            if (!this->connectUserPacket(*client.first, username)) {
-                debug::Debug::printDebug(this->_config->getIsDebug(),
-                    "[SERVER] Error: Failed to send CONNECT_USER packet",
-                    debug::debugType::NETWORK, debug::debugLevel::ERROR);
-                return false;
-            }
-            return true;
-        } else {
-            debug::Debug::printDebug(this->_config->getIsDebug(),
-                "[SERVER] Error: Could not open users file for writing",
+                "[SERVER] Error: Failed to send CONNECT_USER packet",
                 debug::debugType::NETWORK, debug::debugLevel::ERROR);
             return false;
         }
-    } catch (const std::exception& e) {
+        return true;
+    } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Error writing users file: " + std::string(e.what()),
+            "[SERVER] Error: Could not write users file",
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
@@ -367,25 +339,7 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
     }
 
     const std::string filepath = "saves/users.json";
-    nlohmann::json users;
-    try {
-        if (std::filesystem::exists(filepath) && std::filesystem::file_size(filepath) > 0) {
-            std::ifstream file(filepath);
-            if (file.is_open()) {
-                file >> users;
-                file.close();
-            } else {
-                users = nlohmann::json::array();
-            }
-        } else {
-            users = nlohmann::json::array();
-        }
-    } catch (const std::exception& e) {
-        debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Error reading users file: " + std::string(e.what()),
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
-        users = nlohmann::json::array();
-    }
+    nlohmann::json users = utils::SecureJsonManager::readSecureJson(filepath);
 
     if (!users.is_array()) {
         users = nlohmann::json::array();
