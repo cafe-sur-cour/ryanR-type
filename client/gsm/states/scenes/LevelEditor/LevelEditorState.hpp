@@ -17,6 +17,7 @@
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../ui/elements/Background.hpp"
 #include "../../../../ui/elements/Panel.hpp"
+#include "../../../../ui/elements/Text.hpp"
 #include "../../../../ui/elements/focusable/Button.hpp"
 #include "../../../../ui/elements/focusable/TextInput.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
@@ -48,7 +49,10 @@ private:
     std::shared_ptr<ui::Panel> _canvasPanel;
     std::shared_ptr<ui::Button> _saveButton;
     std::shared_ptr<ui::Button> _backButton;
+    std::shared_ptr<ui::Text> _nameLabel;
     std::shared_ptr<ui::TextInput> _levelNameInput;
+    std::shared_ptr<ui::Text> _mapLengthLabel;
+    std::shared_ptr<ui::TextInput> _mapLengthInput;
 
     bool _hasUnsavedChanges = false;
 

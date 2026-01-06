@@ -139,8 +139,18 @@ void LevelEditorState::createUI() {
         }
 
         std::string levelName = _levelNameInput->getText();
+        std::string mapLengthStr = _mapLengthInput->getText();
+
         if (!levelName.empty()) {
             _levelData[constants::LEVEL_NAME_FIELD] = levelName;
+
+            try {
+                float mapLength = std::stof(mapLengthStr);
+                if (mapLength > 0.0f) {
+                    _levelData[constants::LEVEL_MAP_LENGTH_FIELD] = mapLength;
+                }
+            } catch (const std::exception&) {
+            }
 
             std::filesystem::path savePath = *_levelPath;
 
@@ -173,8 +183,20 @@ void LevelEditorState::createUI() {
     _backButton->setFocusEnabled(false);
     _sidePanel->addChild(_backButton);
 
+    float currentY = 150.0f;
+    const float elementSpacing = 20.0f;
+    const float labelToFieldSpacing = 40.0f;
+
+    _nameLabel = std::make_shared<ui::Text>(_resourceManager);
+    _nameLabel->setPosition(math::Vector2f(10.0f, currentY));
+    _nameLabel->setText("Name");
+    _nameLabel->setFontSize(24);
+    _nameLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _sidePanel->addChild(_nameLabel);
+
+    currentY += labelToFieldSpacing;
     _levelNameInput = std::make_shared<ui::TextInput>(_resourceManager);
-    _levelNameInput->setPosition(math::Vector2f(10.0f, 155.0f));
+    _levelNameInput->setPosition(math::Vector2f(10.0f, currentY));
     _levelNameInput->setSize(math::Vector2f(sidePanelWidth - 25.0f, 30.0f));
     _levelNameInput->setText(_levelData.value(constants::LEVEL_NAME_FIELD, "New Level"));
     _levelNameInput->setPlaceholder("Enter level name...");
@@ -190,6 +212,34 @@ void LevelEditorState::createUI() {
     _levelNameInput->setScalingEnabled(false);
     _levelNameInput->setFocusEnabled(true);
     _sidePanel->addChild(_levelNameInput);
+
+    currentY += 40.0f + elementSpacing;
+    _mapLengthLabel = std::make_shared<ui::Text>(_resourceManager);
+    _mapLengthLabel->setPosition(math::Vector2f(10.0f, currentY));
+    _mapLengthLabel->setText("Map Length");
+    _mapLengthLabel->setFontSize(24);
+    _mapLengthLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _sidePanel->addChild(_mapLengthLabel);
+
+    currentY += labelToFieldSpacing;
+    _mapLengthInput = std::make_shared<ui::TextInput>(_resourceManager);
+    _mapLengthInput->setPosition(math::Vector2f(10.0f, currentY));
+    _mapLengthInput->setSize(math::Vector2f(sidePanelWidth - 25.0f, 30.0f));
+    _mapLengthInput->setText(std::to_string(
+        static_cast<int>(_levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0))));
+    _mapLengthInput->setPlaceholder("Enter map length...");
+    _mapLengthInput->setOnTextChanged([this](const std::string& /*text*/) {
+        _hasUnsavedChanges = true;
+        updateSaveButtonText();
+    });
+    _mapLengthInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_mapLengthInput);
+    });
+    _mapLengthInput->setScalingEnabled(false);
+    _mapLengthInput->setFocusEnabled(true);
+    _sidePanel->addChild(_mapLengthInput);
 
     _bottomPanel = std::make_shared<ui::Panel>(_resourceManager);
     _bottomPanel->setPosition(math::Vector2f(sidePanelWidth, canvasHeight));
@@ -226,7 +276,10 @@ void LevelEditorState::exit() {
     _canvasPanel.reset();
     _saveButton.reset();
     _backButton.reset();
+    _nameLabel.reset();
     _levelNameInput.reset();
+    _mapLengthLabel.reset();
+    _mapLengthInput.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
