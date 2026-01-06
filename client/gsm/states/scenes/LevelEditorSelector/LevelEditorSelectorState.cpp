@@ -2,10 +2,10 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** LevelEditorState
+** LevelEditorSelectorState
 */
 
-#include "LevelEditorState.hpp"
+#include "LevelEditorSelectorState.hpp"
 #include <filesystem>  // NOLINT(build/c++17)
 #include <vector>
 #include <memory>
@@ -22,7 +22,7 @@
 
 namespace gsm {
 
-LevelEditorState::LevelEditorState(
+LevelEditorSelectorState::LevelEditorSelectorState(
     std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager
 ) : AGameState(gsm, resourceManager) {
@@ -60,7 +60,7 @@ LevelEditorState::LevelEditorState(
     createLevelSelectionUI();
 }
 
-void LevelEditorState::enter() {
+void LevelEditorSelectorState::enter() {
     _uiManager->setOnBack([this]() {
         if (auto stateMachine = this->_gsm.lock()) {
             stateMachine->requestStatePop();
@@ -71,7 +71,7 @@ void LevelEditorState::enter() {
         math::Vector2f(5376.0f, 3584.0f));
 }
 
-void LevelEditorState::update(float deltaTime) {
+void LevelEditorSelectorState::update(float deltaTime) {
     auto config = _resourceManager->get<SettingsConfig>();
     if (_uiManager->getGlobalScale() != config->getUIScale()) {
         _uiManager->setGlobalScale(config->getUIScale());
@@ -138,11 +138,11 @@ void LevelEditorState::update(float deltaTime) {
     renderUI();
 }
 
-void LevelEditorState::renderUI() {
+void LevelEditorSelectorState::renderUI() {
     _uiManager->render();
 }
 
-void LevelEditorState::createLevelSelectionUI() {
+void LevelEditorSelectorState::createLevelSelectionUI() {
     _uiManager->clearElements();
     _uiManager->addElement(_background);
     _levelButtons.clear();
@@ -426,7 +426,9 @@ void LevelEditorState::createLevelSelectionUI() {
     _uiManager->addElement(backLayout);
 }
 
-std::vector<std::pair<std::filesystem::path, int>> LevelEditorState::getAvailableLevels() {
+std::vector<
+    std::pair<std::filesystem::path, int>
+> LevelEditorSelectorState::getAvailableLevels() {
     std::vector<std::pair<std::filesystem::path, int>> levels;
     std::filesystem::path levelDir = constants::LEVEL_DIRECTORY;
 
@@ -462,7 +464,7 @@ std::vector<std::pair<std::filesystem::path, int>> LevelEditorState::getAvailabl
     return levels;
 }
 
-void LevelEditorState::swapLevels(
+void LevelEditorSelectorState::swapLevels(
     const std::filesystem::path& path1,
     const std::filesystem::path& path2
 ) {
@@ -522,21 +524,21 @@ void LevelEditorState::swapLevels(
     _shouldUpdateUI = true;
 }
 
-void LevelEditorState::showDeleteConfirmation(
+void LevelEditorSelectorState::showDeleteConfirmation(
     const std::filesystem::path& levelPath,
     const std::string& levelName
 ) {
     showDeleteConfirmationPopup(levelPath, levelName);
 }
 
-void LevelEditorState::showDuplicateConfirmation(
+void LevelEditorSelectorState::showDuplicateConfirmation(
     const std::filesystem::path& levelPath,
     const std::string& levelName
 ) {
     showDuplicateConfirmationPopup(levelPath, levelName);
 }
 
-void LevelEditorState::showDeleteConfirmationPopup(
+void LevelEditorSelectorState::showDeleteConfirmationPopup(
     const std::filesystem::path& levelPath,
     const std::string& levelName
 ) {
@@ -620,7 +622,7 @@ void LevelEditorState::showDeleteConfirmationPopup(
     _uiManager->addElement(_deletePopupLayout);
 }
 
-void LevelEditorState::showDuplicateConfirmationPopup(
+void LevelEditorSelectorState::showDuplicateConfirmationPopup(
     const std::filesystem::path& levelPath,
     const std::string& levelName
 ) {
@@ -705,7 +707,7 @@ void LevelEditorState::showDuplicateConfirmationPopup(
     _uiManager->addElement(_duplicatePopupLayout);
 }
 
-void LevelEditorState::confirmDelete() {
+void LevelEditorSelectorState::confirmDelete() {
     if (!_pendingDeletePath.empty()) {
         try {
             std::filesystem::remove(_pendingDeletePath);
@@ -716,7 +718,7 @@ void LevelEditorState::confirmDelete() {
     _shouldHideDeletePopup = true;
 }
 
-void LevelEditorState::confirmDuplicate() {
+void LevelEditorSelectorState::confirmDuplicate() {
     if (!_pendingDuplicatePath.empty()) {
         try {
             std::ifstream originalFile(_pendingDuplicatePath);
@@ -751,7 +753,7 @@ void LevelEditorState::confirmDuplicate() {
     _shouldHideDuplicatePopup = true;
 }
 
-void LevelEditorState::setMainButtonsEnabled(bool enabled) {
+void LevelEditorSelectorState::setMainButtonsEnabled(bool enabled) {
     ui::UIState state = enabled ? ui::UIState::Normal : ui::UIState::Disabled;
 
     for (auto& button : _levelButtons) {
@@ -811,7 +813,7 @@ void LevelEditorState::setMainButtonsEnabled(bool enabled) {
     }
 }
 
-void LevelEditorState::hideDeleteConfirmationPopup() {
+void LevelEditorSelectorState::hideDeleteConfirmationPopup() {
     if (_deletePopupOverlay) {
         _uiManager->removeElement(_deletePopupOverlay);
         _deletePopupOverlay.reset();
@@ -828,7 +830,7 @@ void LevelEditorState::hideDeleteConfirmationPopup() {
     setMainButtonsEnabled(true);
 }
 
-void LevelEditorState::hideDuplicateConfirmationPopup() {
+void LevelEditorSelectorState::hideDuplicateConfirmationPopup() {
     if (_duplicatePopupOverlay) {
         _uiManager->removeElement(_duplicatePopupOverlay);
         _duplicatePopupOverlay.reset();
@@ -846,7 +848,7 @@ void LevelEditorState::hideDuplicateConfirmationPopup() {
     setMainButtonsEnabled(true);
 }
 
-void LevelEditorState::exit() {
+void LevelEditorSelectorState::exit() {
     auto window = _resourceManager->get<gfx::IWindow>();
     window->setCursor(false);
     _uiManager->clearElements();

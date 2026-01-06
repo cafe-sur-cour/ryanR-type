@@ -2,11 +2,11 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** LevelEditorState
+** LevelEditorSelectorState
 */
 
-#ifndef LEVELEDITORSTATE_HPP_
-#define LEVELEDITORSTATE_HPP_
+#ifndef LEVELEDITORSELECTORSTATE_HPP_
+#define LEVELEDITORSELECTORSTATE_HPP_
 
 #include "../../base/AGameState.hpp"
 #include <filesystem>  // NOLINT(build/c++17)
@@ -23,10 +23,10 @@
 
 namespace gsm {
 
-class LevelEditorState : public AGameState {
+class LevelEditorSelectorState : public AGameState {
 public:
-    LevelEditorState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
-    ~LevelEditorState() override = default;
+    LevelEditorSelectorState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
+    ~LevelEditorSelectorState() override = default;
 
     void enter() override;
     void update(float deltaTime) override;
@@ -85,4 +85,4 @@ private:
 
 }  // namespace gsm
 
-#endif /* !LEVELEDITORSTATE_HPP_ */
+#endif /* !LEVELEDITORSELECTORSTATE_HPP_ */

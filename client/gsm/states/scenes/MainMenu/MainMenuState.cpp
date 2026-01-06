@@ -21,7 +21,7 @@
 #include "../Infinite/InfiniteState.hpp"
 #include "../Settings/SettingsState.hpp"
 #include "../Replay/ReplayState.hpp"
-#include "../LevelEditor/LevelEditorState.hpp"
+#include "../LevelEditorSelector/LevelEditorSelectorState.hpp"
 #include "../LobbyWaiting/LobbyWaitingState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
@@ -274,13 +274,15 @@ MainMenuState::MainMenuState(
     _levelEditorButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _levelEditorButton->setOnRelease([this]() {
         if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<LevelEditorState>(stateMachine,
+            stateMachine->requestStatePush(
+                std::make_shared<LevelEditorSelectorState>(stateMachine,
                 this->_resourceManager));
         }
     });
     _levelEditorButton->setOnActivated([this]() {
         if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<LevelEditorState>(stateMachine,
+            stateMachine->requestStatePush(
+                std::make_shared<LevelEditorSelectorState>(stateMachine,
                 this->_resourceManager));
         }
     });
