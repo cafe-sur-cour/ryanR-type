@@ -5,6 +5,29 @@ project(r-type)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# ============================================================================
+# Precompiled Headers Configuration
+# ============================================================================
+option(USE_PCH "Use precompiled headers to speed up compilation" ON)
+
+# ============================================================================
+# Compiler Cache (ccache/sccache) Configuration
+# ============================================================================
+find_program(CCACHE_PROGRAM ccache)
+find_program(SCCACHE_PROGRAM sccache)
+
+if(SCCACHE_PROGRAM)
+    message(STATUS "Using sccache: ${SCCACHE_PROGRAM}")
+    set(CMAKE_C_COMPILER_LAUNCHER ${SCCACHE_PROGRAM})
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${SCCACHE_PROGRAM})
+elseif(CCACHE_PROGRAM)
+    message(STATUS "Using ccache: ${CCACHE_PROGRAM}")
+    set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+else()
+    message(STATUS "No compiler cache found (ccache/sccache)")
+endif()
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_options(-g3 -O0 -fno-omit-frame-pointer)
 endif()

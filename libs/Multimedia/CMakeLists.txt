@@ -24,7 +24,6 @@ add_library(${MULTIMEDIA_LIB_NAME} SHARED
     EventTypes.hpp
     ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
     ${EMBEDDED_ASSET_FILES}
-    ${CMAKE_SOURCE_DIR}/common/types/FRect.cpp
 )
 
 if(WIN32)
@@ -58,6 +57,10 @@ target_link_libraries(${MULTIMEDIA_LIB_NAME}
     PUBLIC ECS
     PUBLIC COLLISION_RULES
 )
+
+if(USE_PCH)
+    target_precompile_headers(${MULTIMEDIA_LIB_NAME} PRIVATE ${PCH_HEADERS})
+endif()
 
 add_custom_command(TARGET ${MULTIMEDIA_LIB_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${MULTIMEDIA_LIB_NAME}> ${CMAKE_SOURCE_DIR}/libraries/
