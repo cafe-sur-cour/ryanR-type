@@ -25,6 +25,7 @@
 #include "../../components/tags/ControllableTag.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../Error/ParserError.hpp"
+#include "../Utils/JsonValidation.hpp"
 
 ComposantParser::ComposantParser(std::shared_ptr<const std::map<std::string,
     std::pair<std::type_index, std::vector<Field>>>> componentDefinitions,
@@ -84,11 +85,21 @@ std::shared_ptr<FieldValue> ComposantParser::parseFieldValue
     (const nlohmann::json& jsonValue, FieldType type) {
     switch (type) {
         case FieldType::VECTOR2F: {
-            if (!jsonValue.is_object() ||
-                !jsonValue.contains(constants::X_FIELD) ||
-                !jsonValue.contains(constants::Y_FIELD)) {
-                throw err::ParserError("Invalid Vector2f format",
+            if (!jsonValue.is_object()) {
+                throw err::ParserError("Invalid Vector2f format: expected object",
                     err::ParserError::INVALID_FORMAT);
+            }
+            auto validation = parser::JsonValidation::hasRequiredFields(
+                jsonValue,
+                {constants::X_FIELD, constants::Y_FIELD},
+                "Vector2f"
+            );
+            if (!validation) {
+                std::string errorMsg = "Invalid Vector2f format:\\n";
+                for (const auto& error : validation.errors) {
+                    errorMsg += "  - " + error + "\\n";
+                }
+                throw err::ParserError(errorMsg, err::ParserError::INVALID_FORMAT);
             }
             math::Vector2f vec(jsonValue[constants::X_FIELD], jsonValue[constants::Y_FIELD]);
             return std::make_shared<FieldValue>(vec);
