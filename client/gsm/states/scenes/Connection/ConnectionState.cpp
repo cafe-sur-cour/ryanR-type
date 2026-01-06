@@ -117,25 +117,6 @@ ConnectionState::ConnectionState(
     _layout->addElement(_portInput);
     _layout->addElement(_connectButton);
 
-    _backButton = std::make_shared<ui::Button>(_resourceManager);
-    _backButton->setText("Back");
-    _backButton->setSize(math::Vector2f(300.f, 50.f));
-    _backButton->setNormalColor(colors::BUTTON_SECONDARY);
-    _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _backButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
-    _backButton->setOnRelease([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePop();
-        }
-    });
-    _backButton->setOnActivated([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePop();
-        }
-    });
-
-    _layout->addElement(_backButton);
-
     _uiManager->addElement(_layout);
 }
 

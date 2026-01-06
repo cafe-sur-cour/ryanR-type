@@ -39,7 +39,6 @@ class ConnectionState : public AGameState {
         std::shared_ptr<ui::TextInput> _ipInput;
         std::shared_ptr<ui::TextInput> _portInput;
         std::shared_ptr<ui::Button> _connectButton;
-        std::shared_ptr<ui::Button> _backButton;
         std::shared_ptr<ui::UILayout> _layout;
         bool _wasConnected = false;
 };
