@@ -56,6 +56,7 @@ target_include_directories(${MULTIMEDIA_LIB_NAME}
 target_link_libraries(${MULTIMEDIA_LIB_NAME}
     PUBLIC ECS
     PUBLIC COLLISION_RULES
+    PUBLIC ENTITY_PREFAB_MANAGER
 )
 
 if(USE_PCH)
