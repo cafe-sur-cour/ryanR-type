@@ -198,3 +198,15 @@ add_test(NAME SpawnIntentComponentTests COMMAND SpawnIntentComponentTests)
 add_executable(SpawnSystemTests common/ECS/system/SpawnSystemTests.cpp)
 target_link_libraries(SpawnSystemTests ECS PREFAB COLLISION_RULES ERROR GTest::gtest GTest::gtest_main)
 add_test(NAME SpawnSystemTests COMMAND SpawnSystemTests)
+
+add_executable(JsonLoaderTests 
+    common/Parser/Utils/JsonLoaderTest.cpp
+)
+target_link_libraries(JsonLoaderTests parser_utils ERROR GTest::gtest GTest::gtest_main nlohmann_json::nlohmann_json)
+add_test(NAME JsonLoaderTests COMMAND JsonLoaderTests)
+
+add_executable(JsonValidationTests 
+    common/Parser/Utils/JsonValidationTest.cpp
+)
+target_link_libraries(JsonValidationTests parser_utils GTest::gtest GTest::gtest_main nlohmann_json::nlohmann_json)
+add_test(NAME JsonValidationTests COMMAND JsonValidationTests)
