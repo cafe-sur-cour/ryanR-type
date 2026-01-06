@@ -25,6 +25,7 @@
 #include "../Register/RegisterState.hpp"
 #include "../Login/LoginState.hpp"
 #include "../Profile/ProfileState.hpp"
+#include "../HowToPlay/HowToPlayState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -345,6 +346,16 @@ MainMenuState::MainMenuState(
     _howToPlayButton->setNormalColor(colors::BUTTON_SECONDARY);
     _howToPlayButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _howToPlayButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _howToPlayButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<HowToPlayState>(stateMachine, this->_resourceManager));
+        }
+    });
+    _howToPlayButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<HowToPlayState>(stateMachine, this->_resourceManager));
+        }
+    });
 
     _leaderboardButton = std::make_shared<ui::Button>(_resourceManager);
     _leaderboardButton->setText("");
@@ -445,8 +456,7 @@ MainMenuState::MainMenuState(
     _uiManager->addElement(_rightLayout);
     _uiManager->addElement(_topLeftLayout);
     _uiManager->addElement(_headerLayout);
-    
-    // Initialiser l'état des boutons selon si l'utilisateur est connecté ou non
+
     updateUIStatus();
 }
 
@@ -593,12 +603,6 @@ void MainMenuState::updateUIStatus() {
         _connectionStatusText->setOutlineThickness(2.0f);
         _serverStatusText->setText("");
     } else {
-        if (network->isReady()) {
-            _usernameButton->setText("Waiting for players...");
-        } else {
-            _usernameButton->setText("Ready ?");
-        }
-
         _connectionStatusText->setText("Connected");
         _connectionStatusText->setTextColor(gfx::color_t{100, 255, 100, 255});
         _connectionStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
