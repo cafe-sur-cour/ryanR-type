@@ -12,7 +12,6 @@
 #include <filesystem>
 #include <iostream>
 #include <nlohmann/json.hpp>
-#include "../../../../Utils/SecureJsonManager.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"

@@ -19,7 +19,6 @@
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../ui/elements/Box.hpp"
-#include "../../../../Utils/SecureJsonManager.hpp"
 
 namespace gsm {
 
@@ -305,36 +304,6 @@ void ProfileState::loadUserData() {
     auto config = _resourceManager->get<SettingsConfig>();
     if (!config) {
         return;
-    }
-
-    std::string username = config->getUsername();
-    _usernameText->setText("Username: " + username);
-
-    if (username.empty()) {
-        _gamesPlayedText->setText("Games Played: 0");
-        _winsText->setText("Wins: 0");
-        _highScoreText->setText("High Score: 0");
-        return;
-    }
-
-    const std::string filepath = "saves/users.json";
-    nlohmann::json users = utils::SecureJsonManager::readSecureJson(filepath);
-    
-    if (!users.is_array()) {
-        return;
-    }
-
-    for (const auto& user : users) {
-        if (user.contains("username") && user["username"] == username) {
-            int gamesPlayed = user.value("gamesPlayed", 0);
-            int wins = user.value("wins", 0);
-            int highScore = user.value("highScore", 0);
-
-            _gamesPlayedText->setText("Games Played: " + std::to_string(gamesPlayed));
-            _winsText->setText("Wins: " + std::to_string(wins));
-            _highScoreText->setText("High Score: " + std::to_string(highScore));
-            break;
-        }
     }
 }
 

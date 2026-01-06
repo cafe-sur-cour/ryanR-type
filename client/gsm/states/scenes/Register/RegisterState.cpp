@@ -20,7 +20,6 @@
 #include "../../../../colors.hpp"
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
-#include "../../../../Utils/SecureJsonManager.hpp"
 
 namespace gsm {
 

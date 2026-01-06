@@ -4,10 +4,6 @@ add_executable(${CLIENT_BIN_NAME}
     main.cpp
     Utils.cpp
     Utils.hpp
-    Utils/Encryption.cpp
-    Utils/Encryption.hpp
-    Utils/SecureJsonManager.cpp
-    Utils/SecureJsonManager.hpp
     ClientNetwork.cpp
     ClientLibLoading.cpp
     ClientNetwork.hpp

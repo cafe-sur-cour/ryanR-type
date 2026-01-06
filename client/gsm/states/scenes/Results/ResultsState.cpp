@@ -12,7 +12,6 @@
 #include <filesystem>
 #include <iostream>
 #include <nlohmann/json.hpp>
-#include "../../../../Utils/SecureJsonManager.hpp"
 #include "../../../common/constants.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/interfaces/IWindow.hpp"
@@ -33,7 +32,7 @@ ResultsState::ResultsState(
 
 void ResultsState::enter() {
     updateUserStats();
-    
+
     std::string text = _isWin ? constants::WIN_TEXT : constants::LOSE_TEXT;
     gfx::color_t color = _isWin ? colors::GREEN : colors::RED;
 
@@ -81,57 +80,7 @@ void ResultsState::updateUserStats() {
     if (!config || config->getUsername().empty()) {
         return;
     }
-
-    const std::string filepath = "saves/users.json";
-    if (!std::filesystem::exists(filepath)) {
-        std::cout << "No users file found!" << std::endl;
-        return;
-    }
-
-    nlohmann::json users;
-    try {
-        users = utils::SecureJsonManager::readSecureJson(filepath);
-    } catch (const std::exception& e) {
-        std::cout << "Failed to read user data!" << std::endl;
-        return;
-    }
-
-    std::string username = config->getUsername();
-    bool userFound = false;
-    
-    for (auto& user : users) {
-        if (user.contains("username") && user["username"] == username) {
-            userFound = true;
-            
-            if (!user.contains("gamesPlayed")) user["gamesPlayed"] = 0;
-            if (!user.contains("wins")) user["wins"] = 0;
-            if (!user.contains("highScore")) user["highScore"] = 0;
-            
-            user["gamesPlayed"] = user["gamesPlayed"].get<int>() + 1;
-            
-            if (_isWin) {
-                user["wins"] = user["wins"].get<int>() + 1;
-            }
-            
-            if (_score > user["highScore"].get<int>()) {
-                user["highScore"] = _score;
-            }
-            
-            break;
-        }
-    }
-
-    if (!userFound) {
-        std::cout << "User not found in database!" << std::endl;
-        return;
-    }
-
-    try {
-        utils::SecureJsonManager::writeSecureJson(filepath, users);
-        std::cout << "User stats updated successfully!" << std::endl;
-    } catch (const std::exception& e) {
-        std::cout << "Failed to save user stats!" << std::endl;
-    }
+    (void)_score; // To avoid unused variable warning for now
 }
 
 }  // namespace gsm
