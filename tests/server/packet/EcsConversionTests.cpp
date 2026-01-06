@@ -79,7 +79,7 @@ protected:
 // Helper function to pack float to uint64_t
 uint64_t packFloat(float value) {
     uint64_t bits = 0;
-    memcpy(&bits, &value, sizeof(float));
+    std::memcpy(&bits, &value, sizeof(float));
     return bits;
 }
 
