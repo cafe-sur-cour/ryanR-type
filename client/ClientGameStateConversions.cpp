@@ -25,7 +25,7 @@ namespace {
 
 inline float unpackFloat(uint64_t bits) {
     float value;
-    memcpy(&value, &bits, sizeof(float));
+    std::memcpy(&value, &bits, sizeof(float));
     return value;
 }
 

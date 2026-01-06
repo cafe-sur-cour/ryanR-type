@@ -49,6 +49,7 @@ ClientNetwork::ClientNetwork() {
     this->_isLobbyMaster = false;
 
     this->_shouldConnect = false;
+    this->_connectionAttemptTime = std::chrono::steady_clock::now();
 
     this->_connectedClients = 0;
     this->_readyClients = 0;
@@ -130,6 +131,7 @@ void ClientNetwork::init() {
 }
 
 void ClientNetwork::connect() {
+    this->_connectionAttemptTime = std::chrono::steady_clock::now();
     this->_shouldConnect = true;
     if (this->_network->getConnectionState() == net::ConnectionState::DISCONNECTED) {
         debug::Debug::printDebug(this->_isDebug,
@@ -285,6 +287,23 @@ void ClientNetwork::start() {
     while (!Signal::stopFlag) {
         std::tie(retryCount, lastRetryTime) = tryConnection(maxRetries, retryCount,
             lastRetryTime);
+
+        if (this->_shouldConnect && !this->_isConnected.load() &&
+            std::chrono::duration_cast<std::chrono::seconds>(
+                std::chrono::steady_clock::now() - this->_connectionAttemptTime).count() >
+                constants::CONNECTION_ATTEMPT_TIMEOUT) {
+            this->_shouldConnect = false;
+            this->_network->setConnectionState(net::ConnectionState::DISCONNECTED);
+            debug::Debug::printDebug(this->_isDebug,
+                "Connection attempt timed out after " +
+                std::to_string(constants::CONNECTION_ATTEMPT_TIMEOUT) + " seconds",
+                debug::debugType::NETWORK,
+                debug::debugLevel::ERROR);
+            auto mainMenuState =
+                std::make_shared<gsm::MainMenuState>(this->_gsm, this->_resourceManager);
+            this->_gsm->changeState(mainMenuState);
+        }
+
         std::vector<uint8_t> receivedData = this->_network->receiveFrom(this->_idClient);
         if (receivedData.size() > 0) {
             if (this->_packet->unpack(receivedData)) {
