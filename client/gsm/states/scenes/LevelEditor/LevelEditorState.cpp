@@ -12,6 +12,7 @@
 #include "../../../../../common/constants.hpp"
 #include "../../../../constants.hpp"
 #include "../../../../colors.hpp"
+#include "../../../../ui/elements/Panel.hpp"
 
 namespace gsm {
 
@@ -93,59 +94,31 @@ void LevelEditorState::renderUI() {
 }
 
 void LevelEditorState::createUI() {
-    // Side panel (left)
-    ui::LayoutConfig sidePanelConfig;
-    sidePanelConfig.direction = ui::LayoutDirection::Vertical;
-    sidePanelConfig.alignment = ui::LayoutAlignment::Start;
-    sidePanelConfig.spacing = 10.0f;
-    sidePanelConfig.padding = math::Vector2f(10.0f, 10.0f);
-    sidePanelConfig.anchorX = ui::AnchorX::Left;
-    sidePanelConfig.anchorY = ui::AnchorY::Top;
-    sidePanelConfig.offset = math::Vector2f(0.0f, 0.0f);
-    sidePanelConfig.background.enabled = true;
-    sidePanelConfig.background.fillColor = colors::PANEL_BACKGROUND;
-    sidePanelConfig.background.outlineColor = colors::PANEL_BORDER;
-    sidePanelConfig.background.cornerRadius = 0.0f; // Bords classiques
+    const float sidePanelWidth = 300.0f;
+    const float bottomPanelHeight = 200.0f;
+    const float canvasWidth = constants::MAX_WIDTH - sidePanelWidth;
+    const float canvasHeight = constants::MAX_HEIGHT - bottomPanelHeight;
 
-    _sidePanel = std::make_shared<ui::UILayout>(_resourceManager, sidePanelConfig);
-    _sidePanel->setSize(math::Vector2f(300.0f, constants::MAX_HEIGHT - 200.0f)); // Laisser de la place pour le bottom panel
+    _sidePanel = std::make_shared<ui::Panel>(_resourceManager);
+    _sidePanel->setPosition(math::Vector2f(0.0f, 0.0f));
+    _sidePanel->setSize(math::Vector2f(sidePanelWidth, constants::MAX_HEIGHT));
+    _sidePanel->setBackgroundColor(colors::LIGHT_GRAY);
+    _sidePanel->setBorderColor(colors::GRAY);
     _uiManager->addElement(_sidePanel);
 
-    // Bottom panel
-    ui::LayoutConfig bottomPanelConfig;
-    bottomPanelConfig.direction = ui::LayoutDirection::Horizontal;
-    bottomPanelConfig.alignment = ui::LayoutAlignment::Start;
-    bottomPanelConfig.spacing = 10.0f;
-    bottomPanelConfig.padding = math::Vector2f(10.0f, 10.0f);
-    bottomPanelConfig.anchorX = ui::AnchorX::Left;
-    bottomPanelConfig.anchorY = ui::AnchorY::Bottom;
-    bottomPanelConfig.offset = math::Vector2f(0.0f, 0.0f);
-    bottomPanelConfig.background.enabled = true;
-    bottomPanelConfig.background.fillColor = colors::PANEL_BACKGROUND;
-    bottomPanelConfig.background.outlineColor = colors::PANEL_BORDER;
-    bottomPanelConfig.background.cornerRadius = 0.0f;
-
-    _bottomPanel = std::make_shared<ui::UILayout>(_resourceManager, bottomPanelConfig);
-    _bottomPanel->setSize(math::Vector2f(constants::MAX_WIDTH, 150.0f));
+    _bottomPanel = std::make_shared<ui::Panel>(_resourceManager);
+    _bottomPanel->setPosition(math::Vector2f(sidePanelWidth, canvasHeight));
+    _bottomPanel->setSize(math::Vector2f(canvasWidth, bottomPanelHeight));
+    _bottomPanel->setBackgroundColor(colors::LIGHT_GRAY);
+    _bottomPanel->setBorderColor(colors::GRAY);
     _uiManager->addElement(_bottomPanel);
 
-    // Canvas (right side)
-    ui::LayoutConfig canvasConfig;
-    canvasConfig.direction = ui::LayoutDirection::Vertical;
-    canvasConfig.alignment = ui::LayoutAlignment::Center;
-    canvasConfig.spacing = 0.0f;
-    canvasConfig.padding = math::Vector2f(0.0f, 0.0f);
-    canvasConfig.anchorX = ui::AnchorX::Right;
-    canvasConfig.anchorY = ui::AnchorY::Top;
-    canvasConfig.offset = math::Vector2f(0.0f, 0.0f);
-    canvasConfig.background.enabled = true;
-    canvasConfig.background.fillColor = colors::UI_BACKGROUND;
-    canvasConfig.background.outlineColor = colors::PANEL_BORDER;
-    canvasConfig.background.cornerRadius = 0.0f;
-
-    _canvas = std::make_shared<ui::UILayout>(_resourceManager, canvasConfig);
-    _canvas->setSize(math::Vector2f(constants::MAX_WIDTH - 300.0f, constants::MAX_HEIGHT - 150.0f)); // Ajuster pour le side et bottom panel
-    _uiManager->addElement(_canvas);
+    _canvasPanel = std::make_shared<ui::Panel>(_resourceManager);
+    _canvasPanel->setPosition(math::Vector2f(sidePanelWidth, 0.0f));
+    _canvasPanel->setSize(math::Vector2f(canvasWidth, canvasHeight));
+    _canvasPanel->setBackgroundColor(colors::BLACK);
+    _canvasPanel->setBorderColor(colors::GRAY);
+    _uiManager->addElement(_canvasPanel);
 }
 
 void LevelEditorState::exit() {
@@ -153,9 +126,6 @@ void LevelEditorState::exit() {
     window->setCursor(false);
     _uiManager->clearElements();
     _background.reset();
-    _sidePanel.reset();
-    _bottomPanel.reset();
-    _canvas.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }

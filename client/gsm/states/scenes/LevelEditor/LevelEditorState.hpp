@@ -15,6 +15,7 @@
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../ui/elements/Background.hpp"
+#include "../../../../ui/elements/Panel.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -38,9 +39,9 @@ private:
     std::unique_ptr<ui::UIManager> _uiManager;
 
     std::shared_ptr<ui::Background> _background;
-    std::shared_ptr<ui::UILayout> _sidePanel;
-    std::shared_ptr<ui::UILayout> _bottomPanel;
-    std::shared_ptr<ui::UILayout> _canvas;
+    std::shared_ptr<ui::Panel> _sidePanel;
+    std::shared_ptr<ui::Panel> _bottomPanel;
+    std::shared_ptr<ui::Panel> _canvasPanel;
 
     std::optional<std::filesystem::path> _levelPath;
 };
