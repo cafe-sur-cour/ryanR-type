@@ -156,7 +156,7 @@ jobs:
   check_windows_compilation:
     name: check project compilation on windows
     needs: [check_coding_style]
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - name: CHECKOUT
         uses: actions/checkout@v4
@@ -171,12 +171,18 @@ jobs:
         with:
           path: |
             build/windows/bin
+            vcpkg
+            vcpkg_installed
           key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json', '**/*.cpp', '**/*.hpp') }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
             ${{ runner.os }}-cmake-build-
 
       - name: RUN COMPILATION
+        env:
+          CL: /MP
+          UseMultiToolTask: true
+          EnforceProcessCountAcrossBuilds: true
         run: |
           .\scripts\compile_project.bat
           if ($LASTEXITCODE -ne 0) {
@@ -231,6 +237,10 @@ jobs:
           ccache --set-config=compression_level=${{ env.CCACHE_COMPRESSLEVEL }}
           ccache --zero-stats
           ccache --show-stats
+
+      - name: SETUP VCPKG
+        run: |
+          echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
 
       - name: RUN UNIT TESTS
         run: |
@@ -373,7 +383,7 @@ jobs:
     name: build windows server package
     needs: [calculate_version]
     if: ${{ github.event_name == 'push' }}
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - name: CHECKOUT
         uses: actions/checkout@v4
@@ -388,12 +398,18 @@ jobs:
         with:
           path: |
             build/windows/bin
+            vcpkg
+            vcpkg_installed
           key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json', '**/*.cpp', '**/*.hpp') }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
             ${{ runner.os }}-cmake-build-
 
       - name: BUILD PROJECT
+        env:
+          CL: /MP
+          UseMultiToolTask: true
+          EnforceProcessCountAcrossBuilds: true
         run: |
           .\scripts\compile_project.bat server
 
@@ -420,7 +436,7 @@ jobs:
     name: build windows client package
     needs: [calculate_version]
     if: ${{ github.event_name == 'push' }}
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - name: CHECKOUT
         uses: actions/checkout@v4
@@ -435,12 +451,18 @@ jobs:
         with:
           path: |
             build/windows/bin
+            vcpkg
+            vcpkg_installed
           key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json', '**/*.cpp', '**/*.hpp') }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
             ${{ runner.os }}-cmake-build-
 
       - name: BUILD PROJECT
+        env:
+          CL: /MP
+          UseMultiToolTask: true
+          EnforceProcessCountAcrossBuilds: true
         run: |
           .\scripts\compile_project.bat client
 
