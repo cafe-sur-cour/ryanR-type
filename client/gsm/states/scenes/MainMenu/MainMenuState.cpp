@@ -223,6 +223,7 @@ MainMenuState::MainMenuState(
 
     _mainMenuLayout = std::make_shared<ui::UILayout>(_resourceManager, menuConfig);
     _mainMenuLayout->setSize(math::Vector2f(576.f, 400.f));
+    _mainMenuLayout->setAutoResize(true);
     _playButton = std::make_shared<ui::Button>(resourceManager);
     _playButton->setText("Not connected");
     _playButton->setSize(math::Vector2f(576.f, 108.f));
@@ -317,6 +318,7 @@ MainMenuState::MainMenuState(
 
     _rightLayout = std::make_shared<ui::UILayout>(_resourceManager, rightConfig);
     _rightLayout->setSize(math::Vector2f(400.f, 236.f));
+    _rightLayout->setAutoResize(true);
 
     _rightLayout->addElement(_requestCodeButton);
     _rightLayout->addElement(_lobbyCodeInput);
