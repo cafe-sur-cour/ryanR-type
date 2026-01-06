@@ -1,0 +1,232 @@
+/*
+** EPITECH PROJECT, 2026
+** R-Type
+** File description:
+** Connection Scene
+*/
+
+#include "ConnectionState.hpp"
+#include <memory>
+#include <string>
+#include <vector>
+#include <iostream>
+#include <optional>
+#include "../../../../../common/interfaces/IWindow.hpp"
+#include "../../../../../common/interfaces/IEvent.hpp"
+#include "../../../../input/MouseInputHandler.hpp"
+#include "../../../../../common/constants.hpp"
+#include "../../../../constants.hpp"
+#include "../../../../../common/gsm/IGameStateMachine.hpp"
+#include "../../../../../common/InputMapping/IInputProvider.hpp"
+#include "../../../../ClientNetwork.hpp"
+#include "../../../../../common/debug.hpp"
+#include "../../../../colors.hpp"
+#include "../../../../SettingsConfig.hpp"
+#include "../MainMenu/MainMenuState.hpp"
+
+namespace gsm {
+
+ConnectionState::ConnectionState(
+    std::shared_ptr<IGameStateMachine> gsm,
+    std::shared_ptr<ResourceManager> resourceManager
+) : AGameState(gsm, resourceManager) {
+    if (!_resourceManager->has<SettingsConfig>()) {
+        _resourceManager->add(std::make_shared<SettingsConfig>());
+    }
+
+    _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
+    _uiManager = std::make_unique<ui::UIManager>();
+
+    auto config = _resourceManager->get<SettingsConfig>();
+    _uiManager->setGlobalScale(config->getUIScale());
+
+    _background = std::make_shared<ui::Background>(_resourceManager);
+    _background->addLayer(constants::UI_BACKGROUND_EARTH_PATH, 0.0f, 0.0f,
+        math::Vector2f(5376.0f, 3584.0f));
+    _uiManager->addElement(_background);
+
+    auto net = this->_resourceManager->get<ClientNetwork>();
+    _ipInput = std::make_shared<ui::TextInput>(_resourceManager);
+    _ipInput->setPlaceholder(constants::IP_PLACEHOLDER);
+    _ipInput->setText(net->getIp());
+    _ipInput->setSize(math::Vector2f(300.f, 50.f));
+    _ipInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_ipInput);
+    });
+
+    _portInput = std::make_shared<ui::TextInput>(_resourceManager);
+    _portInput->setPlaceholder(constants::PORT_PLACEHOLDER);
+    _portInput->setText(std::to_string(net->getPort()));
+    _portInput->setSize(math::Vector2f(300.f, 50.f));
+    _portInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_portInput);
+    });
+
+    _connectButton = std::make_shared<ui::Button>(_resourceManager);
+    _connectButton->setText("Connect");
+    _connectButton->setSize(math::Vector2f(300.f, 108.f));
+
+    _connectButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            std::string ip = _ipInput->getText();
+            std::string portStr = _portInput->getText();
+            try {
+                int port = std::stoi(portStr);
+                network->setIp(ip);
+                network->setPort(port);
+                network->connect();
+            } catch (const std::exception& e) {
+                std::cerr << "Invalid port: " << portStr << std::endl;
+            }
+        }
+    });
+    _connectButton->setOnActivated([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            std::string ip = _ipInput->getText();
+            std::string portStr = _portInput->getText();
+            try {
+                int port = std::stoi(portStr);
+                network->setIp(ip);
+                network->setPort(port);
+                network->connect();
+            } catch (const std::exception& e) {
+                std::cerr << "Invalid port: " << portStr << std::endl;
+            }
+        }
+    });
+
+    ui::LayoutConfig layoutConfig;
+    layoutConfig.direction = ui::LayoutDirection::Vertical;
+    layoutConfig.alignment = ui::LayoutAlignment::Center;
+    layoutConfig.spacing = 20.0f;
+    layoutConfig.padding = math::Vector2f(0.0f, 0.0f);
+    layoutConfig.anchorX = ui::AnchorX::Center;
+    layoutConfig.anchorY = ui::AnchorY::Center;
+    layoutConfig.offset = math::Vector2f(0.0f, 0.0f);
+
+    _layout = std::make_shared<ui::UILayout>(_resourceManager, layoutConfig);
+    _layout->setSize(math::Vector2f(300.f, 300.f));
+
+    _layout->addElement(_ipInput);
+    _layout->addElement(_portInput);
+    _layout->addElement(_connectButton);
+
+    _backButton = std::make_shared<ui::Button>(_resourceManager);
+    _backButton->setText("Back");
+    _backButton->setSize(math::Vector2f(300.f, 50.f));
+    _backButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _backButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _backButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePop();
+        }
+    });
+    _backButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePop();
+        }
+    });
+
+    _layout->addElement(_backButton);
+
+    _uiManager->addElement(_layout);
+}
+
+void ConnectionState::enter() {
+    // Nothing special on enter
+}
+
+void ConnectionState::update(float deltaTime) {
+    auto config = _resourceManager->get<SettingsConfig>();
+    if (_uiManager->getGlobalScale() != config->getUIScale()) {
+        _uiManager->setGlobalScale(config->getUIScale());
+    }
+
+    auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
+    if (eventResult == gfx::EventType::CLOSE) {
+        _resourceManager->get<gfx::IWindow>()->closeWindow();
+        return;
+    }
+
+    bool isTextInputFocused = false;
+    auto navManager = _uiManager->getNavigationManager();
+    if (navManager) {
+        auto focusedElement = navManager->getFocusedElement();
+        if (focusedElement) {
+            isTextInputFocused = std::dynamic_pointer_cast<ui::TextInput>(focusedElement) != nullptr;
+        }
+    }
+
+    bool shouldBlockKeyboardInput = isTextInputFocused &&
+        (eventResult == gfx::EventType::UP ||
+         eventResult == gfx::EventType::DOWN ||
+         eventResult == gfx::EventType::TAB);
+
+    if (!shouldBlockKeyboardInput) {
+        _uiManager->handleKeyboardInput(eventResult);
+    }
+
+    if (eventResult == gfx::EventType::TEXT_INPUT) {
+        _uiManager->handleTextInput(_resourceManager->get<gfx::IEvent>()->getLastTextInput());
+    }
+
+    math::Vector2f mousePos = _mouseHandler->getWorldMousePosition();
+    bool mousePressed = _mouseHandler->isMouseButtonPressed(
+        static_cast<int>(constants::MouseButton::LEFT));
+
+    _uiManager->handleMouseInput(mousePos, mousePressed);
+
+    bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
+    _resourceManager->get<gfx::IWindow>()->setCursor(isHoveringUI);
+
+    if (mousePressed && !isHoveringUI && navManager) {
+        navManager->clearFocus();
+    }
+
+    if (_resourceManager->has<ecs::IInputProvider>() && !isTextInputFocused) {
+        auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
+        // Handle other inputs if needed
+    }
+
+    _uiManager->update(deltaTime);
+    updateUIStatus();
+    renderUI();
+}
+
+void ConnectionState::renderUI() {
+    _uiManager->render();
+}
+
+void ConnectionState::updateUIStatus() {
+    auto network = this->_resourceManager->get<ClientNetwork>();
+    if (!network) return;
+
+    if (network->isConnected()) {
+        if (!_wasConnected) {
+            _wasConnected = true;
+            if (auto stateMachine = this->_gsm.lock()) {
+                stateMachine->requestStatePush(std::make_shared<MainMenuState>(stateMachine, this->_resourceManager));
+            }
+        }
+    }
+}
+
+void ConnectionState::exit() {
+    auto window = _resourceManager->get<gfx::IWindow>();
+    if (window) {
+        window->setCursor(false);
+    }
+
+    if (_uiManager) {
+        _uiManager->clearElements();
+    }
+}
+
+}  // namespace gsm
