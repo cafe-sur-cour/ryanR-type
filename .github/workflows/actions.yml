@@ -123,6 +123,8 @@ jobs:
         with:
           path: |
             build/unix/bin
+            vcpkg
+            vcpkg_installed
           key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json', '**/*.cpp', '**/*.hpp') }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
@@ -142,6 +144,8 @@ jobs:
           name: ubuntu-build-artifacts
           path: |
             build/unix/bin
+            vcpkg
+            vcpkg_installed
             libraries/
             r-type_client
             r-type_server
@@ -196,9 +200,6 @@ jobs:
           packages: cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev ccache
           version: 1.1
 
-      - name: SETUP VCPKG
-        uses: ./.github/actions/setup-vcpkg
-
       - name: DOWNLOAD BUILD ARTIFACTS
         uses: actions/download-artifact@v4
         with:
@@ -226,7 +227,10 @@ jobs:
           mkdir -p ${{ env.CCACHE_DIR }}
           ccache --set-config=cache_dir=${{ env.CCACHE_DIR }}
           ccache --set-config=max_size=${{ env.CCACHE_MAXSIZE }}
+          ccache --set-config=compression=${{ env.CCACHE_COMPRESS }}
+          ccache --set-config=compression_level=${{ env.CCACHE_COMPRESSLEVEL }}
           ccache --zero-stats
+          ccache --show-stats
 
       - name: RUN UNIT TESTS
         run: |
