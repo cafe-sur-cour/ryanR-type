@@ -27,7 +27,7 @@
 ClientNetwork::ClientNetwork() {
     this->_port = 0;
     this->_ip = "";
-    this->_name = "Doof";
+    this->_name = "";
     this->_idClient = 0;
     this->_eventQueue = std::queue<NetworkEvent>();
 
@@ -73,6 +73,7 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_NEXT_LEVEL] = &ClientNetwork::handleNextLevel;
     _packetHandlers[constants::PACKET_LOBBY_CONNECT_VALUE] =
         &ClientNetwork::handleLobbyConnectValue;
+    _packetHandlers[constants::PACKET_CONNECT_USER] = &ClientNetwork::handleConnectUser;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;

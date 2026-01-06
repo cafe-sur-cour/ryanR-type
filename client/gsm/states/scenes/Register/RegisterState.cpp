@@ -12,6 +12,7 @@
 #include <filesystem>
 #include <iostream>
 #include <nlohmann/json.hpp>
+#include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/constants.hpp"
@@ -96,32 +97,13 @@ RegisterState::RegisterState(
             return;
         }
 
-        const std::string filepath = "saves/users.json";
-        nlohmann::json users = utils::SecureJsonManager::readSecureJson(filepath);
-
-        if (!users.is_array()) {
-            users = nlohmann::json::array();
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            network->sendRegisterPacket(username, password);
         }
 
-        for (const auto& user : users) {
-            if (user.is_object() && user.contains("username") && user["username"] == username) {
-                return;
-            }
-        }
-
-        nlohmann::json newUser;
-        newUser["username"] = username;
-        newUser["password"] = password;
-        newUser["wins"] = 0;
-        newUser["highScore"] = 0;
-        newUser["gamesPlayed"] = 0;
-        newUser["timeSpent"] = 0;
-        users.push_back(newUser);
-
-        if (utils::SecureJsonManager::writeSecureJson(filepath, users)) {
-            if (auto stateMachine = this->_gsm.lock()) {
-                stateMachine->requestStatePop();
-            }
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePop();
         }
     });
     _registerButton->setOnActivated([this]() {
@@ -137,32 +119,14 @@ RegisterState::RegisterState(
             return;
         }
 
-        const std::string filepath = "saves/users.json";
-        nlohmann::json users = utils::SecureJsonManager::readSecureJson(filepath);
-
-        if (!users.is_array()) {
-            users = nlohmann::json::array();
+        // Send registration packet to server
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            network->sendRegisterPacket(username, password);
         }
 
-        for (const auto& user : users) {
-            if (user.is_object() && user.contains("username") && user["username"] == username) {
-                return;
-            }
-        }
-
-        nlohmann::json newUser;
-        newUser["username"] = username;
-        newUser["password"] = password;
-        newUser["wins"] = 0;
-        newUser["highScore"] = 0;
-        newUser["gamesPlayed"] = 0;
-        newUser["timeSpent"] = 0;
-        users.push_back(newUser);
-
-        if (utils::SecureJsonManager::writeSecureJson(filepath, users)) {
-            if (auto stateMachine = this->_gsm.lock()) {
-                stateMachine->requestStatePop();
-            }
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePop();
         }
     });
 

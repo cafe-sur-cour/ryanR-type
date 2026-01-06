@@ -84,7 +84,7 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
     }
 
     if (length == 0) {
-        if (type == CLIENT_READY_PACKET) {
+        if (type == CONNECTION_CLIENT_PACKET || type == CLIENT_READY_PACKET) {
             temp = this->_serializer->serializeUInt(length);
             packet.insert(packet.end(), temp.begin(), temp.end());
             return packet;

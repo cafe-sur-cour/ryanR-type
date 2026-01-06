@@ -130,7 +130,6 @@ MainMenuState::MainMenuState(
     _mainMenuLayout = std::make_shared<ui::UILayout>(_resourceManager, menuConfig);
     _mainMenuLayout->setSize(math::Vector2f(576.f, 450.f));
     _usernameButton = std::make_shared<ui::Button>(_resourceManager);
-    _usernameButton->setText("Not connected");
     _usernameButton->setSize(math::Vector2f(576.f, 108.f));
     _usernameButton->setOnRelease([this]() {
         if (auto stateMachine = this->_gsm.lock()) {
@@ -242,7 +241,6 @@ MainMenuState::MainMenuState(
     _headerLayout->setSize(math::Vector2f(80.f, 80.f));
 
     _howToPlayButton = std::make_shared<ui::Button>(_resourceManager);
-    _howToPlayButton->setText("");
     _howToPlayButton->setSize(math::Vector2f(80.f, 80.f));
     _howToPlayButton->setIconPath(constants::HOW_TO_PLAY_PATH);
     _howToPlayButton->setIconSize(math::Vector2f(500.f, 500.f));
@@ -261,7 +259,6 @@ MainMenuState::MainMenuState(
     });
 
     _leaderboardButton = std::make_shared<ui::Button>(_resourceManager);
-    _leaderboardButton->setText("");
     _leaderboardButton->setSize(math::Vector2f(80.f, 80.f));
     _leaderboardButton->setIconPath(constants::LEADERBOARD_PATH);
     _leaderboardButton->setIconSize(math::Vector2f(500.f, 500.f));
@@ -316,14 +313,12 @@ MainMenuState::MainMenuState(
     _disconnectButton->setOnRelease([this]() {
         auto config = this->_resourceManager->get<SettingsConfig>();
         if (config) {
-            config->setUsername("Player");
             config->saveSettings();
         }
     });
     _disconnectButton->setOnActivated([this]() {
         auto config = this->_resourceManager->get<SettingsConfig>();
         if (config) {
-            config->setUsername("Player");
             config->saveSettings();
         }
     });
@@ -438,9 +433,8 @@ void MainMenuState::renderUI() {
 
 void MainMenuState::updateUIStatus() {
     auto config = _resourceManager->get<SettingsConfig>();
-    bool isUserLoggedIn = config && config->getUsername() != "Player";
 
-    if (!isUserLoggedIn) {
+    if (config->getUsername().empty()) {
         if (_usernameButton && _usernameButton->getState() != ui::UIState::Disabled) {
             _usernameButton->setState(ui::UIState::Disabled);
         }
@@ -464,10 +458,8 @@ void MainMenuState::updateUIStatus() {
 
     auto network = this->_resourceManager->get<ClientNetwork>();
     if (!network) {
-        if (isUserLoggedIn) {
+        if (!config->getUsername().empty()) {
             _usernameButton->setText(config->getUsername());
-        } else {
-            _usernameButton->setText("Not connected");
         }
         return;
     }
@@ -480,11 +472,7 @@ void MainMenuState::updateUIStatus() {
     }
 
     if (!network->isConnected()) {
-        if (isUserLoggedIn) {
-            _usernameButton->setText(config->getUsername());
-        } else {
-            _usernameButton->setText("Not connected to server");
-        }
+        _usernameButton->setText("Not connected to server");
     } else {
         _usernameButton->setText(config->getUsername());
     }

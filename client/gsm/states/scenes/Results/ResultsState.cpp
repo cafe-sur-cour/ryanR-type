@@ -78,7 +78,7 @@ void ResultsState::exit() {
 
 void ResultsState::updateUserStats() {
     auto config = _resourceManager->get<SettingsConfig>();
-    if (!config || config->getUsername() == "Player") {
+    if (!config || config->getUsername().empty()) {
         return;
     }
 

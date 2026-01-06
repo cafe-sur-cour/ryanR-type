@@ -74,7 +74,7 @@ private:
     ScreenResolution _screenResolution = ScreenResolution::RES_1920x1080;
     int _targetFPS = 60;
     float _renderQuality = 1.0f;
-    std::string _username = "Player";
+    std::string _username = "";
 };
 
 #endif  // SETTINGSCONFIG_HPP_

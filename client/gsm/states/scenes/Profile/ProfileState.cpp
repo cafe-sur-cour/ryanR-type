@@ -310,7 +310,7 @@ void ProfileState::loadUserData() {
     std::string username = config->getUsername();
     _usernameText->setText("Username: " + username);
 
-    if (username == "Player") {
+    if (username.empty()) {
         _gamesPlayedText->setText("Games Played: 0");
         _winsText->setText("Wins: 0");
         _highScoreText->setText("High Score: 0");
