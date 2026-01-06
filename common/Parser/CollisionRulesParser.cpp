@@ -22,7 +22,7 @@ CollisionRulesData CollisionRulesParser::parseFromFile(const std::string& filePa
     try {
         nlohmann::json json = parser::JsonLoader::loadFromFile(filePath);
         return parseFromJson(json);
-    } catch (const err::ParserError& e) {
+    } catch (const err::ParserError&) {
         throw err::ClientError("Cannot open collision rules file: " +
             filePath, err::ClientError::CAN_NOT_OPEN_FILE);
     }
