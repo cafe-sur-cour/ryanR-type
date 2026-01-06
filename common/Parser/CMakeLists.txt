@@ -1,5 +1,6 @@
 set(PARSER_LIB PARSER)
 
+add_subdirectory(Utils)
 add_subdirectory(ComponentRegistry)
 add_subdirectory(ComposantParser)
 add_subdirectory(EntityParser)
@@ -33,4 +34,5 @@ target_link_libraries(${PARSER_LIB} PUBLIC
     ERROR
     COLLISION_RULES
     nlohmann_json::nlohmann_json
+    parser_utils
 )
