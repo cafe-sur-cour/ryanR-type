@@ -41,6 +41,10 @@ private:
     void showDeleteConfirmationPopup(const std::filesystem::path& levelPath, const std::string& levelName);
     void hideDeleteConfirmationPopup();
     void confirmDelete();
+    void showDuplicateConfirmation(const std::filesystem::path& levelPath, const std::string& levelName);
+    void showDuplicateConfirmationPopup(const std::filesystem::path& levelPath, const std::string& levelName);
+    void hideDuplicateConfirmationPopup();
+    void confirmDuplicate();
     void setMainButtonsEnabled(bool enabled);
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
@@ -51,9 +55,12 @@ private:
     std::vector<std::shared_ptr<ui::Button>> _levelButtons;
     std::vector<std::shared_ptr<ui::Text>> _indexLabels;
     std::shared_ptr<ui::Button> _addLevelButton;
+    std::vector<std::shared_ptr<ui::Button>> _upButtons;
+    std::vector<std::shared_ptr<ui::Button>> _downButtons;
+    std::vector<std::shared_ptr<ui::Button>> _duplicateButtons;
+    std::vector<std::shared_ptr<ui::Button>> _deleteButtons;
     bool _shouldUpdateUI;
 
-    // Delete confirmation popup
     std::shared_ptr<ui::UILayout> _deletePopupOverlay;
     std::shared_ptr<ui::UILayout> _deletePopupLayout;
     std::shared_ptr<ui::Text> _deletePopupText;
@@ -61,6 +68,15 @@ private:
     std::shared_ptr<ui::Button> _deleteConfirmButton;
     std::filesystem::path _pendingDeletePath;
     bool _shouldHideDeletePopup;
+
+    std::shared_ptr<ui::UILayout> _duplicatePopupOverlay;
+    std::shared_ptr<ui::UILayout> _duplicatePopupLayout;
+    std::shared_ptr<ui::Text> _duplicatePopupText;
+    std::shared_ptr<ui::Button> _duplicateCancelButton;
+    std::shared_ptr<ui::Button> _duplicateConfirmButton;
+    std::filesystem::path _pendingDuplicatePath;
+    std::string _pendingDuplicateName;
+    bool _shouldHideDuplicatePopup;
 };
 
 }  // namespace gsm

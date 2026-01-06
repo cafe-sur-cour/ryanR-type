@@ -34,6 +34,7 @@ LevelEditorState::LevelEditorState(
     _uiManager = std::make_unique<ui::UIManager>();
     _shouldUpdateUI = false;
     _shouldHideDeletePopup = false;
+    _shouldHideDuplicatePopup = false;
 
     auto config = _resourceManager->get<SettingsConfig>();
     _uiManager->setGlobalScale(config->getUIScale());
@@ -111,6 +112,11 @@ void LevelEditorState::update(float deltaTime) {
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
     }
 
+    auto navManager = _uiManager->getNavigationManager();
+    if (navManager) {
+        navManager->clearFocus();
+    }
+
     _uiManager->update(deltaTime);
 
     if (_shouldUpdateUI) {
@@ -121,6 +127,11 @@ void LevelEditorState::update(float deltaTime) {
     if (_shouldHideDeletePopup) {
         _shouldHideDeletePopup = false;
         hideDeleteConfirmationPopup();
+    }
+
+    if (_shouldHideDuplicatePopup) {
+        _shouldHideDuplicatePopup = false;
+        hideDuplicateConfirmationPopup();
     }
 
     renderUI();
@@ -135,6 +146,10 @@ void LevelEditorState::createLevelSelectionUI() {
     _uiManager->addElement(_background);
     _levelButtons.clear();
     _indexLabels.clear();
+    _upButtons.clear();
+    _downButtons.clear();
+    _duplicateButtons.clear();
+    _deleteButtons.clear();
 
     auto availableLevels = getAvailableLevels();
 
@@ -148,11 +163,12 @@ void LevelEditorState::createLevelSelectionUI() {
     levelsLayoutConfig.offset = math::Vector2f(0.0f, -50.0f);
 
     auto levelsLayout = std::make_shared<ui::UILayout>(_resourceManager, levelsLayoutConfig);
-    levelsLayout->setSize(math::Vector2f(500.f, 400.f));
+    levelsLayout->setSize(math::Vector2f(800.f, 400.f));
 
     auto titleText = std::make_shared<ui::Text>(_resourceManager);
-    titleText->setText("    Level Editor");
-    titleText->setSize(math::Vector2f(300.f, 40.f));
+    titleText->setText(
+        "Level Editor - Not compatible with controllers (Press BACK to return)");
+    titleText->setSize(math::Vector2f(900.f, 40.f));
     levelsLayout->addElement(titleText);
 
     if (availableLevels.empty()) {
@@ -174,6 +190,11 @@ void LevelEditorState::createLevelSelectionUI() {
                     constants::LEVEL_NAME_FIELD, levelPath.stem().string());
             } catch (const std::exception&) {
                 levelName = levelPath.stem().string();
+            }
+
+            const size_t maxLength = 15;
+            if (levelName.length() > maxLength) {
+                levelName = levelName.substr(0, maxLength - 3) + "...";
             }
 
             ui::LayoutConfig levelLayoutConfig;
@@ -208,9 +229,6 @@ void LevelEditorState::createLevelSelectionUI() {
             levelButton->setOnRelease([this, levelPath]() {
                 // TODO(anyone): Switch to level editing scene
             });
-            levelButton->setOnActivated([this, levelPath]() {
-                // TODO(anyone): Switch to level editing scene
-            });
 
             _levelButtons.push_back(levelButton);
             levelLayout->addElement(levelButton);
@@ -243,13 +261,10 @@ void LevelEditorState::createLevelSelectionUI() {
                     [this, levelPath, nextLevelPath = availableLevels[i - 1].first]() {
                     swapLevels(levelPath, nextLevelPath);
                 });
-                upButton->setOnActivated(
-                    [this, levelPath, nextLevelPath = availableLevels[i - 1].first]() {
-                    swapLevels(levelPath, nextLevelPath);
-                });
             }
 
             controlLayout->addElement(upButton);
+            _upButtons.push_back(upButton);
 
             auto downButton = std::make_shared<ui::Button>(_resourceManager);
             downButton->setText("Down");
@@ -266,13 +281,24 @@ void LevelEditorState::createLevelSelectionUI() {
                     [this, levelPath, nextLevelPath = availableLevels[i + 1].first]() {
                     swapLevels(levelPath, nextLevelPath);
                 });
-                downButton->setOnActivated(
-                    [this, levelPath, nextLevelPath = availableLevels[i + 1].first]() {
-                    swapLevels(levelPath, nextLevelPath);
-                });
             }
 
             controlLayout->addElement(downButton);
+            _downButtons.push_back(downButton);
+
+            auto duplicateButton = std::make_shared<ui::Button>(_resourceManager);
+            duplicateButton->setText("Duplicate");
+            duplicateButton->setSize(math::Vector2f(150.f, 40.f));
+            duplicateButton->setNormalColor(colors::BUTTON_SECONDARY);
+            duplicateButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+            duplicateButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+
+            duplicateButton->setOnRelease([this, levelPath, levelName]() {
+                showDuplicateConfirmation(levelPath, levelName);
+            });
+
+            controlLayout->addElement(duplicateButton);
+            _duplicateButtons.push_back(duplicateButton);
 
             auto deleteButton = std::make_shared<ui::Button>(_resourceManager);
             deleteButton->setText("Delete");
@@ -284,11 +310,9 @@ void LevelEditorState::createLevelSelectionUI() {
             deleteButton->setOnRelease([this, levelPath, levelName]() {
                 showDeleteConfirmation(levelPath, levelName);
             });
-            deleteButton->setOnActivated([this, levelPath, levelName]() {
-                showDeleteConfirmation(levelPath, levelName);
-            });
 
             controlLayout->addElement(deleteButton);
+            _deleteButtons.push_back(deleteButton);
 
             levelLayout->addElement(controlLayout);
 
@@ -432,6 +456,13 @@ void LevelEditorState::showDeleteConfirmation(
     showDeleteConfirmationPopup(levelPath, levelName);
 }
 
+void LevelEditorState::showDuplicateConfirmation(
+    const std::filesystem::path& levelPath,
+    const std::string& levelName
+) {
+    showDuplicateConfirmationPopup(levelPath, levelName);
+}
+
 void LevelEditorState::showDeleteConfirmationPopup(
     const std::filesystem::path& levelPath,
     const std::string& levelName
@@ -516,6 +547,91 @@ void LevelEditorState::showDeleteConfirmationPopup(
     _uiManager->addElement(_deletePopupLayout);
 }
 
+void LevelEditorState::showDuplicateConfirmationPopup(
+    const std::filesystem::path& levelPath,
+    const std::string& levelName
+) {
+    _pendingDuplicatePath = levelPath;
+    _pendingDuplicateName = levelName;
+
+    setMainButtonsEnabled(false);
+
+    ui::LayoutConfig overlayConfig;
+    overlayConfig.direction = ui::LayoutDirection::Vertical;
+    overlayConfig.alignment = ui::LayoutAlignment::Center;
+    overlayConfig.spacing = 0.0f;
+    overlayConfig.padding = math::Vector2f(0.0f, 0.0f);
+    overlayConfig.anchorX = ui::AnchorX::Center;
+    overlayConfig.anchorY = ui::AnchorY::Center;
+    overlayConfig.offset = math::Vector2f(0.0f, 0.0f);
+
+    _duplicatePopupOverlay = std::make_shared<ui::UILayout>(_resourceManager, overlayConfig);
+    _duplicatePopupOverlay->setSize(math::Vector2f(1920.f, 1080.f));
+
+    _uiManager->addElement(_duplicatePopupOverlay);
+
+    ui::LayoutConfig popupConfig;
+    popupConfig.direction = ui::LayoutDirection::Vertical;
+    popupConfig.alignment = ui::LayoutAlignment::Start;
+    popupConfig.spacing = 25.0f;
+    popupConfig.padding = math::Vector2f(60.0f, 40.0f);
+    popupConfig.anchorX = ui::AnchorX::Center;
+    popupConfig.anchorY = ui::AnchorY::Center;
+    popupConfig.offset = math::Vector2f(20.0f, 0.0f);
+    popupConfig.background.enabled = true;
+    popupConfig.background.fillColor = colors::BLACK;
+    popupConfig.background.outlineColor = colors::WHITE;
+    popupConfig.background.cornerRadius = 15.0f;
+
+    _duplicatePopupLayout = std::make_shared<ui::UILayout>(_resourceManager, popupConfig);
+    _duplicatePopupLayout->setSize(math::Vector2f(600.f, 250.f));
+
+    _duplicatePopupText = std::make_shared<ui::Text>(_resourceManager);
+    _duplicatePopupText->setText(
+        "The level will be duplicated\nand added to the\nend of the other levels.");
+    _duplicatePopupText->setSize(math::Vector2f(500.f, 100.f));
+    _duplicatePopupText->setTextColor(gfx::color_t{255, 255, 255, 255});
+    _duplicatePopupLayout->addElement(_duplicatePopupText);
+
+    ui::LayoutConfig buttonsConfig;
+    buttonsConfig.direction = ui::LayoutDirection::Horizontal;
+    buttonsConfig.alignment = ui::LayoutAlignment::Center;
+    buttonsConfig.spacing = 20.0f;
+    buttonsConfig.padding = math::Vector2f(0.0f, 0.0f);
+    buttonsConfig.anchorX = ui::AnchorX::Center;
+    buttonsConfig.anchorY = ui::AnchorY::Center;
+    buttonsConfig.offset = math::Vector2f(0.0f, 0.0f);
+
+    auto buttonsLayout = std::make_shared<ui::UILayout>(_resourceManager, buttonsConfig);
+    buttonsLayout->setSize(math::Vector2f(300.f, 50.f));
+
+    _duplicateCancelButton = std::make_shared<ui::Button>(_resourceManager);
+    _duplicateCancelButton->setText("Cancel");
+    _duplicateCancelButton->setSize(math::Vector2f(150.f, 45.f));
+    _duplicateCancelButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _duplicateCancelButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _duplicateCancelButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _duplicateCancelButton->setOnRelease([this]() {
+        _shouldHideDuplicatePopup = true;
+    });
+    buttonsLayout->addElement(_duplicateCancelButton);
+
+    _duplicateConfirmButton = std::make_shared<ui::Button>(_resourceManager);
+    _duplicateConfirmButton->setText("Duplicate");
+    _duplicateConfirmButton->setSize(math::Vector2f(150.f, 45.f));
+    _duplicateConfirmButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _duplicateConfirmButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _duplicateConfirmButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _duplicateConfirmButton->setOnRelease([this]() {
+        confirmDuplicate();
+    });
+    buttonsLayout->addElement(_duplicateConfirmButton);
+
+    _duplicatePopupLayout->addElement(buttonsLayout);
+
+    _uiManager->addElement(_duplicatePopupLayout);
+}
+
 void LevelEditorState::confirmDelete() {
     if (!_pendingDeletePath.empty()) {
         try {
@@ -527,10 +643,69 @@ void LevelEditorState::confirmDelete() {
     _shouldHideDeletePopup = true;
 }
 
+void LevelEditorState::confirmDuplicate() {
+    if (!_pendingDuplicatePath.empty()) {
+        try {
+            std::ifstream originalFile(_pendingDuplicatePath);
+            nlohmann::json levelData;
+            originalFile >> levelData;
+            originalFile.close();
+
+            auto availableLevels = getAvailableLevels();
+            int nextIndex = 0;
+            for (const auto& [path, index] : availableLevels) {
+                if (index >= nextIndex) {
+                    nextIndex = index + 1;
+                }
+            }
+
+            levelData[constants::LEVEL_INDEX_FIELD] = nextIndex;
+            std::string newName = _pendingDuplicateName + " (copy)";
+            levelData[constants::LEVEL_NAME_FIELD] = newName;
+
+            std::string newFileName = constants::LEVEL_FILE_PREFIX +
+                std::to_string(nextIndex) + constants::LEVEL_FILE_EXTENSION;
+            std::filesystem::path newPath = constants::LEVEL_DIRECTORY + "/" + newFileName;
+
+            std::ofstream newFile(newPath);
+            newFile << levelData.dump(4);
+            newFile.close();
+
+            _shouldUpdateUI = true;
+        } catch (const std::exception&) {
+        }
+    }
+    _shouldHideDuplicatePopup = true;
+}
+
 void LevelEditorState::setMainButtonsEnabled(bool enabled) {
     ui::UIState state = enabled ? ui::UIState::Normal : ui::UIState::Disabled;
 
     for (auto& button : _levelButtons) {
+        if (button) {
+            button->setState(state);
+        }
+    }
+
+    for (auto& button : _upButtons) {
+        if (button) {
+            button->setState(state);
+        }
+    }
+
+    for (auto& button : _downButtons) {
+        if (button) {
+            button->setState(state);
+        }
+    }
+
+    for (auto& button : _duplicateButtons) {
+        if (button) {
+            button->setState(state);
+        }
+    }
+
+    for (auto& button : _deleteButtons) {
         if (button) {
             button->setState(state);
         }
@@ -562,17 +737,49 @@ void LevelEditorState::hideDeleteConfirmationPopup() {
     setMainButtonsEnabled(true);
 }
 
+void LevelEditorState::hideDuplicateConfirmationPopup() {
+    if (_duplicatePopupOverlay) {
+        _uiManager->removeElement(_duplicatePopupOverlay);
+        _duplicatePopupOverlay.reset();
+    }
+    if (_duplicatePopupLayout) {
+        _uiManager->removeElement(_duplicatePopupLayout);
+        _duplicatePopupLayout.reset();
+        _duplicatePopupText.reset();
+        _duplicateCancelButton.reset();
+        _duplicateConfirmButton.reset();
+    }
+    _pendingDuplicatePath.clear();
+    _pendingDuplicateName.clear();
+
+    setMainButtonsEnabled(true);
+}
+
 void LevelEditorState::exit() {
     auto window = _resourceManager->get<gfx::IWindow>();
     window->setCursor(false);
     _uiManager->clearElements();
     _levelButtons.clear();
     _indexLabels.clear();
+    _upButtons.clear();
+    _downButtons.clear();
+    _duplicateButtons.clear();
+    _deleteButtons.clear();
     _background.reset();
     _backButton.reset();
     _addLevelButton.reset();
     _mouseHandler.reset();
     _uiManager.reset();
+    _deletePopupOverlay.reset();
+    _deletePopupLayout.reset();
+    _deletePopupText.reset();
+    _deleteCancelButton.reset();
+    _deleteConfirmButton.reset();
+    _duplicatePopupOverlay.reset();
+    _duplicatePopupLayout.reset();
+    _duplicatePopupText.reset();
+    _duplicateCancelButton.reset();
+    _duplicateConfirmButton.reset();
 }
 
 }  // namespace gsm
