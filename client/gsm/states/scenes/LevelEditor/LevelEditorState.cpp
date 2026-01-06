@@ -38,7 +38,10 @@ LevelEditorState::LevelEditorState(
             return;
         }
     } else {
-        // TODO(anyone): Handle new level creation
+        if (auto stateMachine = gsm) {
+            stateMachine->requestStatePop();
+        }
+        return;
     }
 
     if (!_resourceManager->has<SettingsConfig>()) {
@@ -132,13 +135,12 @@ void LevelEditorState::createUI() {
     _saveButton->setText("Save Level");
     _saveButton->setOnClick([this]() {
         if (!_levelPath) {
-            // TODO(anyone): Save a new level
             return;
         }
 
         std::string levelName = _levelNameInput->getText();
         if (!levelName.empty()) {
-            _levelData["name"] = levelName;
+            _levelData[constants::LEVEL_NAME_FIELD] = levelName;
 
             std::filesystem::path savePath = *_levelPath;
 
@@ -174,7 +176,7 @@ void LevelEditorState::createUI() {
     _levelNameInput = std::make_shared<ui::TextInput>(_resourceManager);
     _levelNameInput->setPosition(math::Vector2f(10.0f, 155.0f));
     _levelNameInput->setSize(math::Vector2f(sidePanelWidth - 25.0f, 30.0f));
-    _levelNameInput->setText(_levelData.value("name", "New Level"));
+    _levelNameInput->setText(_levelData.value(constants::LEVEL_NAME_FIELD, "New Level"));
     _levelNameInput->setPlaceholder("Enter level name...");
     _levelNameInput->setOnTextChanged([this](const std::string& /*text*/) {
         _hasUnsavedChanges = true;
