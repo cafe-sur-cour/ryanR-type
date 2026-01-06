@@ -6,6 +6,9 @@
 */
 
 #include "SpriteComponent.hpp"
+#include <map>
+#include <string>
+#include <memory>
 #include "../../../common/Parser/ComponentRegistry/ComponentRegistrar.hpp"
 #include "../../../common/constants.hpp"
 

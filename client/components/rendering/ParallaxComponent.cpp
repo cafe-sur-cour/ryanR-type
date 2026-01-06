@@ -6,9 +6,12 @@
 */
 
 #include "ParallaxComponent.hpp"
+#include <map>
+#include <string>
+#include <memory>
+#include <nlohmann/json.hpp>
 #include "../../../common/Parser/ComponentRegistry/ComponentRegistrar.hpp"
 #include "../../../common/constants.hpp"
-#include <nlohmann/json.hpp>
 
 REGISTER_COMPONENT(
     ecs::ParallaxComponent,

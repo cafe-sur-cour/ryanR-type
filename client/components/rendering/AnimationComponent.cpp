@@ -6,9 +6,13 @@
 */
 
 #include "AnimationComponent.hpp"
+#include <map>
+#include <string>
+#include <memory>
+#include <vector>
+#include <nlohmann/json.hpp>
 #include "../../../common/Parser/ComponentRegistry/ComponentRegistrar.hpp"
 #include "../../../common/constants.hpp"
-#include <nlohmann/json.hpp>
 
 REGISTER_COMPONENT(
     ecs::AnimationComponent,
@@ -17,7 +21,7 @@ REGISTER_COMPONENT(
         Field{constants::TARGET_FIELD, FieldType::STRING},
         Field{constants::STATES_FIELD, FieldType::JSON},
         Field{constants::INITIALSTATE_FIELD, FieldType::STRING},
-        Field{constants::TRANSITIONS_FIELD, FieldType::JSON, true, 
+        Field{constants::TRANSITIONS_FIELD, FieldType::JSON, true,
               std::make_shared<FieldValue>(nlohmann::json::array())}
     },
     [](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) {
@@ -39,13 +43,15 @@ REGISTER_COMPONENT(
             ecs::AnimationClip clip{
                 texturePath, frameWidth, frameHeight,
                 frameCount, startWidth, startHeight, speed, loop};
-            anim->addState(stateName, std::make_shared<ecs::AnimationClip>(clip));
+            anim->addState(stateName,
+                std::make_shared<ecs::AnimationClip>(clip));
         }
 
         anim->setCurrentState(initialState);
 
         if (fields.count(constants::TRANSITIONS_FIELD)) {
-            auto transitionsJson = std::get<nlohmann::json>(*fields.at(constants::TRANSITIONS_FIELD));
+            auto transitionsJson = std::get<nlohmann::json>(
+                *fields.at(constants::TRANSITIONS_FIELD));
             for (auto& transitionData : transitionsJson) {
                 std::string from = transitionData[constants::FROM_FIELD];
                 std::string to = transitionData[constants::TO_FIELD];

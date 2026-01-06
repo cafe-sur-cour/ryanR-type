@@ -6,9 +6,13 @@
 */
 
 #include "InteractionConfigComponent.hpp"
+#include <map>
+#include <string>
+#include <memory>
+#include <vector>
+#include <nlohmann/json.hpp>
 #include "../../Parser/ComponentRegistry/ComponentRegistrar.hpp"
 #include "../../constants.hpp"
-#include <nlohmann/json.hpp>
 
 REGISTER_COMPONENT(
     ecs::InteractionConfigComponent,

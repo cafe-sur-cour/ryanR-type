@@ -6,6 +6,9 @@
 */
 
 #include "SoundIntentComponent.hpp"
+#include <map>
+#include <string>
+#include <memory>
 #include "../../../common/Parser/ComponentRegistry/ComponentRegistrar.hpp"
 #include "../../../common/constants.hpp"
 
@@ -15,7 +18,7 @@ REGISTER_COMPONENT(
     {
         Field{constants::TARGET_FIELD, FieldType::STRING},
         Field{constants::SOUND_FILE_FIELD, FieldType::STRING},
-        Field{constants::VOLUME_FIELD, FieldType::FLOAT, true, 
+        Field{constants::VOLUME_FIELD, FieldType::FLOAT, true,
               std::make_shared<FieldValue>(100.0f)}
     },
     [](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) {

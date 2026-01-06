@@ -6,6 +6,9 @@
 */
 
 #include "LifetimeComponent.hpp"
+#include <map>
+#include <string>
+#include <memory>
 #include "../../Parser/ComponentRegistry/ComponentRegistrar.hpp"
 #include "../../constants.hpp"
 

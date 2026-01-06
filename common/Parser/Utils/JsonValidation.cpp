@@ -7,6 +7,8 @@
 
 #include "JsonValidation.hpp"
 #include <sstream>
+#include <string>
+#include <vector>
 
 namespace parser {
 

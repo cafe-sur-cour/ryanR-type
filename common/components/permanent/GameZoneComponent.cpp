@@ -6,9 +6,12 @@
 */
 
 #include "GameZoneComponent.hpp"
+#include <map>
+#include <string>
+#include <memory>
+#include <nlohmann/json.hpp>
 #include "../../Parser/ComponentRegistry/ComponentRegistrar.hpp"
 #include "../../constants.hpp"
-#include <nlohmann/json.hpp>
 
 REGISTER_COMPONENT(
     ecs::GameZoneComponent,
@@ -21,7 +24,7 @@ REGISTER_COMPONENT(
         auto zoneRectJson = std::get<nlohmann::json>(*fields.at(constants::ZONERECT_FIELD));
         math::FRect zoneRect(zoneRectJson[constants::X_FIELD],
             zoneRectJson[constants::Y_FIELD],
-            zoneRectJson[constants::WIDTH_FIELD], 
+            zoneRectJson[constants::WIDTH_FIELD],
             zoneRectJson[constants::HEIGHT_FIELD]);
         return std::make_shared<ecs::GameZoneComponent>(zoneRect);
     }

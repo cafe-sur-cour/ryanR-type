@@ -6,6 +6,9 @@
 */
 
 #include "TransformComponent.hpp"
+#include <map>
+#include <string>
+#include <memory>
 #include "../../Parser/ComponentRegistry/ComponentRegistrar.hpp"
 #include "../../constants.hpp"
 
@@ -15,9 +18,9 @@ REGISTER_COMPONENT(
     {
         Field{constants::TARGET_FIELD, FieldType::STRING},
         Field{constants::POSITION_FIELD, FieldType::VECTOR2F},
-        Field{constants::SCALE_FIELD, FieldType::VECTOR2F, true, 
+        Field{constants::SCALE_FIELD, FieldType::VECTOR2F, true,
               std::make_shared<FieldValue>(math::Vector2f(1.0f, 1.0f))},
-        Field{constants::ROTATION_FIELD, FieldType::FLOAT, true, 
+        Field{constants::ROTATION_FIELD, FieldType::FLOAT, true,
               std::make_shared<FieldValue>(0.0f)}
     },
     [](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) {

@@ -8,6 +8,8 @@
 #include "ScriptingComponent.hpp"
 #include <vector>
 #include <string>
+#include <map>
+#include <memory>
 #include <nlohmann/json.hpp>
 #include "../../Parser/ComponentRegistry/ComponentRegistrar.hpp"
 #include "../../constants.hpp"
@@ -64,14 +66,16 @@ REGISTER_COMPONENT(
     {
         Field{constants::TARGET_FIELD, FieldType::STRING},
         Field{constants::SCRIPT_PATH_FIELD, FieldType::STRING},
-        Field{constants::ADDITIONAL_FUNCTIONS_FIELD, FieldType::JSON, true, 
+        Field{constants::ADDITIONAL_FUNCTIONS_FIELD, FieldType::JSON, true,
               std::make_shared<FieldValue>(nlohmann::json::array())}
     },
     [](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) {
         auto scriptPath = std::get<std::string>(*fields.at(constants::SCRIPT_PATH_FIELD));
         std::vector<std::string> additionalFunctions;
-        if (fields.find(constants::ADDITIONAL_FUNCTIONS_FIELD) != fields.end()) {
-            auto functionsJson = std::get<nlohmann::json>(*fields.at(constants::ADDITIONAL_FUNCTIONS_FIELD));
+        if (fields.find(constants::ADDITIONAL_FUNCTIONS_FIELD) !=
+                fields.end()) {
+            auto functionsJson = std::get<nlohmann::json>(
+                *fields.at(constants::ADDITIONAL_FUNCTIONS_FIELD));
             for (const auto& func : functionsJson) {
                 additionalFunctions.push_back(func);
             }
