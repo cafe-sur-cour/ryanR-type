@@ -1,9 +1,9 @@
 {
     "background": "background",
-    "index": 2,
+    "index": 3,
     "mapLength": 6500.0,
     "music": "music",
-    "name": "Level 2",
+    "name": "Level 3",
     "obstacles": [
         {
             "name": "obstacle1",
