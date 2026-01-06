@@ -10,12 +10,15 @@
 
 #include <filesystem>  // NOLINT(build/c++17)
 #include <optional>
+#include <nlohmann/json.hpp>
 #include "../../base/AGameState.hpp"
 #include "../../../../constants.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../ui/elements/Background.hpp"
 #include "../../../../ui/elements/Panel.hpp"
+#include "../../../../ui/elements/focusable/Button.hpp"
+#include "../../../../ui/elements/focusable/TextInput.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -34,6 +37,7 @@ public:
 private:
     void renderUI();
     void createUI();
+    void updateSaveButtonText();
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::unique_ptr<ui::UIManager> _uiManager;
@@ -42,8 +46,14 @@ private:
     std::shared_ptr<ui::Panel> _sidePanel;
     std::shared_ptr<ui::Panel> _bottomPanel;
     std::shared_ptr<ui::Panel> _canvasPanel;
+    std::shared_ptr<ui::Button> _saveButton;
+    std::shared_ptr<ui::Button> _backButton;
+    std::shared_ptr<ui::TextInput> _levelNameInput;
+
+    bool _hasUnsavedChanges = false;
 
     std::optional<std::filesystem::path> _levelPath;
+    nlohmann::json _levelData;
 };
 
 }  // namespace gsm

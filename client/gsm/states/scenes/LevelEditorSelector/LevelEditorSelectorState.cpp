@@ -236,7 +236,8 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
 
             levelButton->setOnRelease([this, levelPath]() {
                 if (auto stateMachine = this->_gsm.lock()) {
-                    stateMachine->requestStatePush(std::make_shared<LevelEditorState>(stateMachine,
+                    stateMachine->requestStatePush(
+                        std::make_shared<LevelEditorState>(stateMachine,
                         this->_resourceManager, levelPath));
                 }
             });
