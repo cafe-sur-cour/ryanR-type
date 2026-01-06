@@ -98,6 +98,22 @@ void UIManager::handleMouseInput(const math::Vector2f& mousePos, bool mousePress
             element->handleInput(mousePos, mousePressed);
         }
     }
+
+    if (mousePressed) {
+        bool clickedOnFocusable = false;
+        for (auto& element : _elements) {
+            if (element && element->isVisible() && element->containsPoint(mousePos)) {
+                auto focusable = std::dynamic_pointer_cast<IFocusable>(element);
+                if (focusable && focusable->canBeFocused()) {
+                    clickedOnFocusable = true;
+                    break;
+                }
+            }
+        }
+        if (!clickedOnFocusable) {
+            _navigationManager->clearFocus();
+        }
+    }
 }
 
 bool UIManager::handleNavigationInput(ecs::InputAction action) {

@@ -138,6 +138,10 @@ void TextInput::setOnSubmit(std::function<void(const std::string&)> callback) {
     _onSubmit = callback;
 }
 
+void TextInput::setOnFocusLost(std::function<void()> callback) {
+    _onFocusLost = callback;
+}
+
 void TextInput::handleInput(const math::Vector2f& mousePos, bool mousePressed) {
     AFocusableElement::handleInput(mousePos, mousePressed);
 }
