@@ -34,5 +34,5 @@ target_link_libraries(${PARSER_LIB} PUBLIC
     ERROR
     COLLISION_RULES
     nlohmann_json::nlohmann_json
-    parser_utils
+    PARSER_UTILS
 )

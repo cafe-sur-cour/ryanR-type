@@ -202,11 +202,11 @@ add_test(NAME SpawnSystemTests COMMAND SpawnSystemTests)
 add_executable(JsonLoaderTests 
     common/Parser/Utils/JsonLoaderTest.cpp
 )
-target_link_libraries(JsonLoaderTests parser_utils ERROR GTest::gtest GTest::gtest_main nlohmann_json::nlohmann_json)
+target_link_libraries(JsonLoaderTests PARSER_UTILS ERROR GTest::gtest GTest::gtest_main nlohmann_json::nlohmann_json)
 add_test(NAME JsonLoaderTests COMMAND JsonLoaderTests)
 
 add_executable(JsonValidationTests 
     common/Parser/Utils/JsonValidationTest.cpp
 )
-target_link_libraries(JsonValidationTests parser_utils GTest::gtest GTest::gtest_main nlohmann_json::nlohmann_json)
+target_link_libraries(JsonValidationTests PARSER_UTILS GTest::gtest GTest::gtest_main nlohmann_json::nlohmann_json)
 add_test(NAME JsonValidationTests COMMAND JsonValidationTests)

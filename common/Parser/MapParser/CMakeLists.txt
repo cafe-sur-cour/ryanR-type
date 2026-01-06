@@ -20,5 +20,6 @@ target_link_libraries(${MAP_PARSER_LIB} PUBLIC
     ECS
     ENTITY_PREFAB_MANAGER
     ERROR
+    PARSER_UTILS
     nlohmann_json::nlohmann_json
 )

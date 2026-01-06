@@ -1,10 +1,3 @@
-cmake_minimum_required(VERSION 3.17)
-
-project(ComponentRegistry)
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 set(SOURCES
     ComponentRegistry.cpp
 )
@@ -16,6 +9,8 @@ set(HEADERS
 )
 
 add_library(ComponentRegistry STATIC ${SOURCES} ${HEADERS})
+
+set_target_properties(ComponentRegistry PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(ComponentRegistry PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
