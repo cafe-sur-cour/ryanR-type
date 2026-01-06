@@ -42,17 +42,17 @@ std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::pa
     const std::string& componentName, const nlohmann::json& componentData) {
 
     if (_componentDefinitions->find(componentName) == _componentDefinitions->end()) {
-        bool shouldWarn = true;
+        bool isError = true;
         if (componentData.contains(constants::TARGET_FIELD) && _shouldParseCallback) {
             std::map<std::string, std::shared_ptr<FieldValue>> tempFields;
             tempFields[constants::TARGET_FIELD] = std::make_shared<FieldValue>(
                 componentData[constants::TARGET_FIELD].get<std::string>());
-            shouldWarn = _shouldParseCallback(tempFields);
+            isError = _shouldParseCallback(tempFields);
         }
 
-        if (shouldWarn) {
-            std::cerr << "[Parser Warning] Unknown component: "
-                << componentName << " (skipping)" << std::endl;
+        if (isError) {
+            throw err::ParserError("Unknown component: " + componentName,
+                err::ParserError::UNKNOWN);
         }
         return {nullptr, std::type_index(typeid(void))};
     }
