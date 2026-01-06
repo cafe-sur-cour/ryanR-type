@@ -153,11 +153,13 @@ void LevelEditorState::createLevelSelectionUI() {
     _deleteButtons.clear();
 
     auto availableLevels = getAvailableLevels();
-    int totalLevels = availableLevels.size();
-    int start = _currentPage * _levelsPerPage;
-    int end = std::min(start + _levelsPerPage, totalLevels);
-    size_t startIdx = static_cast<size_t>(start);
-    size_t endIdx = static_cast<size_t>(end);
+    int totalLevels = static_cast<int>(availableLevels.size());
+    size_t start =
+        static_cast<size_t>(_currentPage) * static_cast<size_t>(_levelsPerPage);
+    size_t end =
+        std::min(start + static_cast<size_t>(_levelsPerPage), static_cast<size_t>(totalLevels));
+    size_t startIdx = start;
+    size_t endIdx = end;
 
     ui::LayoutConfig levelsLayoutConfig;
     levelsLayoutConfig.direction = ui::LayoutDirection::Vertical;
