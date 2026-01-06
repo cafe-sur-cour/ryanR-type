@@ -140,6 +140,13 @@ namespace constants {
     const std::string REPLAY_TYPE_RECTANGLE = "rectangle";
     const std::string REPLAY_TYPE_HITBOX = "hitbox";
     const std::string REPLAY_TYPE_SOUND = "sound";
+
+    /* Level Constants */
+    const std::string LEVEL_DIRECTORY = "configs/map";
+    const std::string LEVEL_FILE_PREFIX = "level";
+    const std::string LEVEL_FILE_EXTENSION = ".json";
+    const std::string LEVEL_INDEX_FIELD = "index";
+    const std::string LEVEL_NAME_FIELD = "name";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
