@@ -1,5 +1,6 @@
 set(PARSER_LIB PARSER)
 
+add_subdirectory(ComponentRegistry)
 add_subdirectory(ComposantParser)
 add_subdirectory(EntityParser)
 add_subdirectory(MapParser)
@@ -13,7 +14,6 @@ set(PARSER_SOURCES
 set(PARSER_HEADERS
     Parser.hpp
     ParserParam.hpp
-    ComponentParserCreators.cpp
     CollisionRulesParser.hpp
 )
 
@@ -25,6 +25,7 @@ target_include_directories(${PARSER_LIB} PUBLIC
 
 target_link_libraries(${PARSER_LIB} PUBLIC
     PREFAB
+    ComponentRegistry
     COMPOSANT_PARSER
     ENTITY_PARSER
     MAP_PARSER
