@@ -235,7 +235,10 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
             levelButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
 
             levelButton->setOnRelease([this, levelPath]() {
-                // TODO(anyone): Switch to level editing scene
+                if (auto stateMachine = this->_gsm.lock()) {
+                    stateMachine->requestStatePush(std::make_shared<LevelEditorState>(stateMachine,
+                        this->_resourceManager, levelPath));
+                }
             });
 
             _levelButtons.push_back(levelButton);
