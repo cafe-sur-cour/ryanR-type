@@ -69,6 +69,8 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_WHOAMI] = &ClientNetwork::handleWhoAmI;
     _packetHandlers[constants::PACKET_SERVER_STATUS] = &ClientNetwork::handleServerStatus;
     _packetHandlers[constants::PACKET_SEND_LOBBY_CODE] = &ClientNetwork::handleCode;
+    _packetHandlers[constants::PACKET_LEVEL_COMPLETE] = &ClientNetwork::handleLevelComplete;
+    _packetHandlers[constants::PACKET_NEXT_LEVEL] = &ClientNetwork::handleNextLevel;
     _packetHandlers[constants::PACKET_LOBBY_CONNECT_VALUE] =
         &ClientNetwork::handleLobbyConnectValue;
 
