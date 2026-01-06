@@ -367,7 +367,7 @@ jobs:
 
   build_windows_server_package:
     name: build windows server package
-    needs: [calculate_version, check_windows_compilation]
+    needs: [calculate_version]
     if: ${{ github.event_name == 'push' }}
     runs-on: windows-latest
     steps:
@@ -414,7 +414,7 @@ jobs:
 
   build_windows_client_package:
     name: build windows client package
-    needs: [calculate_version, check_windows_compilation]
+    needs: [calculate_version]
     if: ${{ github.event_name == 'push' }}
     runs-on: windows-latest
     steps:
