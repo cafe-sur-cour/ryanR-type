@@ -26,7 +26,7 @@ void ecs::ScriptingComponent::init(sol::state& lua, size_t entityId) {
         sol::table metatable = lua.create_table();
         metatable["__index"] = lua["_G"];
         _env[sol::metatable_key] = metatable;
-        sol::protected_function chunk = script;
+        sol::protected_function chunk = script.get<sol::protected_function>();
         sol::protected_function_result result = chunk(_env);
         if (!result.valid()) {
             sol::error err = result;
@@ -38,16 +38,13 @@ void ecs::ScriptingComponent::init(sol::state& lua, size_t entityId) {
     std::vector<std::string> defaults = {constants::INIT_FUNCTION, constants::UPDATE_FUNCTION};
     defaults.insert(defaults.end(), _additionalFunctions.begin(), _additionalFunctions.end());
     for (const auto& def : defaults) {
-        auto fn_proxy = _env[def];
-        if (fn_proxy.valid()) {
-            sol::function fn = fn_proxy.get<sol::function>();
-            _functions[def] = fn;
-        }
+        sol::optional<sol::protected_function> fn = _env[def];
+        if (fn)
+            _functions[def] = *fn;
     }
-    auto init_func_proxy = _env[constants::INIT_FUNCTION];
-    if (init_func_proxy.valid()) {
-        sol::function initFunc = init_func_proxy.get<sol::function>();
-        sol::protected_function_result result = initFunc(entityId);
+    sol::optional<sol::protected_function> initFunc = _env[constants::INIT_FUNCTION];
+    if (initFunc) {
+        sol::protected_function_result result = (*initFunc)(entityId);
         if (!result.valid()) {
             sol::error err = result;
             throw err::ScriptingError("Failed to run init function: " +

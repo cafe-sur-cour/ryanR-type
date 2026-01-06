@@ -17,6 +17,7 @@
 #include "DeathAnimationSpawner.hpp"
 #include "gsm/states/scenes/InGame/InGameState.hpp"
 #include "gsm/states/scenes/Results/ResultsState.hpp"
+#include "gsm/states/scenes/LevelComplete/LevelCompleteState.hpp"
 #include "./components/rendering/AnimationComponent.hpp"
 
 /* Packet Handlers */
@@ -375,5 +376,42 @@ void ClientNetwork::handleLobbyConnectValue() {
         this->_lobbyCode = "";
         _isConnectedToLobby = false;
         _isLobbyMaster = false;
+    }
+}
+
+void ClientNetwork::handleLevelComplete() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received level complete packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    if (this->_gsm) {
+        this->_gsm->requestStateChange(
+            std::make_shared<gsm::LevelCompleteState>
+                (this->_gsm, this->_resourceManager)
+        );
+    }
+}
+
+void ClientNetwork::handleNextLevel() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received next level packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    _serverToLocalEntityMap.clear();
+
+    if (this->_resourceManager->has<ecs::Registry>()) {
+        auto registry = this->_resourceManager->get<ecs::Registry>();
+        if (registry) {
+            registry->clearAllEntities();
+        }
+    }
+
+    if (this->_gsm) {
+        this->_gsm->requestStateChange(
+            std::make_shared<gsm::InGameState>
+                (this->_gsm, this->_resourceManager)
+        );
     }
 }

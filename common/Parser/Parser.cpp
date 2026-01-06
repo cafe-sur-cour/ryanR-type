@@ -93,6 +93,10 @@ void Parser::parseMapFromFile(const std::string& filePath) {
     _mapParser->parseMapFromFile(filePath);
 }
 
+void Parser::parseMapFromJson(const nlohmann::json& mapJson) {
+    _mapParser->parseMap(mapJson);
+}
+
 std::shared_ptr<MapParser> Parser::getMapParser() const {
     return _mapParser;
 }
