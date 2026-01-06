@@ -39,6 +39,7 @@ private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::shared_ptr<ui::Button> _usernameButton;
     std::shared_ptr<ui::Button> _settingsButton;
+    std::shared_ptr<ui::Button> _replayButton;
     std::shared_ptr<ui::Button> _quitButton;
     std::shared_ptr<ui::Button> _connectButton;
     std::shared_ptr<ui::Button> _requestCodeButton;

@@ -78,6 +78,66 @@ namespace constants {
     /* Home page input place holders */
     const std::string IP_PLACEHOLDER = "Enter an IP address";
     const std::string PORT_PLACEHOLDER = "Enter a port";
+
+     /* Replay Constants */
+     constexpr int MAX_REPLAY_FILES = 5;
+    const std::string REPLAY_DIRECTORY = "saves/replays";
+    const std::string REPLAY_FILE_PREFIX = "replay";
+    const std::string REPLAY_BUTTON_TEXT = "Replay";
+    const std::string REPLAY_TOTAL_TIME = "totalTime";
+    const std::string REPLAY_RENDERABLES = "renderables";
+    const std::string REPLAY_GAMEZONE = "gamezone";
+    const std::string REPLAY_AUDIO = "audio";
+    const std::string REPLAY_TYPE = "type";
+    const std::string REPLAY_TRANSFORM = "transform";
+    const std::string REPLAY_X = "x";
+    const std::string REPLAY_Y = "y";
+    const std::string REPLAY_WIDTH = "width";
+    const std::string REPLAY_HEIGHT = "height";
+    const std::string REPLAY_ROTATION = "r";
+    const std::string REPLAY_SCALE_X = "sx";
+    const std::string REPLAY_SCALE_Y = "sy";
+    const std::string REPLAY_COLOR = "color";
+    const std::string REPLAY_RED = "r";
+    const std::string REPLAY_GREEN = "g";
+    const std::string REPLAY_BLUE = "b";
+    const std::string REPLAY_ALPHA = "a";
+    const std::string REPLAY_SPRITE = "sprite";
+    const std::string REPLAY_TEXTURE = "texture";
+    const std::string REPLAY_OFFSET_X = "offsetX";
+    const std::string REPLAY_OFFSET_Y = "offsetY";
+    const std::string REPLAY_PARALLAX = "parallax";
+    const std::string REPLAY_BASE_SCROLL_SPEED = "baseScrollSpeed";
+    const std::string REPLAY_DIRECTION = "direction";
+    const std::string REPLAY_LAYERS = "layers";
+    const std::string REPLAY_NAME = "name";
+    const std::string REPLAY_FILE_PATH = "filePath";
+    const std::string REPLAY_SPEED_MULTIPLIER = "speedMultiplier";
+    const std::string REPLAY_SCALE = "scale";
+    const std::string REPLAY_SCALE_MODE = "scaleMode";
+    const std::string REPLAY_SOURCE_SIZE = "sourceSize";
+    const std::string REPLAY_REPEAT = "repeat";
+    const std::string REPLAY_Z_INDEX = "zIndex";
+    const std::string REPLAY_CURRENT_OFFSET = "currentOffset";
+    const std::string REPLAY_HEALTH = "health";
+    const std::string REPLAY_CURRENT = "current";
+    const std::string REPLAY_MAX = "max";
+    const std::string REPLAY_COLLIDER = "collider";
+    const std::string REPLAY_SIZE_X = "sizeX";
+    const std::string REPLAY_SIZE_Y = "sizeY";
+    const std::string REPLAY_TEXT = "text";
+    const std::string REPLAY_CONTENT = "content";
+    const std::string REPLAY_FONT_PATH = "fontPath";
+    const std::string REPLAY_RECTANGLE = "rectangle";
+    const std::string REPLAY_HITBOX = "hitbox";
+    const std::string REPLAY_SOUND_PATH = "soundPath";
+    const std::string REPLAY_VOLUME = "volume";
+    const std::string REPLAY_TYPE_PARALLAX = "parallax";
+    const std::string REPLAY_TYPE_HEALTHBAR = "healthbar";
+    const std::string REPLAY_TYPE_TEXT = "text";
+    const std::string REPLAY_TYPE_RECTANGLE = "rectangle";
+    const std::string REPLAY_TYPE_HITBOX = "hitbox";
+    const std::string REPLAY_TYPE_SOUND = "sound";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
