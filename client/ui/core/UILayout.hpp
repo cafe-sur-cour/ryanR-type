@@ -12,6 +12,9 @@
 #include <vector>
 #include "../elements/base/UIElement.hpp"
 #include "../../../common/types/Vector2f.hpp"
+#include "../../../common/interfaces/IWindow.hpp"
+
+using namespace ::gfx;
 
 namespace ui {
 
@@ -49,6 +52,13 @@ struct LayoutConfig {
     bool autoResize = false;
     AnchorX anchorX = AnchorX::None;
     AnchorY anchorY = AnchorY::None;
+
+    struct BackgroundConfig {
+        bool enabled = false;
+        color_t fillColor = {0, 0, 0, 0}; // Transparent
+        color_t outlineColor = {0, 0, 0, 0}; // Transparent
+        float cornerRadius = 0.0f;
+    } background;
 };
 
 class UILayout : public UIElement {
@@ -67,6 +77,11 @@ class UILayout : public UIElement {
         void setOffset(const math::Vector2f& offset);
         void setAutoResize(bool autoResize);
         void setAnchor(AnchorX anchorX, AnchorY anchorY);
+
+        void setBackgroundEnabled(bool enabled);
+        void setBackgroundFillColor(const color_t& color);
+        void setBackgroundOutlineColor(const color_t& color);
+        void setBackgroundCornerRadius(float radius);
 
         LayoutDirection getDirection() const;
         LayoutAlignment getAlignment() const;

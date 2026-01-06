@@ -88,6 +88,22 @@ void UILayout::setAnchor(AnchorX anchorX, AnchorY anchorY) {
     applyAnchor();
 }
 
+void UILayout::setBackgroundEnabled(bool enabled) {
+    _config.background.enabled = enabled;
+}
+
+void UILayout::setBackgroundFillColor(const color_t& color) {
+    _config.background.fillColor = color;
+}
+
+void UILayout::setBackgroundOutlineColor(const color_t& color) {
+    _config.background.outlineColor = color;
+}
+
+void UILayout::setBackgroundCornerRadius(float radius) {
+    _config.background.cornerRadius = radius;
+}
+
 LayoutDirection UILayout::getDirection() const {
     return _config.direction;
 }
@@ -348,6 +364,33 @@ math::Vector2f UILayout::calculateElementPosition(size_t index, float maxCrossSi
 void UILayout::render() {
     if (!_visible) {
         return;
+    }
+
+    // Draw background if enabled
+    if (_config.background.enabled) {
+        auto window = _resourceManager.lock()->get<IWindow>();
+        math::Vector2f absSize = getAbsoluteSize();
+        math::Vector2f absPos = getAbsolutePosition();
+
+        // Draw filled background
+        if (_config.background.fillColor.a > 0) {
+            window->drawRoundedRectangleFilled(
+                _config.background.fillColor,
+                {static_cast<size_t>(absPos.getX()), static_cast<size_t>(absPos.getY())},
+                {static_cast<size_t>(absSize.getX()), static_cast<size_t>(absSize.getY())},
+                _config.background.cornerRadius
+            );
+        }
+
+        // Draw outline
+        if (_config.background.outlineColor.a > 0) {
+            window->drawRoundedRectangleOutline(
+                _config.background.outlineColor,
+                {static_cast<size_t>(absPos.getX()), static_cast<size_t>(absPos.getY())},
+                {static_cast<size_t>(absSize.getX()), static_cast<size_t>(absSize.getY())},
+                _config.background.cornerRadius
+            );
+        }
     }
 
     UIElement::render();
