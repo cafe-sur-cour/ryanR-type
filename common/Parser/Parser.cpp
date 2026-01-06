@@ -14,12 +14,16 @@
 #include "../Prefab/ParsedEntityPrefab.hpp"
 #include "../Error/ParserError.hpp"
 #include "../constants.hpp"
+#include "ComponentRegistry/ComponentRegistry.hpp"
 
 Parser::Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type,
     std::shared_ptr<ecs::Registry> registry) :
     _prefabManager(prefab), _parsingType(type) {
-    instanciateComponentDefinitions();
-    instanciateComponentCreators();
+    auto& componentRegistry = parser::ComponentRegistry::getInstance();
+    _componentDefinitions = componentRegistry.getComponentDefinitions();
+    _componentCreators = componentRegistry.getComponentCreators();
+    _componentAdders = componentRegistry.getComponentAdders();
+    
     _mapParser = std::make_shared<MapParser>(_prefabManager, registry);
     auto shouldParseCallback =
         [this](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> bool {
