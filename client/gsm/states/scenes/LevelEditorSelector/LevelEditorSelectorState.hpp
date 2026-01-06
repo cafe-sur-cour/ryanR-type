@@ -20,6 +20,7 @@
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../SettingsConfig.hpp"
+#include "../LevelEditor/LevelEditorState.hpp"
 
 namespace gsm {
 
