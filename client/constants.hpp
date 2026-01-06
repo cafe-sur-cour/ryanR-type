@@ -13,6 +13,7 @@
 namespace constants {
     /* Timeout */
     constexpr int NETWORK_TIMEOUT = 5;
+    constexpr int CONNECTION_ATTEMPT_TIMEOUT = 5;
 
     /* Window */
     constexpr int WINDOW_WIDTH = 1920;
