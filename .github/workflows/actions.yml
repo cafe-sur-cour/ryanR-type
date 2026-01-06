@@ -182,7 +182,7 @@ jobs:
 
   run_all_tests:
     name: run all tests
-    needs: [check_ubuntu_compilation, check_windows_compilation]
+    needs: [check_ubuntu_compilation]
     runs-on: ubuntu-latest
     steps:
       - name: CHECKOUT
