@@ -13,6 +13,7 @@
 #include "../../../common/components/tags/GameEndTag.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/components/permanent/ColliderComponent.hpp"
+#include "../../../common/Parser/MapParser/MapHandler.hpp"
 
 namespace ecs {
 
@@ -71,7 +72,16 @@ void EndOfMapDetectionSystem::update(
 
             if (collides(*playerTransform, *playerCollider, *endTransform, *endCollider)) {
                 if (resourceManager->has<gsm::GameStateType>()) {
-                    *resourceManager->get<gsm::GameStateType>() = gsm::GAME_END;
+                    if (resourceManager->has<MapHandler>()) {
+                        auto mapHandler = resourceManager->get<MapHandler>();
+                        if (mapHandler->isLastMap()) {
+                            *resourceManager->get<gsm::GameStateType>() = gsm::GAME_END;
+                        } else {
+                            *resourceManager->get<gsm::GameStateType>() = gsm::LEVEL_COMPLETE;
+                        }
+                    } else {
+                        *resourceManager->get<gsm::GameStateType>() = gsm::GAME_END;
+                    }
                 }
                 return;
             }

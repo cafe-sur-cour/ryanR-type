@@ -339,6 +339,9 @@ bool registerDefaultPacketHandlers(
     registerSingleUCharPacket(packet, ser, LOBBY_CONNECT_VALUE,
         LENGTH_CONNECT_TO_LOBBY_PACKET);
 
+    registerOptionalULongPacket(packet, ser, LEVEL_COMPLETE_PACKET);
+    registerOptionalULongPacket(packet, ser, NEXT_LEVEL_PACKET);
+
     packet->registerLength(LOBBY_CONNECT_VALUE, LENGTH_CONNECT_TO_LOBBY_PACKET);
     packet->registerLength(REQUEST_LOBBY_PACKET, LENGTH_REQUEST_LOBBY_PACKET);
     packet->registerLength(SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
