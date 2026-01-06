@@ -66,6 +66,10 @@ namespace colors {
     const gfx::color_t UI_HOVER = {0, 150, 255};                                // Bright blue hover
     const gfx::color_t UI_FOCUSED = {0, 200, 255};                              // Cyan focused
     const gfx::color_t UI_DISABLED = {100, 100, 100};                           // Gray disabled
+
+    // Level Editor Panel Colors
+    const gfx::color_t LEVEL_EDITOR_PANEL_BACKGROUND = {15, 10, 25};            // Dark with slight purple tint
+    const gfx::color_t LEVEL_EDITOR_PANEL_BORDER = {200, 200, 200};             // Light gray border
 }
 
 #endif  // COLORS_HPP_
