@@ -198,7 +198,8 @@ void ClientNetwork::sendMasterStartGame() {
     this->_sequenceNumber++;
 }
 
-void ClientNetwork::sendRegisterPacket(const std::string &username, const std::string &password) {
+void ClientNetwork::sendRegisterPacket(const std::string &username,
+    const std::string &password) {
     if (!_network) {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);

@@ -249,12 +249,14 @@ MainMenuState::MainMenuState(
     _howToPlayButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _howToPlayButton->setOnRelease([this]() {
         if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_unique<HowToPlayState>(stateMachine, this->_resourceManager));
+            stateMachine->requestStatePush(std::make_unique<HowToPlayState>(stateMachine,
+                this->_resourceManager));
         }
     });
     _howToPlayButton->setOnActivated([this]() {
         if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_unique<HowToPlayState>(stateMachine, this->_resourceManager));
+            stateMachine->requestStatePush(std::make_unique<HowToPlayState>(stateMachine,
+                this->_resourceManager));
         }
     });
 

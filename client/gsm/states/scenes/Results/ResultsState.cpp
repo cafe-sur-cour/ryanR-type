@@ -9,7 +9,6 @@
 #include <memory>
 #include <string>
 #include <fstream>
-#include <filesystem>
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include "../../../common/constants.hpp"
@@ -80,7 +79,7 @@ void ResultsState::updateUserStats() {
     if (!config || config->getUsername().empty()) {
         return;
     }
-    (void)_score; // To avoid unused variable warning for now
+    (void)_score;
 }
 
 }  // namespace gsm
