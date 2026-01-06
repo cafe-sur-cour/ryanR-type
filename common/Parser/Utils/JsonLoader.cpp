@@ -8,7 +8,8 @@
 #include "JsonLoader.hpp"
 #include <fstream>
 #include <sstream>
-#include <filesystem>
+#include <filesystem>  // NOLINT(build/c++17)
+#include <string>
 #include "../../Error/ParserError.hpp"
 
 namespace parser {
@@ -87,7 +88,7 @@ JsonLoader::LoadResult JsonLoader::tryParseFromString(const std::string& jsonStr
 }
 
 bool JsonLoader::fileExists(const std::string& filePath) {
-    return std::filesystem::exists(filePath) && 
+    return std::filesystem::exists(filePath) &&
            std::filesystem::is_regular_file(filePath);
 }
 

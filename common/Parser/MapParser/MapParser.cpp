@@ -44,7 +44,7 @@ MapParser::~MapParser() {
 
 void MapParser::parseMapFromFile(const std::string &filePath) {
     nlohmann::json mapJson = parser::JsonLoader::loadFromFile(filePath);
-    
+
     if (!this->_mapJson.is_null())
         this->_mapJson.clear();
     this->_mapJson = mapJson;
@@ -339,7 +339,7 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
         for (const auto& enemyGroup : wave[constants::ENEMIES_FIELD]) {
             auto groupValidation = parser::JsonValidation::hasRequiredFields(
                 enemyGroup,
-                {constants::TYPE_FIELD, constants::DISTRIBUTIONX_FIELD, 
+                {constants::TYPE_FIELD, constants::DISTRIBUTIONX_FIELD,
                  constants::DISTRIBUTIONY_FIELD, constants::COUNT_FIELD},
                 "Enemy group in wave " + std::to_string(waveIndex)
             );

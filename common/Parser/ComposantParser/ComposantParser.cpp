@@ -49,9 +49,10 @@ std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::pa
                 componentData[constants::TARGET_FIELD].get<std::string>());
             shouldWarn = _shouldParseCallback(tempFields);
         }
-        
+
         if (shouldWarn) {
-            std::cerr << "[Parser Warning] Unknown component: " << componentName << " (skipping)" << std::endl;
+            std::cerr << "[Parser Warning] Unknown component: "
+                << componentName << " (skipping)" << std::endl;
         }
         return {nullptr, std::type_index(typeid(void))};
     }

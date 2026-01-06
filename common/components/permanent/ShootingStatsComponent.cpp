@@ -6,6 +6,9 @@
 */
 
 #include "ShootingStatsComponent.hpp"
+#include <map>
+#include <string>
+#include <memory>
 #include "../../Parser/ComponentRegistry/ComponentRegistrar.hpp"
 #include "../../constants.hpp"
 
@@ -15,11 +18,11 @@ REGISTER_COMPONENT(
     {
         Field{constants::TARGET_FIELD, FieldType::STRING},
         Field{constants::FIRERATE_FIELD, FieldType::FLOAT},
-        Field{constants::SHOTCOUNT_FIELD, FieldType::INT, true, 
+        Field{constants::SHOTCOUNT_FIELD, FieldType::INT, true,
               std::make_shared<FieldValue>(1)},
-        Field{constants::ANGLEOFFSET_FIELD, FieldType::FLOAT, true, 
+        Field{constants::ANGLEOFFSET_FIELD, FieldType::FLOAT, true,
               std::make_shared<FieldValue>(0.0f)},
-        Field{constants::SPREADANGLE_FIELD, FieldType::FLOAT, true, 
+        Field{constants::SPREADANGLE_FIELD, FieldType::FLOAT, true,
               std::make_shared<FieldValue>(0.0f)}
     },
     [](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) {

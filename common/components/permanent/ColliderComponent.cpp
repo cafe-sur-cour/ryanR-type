@@ -9,6 +9,9 @@
 #include <algorithm>
 #include <limits>
 #include <vector>
+#include <map>
+#include <string>
+#include <memory>
 #include "../../Parser/ComponentRegistry/ComponentRegistrar.hpp"
 #include "../../constants.hpp"
 
@@ -103,7 +106,7 @@ REGISTER_COMPONENT(
     constants::COLLIDERCOMPONENT,
     {
         Field{constants::TARGET_FIELD, FieldType::STRING},
-        Field{constants::OFFSET_FIELD, FieldType::VECTOR2F, true, 
+        Field{constants::OFFSET_FIELD, FieldType::VECTOR2F, true,
               std::make_shared<FieldValue>(math::Vector2f(0.0f, 0.0f))},
         Field{constants::SIZE_FIELD, FieldType::VECTOR2F},
         Field{constants::TYPE_FIELD, FieldType::STRING}

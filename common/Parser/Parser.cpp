@@ -23,7 +23,7 @@ Parser::Parser(std::shared_ptr<EntityPrefabManager> prefab, ParsingType type,
     _componentDefinitions = componentRegistry.getComponentDefinitions();
     _componentCreators = componentRegistry.getComponentCreators();
     _componentAdders = componentRegistry.getComponentAdders();
-    
+
     _mapParser = std::make_shared<MapParser>(_prefabManager, registry);
     auto shouldParseCallback =
         [this](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) -> bool {

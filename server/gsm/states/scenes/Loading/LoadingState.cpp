@@ -31,7 +31,7 @@ void LoadingState::enter() {
     auto parser = _resourceManager->get<Parser>();
     if (parser && mapHandler && mapHandler->getTotalMaps() > 0) {
         nlohmann::json currentMap = mapHandler->getCurrentMapJson();
-        parser->parseMapFromJson(currentMap);
+        parser->getMapParser()->setMapJson(currentMap);
     }
     *(_resourceManager->get<gsm::GameStateType>()) = gsm::LOADING;
     if (auto stateMachine = _gsm.lock()) {
