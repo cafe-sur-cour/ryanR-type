@@ -9,6 +9,10 @@ on:
 
 env:
   MIRROR_URL: "git@github.com:EpitechPGE3-2025/G-CPP-500-NAN-5-2-rtype-2.git"
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_MAXSIZE: 500M
+  CCACHE_COMPRESS: true
+  CCACHE_COMPRESSLEVEL: 6
 
 jobs:
   check_repository:
@@ -78,6 +82,8 @@ jobs:
     name: check project compilation on ubuntu
     needs: [check_coding_style]
     runs-on: ubuntu-latest
+    outputs:
+      cache-hit: ${{ steps.cache-build.outputs.cache-hit }}
     steps:
       - name: CHECKOUT
         uses: actions/checkout@v4
@@ -87,25 +93,61 @@ jobs:
       - name: CACHE SYSTEM PACKAGES
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
-          version: 1.0
+          packages: cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev ccache
+          version: 1.1
 
       - name: SETUP VCPKG
         uses: ./.github/actions/setup-vcpkg
 
+      - name: CACHE CCACHE
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ runner.os }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-ccache-
+
+      - name: CONFIGURE CCACHE
+        run: |
+          mkdir -p ${{ env.CCACHE_DIR }}
+          ccache --set-config=cache_dir=${{ env.CCACHE_DIR }}
+          ccache --set-config=max_size=${{ env.CCACHE_MAXSIZE }}
+          ccache --set-config=compression=${{ env.CCACHE_COMPRESS }}
+          ccache --set-config=compression_level=${{ env.CCACHE_COMPRESSLEVEL }}
+          ccache --zero-stats
+          ccache --show-stats
+
       - name: CACHE CMAKE BUILD
+        id: cache-build
         uses: actions/cache@v4
         with:
           path: |
             build/unix/bin
-          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json', '**/*.cpp', '**/*.hpp') }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
+            ${{ runner.os }}-cmake-build-
 
       - name: RUN COMPILATION
         run: |
           chmod +x ./scripts/compile_project.sh
           ./scripts/compile_project.sh
+
+      - name: SHOW CCACHE STATS
+        run: ccache --show-stats
+
+      - name: UPLOAD BUILD ARTIFACTS
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-build-artifacts
+          path: |
+            build/unix/bin
+            libraries/
+            r-type_client
+            r-type_server
+            configs/
+          retention-days: 1
+          compression-level: 6
 
   check_windows_compilation:
     name: check project compilation on windows
@@ -125,9 +167,10 @@ jobs:
         with:
           path: |
             build/windows/bin
-          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json', '**/*.cpp', '**/*.hpp') }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
+            ${{ runner.os }}-cmake-build-
 
       - name: RUN COMPILATION
         run: |
@@ -150,25 +193,48 @@ jobs:
       - name: CACHE SYSTEM PACKAGES
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev
-          version: 1.0
+          packages: cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev ccache
+          version: 1.1
 
       - name: SETUP VCPKG
         uses: ./.github/actions/setup-vcpkg
 
-      - name: CACHE CMAKE BUILD
+      - name: DOWNLOAD BUILD ARTIFACTS
+        uses: actions/download-artifact@v4
+        with:
+          name: ubuntu-build-artifacts
+          path: .
+
+      - name: RESTORE BUILD PERMISSIONS
+        run: |
+          chmod +x r-type_client || true
+          chmod +x r-type_server || true
+          find build -type f -name "*.so" -exec chmod +x {} \; 2>/dev/null || true
+          find libraries -type f -name "*.so" -exec chmod +x {} \; 2>/dev/null || true
+
+      - name: CACHE CCACHE
         uses: actions/cache@v4
         with:
-          path: |
-            build/unix/bin
-          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ runner.os }}-ccache-tests-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
+            ${{ runner.os }}-ccache-${{ github.sha }}
+            ${{ runner.os }}-ccache-
+
+      - name: CONFIGURE CCACHE
+        run: |
+          mkdir -p ${{ env.CCACHE_DIR }}
+          ccache --set-config=cache_dir=${{ env.CCACHE_DIR }}
+          ccache --set-config=max_size=${{ env.CCACHE_MAXSIZE }}
+          ccache --zero-stats
 
       - name: RUN UNIT TESTS
         run: |
           chmod +x ./scripts/run_unit_tests.sh
           ./scripts/run_unit_tests.sh
+
+      - name: SHOW CCACHE STATS
+        run: ccache --show-stats
 
   push_to_mirror:
     name: push to target repository
@@ -301,7 +367,7 @@ jobs:
 
   build_windows_server_package:
     name: build windows server package
-    needs: [calculate_version]
+    needs: [calculate_version, check_windows_compilation]
     if: ${{ github.event_name == 'push' }}
     runs-on: windows-latest
     steps:
@@ -318,9 +384,10 @@ jobs:
         with:
           path: |
             build/windows/bin
-          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json', '**/*.cpp', '**/*.hpp') }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
+            ${{ runner.os }}-cmake-build-
 
       - name: BUILD PROJECT
         run: |
@@ -347,7 +414,7 @@ jobs:
 
   build_windows_client_package:
     name: build windows client package
-    needs: [calculate_version]
+    needs: [calculate_version, check_windows_compilation]
     if: ${{ github.event_name == 'push' }}
     runs-on: windows-latest
     steps:
@@ -364,9 +431,10 @@ jobs:
         with:
           path: |
             build/windows/bin
-          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-${{ github.sha }}
+          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json', '**/*.cpp', '**/*.hpp') }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
+            ${{ runner.os }}-cmake-build-
 
       - name: BUILD PROJECT
         run: |
