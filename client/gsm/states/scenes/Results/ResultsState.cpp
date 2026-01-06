@@ -12,6 +12,7 @@
 #include <filesystem>
 #include <iostream>
 #include <nlohmann/json.hpp>
+#include "../../../../Utils/SecureJsonManager.hpp"
 #include "../../../common/constants.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/interfaces/IWindow.hpp"
@@ -87,21 +88,13 @@ void ResultsState::updateUserStats() {
         return;
     }
 
-    std::ifstream inFile(filepath);
-    if (!inFile.is_open()) {
+    nlohmann::json users;
+    try {
+        users = utils::SecureJsonManager::readSecureJson(filepath);
+    } catch (const std::exception& e) {
         std::cout << "Failed to read user data!" << std::endl;
         return;
     }
-
-    nlohmann::json users;
-    try {
-        inFile >> users;
-    } catch (const std::exception& e) {
-        std::cout << "Failed to parse user data!" << std::endl;
-        inFile.close();
-        return;
-    }
-    inFile.close();
 
     std::string username = config->getUsername();
     bool userFound = false;
@@ -133,12 +126,10 @@ void ResultsState::updateUserStats() {
         return;
     }
 
-    std::ofstream outFile(filepath);
-    if (outFile.is_open()) {
-        outFile << users.dump(4);
-        outFile.close();
+    try {
+        utils::SecureJsonManager::writeSecureJson(filepath, users);
         std::cout << "User stats updated successfully!" << std::endl;
-    } else {
+    } catch (const std::exception& e) {
         std::cout << "Failed to save user stats!" << std::endl;
     }
 }

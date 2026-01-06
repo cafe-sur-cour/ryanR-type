@@ -19,6 +19,7 @@
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../ui/elements/Box.hpp"
+#include "../../../../Utils/SecureJsonManager.hpp"
 
 namespace gsm {
 
@@ -317,24 +318,8 @@ void ProfileState::loadUserData() {
     }
 
     const std::string filepath = "saves/users.json";
-    if (!std::filesystem::exists(filepath)) {
-        return;
-    }
-
-    std::ifstream file(filepath);
-    if (!file.is_open()) {
-        return;
-    }
-
-    nlohmann::json users;
-    try {
-        file >> users;
-    } catch (const std::exception& e) {
-        file.close();
-        return;
-    }
-    file.close();
-
+    nlohmann::json users = utils::SecureJsonManager::readSecureJson(filepath);
+    
     if (!users.is_array()) {
         return;
     }

@@ -19,6 +19,7 @@
 #include "../../../../colors.hpp"
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
+#include "../../../../Utils/SecureJsonManager.hpp"
 
 namespace gsm {
 
@@ -96,23 +97,14 @@ RegisterState::RegisterState(
         }
 
         const std::string filepath = "saves/users.json";
-        nlohmann::json users;
-        if (std::filesystem::exists(filepath)) {
-            std::ifstream file(filepath);
-            if (file.is_open()) {
-                try {
-                    file >> users;
-                } catch (const std::exception& e) {
-                    users = nlohmann::json::array();
-                }
-                file.close();
-            }
-        } else {
+        nlohmann::json users = utils::SecureJsonManager::readSecureJson(filepath);
+
+        if (!users.is_array()) {
             users = nlohmann::json::array();
         }
 
         for (const auto& user : users) {
-            if (user.contains("username") && user["username"] == username) {
+            if (user.is_object() && user.contains("username") && user["username"] == username) {
                 return;
             }
         }
@@ -126,11 +118,7 @@ RegisterState::RegisterState(
         newUser["timeSpent"] = 0;
         users.push_back(newUser);
 
-        std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
-        std::ofstream file(filepath);
-        if (file.is_open()) {
-            file << users.dump(4);
-            file.close();
+        if (utils::SecureJsonManager::writeSecureJson(filepath, users)) {
             if (auto stateMachine = this->_gsm.lock()) {
                 stateMachine->requestStatePop();
             }
@@ -150,23 +138,14 @@ RegisterState::RegisterState(
         }
 
         const std::string filepath = "saves/users.json";
-        nlohmann::json users;
-        if (std::filesystem::exists(filepath)) {
-            std::ifstream file(filepath);
-            if (file.is_open()) {
-                try {
-                    file >> users;
-                } catch (const std::exception& e) {
-                    users = nlohmann::json::array();
-                }
-                file.close();
-            }
-        } else {
+        nlohmann::json users = utils::SecureJsonManager::readSecureJson(filepath);
+
+        if (!users.is_array()) {
             users = nlohmann::json::array();
         }
 
         for (const auto& user : users) {
-            if (user.contains("username") && user["username"] == username) {
+            if (user.is_object() && user.contains("username") && user["username"] == username) {
                 return;
             }
         }
@@ -180,11 +159,7 @@ RegisterState::RegisterState(
         newUser["timeSpent"] = 0;
         users.push_back(newUser);
 
-        std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
-        std::ofstream file(filepath);
-        if (file.is_open()) {
-            file << users.dump(4);
-            file.close();
+        if (utils::SecureJsonManager::writeSecureJson(filepath, users)) {
             if (auto stateMachine = this->_gsm.lock()) {
                 stateMachine->requestStatePop();
             }
