@@ -39,6 +39,7 @@ private:
     void renderUI();
     void createUI();
     void updateSaveButtonText();
+    bool validateFields();
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::unique_ptr<ui::UIManager> _uiManager;

@@ -17,7 +17,7 @@
 #include "../../../../../common/constants.hpp"
 #include "../../../../constants.hpp"
 #include "../../../../colors.hpp"
-#include "../../../../ui/elements/Panel.hpp"
+#include "../../../../ui/elements/base/UIElement.hpp"
 
 namespace gsm {
 
@@ -134,33 +134,29 @@ void LevelEditorState::createUI() {
     _saveButton->setSize(math::Vector2f(sidePanelWidth - 25.0f, 40.0f));
     _saveButton->setText("Save Level");
     _saveButton->setOnClick([this]() {
-        if (!_levelPath) {
+        if (!_levelPath || !validateFields()) {
             return;
         }
 
         std::string levelName = _levelNameInput->getText();
         std::string mapLengthStr = _mapLengthInput->getText();
 
-        if (!levelName.empty()) {
-            _levelData[constants::LEVEL_NAME_FIELD] = levelName;
+        _levelData[constants::LEVEL_NAME_FIELD] = levelName;
 
-            try {
-                float mapLength = std::stof(mapLengthStr);
-                if (mapLength > 0.0f) {
-                    _levelData[constants::LEVEL_MAP_LENGTH_FIELD] = mapLength;
-                }
-            } catch (const std::exception&) {
-            }
+        try {
+            float mapLength = std::stof(mapLengthStr);
+            _levelData[constants::LEVEL_MAP_LENGTH_FIELD] = mapLength;
+        } catch (const std::exception&) {
+        }
 
-            std::filesystem::path savePath = *_levelPath;
+        std::filesystem::path savePath = *_levelPath;
 
-            std::ofstream file(savePath);
-            if (file.is_open()) {
-                file << _levelData.dump(4);
-                file.close();
-                _hasUnsavedChanges = false;
-                updateSaveButtonText();
-            }
+        std::ofstream file(savePath);
+        if (file.is_open()) {
+            file << _levelData.dump(4);
+            file.close();
+            _hasUnsavedChanges = false;
+            updateSaveButtonText();
         }
     });
     _saveButton->setScalingEnabled(false);
@@ -203,6 +199,7 @@ void LevelEditorState::createUI() {
     _levelNameInput->setOnTextChanged([this](const std::string& /*text*/) {
         _hasUnsavedChanges = true;
         updateSaveButtonText();
+        _saveButton->setState(validateFields() ? ui::UIState::Normal : ui::UIState::Disabled);
     });
     _levelNameInput->setOnRelease([this]() {
         auto navMan = this->_uiManager->getNavigationManager();
@@ -231,6 +228,7 @@ void LevelEditorState::createUI() {
     _mapLengthInput->setOnTextChanged([this](const std::string& /*text*/) {
         _hasUnsavedChanges = true;
         updateSaveButtonText();
+        _saveButton->setState(validateFields() ? ui::UIState::Normal : ui::UIState::Disabled);
     });
     _mapLengthInput->setOnRelease([this]() {
         auto navMan = this->_uiManager->getNavigationManager();
@@ -254,6 +252,8 @@ void LevelEditorState::createUI() {
     _canvasPanel->setBackgroundColor(colors::BLACK);
     _canvasPanel->setBorderColor(colors::GRAY);
     _uiManager->addElement(_canvasPanel);
+
+    _saveButton->setState(validateFields() ? ui::UIState::Normal : ui::UIState::Disabled);
 }
 
 void LevelEditorState::updateSaveButtonText() {
@@ -264,6 +264,25 @@ void LevelEditorState::updateSaveButtonText() {
         }
         _saveButton->setText(baseText);
     }
+}
+
+bool LevelEditorState::validateFields() {
+    std::string levelName = _levelNameInput->getText();
+    if (levelName.empty()) {
+        return false;
+    }
+
+    std::string mapLengthStr = _mapLengthInput->getText();
+    try {
+        float mapLength = std::stof(mapLengthStr);
+        if (mapLength <= 0.0f) {
+            return false;
+        }
+    } catch (const std::exception&) {
+        return false;
+    }
+
+    return true;
 }
 
 void LevelEditorState::exit() {
