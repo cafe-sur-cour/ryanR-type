@@ -11,6 +11,7 @@
 #include <fstream>
 #include <memory>
 #include <string>
+#include <vector>
 #include <nlohmann/json.hpp>
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
@@ -116,6 +117,36 @@ void LevelEditorState::renderUI() {
     _uiManager->render();
 }
 
+std::vector<std::string> LevelEditorState::loadAvailableMusics() {
+    std::vector<std::string> musics;
+    std::filesystem::path musicsPath = constants::MUSIC_DIRECTORY;
+
+    if (!std::filesystem::exists(musicsPath) || !std::filesystem::is_directory(musicsPath)) {
+        return musics;
+    }
+
+    for (const auto& entry : std::filesystem::directory_iterator(musicsPath)) {
+        if (entry.is_regular_file() && entry.path().extension() ==
+            constants::LEVEL_FILE_EXTENSION) {
+            try {
+                std::ifstream file(entry.path());
+                nlohmann::json musicData;
+                file >> musicData;
+                file.close();
+
+                if (musicData.contains(constants::LEVEL_NAME_FIELD) &&
+                    musicData[constants::LEVEL_NAME_FIELD].is_string()) {
+                    std::string musicName = musicData[constants::LEVEL_NAME_FIELD];
+                    musics.push_back(musicName);
+                }
+            } catch (const std::exception& e) {
+            }
+        }
+    }
+
+    return musics;
+}
+
 void LevelEditorState::createUI() {
     const float sidePanelWidth = 300.0f;
     const float bottomPanelHeight = 200.0f;
@@ -167,7 +198,7 @@ void LevelEditorState::createUI() {
         }
     });
     _saveButton->setScalingEnabled(false);
-    _saveButton->setFocusEnabled(false);
+    _saveButton->setFocusEnabled(true);
     _sidePanel->addChild(_saveButton);
 
     _backButton = std::make_shared<ui::Button>(_resourceManager);
@@ -183,7 +214,7 @@ void LevelEditorState::createUI() {
         }
     });
     _backButton->setScalingEnabled(false);
-    _backButton->setFocusEnabled(false);
+    _backButton->setFocusEnabled(true);
     _sidePanel->addChild(_backButton);
 
     float currentY = 150.0f;
@@ -299,6 +330,43 @@ void LevelEditorState::createUI() {
     _scrollSpeedInput->setFocusEnabled(true);
     _sidePanel->addChild(_scrollSpeedInput);
 
+    currentY += 40.0f + elementSpacing;
+    _musicLabel = std::make_shared<ui::Text>(_resourceManager);
+    _musicLabel->setPosition(math::Vector2f(10.0f, currentY));
+    _musicLabel->setText("Music");
+    _musicLabel->setFontSize(24);
+    _musicLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _sidePanel->addChild(_musicLabel);
+
+    currentY += labelToFieldSpacing;
+    _musicDropdown = std::make_shared<ui::Dropdown>(_resourceManager);
+    _musicDropdown->setPosition(math::Vector2f(10.0f, currentY));
+    _musicDropdown->setSize(math::Vector2f(sidePanelWidth - 25.0f, 40.0f));
+    auto availableMusics = loadAvailableMusics();
+    _musicDropdown->setOptions(availableMusics);
+    _musicDropdown->setPlaceholder("Select music...");
+
+    std::string currentMusic = _levelData.value(constants::LEVEL_MUSIC_FIELD, "");
+    if (!currentMusic.empty()) {
+        auto options = _musicDropdown->getOptions();
+        for (size_t i = 0; i < options.size(); ++i) {
+            if (options[i] == currentMusic) {
+                _musicDropdown->setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
+    _musicDropdown->setOnSelectionChanged(
+        [this](const std::string& musicName, [[maybe_unused]] size_t index) {
+        _levelData[constants::LEVEL_MUSIC_FIELD] = musicName;
+        _hasUnsavedChanges = true;
+        updateSaveButtonText();
+    });
+    _musicDropdown->setScalingEnabled(false);
+    _musicDropdown->setFocusEnabled(true);
+    _sidePanel->addChild(_musicDropdown);
+
     _bottomPanel = std::make_shared<ui::Panel>(_resourceManager);
     _bottomPanel->setPosition(math::Vector2f(sidePanelWidth, canvasHeight));
     _bottomPanel->setSize(math::Vector2f(canvasWidth, bottomPanelHeight));
@@ -369,6 +437,10 @@ void LevelEditorState::exit() {
     _levelNameInput.reset();
     _mapLengthLabel.reset();
     _mapLengthInput.reset();
+    _scrollSpeedLabel.reset();
+    _scrollSpeedInput.reset();
+    _musicLabel.reset();
+    _musicDropdown.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
