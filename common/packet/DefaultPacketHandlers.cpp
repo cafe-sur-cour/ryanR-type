@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 #include "GameStateHandlers.hpp"
+#include "GameStateHandlersOptimized.hpp"
 #include "../../libs/Packet/serializer/BigEndianSerialization.hpp"
 #include "../../libs/Packet/PacketManager.hpp"
 #include "../../common/translationToECS.hpp"
@@ -17,6 +18,7 @@
 
 using SerializerPtr = std::shared_ptr<pm::ISerializer>;
 using pm::BigEndianSerialization;
+
 
 namespace common::packet {
 
@@ -329,8 +331,10 @@ bool registerDefaultPacketHandlers(
 
     registerOptionalULongPacket(packet, ser, END_GAME_PACKET);
 
-    if (!registerGameStateHandlers(packet))
+
+    if (!registerOptimizedGameStateHandlers(packet))
         return false;
+
     registerOptionalULongPacket(packet, ser, REQUEST_LOBBY_PACKET);
     registerMultiUCharPacket(packet, ser, SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
     registerMultiUCharPacket(packet, ser, CONNECT_TO_LOBBY, LENGTH_LOBBY_CODE_PACKET);
