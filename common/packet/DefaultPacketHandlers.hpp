@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** Default packet handlers registration (common)
+** Default packet handlers
 */
 
 #ifndef COMMON_DEFAULT_PACKET_HANDLERS_HPP_

@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** ScoreValueComponent registration
+** ScoreValueComponent
 */
 
 #include "ScoreValueComponent.hpp"

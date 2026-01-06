@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** DamageComponent registration
+** DamageComponent
 */
 
 #include "DamageComponent.hpp"

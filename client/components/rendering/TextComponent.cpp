@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** TextComponent registration
+** TextComponent
 */
 
 #include "TextComponent.hpp"
