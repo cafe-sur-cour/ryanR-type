@@ -37,6 +37,7 @@ private:
     void renderUI();
     void createLevelSelectionUI();
     std::vector<std::pair<std::filesystem::path, int>> getAvailableLevels();
+    std::optional<std::filesystem::path> createNewLevel();
     void swapLevels(const std::filesystem::path& path1, const std::filesystem::path& path2);
     void showDeleteConfirmation(const std::filesystem::path& levelPath, const std::string& levelName);
     void showDeleteConfirmationPopup(const std::filesystem::path& levelPath, const std::string& levelName);
@@ -63,6 +64,7 @@ private:
     std::shared_ptr<ui::Button> _prevButton;
     std::shared_ptr<ui::Button> _nextButton;
     bool _shouldUpdateUI;
+    size_t _lastLevelCount;
     int _currentPage;
     static constexpr int _levelsPerPage = 8;
 
