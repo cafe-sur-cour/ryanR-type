@@ -140,12 +140,19 @@ void LevelEditorState::createUI() {
 
         std::string levelName = _levelNameInput->getText();
         std::string mapLengthStr = _mapLengthInput->getText();
+        std::string scrollSpeedStr = _scrollSpeedInput->getText();
 
         _levelData[constants::LEVEL_NAME_FIELD] = levelName;
 
         try {
             float mapLength = std::stof(mapLengthStr);
             _levelData[constants::LEVEL_MAP_LENGTH_FIELD] = mapLength;
+        } catch (const std::exception&) {
+        }
+
+        try {
+            int scrollSpeed = std::stoi(scrollSpeedStr);
+            _levelData[constants::LEVEL_SCROLL_SPEED_FIELD] = scrollSpeed;
         } catch (const std::exception&) {
         }
 
@@ -251,6 +258,47 @@ void LevelEditorState::createUI() {
     _mapLengthInput->setFocusEnabled(true);
     _sidePanel->addChild(_mapLengthInput);
 
+    currentY += 40.0f + elementSpacing;
+    _scrollSpeedLabel = std::make_shared<ui::Text>(_resourceManager);
+    _scrollSpeedLabel->setPosition(math::Vector2f(10.0f, currentY));
+    _scrollSpeedLabel->setText("Scroll Speed");
+    _scrollSpeedLabel->setFontSize(24);
+    _scrollSpeedLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _sidePanel->addChild(_scrollSpeedLabel);
+
+    currentY += labelToFieldSpacing;
+    _scrollSpeedInput = std::make_shared<ui::TextInput>(_resourceManager);
+    _scrollSpeedInput->setPosition(math::Vector2f(10.0f, currentY));
+    _scrollSpeedInput->setSize(math::Vector2f(sidePanelWidth - 25.0f, 30.0f));
+    _scrollSpeedInput->setText(std::to_string(
+        static_cast<int>(_levelData.value(constants::LEVEL_SCROLL_SPEED_FIELD, 1))));
+    _scrollSpeedInput->setPlaceholder("Enter scroll speed...");
+    _scrollSpeedInput->setOnTextChanged([this](const std::string& text) {
+        std::string filteredText;
+        for (char c : text) {
+            if (c >= '0' && c <= '9') {
+                filteredText += c;
+            }
+        }
+
+        if (filteredText != text) {
+            _scrollSpeedInput->setText(filteredText);
+            return;
+        }
+
+        _hasUnsavedChanges = true;
+        updateSaveButtonText();
+        _saveButton->setState(validateFields() ? ui::UIState::Normal : ui::UIState::Disabled);
+    });
+    _scrollSpeedInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_scrollSpeedInput);
+    });
+    _scrollSpeedInput->setScalingEnabled(false);
+    _scrollSpeedInput->setFocusEnabled(true);
+    _sidePanel->addChild(_scrollSpeedInput);
+
     _bottomPanel = std::make_shared<ui::Panel>(_resourceManager);
     _bottomPanel->setPosition(math::Vector2f(sidePanelWidth, canvasHeight));
     _bottomPanel->setSize(math::Vector2f(canvasWidth, bottomPanelHeight));
@@ -288,6 +336,16 @@ bool LevelEditorState::validateFields() {
     try {
         float mapLength = std::stof(mapLengthStr);
         if (mapLength <= 0.0f) {
+            return false;
+        }
+    } catch (const std::exception&) {
+        return false;
+    }
+
+    std::string scrollSpeedStr = _scrollSpeedInput->getText();
+    try {
+        int scrollSpeed = std::stoi(scrollSpeedStr);
+        if (scrollSpeed <= 0) {
             return false;
         }
     } catch (const std::exception&) {
