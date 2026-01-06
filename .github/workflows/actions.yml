@@ -206,18 +206,8 @@ jobs:
           packages: cmake g++ make git build-essential ninja-build libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev ccache
           version: 1.1
 
-      - name: DOWNLOAD BUILD ARTIFACTS
-        uses: actions/download-artifact@v4
-        with:
-          name: ubuntu-build-artifacts
-          path: .
-
-      - name: RESTORE BUILD PERMISSIONS
-        run: |
-          chmod +x r-type_client || true
-          chmod +x r-type_server || true
-          find build -type f -name "*.so" -exec chmod +x {} \; 2>/dev/null || true
-          find libraries -type f -name "*.so" -exec chmod +x {} \; 2>/dev/null || true
+      - name: SETUP VCPKG
+        uses: ./.github/actions/setup-vcpkg
 
       - name: CACHE CCACHE
         uses: actions/cache@v4
@@ -225,7 +215,7 @@ jobs:
           path: ${{ env.CCACHE_DIR }}
           key: ${{ runner.os }}-ccache-tests-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-ccache-${{ github.sha }}
+            ${{ runner.os }}-ccache-tests-
             ${{ runner.os }}-ccache-
 
       - name: CONFIGURE CCACHE
@@ -238,9 +228,16 @@ jobs:
           ccache --zero-stats
           ccache --show-stats
 
-      - name: SETUP VCPKG
-        run: |
-          echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
+      - name: CACHE CMAKE BUILD FOR TESTS
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/unix/bin
+            vcpkg_installed
+          key: ${{ runner.os }}-cmake-tests-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json', '**/tests/**/*.cpp', '**/tests/**/*.hpp') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-tests-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
+            ${{ runner.os }}-cmake-tests-
 
       - name: RUN UNIT TESTS
         run: |
