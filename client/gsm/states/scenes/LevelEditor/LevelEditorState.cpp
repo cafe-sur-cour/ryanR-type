@@ -225,7 +225,19 @@ void LevelEditorState::createUI() {
     _mapLengthInput->setText(std::to_string(
         static_cast<int>(_levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0))));
     _mapLengthInput->setPlaceholder("Enter map length...");
-    _mapLengthInput->setOnTextChanged([this](const std::string& /*text*/) {
+    _mapLengthInput->setOnTextChanged([this](const std::string& text) {
+        std::string filteredText;
+        for (char c : text) {
+            if (c >= '0' && c <= '9') {
+                filteredText += c;
+            }
+        }
+
+        if (filteredText != text) {
+            _mapLengthInput->setText(filteredText);
+            return;
+        }
+
         _hasUnsavedChanges = true;
         updateSaveButtonText();
         _saveButton->setState(validateFields() ? ui::UIState::Normal : ui::UIState::Disabled);
