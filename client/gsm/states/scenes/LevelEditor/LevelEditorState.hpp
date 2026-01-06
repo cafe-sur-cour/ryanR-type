@@ -54,6 +54,8 @@ private:
     std::shared_ptr<ui::TextInput> _levelNameInput;
     std::shared_ptr<ui::Text> _mapLengthLabel;
     std::shared_ptr<ui::TextInput> _mapLengthInput;
+    std::shared_ptr<ui::Text> _scrollSpeedLabel;
+    std::shared_ptr<ui::TextInput> _scrollSpeedInput;
 
     bool _hasUnsavedChanges = false;
 
