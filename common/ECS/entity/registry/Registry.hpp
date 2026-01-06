@@ -56,6 +56,7 @@ class Registry : public std::enable_shared_from_this<Registry> {
 
         Entity createEntity();
         void destroyEntity(Entity entityId);
+        void clearAllEntities();
 
         void setOnEntityDestroyed(std::function<void(Entity)> callback);
     protected:

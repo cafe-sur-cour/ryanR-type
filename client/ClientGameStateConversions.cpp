@@ -51,7 +51,11 @@ size_t ClientNetwork::parseTransformComponent(const std::vector<uint64_t> &paylo
     float scaleX = unpackFloat(payload[index++]);
     float scaleY = unpackFloat(payload[index++]);
     if (!registry->hasComponent<ecs::TransformComponent>(entityId)) {
-        auto transform = std::make_shared<ecs::TransformComponent>();
+        auto transform = std::make_shared<ecs::TransformComponent>(
+            math::Vector2f(posX, posY),
+            rotation,
+            math::Vector2f(scaleX, scaleY)
+        );
         registry->addComponent(entityId, transform);
     } else {
         auto transform = registry->getComponent<ecs::TransformComponent>(entityId);

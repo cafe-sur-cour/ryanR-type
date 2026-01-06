@@ -72,8 +72,12 @@ namespace constants {
     const std::string HOW_TO_PLAY_PATH = "assets/sprites/how_to_play.png";
     const std::string LEADERBOARD_PATH = "assets/sprites/leaderboard.png";
 
+    const std::string MAIN_FONT = "assets/fonts/abduction2002.ttf";
+
     const std::string WIN_TEXT = "YOU WIN!";
     const std::string LOSE_TEXT = "YOU LOSE!";
+    const std::string LEVEL_COMPLETE_TITLE_TEXT = "LEVEL COMPLETE!";
+    const std::string LEVEL_COMPLETE_SUB_TITLE_TEXT = "Going to the next level...";
 
     /* Home page input place holders */
     const std::string IP_PLACEHOLDER = "Enter an IP address";

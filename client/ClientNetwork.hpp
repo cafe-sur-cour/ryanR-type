@@ -127,6 +127,8 @@ class ClientNetwork {
         void handleWhoAmI();
         void handleServerStatus();
         void handleCode();
+        void handleLevelComplete();
+        void handleNextLevel();
         void handleLobbyConnectValue();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
