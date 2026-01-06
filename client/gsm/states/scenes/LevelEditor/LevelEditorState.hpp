@@ -42,6 +42,7 @@ private:
     void updateSaveButtonText();
     bool validateFields();
     std::vector<std::string> loadAvailableMusics();
+    std::vector<std::string> loadAvailableBackgrounds();
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::unique_ptr<ui::UIManager> _uiManager;
@@ -60,6 +61,8 @@ private:
     std::shared_ptr<ui::TextInput> _scrollSpeedInput;
     std::shared_ptr<ui::Text> _musicLabel;
     std::shared_ptr<ui::Dropdown> _musicDropdown;
+    std::shared_ptr<ui::Text> _backgroundLabel;
+    std::shared_ptr<ui::Dropdown> _backgroundDropdown;
 
     bool _hasUnsavedChanges = false;
 

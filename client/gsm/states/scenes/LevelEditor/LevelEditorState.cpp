@@ -147,6 +147,37 @@ std::vector<std::string> LevelEditorState::loadAvailableMusics() {
     return musics;
 }
 
+std::vector<std::string> LevelEditorState::loadAvailableBackgrounds() {
+    std::vector<std::string> backgrounds;
+    std::filesystem::path backgroundsPath = constants::BACKGROUNDS_DIRECTORY;
+
+    if (!std::filesystem::exists(backgroundsPath) ||
+        !std::filesystem::is_directory(backgroundsPath)) {
+        return backgrounds;
+    }
+
+    for (const auto& entry : std::filesystem::directory_iterator(backgroundsPath)) {
+        if (entry.is_regular_file() && entry.path().extension() ==
+            constants::LEVEL_FILE_EXTENSION) {
+            try {
+                std::ifstream file(entry.path());
+                nlohmann::json backgroundData;
+                file >> backgroundData;
+                file.close();
+
+                if (backgroundData.contains(constants::LEVEL_NAME_FIELD) &&
+                    backgroundData[constants::LEVEL_NAME_FIELD].is_string()) {
+                    std::string backgroundName = backgroundData[constants::LEVEL_NAME_FIELD];
+                    backgrounds.push_back(backgroundName);
+                }
+            } catch (const std::exception& e) {
+            }
+        }
+    }
+
+    return backgrounds;
+}
+
 void LevelEditorState::createUI() {
     const float sidePanelWidth = 300.0f;
     const float bottomPanelHeight = 200.0f;
@@ -365,6 +396,45 @@ void LevelEditorState::createUI() {
     });
     _musicDropdown->setScalingEnabled(false);
     _musicDropdown->setFocusEnabled(true);
+    /* musicDropdown will be added after background dropDown */
+
+    currentY += 40.0f + elementSpacing;
+    _backgroundLabel = std::make_shared<ui::Text>(_resourceManager);
+    _backgroundLabel->setPosition(math::Vector2f(10.0f, currentY));
+    _backgroundLabel->setText("Background");
+    _backgroundLabel->setFontSize(24);
+    _backgroundLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _sidePanel->addChild(_backgroundLabel);
+
+    currentY += labelToFieldSpacing;
+    _backgroundDropdown = std::make_shared<ui::Dropdown>(_resourceManager);
+    _backgroundDropdown->setPosition(math::Vector2f(10.0f, currentY));
+    _backgroundDropdown->setSize(math::Vector2f(sidePanelWidth - 25.0f, 40.0f));
+    auto availableBackgrounds = loadAvailableBackgrounds();
+    _backgroundDropdown->setOptions(availableBackgrounds);
+    _backgroundDropdown->setPlaceholder("Select background...");
+
+    std::string currentBackground = _levelData.value(constants::LEVEL_BACKGROUND_FIELD, "");
+    if (!currentBackground.empty()) {
+        auto options = _backgroundDropdown->getOptions();
+        for (size_t i = 0; i < options.size(); ++i) {
+            if (options[i] == currentBackground) {
+                _backgroundDropdown->setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
+    _backgroundDropdown->setOnSelectionChanged(
+        [this](const std::string& backgroundName, [[maybe_unused]] size_t index) {
+        _levelData[constants::LEVEL_BACKGROUND_FIELD] = backgroundName;
+        _hasUnsavedChanges = true;
+        updateSaveButtonText();
+    });
+    _backgroundDropdown->setScalingEnabled(false);
+    _backgroundDropdown->setFocusEnabled(true);
+    _sidePanel->addChild(_backgroundDropdown);
+    /* musicDropdown is added after background dropDown to ensure proper z order */
     _sidePanel->addChild(_musicDropdown);
 
     _bottomPanel = std::make_shared<ui::Panel>(_resourceManager);
@@ -424,6 +494,12 @@ bool LevelEditorState::validateFields() {
     if (selectedMusic.empty()) {
         return false;
     }
+
+    std::string selectedBackground = _backgroundDropdown->getSelectedOption();
+    if (selectedBackground.empty()) {
+        return false;
+    }
+
     return true;
 }
 
