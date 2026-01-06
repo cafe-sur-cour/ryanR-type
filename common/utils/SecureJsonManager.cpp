@@ -5,10 +5,11 @@
 ** Secure JSON File Manager
 */
 
+#include <fstream>
+#include <string>
+
 #include "SecureJsonManager.hpp"
 #include "Encryption.hpp"
-#include <fstream>
-#include <filesystem>
 
 namespace utils {
 
@@ -41,7 +42,8 @@ nlohmann::json SecureJsonManager::readSecureJson(const std::string& filepath) {
     }
 }
 
-bool SecureJsonManager::writeSecureJson(const std::string& filepath, const nlohmann::json& data) {
+bool SecureJsonManager::writeSecureJson(const std::string& filepath,
+    const nlohmann::json& data) {
     try {
         std::filesystem::path path(filepath);
         if (path.has_parent_path()) {

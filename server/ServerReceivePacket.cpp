@@ -12,7 +12,6 @@
 #include <thread>
 #include <tuple>
 #include <fstream>
-#include <filesystem>
 #include <nlohmann/json.hpp>
 
 #include "Server.hpp"

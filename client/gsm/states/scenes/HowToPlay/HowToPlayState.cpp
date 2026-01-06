@@ -7,6 +7,8 @@
 
 #include "HowToPlayState.hpp"
 #include <memory>
+#include <string>
+#include <vector>
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/constants.hpp"
@@ -94,7 +96,8 @@ HowToPlayState::HowToPlayState(
     controlsTitleConfig.anchorX = ui::AnchorX::Center;
     controlsTitleConfig.anchorY = ui::AnchorY::Center;
 
-    auto controlsTitleLayout = std::make_shared<ui::UILayout>(_resourceManager, controlsTitleConfig);
+    auto controlsTitleLayout = std::make_shared<ui::UILayout>(_resourceManager,
+        controlsTitleConfig);
     controlsTitleLayout->setSize(math::Vector2f(690.f, 60.f));
 
     auto controlsTitle = std::make_shared<ui::Text>(_resourceManager);
@@ -153,7 +156,8 @@ HowToPlayState::HowToPlayState(
     objectivesConfig.anchorY = ui::AnchorY::Center;
     objectivesConfig.offset = math::Vector2f(0.0f, 0.0f);
 
-    auto objectivesSection = std::make_shared<ui::UILayout>(_resourceManager, objectivesConfig);
+    auto objectivesSection = std::make_shared<ui::UILayout>(_resourceManager,
+        objectivesConfig);
     objectivesSection->setSize(math::Vector2f(750.f, 450.f));
 
     auto objectivesTitleBox = std::make_shared<ui::Box>(_resourceManager);
@@ -170,7 +174,8 @@ HowToPlayState::HowToPlayState(
     objectivesTitleConfig.anchorX = ui::AnchorX::Center;
     objectivesTitleConfig.anchorY = ui::AnchorY::Center;
 
-    auto objectivesTitleLayout = std::make_shared<ui::UILayout>(_resourceManager, objectivesTitleConfig);
+    auto objectivesTitleLayout = std::make_shared<ui::UILayout>(_resourceManager,
+        objectivesTitleConfig);
     objectivesTitleLayout->setSize(math::Vector2f(690.f, 60.f));
 
     auto objectivesTitle = std::make_shared<ui::Text>(_resourceManager);
@@ -206,7 +211,8 @@ HowToPlayState::HowToPlayState(
         objectiveConfig.anchorX = ui::AnchorX::Left;
         objectiveConfig.anchorY = ui::AnchorY::Center;
 
-        auto objectiveLayout = std::make_shared<ui::UILayout>(_resourceManager, objectiveConfig);
+        auto objectiveLayout = std::make_shared<ui::UILayout>(_resourceManager,
+            objectiveConfig);
         objectiveLayout->setSize(math::Vector2f(690.f, 55.f));
 
         auto objectiveText = std::make_shared<ui::Text>(_resourceManager);

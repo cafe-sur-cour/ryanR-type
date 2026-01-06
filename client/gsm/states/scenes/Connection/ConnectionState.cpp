@@ -141,7 +141,8 @@ void ConnectionState::update(float deltaTime) {
     if (navManager) {
         auto focusedElement = navManager->getFocusedElement();
         if (focusedElement) {
-            isTextInputFocused = std::dynamic_pointer_cast<ui::TextInput>(focusedElement) != nullptr;
+            isTextInputFocused = std::dynamic_pointer_cast<ui::TextInput>(
+                focusedElement) != nullptr;
         }
     }
 
@@ -193,7 +194,8 @@ void ConnectionState::updateUIStatus() {
         if (!_wasConnected) {
             _wasConnected = true;
             if (auto stateMachine = this->_gsm.lock()) {
-                stateMachine->requestStatePush(std::make_shared<MainMenuState>(stateMachine, this->_resourceManager));
+                stateMachine->requestStatePush(
+                    std::make_shared<MainMenuState>(stateMachine, this->_resourceManager));
             }
         }
     }

@@ -5,6 +5,8 @@
 ** Box
 */
 
+#include <utility>
+
 #include "Box.hpp"
 #include "../../../common/interfaces/IWindow.hpp"
 
@@ -51,16 +53,20 @@ void Box::render() {
     // Dessiner le fond du rectangle
     window->drawFilledRectangle(
         _backgroundColor,
-        std::make_pair(static_cast<size_t>(absolutePos.getX()), static_cast<size_t>(absolutePos.getY())),
-        std::make_pair(static_cast<size_t>(absoluteSize.getX()), static_cast<size_t>(absoluteSize.getY()))
+        std::make_pair(static_cast<size_t>(absolutePos.getX()),
+            static_cast<size_t>(absolutePos.getY())),
+        std::make_pair(static_cast<size_t>(absoluteSize.getX()),
+            static_cast<size_t>(absoluteSize.getY()))
     );
 
     // Dessiner la bordure si thickness > 0
     if (_borderThickness > 0) {
         window->drawRectangleOutline(
             _borderColor,
-            std::make_pair(static_cast<size_t>(absolutePos.getX()), static_cast<size_t>(absolutePos.getY())),
-            std::make_pair(static_cast<size_t>(absoluteSize.getX()), static_cast<size_t>(absoluteSize.getY()))
+            std::make_pair(static_cast<size_t>(absolutePos.getX()),
+                static_cast<size_t>(absolutePos.getY())),
+            std::make_pair(static_cast<size_t>(absoluteSize.getX()),
+                static_cast<size_t>(absoluteSize.getY()))
         );
     }
 

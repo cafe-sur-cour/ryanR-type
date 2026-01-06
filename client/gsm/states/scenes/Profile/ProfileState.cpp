@@ -9,7 +9,6 @@
 #include <memory>
 #include <string>
 #include <fstream>
-#include <filesystem>
 #include <nlohmann/json.hpp>
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
@@ -230,7 +229,6 @@ ProfileState::ProfileState(
     _button1->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _button1->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _button1->setOnRelease([]() {
-        // TODO: Implémenter l'action du bouton 1
     });
 
     // Bouton 2 - À implémenter
@@ -241,7 +239,6 @@ ProfileState::ProfileState(
     _button2->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _button2->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _button2->setOnRelease([]() {
-        // TODO: Implémenter l'action du bouton 2
     });
 
     // Bouton 3 - À implémenter
@@ -252,7 +249,6 @@ ProfileState::ProfileState(
     _button3->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _button3->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _button3->setOnRelease([]() {
-        // TODO: Implémenter l'action du bouton 3
     });
 
     buttonsSection->addElement(_button1);
