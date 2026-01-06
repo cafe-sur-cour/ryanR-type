@@ -334,16 +334,16 @@ math::Vector2f Dropdown::getOptionPosition(size_t optionIndex) const {
     switch (_direction) {
         case DropdownDirection::Down:
             return {basePos.getX(), basePos.getY() + size.getY() +
-                (OPTION_SPACING * (optionIndex + 1)) + size.getY() * optionIndex};
+                OPTION_SPACING + (size.getY() + OPTION_SPACING) * optionIndex};
         case DropdownDirection::Up:
-            return {basePos.getX(), basePos.getY() - size.getY() *
-                (optionIndex + 1) - (OPTION_SPACING * (optionIndex + 1)) * (optionIndex + 1)};
+            return {basePos.getX(), basePos.getY() - size.getY() -
+                OPTION_SPACING - (size.getY() + OPTION_SPACING) * optionIndex};
         case DropdownDirection::Right:
-            return {basePos.getX() + size.getX() + (OPTION_SPACING *
-                (optionIndex + 1)) + size.getX() * optionIndex, basePos.getY()};
+            return {basePos.getX() + size.getX() + OPTION_SPACING +
+                (size.getX() + OPTION_SPACING) * optionIndex, basePos.getY()};
         case DropdownDirection::Left:
-            return {basePos.getX() - size.getX() * (optionIndex + 1) -
-                (OPTION_SPACING * (optionIndex + 1)) * (optionIndex + 1), basePos.getY()};
+            return {basePos.getX() - size.getX() - OPTION_SPACING -
+                (size.getX() + OPTION_SPACING) * optionIndex, basePos.getY()};
         default:
             return basePos;
     }
