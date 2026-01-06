@@ -149,11 +149,11 @@ target_link_libraries(BufferTests Buffer GTest::gtest GTest::gtest_main)
 add_test(NAME BufferTests COMMAND BufferTests)
 
 add_executable(PacketTests server/packet/packettest.cpp)
-target_link_libraries(PacketTests Packet Buffer CommonPacketHandlers GTest::gtest GTest::gtest_main)
+target_link_libraries(PacketTests Packet Buffer CommonPacketHandlers PREFAB ECS COLLISION_RULES ERROR GTest::gtest GTest::gtest_main)
 add_test(NAME PacketTests COMMAND PacketTests)
 
 add_executable(AdditionalPacketTests server/packet/AdditionalPacketTests.cpp)
-target_link_libraries(AdditionalPacketTests Packet Buffer CommonPacketHandlers GTest::gtest GTest::gtest_main)
+target_link_libraries(AdditionalPacketTests Packet Buffer CommonPacketHandlers PREFAB ECS COLLISION_RULES ERROR GTest::gtest GTest::gtest_main)
 add_test(NAME AdditionalPacketTests COMMAND AdditionalPacketTests)
 
 add_executable(EcsConversionTests server/packet/EcsConversionTests.cpp)
