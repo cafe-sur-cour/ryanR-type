@@ -20,6 +20,8 @@
 #include "../../../../../common/InputMapping/IInputProvider.hpp"
 #include "../Infinite/InfiniteState.hpp"
 #include "../Settings/SettingsState.hpp"
+#include "../Replay/ReplayState.hpp"
+#include "../LobbyWaiting/LobbyWaitingState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -29,7 +31,8 @@ namespace gsm {
 MainMenuState::MainMenuState(
     std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager
-) : AGameState(gsm, resourceManager) {
+) : AGameState(gsm, resourceManager), _previousLobbyConnectedState(false),
+    _previousLobbyMasterState(false) {
     if (!_resourceManager->has<SettingsConfig>()) {
         _resourceManager->add(std::make_shared<SettingsConfig>());
     }
@@ -143,7 +146,6 @@ MainMenuState::MainMenuState(
     _requestCodeButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            std::cout << "Requesting code from server..." << std::endl;
             network->requestCode();
         } else {
             std::cout << "Cannot request code: Not connected to server" << std::endl;
@@ -162,9 +164,45 @@ MainMenuState::MainMenuState(
     _lobbyConnectButton = std::make_shared<ui::Button>(_resourceManager);
     _lobbyConnectButton->setText("Connect to Lobby");
     _lobbyConnectButton->setSize(math::Vector2f(300.f, 50.f));
+
     _lobbyConnectButton->setOnRelease([this]() {
-        std::string lobbyCode = this->_lobbyCodeInput->getText();
-        std::cout << "Connecting to lobby with code: " << lobbyCode << std::endl;
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            std::string code = this->_lobbyCodeInput->getText();
+            if (!code.empty()) {
+                network->setLobbyCode(code);
+                network->sendLobbyConnection(code);
+                debug::Debug::printDebug(network->isDebugMode(),
+                    "[MainMenu] Connecting to lobby with code: " + code,
+                    debug::debugType::NETWORK,
+                    debug::debugLevel::INFO);
+            } else {
+                debug::Debug::printDebug(network->isDebugMode(),
+                    "[MainMenu] Cannot connect to lobby: Code is empty",
+                    debug::debugType::NETWORK,
+                    debug::debugLevel::WARNING);
+            }
+        }
+    });
+
+    _lobbyConnectButton->setOnActivated([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            std::string code = this->_lobbyCodeInput->getText();
+            if (!code.empty()) {
+                network->setLobbyCode(code);
+                network->sendLobbyConnection(code);
+                debug::Debug::printDebug(network->isDebugMode(),
+                    "[MainMenu] Connecting to lobby with code: " + code,
+                    debug::debugType::NETWORK,
+                    debug::debugLevel::INFO);
+            } else {
+                debug::Debug::printDebug(network->isDebugMode(),
+                    "[MainMenu] Cannot connect to lobby: Code is empty",
+                    debug::debugType::NETWORK,
+                    debug::debugLevel::WARNING);
+            }
+        }
     });
 
     _leftLayout->addElement(_ipInput);
@@ -188,36 +226,6 @@ MainMenuState::MainMenuState(
     _playButton->setText("Not connected");
     _playButton->setSize(math::Vector2f(576.f, 108.f));
 
-    _playButton->setOnRelease([this]() {
-        auto network = this->_resourceManager->get<ClientNetwork>();
-        if (network && network->isConnected()) {
-            network->sendReady();
-            debug::Debug::printDebug(network->isDebugMode(),
-                "[MainMenu] Sent ready signal to server.",
-                debug::debugType::NETWORK,
-                debug::debugLevel::INFO);
-        } else {
-            debug::Debug::printDebug(network ? network->isDebugMode() : false,
-                "[MainMenu] Cannot send ready: Not connected to server.",
-                debug::debugType::NETWORK,
-                debug::debugLevel::WARNING);
-        }
-    });
-    _playButton->setOnActivated([this]() {
-        auto network = this->_resourceManager->get<ClientNetwork>();
-        if (network && network->isConnected()) {
-            network->sendReady();
-            debug::Debug::printDebug(network->isDebugMode(),
-                "[MainMenu] Sent ready signal to server.",
-                debug::debugType::NETWORK,
-                debug::debugLevel::INFO);
-        } else {
-            debug::Debug::printDebug(network ? network->isDebugMode() : false,
-                "[MainMenu] Cannot send ready: Not connected to server.",
-                debug::debugType::NETWORK,
-                debug::debugLevel::WARNING);
-        }
-    });
 
     _settingsButton = std::make_shared<ui::Button>(resourceManager);
     _settingsButton->setText("Settings");
@@ -238,6 +246,25 @@ MainMenuState::MainMenuState(
         }
     });
 
+    _replayButton = std::make_shared<ui::Button>(resourceManager);
+    _replayButton->setText(constants::REPLAY_BUTTON_TEXT);
+    _replayButton->setSize(math::Vector2f(576.f, 108.f));
+    _replayButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _replayButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _replayButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _replayButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<ReplayState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _replayButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<ReplayState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+
     _quitButton = std::make_shared<ui::Button>(resourceManager);
     _quitButton->setText("Quit");
     _quitButton->setSize(math::Vector2f(576.f, 108.f));
@@ -253,6 +280,7 @@ MainMenuState::MainMenuState(
 
     _mainMenuLayout->addElement(_playButton);
     _mainMenuLayout->addElement(_settingsButton);
+    _mainMenuLayout->addElement(_replayButton);
     _mainMenuLayout->addElement(_quitButton);
 
     ui::LayoutConfig rightConfig;
@@ -297,6 +325,11 @@ MainMenuState::MainMenuState(
 }
 
 void MainMenuState::enter() {
+    auto network = _resourceManager->get<ClientNetwork>();
+    if (network) {
+        _previousLobbyConnectedState = network->isConnectedToLobby();
+        _previousLobbyMasterState = network->isLobbyMaster();
+    }
 }
 
 void MainMenuState::update(float deltaTime) {
@@ -311,7 +344,24 @@ void MainMenuState::update(float deltaTime) {
         return;
     }
 
-    _uiManager->handleKeyboardInput(eventResult);
+    bool isTextInputFocused = false;
+    auto navManager = _uiManager->getNavigationManager();
+    if (navManager) {
+        auto focusedElement = navManager->getFocusedElement();
+        if (focusedElement) {
+            auto textInput = std::dynamic_pointer_cast<ui::TextInput>(focusedElement);
+            isTextInputFocused = (textInput != nullptr);
+        }
+    }
+
+    bool shouldBlockKeyboardInput = isTextInputFocused &&
+        (eventResult == gfx::EventType::UP ||
+         eventResult == gfx::EventType::DOWN ||
+         eventResult == gfx::EventType::TAB);
+
+    if (!shouldBlockKeyboardInput) {
+        _uiManager->handleKeyboardInput(eventResult);
+    }
 
     if (eventResult == gfx::EventType::TEXT_INPUT) {
         std::string textInput = _resourceManager->get<gfx::IEvent>()->getLastTextInput();
@@ -329,12 +379,17 @@ void MainMenuState::update(float deltaTime) {
     bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
     _resourceManager->get<gfx::IWindow>()->setCursor(isHoveringUI);
 
-    if (_resourceManager->has<ecs::IInputProvider>()) {
+    if (mousePressed && !isHoveringUI && navManager) {
+        navManager->clearFocus();
+    }
+
+    if (_resourceManager->has<ecs::IInputProvider>() && !isTextInputFocused) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
     }
 
     _uiManager->update(deltaTime);
+    checkLobbyConnectionTransition();
     updateUIStatus();
     renderUI();
 }
@@ -389,6 +444,36 @@ void MainMenuState::updateUIStatus() {
         }
         _serverStatusText->setText(status);
     }
+}
+
+void MainMenuState::checkLobbyConnectionTransition() {
+    auto network = _resourceManager->get<ClientNetwork>();
+    if (!network) {
+        return;
+    }
+
+    bool currentLobbyConnected = network->isConnectedToLobby();
+    bool currentLobbyMaster = network->isLobbyMaster();
+
+    if (!_previousLobbyMasterState && currentLobbyMaster &&
+        !network->getLobbyCode().empty()) {
+        if (auto stateMachine = _gsm.lock()) {
+            auto lobbyWaitingState = std::make_shared<LobbyWaitingState>(
+                stateMachine, _resourceManager, true);
+            stateMachine->requestStateChange(lobbyWaitingState);
+            return;
+        }
+    }
+
+    if (!_previousLobbyConnectedState && currentLobbyConnected) {
+        if (auto stateMachine = _gsm.lock()) {
+            auto lobbyWaitingState = std::make_shared<LobbyWaitingState>(
+                stateMachine, _resourceManager, currentLobbyMaster);
+            stateMachine->requestStateChange(lobbyWaitingState);
+        }
+    }
+    _previousLobbyConnectedState = currentLobbyConnected;
+    _previousLobbyMasterState = currentLobbyMaster;
 }
 
 void MainMenuState::exit() {

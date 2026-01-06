@@ -8,7 +8,7 @@
 #include "LobbyState.hpp"
 #include <memory>
 #include "../Loading/LoadingState.hpp"
-#include "../../../../../server/Server.hpp"
+#include "../../../../../server/Lobby.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../gsmStates.hpp"
 
@@ -25,14 +25,13 @@ void LobbyState::enter() {
 void LobbyState::update(float deltaTime) {
     (void)deltaTime;
     *(_resourceManager->get<gsm::GameStateType>()) = gsm::LOBBY;
-    auto server = _resourceManager->get<rserv::Server>();
-    if (server && server->allClientsReady()) {
+    auto lobby = _resourceManager->get<rserv::Lobby>();
+    if (lobby && lobby->isGameStarted()) {
         if (auto stateMachine = _gsm.lock()) {
             stateMachine->requestStateChange(std::make_shared<LoadingState>(stateMachine,
                 _resourceManager));
         }
     }
 }
-
 
 }  // namespace gsm

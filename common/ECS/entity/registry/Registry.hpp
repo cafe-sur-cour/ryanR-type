@@ -25,6 +25,7 @@ template <typename... Components> class Group;
 class Registry : public std::enable_shared_from_this<Registry> {
     public:
         Registry();
+        explicit Registry(Entity nextEntityId);
         ~Registry();
 
         template <typename T>

@@ -48,6 +48,7 @@
 #include "../../../../../common/components/tags/PlayerTag.hpp"
 #include "../../../../../common/components/tags/LocalPlayerTag.hpp"
 #include "../../../../../common/ECS/view/View.hpp"
+#include "../../../../systems/replay/ReplaySystem.hpp"
 #include "../../../../../common/components/tags/ObstacleTag.hpp"
 #include "../../../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../../systems/rendering/GameZoneViewSystem.hpp"
@@ -80,11 +81,9 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::MovementInputSystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::ShootInputSystem>());
-    addSystem(std::make_shared<ecs::SoundSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
     addSystem(std::make_shared<ecs::ClientEffectCleanupSystem>());
     addSystem(std::make_shared<ecs::GameZoneViewSystem>());
-    addSystem(std::make_shared<ecs::MusicSystem>());
     addSystem(std::make_shared<ecs::ParallaxRenderingSystem>());
     addSystem(std::make_shared<ecs::SpriteRenderingSystem>());
     addSystem(std::make_shared<ecs::RectangleRenderingSystem>());
@@ -92,6 +91,9 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::HitboxRenderingSystem>());
     addSystem(std::make_shared<ecs::HealthBarRenderingSystem>());
     addSystem(std::make_shared<ecs::TextRenderingSystem>());
+    addSystem(std::make_shared<ecs::ReplaySystem>());
+    addSystem(std::make_shared<ecs::SoundSystem>());
+    addSystem(std::make_shared<ecs::MusicSystem>());
 
     auto audio = _resourceManager->get<gfx::IAudio>();
 

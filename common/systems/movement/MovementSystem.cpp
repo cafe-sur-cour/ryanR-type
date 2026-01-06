@@ -126,9 +126,6 @@ bool MovementSystem::checkCollisionWithBoundaries(
 
     for (auto& movingCollider : movingColliders) {
         if (movingCollider->getType() != CollisionType::Solid) continue;
-
-        math::FRect movingHitbox = movingCollider->getHitbox(newPos, movingScale,
-            movingTransform->getRotation());
         math::OrientedRect movingOriented = movingCollider->
             getOrientedHitbox(newPos, movingScale, movingTransform->getRotation());
 
@@ -318,9 +315,6 @@ void MovementSystem::handlePushCollision(
 
     for (auto& pushCollider : pushColliders) {
         if (pushCollider->getType() != CollisionType::Push) continue;
-
-        math::FRect pushHitbox = pushCollider->getHitbox(finalPos,
-            entityScale, entityTransform->getRotation());
         math::OrientedRect pushOriented = pushCollider->getOrientedHitbox(finalPos,
             entityScale, entityTransform->getRotation());
 
