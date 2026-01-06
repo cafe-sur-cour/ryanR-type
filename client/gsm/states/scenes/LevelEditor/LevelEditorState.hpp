@@ -59,7 +59,11 @@ private:
     std::vector<std::shared_ptr<ui::Button>> _downButtons;
     std::vector<std::shared_ptr<ui::Button>> _duplicateButtons;
     std::vector<std::shared_ptr<ui::Button>> _deleteButtons;
+    std::shared_ptr<ui::Button> _prevButton;
+    std::shared_ptr<ui::Button> _nextButton;
     bool _shouldUpdateUI;
+    int _currentPage;
+    static constexpr int _levelsPerPage = 8;
 
     std::shared_ptr<ui::UILayout> _deletePopupOverlay;
     std::shared_ptr<ui::UILayout> _deletePopupLayout;

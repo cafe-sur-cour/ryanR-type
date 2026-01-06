@@ -35,6 +35,7 @@ LevelEditorState::LevelEditorState(
     _shouldUpdateUI = false;
     _shouldHideDeletePopup = false;
     _shouldHideDuplicatePopup = false;
+    _currentPage = 0;
 
     auto config = _resourceManager->get<SettingsConfig>();
     _uiManager->setGlobalScale(config->getUIScale());
@@ -152,6 +153,11 @@ void LevelEditorState::createLevelSelectionUI() {
     _deleteButtons.clear();
 
     auto availableLevels = getAvailableLevels();
+    int totalLevels = availableLevels.size();
+    int start = _currentPage * _levelsPerPage;
+    int end = std::min(start + _levelsPerPage, totalLevels);
+    size_t startIdx = static_cast<size_t>(start);
+    size_t endIdx = static_cast<size_t>(end);
 
     ui::LayoutConfig levelsLayoutConfig;
     levelsLayoutConfig.direction = ui::LayoutDirection::Vertical;
@@ -177,7 +183,7 @@ void LevelEditorState::createLevelSelectionUI() {
         noLevelsText->setSize(math::Vector2f(300.f, 30.f));
         levelsLayout->addElement(noLevelsText);
     } else {
-        for (size_t i = 0; i < availableLevels.size(); ++i) {
+        for (size_t i = startIdx; i < endIdx; ++i) {
             const auto& [levelPath, index] = availableLevels[i];
 
             std::string levelName = "Unknown";
@@ -320,9 +326,80 @@ void LevelEditorState::createLevelSelectionUI() {
         }
     }
 
+    // Pagination
+    ui::LayoutConfig paginationConfig;
+    paginationConfig.direction = ui::LayoutDirection::Vertical;
+    paginationConfig.alignment = ui::LayoutAlignment::Center;
+    paginationConfig.spacing = 10.0f;
+    paginationConfig.padding = math::Vector2f(0.0f, 0.0f);
+
+    auto paginationLayout = std::make_shared<ui::UILayout>(_resourceManager, paginationConfig);
+    paginationLayout->setSize(math::Vector2f(800.f, 100.f));
+
+    int totalPages = (totalLevels + _levelsPerPage - 1) / _levelsPerPage;
+    auto pageText = std::make_shared<ui::Text>(_resourceManager);
+    pageText->setText(
+        "Page " + std::to_string(_currentPage + 1) + " / " + std::to_string(totalPages));
+    pageText->setSize(math::Vector2f(800.f, 40.f));
+    pageText->setTextColor(gfx::color_t{255, 255, 255, 255});
+    paginationLayout->addElement(pageText);
+
+    ui::LayoutConfig buttonLayoutConfig;
+    buttonLayoutConfig.direction = ui::LayoutDirection::Horizontal;
+    buttonLayoutConfig.alignment = ui::LayoutAlignment::Center;
+    buttonLayoutConfig.spacing = 25.0f;
+    buttonLayoutConfig.padding = math::Vector2f(0.0f, 0.0f);
+
+    auto buttonLayout = std::make_shared<ui::UILayout>(_resourceManager, buttonLayoutConfig);
+    buttonLayout->setSize(math::Vector2f(800.f, 40.f));
+
+    auto prevButton = std::make_shared<ui::Button>(_resourceManager);
+    prevButton->setText("< Previous");
+    prevButton->setSize(math::Vector2f(180.f, 40.f));
+    prevButton->setNormalColor(colors::BUTTON_SECONDARY);
+    prevButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    prevButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+
+    if (_currentPage > 0) {
+        prevButton->setOnRelease([this]() {
+            _currentPage--;
+            _shouldUpdateUI = true;
+        });
+    } else {
+        prevButton->setState(ui::UIState::Disabled);
+    }
+
+    buttonLayout->addElement(prevButton);
+    _prevButton = prevButton;
+
+    auto nextButton = std::make_shared<ui::Button>(_resourceManager);
+    nextButton->setText("Next >");
+    nextButton->setSize(math::Vector2f(180.f, 40.f));
+    nextButton->setNormalColor(colors::BUTTON_SECONDARY);
+    nextButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    nextButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+
+    if (_currentPage < totalPages - 1) {
+        nextButton->setOnRelease([this]() {
+            _currentPage++;
+            _shouldUpdateUI = true;
+        });
+    } else {
+        nextButton->setState(ui::UIState::Disabled);
+    }
+
+    buttonLayout->addElement(nextButton);
+    _nextButton = nextButton;
+
+    paginationLayout->addElement(buttonLayout);
+
+    levelsLayout->addElement(paginationLayout);
+
+    _uiManager->addElement(levelsLayout);
+
     _addLevelButton = std::make_shared<ui::Button>(_resourceManager);
     _addLevelButton->setText("Add Level");
-    _addLevelButton->setSize(math::Vector2f(400.f, 40.f));
+    _addLevelButton->setSize(math::Vector2f(300.f, 50.f));
     _addLevelButton->setNormalColor(colors::BUTTON_SECONDARY);
     _addLevelButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _addLevelButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
@@ -330,25 +407,20 @@ void LevelEditorState::createLevelSelectionUI() {
     _addLevelButton->setOnRelease([]() {
         // TODO(anyone): Implement add level functionality
     });
-    _addLevelButton->setOnActivated([]() {
-        // TODO(anyone): Implement add level functionality
-    });
-    levelsLayout->addElement(_addLevelButton);
-
-    _uiManager->addElement(levelsLayout);
 
     ui::LayoutConfig backLayoutConfig;
-    backLayoutConfig.direction = ui::LayoutDirection::Vertical;
+    backLayoutConfig.direction = ui::LayoutDirection::Horizontal;
     backLayoutConfig.alignment = ui::LayoutAlignment::Center;
-    backLayoutConfig.spacing = 15.0f;
+    backLayoutConfig.spacing = 20.0f;
     backLayoutConfig.padding = math::Vector2f(20.0f, 20.0f);
     backLayoutConfig.anchorX = ui::AnchorX::Center;
     backLayoutConfig.anchorY = ui::AnchorY::Bottom;
     backLayoutConfig.offset = math::Vector2f(0.0f, -50.0f);
 
     auto backLayout = std::make_shared<ui::UILayout>(_resourceManager, backLayoutConfig);
-    backLayout->setSize(math::Vector2f(300.f, 100.f));
+    backLayout->setSize(math::Vector2f(650.f, 100.f));
     backLayout->addElement(_backButton);
+    backLayout->addElement(_addLevelButton);
 
     _uiManager->addElement(backLayout);
 }
@@ -718,6 +790,24 @@ void LevelEditorState::setMainButtonsEnabled(bool enabled) {
     if (_backButton) {
         _backButton->setState(state);
     }
+
+    if (_prevButton) {
+        if (enabled && _currentPage > 0) {
+            _prevButton->setState(ui::UIState::Normal);
+        } else {
+            _prevButton->setState(ui::UIState::Disabled);
+        }
+    }
+
+    if (_nextButton) {
+        int totalLevels = getAvailableLevels().size();
+        int totalPages = (totalLevels + _levelsPerPage - 1) / _levelsPerPage;
+        if (enabled && _currentPage < totalPages - 1) {
+            _nextButton->setState(ui::UIState::Normal);
+        } else {
+            _nextButton->setState(ui::UIState::Disabled);
+        }
+    }
 }
 
 void LevelEditorState::hideDeleteConfirmationPopup() {
@@ -768,6 +858,8 @@ void LevelEditorState::exit() {
     _background.reset();
     _backButton.reset();
     _addLevelButton.reset();
+    _prevButton.reset();
+    _nextButton.reset();
     _mouseHandler.reset();
     _uiManager.reset();
     _deletePopupOverlay.reset();
