@@ -20,6 +20,7 @@
 #include "../../../../ui/elements/Text.hpp"
 #include "../../../../ui/elements/focusable/Button.hpp"
 #include "../../../../ui/elements/focusable/TextInput.hpp"
+#include "../../../../ui/elements/focusable/Dropdown.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -40,6 +41,7 @@ private:
     void createUI();
     void updateSaveButtonText();
     bool validateFields();
+    std::vector<std::string> loadAvailableMusics();
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::unique_ptr<ui::UIManager> _uiManager;
@@ -56,6 +58,8 @@ private:
     std::shared_ptr<ui::TextInput> _mapLengthInput;
     std::shared_ptr<ui::Text> _scrollSpeedLabel;
     std::shared_ptr<ui::TextInput> _scrollSpeedInput;
+    std::shared_ptr<ui::Text> _musicLabel;
+    std::shared_ptr<ui::Dropdown> _musicDropdown;
 
     bool _hasUnsavedChanges = false;
 
