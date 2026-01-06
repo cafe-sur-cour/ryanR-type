@@ -326,7 +326,6 @@ void LevelEditorState::createLevelSelectionUI() {
         }
     }
 
-    // Pagination
     ui::LayoutConfig paginationConfig;
     paginationConfig.direction = ui::LayoutDirection::Vertical;
     paginationConfig.alignment = ui::LayoutAlignment::Center;
