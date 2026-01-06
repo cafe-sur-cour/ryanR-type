@@ -55,8 +55,8 @@ struct LayoutConfig {
 
     struct BackgroundConfig {
         bool enabled = false;
-        color_t fillColor = {0, 0, 0, 0}; // Transparent
-        color_t outlineColor = {0, 0, 0, 0}; // Transparent
+        color_t fillColor = {0, 0, 0, 0};
+        color_t outlineColor = {0, 0, 0, 0};
         float cornerRadius = 0.0f;
     } background;
 };
