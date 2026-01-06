@@ -156,6 +156,7 @@ namespace constants {
     const std::string LEVEL_WAVES_FIELD = "waves";
 
     const std::string MUSIC_DIRECTORY = "configs/entities/musics";
+    const std::string BACKGROUNDS_DIRECTORY = "configs/entities/backgrounds";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
