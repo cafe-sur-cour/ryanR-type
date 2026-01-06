@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** HealthComponent registration
+** HealthComponent
 */
 
 #include "HealthComponent.hpp"

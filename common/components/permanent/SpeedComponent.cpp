@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** SpeedComponent registration
+** SpeedComponent
 */
 
 #include "SpeedComponent.hpp"

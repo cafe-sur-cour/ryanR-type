@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** GameZoneColliderTag registration
+** GameZoneColliderTag
 */
 
 #include "GameZoneColliderTag.hpp"
