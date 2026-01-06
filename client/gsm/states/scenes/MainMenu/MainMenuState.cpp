@@ -473,7 +473,7 @@ void MainMenuState::updateUIStatus() {
         _requestCodeButton->setVisible(true);
     }
 
-    if (!network->isConnected()) {
+    if (config->getUsername().empty()) {
         _usernameButton->setText("Not connected to server");
     } else {
         _usernameButton->setText(config->getUsername());
