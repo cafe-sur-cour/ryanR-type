@@ -80,7 +80,7 @@ jobs:
 
   check_ubuntu_compilation:
     name: check project compilation on ubuntu
-    needs: [check_coding_style]
+    needs: [check_repository]
     runs-on: ubuntu-latest
     outputs:
       cache-hit: ${{ steps.cache-build.outputs.cache-hit }}
@@ -138,24 +138,9 @@ jobs:
       - name: SHOW CCACHE STATS
         run: ccache --show-stats
 
-      - name: UPLOAD BUILD ARTIFACTS
-        uses: actions/upload-artifact@v4
-        with:
-          name: ubuntu-build-artifacts
-          path: |
-            build/unix/bin
-            vcpkg
-            vcpkg_installed
-            libraries/
-            r-type_client
-            r-type_server
-            configs/
-          retention-days: 1
-          compression-level: 6
-
   check_windows_compilation:
     name: check project compilation on windows
-    needs: [check_coding_style]
+    needs: [check_repository]
     runs-on: windows-2022
     steps:
       - name: CHECKOUT
@@ -192,7 +177,7 @@ jobs:
 
   run_all_tests:
     name: run all tests
-    needs: [check_ubuntu_compilation]
+    needs: [check_repository]
     runs-on: ubuntu-latest
     steps:
       - name: CHECKOUT
@@ -249,7 +234,7 @@ jobs:
 
   push_to_mirror:
     name: push to target repository
-    needs: [run_all_tests, check_windows_compilation]
+    needs: [run_all_tests, check_windows_compilation, check_ubuntu_compilation]
     if: ${{ github.event_name == 'push' }}
     environment: RTYPE
     runs-on: ubuntu-latest
@@ -266,7 +251,7 @@ jobs:
 
   calculate_version:
     name: calculate semantic version
-    needs: [run_all_tests, check_windows_compilation]
+    needs: [run_all_tests, check_windows_compilation, check_ubuntu_compilation]
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     outputs:
