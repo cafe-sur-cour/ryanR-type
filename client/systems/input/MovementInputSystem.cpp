@@ -15,6 +15,7 @@
 #include "../../../common/constants.hpp"
 #include "../../../common/components/tags/ControllableTag.hpp"
 #include "../../../common/components/tags/LocalPlayerTag.hpp"
+#include "../../../common/components/permanent/HealthComponent.hpp"
 #include "../../../common/components/temporary/InputIntentComponent.hpp"
 #include "../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../common/InputMapping/InputAction.hpp"
@@ -34,25 +35,39 @@ void MovementInputSystem::update(
     (void)deltaTime;
 
     auto view = registry->view<ControllableTag, LocalPlayerTag>();
-    math::Vector2f movementDirection = getMovementDirection(resourceManager);
 
-    bool isMovingThisFrame = !(std::fabs(movementDirection.getX()) <= constants::EPS &&
-        std::fabs(movementDirection.getY()) <= constants::EPS);
-
-    if (resourceManager->has<ClientNetwork>()) {
-        if (isMovingThisFrame) {
-            sendAxisEvents(resourceManager, movementDirection);
-            _wasMovingLastFrame = true;
-        } else if (_wasMovingLastFrame) {
-            NetworkEvent stopEvent;
-            stopEvent.eventType = constants::EventType::STOP;
-            stopEvent.depth = 0.0;
-            resourceManager->get<ClientNetwork>()->addToEventQueue(stopEvent);
-            _wasMovingLastFrame = false;
+    bool localPlayerAlive = false;
+    for (auto entityId : view) {
+        if (isPlayerAlive(registry, entityId)) {
+            localPlayerAlive = true;
+            break;
         }
     }
-    for (auto entityId : view) {
-        updateInputIntent(registry, entityId, movementDirection);
+    if (localPlayerAlive) {
+        math::Vector2f movementDirection = getMovementDirection(resourceManager);
+
+        bool isMovingThisFrame = !(std::fabs(movementDirection.getX()) <= constants::EPS &&
+            std::fabs(movementDirection.getY()) <= constants::EPS);
+
+        if (resourceManager->has<ClientNetwork>()) {
+            if (isMovingThisFrame) {
+                sendAxisEvents(resourceManager, movementDirection);
+                _wasMovingLastFrame = true;
+            } else if (_wasMovingLastFrame) {
+                NetworkEvent stopEvent;
+                stopEvent.eventType = constants::EventType::STOP;
+                stopEvent.depth = 0.0;
+                resourceManager->get<ClientNetwork>()->addToEventQueue(stopEvent);
+                _wasMovingLastFrame = false;
+            }
+        }
+        for (auto entityId : view) {
+            if (isPlayerAlive(registry, entityId)) {
+                updateInputIntent(registry, entityId, movementDirection);
+            }
+        }
+    } else {
+        _wasMovingLastFrame = false;
     }
 }
 
@@ -136,6 +151,16 @@ void MovementInputSystem::sendAxisEvents(
         yEvent.depth = static_cast<double>(std::fabs(direction.getY()));
         clientNetwork->addToEventQueue(yEvent);
     }
+}
+
+bool MovementInputSystem::isPlayerAlive(
+    std::shared_ptr<Registry> registry,
+    Entity entityId) const {
+    if (registry->hasComponent<HealthComponent>(entityId)) {
+        auto health = registry->getComponent<HealthComponent>(entityId);
+        return health->getHealth() > 0.0f;
+    }
+    return true;
 }
 
 }  // namespace ecs
