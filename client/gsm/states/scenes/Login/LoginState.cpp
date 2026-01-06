@@ -12,6 +12,7 @@
 #include <filesystem>
 #include <iostream>
 #include <nlohmann/json.hpp>
+#include "../../../../Utils/SecureJsonManager.hpp"
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/constants.hpp"
@@ -86,19 +87,12 @@ LoginState::LoginState(
             return;
         }
 
-        std::ifstream file(filepath);
-        if (!file.is_open()) {
-            return;
-        }
-
         nlohmann::json users;
         try {
-            file >> users;
+            users = utils::SecureJsonManager::readSecureJson(filepath);
         } catch (const std::exception& e) {
-            file.close();
             return;
         }
-        file.close();
 
         bool found = false;
         for (const auto& user : users) {
@@ -133,19 +127,12 @@ LoginState::LoginState(
             return;
         }
 
-        std::ifstream file(filepath);
-        if (!file.is_open()) {
-            return;
-        }
-
         nlohmann::json users;
         try {
-            file >> users;
+            users = utils::SecureJsonManager::readSecureJson(filepath);
         } catch (const std::exception& e) {
-            file.close();
             return;
         }
-        file.close();
 
         bool found = false;
         for (const auto& user : users) {
