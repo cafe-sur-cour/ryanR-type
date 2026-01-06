@@ -154,6 +154,8 @@ namespace constants {
     const std::string LEVEL_MAP_LENGTH_FIELD = "mapLength";
     const std::string LEVEL_OBSTACLES_FIELD = "obstacles";
     const std::string LEVEL_WAVES_FIELD = "waves";
+
+    const std::string MUSIC_DIRECTORY = "configs/entities/musics";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
