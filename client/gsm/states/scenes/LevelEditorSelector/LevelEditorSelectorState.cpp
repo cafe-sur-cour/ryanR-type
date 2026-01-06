@@ -33,6 +33,7 @@ LevelEditorSelectorState::LevelEditorSelectorState(
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
     _shouldUpdateUI = false;
+    _lastLevelCount = 0;
     _shouldHideDeletePopup = false;
     _shouldHideDuplicatePopup = false;
     _currentPage = 0;
@@ -69,6 +70,8 @@ void LevelEditorSelectorState::enter() {
 
     _background->addLayer(constants::UI_BACKGROUND_EARTH_PATH, 0.0f, 0.0f,
         math::Vector2f(5376.0f, 3584.0f));
+
+    _shouldUpdateUI = true;
 }
 
 void LevelEditorSelectorState::update(float deltaTime) {
@@ -119,6 +122,12 @@ void LevelEditorSelectorState::update(float deltaTime) {
     }
 
     _uiManager->update(deltaTime);
+
+    size_t currentLevelCount = getAvailableLevels().size();
+    if (currentLevelCount != _lastLevelCount) {
+        _lastLevelCount = currentLevelCount;
+        _shouldUpdateUI = true;
+    }
 
     if (_shouldUpdateUI) {
         _shouldUpdateUI = false;
@@ -409,8 +418,15 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
     _addLevelButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _addLevelButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
 
-    _addLevelButton->setOnRelease([]() {
-        // TODO(anyone): Implement add level functionality
+    _addLevelButton->setOnRelease([this]() {
+        auto newLevelPath = createNewLevel();
+        if (newLevelPath) {
+            auto stateMachine = this->_gsm.lock();
+            if (stateMachine) {
+                stateMachine->requestStatePush(std::make_shared<LevelEditorState>(
+                    stateMachine, this->_resourceManager, *newLevelPath));
+            }
+        }
     });
 
     ui::LayoutConfig backLayoutConfig;
@@ -879,6 +895,40 @@ void LevelEditorSelectorState::exit() {
     _duplicatePopupText.reset();
     _duplicateCancelButton.reset();
     _duplicateConfirmButton.reset();
+}
+
+std::optional<std::filesystem::path> LevelEditorSelectorState::createNewLevel() {
+    auto availableLevels = getAvailableLevels();
+    int nextIndex = 0;
+    for (const auto& [path, index] : availableLevels) {
+        if (index >= nextIndex) {
+            nextIndex = index + 1;
+        }
+    }
+
+    nlohmann::json newLevelData;
+    newLevelData[constants::LEVEL_INDEX_FIELD] = nextIndex;
+    newLevelData[constants::LEVEL_NAME_FIELD] = "New Level";
+    newLevelData[constants::LEVEL_BACKGROUND_FIELD] = "";
+    newLevelData[constants::LEVEL_SCROLL_SPEED_FIELD] = 100.0;
+    newLevelData[constants::LEVEL_MUSIC_FIELD] = "";
+    newLevelData[constants::LEVEL_POWER_UPS_FIELD] = nlohmann::json::array();
+    newLevelData[constants::LEVEL_MAP_LENGTH_FIELD] = 0.0;
+    newLevelData[constants::LEVEL_OBSTACLES_FIELD] = nlohmann::json::array();
+    newLevelData[constants::LEVEL_WAVES_FIELD] = nlohmann::json::array();
+
+    std::string newFileName = constants::LEVEL_FILE_PREFIX +
+        std::to_string(nextIndex) + constants::LEVEL_FILE_EXTENSION;
+    std::filesystem::path newPath = constants::LEVEL_DIRECTORY + "/" + newFileName;
+
+    try {
+        std::ofstream newFile(newPath);
+        newFile << newLevelData.dump(4);
+        newFile.close();
+        return newPath;
+    } catch (const std::exception&) {
+        return std::nullopt;
+    }
 }
 
 }  // namespace gsm
