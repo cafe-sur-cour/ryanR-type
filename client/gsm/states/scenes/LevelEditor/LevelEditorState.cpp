@@ -170,7 +170,8 @@ void LevelEditorState::createLevelSelectionUI() {
                 nlohmann::json levelData;
                 file >> levelData;
                 file.close();
-                levelName = levelData.value("name", levelPath.stem().string());
+                levelName = levelData.value(
+                    constants::LEVEL_NAME_FIELD, levelPath.stem().string());
             } catch (const std::exception&) {
                 levelName = levelPath.stem().string();
             }
@@ -330,20 +331,22 @@ void LevelEditorState::createLevelSelectionUI() {
 
 std::vector<std::pair<std::filesystem::path, int>> LevelEditorState::getAvailableLevels() {
     std::vector<std::pair<std::filesystem::path, int>> levels;
-    std::filesystem::path levelDir = "configs/map";
+    std::filesystem::path levelDir = constants::LEVEL_DIRECTORY;
 
     if (std::filesystem::exists(levelDir) && std::filesystem::is_directory(levelDir)) {
         for (const auto& entry : std::filesystem::directory_iterator(levelDir)) {
-            if (entry.is_regular_file() && entry.path().extension() == ".json" &&
-                entry.path().stem().string().find("level") == 0) {
+            if (entry.is_regular_file() && entry.path().extension() ==
+                constants::LEVEL_FILE_EXTENSION &&
+                entry.path().stem().string().find(constants::LEVEL_FILE_PREFIX) == 0) {
                 try {
                     std::ifstream file(entry.path());
                     nlohmann::json levelData;
                     file >> levelData;
                     file.close();
 
-                    int index = levelData.value("index", -1);
-                    std::string name = levelData.value("name", entry.path().stem().string());
+                    int index = levelData.value(constants::LEVEL_INDEX_FIELD, -1);
+                    std::string name = levelData.value(
+                        constants::LEVEL_NAME_FIELD, entry.path().stem().string());
 
                     levels.emplace_back(entry.path(), index);
                 } catch (const std::exception&) {
@@ -374,7 +377,7 @@ void LevelEditorState::swapLevels(
         nlohmann::json data1;
         file1 >> data1;
         file1.close();
-        index1 = data1.value("index", -1);
+        index1 = data1.value(constants::LEVEL_INDEX_FIELD, -1);
     } catch (const std::exception&) {
         return;
     }
@@ -384,7 +387,7 @@ void LevelEditorState::swapLevels(
         nlohmann::json data2;
         file2 >> data2;
         file2.close();
-        index2 = data2.value("index", -1);
+        index2 = data2.value(constants::LEVEL_INDEX_FIELD, -1);
     } catch (const std::exception&) {
         return;
     }
@@ -395,7 +398,7 @@ void LevelEditorState::swapLevels(
         file1 >> data1;
         file1.close();
 
-        data1["index"] = index2;
+        data1[constants::LEVEL_INDEX_FIELD] = index2;
 
         std::ofstream outFile1(path1);
         outFile1 << data1.dump(4);
@@ -410,7 +413,7 @@ void LevelEditorState::swapLevels(
         file2 >> data2;
         file2.close();
 
-        data2["index"] = index1;
+        data2[constants::LEVEL_INDEX_FIELD] = index1;
 
         std::ofstream outFile2(path2);
         outFile2 << data2.dump(4);

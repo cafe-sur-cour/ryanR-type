@@ -11,6 +11,7 @@
 #include "../../base/AGameState.hpp"
 #include <filesystem>  // NOLINT(build/c++17)
 #include <nlohmann/json.hpp>
+#include "../../../../constants.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../ui/elements/focusable/Button.hpp"
