@@ -116,7 +116,7 @@ void SfmlAudio::cleanupFinishedSounds() {
     }
 }
 
-void SfmlAudio::playSound(const std::string& soundPath, float volume) {
+void SfmlAudio::playSound(const std::string& soundPath, float volume, float pitch) {
     loadSoundBuffer(soundPath);
 
     if (_soundBuffers.find(soundPath) == _soundBuffers.end()) {
@@ -130,6 +130,7 @@ void SfmlAudio::playSound(const std::string& soundPath, float volume) {
 
     auto sound = std::make_shared<sf::Sound>(*_soundBuffers[soundPath]);
     sound->setVolume(std::max(0.0f, std::min(100.0f, volume)) * (_soundVolume / 100.0f));
+    sound->setPitch(pitch);
     sound->play();
 
     _sounds[soundKey] = sound;
