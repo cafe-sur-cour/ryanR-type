@@ -57,6 +57,7 @@
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../../common/components/permanent/HealthComponent.hpp"
 #include "../../../../ClientNetwork.hpp"
+#include "../../../../../common/Parser/Parser.hpp"
 
 namespace gsm {
 
@@ -65,13 +66,25 @@ InGameState::InGameState(
     std::shared_ptr<ResourceManager> resourceManager)
     : AGameState(gsm, resourceManager), _previousScore(-1), _previousHealth(-1) {
     _registry = resourceManager->get<ecs::Registry>();
-    _prefabManager = resourceManager->get<EntityPrefabManager>();
+    if (resourceManager->has<Parser>()) {
+        _prefabManager = resourceManager->get<Parser>()->getPrefabManager();
+    } else {
+        _prefabManager = resourceManager->get<EntityPrefabManager>();
+    }
     this->_parser = nullptr;
 }
 
 void InGameState::enter() {
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
     _resourceManager->add<ecs::Registry>(_registry);
+
+    if (_resourceManager->has<gfx::IWindow>()) {
+        auto window = _resourceManager->get<gfx::IWindow>();
+        window->setViewCenter(
+            constants::MAX_WIDTH / 2.0f,
+            constants::MAX_HEIGHT / 2.0f
+        );
+    }
 
     auto collisionData =
         ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
@@ -226,7 +239,7 @@ void InGameState::drawHealthHUD(
     std::pair<size_t, size_t> healthTextPosition =
         {barX, static_cast<size_t>(barY - textOffsetY)};
     window->drawText(healthText, colors::WHITE, healthTextPosition,
-        "assets/fonts/abduction2002.ttf", 20, colors::BLACK, 1.0f);
+        constants::MAIN_FONT, 20, colors::BLACK, 1.0f);
 
     for (const auto& feedback : _healthFeedbacks) {
         uint8_t alpha =
@@ -239,7 +252,7 @@ void InGameState::drawHealthHUD(
         std::pair<size_t, size_t> feedbackPosition = {x, y};
         window->drawText(
             feedback.text, feedbackColor, feedbackPosition,
-            "assets/fonts/abduction2002.ttf", 28
+            constants::MAIN_FONT, 28
         );
     }
 }
@@ -254,7 +267,7 @@ void InGameState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) 
 
     std::pair<size_t, size_t> labelPosition = {barX, barY - textOffsetY};
     window->drawText("Score", colors::WHITE, labelPosition,
-        "assets/fonts/abduction2002.ttf", 20, colors::BLACK, 1.0f);
+        constants::MAIN_FONT, 20, colors::BLACK, 1.0f);
 
     std::pair<size_t, size_t> rectPosition = {barX, barY};
     window->drawRoundedRectangleFilled(
@@ -268,7 +281,7 @@ void InGameState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) 
     std::pair<size_t, size_t> scorePosition = {barX + 10, barY - 2};
     window->drawText(
         scoreText, colors::YELLOW, scorePosition,
-        "assets/fonts/abduction2002.ttf", 20
+        constants::MAIN_FONT, 20
     );
 
     for (const auto& feedback : _scoreFeedbacks) {
@@ -283,7 +296,7 @@ void InGameState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) 
         std::pair<size_t, size_t> feedbackPosition = {x, y};
         window->drawText(
             feedback.text, feedbackColor, feedbackPosition,
-            "assets/fonts/abduction2002.ttf", 28
+            constants::MAIN_FONT, 28
         );
     }
 }
@@ -294,8 +307,6 @@ void InGameState::exit() {
         systemManager->removeSystem(sys);
     }
     _systems.clear();
-    _resourceManager->remove<ecs::Registry>();
-    _resourceManager->remove<EntityPrefabManager>();
 }
 
 }  // namespace gsm

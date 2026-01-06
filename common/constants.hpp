@@ -123,6 +123,7 @@ namespace constants {
     const std::string LAYERS_FIELD = "layers";
     const std::string ZONERECT_FIELD = "zoneRect";
     const std::string NAME_FIELD = "name";
+    const std::string INDEX_FIELD = "index";
     const std::string SPEEDMULTIPLIER_FIELD = "speedMultiplier";
     const std::string SCALEMODE_FIELD = "scaleMode";
     const std::string SOURCESIZE_FIELD = "sourceSize";
@@ -261,8 +262,10 @@ namespace constants {
     constexpr std::uint8_t PACKET_CONNECT_TO_LOBBY = 0x0F;
     constexpr std::uint8_t PACKET_LOBBY_MASTER_REQUEST_START = 0x10;
     constexpr std::uint8_t PACKET_LOBBY_CONNECT_VALUE = 0x11;
+    constexpr std::uint8_t PACKET_LEVEL_COMPLETE = 0x12;
+    constexpr std::uint8_t PACKET_NEXT_LEVEL = 0x13;
 
-    const int MAX_INDEX_PACKET_TYPE = 18;
+    const int MAX_INDEX_PACKET_TYPE = 20;
     const int MAX_CLIENT_PER_LOBBY = 4;
 
     /* Scripting constant */
