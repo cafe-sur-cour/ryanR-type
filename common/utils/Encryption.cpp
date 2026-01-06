@@ -19,7 +19,7 @@ std::string Encryption::getEncryptionKey() {
         return std::string(envKey);
     }
 
-    std::ifstream envFile("client/Utils/.env");
+    std::ifstream envFile("common/utils/.env");
     if (envFile.is_open()) {
         std::string line;
         while (std::getline(envFile, line)) {

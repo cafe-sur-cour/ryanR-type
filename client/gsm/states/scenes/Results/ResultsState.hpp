@@ -28,7 +28,7 @@ class ResultsState : public AGameState {
 
     private:
         void updateUserStats();
-        
+
         bool _isWin;
         int _score;
         std::unique_ptr<ui::UIManager> _uiManager;

@@ -313,12 +313,14 @@ MainMenuState::MainMenuState(
     _disconnectButton->setOnRelease([this]() {
         auto config = this->_resourceManager->get<SettingsConfig>();
         if (config) {
+            config->setUsername("");
             config->saveSettings();
         }
     });
     _disconnectButton->setOnActivated([this]() {
         auto config = this->_resourceManager->get<SettingsConfig>();
         if (config) {
+            config->setUsername("");
             config->saveSettings();
         }
     });
