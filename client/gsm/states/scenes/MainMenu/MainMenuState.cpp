@@ -538,8 +538,6 @@ void MainMenuState::updateUIStatus() {
     auto config = _resourceManager->get<SettingsConfig>();
     bool isUserLoggedIn = config && config->getUsername() != "Player";
 
-    // Si l'utilisateur n'est pas connecté, on désactive les boutons
-    // Si l'utilisateur est connecté ET que le bouton est Disabled, on le réactive à Normal
     if (!isUserLoggedIn) {
         if (_usernameButton && _usernameButton->getState() != ui::UIState::Disabled) {
             _usernameButton->setState(ui::UIState::Disabled);
@@ -554,7 +552,6 @@ void MainMenuState::updateUIStatus() {
             _lobbyConnectButton->setState(ui::UIState::Disabled);
         }
     } else {
-        // Réactiver les boutons s'ils sont Disabled
         if (_usernameButton && _usernameButton->getState() == ui::UIState::Disabled) {
             _usernameButton->setState(ui::UIState::Normal);
         }
@@ -657,32 +654,6 @@ void MainMenuState::exit() {
     if (_uiManager) {
         _uiManager->clearElements();
     }
-
-    // Libération explicite des ressources
-    _background.reset();
-    _leftLayout.reset();
-    _mainMenuLayout.reset();
-    _rightLayout.reset();
-    _topLeftLayout.reset();
-    _headerLayout.reset();
-    _usernameButton.reset();
-    _settingsButton.reset();
-    _quitButton.reset();
-    _connectButton.reset();
-    _requestCodeButton.reset();
-    _lobbyConnectButton.reset();
-    _howToPlayButton.reset();
-    _leaderboardButton.reset();
-    _registerButton.reset();
-    _loginButton.reset();
-    _disconnectButton.reset();
-    _ipInput.reset();
-    _portInput.reset();
-    _lobbyCodeInput.reset();
-    _connectionStatusText.reset();
-    _serverStatusText.reset();
-    _uiManager.reset();
-    _mouseHandler.reset();
 }
 
 }  // namespace gsm
