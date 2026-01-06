@@ -251,6 +251,14 @@ const std::vector<std::string>& Dropdown::getOptions() const {
     return _options;
 }
 
+const std::string& Dropdown::getSelectedOption() const {
+    static const std::string emptyString = "";
+    if (_hasSelection && _selectedIndex < _options.size()) {
+        return _options[_selectedIndex];
+    }
+    return emptyString;
+}
+
 void Dropdown::setSelectedIndex(size_t index) {
     if (index < _options.size()) {
         _selectedIndex = index;

@@ -40,6 +40,7 @@ class Dropdown : public AFocusableElement {
         void clearOptions();
 
         const std::vector<std::string>& getOptions() const;
+        const std::string& getSelectedOption() const;
 
         void setSelectedIndex(size_t index);
         size_t getSelectedIndex() const;
