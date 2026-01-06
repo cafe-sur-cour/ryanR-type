@@ -96,6 +96,10 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
 rserv::Lobby::~Lobby() {
     this->stop();
 
+    if (!this->_resourceManager) {
+        return;
+    }
+
     if (!this->_resourceManager->has<ecs::Registry>()) {
         debug::Debug::printDebug(this->getIsDebug(),
             "[SERVER] Registry not found, cannot process WHOAMI",
