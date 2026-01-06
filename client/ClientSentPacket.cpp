@@ -22,12 +22,11 @@ void ClientNetwork::connectionPacket() {
             err::ClientNetworkError::INTERNAL_ERROR);
     }
 
-    std::vector<uint64_t> payload = this->_packet->formatString(this->_name);
     std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
-        this->_sequenceNumber, constants::PACKET_CONNECTION, payload);
+        this->_sequenceNumber, constants::PACKET_CONNECTION, {});
 
     debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Sending connection packet with name: " + this->_name,
+        "[CLIENT] Sending connection packet",
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
 
@@ -197,4 +196,53 @@ void ClientNetwork::sendMasterStartGame() {
 
     this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
+}
+
+void ClientNetwork::sendRegisterPacket(const std::string &username, const std::string &password) {
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
+    }
+
+    std::vector<uint64_t> payload;
+    std::vector<uint64_t> usernameBytes = this->_packet->formatString(username);
+    std::vector<uint64_t> passwordBytes = this->_packet->formatString(password);
+    payload.insert(payload.end(), usernameBytes.begin(), usernameBytes.end());
+    payload.insert(payload.end(), passwordBytes.begin(), passwordBytes.end());
+
+    std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
+        this->_sequenceNumber, constants::PACKET_REGISTER, payload);
+
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Sending register packet for username: " + username,
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    this->_network->sendTo(*this->_serverEndpoint, packet);
+    this->_sequenceNumber++;
+}
+
+void ClientNetwork::sendLoginPacket(const std::string &username, const std::string &password) {
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
+    }
+
+    std::vector<uint64_t> payload;
+    std::vector<uint64_t> usernameBytes = this->_packet->formatString(username);
+    std::vector<uint64_t> passwordBytes = this->_packet->formatString(password);
+    payload.insert(payload.end(), usernameBytes.begin(), usernameBytes.end());
+    payload.insert(payload.end(), passwordBytes.begin(), passwordBytes.end());
+
+    std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
+        this->_sequenceNumber, constants::PACKET_LOGIN, payload);
+
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Sending login packet for username: " + username,
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    this->_network->sendTo(*this->_serverEndpoint, packet);
+    this->_sequenceNumber++;
+    this->_expectingLoginResponse = true;
 }

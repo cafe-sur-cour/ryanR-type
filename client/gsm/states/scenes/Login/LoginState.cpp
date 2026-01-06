@@ -13,6 +13,7 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include "../../../../Utils/SecureJsonManager.hpp"
+#include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/constants.hpp"
@@ -82,36 +83,9 @@ LoginState::LoginState(
             return;
         }
 
-        const std::string filepath = "saves/users.json";
-        if (!std::filesystem::exists(filepath)) {
-            return;
-        }
-
-        nlohmann::json users;
-        try {
-            users = utils::SecureJsonManager::readSecureJson(filepath);
-        } catch (const std::exception& e) {
-            return;
-        }
-
-        bool found = false;
-        for (const auto& user : users) {
-            if (user.contains("username") && user.contains("password") &&
-                user["username"] == username && user["password"] == password) {
-                found = true;
-                break;
-            }
-        }
-
-        if (found) {
-            auto config = this->_resourceManager->get<SettingsConfig>();
-            if (config) {
-                config->setUsername(username);
-                config->saveSettings();
-                if (auto stateMachine = this->_gsm.lock()) {
-                    stateMachine->requestStatePop();
-                }
-            }
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            network->sendLoginPacket(username, password);
         }
     });
     _loginButton->setOnActivated([this]() {
@@ -122,36 +96,9 @@ LoginState::LoginState(
             return;
         }
 
-        const std::string filepath = "saves/users.json";
-        if (!std::filesystem::exists(filepath)) {
-            return;
-        }
-
-        nlohmann::json users;
-        try {
-            users = utils::SecureJsonManager::readSecureJson(filepath);
-        } catch (const std::exception& e) {
-            return;
-        }
-
-        bool found = false;
-        for (const auto& user : users) {
-            if (user.contains("username") && user.contains("password") &&
-                user["username"] == username && user["password"] == password) {
-                found = true;
-                break;
-            }
-        }
-
-        if (found) {
-            auto config = this->_resourceManager->get<SettingsConfig>();
-            if (config) {
-                config->setUsername(username);
-                config->saveSettings();
-                if (auto stateMachine = this->_gsm.lock()) {
-                    stateMachine->requestStatePop();
-                }
-            }
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            network->sendLoginPacket(username, password);
         }
     });
 
