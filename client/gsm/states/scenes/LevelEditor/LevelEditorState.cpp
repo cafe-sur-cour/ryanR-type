@@ -156,8 +156,8 @@ void LevelEditorState::createLevelSelectionUI() {
     int totalLevels = static_cast<int>(availableLevels.size());
     size_t start =
         static_cast<size_t>(_currentPage) * static_cast<size_t>(_levelsPerPage);
-    size_t end =
-        std::min(start + static_cast<size_t>(_levelsPerPage), static_cast<size_t>(totalLevels));
+    size_t end = std::min(start + static_cast<size_t>(_levelsPerPage),
+        static_cast<size_t>(totalLevels));
     size_t startIdx = start;
     size_t endIdx = end;
 
