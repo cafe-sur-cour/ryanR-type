@@ -801,7 +801,7 @@ void LevelEditorState::setMainButtonsEnabled(bool enabled) {
     }
 
     if (_nextButton) {
-        int totalLevels = getAvailableLevels().size();
+        int totalLevels = static_cast<int>(getAvailableLevels().size());
         int totalPages = (totalLevels + _levelsPerPage - 1) / _levelsPerPage;
         if (enabled && _currentPage < totalPages - 1) {
             _nextButton->setState(ui::UIState::Normal);
