@@ -15,14 +15,7 @@
 #include "../../common/translationToECS.hpp"
 #include "../constants.hpp"
 
-using SerializerPtr = std::shared_ptr<pm::ISerializer>;
-using pm::BigEndianSerialization;
-
 namespace common::packet {
-
-static SerializerPtr makeSerializer() {
-    return std::make_shared<BigEndianSerialization>();
-}
 
 static void registerMultiUCharPacket(
     std::shared_ptr<pm::IPacketManager> packet,
