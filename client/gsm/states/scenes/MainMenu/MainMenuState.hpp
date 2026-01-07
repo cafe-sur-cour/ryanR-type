@@ -17,6 +17,7 @@
 #include "../../../../ui/elements/Background.hpp"
 #include "../../../../ui/elements/focusable/TextInput.hpp"
 #include "../../../../ui/elements/Text.hpp"
+#include "../Leaderboard/LeaderboardState.hpp"
 
 
 namespace gsm {

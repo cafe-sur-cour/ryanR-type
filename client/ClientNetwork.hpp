@@ -83,6 +83,7 @@ class ClientNetwork {
         void sendMasterStartGame();
         void sendRegisterPacket(const std::string &username, const std::string &password);
         void sendLoginPacket(const std::string &username, const std::string &password);
+        void sendRequestLeaderboardPacket();
 
         void addToEventQueue(const NetworkEvent &event);
 
