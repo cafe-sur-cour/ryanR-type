@@ -49,6 +49,10 @@ target_compile_definitions(${CLIENT_BIN_NAME}
     PUBLIC R_TYPE_CLIENT
 )
 
+if(USE_PCH)
+    target_precompile_headers(${CLIENT_BIN_NAME} PRIVATE ${PCH_HEADERS})
+endif()
+
 add_subdirectory(initResourcesManager)
 add_subdirectory(gsm)
 add_subdirectory(components)

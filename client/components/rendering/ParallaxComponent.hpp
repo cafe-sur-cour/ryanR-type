@@ -13,6 +13,7 @@
 #include "../../../common/constants.hpp"
 #include <string>
 #include <vector>
+#include <algorithm>
 
 namespace ecs {
 
