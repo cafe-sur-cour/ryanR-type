@@ -8,6 +8,7 @@
 #include <vector>
 #include <iostream>
 #include "PacketManager.hpp"
+#include "compression/Compression.hpp"
 #include "../../common/debug.hpp"
 #include "../../common/translationToECS.hpp"
 
@@ -44,6 +45,93 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
         return true;
     }
 
+    if (type == GAME_STATE_COMPRESSED_PACKET) {
+        this->_idClient = static_cast<uint8_t>(idClient);
+        this->_sequenceNumber = static_cast<uint32_t>(sequenceNumber);
+        this->_type = GAME_STATE_PACKET;
+        std::vector<uint8_t> compressedPayload(data.begin() + 11, data.end());
+        std::vector<uint8_t> payload = Compression::decompress(compressedPayload);
+        if (payload.empty()) {
+            std::cerr << "[PACKET] Failed to decompress GAME_STATE packet" << std::endl;
+            return false;
+        }
+
+        this->_length = static_cast<uint32_t>(payload.size());
+        this->_payload.clear();
+
+        auto [idx, bytesRead] = this->_serializer->deserializeVarint(payload, 0);
+        this->_payload.push_back(idx);
+
+        for (unsigned int i = static_cast<unsigned int>(bytesRead); i < payload.size();) {
+            for (const auto &func : this->_unpackGSFunction) {
+                unsigned int ret = func(payload, i);
+                if (ret > 0) {
+                    i += ret;
+                    break;
+                }
+            }
+        }
+        return true;
+    }
+
+    if (type == GAME_STATE_BATCH_PACKET || type == GAME_STATE_BATCH_COMPRESSED_PACKET) {
+        this->_idClient = static_cast<uint8_t>(idClient);
+        this->_sequenceNumber = static_cast<uint32_t>(sequenceNumber);
+        this->_type = GAME_STATE_BATCH_PACKET;
+
+        std::vector<uint8_t> payload;
+        if (type == GAME_STATE_BATCH_COMPRESSED_PACKET) {
+            std::vector<uint8_t> compressedPayload(data.begin() + 11, data.end());
+            payload = Compression::decompress(compressedPayload);
+            if (payload.empty()) {
+                std::cerr << "[PACKET] Failed to decompress GAME_STATE_BATCH packet"
+                    << std::endl;
+                return false;
+            }
+        } else {
+            payload = std::vector<uint8_t>(data.begin() + 11, data.end());
+        }
+
+        this->_length = static_cast<uint32_t>(payload.size());
+        this->_batchedPayloads.clear();
+
+        size_t offset = 0;
+        auto [entityCount, countBytes] = this->_serializer->deserializeVarint(payload, offset);
+        offset += countBytes;
+
+        for (uint64_t e = 0; e < entityCount && offset < payload.size(); ++e) {
+            this->_payload.clear();
+
+            auto [entityId, idBytes] = this->_serializer->deserializeVarint(payload, offset);
+            offset += idBytes;
+            this->_payload.push_back(entityId);
+
+            auto [entitySize, sizeBytes] =
+                this->_serializer->deserializeVarint(payload, offset);
+            offset += sizeBytes;
+
+            size_t entityEnd = offset + entitySize;
+            for (unsigned int i = static_cast<unsigned int>(offset); i < entityEnd && i <
+                payload.size();) {
+                bool handled = false;
+                for (const auto &func : this->_unpackGSFunction) {
+                    unsigned int ret = func(payload, i);
+                    if (ret > 0) {
+                        i += ret;
+                        handled = true;
+                        break;
+                    }
+                }
+                if (!handled) break;
+            }
+            offset = entityEnd;
+
+            this->_batchedPayloads.push_back(this->_payload);
+        }
+        this->_payload.clear();
+        return true;
+    }
+
     if (type == GAME_STATE_PACKET) {
         this->_idClient = static_cast<uint8_t>(idClient);
         this->_sequenceNumber = static_cast<uint32_t>(sequenceNumber);
@@ -52,10 +140,9 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
 
         std::vector<uint8_t> payload(data.begin() + 11, data.end());
         this->_payload.clear();
-        uint64_t idx = this->_serializer->deserializeULong(
-            std::vector<uint8_t>(payload.begin(), payload.begin() + 8));
+        auto [idx, bytesRead] = this->_serializer->deserializeVarint(payload, 0);
         this->_payload.push_back(idx);
-        for (unsigned int i = 8; i < payload.size();) {
+        for (unsigned int i = static_cast<unsigned int>(bytesRead); i < payload.size();) {
             for (const auto &func : this->_unpackGSFunction) {
                 unsigned int ret = func(payload, i);
                 if (ret > 0) {
