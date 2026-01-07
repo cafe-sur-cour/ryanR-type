@@ -49,7 +49,7 @@ void SettingsConfig::saveSettings(const std::string& filepath) {
     j[constants::SETTINGS_SCREEN_RESOLUTION] = static_cast<int>(_screenResolution);
     j[constants::SETTINGS_TARGET_FPS] = _targetFPS;
     j[constants::SETTINGS_RENDER_QUALITY] = _renderQuality;
-    j["username"] = _username;
+    j[constants::SETTINGS_USERNAME] = _username;
     std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
     std::ofstream file(filepath);
     file << j.dump(4);
@@ -76,7 +76,7 @@ void SettingsConfig::loadSettings(const std::string& filepath) {
         j[constants::SETTINGS_TARGET_FPS];
     if (j.contains(constants::SETTINGS_RENDER_QUALITY)) _renderQuality =
         j[constants::SETTINGS_RENDER_QUALITY];
-    if (j.contains("username")) _username = j["username"];
+    if (j.contains(constants::SETTINGS_USERNAME)) _username = j[constants::SETTINGS_USERNAME];
 }
 
 std::string SettingsConfig::getScreenResolutionName(ScreenResolution resolution) const {
