@@ -58,6 +58,11 @@ if(APPLE OR UNIX)
     )
 endif()
 
+if(USE_UNITY_BUILD)
+    set_target_properties(${NETWORK_SERVER_LIB_NAME} PROPERTIES UNITY_BUILD ON)
+    set_target_properties(${NETWORK_CLIENT_LIB_NAME} PROPERTIES UNITY_BUILD ON)
+endif()
+
 # Link asio for networking functionality
 target_link_libraries(${NETWORK_CLIENT_LIB_NAME}
     PUBLIC asio::asio

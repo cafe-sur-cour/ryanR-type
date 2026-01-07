@@ -11,6 +11,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(USE_PCH "Use precompiled headers to speed up compilation" ON)
 
 # ============================================================================
+# Unity Build Configuration
+# ============================================================================
+option(USE_UNITY_BUILD "Use Unity Build to speed up compilation" ON)
+if(USE_UNITY_BUILD)
+    # Don't enable globally - we'll enable it per-target to avoid static library conflicts
+    set(CMAKE_UNITY_BUILD OFF)
+    set(CMAKE_UNITY_BUILD_BATCH_SIZE 16)
+    message(STATUS "Unity Build will be enabled for executables and shared libraries only")
+    message(STATUS "Unity Build batch size: ${CMAKE_UNITY_BUILD_BATCH_SIZE}")
+endif()
+
+# ============================================================================
 # Compiler Cache (ccache/sccache) Configuration
 # ============================================================================
 find_program(CCACHE_PROGRAM ccache)
@@ -84,3 +96,4 @@ endif()
 if(BUILD_TESTS)
     add_subdirectory(tests)
 endif()
+
