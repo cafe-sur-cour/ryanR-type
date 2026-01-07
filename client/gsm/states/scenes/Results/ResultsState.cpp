@@ -8,23 +8,30 @@
 #include "ResultsState.hpp"
 #include <memory>
 #include <string>
+#include <fstream>
+#include <iostream>
+#include <nlohmann/json.hpp>
 #include "../../../common/constants.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../gsm/machine/AGameStateMachine.hpp"
 #include "../MainMenu/MainMenuState.hpp"
+#include "../../../../SettingsConfig.hpp"
 
 namespace gsm {
 
 ResultsState::ResultsState(
     std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager,
-    bool isWin)
-    : AGameState(gsm, resourceManager), _isWin(isWin) {
+    bool isWin,
+    int score)
+    : AGameState(gsm, resourceManager), _isWin(isWin), _score(score) {
     _uiManager = std::make_unique<ui::UIManager>();
 }
 
 void ResultsState::enter() {
+    updateUserStats();
+
     std::string text = _isWin ? constants::WIN_TEXT : constants::LOSE_TEXT;
     gfx::color_t color = _isWin ? colors::GREEN : colors::RED;
 
@@ -65,6 +72,14 @@ void ResultsState::update(float deltaTime) {
 
 void ResultsState::exit() {
     // TODO(anyone): Cleanup results state
+}
+
+void ResultsState::updateUserStats() {
+    auto config = _resourceManager->get<SettingsConfig>();
+    if (!config || config->getUsername().empty()) {
+        return;
+    }
+    (void)_score;
 }
 
 }  // namespace gsm

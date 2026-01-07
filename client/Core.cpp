@@ -12,6 +12,7 @@
 #include <string>
 #include "initResourcesManager/initResourcesManager.hpp"
 #include "gsm/states/scenes/MainMenu/MainMenuState.hpp"
+#include "gsm/states/scenes/Connection/ConnectionState.hpp"
 #include "../common/debug.hpp"
 #include "../../common/Signal/Signal.hpp"
 #include "../../common/interfaces/IWindow.hpp"
@@ -93,9 +94,9 @@ Core::~Core() {
 }
 
 void Core::initFirstScene() {
-    std::shared_ptr<gsm::MainMenuState> mainMenuState =
-        std::make_shared<gsm::MainMenuState>(_gsm, _resourceManager);
-    _gsm->changeState(mainMenuState);
+    std::shared_ptr<gsm::ConnectionState> connectionState =
+        std::make_shared<gsm::ConnectionState>(_gsm, _resourceManager);
+    _gsm->changeState(connectionState);
 }
 
 void Core::run() {

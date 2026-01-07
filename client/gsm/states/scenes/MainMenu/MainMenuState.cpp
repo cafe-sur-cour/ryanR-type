@@ -23,6 +23,11 @@
 #include "../Replay/ReplayState.hpp"
 #include "../LevelEditor/LevelEditorState.hpp"
 #include "../LobbyWaiting/LobbyWaitingState.hpp"
+#include "../Register/RegisterState.hpp"
+#include "../Login/LoginState.hpp"
+#include "../Profile/ProfileState.hpp"
+#include "../HowToPlay/HowToPlayState.hpp"
+#include "../Connection/ConnectionState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -48,98 +53,6 @@ MainMenuState::MainMenuState(
     _background->addLayer(constants::UI_BACKGROUND_EARTH_PATH, 0.0f, 0.0f,
         math::Vector2f(5376.0f, 3584.0f));
     _uiManager->addElement(_background);
-
-    auto net = this->_resourceManager->get<ClientNetwork>();
-    _ipInput = std::make_shared<ui::TextInput>(_resourceManager);
-    _ipInput->setPlaceholder(constants::IP_PLACEHOLDER);
-    _ipInput->setText(net->getIp());
-    _ipInput->setSize(math::Vector2f(300.f, 50.f));
-    _ipInput->setOnRelease([this]() {
-        auto navMan = this->_uiManager->getNavigationManager();
-        navMan->enableFocus();
-        navMan->setFocus(this->_ipInput);
-    });
-
-    _portInput = std::make_shared<ui::TextInput>(_resourceManager);
-    _portInput->setPlaceholder(constants::PORT_PLACEHOLDER);
-    _portInput->setText(std::to_string(net->getPort()));
-    _portInput->setSize(math::Vector2f(300.f, 50.f));
-    _portInput->setOnRelease([this]() {
-        auto navMan = this->_uiManager->getNavigationManager();
-        navMan->enableFocus();
-        navMan->setFocus(this->_portInput);
-    });
-
-    ui::LayoutConfig leftConfig;
-    leftConfig.direction = ui::LayoutDirection::Vertical;
-    leftConfig.alignment = ui::LayoutAlignment::Center;
-    leftConfig.spacing = 20.0f;
-    leftConfig.padding = math::Vector2f(0.0f, 0.0f);
-    leftConfig.anchorX = ui::AnchorX::Left;
-    leftConfig.anchorY = ui::AnchorY::Center;
-    leftConfig.offset = math::Vector2f(50.0f, 0.0f);
-
-    _leftLayout = std::make_shared<ui::UILayout>(_resourceManager, leftConfig);
-    _leftLayout->setSize(math::Vector2f(300.f, 300.f));
-
-    _connectButton = std::make_shared<ui::Button>(_resourceManager);
-    _connectButton->setText("Connect");
-    _connectButton->setSize(math::Vector2f(300.f, 108.f));
-
-    _connectButton->setOnRelease([this]() {
-        auto network = this->_resourceManager->get<ClientNetwork>();
-        if (network) {
-            network->setIp(this->_ipInput->getText());
-            try {
-                int port = std::stoi(this->_portInput->getText());
-                network->setPort(port);
-                network->redoServerEndpoint();
-            } catch (const std::exception&) {
-                network->setPort(4242);
-            }
-            if (!network->isConnected()) {
-                network->connect();
-                debug::Debug::printDebug(network->isDebugMode(),
-                    "[MainMenu] Connecting to server...",
-                    debug::debugType::NETWORK,
-                    debug::debugLevel::INFO);
-            }
-        }
-    });
-    _connectButton->setOnActivated([this]() {
-        auto network = this->_resourceManager->get<ClientNetwork>();
-        if (network) {
-            network->setIp(this->_ipInput->getText());
-            try {
-                int port = std::stoi(this->_portInput->getText());
-                network->setPort(port);
-                network->redoServerEndpoint();
-            } catch (const std::exception&) {
-                network->setPort(4242);
-            }
-            if (!network->isConnected()) {
-                network->connect();
-                debug::Debug::printDebug(network->isDebugMode(),
-                    "[MainMenu] Connecting to server...",
-                    debug::debugType::NETWORK,
-                    debug::debugLevel::INFO);
-            }
-        }
-    });
-
-    _connectionStatusText = std::make_shared<ui::Text>(_resourceManager);
-    _connectionStatusText->setText("Not connected to server");
-    _connectionStatusText->setSize(math::Vector2f(300.f, 30.f));
-    _connectionStatusText->setTextColor(gfx::color_t{255, 100, 100, 255});
-    _connectionStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
-    _connectionStatusText->setOutlineThickness(2.0f);
-
-    _serverStatusText = std::make_shared<ui::Text>(_resourceManager);
-    _serverStatusText->setText("");
-    _serverStatusText->setSize(math::Vector2f(300.f, 40.f));
-    _serverStatusText->setTextColor(gfx::color_t{100, 150, 255, 255});
-    _serverStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
-    _serverStatusText->setOutlineThickness(1.0f);
 
     _requestCodeButton = std::make_shared<ui::Button>(_resourceManager);
     _requestCodeButton->setText("Request Code");
@@ -206,12 +119,6 @@ MainMenuState::MainMenuState(
         }
     });
 
-    _leftLayout->addElement(_ipInput);
-    _leftLayout->addElement(_portInput);
-    _leftLayout->addElement(_connectButton);
-    _leftLayout->addElement(_connectionStatusText);
-    _leftLayout->addElement(_serverStatusText);
-
     ui::LayoutConfig menuConfig;
     menuConfig.direction = ui::LayoutDirection::Vertical;
     menuConfig.alignment = ui::LayoutAlignment::Center;
@@ -222,11 +129,21 @@ MainMenuState::MainMenuState(
     menuConfig.offset = math::Vector2f(0.0f, 0.0f);
 
     _mainMenuLayout = std::make_shared<ui::UILayout>(_resourceManager, menuConfig);
-    _mainMenuLayout->setSize(math::Vector2f(576.f, 400.f));
-    _playButton = std::make_shared<ui::Button>(resourceManager);
-    _playButton->setText("Not connected");
-    _playButton->setSize(math::Vector2f(576.f, 108.f));
-
+    _mainMenuLayout->setSize(math::Vector2f(576.f, 450.f));
+    _usernameButton = std::make_shared<ui::Button>(_resourceManager);
+    _usernameButton->setSize(math::Vector2f(576.f, 108.f));
+    _usernameButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<ProfileState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _usernameButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<ProfileState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
 
     _settingsButton = std::make_shared<ui::Button>(resourceManager);
     _settingsButton->setText("Settings");
@@ -298,7 +215,7 @@ MainMenuState::MainMenuState(
         _resourceManager->get<gfx::IWindow>()->closeWindow();
     });
 
-    _mainMenuLayout->addElement(_playButton);
+    _mainMenuLayout->addElement(_usernameButton);
     _mainMenuLayout->addElement(_settingsButton);
     _mainMenuLayout->addElement(_replayButton);
     _mainMenuLayout->addElement(_levelEditorButton);
@@ -320,6 +237,123 @@ MainMenuState::MainMenuState(
     _rightLayout->addElement(_lobbyCodeInput);
     _rightLayout->addElement(_lobbyConnectButton);
 
+    ui::LayoutConfig topLeftConfig;
+    topLeftConfig.direction = ui::LayoutDirection::Horizontal;
+    topLeftConfig.alignment = ui::LayoutAlignment::Center;
+    topLeftConfig.spacing = 20.0f;
+    topLeftConfig.padding = math::Vector2f(0.0f, 0.0f);
+    topLeftConfig.anchorX = ui::AnchorX::Left;
+    topLeftConfig.anchorY = ui::AnchorY::Top;
+    topLeftConfig.offset = math::Vector2f(20.0f, 20.0f);
+
+    _topLeftLayout = std::make_shared<ui::UILayout>(_resourceManager, topLeftConfig);
+    _topLeftLayout->setSize(math::Vector2f(320.f, 80.f));
+
+    ui::LayoutConfig headerConfig;
+    headerConfig.direction = ui::LayoutDirection::Horizontal;
+    headerConfig.alignment = ui::LayoutAlignment::Center;
+    headerConfig.spacing = 20.0f;
+    headerConfig.padding = math::Vector2f(0.0f, 0.0f);
+    headerConfig.anchorX = ui::AnchorX::Right;
+    headerConfig.anchorY = ui::AnchorY::Top;
+    headerConfig.offset = math::Vector2f(-20.0f, 20.0f);
+
+    _headerLayout = std::make_shared<ui::UILayout>(_resourceManager, headerConfig);
+    _headerLayout->setSize(math::Vector2f(80.f, 80.f));
+
+    _howToPlayButton = std::make_shared<ui::Button>(_resourceManager);
+    _howToPlayButton->setSize(math::Vector2f(80.f, 80.f));
+    _howToPlayButton->setIconPath(constants::HOW_TO_PLAY_PATH);
+    _howToPlayButton->setIconSize(math::Vector2f(500.f, 500.f));
+    _howToPlayButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _howToPlayButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _howToPlayButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _howToPlayButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<HowToPlayState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _howToPlayButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<HowToPlayState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+
+    _leaderboardButton = std::make_shared<ui::Button>(_resourceManager);
+    _leaderboardButton->setSize(math::Vector2f(80.f, 80.f));
+    _leaderboardButton->setIconPath(constants::LEADERBOARD_PATH);
+    _leaderboardButton->setIconSize(math::Vector2f(500.f, 500.f));
+    _leaderboardButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _leaderboardButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _leaderboardButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+
+    _registerButton = std::make_shared<ui::Button>(_resourceManager);
+    _registerButton->setText("Register");
+    _registerButton->setSize(math::Vector2f(150.f, 80.f));
+    _registerButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _registerButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _registerButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _registerButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<RegisterState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _registerButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<RegisterState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+
+    _loginButton = std::make_shared<ui::Button>(_resourceManager);
+    _loginButton->setText("Log In");
+    _loginButton->setSize(math::Vector2f(150.f, 80.f));
+    _loginButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _loginButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _loginButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _loginButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<LoginState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _loginButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<LoginState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+
+    _disconnectButton = std::make_shared<ui::Button>(_resourceManager);
+    _disconnectButton->setText("Q");
+    _disconnectButton->setSize(math::Vector2f(80.f, 80.f));
+    _disconnectButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _disconnectButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _disconnectButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _disconnectButton->setOnRelease([this]() {
+        auto settingsConfig = this->_resourceManager->get<SettingsConfig>();
+        if (settingsConfig) {
+            settingsConfig->setUsername("");
+            settingsConfig->saveSettings();
+        }
+    });
+    _disconnectButton->setOnActivated([this]() {
+        auto settingsConfig = this->_resourceManager->get<SettingsConfig>();
+        if (settingsConfig) {
+            settingsConfig->setUsername("");
+            settingsConfig->saveSettings();
+        }
+    });
+
+    _headerLayout->addElement(_leaderboardButton);
+    _headerLayout->addElement(_howToPlayButton);
+    _headerLayout->addElement(_disconnectButton);
+
+    _topLeftLayout->addElement(_registerButton);
+    _topLeftLayout->addElement(_loginButton);
     _infiniteButton = std::make_shared<ui::Button>(_resourceManager);
     _infiniteButton->setText("Infinite Scene");
     _infiniteButton->setSize(math::Vector2f(400.f, 108.f));
@@ -340,9 +374,12 @@ MainMenuState::MainMenuState(
     });
     _rightLayout->addElement(_infiniteButton);
 
-    _uiManager->addElement(_leftLayout);
     _uiManager->addElement(_mainMenuLayout);
     _uiManager->addElement(_rightLayout);
+    _uiManager->addElement(_topLeftLayout);
+    _uiManager->addElement(_headerLayout);
+
+    updateUIStatus();
 }
 
 void MainMenuState::enter() {
@@ -420,14 +457,35 @@ void MainMenuState::renderUI() {
 }
 
 void MainMenuState::updateUIStatus() {
+    auto config = _resourceManager->get<SettingsConfig>();
+
+    if (config->getUsername().empty()) {
+        if (_usernameButton && _usernameButton->getState() != ui::UIState::Disabled) {
+            _usernameButton->setState(ui::UIState::Disabled);
+        }
+        if (_requestCodeButton && _requestCodeButton->getState() != ui::UIState::Disabled) {
+            _requestCodeButton->setState(ui::UIState::Disabled);
+        }
+        if (_lobbyConnectButton && _lobbyConnectButton->getState() != ui::UIState::Disabled) {
+            _lobbyConnectButton->setState(ui::UIState::Disabled);
+        }
+    } else {
+        if (_usernameButton && _usernameButton->getState() == ui::UIState::Disabled) {
+            _usernameButton->setState(ui::UIState::Normal);
+        }
+        if (_requestCodeButton && _requestCodeButton->getState() == ui::UIState::Disabled) {
+            _requestCodeButton->setState(ui::UIState::Normal);
+        }
+        if (_lobbyConnectButton && _lobbyConnectButton->getState() == ui::UIState::Disabled) {
+            _lobbyConnectButton->setState(ui::UIState::Normal);
+        }
+    }
+
     auto network = this->_resourceManager->get<ClientNetwork>();
     if (!network) {
-        _playButton->setText("Not connected");
-        _connectionStatusText->setText("Not connected");
-        _connectionStatusText->setTextColor(gfx::color_t{255, 100, 100, 255});
-        _connectionStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
-        _connectionStatusText->setOutlineThickness(2.0f);
-        _serverStatusText->setText("to server");
+        if (!config->getUsername().empty()) {
+            _usernameButton->setText(config->getUsername());
+        }
         return;
     }
 
@@ -438,32 +496,10 @@ void MainMenuState::updateUIStatus() {
         _requestCodeButton->setVisible(true);
     }
 
-    if (!network->isConnected()) {
-        _playButton->setText("Not connected to server");
-        _connectionStatusText->setText("Not connected to server");
-        _connectionStatusText->setTextColor(gfx::color_t{255, 100, 100, 255});
-        _connectionStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
-        _connectionStatusText->setOutlineThickness(2.0f);
-        _serverStatusText->setText("");
+    if (config->getUsername().empty()) {
+        _usernameButton->setText("Not connected to server");
     } else {
-        if (network->isReady()) {
-            _playButton->setText("Waiting for players...");
-        } else {
-            _playButton->setText("Ready ?");
-        }
-
-        _connectionStatusText->setText("Connected");
-        _connectionStatusText->setTextColor(gfx::color_t{100, 255, 100, 255});
-        _connectionStatusText->setOutlineColor(gfx::color_t{0, 0, 0, 255});
-        _connectionStatusText->setOutlineThickness(2.0f);
-
-        std::string status = std::to_string(network->getConnectedClients()) + " players, ";
-        status += std::to_string(network->getReadyClients()) + " ready";
-        if (network->getClientId() != 0) {
-            status += "\nYou are player " + std::to_string(network->getClientId());
-            status += network->getClientReadyStatus() ? " (ready)" : " (not ready)";
-        }
-        _serverStatusText->setText(status);
+        _usernameButton->setText(config->getUsername());
     }
 }
 
@@ -499,27 +535,13 @@ void MainMenuState::checkLobbyConnectionTransition() {
 
 void MainMenuState::exit() {
     auto window = _resourceManager->get<gfx::IWindow>();
-    window->setCursor(false);
-    _uiManager->clearElements();
-    _playButton.reset();
-    _settingsButton.reset();
-    _replayButton.reset();
-    _levelEditorButton.reset();
-    _quitButton.reset();
-    _connectButton.reset();
-    _requestCodeButton.reset();
-    _lobbyConnectButton.reset();
-    _ipInput.reset();
-    _portInput.reset();
-    _lobbyCodeInput.reset();
-    _connectionStatusText.reset();
-    _serverStatusText.reset();
-    _mainMenuLayout.reset();
-    _rightLayout.reset();
-    _leftLayout.reset();
-    _background.reset();
-    _mouseHandler.reset();
-    _uiManager.reset();
+    if (window) {
+        window->setCursor(false);
+    }
+
+    if (_uiManager) {
+        _uiManager->clearElements();
+    }
 }
 
 }  // namespace gsm
