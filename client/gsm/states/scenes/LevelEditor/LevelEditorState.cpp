@@ -759,6 +759,12 @@ void LevelEditorState::createBottomPanel() {
         if (_spriteHeightLabel) {
             _spriteHeightLabel->setVisible(showObstacles);
         }
+        if (_obstacleTypeLabel) {
+            _obstacleTypeLabel->setVisible(showObstacles);
+        }
+        if (_obstacleTypeDropdown) {
+            _obstacleTypeDropdown->setVisible(showObstacles);
+        }
     });
     _editorModeDropdown->setScalingEnabled(false);
     _editorModeDropdown->setFocusEnabled(true);
@@ -842,7 +848,7 @@ void LevelEditorState::createBottomPanel() {
     _obstacleTypeLabel->setText("Type");
     _obstacleTypeLabel->setFontSize(16);
     _obstacleTypeLabel->setTextColor(colors::BUTTON_PRIMARY);
-    _obstacleTypeLabel->setVisible(true);
+    _obstacleTypeLabel->setVisible(false);
     _bottomPanel->addChild(_obstacleTypeLabel);
 
     _obstacleTypeDropdown = std::make_shared<ui::Dropdown>(_resourceManager);
@@ -853,7 +859,7 @@ void LevelEditorState::createBottomPanel() {
     _obstacleTypeDropdown->addOption("unique");
     _obstacleTypeDropdown->addOption("horizontal");
     _obstacleTypeDropdown->addOption("vertical");
-    _obstacleTypeDropdown->setVisible(true);
+    _obstacleTypeDropdown->setVisible(false);
     _obstacleTypeDropdown->setOnSelectionChanged(
         [this](const std::string& selectedText, size_t selectedIndex) {
         (void)selectedText;
@@ -1058,6 +1064,71 @@ void LevelEditorState::createBottomPanel() {
     });
     _bottomPanel->addChild(_obstacleCountInput);
 
+    _obstacleDeleteButton = std::make_shared<ui::Button>(_resourceManager);
+    _obstacleDeleteButton->setPosition(math::Vector2f(1490, 145.0f));
+    _obstacleDeleteButton->setSize(math::Vector2f(110.0f, 40.0f));
+    _obstacleDeleteButton->setText("Delete");
+    _obstacleDeleteButton->setNormalColor(colors::BUTTON_DANGER);
+    _obstacleDeleteButton->setHoveredColor(colors::BUTTON_DANGER_HOVER);
+    _obstacleDeleteButton->setPressedColor(colors::BUTTON_DANGER_PRESSED);
+    _obstacleDeleteButton->setVisible(false);
+    _obstacleDeleteButton->setScalingEnabled(false);
+    _obstacleDeleteButton->setFocusEnabled(true);
+    _obstacleDeleteButton->setOnRelease([this]() {
+        if (!_selectedObstacle.has_value()) {
+            return;
+        }
+
+        const auto& sel = _selectedObstacle.value();
+
+        if (sel.type == "unique") {
+            auto& uniques = _obstaclesByName[sel.prefabName].uniques;
+            if (sel.index < static_cast<int>(uniques.size())) {
+                uniques.erase(uniques.begin() + sel.index);
+            }
+        } else if (sel.type == "horizontal") {
+            auto& horizontals = _obstaclesByName[sel.prefabName].horizontalLines;
+            if (sel.index < static_cast<int>(horizontals.size())) {
+                horizontals.erase(horizontals.begin() + sel.index);
+            }
+        } else if (sel.type == "vertical") {
+            auto& verticals = _obstaclesByName[sel.prefabName].verticalLines;
+            if (sel.index < static_cast<int>(verticals.size())) {
+                verticals.erase(verticals.begin() + sel.index);
+            }
+        }
+
+        _selectedObstacle = std::nullopt;
+        if (_obstaclePosXInput) {
+            _obstaclePosXInput->setVisible(false);
+        }
+        if (_obstaclePosXLabel) {
+            _obstaclePosXLabel->setVisible(false);
+        }
+        if (_obstaclePosYInput) {
+            _obstaclePosYInput->setVisible(false);
+        }
+        if (_obstaclePosYLabel) {
+            _obstaclePosYLabel->setVisible(false);
+        }
+        if (_obstacleCountInput) {
+            _obstacleCountInput->setVisible(false);
+        }
+        if (_obstacleCountLabel) {
+            _obstacleCountLabel->setVisible(false);
+        }
+        if (_obstacleDeleteButton) {
+            _obstacleDeleteButton->setVisible(false);
+        }
+        if (_obstaclePrefabDropdown) {
+            _obstaclePrefabDropdown->setSelectedIndex(0);
+        }
+
+        _hasUnsavedChanges = true;
+        updateSaveButtonText();
+    });
+    _bottomPanel->addChild(_obstacleDeleteButton);
+
     /* DropDowns are added at the end */
     _bottomPanel->addChild(_obstaclePrefabDropdown);
     _bottomPanel->addChild(_editorModeDropdown);
@@ -1153,6 +1224,7 @@ void LevelEditorState::exit() {
     _obstaclePosYInput.reset();
     _obstacleCountLabel.reset();
     _obstacleCountInput.reset();
+    _obstacleDeleteButton.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }

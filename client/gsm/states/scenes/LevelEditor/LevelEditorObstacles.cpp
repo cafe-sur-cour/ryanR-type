@@ -411,6 +411,10 @@ void LevelEditorState::handleObstacleClick(
                 _obstacleCountLabel->setVisible(false);
             }
         }
+
+        if (_obstacleDeleteButton) {
+            _obstacleDeleteButton->setVisible(true);
+        }
     } else {
         _selectedObstacle = std::nullopt;
         if (_obstaclePosXInput) {
@@ -430,6 +434,9 @@ void LevelEditorState::handleObstacleClick(
         }
         if (_obstacleCountLabel) {
             _obstacleCountLabel->setVisible(false);
+        }
+        if (_obstacleDeleteButton) {
+            _obstacleDeleteButton->setVisible(false);
         }
     }
 }
