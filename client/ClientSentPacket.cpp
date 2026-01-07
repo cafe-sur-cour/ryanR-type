@@ -218,7 +218,6 @@ void ClientNetwork::sendRegisterPacket(const std::string &username,
         "[CLIENT] Sending register packet for username: " + username,
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
-
     this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
