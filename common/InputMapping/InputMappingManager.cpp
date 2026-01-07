@@ -102,7 +102,8 @@ const std::map<std::string, RemappableAction> stringToActionMap = {
     {"MOVE_RIGHT", RemappableAction::MOVE_RIGHT},
     {"MOVE_UP", RemappableAction::MOVE_UP},
     {"MOVE_DOWN", RemappableAction::MOVE_DOWN},
-    {"SHOOT", RemappableAction::SHOOT}
+    {"SHOOT", RemappableAction::SHOOT},
+    {"FORCE", RemappableAction::FORCE}
 };
 
 InputMappingManager::InputMappingManager() {
