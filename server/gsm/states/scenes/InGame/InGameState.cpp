@@ -24,6 +24,7 @@
 #include "../../../../../common/systems/scripting/ScriptingSystem.hpp"
 #include "../../../../systems/input/ServerMovementInputSystem.hpp"
 #include "../../../../systems/input/ServerShootInputSystem.hpp"
+#include "../../../../systems/input/ServerForceInputSystem.hpp"
 #include "../../../../systems/gameEnd/EndOfMapDetectionSystem.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
 #include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
@@ -57,6 +58,7 @@ void InGameState::enter() {
     ecs::CollisionRules::initWithData(collisionData);
     addSystem(std::make_shared<ecs::ServerMovementInputSystem>());
     addSystem(std::make_shared<ecs::ServerShootInputSystem>());
+    addSystem(std::make_shared<ecs::ServerForceInputSystem>());
     addSystem(std::make_shared<ecs::ScriptingSystem>());
     addSystem(std::make_shared<ecs::IntentToVelocitySystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
