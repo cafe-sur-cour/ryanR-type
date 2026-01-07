@@ -1088,20 +1088,26 @@ void LevelEditorState::renderLevelPreview() {
         }
     }
 
-    LevelPreviewSprite spriteData =
-        extractSpriteDataFromPrefab("configs/entities/obstacles/obstacle1.json");
-    if (!spriteData.texturePath.empty()) {
-        float screenX = levelX + (0.0f * _viewportZoom);
-        float screenY = levelY + (0.0f * _viewportZoom);
-        renderSpriteInLevelPreview(spriteData, screenX, screenY);
-    }
+    renderAllObstacles(levelX, levelY, canvasLeft, canvasRight, canvasTop, canvasBottom);
 }
 
 void LevelEditorState::renderSpriteInLevelPreview(
     const LevelPreviewSprite& spriteData,
     float screenX,
-    float screenY
+    float screenY,
+    float canvasLeft,
+    float canvasRight,
+    float canvasTop,
+    float canvasBottom
 ) {
+    float scaledWidth = spriteData.width * _viewportZoom;
+    float scaledHeight = spriteData.height * _viewportZoom;
+
+    if (screenX < canvasLeft || screenX + scaledWidth > canvasRight ||
+        screenY < canvasTop || screenY + scaledHeight > canvasBottom) {
+        return;
+    }
+
     auto window = _resourceManager->get<gfx::IWindow>();
 
     float finalScaleX = _viewportZoom * spriteData.scale;
@@ -1115,83 +1121,6 @@ void LevelEditorState::renderSpriteInLevelPreview(
         finalScaleY,
         spriteData.rotation
     );
-}
-
-void LevelEditorState::parseObstacles() {
-    _obstaclesByName.clear();
-
-    if (!_levelData.contains(constants::OBSTACLES_FIELD) ||
-        !_levelData[constants::OBSTACLES_FIELD].is_array()) {
-        return;
-    }
-
-    const auto& obstacles = _levelData[constants::OBSTACLES_FIELD];
-
-    for (const auto& obstacle : obstacles) {
-        if (!obstacle.contains(constants::OBSTACLE_NAME_FIELD)) {
-            continue;
-        }
-        std::string obstacleName =
-            obstacle[constants::OBSTACLE_NAME_FIELD].get<std::string>();
-
-        if (_obstaclesByName.find(obstacleName) == _obstaclesByName.end()) {
-            _obstaclesByName[obstacleName] = ObstacleGroup();
-        }
-        ObstacleGroup& group = _obstaclesByName[obstacleName];
-
-        if (!obstacle.contains(constants::OBSTACLE_POSITIONS_FIELD) ||
-            !obstacle[constants::OBSTACLE_POSITIONS_FIELD].is_array()) {
-            continue;
-        }
-
-        const auto& positions = obstacle[constants::OBSTACLE_POSITIONS_FIELD];
-
-        for (const auto& position : positions) {
-            if (!position.contains(constants::OBSTACLE_TYPE_FIELD)) {
-                continue;
-            }
-
-            std::string type = position[constants::OBSTACLE_TYPE_FIELD].get<std::string>();
-            if (type == constants::OBSTACLE_HORIZONTAL_LINE_TYPE) {
-                if (!position.contains(constants::OBSTACLE_FROMX_FIELD) ||
-                    !position.contains(constants::OBSTACLE_POSY_FIELD) ||
-                    !position.contains(constants::OBSTACLE_COUNT_FIELD)) {
-                    continue;
-                }
-
-                HorizontalLineObstacle hLine;
-                hLine.fromX = position[constants::OBSTACLE_FROMX_FIELD].get<float>();
-                hLine.posY = position[constants::OBSTACLE_POSY_FIELD].get<float>();
-                hLine.count = position[constants::OBSTACLE_COUNT_FIELD].get<int>();
-
-                group.horizontalLines.push_back(hLine);
-            } else if (type == constants::OBSTACLE_VERTICAL_LINE_TYPE) {
-                if (!position.contains(constants::OBSTACLE_FROMY_FIELD) ||
-                    !position.contains(constants::OBSTACLE_POSX_FIELD) ||
-                    !position.contains(constants::OBSTACLE_COUNT_FIELD)) {
-                    continue;
-                }
-
-                VerticalLineObstacle vLine;
-                vLine.fromY = position[constants::OBSTACLE_FROMY_FIELD].get<float>();
-                vLine.posX = position[constants::OBSTACLE_POSX_FIELD].get<float>();
-                vLine.count = position[constants::OBSTACLE_COUNT_FIELD].get<int>();
-
-                group.verticalLines.push_back(vLine);
-            } else if (type == constants::OBSTACLE_UNIQUE_TYPE) {
-                if (!position.contains(constants::OBSTACLE_POSX_FIELD) ||
-                    !position.contains(constants::OBSTACLE_POSY_FIELD)) {
-                    continue;
-                }
-
-                UniqueObstacle unique;
-                unique.posX = position[constants::OBSTACLE_POSX_FIELD].get<float>();
-                unique.posY = position[constants::OBSTACLE_POSY_FIELD].get<float>();
-
-                group.uniques.push_back(unique);
-            }
-        }
-    }
 }
 
 LevelPreviewSprite LevelEditorState::extractSpriteDataFromPrefab(
