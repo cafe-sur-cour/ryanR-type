@@ -12,6 +12,8 @@
 #include <utility>
 #include <thread>
 #include <chrono>
+#include <nlohmann/json.hpp>
+#include <algorithm>
 #include "Server.hpp"
 #include "Constants.hpp"
 #include "Utils.hpp"
@@ -20,6 +22,7 @@
 #include "../common/ECS/entity/Entity.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/Parser/Parser.hpp"
+#include "../common/utils/SecureJsonManager.hpp"
 
 bool rserv::Server::connectionPacket(const net::INetworkEndpoint& endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
@@ -237,6 +240,65 @@ bool rserv::Server::connectUserPacket(const net::INetworkEndpoint &endpoint,
     }
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "[SERVER] Sent CONNECT_USER packet to client with username: " + username,
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+    this->_sequenceNumber++;
+    return true;
+}
+
+bool rserv::Server::leaderboardPacket(const net::INetworkEndpoint &endpoint) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    const std::string filepath = constants::SCORES_JSON_PATH;
+    nlohmann::json scores = utils::SecureJsonManager::readSecureJson(filepath);
+
+    if (!scores.is_object()) {
+        scores = nlohmann::json::object();
+    }
+
+    std::vector<std::pair<std::string, int>> leaderboard;
+    for (const auto& [username, userData] : scores.items()) {
+        if (userData.is_object() && userData.contains("scores") && userData["scores"].is_array()) {
+            const auto& scoreArray = userData["scores"];
+            for (const auto& score : scoreArray) {
+                if (score.is_number()) {
+                    leaderboard.emplace_back(username, score.get<int>());
+                }
+            }
+        }
+    }
+
+    std::sort(leaderboard.begin(), leaderboard.end(),
+        [](const std::pair<std::string, int>& a, const std::pair<std::string, int>& b) {
+            return a.second > b.second;
+        });
+
+    if (leaderboard.size() > 10) {
+        leaderboard.resize(10);
+    }
+
+    std::vector<uint64_t> payload;
+    for (const auto& entry : leaderboard) {
+        std::vector<uint64_t> nameData = this->_packet->formatString(entry.first);
+        payload.insert(payload.end(), nameData.begin(), nameData.end());
+        std::vector<uint64_t> scoreData = this->_packet->formatString(std::to_string(entry.second));
+        payload.insert(payload.end(), scoreData.begin(), scoreData.end());
+    }
+
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_LEADERBOARD, payload);
+    if (!this->_network->sendTo(endpoint, packet)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Failed to send LEADERBOARD response to client",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Sent LEADERBOARD packet to client with " + std::to_string(leaderboard.size()) + " entries",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
     this->_sequenceNumber++;
     return true;

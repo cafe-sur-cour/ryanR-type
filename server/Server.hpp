@@ -86,6 +86,7 @@ namespace rserv {
             bool processMasterStart(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> payload);
             bool processRegistration(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> client);
             bool processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> client);
+            bool processLeaderboardRequest(std::shared_ptr<net::INetworkEndpoint> client);
 
             /* Sent Packet Handling */
             bool connectionPacket(const net::INetworkEndpoint& endpoint);
@@ -94,6 +95,7 @@ namespace rserv {
             bool sendCodeLobbyPacket(const net::INetworkEndpoint &endpoint);
             bool lobbyConnectValuePacket(const net::INetworkEndpoint &endpoint, bool canConnect);
             bool connectUserPacket(const net::INetworkEndpoint &endpoint, const std::string &username);
+            bool leaderboardPacket(const net::INetworkEndpoint &endpoint);
 
             uint32_t getSequenceNumber() const;
             std::shared_ptr<pm::IPacketManager> getPacketManager() const;

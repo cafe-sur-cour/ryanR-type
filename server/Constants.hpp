@@ -30,6 +30,7 @@ namespace constants {
     constexpr char END_OFSTRING_TRD = '\0';
 
     const std::string USERS_JSON_PATH = "saves/users.json";
+    const std::string SCORES_JSON_PATH = "saves/scores.json";
     const std::string USERNAME_JSON_WARD = "username";
     const std::string PASSWORD_JSON_WARD = "password";
     const std::string GAMES_PLAYED_JSON_WARD = "games_played";
