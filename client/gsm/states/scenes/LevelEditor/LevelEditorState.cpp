@@ -145,7 +145,7 @@ void LevelEditorState::update(float deltaTime) {
 
     _uiManager->update(deltaTime);
 
-    handleZoom(deltaTime);
+    handleZoom(deltaTime, eventResult);
     handleCanvasDrag(deltaTime);
 
     const float sidePanelWidth = 300.0f;
@@ -782,25 +782,52 @@ void LevelEditorState::initializeViewport() {
     _viewportOffset = math::Vector2f(0.0f, 0.0f);
 }
 
-void LevelEditorState::handleZoom([[maybe_unused]] float deltaTime) {
+void LevelEditorState::handleZoom(
+    [[maybe_unused]] float deltaTime,
+    gfx::EventType eventResult
+) {
     auto event = _resourceManager->get<gfx::IEvent>();
 
     bool zoomIn = event->isKeyPressed(gfx::EventType::NUMPAD_ADD);
     bool zoomOut = event->isKeyPressed(gfx::EventType::NUMPAD_SUBTRACT);
 
-    if (zoomIn || zoomOut) {
-        float zoomFactor = zoomIn ? 1.1f : 0.9f;
+    bool wheelUp = eventResult == gfx::EventType::MOUSEWHEELUP;
+    bool wheelDown = eventResult == gfx::EventType::MOUSEWHEELDOWN;
+
+    if (zoomIn || zoomOut || wheelUp || wheelDown) {
+        const float sidePanelWidth = 300.0f;
+        const float bottomPanelHeight = 200.0f;
+        const float canvasHeight = constants::MAX_HEIGHT - bottomPanelHeight;
+
+        math::Vector2f mousePos = _mouseHandler->getWorldMousePosition();
+
+        bool isInCanvas = mousePos.getX() >= sidePanelWidth &&
+                          mousePos.getX() <= constants::MAX_WIDTH &&
+                          mousePos.getY() >= 0.0f &&
+                          mousePos.getY() <= canvasHeight;
+
+        float cursorLevelX =
+            _viewportOffset.getX() + (mousePos.getX() - sidePanelWidth) / _viewportZoom;
+        float cursorLevelY = _viewportOffset.getY() + mousePos.getY() / _viewportZoom;
+
+        float zoomFactor = (zoomIn || wheelUp) ? 1.1f : 0.9f;
+        float oldZoom = _viewportZoom;
         float newZoom = _viewportZoom * zoomFactor;
 
-        if (newZoom > _maxZoom) {
+        if (newZoom > _maxZoom)
             newZoom = _maxZoom;
-        }
 
-        if (newZoom < _minZoom) {
+        if (newZoom < _minZoom)
             newZoom = _minZoom;
-        }
 
         _viewportZoom = newZoom;
+
+        if (isInCanvas && oldZoom != 0.0f) {
+            float newOffsetX = cursorLevelX - (mousePos.getX() - sidePanelWidth) / newZoom;
+            float newOffsetY = cursorLevelY - mousePos.getY() / newZoom;
+            _viewportOffset.setX(newOffsetX);
+            _viewportOffset.setY(newOffsetY);
+        }
     }
 }
 

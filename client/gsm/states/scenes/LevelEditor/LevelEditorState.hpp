@@ -18,6 +18,7 @@
 #include "../../../../ui/elements/Background.hpp"
 #include "../../../../ui/elements/Panel.hpp"
 #include "../../../../ui/elements/Text.hpp"
+#include "../../../../../libs/Multimedia/EventTypes.hpp"
 #include "../../../../ui/elements/focusable/Button.hpp"
 #include "../../../../ui/elements/focusable/TextInput.hpp"
 #include "../../../../ui/elements/focusable/Dropdown.hpp"
@@ -47,7 +48,7 @@ private:
     void loadFromHistory(size_t index);
     void updateHistoryButtons();
     void initializeViewport();
-    void handleZoom(float deltaTime);
+    void handleZoom(float deltaTime, gfx::EventType eventResult);
     void handleCanvasDrag(float deltaTime);
     void renderLevelPreview();
 
