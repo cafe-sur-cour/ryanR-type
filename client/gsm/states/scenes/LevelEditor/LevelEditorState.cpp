@@ -838,7 +838,7 @@ void LevelEditorState::createBottomPanel() {
     _bottomPanel->addChild(_spriteHeightLabel);
 
     _obstaclePosXLabel = std::make_shared<ui::Text>(_resourceManager);
-    _obstaclePosXLabel->setPosition(math::Vector2f(450.0f, 12.5f));
+    _obstaclePosXLabel->setPosition(math::Vector2f(450.0f, 92.5f));
     _obstaclePosXLabel->setText("Pos X");
     _obstaclePosXLabel->setFontSize(16);
     _obstaclePosXLabel->setTextColor(colors::BUTTON_PRIMARY);
@@ -846,8 +846,8 @@ void LevelEditorState::createBottomPanel() {
     _bottomPanel->addChild(_obstaclePosXLabel);
 
     _obstaclePosXInput = std::make_shared<ui::TextInput>(_resourceManager);
-    _obstaclePosXInput->setPosition(math::Vector2f(450.0f, 35.0f));
-    _obstaclePosXInput->setSize(math::Vector2f(275.0f, 30.0f));
+    _obstaclePosXInput->setPosition(math::Vector2f(450.0f, 115.0f));
+    _obstaclePosXInput->setSize(math::Vector2f(130.0f, 30.0f));
     _obstaclePosXInput->setPlaceholder("X...");
     _obstaclePosXInput->setVisible(false);
     _obstaclePosXInput->setScalingEnabled(false);
@@ -896,7 +896,7 @@ void LevelEditorState::createBottomPanel() {
     _bottomPanel->addChild(_obstaclePosXInput);
 
     _obstaclePosYLabel = std::make_shared<ui::Text>(_resourceManager);
-    _obstaclePosYLabel->setPosition(math::Vector2f(450.0f, 75.0f));
+    _obstaclePosYLabel->setPosition(math::Vector2f(595.0f, 92.5f));
     _obstaclePosYLabel->setText("Pos Y");
     _obstaclePosYLabel->setFontSize(16);
     _obstaclePosYLabel->setTextColor(colors::BUTTON_PRIMARY);
@@ -904,8 +904,8 @@ void LevelEditorState::createBottomPanel() {
     _bottomPanel->addChild(_obstaclePosYLabel);
 
     _obstaclePosYInput = std::make_shared<ui::TextInput>(_resourceManager);
-    _obstaclePosYInput->setPosition(math::Vector2f(450.0f, 97.5f));
-    _obstaclePosYInput->setSize(math::Vector2f(275.0f, 30.0f));
+    _obstaclePosYInput->setPosition(math::Vector2f(595.0f, 115.0f));
+    _obstaclePosYInput->setSize(math::Vector2f(130.0f, 30.0f));
     _obstaclePosYInput->setPlaceholder("Y...");
     _obstaclePosYInput->setVisible(false);
     _obstaclePosYInput->setScalingEnabled(false);
