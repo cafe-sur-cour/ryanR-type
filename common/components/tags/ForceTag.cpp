@@ -6,9 +6,11 @@
 */
 
 #include "ForceTag.hpp"
+#include <string>
+#include <map>
+#include <memory>
 #include "../../Parser/ComponentRegistry/ComponentRegistrar.hpp"
 #include "../../constants.hpp"
-#include <string>
 
 REGISTER_COMPONENT(
     ecs::ForceTag,
