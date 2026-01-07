@@ -177,7 +177,7 @@ TEST_F(AdditionalPacketTest, ResetMultipleTimes) {
 
 // Connection packet round trip test
 TEST_F(AdditionalPacketTest, PackAndUnpackConnectionRoundTrip) {
-    std::vector<uint64_t> payload = {42};  // connection value
+    std::vector<uint64_t> payload = {};  // connection packet has no payload (LENGTH_CONNECTION_PACKET = 0)
     std::vector<uint8_t> packedData = packet->pack(25, 777, CONNECTION_CLIENT_PACKET, payload);
 
     auto packet2 = std::make_shared<pm::PacketManager>(0);
@@ -190,8 +190,7 @@ TEST_F(AdditionalPacketTest, PackAndUnpackConnectionRoundTrip) {
     EXPECT_EQ(packet2->getType(), CONNECTION_CLIENT_PACKET);
 
     std::vector<uint64_t> retrieved = packet2->getPayload();
-    ASSERT_EQ(retrieved.size(), 1);
-    EXPECT_EQ(retrieved[0], 42);
+    EXPECT_EQ(retrieved.size(), 0);  // No payload expected
 }
 
 int main(int argc, char **argv) {
