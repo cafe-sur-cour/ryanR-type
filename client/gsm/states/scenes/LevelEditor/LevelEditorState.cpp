@@ -45,6 +45,9 @@ LevelEditorState::LevelEditorState(
         return;
     }
 
+    _history.push_back(_levelData);
+    _currentHistoryIndex = 0;
+
     if (!_resourceManager->has<SettingsConfig>()) {
         _resourceManager->add(std::make_shared<SettingsConfig>());
     }
@@ -88,6 +91,33 @@ void LevelEditorState::update(float deltaTime) {
 
     _uiManager->handleKeyboardInput(eventResult);
 
+    bool ctrlPressed = _resourceManager->get<
+        gfx::IEvent>()->isKeyPressed(gfx::EventType::LCTRL) ||
+                       _resourceManager->get<
+        gfx::IEvent>()->isKeyPressed(gfx::EventType::RCTRL);
+    bool zPressed = _resourceManager->get<
+        gfx::IEvent>()->isKeyPressed(gfx::EventType::Z);
+    bool yPressed = _resourceManager->get<
+        gfx::IEvent>()->isKeyPressed(gfx::EventType::Y);
+
+    if (ctrlPressed && zPressed && !_undoPressedLastFrame) {
+        if (_currentHistoryIndex > 0) {
+            loadFromHistory(_currentHistoryIndex - 1);
+        }
+        _undoPressedLastFrame = true;
+    } else if (!(ctrlPressed && zPressed)) {
+        _undoPressedLastFrame = false;
+    }
+
+    if (ctrlPressed && yPressed && !_redoPressedLastFrame) {
+        if (_currentHistoryIndex < _history.size() - 1) {
+            loadFromHistory(_currentHistoryIndex + 1);
+        }
+        _redoPressedLastFrame = true;
+    } else if (!(ctrlPressed && yPressed)) {
+        _redoPressedLastFrame = false;
+    }
+
     if (eventResult == gfx::EventType::TEXT_INPUT) {
         std::string textInput = _resourceManager->get<gfx::IEvent>()->getLastTextInput();
         if (!textInput.empty()) {
@@ -111,6 +141,15 @@ void LevelEditorState::update(float deltaTime) {
 
     _uiManager->update(deltaTime);
     renderUI();
+
+    if (_hasPendingChange) {
+        _lastChangeTime += deltaTime;
+        if (_lastChangeTime >= constants::CHANGE_DEBOUNCE_TIME) {
+            saveToHistory();
+            _hasPendingChange = false;
+            _lastChangeTime = 0.0f;
+        }
+    }
 }
 
 void LevelEditorState::renderUI() {
@@ -265,7 +304,13 @@ void LevelEditorState::createUI() {
     _levelNameInput->setSize(math::Vector2f(sidePanelWidth - 25.0f, 30.0f));
     _levelNameInput->setText(_levelData.value(constants::LEVEL_NAME_FIELD, "New Level"));
     _levelNameInput->setPlaceholder("Enter level name...");
-    _levelNameInput->setOnTextChanged([this](const std::string& /*text*/) {
+    _levelNameInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory) {
+            return;
+        }
+        _levelData[constants::LEVEL_NAME_FIELD] = text;
+        _hasPendingChange = true;
+        _lastChangeTime = 0.0f;
         _hasUnsavedChanges = true;
         updateSaveButtonText();
         _saveButton->setState(validateFields() ? ui::UIState::Normal : ui::UIState::Disabled);
@@ -295,6 +340,10 @@ void LevelEditorState::createUI() {
         static_cast<int>(_levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0))));
     _mapLengthInput->setPlaceholder("Enter map length...");
     _mapLengthInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory) {
+            return;
+        }
+
         std::string filteredText;
         for (char c : text) {
             if (c >= '0' && c <= '9') {
@@ -305,6 +354,14 @@ void LevelEditorState::createUI() {
         if (filteredText != text) {
             _mapLengthInput->setText(filteredText);
             return;
+        }
+
+        try {
+            float mapLength = std::stof(filteredText);
+            _levelData[constants::LEVEL_MAP_LENGTH_FIELD] = mapLength;
+            _hasPendingChange = true;
+            _lastChangeTime = 0.0f;
+        } catch (const std::exception&) {
         }
 
         _hasUnsavedChanges = true;
@@ -336,6 +393,10 @@ void LevelEditorState::createUI() {
         static_cast<int>(_levelData.value(constants::LEVEL_SCROLL_SPEED_FIELD, 1))));
     _scrollSpeedInput->setPlaceholder("Enter scroll speed...");
     _scrollSpeedInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory) {
+            return;
+        }
+
         std::string filteredText;
         for (char c : text) {
             if (c >= '0' && c <= '9') {
@@ -346,6 +407,14 @@ void LevelEditorState::createUI() {
         if (filteredText != text) {
             _scrollSpeedInput->setText(filteredText);
             return;
+        }
+
+        try {
+            int scrollSpeed = std::stoi(filteredText);
+            _levelData[constants::LEVEL_SCROLL_SPEED_FIELD] = scrollSpeed;
+            _hasPendingChange = true;
+            _lastChangeTime = 0.0f;
+        } catch (const std::exception&) {
         }
 
         _hasUnsavedChanges = true;
@@ -390,7 +459,11 @@ void LevelEditorState::createUI() {
 
     _musicDropdown->setOnSelectionChanged(
         [this](const std::string& musicName, [[maybe_unused]] size_t index) {
+        if (_isLoadingFromHistory) {
+            return;
+        }
         _levelData[constants::LEVEL_MUSIC_FIELD] = musicName;
+        saveToHistory();
         _hasUnsavedChanges = true;
         updateSaveButtonText();
     });
@@ -427,7 +500,11 @@ void LevelEditorState::createUI() {
 
     _backgroundDropdown->setOnSelectionChanged(
         [this](const std::string& backgroundName, [[maybe_unused]] size_t index) {
+        if (_isLoadingFromHistory) {
+            return;
+        }
         _levelData[constants::LEVEL_BACKGROUND_FIELD] = backgroundName;
+        saveToHistory();
         _hasUnsavedChanges = true;
         updateSaveButtonText();
     });
@@ -436,6 +513,43 @@ void LevelEditorState::createUI() {
     _sidePanel->addChild(_backgroundDropdown);
     /* musicDropdown is added after background dropDown to ensure proper z order */
     _sidePanel->addChild(_musicDropdown);
+
+    const float buttonWidth = (sidePanelWidth - 35.0f) / 2.0f;
+    const float buttonY = constants::MAX_HEIGHT - 60.0f;
+
+    _undoButton = std::make_shared<ui::Button>(_resourceManager);
+    _undoButton->setPosition(math::Vector2f(10.0f, buttonY));
+    _undoButton->setSize(math::Vector2f(buttonWidth, 40.0f));
+    _undoButton->setText("Undo");
+    _undoButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _undoButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _undoButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _undoButton->setOnRelease([this]() {
+        if (_currentHistoryIndex > 0) {
+            loadFromHistory(_currentHistoryIndex - 1);
+        }
+    });
+    _undoButton->setScalingEnabled(false);
+    _undoButton->setFocusEnabled(true);
+    _sidePanel->addChild(_undoButton);
+
+    _redoButton = std::make_shared<ui::Button>(_resourceManager);
+    _redoButton->setPosition(math::Vector2f(20.0f + buttonWidth, buttonY));
+    _redoButton->setSize(math::Vector2f(buttonWidth, 40.0f));
+    _redoButton->setText("Redo");
+    _redoButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _redoButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _redoButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _redoButton->setOnRelease([this]() {
+        if (_currentHistoryIndex < _history.size() - 1) {
+            loadFromHistory(_currentHistoryIndex + 1);
+        }
+    });
+    _redoButton->setScalingEnabled(false);
+    _redoButton->setFocusEnabled(true);
+    _sidePanel->addChild(_redoButton);
+
+    updateHistoryButtons();
 
     _bottomPanel = std::make_shared<ui::Panel>(_resourceManager);
     _bottomPanel->setPosition(math::Vector2f(sidePanelWidth, canvasHeight));
@@ -521,8 +635,92 @@ void LevelEditorState::exit() {
     _scrollSpeedInput.reset();
     _musicLabel.reset();
     _musicDropdown.reset();
+    _backgroundLabel.reset();
+    _backgroundDropdown.reset();
+    _undoButton.reset();
+    _redoButton.reset();
     _mouseHandler.reset();
     _uiManager.reset();
+}
+
+void LevelEditorState::saveToHistory() {
+    if (_currentHistoryIndex + 1 < _history.size()) {
+        _history.erase(_history.begin() + static_cast<
+            std::vector<nlohmann::json>::difference_type>(
+                _currentHistoryIndex) + 1, _history.end());
+    }
+
+    _history.push_back(_levelData);
+    _currentHistoryIndex = _history.size() - 1;
+
+    if (_history.size() > constants::MAX_HISTORY_SIZE) {
+        _history.erase(_history.begin());
+        _currentHistoryIndex--;
+    }
+
+    updateHistoryButtons();
+}
+
+void LevelEditorState::loadFromHistory(size_t index) {
+    if (index >= _history.size()) {
+        return;
+    }
+
+    _isLoadingFromHistory = true;
+    _levelData = _history[index];
+    _currentHistoryIndex = index;
+
+    _levelNameInput->setText(_levelData.value(constants::LEVEL_NAME_FIELD, "New Level"));
+    _mapLengthInput->setText(std::to_string(
+        static_cast<int>(_levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0))));
+    _scrollSpeedInput->setText(std::to_string(
+        static_cast<int>(_levelData.value(constants::LEVEL_SCROLL_SPEED_FIELD, 1))));
+
+    std::string currentMusic = _levelData.value(constants::LEVEL_MUSIC_FIELD, "");
+    if (!currentMusic.empty()) {
+        auto options = _musicDropdown->getOptions();
+        for (size_t i = 0; i < options.size(); ++i) {
+            if (options[i] == currentMusic) {
+                _musicDropdown->setSelectedIndex(i);
+                break;
+            }
+        }
+    } else {
+        _musicDropdown->setSelectedIndex(static_cast<size_t>(-1));
+    }
+
+    std::string currentBackground = _levelData.value(constants::LEVEL_BACKGROUND_FIELD, "");
+    if (!currentBackground.empty()) {
+        auto options = _backgroundDropdown->getOptions();
+        for (size_t i = 0; i < options.size(); ++i) {
+            if (options[i] == currentBackground) {
+                _backgroundDropdown->setSelectedIndex(i);
+                break;
+            }
+        }
+    } else {
+        _backgroundDropdown->setSelectedIndex(static_cast<size_t>(-1));
+    }
+
+    _hasUnsavedChanges = true;
+    updateSaveButtonText();
+    updateHistoryButtons();
+
+    _isLoadingFromHistory = false;
+    _hasPendingChange = false;
+    _lastChangeTime = 0.0f;
+}
+
+void LevelEditorState::updateHistoryButtons() {
+    bool canUndo = _currentHistoryIndex > 0;
+    bool canRedo = _currentHistoryIndex < _history.size() - 1;
+
+    if (_undoButton) {
+        _undoButton->setState(canUndo ? ui::UIState::Normal : ui::UIState::Disabled);
+    }
+    if (_redoButton) {
+        _redoButton->setState(canRedo ? ui::UIState::Normal : ui::UIState::Disabled);
+    }
 }
 
 }  // namespace gsm

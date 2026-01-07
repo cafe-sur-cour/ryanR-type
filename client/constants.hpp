@@ -143,6 +143,9 @@ namespace constants {
     const std::string REPLAY_TYPE_SOUND = "sound";
 
     /* Level Constants */
+    const size_t MAX_HISTORY_SIZE = 50;
+    const float CHANGE_DEBOUNCE_TIME = 2.0f;
+
     const std::string LEVEL_DIRECTORY = "configs/map";
     const std::string LEVEL_FILE_PREFIX = "level";
     const std::string LEVEL_FILE_EXTENSION = ".json";
