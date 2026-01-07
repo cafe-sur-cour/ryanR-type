@@ -15,10 +15,7 @@ namespace ecs {
 class PowerUpTag : public AComponent {
     public:
         PowerUpTag() = default;
-        ~PowerUpTag() override = default;
-
-    protected:
-    private:
+        ~PowerUpTag() = default;
 };
 
 }  // namespace ecs

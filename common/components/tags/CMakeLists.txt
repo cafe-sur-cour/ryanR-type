@@ -22,6 +22,4 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     ClientEffectTag.cpp
     PowerUpTag.hpp
     PowerUpTag.cpp
-    ForceTag.hpp
-    ForceTag.cpp
 )
