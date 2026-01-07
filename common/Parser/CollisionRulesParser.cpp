@@ -6,7 +6,6 @@
 */
 
 #include "CollisionRulesParser.hpp"
-#include <fstream>
 #include <string>
 #include <map>
 #include <memory>
@@ -14,18 +13,19 @@
 #include <nlohmann/json.hpp>
 #include "../constants.hpp"
 #include "../Error/ClientError.hpp"
+#include "../Error/ParserError.hpp"
+#include "Utils/JsonLoader.hpp"
 
 namespace ecs {
 
 CollisionRulesData CollisionRulesParser::parseFromFile(const std::string& filePath) {
-    std::ifstream collisionFile(filePath);
-    if (!collisionFile.is_open()) {
+    try {
+        nlohmann::json json = parser::JsonLoader::loadFromFile(filePath);
+        return parseFromJson(json);
+    } catch (const err::ParserError&) {
         throw err::ClientError("Cannot open collision rules file: " +
             filePath, err::ClientError::CAN_NOT_OPEN_FILE);
     }
-    std::string jsonString((std::istreambuf_iterator<char>(collisionFile)),
-        std::istreambuf_iterator<char>());
-    return parseFromJsonString(jsonString);
 }
 
 void CollisionRulesParser::parseRulesForType(
@@ -44,13 +44,11 @@ void CollisionRulesParser::parseRulesForType(
     }
 }
 
-CollisionRulesData CollisionRulesParser::parseFromJsonString(const std::string& jsonString) {
+CollisionRulesData CollisionRulesParser::parseFromJson(const nlohmann::json& json) {
     CollisionRulesData data;
     data.solidAllowRules = std::make_shared<std::vector<CollisionRule>>();
     data.triggerAllowRules = std::make_shared<std::vector<CollisionRule>>();
     data.pushAllowRules = std::make_shared<std::vector<CollisionRule>>();
-
-    nlohmann::json json = nlohmann::json::parse(jsonString);
 
     const std::map<std::string, std::shared_ptr<std::vector<CollisionRule>>> typeMap = {
         {constants::COLLISION_SOLID_KEY, data.solidAllowRules},
@@ -66,6 +64,11 @@ CollisionRulesData CollisionRulesParser::parseFromJsonString(const std::string& 
     }
 
     return data;
+}
+
+CollisionRulesData CollisionRulesParser::parseFromJsonString(const std::string& jsonString) {
+    nlohmann::json json = nlohmann::json::parse(jsonString);
+    return parseFromJson(json);
 }
 
 }  // namespace ecs
