@@ -164,15 +164,15 @@ void LevelEditorState::update(float deltaTime) {
             _viewportOffset.getY() + mousePos.getY() / _viewportZoom;
 
         std::stringstream ssX;
-        ssX << "Level X:  " << static_cast<int>(cursorMapX);
+        ssX << " Level X:  " << static_cast<int>(cursorMapX);
         _cursorPosLabel->setText(ssX.str());
 
         std::stringstream ssY;
-        ssY << "Level Y:  " << static_cast<int>(cursorMapY);
+        ssY << " Level Y:  " << static_cast<int>(cursorMapY);
         _cursorPosYLabel->setText(ssY.str());
     } else {
-        _cursorPosLabel->setText("Level X:  N/A");
-        _cursorPosYLabel->setText("Level Y:  N/A");
+        _cursorPosLabel->setText(" Level X:  N/A");
+        _cursorPosYLabel->setText(" Level Y:  N/A");
     }
 
     renderUI();
@@ -554,18 +554,32 @@ void LevelEditorState::createUI() {
     const float buttonY = constants::MAX_HEIGHT - 60.0f;
 
     _cursorPosLabel = std::make_shared<ui::Text>(_resourceManager);
-    _cursorPosLabel->setPosition(math::Vector2f(10.0f, buttonY - 110.0f));
-    _cursorPosLabel->setText("Level X:  0");
+    _cursorPosLabel->setPosition(math::Vector2f(10.0f, buttonY - 150.0f));
+    _cursorPosLabel->setText(" Level X:  0");
     _cursorPosLabel->setFontSize(28);
     _cursorPosLabel->setTextColor(colors::BUTTON_PRIMARY);
     _sidePanel->addChild(_cursorPosLabel);
 
     _cursorPosYLabel = std::make_shared<ui::Text>(_resourceManager);
-    _cursorPosYLabel->setPosition(math::Vector2f(10.0f, buttonY - 70.0f));
-    _cursorPosYLabel->setText("Level Y:  0");
+    _cursorPosYLabel->setPosition(math::Vector2f(10.0f, buttonY - 110.0f));
+    _cursorPosYLabel->setText(" Level Y:  0");
     _cursorPosYLabel->setFontSize(28);
     _cursorPosYLabel->setTextColor(colors::BUTTON_PRIMARY);
     _sidePanel->addChild(_cursorPosYLabel);
+
+    _resetViewButton = std::make_shared<ui::Button>(_resourceManager);
+    _resetViewButton->setPosition(math::Vector2f(10.0f, buttonY - 65.0f));
+    _resetViewButton->setSize(math::Vector2f(sidePanelWidth - 25.0f, 40.0f));
+    _resetViewButton->setText("Reset View");
+    _resetViewButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _resetViewButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _resetViewButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _resetViewButton->setOnRelease([this]() {
+        initializeViewport();
+    });
+    _resetViewButton->setScalingEnabled(false);
+    _resetViewButton->setFocusEnabled(true);
+    _sidePanel->addChild(_resetViewButton);
 
     _undoButton = std::make_shared<ui::Button>(_resourceManager);
     _undoButton->setPosition(math::Vector2f(10.0f, buttonY));
@@ -691,6 +705,7 @@ void LevelEditorState::exit() {
     _redoButton.reset();
     _cursorPosLabel.reset();
     _cursorPosYLabel.reset();
+    _resetViewButton.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }

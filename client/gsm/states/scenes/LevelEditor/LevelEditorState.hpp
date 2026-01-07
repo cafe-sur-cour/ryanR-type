@@ -76,6 +76,7 @@ private:
     std::shared_ptr<ui::Button> _redoButton;
     std::shared_ptr<ui::Text> _cursorPosLabel;
     std::shared_ptr<ui::Text> _cursorPosYLabel;
+    std::shared_ptr<ui::Button> _resetViewButton;
 
     bool _hasUnsavedChanges = false;
 
