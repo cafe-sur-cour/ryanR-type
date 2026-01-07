@@ -4,7 +4,15 @@
     "background": "background",
     "scrollSpeed": 100.0,
     "music": "music",
-    "powerUps": [],
+    "powerUps": [
+        {
+            "name": "powerUpAddLife",
+            "position": {
+                "posY": 500.0,
+                "posX": 500.0
+            }
+        }
+    ],
     "mapLength": 6500.0,
     "obstacles": [
         {

@@ -40,6 +40,10 @@ target_link_libraries(${SERVER_LIB_NAME}
 target_include_directories(${SERVER_LIB_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/common)
 target_include_directories(${SERVER_LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
+if(USE_PCH)
+    target_precompile_headers(${SERVER_LIB_NAME} PRIVATE ${PCH_HEADERS})
+endif()
+
 add_subdirectory(packet)
 add_subdirectory(gsm)
 add_subdirectory(initResourcesManager)
