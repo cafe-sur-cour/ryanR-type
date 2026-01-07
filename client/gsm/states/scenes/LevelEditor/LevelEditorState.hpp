@@ -94,6 +94,7 @@ private:
     /* Obstacles methods */
     void parseObstacles();
     void renderAllObstacles(float levelX, float levelY, float canvasLeft, float canvasRight, float canvasTop, float canvasBottom);
+    void saveObstacles();
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::unique_ptr<ui::UIManager> _uiManager;

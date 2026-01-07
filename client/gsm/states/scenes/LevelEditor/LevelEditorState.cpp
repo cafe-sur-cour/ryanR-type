@@ -324,6 +324,8 @@ void LevelEditorState::createUI() {
         } catch (const std::exception&) {
         }
 
+        saveObstacles();
+
         std::filesystem::path savePath = *_levelPath;
 
         std::ofstream file(savePath);
@@ -1103,24 +1105,26 @@ void LevelEditorState::renderSpriteInLevelPreview(
     float scaledWidth = spriteData.width * _viewportZoom;
     float scaledHeight = spriteData.height * _viewportZoom;
 
-    if (screenX < canvasLeft || screenX + scaledWidth > canvasRight ||
-        screenY < canvasTop || screenY + scaledHeight > canvasBottom) {
+    if (screenX + scaledWidth <= canvasLeft || screenX >= canvasRight ||
+        screenY + scaledHeight <= canvasTop || screenY >= canvasBottom) {
         return;
     }
 
-    auto window = _resourceManager->get<gfx::IWindow>();
+    if (screenX >= canvasLeft && screenX + scaledWidth <= canvasRight &&
+        screenY >= canvasTop && screenY + scaledHeight <= canvasBottom) {
+        auto window = _resourceManager->get<gfx::IWindow>();
+        float finalScaleX = _viewportZoom * spriteData.scale;
+        float finalScaleY = _viewportZoom * spriteData.scale;
 
-    float finalScaleX = _viewportZoom * spriteData.scale;
-    float finalScaleY = _viewportZoom * spriteData.scale;
-
-    window->drawSprite(
-        spriteData.texturePath,
-        screenX,
-        screenY,
-        finalScaleX,
-        finalScaleY,
-        spriteData.rotation
-    );
+        window->drawSprite(
+            spriteData.texturePath,
+            screenX,
+            screenY,
+            finalScaleX,
+            finalScaleY,
+            spriteData.rotation
+        );
+    }
 }
 
 LevelPreviewSprite LevelEditorState::extractSpriteDataFromPrefab(
