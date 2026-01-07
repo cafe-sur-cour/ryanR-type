@@ -72,6 +72,11 @@ Entity AComponentArray<T>::getMaxEntityId() const {
     return _components.size();
 }
 
+template <typename T>
+void AComponentArray<T>::clear() {
+    _components.clear();
+}
+
 }  // namespace ecs
 
 #endif /* !AComponentArray_TPP_ */

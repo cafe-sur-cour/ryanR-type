@@ -21,6 +21,7 @@
 #include "../Infinite/InfiniteState.hpp"
 #include "../Settings/SettingsState.hpp"
 #include "../Replay/ReplayState.hpp"
+#include "../LevelEditor/LevelEditorState.hpp"
 #include "../LobbyWaiting/LobbyWaitingState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
@@ -265,6 +266,25 @@ MainMenuState::MainMenuState(
         }
     });
 
+    _levelEditorButton = std::make_shared<ui::Button>(resourceManager);
+    _levelEditorButton->setText("Level Editor");
+    _levelEditorButton->setSize(math::Vector2f(576.f, 108.f));
+    _levelEditorButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _levelEditorButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _levelEditorButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _levelEditorButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<LevelEditorState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _levelEditorButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<LevelEditorState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+
     _quitButton = std::make_shared<ui::Button>(resourceManager);
     _quitButton->setText("Quit");
     _quitButton->setSize(math::Vector2f(576.f, 108.f));
@@ -281,6 +301,7 @@ MainMenuState::MainMenuState(
     _mainMenuLayout->addElement(_playButton);
     _mainMenuLayout->addElement(_settingsButton);
     _mainMenuLayout->addElement(_replayButton);
+    _mainMenuLayout->addElement(_levelEditorButton);
     _mainMenuLayout->addElement(_quitButton);
 
     ui::LayoutConfig rightConfig;
@@ -482,6 +503,8 @@ void MainMenuState::exit() {
     _uiManager->clearElements();
     _playButton.reset();
     _settingsButton.reset();
+    _replayButton.reset();
+    _levelEditorButton.reset();
     _quitButton.reset();
     _connectButton.reset();
     _requestCodeButton.reset();

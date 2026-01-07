@@ -16,6 +16,7 @@
 #include <condition_variable>
 #include <atomic>
 #include <map>
+#include <chrono>
 
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
@@ -23,6 +24,7 @@
 #include "../common/constants.hpp"
 #include "../common/resourceManager/ResourceManager.hpp"
 #include "../common/gsm/IGameStateMachine.hpp"
+#include "gsm/states/scenes/MainMenu/MainMenuState.hpp"
 
 namespace ecs {
     class Registry;
@@ -127,6 +129,8 @@ class ClientNetwork {
         void handleWhoAmI();
         void handleServerStatus();
         void handleCode();
+        void handleLevelComplete();
+        void handleNextLevel();
         void handleLobbyConnectValue();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
@@ -185,6 +189,8 @@ class ClientNetwork {
 
         std::string _lobbyCode;
         bool _shouldConnect;
+
+        std::chrono::steady_clock::time_point _connectionAttemptTime;
 };
 
 #endif /* !CLIENTNETWORK_HPP_ */

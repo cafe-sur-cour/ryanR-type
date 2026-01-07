@@ -8,9 +8,10 @@
 #ifndef FORCETAG_HPP_
 #define FORCETAG_HPP_
 
-namespace ecs {
-
 #include "../base/AComponent.hpp"
+#include <string>
+
+namespace ecs {
 
 class ForceTag : public AComponent {
     public:

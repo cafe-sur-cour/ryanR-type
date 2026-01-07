@@ -18,9 +18,10 @@ add_subdirectory(view)
 set_target_properties(${ECS_LIB_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(${ECS_LIB_NAME}
-    PUBLIC ENTITY_PREFAB_MANAGER
+    PUBLIC TYPES
     PUBLIC SPATIAL_GRID
     PUBLIC COLLISION_RULES
+    PUBLIC ComponentRegistry
     PRIVATE ${LUA_LIBRARIES}
 )
 
@@ -28,3 +29,7 @@ target_include_directories(${ECS_LIB_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../
 )
+
+if(USE_PCH)
+    target_precompile_headers(${ECS_LIB_NAME} PRIVATE ${PCH_HEADERS})
+endif()

@@ -31,6 +31,11 @@ void InputToVelocitySystem::update(
         auto inputIntent =
             registry->getComponent<InputIntentComponent>(entityId);
         auto speedComp = registry->getComponent<SpeedComponent>(entityId);
+
+        if (!inputIntent || !speedComp) {
+            continue;
+        }
+
         math::Vector2f direction = inputIntent->getDirection();
 
         registry->registerComponent<VelocityComponent>();
