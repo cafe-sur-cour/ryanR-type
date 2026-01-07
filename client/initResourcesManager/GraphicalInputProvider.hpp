@@ -5,6 +5,8 @@
 ** GraphicalInputProvider
 */
 
+#pragma once
+
 #include "../../common/InputMapping/IInputProvider.hpp"
 #include "../../common/interfaces/IEvent.hpp"
 #include "../../common/InputMapping/InputMappingManager.hpp"
