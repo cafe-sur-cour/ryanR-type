@@ -91,10 +91,22 @@ void TextInput::render() {
 }
 
 void TextInput::setText(const std::string& text) {
-    _text = text;
+    if (_maxLength > 0 && text.length() > _maxLength) {
+        _text = text.substr(0, _maxLength);
+    } else {
+        _text = text;
+    }
     _cursorPosition = _text.length();
     if (_onTextChanged) {
         _onTextChanged(_text);
+    }
+}
+
+void TextInput::setMaxLength(size_t maxLength) {
+    _maxLength = maxLength;
+    if (_maxLength > 0 && _text.length() > _maxLength) {
+        _text = _text.substr(0, _maxLength);
+        _cursorPosition = std::min(_cursorPosition, _text.length());
     }
 }
 
@@ -170,6 +182,9 @@ void TextInput::handleTextInput(const std::string& text) {
 }
 
 void TextInput::insertChar(char c) {
+    if (_maxLength > 0 && _text.length() >= _maxLength) {
+        return;
+    }
     _text.insert(_cursorPosition, 1, c);
     _cursorPosition++;
     if (_onTextChanged) {

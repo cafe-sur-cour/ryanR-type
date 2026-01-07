@@ -10,6 +10,7 @@
 #include <memory>
 #include <unordered_map>
 #include "ClientNetwork.hpp"
+#include "SettingsConfig.hpp"
 #include "../common/debug.hpp"
 #include "../common/Parser/Parser.hpp"
 #include "../common/ECS/entity/EntityCreationContext.hpp"
@@ -413,5 +414,30 @@ void ClientNetwork::handleNextLevel() {
             std::make_shared<gsm::InGameState>
                 (this->_gsm, this->_resourceManager)
         );
+    }
+}
+
+void ClientNetwork::handleConnectUser() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received connection user packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    std::string username;
+    for (size_t i = 0; i < payload.size() && payload.at(i) != '\0'; ++i) {
+        char c = static_cast<char>(payload.at(i) & 0xFF);
+        username += c;
+    }
+
+    this->setName(username);
+    this->_resourceManager->get<SettingsConfig>()->setUsername(username);
+    this->_isConnected = true;
+
+    if (this->_expectingLoginResponse) {
+        if (auto gsm = this->_gsm) {
+            gsm->requestStatePop();
+        }
+        this->_expectingLoginResponse = false;
     }
 }

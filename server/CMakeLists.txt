@@ -14,6 +14,8 @@ add_library(${SERVER_LIB_NAME}
     Utils.cpp
     Utils.hpp
     LobbyStruct.hpp
+    ../common/utils/Encryption.cpp
+    ../common/utils/SecureJsonManager.cpp
 )
 
 target_link_libraries(${SERVER_LIB_NAME}

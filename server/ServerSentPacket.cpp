@@ -213,3 +213,31 @@ bool rserv::Server::lobbyConnectValuePacket(const net::INetworkEndpoint &endpoin
             debug::debugLevel::WARNING));
     return true;
 }
+
+bool rserv::Server::connectUserPacket(const net::INetworkEndpoint &endpoint,
+    const std::string &username) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    std::vector<uint64_t> payload;
+    std::vector<uint64_t> nameData = this->_packet->formatString(username);
+    payload.insert(payload.end(), nameData.begin(), nameData.end());
+
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_CONNECT_USER, payload);
+    if (!this->_network->sendTo(endpoint, packet)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Failed to send CONNECT_USER response to client",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Sent CONNECT_USER packet to client with username: " + username,
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+    this->_sequenceNumber++;
+    return true;
+}
