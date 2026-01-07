@@ -13,7 +13,7 @@
             "target": "client",
             "states": {
                 "idle": {
-                    "texturePath": "assets/sprites/player_ship/rtype.png",
+                    "texturePath": "assets/sprites/player_ship/flyingforce.png",
                     "frameWidth": 17.0,
                     "frameHeight": 18.0,
                     "frameCount": 12,
