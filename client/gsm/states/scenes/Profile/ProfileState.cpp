@@ -38,7 +38,6 @@ ProfileState::ProfileState(
         math::Vector2f(5376.0f, 3584.0f));
     _uiManager->addElement(_background);
 
-    // Titre en haut au centre
     ui::LayoutConfig titleConfig;
     titleConfig.direction = ui::LayoutDirection::Vertical;
     titleConfig.alignment = ui::LayoutAlignment::Center;
@@ -73,7 +72,6 @@ ProfileState::ProfileState(
     _mainLayout = std::make_shared<ui::UILayout>(_resourceManager, mainConfig);
     _mainLayout->setSize(math::Vector2f(1400.f, 400.f));
 
-    // ========== SECTION STATISTIQUES ==========
     ui::LayoutConfig statsConfig;
     statsConfig.direction = ui::LayoutDirection::Vertical;
     statsConfig.alignment = ui::LayoutAlignment::Center;
@@ -86,7 +84,6 @@ ProfileState::ProfileState(
     auto statsSection = std::make_shared<ui::UILayout>(_resourceManager, statsConfig);
     statsSection->setSize(math::Vector2f(650.f, 350.f));
 
-    // Box pour Username
     auto usernameBoxBackground = std::make_shared<ui::Box>(_resourceManager);
     usernameBoxBackground->setSize(math::Vector2f(600.f, 70.f));
     usernameBoxBackground->setBackgroundColor(gfx::color_t{40, 40, 70, 220});
@@ -115,7 +112,6 @@ ProfileState::ProfileState(
     usernameBox->addChild(usernameBoxBackground);
     usernameBox->addElement(_usernameText);
 
-    // Box pour Games Played
     auto gamesBoxBackground = std::make_shared<ui::Box>(_resourceManager);
     gamesBoxBackground->setSize(math::Vector2f(600.f, 60.f));
     gamesBoxBackground->setBackgroundColor(gfx::color_t{40, 50, 70, 220});
@@ -144,7 +140,6 @@ ProfileState::ProfileState(
     gamesBox->addChild(gamesBoxBackground);
     gamesBox->addElement(_gamesPlayedText);
 
-    // Box pour Wins
     auto winsBoxBackground = std::make_shared<ui::Box>(_resourceManager);
     winsBoxBackground->setSize(math::Vector2f(600.f, 60.f));
     winsBoxBackground->setBackgroundColor(gfx::color_t{40, 70, 50, 220});
@@ -173,7 +168,6 @@ ProfileState::ProfileState(
     winsBox->addChild(winsBoxBackground);
     winsBox->addElement(_winsText);
 
-    // Box pour High Score
     auto scoreBoxBackground = std::make_shared<ui::Box>(_resourceManager);
     scoreBoxBackground->setSize(math::Vector2f(600.f, 70.f));
     scoreBoxBackground->setBackgroundColor(gfx::color_t{70, 60, 40, 220});
@@ -202,13 +196,11 @@ ProfileState::ProfileState(
     scoreBox->addChild(scoreBoxBackground);
     scoreBox->addElement(_highScoreText);
 
-    // Ajout des boxes de statistiques à la section stats
     statsSection->addElement(usernameBox);
     statsSection->addElement(gamesBox);
     statsSection->addElement(winsBox);
     statsSection->addElement(scoreBox);
 
-    // ========== SECTION BOUTONS ==========
     ui::LayoutConfig buttonsConfig;
     buttonsConfig.direction = ui::LayoutDirection::Vertical;
     buttonsConfig.alignment = ui::LayoutAlignment::Center;
@@ -221,7 +213,6 @@ ProfileState::ProfileState(
     auto buttonsSection = std::make_shared<ui::UILayout>(_resourceManager, buttonsConfig);
     buttonsSection->setSize(math::Vector2f(500.f, 350.f));
 
-    // Bouton 1 - À implémenter
     _button1 = std::make_shared<ui::Button>(_resourceManager);
     _button1->setText("Button 1");
     _button1->setSize(math::Vector2f(500.f, 60.f));
@@ -231,7 +222,6 @@ ProfileState::ProfileState(
     _button1->setOnRelease([]() {
     });
 
-    // Bouton 2 - À implémenter
     _button2 = std::make_shared<ui::Button>(_resourceManager);
     _button2->setText("Button 2");
     _button2->setSize(math::Vector2f(500.f, 60.f));
@@ -241,7 +231,6 @@ ProfileState::ProfileState(
     _button2->setOnRelease([]() {
     });
 
-    // Bouton 3 - À implémenter
     _button3 = std::make_shared<ui::Button>(_resourceManager);
     _button3->setText("Button 3");
     _button3->setSize(math::Vector2f(500.f, 60.f));
@@ -273,13 +262,11 @@ ProfileState::ProfileState(
         }
     });
 
-    // Ajout des sections au layout principal
     _mainLayout->addElement(statsSection);
     _mainLayout->addElement(buttonsSection);
 
     _uiManager->addElement(_mainLayout);
 
-    // Layout séparé pour le bouton Back en bas
     ui::LayoutConfig backLayoutConfig;
     backLayoutConfig.direction = ui::LayoutDirection::Vertical;
     backLayoutConfig.alignment = ui::LayoutAlignment::Center;
@@ -349,7 +336,6 @@ void ProfileState::exit() {
         _uiManager->clearElements();
     }
 
-    // Libération explicite des ressources
     _background.reset();
     _mainLayout.reset();
     _titleText.reset();
