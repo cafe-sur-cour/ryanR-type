@@ -106,7 +106,7 @@ void TextInput::setMaxLength(size_t maxLength) {
     _maxLength = maxLength;
     if (_maxLength > 0 && _text.length() > _maxLength) {
         _text = _text.substr(0, _maxLength);
-        _cursorPosition = std::min(_cursorPosition, _text.length());
+        _cursorPosition = (std::min)(_cursorPosition, _text.length());
     }
 }
 
@@ -148,6 +148,10 @@ void TextInput::setOnTextChanged(std::function<void(const std::string&)> callbac
 
 void TextInput::setOnSubmit(std::function<void(const std::string&)> callback) {
     _onSubmit = callback;
+}
+
+void TextInput::setOnFocusLost(std::function<void()> callback) {
+    _onFocusLost = callback;
 }
 
 void TextInput::handleInput(const math::Vector2f& mousePos, bool mousePressed) {

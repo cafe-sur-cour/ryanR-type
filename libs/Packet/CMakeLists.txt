@@ -26,6 +26,9 @@ target_link_libraries(${PACKET_LIB_NAME}
 add_subdirectory(serializer)
 add_subdirectory(compression)
 
+if(USE_UNITY_BUILD)
+    set_target_properties(${PACKET_LIB_NAME} PROPERTIES UNITY_BUILD ON)
+endif()
 
 add_custom_command(TARGET ${PACKET_LIB_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PACKET_LIB_NAME}> ${CMAKE_SOURCE_DIR}/libraries/

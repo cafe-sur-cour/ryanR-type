@@ -146,11 +146,24 @@ namespace constants {
     const std::string REPLAY_TYPE_SOUND = "sound";
 
     /* Level Constants */
+    const size_t MAX_HISTORY_SIZE = 50;
+    const float CHANGE_DEBOUNCE_TIME = 2.0f;
+
     const std::string LEVEL_DIRECTORY = "configs/map";
     const std::string LEVEL_FILE_PREFIX = "level";
     const std::string LEVEL_FILE_EXTENSION = ".json";
     const std::string LEVEL_INDEX_FIELD = "index";
     const std::string LEVEL_NAME_FIELD = "name";
+    const std::string LEVEL_BACKGROUND_FIELD = "background";
+    const std::string LEVEL_SCROLL_SPEED_FIELD = "scrollSpeed";
+    const std::string LEVEL_MUSIC_FIELD = "music";
+    const std::string LEVEL_POWER_UPS_FIELD = "powerUps";
+    const std::string LEVEL_MAP_LENGTH_FIELD = "mapLength";
+    const std::string LEVEL_OBSTACLES_FIELD = "obstacles";
+    const std::string LEVEL_WAVES_FIELD = "waves";
+
+    const std::string MUSIC_DIRECTORY = "configs/entities/musics";
+    const std::string BACKGROUNDS_DIRECTORY = "configs/entities/backgrounds";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */

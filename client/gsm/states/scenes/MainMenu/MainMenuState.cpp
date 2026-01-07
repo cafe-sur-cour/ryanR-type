@@ -21,7 +21,7 @@
 #include "../Infinite/InfiniteState.hpp"
 #include "../Settings/SettingsState.hpp"
 #include "../Replay/ReplayState.hpp"
-#include "../LevelEditor/LevelEditorState.hpp"
+#include "../LevelEditorSelector/LevelEditorSelectorState.hpp"
 #include "../LobbyWaiting/LobbyWaitingState.hpp"
 #include "../Register/RegisterState.hpp"
 #include "../Login/LoginState.hpp"
@@ -130,6 +130,7 @@ MainMenuState::MainMenuState(
 
     _mainMenuLayout = std::make_shared<ui::UILayout>(_resourceManager, menuConfig);
     _mainMenuLayout->setSize(math::Vector2f(576.f, 450.f));
+    _mainMenuLayout->setAutoResize(true);
     _usernameButton = std::make_shared<ui::Button>(_resourceManager);
     _usernameButton->setSize(math::Vector2f(576.f, 108.f));
     _usernameButton->setOnRelease([this]() {
@@ -191,13 +192,15 @@ MainMenuState::MainMenuState(
     _levelEditorButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _levelEditorButton->setOnRelease([this]() {
         if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<LevelEditorState>(stateMachine,
+            stateMachine->requestStatePush(
+                std::make_shared<LevelEditorSelectorState>(stateMachine,
                 this->_resourceManager));
         }
     });
     _levelEditorButton->setOnActivated([this]() {
         if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<LevelEditorState>(stateMachine,
+            stateMachine->requestStatePush(
+                std::make_shared<LevelEditorSelectorState>(stateMachine,
                 this->_resourceManager));
         }
     });
@@ -232,6 +235,7 @@ MainMenuState::MainMenuState(
 
     _rightLayout = std::make_shared<ui::UILayout>(_resourceManager, rightConfig);
     _rightLayout->setSize(math::Vector2f(400.f, 236.f));
+    _rightLayout->setAutoResize(true);
 
     _rightLayout->addElement(_requestCodeButton);
     _rightLayout->addElement(_lobbyCodeInput);

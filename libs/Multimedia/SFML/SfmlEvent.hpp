@@ -49,6 +49,7 @@ class SfmlEvent : public gfx::IEvent {
         std::map<event_t, unsigned int> _joystickButtonMap;
         std::string _lastTextInput;
         std::chrono::steady_clock::time_point _lastTextTime;
+        event_t _lastMouseWheelEvent = event_t::NOTHING;
 };
 
 #endif /* !SFMLEVENT_HPP_ */

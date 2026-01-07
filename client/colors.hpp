@@ -62,10 +62,12 @@ namespace colors {
     const gfx::color_t TOGGLE_ON = {150, 0, 200};                               // Purple on
     const gfx::color_t TOGGLE_OFF = {50, 0, 100};                               // Dark purple off
 
-    // General UI States
     const gfx::color_t UI_HOVER = {0, 150, 255};                                // Bright blue hover
     const gfx::color_t UI_FOCUSED = {0, 200, 255};                              // Cyan focused
     const gfx::color_t UI_DISABLED = {100, 100, 100};                           // Gray disabled
+
+    const gfx::color_t LEVEL_EDITOR_PANEL_BACKGROUND = {15, 10, 25};            // Dark with slight purple tint
+    const gfx::color_t LEVEL_EDITOR_PANEL_BORDER = {200, 200, 200};             // Light gray border
 }
 
 #endif  // COLORS_HPP_

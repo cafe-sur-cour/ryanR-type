@@ -63,7 +63,7 @@ math::Vector2f ParallaxRenderingSystem::calculateScale(const ParallaxLayer& laye
         case ParallaxScaleMode::FIT_SCREEN: {
             float scaleX = screenWidth / layer.sourceSize.getX();
             float scaleY = screenHeight / layer.sourceSize.getY();
-            float uniformScale = std::max(scaleX, scaleY);
+            float uniformScale = (std::max)(scaleX, scaleY);
             finalScale = math::Vector2f(uniformScale, uniformScale);
             break;
         }
