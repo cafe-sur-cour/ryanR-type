@@ -106,6 +106,10 @@ std::vector<uint64_t> pm::PacketManager::getPayload() const {
     return this->_payload;
 }
 
+std::vector<std::vector<uint64_t>> pm::PacketManager::getBatchedPayloads() const {
+    return this->_batchedPayloads;
+}
+
 uint8_t pm::PacketManager::getIdClient() const {
     return this->_idClient;
 }
