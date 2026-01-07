@@ -583,6 +583,23 @@ void LevelEditorState::createUI() {
     /* musicDropdown is added after background dropDown to ensure proper z order */
     _sidePanel->addChild(_musicDropdown);
 
+    currentY += 60.0f + elementSpacing;
+    _showHitboxesButton = std::make_shared<ui::Button>(_resourceManager);
+    _showHitboxesButton->setPosition(math::Vector2f(10.0f, currentY));
+    _showHitboxesButton->setSize(math::Vector2f(sidePanelWidth - 25.0f, 40.0f));
+    _showHitboxesButton->setText("Hitboxes: Hide");
+    _showHitboxesButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _showHitboxesButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _showHitboxesButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _showHitboxesButton->setOnRelease([this]() {
+        _showHitboxes = !_showHitboxes;
+        std::string text = "Hitboxes: " + std::string(_showHitboxes ? "Show" : "Hide");
+        _showHitboxesButton->setText(text);
+    });
+    _showHitboxesButton->setScalingEnabled(false);
+    _showHitboxesButton->setFocusEnabled(true);
+    _sidePanel->addChild(_showHitboxesButton);
+
     const float buttonWidth = (sidePanelWidth - 35.0f) / 2.0f;
     const float buttonY = constants::MAX_HEIGHT - 60.0f;
 
@@ -861,6 +878,7 @@ void LevelEditorState::exit() {
     _cursorPosLabel.reset();
     _cursorPosYLabel.reset();
     _resetViewButton.reset();
+    _showHitboxesButton.reset();
     _editorModeDropdown.reset();
     _obstaclePrefabLabel.reset();
     _obstaclePrefabDropdown.reset();
@@ -1158,6 +1176,18 @@ void LevelEditorState::renderSpriteInLevelPreview(
             finalScaleY,
             spriteData.rotation
         );
+
+        if (_showHitboxes) {
+            gfx::color_t green = colors::GREEN;
+            window->drawRectangleOutline(
+                green,
+                std::make_pair(static_cast<size_t>
+                    (screenX), static_cast<size_t>(screenY)),
+                std::make_pair(static_cast<size_t>
+                    (scaledWidth), static_cast<size_t>(scaledHeight)),
+                1
+            );
+        }
     }
 }
 
