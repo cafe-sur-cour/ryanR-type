@@ -108,6 +108,13 @@ void ScriptingSystem::bindAPI() {
         registry->addComponent<ecs::ShootIntentComponent>(e, intent);
     });
 
+    lua.set_function(constants::SET_ANIMATION_STATE_FUNCTION,
+        [this](Entity e, const std::string& newState) {
+        (void)e;
+        (void)newState;
+        // AnimationStateIntentComponent is ignored for now
+    });
+
     lua.set_function(constants::GET_ENTITY_ID_FUNCTION, [](Entity e) -> size_t {
         return static_cast<size_t>(e);
     });
@@ -275,6 +282,29 @@ void ScriptingSystem::bindAPI() {
             }
         }
         return 0;
+    });
+
+    lua.set_function("addForceLevel",
+        [this](size_t entityId) {
+
+
+        if (registry->hasComponent<ecs::EntityPartsComponent>(entityId)) {
+            std::vector<size_t> partsComp = registry->getComponent<ecs::EntityPartsComponent>(entityId)->partIds;
+
+            for (auto partId : partsComp) {
+                Entity part = static_cast<Entity>(partId);
+                if (registry->hasComponent<ForceTag>(part) &&
+                    registry->getComponent<ecs::ForceTag>(part)->getForceType() == "force"
+                    && registry->hasComponent<ecs::ScriptingComponent>(part)) {
+                    auto scriptComp = registry->getComponent<ecs::ScriptingComponent>(part);
+                    auto forceTag = registry->getComponent<ForceTag>(part);
+                    if (scriptComp->hasFunction("addLevel")) {
+                        sol::function addLevelFunc = scriptComp->getFunction("addLevel");
+                        addLevelFunc(partId);
+                    }
+                }
+            }
+        }
     });
 }
 

@@ -64,10 +64,12 @@ function OnInteract(entity, interactorEntity)
         end
         isequipped = true
 
-        if level == 1 then
+        if level == 2 then
             setProjectilePrefab(interactorEntity, "heavy_shot")
         end
-
+        if (level >= 3) then
+            setProjectilePrefab(interactorEntity, "triple_shot")
+        end
     end
 end
 
@@ -86,3 +88,25 @@ function ActivateOrDeactivateForce(entity, entityCaller)
     end
 end
 
+function addLevel(entity)
+    level = level + 1
+    print("[force] New force level: " .. level)
+    if (level > 3) then
+        level = 3
+    end
+    local parentId = getParentId(entity)
+    if isEntityPlayer(parentId) == false then
+        print("[force] Parent is not player, not changing projectile. Parent ID: " .. parentId)
+        return
+    end
+    if level == 2 then
+        setProjectilePrefab(parentId, "heavy_shot")
+        print("[force] Setting heavy shot")
+        setAnimationState(entity, "level2")
+        print("[force] Setting animation to level2")
+    end
+    if (level == 3) then
+        setAnimationState(entity, "level3")
+        setProjectilePrefab(parentId, "triple_shot")
+    end
+end
