@@ -13,7 +13,7 @@
 namespace constants {
     /* TPS */
     constexpr long TPS = 50;
-    constexpr long CD_TPS = 20;
+    constexpr long CD_TPS = 50;
 
     /* Core */
     constexpr long SERVER_THREAD_SLEEP_MS = 10;
