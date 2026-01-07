@@ -138,6 +138,8 @@ private:
     std::shared_ptr<ui::Text> _cursorPosYLabel;
     std::shared_ptr<ui::Button> _resetViewButton;
     std::shared_ptr<ui::Button> _showHitboxesButton;
+    std::shared_ptr<ui::Text> _obstacleTypeLabel;
+    std::shared_ptr<ui::Dropdown> _obstacleTypeDropdown;
     std::shared_ptr<ui::Text> _obstaclePosXLabel;
     std::shared_ptr<ui::TextInput> _obstaclePosXInput;
     std::shared_ptr<ui::Text> _obstaclePosYLabel;

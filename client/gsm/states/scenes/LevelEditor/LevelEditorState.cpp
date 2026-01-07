@@ -837,6 +837,56 @@ void LevelEditorState::createBottomPanel() {
     _spriteHeightLabel->setVisible(true);
     _bottomPanel->addChild(_spriteHeightLabel);
 
+    _obstacleTypeLabel = std::make_shared<ui::Text>(_resourceManager);
+    _obstacleTypeLabel->setPosition(math::Vector2f(450.0f, 12.5f));
+    _obstacleTypeLabel->setText("Type");
+    _obstacleTypeLabel->setFontSize(16);
+    _obstacleTypeLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _obstacleTypeLabel->setVisible(true);
+    _bottomPanel->addChild(_obstacleTypeLabel);
+
+    _obstacleTypeDropdown = std::make_shared<ui::Dropdown>(_resourceManager);
+    _obstacleTypeDropdown->setPosition(math::Vector2f(450.0f, 40.0f));
+    _obstacleTypeDropdown->setSize(math::Vector2f(200.0f, 35.0f));
+    _obstacleTypeDropdown->setScalingEnabled(false);
+    _obstacleTypeDropdown->setDirection(ui::DropdownDirection::Right);
+    _obstacleTypeDropdown->addOption("unique");
+    _obstacleTypeDropdown->addOption("horizontal");
+    _obstacleTypeDropdown->addOption("vertical");
+    _obstacleTypeDropdown->setVisible(true);
+    _obstacleTypeDropdown->setOnSelectionChanged(
+        [this](const std::string& selectedText, size_t selectedIndex) {
+        (void)selectedText;
+        if (!_selectedObstacle.has_value()) {
+            return;
+        }
+
+        const auto& sel = _selectedObstacle.value();
+        std::string newType;
+        if (selectedIndex == 0) {
+            newType = "unique";
+        } else if (selectedIndex == 1) {
+            newType = "horizontal";
+        } else if (selectedIndex == 2) {
+            newType = "vertical";
+        } else {
+            return;
+        }
+
+        if (newType != sel.type) {
+            size_t currentTypeIndex = 0;
+            if (sel.type == "unique") {
+                currentTypeIndex = 0;
+            } else if (sel.type == "horizontal") {
+                currentTypeIndex = 1;
+            } else if (sel.type == "vertical") {
+                currentTypeIndex = 2;
+            }
+            _obstacleTypeDropdown->setSelectedIndex(currentTypeIndex);
+        }
+    });
+    _bottomPanel->addChild(_obstacleTypeDropdown);
+
     _obstaclePosXLabel = std::make_shared<ui::Text>(_resourceManager);
     _obstaclePosXLabel->setPosition(math::Vector2f(450.0f, 92.5f));
     _obstaclePosXLabel->setText("Pos X");
@@ -1040,6 +1090,8 @@ void LevelEditorState::exit() {
     _editorModeDropdown.reset();
     _obstaclePrefabLabel.reset();
     _obstaclePrefabDropdown.reset();
+    _obstacleTypeLabel.reset();
+    _obstacleTypeDropdown.reset();
     _obstaclePosXLabel.reset();
     _obstaclePosXInput.reset();
     _obstaclePosYLabel.reset();
