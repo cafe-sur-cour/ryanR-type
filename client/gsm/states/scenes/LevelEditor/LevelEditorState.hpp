@@ -47,6 +47,12 @@ struct UniqueObstacle {
     float posY;
 };
 
+struct ObstacleSelection {
+    std::string prefabName;
+    std::string type;  // "unique", "horizontal", "vertical"
+    int index;  // index dans le vecteur correspondant
+};
+
 struct ObstacleGroup {
     std::vector<HorizontalLineObstacle> horizontalLines;
     std::vector<VerticalLineObstacle> verticalLines;
@@ -95,6 +101,8 @@ private:
     void parseObstacles();
     void renderAllObstacles(float levelX, float levelY, float canvasLeft, float canvasRight, float canvasTop, float canvasBottom);
     void saveObstacles();
+    void handleObstacleClick(float mouseX, float mouseY, float levelX, float levelY);
+    std::optional<ObstacleSelection> getObstacleAtPosition(float mouseX, float mouseY, float levelX, float levelY);
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::unique_ptr<ui::UIManager> _uiManager;
@@ -142,6 +150,7 @@ private:
     bool _isLoadingFromHistory = false;
     bool _undoPressedLastFrame = false;
     bool _redoPressedLastFrame = false;
+    bool _leftMousePressedLastFrame = false;
 
     math::Vector2f _viewportOffset;
     float _viewportZoom = 1.0f;
@@ -153,6 +162,7 @@ private:
     math::Vector2f _dragStartPos;
 
     std::map<std::string, ObstacleGroup> _obstaclesByName;
+    std::optional<ObstacleSelection> _selectedObstacle;
 
 };
 

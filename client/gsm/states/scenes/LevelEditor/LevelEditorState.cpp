@@ -159,6 +159,20 @@ void LevelEditorState::update(float deltaTime) {
                       mousePos.getY() >= 0.0f &&
                       mousePos.getY() <= canvasHeight;
 
+    bool leftMousePressed = _mouseHandler->isMouseButtonPressed(
+        static_cast<int>(constants::MouseButton::LEFT));
+
+    if (isInCanvas && !leftMousePressed && _leftMousePressedLastFrame && !_isDragging) {
+        float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
+        if (mapLength > 0.0f) {
+            float levelX = sidePanelWidth - (_viewportOffset.getX() * _viewportZoom);
+            float levelY = -(_viewportOffset.getY() * _viewportZoom);
+            handleObstacleClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
+        }
+    }
+
+    _leftMousePressedLastFrame = leftMousePressed;
+
     if (isInCanvas) {
         float cursorMapX =
             _viewportOffset.getX() + (mousePos.getX() - sidePanelWidth) / _viewportZoom;

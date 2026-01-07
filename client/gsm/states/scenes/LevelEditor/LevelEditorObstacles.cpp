@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <string>
+#include <utility>
 #include <nlohmann/json.hpp>
 #include "LevelEditorState.hpp"
 #include "../../../../constants.hpp"
@@ -98,6 +99,9 @@ void LevelEditorState::renderAllObstacles(
     float canvasTop,
     float canvasBottom
 ) {
+    auto window = _resourceManager->get<gfx::IWindow>();
+    gfx::color_t lightBlue = {100, 200, 255, 255};
+
     for (const auto& [prefabName, obstacleGroup] : _obstaclesByName) {
         std::string prefabPath =
             constants::OBSTACLES_DIRECTORY + "/" +
@@ -108,7 +112,11 @@ void LevelEditorState::renderAllObstacles(
             continue;
         }
 
-        for (const auto& hLine : obstacleGroup.horizontalLines) {
+        float scaledWidth = spriteData.width * _viewportZoom;
+        float scaledHeight = spriteData.height * _viewportZoom;
+
+        for (size_t hIdx = 0; hIdx < obstacleGroup.horizontalLines.size(); ++hIdx) {
+            const auto& hLine = obstacleGroup.horizontalLines[hIdx];
             for (int i = 0; i < hLine.count; ++i) {
                 float worldX = hLine.fromX + (i * spriteData.width);
                 float worldY = hLine.posY;
@@ -120,9 +128,29 @@ void LevelEditorState::renderAllObstacles(
                     spriteData, screenX, screenY, canvasLeft,
                     canvasRight, canvasTop, canvasBottom);
             }
+
+            if (_selectedObstacle.has_value() &&
+                _selectedObstacle.value().prefabName == prefabName &&
+                _selectedObstacle.value().type == "horizontal" &&
+                _selectedObstacle.value().index == static_cast<int>(hIdx)) {
+                float screenX = levelX + (hLine.fromX * _viewportZoom);
+                float screenY = levelY + (hLine.posY * _viewportZoom);
+                float totalWidth = hLine.count * scaledWidth;
+                float totalHeight = scaledHeight;
+
+                window->drawRectangleOutline(
+                    lightBlue,
+                    std::make_pair(static_cast<size_t>(
+                        screenX), static_cast<size_t>(screenY)),
+                    std::make_pair(static_cast<size_t>(
+                        totalWidth), static_cast<size_t>(totalHeight)),
+                    2
+                );
+            }
         }
 
-        for (const auto& vLine : obstacleGroup.verticalLines) {
+        for (size_t vIdx = 0; vIdx < obstacleGroup.verticalLines.size(); ++vIdx) {
+            const auto& vLine = obstacleGroup.verticalLines[vIdx];
             for (int i = 0; i < vLine.count; ++i) {
                 float worldX = vLine.posX;
                 float worldY = vLine.fromY + (i * spriteData.height);
@@ -134,15 +162,49 @@ void LevelEditorState::renderAllObstacles(
                     spriteData, screenX, screenY, canvasLeft,
                     canvasRight, canvasTop, canvasBottom);
             }
+
+            if (_selectedObstacle.has_value() &&
+                _selectedObstacle.value().prefabName == prefabName &&
+                _selectedObstacle.value().type == "vertical" &&
+                _selectedObstacle.value().index == static_cast<int>(vIdx)) {
+                float screenX = levelX + (vLine.posX * _viewportZoom);
+                float screenY = levelY + (vLine.fromY * _viewportZoom);
+                float totalWidth = scaledWidth;
+                float totalHeight = vLine.count * scaledHeight;
+
+                window->drawRectangleOutline(
+                    lightBlue,
+                    std::make_pair(static_cast<size_t>(
+                        screenX), static_cast<size_t>(screenY)),
+                    std::make_pair(static_cast<size_t>(
+                        totalWidth), static_cast<size_t>(totalHeight)),
+                    2
+                );
+            }
         }
 
-        for (const auto& unique : obstacleGroup.uniques) {
+        for (size_t uIdx = 0; uIdx < obstacleGroup.uniques.size(); ++uIdx) {
+            const auto& unique = obstacleGroup.uniques[uIdx];
             float screenX = levelX + (unique.posX * _viewportZoom);
             float screenY = levelY + (unique.posY * _viewportZoom);
 
             renderSpriteInLevelPreview(
                 spriteData, screenX, screenY, canvasLeft,
                 canvasRight, canvasTop, canvasBottom);
+
+            if (_selectedObstacle.has_value() &&
+                _selectedObstacle.value().prefabName == prefabName &&
+                _selectedObstacle.value().type == "unique" &&
+                _selectedObstacle.value().index == static_cast<int>(uIdx)) {
+                window->drawRectangleOutline(
+                    lightBlue,
+                    std::make_pair(static_cast<size_t>(
+                        screenX), static_cast<size_t>(screenY)),
+                    std::make_pair(static_cast<size_t>(
+                        scaledWidth), static_cast<size_t>(scaledHeight)),
+                    2
+                );
+            }
         }
     }
 }
@@ -189,6 +251,91 @@ void LevelEditorState::saveObstacles() {
     }
 
     _levelData[constants::OBSTACLES_FIELD] = obstaclesArray;
+}
+
+std::optional<ObstacleSelection> LevelEditorState::getObstacleAtPosition(
+    float mouseX, float mouseY, float levelX, float levelY
+) {
+    for (const auto& [prefabName, obstacleGroup] : _obstaclesByName) {
+        std::string prefabPath =
+            constants::OBSTACLES_DIRECTORY + "/" +
+                prefabName + constants::LEVEL_FILE_EXTENSION;
+        LevelPreviewSprite spriteData = extractSpriteDataFromPrefab(prefabPath);
+
+        if (spriteData.texturePath.empty()) {
+            continue;
+        }
+
+        float scaledWidth = spriteData.width * _viewportZoom;
+        float scaledHeight = spriteData.height * _viewportZoom;
+
+        for (size_t i = 0; i < obstacleGroup.uniques.size(); ++i) {
+            const auto& unique = obstacleGroup.uniques[i];
+            float screenX = levelX + (unique.posX * _viewportZoom);
+            float screenY = levelY + (unique.posY * _viewportZoom);
+
+            if (mouseX >= screenX && mouseX < screenX + scaledWidth &&
+                mouseY >= screenY && mouseY < screenY + scaledHeight) {
+                return ObstacleSelection{prefabName, "unique", static_cast<int>(i)};
+            }
+        }
+
+        for (size_t i = 0; i < obstacleGroup.horizontalLines.size(); ++i) {
+            const auto& hLine = obstacleGroup.horizontalLines[i];
+            for (int j = 0; j < hLine.count; ++j) {
+                float worldX = hLine.fromX + (j * spriteData.width);
+                float worldY = hLine.posY;
+                float screenX = levelX + (worldX * _viewportZoom);
+                float screenY = levelY + (worldY * _viewportZoom);
+
+                if (mouseX >= screenX && mouseX < screenX + scaledWidth &&
+                    mouseY >= screenY && mouseY < screenY + scaledHeight) {
+                    return ObstacleSelection{prefabName, "horizontal", static_cast<int>(i)};
+                }
+            }
+        }
+
+        for (size_t i = 0; i < obstacleGroup.verticalLines.size(); ++i) {
+            const auto& vLine = obstacleGroup.verticalLines[i];
+            for (int j = 0; j < vLine.count; ++j) {
+                float worldX = vLine.posX;
+                float worldY = vLine.fromY + (j * spriteData.height);
+                float screenX = levelX + (worldX * _viewportZoom);
+                float screenY = levelY + (worldY * _viewportZoom);
+
+                if (mouseX >= screenX && mouseX < screenX + scaledWidth &&
+                    mouseY >= screenY && mouseY < screenY + scaledHeight) {
+                    return ObstacleSelection{prefabName, "vertical", static_cast<int>(i)};
+                }
+            }
+        }
+    }
+
+    return std::nullopt;
+}
+
+void LevelEditorState::handleObstacleClick(
+    float mouseX, float mouseY, float levelX, float levelY
+) {
+    auto selection = getObstacleAtPosition(mouseX, mouseY, levelX, levelY);
+    if (selection.has_value()) {
+        _selectedObstacle = selection;
+        if (_obstaclePrefabDropdown) {
+            const auto& prefabName = selection.value().prefabName;
+            auto options = _obstaclePrefabDropdown->getOptions();
+            for (size_t i = 0; i < options.size(); ++i) {
+                if (options[i] == prefabName) {
+                    _obstaclePrefabDropdown->setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+        if (_editorModeDropdown) {
+            _editorModeDropdown->setSelectedIndex(0);
+        }
+    } else {
+        _selectedObstacle = std::nullopt;
+    }
 }
 
 }  // namespace gsm
