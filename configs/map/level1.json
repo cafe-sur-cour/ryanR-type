@@ -6,6 +6,13 @@
     "music": "music",
     "powerUps": [
         {
+            "name": "powerUpAddForceLevel",
+            "position": {
+            "posY": 200.0,
+            "posX": 1000.0
+            }
+        },
+        {
             "name": "flyingForce",
             "position": {
             "posY": 400.0,

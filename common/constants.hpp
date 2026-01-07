@@ -290,6 +290,7 @@ namespace constants {
     const std::string GET_NEAREST_PLAYER_POSITION_FUNCTION = "getNearestPlayerPosition";
     const std::string GET_ENTITY_SPEED_FUNCTION = "getEntitySpeed";
     const std::string CREATE_SHOOT_INTENT_FUNCTION = "createShootIntent";
+    const std::string SET_ANIMATION_STATE_FUNCTION = "setAnimationState";
     const std::string SPAWN_ENTITY_FUNCTION = "spawnEntity";
     const std::string GET_ENTITY_ID_FUNCTION = "getEntityId";
     const std::string ADD_PART_ID_FUNCTION = "addPartId";
