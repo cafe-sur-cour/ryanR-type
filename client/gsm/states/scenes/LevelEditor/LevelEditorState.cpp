@@ -809,6 +809,122 @@ void LevelEditorState::createBottomPanel() {
     _spriteHeightLabel->setVisible(true);
     _bottomPanel->addChild(_spriteHeightLabel);
 
+    _obstaclePosXLabel = std::make_shared<ui::Text>(_resourceManager);
+    _obstaclePosXLabel->setPosition(math::Vector2f(650.0f, 12.5f));
+    _obstaclePosXLabel->setText("Pos X");
+    _obstaclePosXLabel->setFontSize(16);
+    _obstaclePosXLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _obstaclePosXLabel->setVisible(false);
+    _bottomPanel->addChild(_obstaclePosXLabel);
+
+    _obstaclePosXInput = std::make_shared<ui::TextInput>(_resourceManager);
+    _obstaclePosXInput->setPosition(math::Vector2f(650.0f, 35.0f));
+    _obstaclePosXInput->setSize(math::Vector2f(275.0f, 30.0f));
+    _obstaclePosXInput->setPlaceholder("X...");
+    _obstaclePosXInput->setVisible(false);
+    _obstaclePosXInput->setScalingEnabled(false);
+    _obstaclePosXInput->setFocusEnabled(true);
+    _obstaclePosXInput->setOnTextChanged([this](const std::string& text) {
+        std::string filteredText;
+        for (char c : text) {
+            if ((c >= '0' && c <= '9') || c == '-' || c == '.') {
+                filteredText += c;
+            }
+        }
+
+        if (filteredText != text) {
+            _obstaclePosXInput->setText(filteredText);
+            return;
+        }
+
+        if (!_selectedObstacle.has_value()) {
+            return;
+        }
+        const auto& selectedSel = _selectedObstacle.value();
+        try {
+            if (!filteredText.empty()) {
+                float newPosX = std::stof(filteredText);
+                if (selectedSel.type == "unique") {
+                    _obstaclesByName[selectedSel.prefabName].uniques[static_cast<
+                        size_t>(selectedSel.index)].posX = newPosX;
+                } else if (selectedSel.type == "horizontal") {
+                    _obstaclesByName[selectedSel.prefabName].horizontalLines[static_cast<
+                        size_t>(selectedSel.index)].fromX = newPosX;
+                } else if (selectedSel.type == "vertical") {
+                    _obstaclesByName[selectedSel.prefabName].verticalLines[static_cast<
+                        size_t>(selectedSel.index)].posX = newPosX;
+                }
+                _hasUnsavedChanges = true;
+                updateSaveButtonText();
+            }
+        } catch (const std::exception&) {
+        }
+    });
+    _obstaclePosXInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_obstaclePosXInput);
+    });
+    _bottomPanel->addChild(_obstaclePosXInput);
+
+    _obstaclePosYLabel = std::make_shared<ui::Text>(_resourceManager);
+    _obstaclePosYLabel->setPosition(math::Vector2f(650.0f, 75.0f));
+    _obstaclePosYLabel->setText("Pos Y");
+    _obstaclePosYLabel->setFontSize(16);
+    _obstaclePosYLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _obstaclePosYLabel->setVisible(false);
+    _bottomPanel->addChild(_obstaclePosYLabel);
+
+    _obstaclePosYInput = std::make_shared<ui::TextInput>(_resourceManager);
+    _obstaclePosYInput->setPosition(math::Vector2f(650.0f, 97.5f));
+    _obstaclePosYInput->setSize(math::Vector2f(275.0f, 30.0f));
+    _obstaclePosYInput->setPlaceholder("Y...");
+    _obstaclePosYInput->setVisible(false);
+    _obstaclePosYInput->setScalingEnabled(false);
+    _obstaclePosYInput->setFocusEnabled(true);
+    _obstaclePosYInput->setOnTextChanged([this](const std::string& text) {
+        std::string filteredText;
+        for (char c : text) {
+            if ((c >= '0' && c <= '9') || c == '-' || c == '.') {
+                filteredText += c;
+            }
+        }
+
+        if (filteredText != text) {
+            _obstaclePosYInput->setText(filteredText);
+            return;
+        }
+
+        if (!_selectedObstacle.has_value()) {
+            return;
+        }
+        const auto& selectedSel = _selectedObstacle.value();
+        try {
+            if (!filteredText.empty()) {
+                float newPosY = std::stof(filteredText);
+                if (selectedSel.type == "unique") {
+                    _obstaclesByName[selectedSel.prefabName].uniques[static_cast<
+                        size_t>(selectedSel.index)].posY = newPosY;
+                } else if (selectedSel.type == "horizontal") {
+                    _obstaclesByName[selectedSel.prefabName].horizontalLines[static_cast<
+                        size_t>(selectedSel.index)].posY = newPosY;
+                } else if (selectedSel.type == "vertical") {
+                    _obstaclesByName[selectedSel.prefabName].verticalLines[static_cast<
+                        size_t>(selectedSel.index)].fromY = newPosY;
+                }
+                _hasUnsavedChanges = true;
+                updateSaveButtonText();
+            }
+        } catch (const std::exception&) {
+        }
+    });
+    _obstaclePosYInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_obstaclePosYInput);
+    });
+    _bottomPanel->addChild(_obstaclePosYInput);
+
     /* DropDowns are added at the end */
     _bottomPanel->addChild(_obstaclePrefabDropdown);
     _bottomPanel->addChild(_editorModeDropdown);
@@ -896,6 +1012,10 @@ void LevelEditorState::exit() {
     _editorModeDropdown.reset();
     _obstaclePrefabLabel.reset();
     _obstaclePrefabDropdown.reset();
+    _obstaclePosXLabel.reset();
+    _obstaclePosXInput.reset();
+    _obstaclePosYLabel.reset();
+    _obstaclePosYInput.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
