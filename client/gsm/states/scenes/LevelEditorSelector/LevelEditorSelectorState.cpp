@@ -324,9 +324,9 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
             auto deleteButton = std::make_shared<ui::Button>(_resourceManager);
             deleteButton->setText("Delete");
             deleteButton->setSize(math::Vector2f(110.f, 40.f));
-            deleteButton->setNormalColor(gfx::color_t{255, 100, 100, 255});
-            deleteButton->setHoveredColor(gfx::color_t{255, 150, 150, 255});
-            deleteButton->setPressedColor(gfx::color_t{255, 50, 50, 255});
+            deleteButton->setNormalColor(colors::BUTTON_DANGER);
+            deleteButton->setHoveredColor(colors::BUTTON_DANGER_HOVER);
+            deleteButton->setPressedColor(colors::BUTTON_DANGER_PRESSED);
 
             deleteButton->setOnRelease([this, levelPath, levelName]() {
                 showDeleteConfirmation(levelPath, levelName);
