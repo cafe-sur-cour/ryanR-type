@@ -6,7 +6,6 @@
 */
 
 #include "MapParser.hpp"
-#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <random>
@@ -26,6 +25,8 @@
 #include "../../components/tags/GameZoneColliderTag.hpp"
 #include "../../components/temporary/SpawnIntentComponent.hpp"
 #include "../../ECS/entity/factory/EntityFactory.hpp"
+#include "../Utils/JsonLoader.hpp"
+#include "../Utils/JsonValidation.hpp"
 
 MapParser::MapParser(std::shared_ptr<EntityPrefabManager> prefabManager,
     std::shared_ptr<ecs::Registry> registry)
@@ -42,19 +43,8 @@ MapParser::~MapParser() {
 }
 
 void MapParser::parseMapFromFile(const std::string &filePath) {
-    std::ifstream file(filePath);
-    if (!file.is_open())
-        throw err::ParserError("Cannot open map file: " +
-            filePath, err::ParserError::FILE_NOT_FOUND);
+    nlohmann::json mapJson = parser::JsonLoader::loadFromFile(filePath);
 
-    nlohmann::json mapJson;
-    try {
-        file >> mapJson;
-    } catch (const nlohmann::detail::exception& e) {
-        throw err::ParserError("Invalid JSON format in map file: " +
-            filePath + " (" + e.what() + ")",
-            err::ParserError::INVALID_FORMAT);
-    }
     if (!this->_mapJson.is_null())
         this->_mapJson.clear();
     this->_mapJson = mapJson;
@@ -147,10 +137,45 @@ void MapParser::createGameEndEntity(float mapLength) {
 }
 
 void MapParser::parsePowerUps(const nlohmann::json &powerUps) {
-    // TODO(anyone): create configs for power-up entities and parse them
     if (!powerUps.is_array()) {
         std::cerr << "Error: powerUps is not a valid array" << std::endl;
         return;
+    }
+
+    for (size_t index = 0; index < powerUps.size(); ++index) {
+        const auto &powerUp = powerUps[index];
+
+        if (!powerUp.contains(constants::NAME_FIELD) ||
+            !powerUp.contains(constants::POSITION_FIELD)) {
+            std::cerr << "Warning: PowerUp " << index <<
+                ": missing required fields (name/position), skipping" << std::endl;
+            continue;
+        }
+
+        const std::string &prefabName = powerUp[constants::NAME_FIELD].get<std::string>();
+        const auto &position = powerUp[constants::POSITION_FIELD];
+
+        if (!position.contains(constants::POSX_FIELD) ||
+            !position.contains(constants::POSY_FIELD)) {
+            std::cerr << "Warning: PowerUp " << index <<
+                ": position missing posX or posY, skipping" << std::endl;
+            continue;
+        }
+
+        float posX = position[constants::POSX_FIELD].get<float>();
+        float posY = position[constants::POSY_FIELD].get<float>();
+
+        if (_prefabManager->hasPrefab(prefabName)) {
+            try {
+                createEntityFromPrefab(prefabName, posX, posY);
+            } catch (const std::exception& e) {
+                std::cerr << "Error creating power-up entity '"
+                << prefabName << "': " << e.what() << std::endl;
+            }
+        } else {
+            std::cerr << "Warning: Power-up prefab '"
+            << prefabName << "' not found" << std::endl;
+        }
     }
 }
 
@@ -163,12 +188,15 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
     for (size_t index = 0; index < obstacles.size(); ++index) {
         const auto &obstacle = obstacles[index];
 
-        if (
-            !obstacle.contains(constants::NAME_FIELD) ||
-            !obstacle.contains(constants::POSITIONS_FIELD)
-        ) {
-            std::cerr << "Warning: Obstacle " << index <<
-                ": missing required fields (name/positions), skipping" << std::endl;
+        auto validation = parser::JsonValidation::hasRequiredFields(
+            obstacle,
+            {constants::NAME_FIELD, constants::POSITIONS_FIELD},
+            "Obstacle " + std::to_string(index)
+        );
+        if (!validation) {
+            for (const auto& error : validation.errors) {
+                std::cerr << "Warning: " << error << ", skipping" << std::endl;
+            }
             continue;
         }
 
@@ -193,14 +221,15 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
             const std::string &type = position[constants::TYPE_FIELD];
 
             if (type == constants::HORIZONTAL_LINE_TYPE) {
-                if (
-                    !position.contains(constants::FROMX_FIELD) ||
-                    !position.contains(constants::POSY_FIELD) ||
-                    !position.contains(constants::COUNT_FIELD)
-                ) {
-                    std::cerr << "Warning: position in obstacle " << index
-                        << " missing required fields for type " << type
-                        << "(fromX/posY), skipping" << std::endl;
+                auto lineValidation = parser::JsonValidation::hasRequiredFields(
+                    position,
+                    {constants::FROMX_FIELD, constants::POSY_FIELD, constants::COUNT_FIELD},
+                    "Obstacle " + std::to_string(index) + " position (type " + type + ")"
+                );
+                if (!lineValidation) {
+                    for (const auto& error : lineValidation.errors) {
+                        std::cerr << "Warning: " << error << ", skipping" << std::endl;
+                    }
                     continue;
                 }
 
@@ -236,14 +265,15 @@ void MapParser::parseObstacles(const nlohmann::json &obstacles) {
                 }
             }
             if (type == constants::VERTICAL_LINE_TYPE) {
-                if (
-                    !position.contains(constants::FROMY_FIELD) ||
-                    !position.contains(constants::POSX_FIELD) ||
-                    !position.contains(constants::COUNT_FIELD)
-                ) {
-                    std::cerr << "Warning: position in obstacle " << index
-                        << " missing required fields for type " << type
-                        << "(fromY/posX), skipping" << std::endl;
+                auto lineValidation = parser::JsonValidation::hasRequiredFields(
+                    position,
+                    {constants::FROMY_FIELD, constants::POSX_FIELD, constants::COUNT_FIELD},
+                    "Obstacle " + std::to_string(index) + " position (type " + type + ")"
+                );
+                if (!lineValidation) {
+                    for (const auto& error : lineValidation.errors) {
+                        std::cerr << "Warning: " << error << ", skipping" << std::endl;
+                    }
                     continue;
                 }
 
@@ -319,13 +349,15 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
     for (size_t waveIndex = 0; waveIndex < waves.size(); ++waveIndex) {
         const auto& wave = waves[waveIndex];
 
-        if (
-            !wave.contains(constants::GAMEXTRIGGER_FIELD) ||
-            !wave.contains(constants::ENEMIES_FIELD)
-        ) {
-            std::cerr << "Warning: Wave " << waveIndex << ": missing required fields (" <<
-                constants::GAMEXTRIGGER_FIELD << "/" << constants::ENEMIES_FIELD <<
-                "), skipping" << std::endl;
+        auto validation = parser::JsonValidation::hasRequiredFields(
+            wave,
+            {constants::GAMEXTRIGGER_FIELD, constants::ENEMIES_FIELD},
+            "Wave " + std::to_string(waveIndex)
+        );
+        if (!validation) {
+            for (const auto& error : validation.errors) {
+                std::cerr << "Warning: " << error << ", skipping" << std::endl;
+            }
             continue;
         }
 
@@ -340,15 +372,16 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
         auto spawner = _registry->createEntity();
 
         for (const auto& enemyGroup : wave[constants::ENEMIES_FIELD]) {
-            if (
-                !enemyGroup.contains(constants::TYPE_FIELD) ||
-                !enemyGroup.contains(constants::DISTRIBUTIONX_FIELD) ||
-                !enemyGroup.contains(constants::DISTRIBUTIONY_FIELD) ||
-                !enemyGroup.contains(constants::COUNT_FIELD)
-            ) {
-                std::cerr << "Warning: Enemy group in wave " << waveIndex
-                    << " missing required fields (type/count/distributionX/distributionY)"
-                    << ", skipping" << std::endl;
+            auto groupValidation = parser::JsonValidation::hasRequiredFields(
+                enemyGroup,
+                {constants::TYPE_FIELD, constants::DISTRIBUTIONX_FIELD,
+                 constants::DISTRIBUTIONY_FIELD, constants::COUNT_FIELD},
+                "Enemy group in wave " + std::to_string(waveIndex)
+            );
+            if (!groupValidation) {
+                for (const auto& error : groupValidation.errors) {
+                    std::cerr << "Warning: " << error << ", skipping" << std::endl;
+                }
                 continue;
             }
 
@@ -358,16 +391,15 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
                 continue;
             }
             auto distributionX = enemyGroup[constants::DISTRIBUTIONX_FIELD];
-            if (
-                !distributionX.contains(constants::MIN_FIELD) ||
-                !distributionX.contains(constants::MAX_FIELD) ||
-                !distributionX.contains(constants::TYPE_FIELD)
-            ) {
-                std::cerr << "Warning: distributionX in wave " << waveIndex <<
-                    " is missing a required field (" <<
-                    constants::MIN_FIELD << "/" <<
-                    constants::MAX_FIELD << "/" <<
-                    constants::TYPE_FIELD << "), skipping" << std::endl;
+            auto distXValidation = parser::JsonValidation::hasRequiredFields(
+                distributionX,
+                {constants::MIN_FIELD, constants::MAX_FIELD, constants::TYPE_FIELD},
+                "distributionX in wave " + std::to_string(waveIndex)
+            );
+            if (!distXValidation) {
+                for (const auto& error : distXValidation.errors) {
+                    std::cerr << "Warning: " << error << ", skipping" << std::endl;
+                }
                 continue;
             }
 
@@ -377,16 +409,15 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
                 continue;
             }
             auto distributionY = enemyGroup[constants::DISTRIBUTIONY_FIELD];
-            if (
-                !distributionY.contains(constants::MIN_FIELD) ||
-                !distributionY.contains(constants::MAX_FIELD) ||
-                !distributionY.contains(constants::TYPE_FIELD)
-            ) {
-                std::cerr << "Warning: distributionY in wave " << waveIndex <<
-                    " is missing a required field (" <<
-                    constants::MIN_FIELD << "/" <<
-                    constants::MAX_FIELD << "/" <<
-                    constants::TYPE_FIELD << "), skipping" << std::endl;
+            auto distYValidation = parser::JsonValidation::hasRequiredFields(
+                distributionY,
+                {constants::MIN_FIELD, constants::MAX_FIELD, constants::TYPE_FIELD},
+                "distributionY in wave " + std::to_string(waveIndex)
+            );
+            if (!distYValidation) {
+                for (const auto& error : distYValidation.errors) {
+                    std::cerr << "Warning: " << error << ", skipping" << std::endl;
+                }
                 continue;
             }
 

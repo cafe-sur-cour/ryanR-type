@@ -1,13 +1,25 @@
 target_sources(${ECS_LIB_NAME} PUBLIC
     PlayerTag.hpp
+    PlayerTag.cpp
     MobTag.hpp
+    MobTag.cpp
     PlayerProjectileTag.hpp
+    PlayerProjectileTag.cpp
     LocalPlayerTag.hpp
     EnnemyProjectileTag.hpp
+    EnnemyProjectileTag.cpp
     ProjectilePassThroughTag.hpp
+    ProjectilePassThroughTag.cpp
     ObstacleTag.hpp
+    ObstacleTag.cpp
     ControllableTag.hpp
+    ControllableTag.cpp
     ShooterTag.hpp
+    ShooterTag.cpp
     GameZoneColliderTag.hpp
+    GameZoneColliderTag.cpp
     ClientEffectTag.hpp
+    ClientEffectTag.cpp
+    PowerUpTag.hpp
+    PowerUpTag.cpp
 )
