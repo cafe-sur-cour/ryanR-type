@@ -432,6 +432,7 @@ void ClientNetwork::handleConnectUser() {
 
     this->setName(username);
     this->_resourceManager->get<SettingsConfig>()->setUsername(username);
+    this->_isConnected = true;
 
     if (this->_expectingLoginResponse) {
         if (auto gsm = this->_gsm) {

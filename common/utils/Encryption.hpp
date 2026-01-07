@@ -21,7 +21,7 @@ public:
     static std::vector<unsigned char> base64Decode(const std::string& encoded);
 
 private:
-    static std::string getEncryptionKey();
+    static inline const std::string _key = "R-Type_Secure_Key_2026";
 };
 
 }  // namespace utils
