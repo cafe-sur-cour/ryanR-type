@@ -164,6 +164,29 @@ namespace constants {
 
     const std::string MUSIC_DIRECTORY = "configs/entities/musics";
     const std::string BACKGROUNDS_DIRECTORY = "configs/entities/backgrounds";
+    const std::string OBSTACLES_DIRECTORY = "configs/entities/obstacles";
+
+    /* Prefab JSON field constants */
+    const std::string PREFAB_COMPONENTS_FIELD = "components";
+    const std::string PREFAB_SPRITE_COMPONENT = "SpriteComponent";
+    const std::string PREFAB_ANIMATION_COMPONENT = "AnimationComponent";
+    const std::string PREFAB_COLLIDER_COMPONENT = "ColliderComponent";
+    const std::string PREFAB_TRANSFORM_COMPONENT = "TransformComponent";
+    const std::string PREFAB_FILEPATH_FIELD = "filePath";
+    const std::string PREFAB_STATES_FIELD = "states";
+    const std::string PREFAB_TEXTURE_PATH_FIELD = "texturePath";
+    const std::string PREFAB_FRAME_WIDTH_FIELD = "frameWidth";
+    const std::string PREFAB_FRAME_HEIGHT_FIELD = "frameHeight";
+    const std::string PREFAB_FRAME_COUNT_FIELD = "frameCount";
+    const std::string PREFAB_START_WIDTH_FIELD = "startWidth";
+    const std::string PREFAB_START_HEIGHT_FIELD = "startHeight";
+    const std::string PREFAB_SPEED_FIELD = "speed";
+    const std::string PREFAB_LOOP_FIELD = "loop";
+    const std::string PREFAB_SIZE_FIELD = "size";
+    const std::string PREFAB_SCALE_FIELD = "scale";
+    const std::string PREFAB_ROTATION_FIELD = "rotation";
+    const std::string PREFAB_X_FIELD = "x";
+    const std::string PREFAB_Y_FIELD = "y";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
