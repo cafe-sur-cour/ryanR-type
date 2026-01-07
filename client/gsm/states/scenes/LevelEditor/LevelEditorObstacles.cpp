@@ -382,6 +382,35 @@ void LevelEditorState::handleObstacleClick(
         if (_obstaclePosYLabel) {
             _obstaclePosYLabel->setVisible(true);
         }
+
+        if (sel.type == "horizontal") {
+            const auto& obstacle = _obstaclesByName[sel.prefabName].horizontalLines[
+                static_cast<size_t>(sel.index)];
+            if (_obstacleCountInput) {
+                _obstacleCountInput->setText(std::to_string(obstacle.count));
+                _obstacleCountInput->setVisible(true);
+            }
+            if (_obstacleCountLabel) {
+                _obstacleCountLabel->setVisible(true);
+            }
+        } else if (sel.type == "vertical") {
+            const auto& obstacle = _obstaclesByName[sel.prefabName].verticalLines[
+                static_cast<size_t>(sel.index)];
+            if (_obstacleCountInput) {
+                _obstacleCountInput->setText(std::to_string(obstacle.count));
+                _obstacleCountInput->setVisible(true);
+            }
+            if (_obstacleCountLabel) {
+                _obstacleCountLabel->setVisible(true);
+            }
+        } else {
+            if (_obstacleCountInput) {
+                _obstacleCountInput->setVisible(false);
+            }
+            if (_obstacleCountLabel) {
+                _obstacleCountLabel->setVisible(false);
+            }
+        }
     } else {
         _selectedObstacle = std::nullopt;
         if (_obstaclePosXInput) {
@@ -395,6 +424,12 @@ void LevelEditorState::handleObstacleClick(
         }
         if (_obstaclePosYLabel) {
             _obstaclePosYLabel->setVisible(false);
+        }
+        if (_obstacleCountInput) {
+            _obstacleCountInput->setVisible(false);
+        }
+        if (_obstacleCountLabel) {
+            _obstacleCountLabel->setVisible(false);
         }
     }
 }

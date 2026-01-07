@@ -144,6 +144,8 @@ private:
     std::shared_ptr<ui::TextInput> _obstaclePosXInput;
     std::shared_ptr<ui::Text> _obstaclePosYLabel;
     std::shared_ptr<ui::TextInput> _obstaclePosYInput;
+    std::shared_ptr<ui::Text> _obstacleCountLabel;
+    std::shared_ptr<ui::TextInput> _obstacleCountInput;
 
     bool _hasUnsavedChanges = false;
     bool _showHitboxes = false;
