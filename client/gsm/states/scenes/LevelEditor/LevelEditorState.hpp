@@ -40,10 +40,12 @@ public:
 private:
     void renderUI();
     void createUI();
+    void createBottomPanel();
     void updateSaveButtonText();
     bool validateFields();
     std::vector<std::string> loadAvailableMusics();
     std::vector<std::string> loadAvailableBackgrounds();
+    std::vector<std::string> loadAvailableObstacles();
     void saveToHistory();
     void loadFromHistory(size_t index);
     void updateHistoryButtons();
@@ -60,6 +62,9 @@ private:
     std::shared_ptr<ui::Panel> _sidePanel;
     std::shared_ptr<ui::Panel> _bottomPanel;
     std::shared_ptr<ui::Panel> _canvasPanel;
+    std::shared_ptr<ui::Dropdown> _editorModeDropdown;
+    std::shared_ptr<ui::Text> _obstaclePrefabLabel;
+    std::shared_ptr<ui::Dropdown> _obstaclePrefabDropdown;
     std::shared_ptr<ui::Button> _saveButton;
     std::shared_ptr<ui::Button> _backButton;
     std::shared_ptr<ui::Text> _nameLabel;

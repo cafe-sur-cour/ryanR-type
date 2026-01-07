@@ -253,6 +253,35 @@ std::vector<std::string> LevelEditorState::loadAvailableBackgrounds() {
     return backgrounds;
 }
 
+std::vector<std::string> LevelEditorState::loadAvailableObstacles() {
+    std::vector<std::string> obstacles;
+    std::filesystem::path obstaclesPath = "configs/entities/obstacles";
+
+    if (!std::filesystem::exists(obstaclesPath) ||
+        !std::filesystem::is_directory(obstaclesPath)) {
+        return obstacles;
+    }
+
+    for (const auto& entry : std::filesystem::directory_iterator(obstaclesPath)) {
+        if (entry.is_regular_file() && entry.path().extension() == ".json") {
+            try {
+                std::ifstream file(entry.path());
+                nlohmann::json obstacleData;
+                file >> obstacleData;
+                file.close();
+
+                if (obstacleData.contains("name") && obstacleData["name"].is_string()) {
+                    std::string obstacleName = obstacleData["name"];
+                    obstacles.push_back(obstacleName);
+                }
+            } catch (const std::exception&) {
+            }
+        }
+    }
+
+    return obstacles;
+}
+
 void LevelEditorState::createUI() {
     const float sidePanelWidth = 300.0f;
     const float bottomPanelHeight = 200.0f;
@@ -615,12 +644,7 @@ void LevelEditorState::createUI() {
 
     updateHistoryButtons();
 
-    _bottomPanel = std::make_shared<ui::Panel>(_resourceManager);
-    _bottomPanel->setPosition(math::Vector2f(sidePanelWidth, canvasHeight));
-    _bottomPanel->setSize(math::Vector2f(canvasWidth, bottomPanelHeight));
-    _bottomPanel->setBackgroundColor(colors::LIGHT_GRAY);
-    _bottomPanel->setBorderColor(colors::GRAY);
-    _uiManager->addElement(_bottomPanel);
+    createBottomPanel();
 
     _canvasPanel = std::make_shared<ui::Panel>(_resourceManager);
     _canvasPanel->setPosition(math::Vector2f(sidePanelWidth, 0.0f));
@@ -630,6 +654,64 @@ void LevelEditorState::createUI() {
     _uiManager->addElement(_canvasPanel);
 
     _saveButton->setState(validateFields() ? ui::UIState::Normal : ui::UIState::Disabled);
+}
+
+void LevelEditorState::createBottomPanel() {
+    const float sidePanelWidth = 300.0f;
+    const float bottomPanelHeight = 200.0f;
+    const float canvasHeight = constants::MAX_HEIGHT - bottomPanelHeight;
+    const float canvasWidth = constants::MAX_WIDTH - sidePanelWidth;
+
+    _bottomPanel = std::make_shared<ui::Panel>(_resourceManager);
+    _bottomPanel->setPosition(math::Vector2f(sidePanelWidth, canvasHeight));
+    _bottomPanel->setSize(math::Vector2f(canvasWidth, bottomPanelHeight));
+    _bottomPanel->setBackgroundColor(colors::LIGHT_GRAY);
+    _bottomPanel->setBorderColor(colors::GRAY);
+    _uiManager->addElement(_bottomPanel);
+
+    _editorModeDropdown = std::make_shared<ui::Dropdown>(_resourceManager);
+    _editorModeDropdown->setPosition(math::Vector2f(10.0f, 35.0f));
+    _editorModeDropdown->setSize(math::Vector2f(200.0f, 40.0f));
+    _editorModeDropdown->setOptions({"Obstacles", "PowerUps", "Waves"});
+    _editorModeDropdown->setDirection(ui::DropdownDirection::Right);
+    _editorModeDropdown->setSelectedIndex(0);
+    _editorModeDropdown->setOnSelectionChanged(
+        [this](const std::string& mode, [[maybe_unused]] size_t index) {
+        bool showObstacles = (mode == "Obstacles");
+        if (_obstaclePrefabLabel) {
+            _obstaclePrefabLabel->setVisible(showObstacles);
+        }
+        if (_obstaclePrefabDropdown) {
+            _obstaclePrefabDropdown->setVisible(showObstacles);
+        }
+    });
+    _editorModeDropdown->setScalingEnabled(false);
+    _editorModeDropdown->setFocusEnabled(true);
+    _bottomPanel->addChild(_editorModeDropdown);
+
+    _obstaclePrefabLabel = std::make_shared<ui::Text>(_resourceManager);
+    _obstaclePrefabLabel->setPosition(math::Vector2f(10.0f, 100.0f));
+    _obstaclePrefabLabel->setText("Prefab");
+    _obstaclePrefabLabel->setFontSize(16);
+    _obstaclePrefabLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _obstaclePrefabLabel->setVisible(true);
+    _bottomPanel->addChild(_obstaclePrefabLabel);
+
+    _obstaclePrefabDropdown = std::make_shared<ui::Dropdown>(_resourceManager);
+    _obstaclePrefabDropdown->setPosition(math::Vector2f(10.0f, 130.0f));
+    _obstaclePrefabDropdown->setSize(math::Vector2f(200.0f, 40.0f));
+    auto availableObstacles = loadAvailableObstacles();
+    _obstaclePrefabDropdown->setOptions(availableObstacles);
+    _obstaclePrefabDropdown->setPlaceholder("Prefab...");
+    _obstaclePrefabDropdown->setOnSelectionChanged(
+        [this](const std::string& obstacle, [[maybe_unused]] size_t index) {
+        (void)obstacle;
+    });
+    _obstaclePrefabDropdown->setScalingEnabled(false);
+    _obstaclePrefabDropdown->setFocusEnabled(true);
+    _obstaclePrefabDropdown->setDirection(ui::DropdownDirection::Right);
+    _obstaclePrefabDropdown->setVisible(true);
+    _bottomPanel->addChild(_obstaclePrefabDropdown);
 }
 
 void LevelEditorState::updateSaveButtonText() {
@@ -706,6 +788,9 @@ void LevelEditorState::exit() {
     _cursorPosLabel.reset();
     _cursorPosYLabel.reset();
     _resetViewButton.reset();
+    _editorModeDropdown.reset();
+    _obstaclePrefabLabel.reset();
+    _obstaclePrefabDropdown.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
