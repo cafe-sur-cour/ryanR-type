@@ -46,7 +46,25 @@ void Button::render() {
         15.0f
     );
 
-    if (!_text.empty()) {
+    if (!_iconPath.empty() && _iconSize.getX() > 0.0f && _iconSize.getY() > 0.0f) {
+        float margin = 5.0f * getScaleFactor();
+        float targetWidth = absSize.getX() - (2.0f * margin);
+        float targetHeight = absSize.getY() - (2.0f * margin);
+
+        float scaleX = targetWidth / _iconSize.getX();
+        float scaleY = targetHeight / _iconSize.getY();
+
+        float iconX = absPos.getX() + margin;
+        float iconY = absPos.getY() + margin;
+
+        resourceManager->get<gfx::IWindow>()->drawSprite(
+            _iconPath,
+            iconX,
+            iconY,
+            scaleX,
+            scaleY
+        );
+    } else if (!_text.empty()) {
         auto textSize = resourceManager->get<
             gfx::IWindow>()->getTextSize(_text, _fontPath, getFontSize());
         float textX = absPos.getX() +
@@ -126,6 +144,14 @@ size_t Button::getBaseFontSize() const {
 size_t Button::getFontSize() const {
     float scale = getScaleFactor();
     return static_cast<size_t>(static_cast<float>(_baseFontSize) * scale);
+}
+
+void Button::setIconPath(const std::string& iconPath) {
+    _iconPath = iconPath;
+}
+
+void Button::setIconSize(const math::Vector2f& size) {
+    _iconSize = size;
 }
 
 }  // namespace ui
