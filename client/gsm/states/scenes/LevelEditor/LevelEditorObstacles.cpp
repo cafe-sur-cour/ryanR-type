@@ -333,8 +333,57 @@ void LevelEditorState::handleObstacleClick(
         if (_editorModeDropdown) {
             _editorModeDropdown->setSelectedIndex(0);
         }
+
+        const auto& sel = selection.value();
+        float posX = 0.0f;
+        float posY = 0.0f;
+
+        if (sel.type == "unique") {
+            const auto& obstacle = _obstaclesByName[sel.prefabName].uniques[
+                static_cast<size_t>(sel.index)];
+            posX = obstacle.posX;
+            posY = obstacle.posY;
+        } else if (sel.type == "horizontal") {
+            const auto& obstacle = _obstaclesByName[sel.prefabName].horizontalLines[
+                static_cast<size_t>(sel.index)];
+            posX = obstacle.fromX;
+            posY = obstacle.posY;
+        } else if (sel.type == "vertical") {
+            const auto& obstacle = _obstaclesByName[sel.prefabName].verticalLines[
+                static_cast<size_t>(sel.index)];
+            posX = obstacle.posX;
+            posY = obstacle.fromY;
+        }
+
+        if (_obstaclePosXInput) {
+            _obstaclePosXInput->setText(std::to_string(static_cast<int>(posX)));
+            _obstaclePosXInput->setVisible(true);
+        }
+        if (_obstaclePosXLabel) {
+            _obstaclePosXLabel->setVisible(true);
+        }
+        if (_obstaclePosYInput) {
+            _obstaclePosYInput->setText(std::to_string(static_cast<int>(posY)));
+            _obstaclePosYInput->setVisible(true);
+        }
+        if (_obstaclePosYLabel) {
+            _obstaclePosYLabel->setVisible(true);
+        }
     } else {
         _selectedObstacle = std::nullopt;
+        // Hide position fields
+        if (_obstaclePosXInput) {
+            _obstaclePosXInput->setVisible(false);
+        }
+        if (_obstaclePosXLabel) {
+            _obstaclePosXLabel->setVisible(false);
+        }
+        if (_obstaclePosYInput) {
+            _obstaclePosYInput->setVisible(false);
+        }
+        if (_obstaclePosYLabel) {
+            _obstaclePosYLabel->setVisible(false);
+        }
     }
 }
 

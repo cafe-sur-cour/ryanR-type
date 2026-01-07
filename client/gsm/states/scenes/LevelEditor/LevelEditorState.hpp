@@ -136,6 +136,10 @@ private:
     std::shared_ptr<ui::Text> _cursorPosYLabel;
     std::shared_ptr<ui::Button> _resetViewButton;
     std::shared_ptr<ui::Button> _showHitboxesButton;
+    std::shared_ptr<ui::Text> _obstaclePosXLabel;
+    std::shared_ptr<ui::TextInput> _obstaclePosXInput;
+    std::shared_ptr<ui::Text> _obstaclePosYLabel;
+    std::shared_ptr<ui::TextInput> _obstaclePosYInput;
 
     bool _hasUnsavedChanges = false;
     bool _showHitboxes = false;
