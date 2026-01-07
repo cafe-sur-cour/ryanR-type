@@ -13,6 +13,7 @@
 namespace constants {
     /* Timeout */
     constexpr int NETWORK_TIMEOUT = 5;
+    constexpr int CONNECTION_ATTEMPT_TIMEOUT = 5;
 
     /* Window */
     constexpr int WINDOW_WIDTH = 1920;
@@ -142,6 +143,13 @@ namespace constants {
     const std::string REPLAY_TYPE_RECTANGLE = "rectangle";
     const std::string REPLAY_TYPE_HITBOX = "hitbox";
     const std::string REPLAY_TYPE_SOUND = "sound";
+
+    /* Level Constants */
+    const std::string LEVEL_DIRECTORY = "configs/map";
+    const std::string LEVEL_FILE_PREFIX = "level";
+    const std::string LEVEL_FILE_EXTENSION = ".json";
+    const std::string LEVEL_INDEX_FIELD = "index";
+    const std::string LEVEL_NAME_FIELD = "name";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
