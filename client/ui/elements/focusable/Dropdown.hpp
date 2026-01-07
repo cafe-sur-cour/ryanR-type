@@ -90,6 +90,7 @@ class Dropdown : public AFocusableElement {
 
         void renderClosed();
         void renderOpen();
+        void drawArrow(float arrowX, float arrowY, float arrowSize);
         bool isMouseOverOption(const math::Vector2f& mousePos, size_t optionIndex) const;
         math::Vector2f getOptionPosition(size_t optionIndex) const;
         math::Vector2f getDropdownSize() const;
