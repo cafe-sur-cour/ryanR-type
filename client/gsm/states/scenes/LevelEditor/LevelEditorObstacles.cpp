@@ -100,7 +100,8 @@ void LevelEditorState::renderAllObstacles(
 ) {
     for (const auto& [prefabName, obstacleGroup] : _obstaclesByName) {
         std::string prefabPath =
-            constants::OBSTACLES_DIRECTORY + prefabName + constants::LEVEL_FILE_EXTENSION;
+            constants::OBSTACLES_DIRECTORY + "/" +
+                prefabName + constants::LEVEL_FILE_EXTENSION;
         LevelPreviewSprite spriteData = extractSpriteDataFromPrefab(prefabPath);
 
         if (spriteData.texturePath.empty()) {
@@ -144,6 +145,50 @@ void LevelEditorState::renderAllObstacles(
                 canvasRight, canvasTop, canvasBottom);
         }
     }
+}
+
+void LevelEditorState::saveObstacles() {
+    nlohmann::json obstaclesArray = nlohmann::json::array();
+
+    for (const auto& [prefabName, obstacleGroup] : _obstaclesByName) {
+        nlohmann::json obstacleEntry;
+        obstacleEntry[constants::OBSTACLE_NAME_FIELD] = prefabName;
+
+        nlohmann::json positionsArray = nlohmann::json::array();
+
+        for (const auto& hLine : obstacleGroup.horizontalLines) {
+            nlohmann::json position;
+            position[constants::OBSTACLE_TYPE_FIELD] =
+                constants::OBSTACLE_HORIZONTAL_LINE_TYPE;
+            position[constants::OBSTACLE_FROMX_FIELD] = hLine.fromX;
+            position[constants::OBSTACLE_POSY_FIELD] = hLine.posY;
+            position[constants::OBSTACLE_COUNT_FIELD] = hLine.count;
+            positionsArray.push_back(position);
+        }
+
+        for (const auto& vLine : obstacleGroup.verticalLines) {
+            nlohmann::json position;
+            position[constants::OBSTACLE_TYPE_FIELD] =
+                constants::OBSTACLE_VERTICAL_LINE_TYPE;
+            position[constants::OBSTACLE_FROMY_FIELD] = vLine.fromY;
+            position[constants::OBSTACLE_POSX_FIELD] = vLine.posX;
+            position[constants::OBSTACLE_COUNT_FIELD] = vLine.count;
+            positionsArray.push_back(position);
+        }
+
+        for (const auto& unique : obstacleGroup.uniques) {
+            nlohmann::json position;
+            position[constants::OBSTACLE_TYPE_FIELD] = constants::OBSTACLE_UNIQUE_TYPE;
+            position[constants::OBSTACLE_POSX_FIELD] = unique.posX;
+            position[constants::OBSTACLE_POSY_FIELD] = unique.posY;
+            positionsArray.push_back(position);
+        }
+
+        obstacleEntry[constants::OBSTACLE_POSITIONS_FIELD] = positionsArray;
+        obstaclesArray.push_back(obstacleEntry);
+    }
+
+    _levelData[constants::OBSTACLES_FIELD] = obstaclesArray;
 }
 
 }  // namespace gsm
