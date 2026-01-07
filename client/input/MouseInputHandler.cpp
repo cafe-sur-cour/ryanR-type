@@ -6,8 +6,8 @@
 */
 
 #include "MouseInputHandler.hpp"
-#include "../../libs/Multimedia/IWindow.hpp"
-#include "../../libs/Multimedia/IEvent.hpp"
+#include "../../common/interfaces/IWindow.hpp"
+#include "../../common/interfaces/IEvent.hpp"
 
 MouseInputHandler::MouseInputHandler(std::shared_ptr<ResourceManager> resourceManager)
     : _resourceManager(resourceManager) {

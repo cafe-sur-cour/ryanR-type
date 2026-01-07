@@ -7,6 +7,7 @@
 
 #include "ComposantParser.hpp"
 #include <map>
+#include <iostream>
 #include <stdexcept>
 #include <typeindex>
 #include <memory>
@@ -24,6 +25,7 @@
 #include "../../components/tags/ControllableTag.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../Error/ParserError.hpp"
+#include "../Utils/JsonValidation.hpp"
 
 ComposantParser::ComposantParser(std::shared_ptr<const std::map<std::string,
     std::pair<std::type_index, std::vector<Field>>>> componentDefinitions,
@@ -39,9 +41,21 @@ ComposantParser::~ComposantParser() {
 std::pair<std::shared_ptr<ecs::IComponent>, std::type_index> ComposantParser::parseComponent(
     const std::string& componentName, const nlohmann::json& componentData) {
 
-    if (_componentDefinitions->find(componentName) == _componentDefinitions->end())
-        throw err::ParserError("Unknown component: " + componentName,
-            err::ParserError::UNKNOWN);
+    if (_componentDefinitions->find(componentName) == _componentDefinitions->end()) {
+        bool isError = true;
+        if (componentData.contains(constants::TARGET_FIELD) && _shouldParseCallback) {
+            std::map<std::string, std::shared_ptr<FieldValue>> tempFields;
+            tempFields[constants::TARGET_FIELD] = std::make_shared<FieldValue>(
+                componentData[constants::TARGET_FIELD].get<std::string>());
+            isError = _shouldParseCallback(tempFields);
+        }
+
+        if (isError) {
+            throw err::ParserError("Unknown component: " + componentName,
+                err::ParserError::UNKNOWN);
+        }
+        return {nullptr, std::type_index(typeid(void))};
+    }
 
     auto [typeIndex, fieldsDef] = _componentDefinitions->at(componentName);
 
@@ -72,11 +86,21 @@ std::shared_ptr<FieldValue> ComposantParser::parseFieldValue
     (const nlohmann::json& jsonValue, FieldType type) {
     switch (type) {
         case FieldType::VECTOR2F: {
-            if (!jsonValue.is_object() ||
-                !jsonValue.contains(constants::X_FIELD) ||
-                !jsonValue.contains(constants::Y_FIELD)) {
-                throw err::ParserError("Invalid Vector2f format",
+            if (!jsonValue.is_object()) {
+                throw err::ParserError("Invalid Vector2f format: expected object",
                     err::ParserError::INVALID_FORMAT);
+            }
+            auto validation = parser::JsonValidation::hasRequiredFields(
+                jsonValue,
+                {constants::X_FIELD, constants::Y_FIELD},
+                "Vector2f"
+            );
+            if (!validation) {
+                std::string errorMsg = "Invalid Vector2f format:\\n";
+                for (const auto& error : validation.errors) {
+                    errorMsg += "  - " + error + "\\n";
+                }
+                throw err::ParserError(errorMsg, err::ParserError::INVALID_FORMAT);
             }
             math::Vector2f vec(jsonValue[constants::X_FIELD], jsonValue[constants::Y_FIELD]);
             return std::make_shared<FieldValue>(vec);

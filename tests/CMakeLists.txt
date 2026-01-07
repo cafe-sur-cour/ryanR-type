@@ -149,12 +149,16 @@ target_link_libraries(BufferTests Buffer GTest::gtest GTest::gtest_main)
 add_test(NAME BufferTests COMMAND BufferTests)
 
 add_executable(PacketTests server/packet/packettest.cpp)
-target_link_libraries(PacketTests Packet Buffer CommonPacketHandlers GTest::gtest GTest::gtest_main)
+target_link_libraries(PacketTests Packet Buffer CommonPacketHandlers PREFAB ECS COLLISION_RULES ERROR GTest::gtest GTest::gtest_main)
 add_test(NAME PacketTests COMMAND PacketTests)
 
 add_executable(AdditionalPacketTests server/packet/AdditionalPacketTests.cpp)
-target_link_libraries(AdditionalPacketTests Packet Buffer CommonPacketHandlers GTest::gtest GTest::gtest_main)
+target_link_libraries(AdditionalPacketTests Packet Buffer CommonPacketHandlers PREFAB ECS COLLISION_RULES ERROR GTest::gtest GTest::gtest_main)
 add_test(NAME AdditionalPacketTests COMMAND AdditionalPacketTests)
+
+add_executable(EcsConversionTests server/packet/EcsConversionTests.cpp)
+target_link_libraries(EcsConversionTests r-type_server_lib ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME EcsConversionTests COMMAND EcsConversionTests)
 
 add_executable(AdditionalServerConfigTests server/AdditionalServerConfigTests.cpp)
 target_link_libraries(AdditionalServerConfigTests r-type_server_lib GTest::gtest GTest::gtest_main)
@@ -194,3 +198,15 @@ add_test(NAME SpawnIntentComponentTests COMMAND SpawnIntentComponentTests)
 add_executable(SpawnSystemTests common/ECS/system/SpawnSystemTests.cpp)
 target_link_libraries(SpawnSystemTests ECS PREFAB COLLISION_RULES ERROR GTest::gtest GTest::gtest_main)
 add_test(NAME SpawnSystemTests COMMAND SpawnSystemTests)
+
+add_executable(JsonLoaderTests 
+    common/Parser/Utils/JsonLoaderTest.cpp
+)
+target_link_libraries(JsonLoaderTests PARSER_UTILS ERROR GTest::gtest GTest::gtest_main nlohmann_json::nlohmann_json)
+add_test(NAME JsonLoaderTests COMMAND JsonLoaderTests)
+
+add_executable(JsonValidationTests 
+    common/Parser/Utils/JsonValidationTest.cpp
+)
+target_link_libraries(JsonValidationTests PARSER_UTILS GTest::gtest GTest::gtest_main nlohmann_json::nlohmann_json)
+add_test(NAME JsonValidationTests COMMAND JsonValidationTests)

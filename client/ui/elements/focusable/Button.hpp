@@ -10,7 +10,7 @@
 
 #include "../../core/AFocusableElement.hpp"
 #include <string>
-#include "../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../common/interfaces/IWindow.hpp"
 #include "../../../constants.hpp"
 #include "../../../colors.hpp"
 
@@ -39,7 +39,7 @@ class Button : public AFocusableElement {
     private:
         std::string _text;
         gfx::color_t _textColor = colors::UI_TEXT;
-        std::string _fontPath = "assets/fonts/abduction2002.ttf";
+        std::string _fontPath = constants::MAIN_FONT;
 
         gfx::color_t _normalColor = colors::BUTTON_PRIMARY;
         gfx::color_t _hoveredColor = colors::BUTTON_PRIMARY_HOVER;

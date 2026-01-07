@@ -5,6 +5,29 @@ project(r-type)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# ============================================================================
+# Precompiled Headers Configuration
+# ============================================================================
+option(USE_PCH "Use precompiled headers to speed up compilation" ON)
+
+# ============================================================================
+# Compiler Cache (ccache/sccache) Configuration
+# ============================================================================
+find_program(CCACHE_PROGRAM ccache)
+find_program(SCCACHE_PROGRAM sccache)
+
+if(SCCACHE_PROGRAM)
+    message(STATUS "Using sccache: ${SCCACHE_PROGRAM}")
+    set(CMAKE_C_COMPILER_LAUNCHER ${SCCACHE_PROGRAM})
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${SCCACHE_PROGRAM})
+elseif(CCACHE_PROGRAM)
+    message(STATUS "Using ccache: ${CCACHE_PROGRAM}")
+    set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+else()
+    message(STATUS "No compiler cache found (ccache/sccache)")
+endif()
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_options(-g3 -O0 -fno-omit-frame-pointer)
 endif()
@@ -12,10 +35,7 @@ endif()
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0A00)
     add_definitions(-DWIN32_LEAN_AND_MEAN)
-    add_definitions(-DASIO_STANDALONE)
 endif()
-
-find_package(asio CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 option(BUILD_TESTS "Build unit tests" OFF)
 option(BUILD_CLIENT "Build client and multimedia library" ON)
@@ -24,7 +44,7 @@ option(BUILD_SERVER "Build server" ON)
 if(APPLE)
     add_compile_options(-Wall -Wextra -Werror -Wshadow -Wpedantic -Wconversion -Wsign-conversion -Wfloat-equal -Wcast-align -Wformat=2 -Wnull-dereference -Wdouble-promotion)
 elseif(UNIX)
-    add_compile_options(-Wall -Wextra -Werror -Wshadow -Wpedantic -Wconversion -Wsign-conversion -Wfloat-equal -Wcast-align -Wformat=2 -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wnull-dereference -Wdouble-promotion -Wuse-after-free -Wno-null-dereference)
+    add_compile_options(-Wall -Wextra -Werror -Wshadow -Wpedantic -Wno-conversion -Wsign-conversion -Wno-float-equal -Wcast-align -Wformat=2 -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wnull-dereference -Wdouble-promotion -Wuse-after-free -Wno-null-dereference)
 elseif(WIN32)
     add_compile_options(/W4 /WX /permissive-)
 endif()

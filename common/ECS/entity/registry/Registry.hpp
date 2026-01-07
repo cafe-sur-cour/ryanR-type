@@ -25,6 +25,7 @@ template <typename... Components> class Group;
 class Registry : public std::enable_shared_from_this<Registry> {
     public:
         Registry();
+        explicit Registry(Entity nextEntityId);
         ~Registry();
 
         template <typename T>
@@ -55,6 +56,7 @@ class Registry : public std::enable_shared_from_this<Registry> {
 
         Entity createEntity();
         void destroyEntity(Entity entityId);
+        void clearAllEntities();
 
         void setOnEntityDestroyed(std::function<void(Entity)> callback);
     protected:

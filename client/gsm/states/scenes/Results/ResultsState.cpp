@@ -9,8 +9,8 @@
 #include <memory>
 #include <string>
 #include "../../../common/constants.hpp"
-#include "../../../libs/Multimedia/IEvent.hpp"
-#include "../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../../common/interfaces/IEvent.hpp"
+#include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../gsm/machine/AGameStateMachine.hpp"
 #include "../MainMenu/MainMenuState.hpp"
 
@@ -36,7 +36,7 @@ void ResultsState::enter() {
     _resultText->setOutlineThickness(2.0f);
 
     auto window = _resourceManager->get<gfx::IWindow>();
-    auto textSize = window->getTextSize(text, "assets/fonts/abduction2002.ttf", 150);
+    auto textSize = window->getTextSize(text, constants::MAIN_FONT, 150);
     float x = (constants::MAX_WIDTH - static_cast<float>(textSize.first)) / 2.0f;
     float y = (constants::MAX_HEIGHT - static_cast<float>(textSize.second)) / 2.0f;
     _resultText->setPosition(math::Vector2f(x, y));

@@ -16,7 +16,6 @@ target_include_directories(${SPATIAL_GRID_LIB} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
-target_sources(${SPATIAL_GRID_LIB} PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/../types/Vector2f.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../types/FRect.cpp
+target_link_libraries(${SPATIAL_GRID_LIB}
+    PUBLIC TYPES
 )
