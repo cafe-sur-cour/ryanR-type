@@ -2,10 +2,12 @@ set(MAP_PARSER_LIB MAP_PARSER)
 
 set(MAP_PARSER_SOURCES
     MapParser.cpp
+    MapHandler.cpp
 )
 
 set(MAP_PARSER_HEADERS
     MapParser.hpp
+    MapHandler.hpp
 )
 
 add_library(${MAP_PARSER_LIB} STATIC ${MAP_PARSER_SOURCES} ${MAP_PARSER_HEADERS})
@@ -18,5 +20,6 @@ target_link_libraries(${MAP_PARSER_LIB} PUBLIC
     ECS
     ENTITY_PREFAB_MANAGER
     ERROR
+    PARSER_UTILS
     nlohmann_json::nlohmann_json
 )

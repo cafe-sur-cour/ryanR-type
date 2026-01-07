@@ -48,7 +48,13 @@
             [["ObstacleTag"], ["EnnemyProjectileTag"]],
 
             [["PlayerProjectileTag"], ["EnnemyProjectileTag"]],
-            [["EnnemyProjectileTag"], ["PlayerProjectileTag"]]
+            [["EnnemyProjectileTag"], ["PlayerProjectileTag"]],
+
+            [["PlayerTag"], ["MobTag"]],
+            [["MobTag"], ["PlayerTag"]],
+
+            [["PowerUpTag"], ["PlayerTag"]],
+            [["PlayerTag"], ["PowerUpTag"]]
         ]
     },
     "push": {
