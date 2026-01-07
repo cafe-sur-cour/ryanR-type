@@ -235,6 +235,9 @@ bool rserv::Server::connectUserPacket(const net::INetworkEndpoint &endpoint,
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Sent CONNECT_USER packet to client with username: " + username,
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
     this->_sequenceNumber++;
     return true;
 }
