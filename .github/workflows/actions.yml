@@ -125,10 +125,10 @@ jobs:
             build/unix/bin
             vcpkg
             vcpkg_installed
-          key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json', '**/*.cpp', '**/*.hpp') }}-${{ github.sha }}
+          key: ${{ runner.os }}-cmake-build-v2-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json', '**/*.cpp', '**/*.hpp') }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
-            ${{ runner.os }}-cmake-build-
+            ${{ runner.os }}-cmake-build-v2-${{ hashFiles('**/CMakeLists.txt', '**/vcpkg.json') }}-
+            ${{ runner.os }}-cmake-build-v2-
 
       - name: RUN COMPILATION
         run: |
