@@ -134,9 +134,6 @@ Please see our [Contributing Guide](../HOW-TO-CONTRIBUTE/htc-intro.md) for detai
 ## 📄 Documentation
 
 - **[Architecture](./project_architecure.md)**: Detailed technical architecture
-- **[API Reference](../api/)**: Code documentation and APIs
-- **[Build Guide](../build/)**: Compilation and deployment
-- **[Testing](../testing/)**: Test coverage and quality assurance
 
 ---
 

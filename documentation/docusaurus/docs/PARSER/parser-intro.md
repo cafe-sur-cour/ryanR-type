@@ -2,10 +2,6 @@
 title: Parser
 ---
 
----
-title: Parser
----
-
 Presentation
 - **Purpose:** The parser system transforms configuration files (entity prefabs and maps) into game entities and registers them in the appropriate managers.
 - **Location:** `common/Parser`.
