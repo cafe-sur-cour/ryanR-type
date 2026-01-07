@@ -269,8 +269,8 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
     }
 
     for (const auto& user : users) {
-        if (user.is_object() && user.contains("username") &&
-            user["username"] == username) {
+        if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
+            user[constants::USERNAME_JSON_WARD] == username) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER] Registration failed: Username already exists",
                 debug::debugType::NETWORK, debug::debugLevel::WARNING);
@@ -279,12 +279,12 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
     }
 
     nlohmann::json newUser;
-    newUser["username"] = username;
-    newUser["password"] = password;
-    newUser["wins"] = 0;
-    newUser["highScore"] = 0;
-    newUser["gamesPlayed"] = 0;
-    newUser["timeSpent"] = 0;
+    newUser[constants::USERNAME_JSON_WARD] = username;
+    newUser[constants::PASSWORD_JSON_WARD] = password;
+    newUser[constants::WINS_JSON_WARD] = 0;
+    newUser[constants::HIGH_SCORE_JSON_WARD] = 0;
+    newUser[constants::GAMES_PLAYED_JSON_WARD] = 0;
+    newUser[constants::TIME_SPENT_JSON_WARD] = 0;
     users.push_back(newUser);
     if (utils::SecureJsonManager::writeSecureJson(filepath, users)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -337,7 +337,7 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
         return false;
     }
 
-    const std::string filepath = "saves/users.json";
+    const std::string filepath = constants::USERS_JSON_PATH;
     nlohmann::json users = utils::SecureJsonManager::readSecureJson(filepath);
 
     if (!users.is_array()) {
@@ -346,8 +346,10 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
 
     bool loginSuccess = false;
     for (const auto& user : users) {
-        if (user.is_object() && user.contains("username") && user.contains("password") &&
-            user["username"] == username && user["password"] == password) {
+        if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
+            user.contains(constants::PASSWORD_JSON_WARD) &&
+            user[constants::USERNAME_JSON_WARD] == username &&
+            user[constants::PASSWORD_JSON_WARD] == password) {
             loginSuccess = true;
             break;
         }

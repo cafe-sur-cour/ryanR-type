@@ -13,60 +13,14 @@
 #include <vector>
 #include <string>
 
-#ifdef _WIN32
-#include <stdlib.h>
-#endif
-
 namespace utils {
-
-static std::string getEnvVar(const char* name) {
-#ifdef _WIN32
-    char* value = nullptr;
-    size_t len;
-    if (_dupenv_s(&value, &len, name) == 0 && value) {
-        std::string result(value);
-        free(value);
-        return result;
-    }
-    return "";
-#else
-    const char* value = std::getenv(name);
-    return value ? std::string(value) : "";
-#endif
-}
-
-std::string Encryption::getEncryptionKey() {
-    std::string envKey = getEnvVar("ENCRYPTION_KEY");
-    if (!envKey.empty()) {
-        return envKey;
-    }
-
-    std::ifstream envFile("common/utils/.env");
-    if (envFile.is_open()) {
-        std::string line;
-        while (std::getline(envFile, line)) {
-            if (line.find("ENCRYPTION_KEY=") == 0) {
-                std::string key = line.substr(15);
-                if (key.length() > 1 && key[0] == '"' && key.back() == '"') {
-                    key = key.substr(1, key.length() - 2);
-                }
-                if (!key.empty()) {
-                    return key;
-                }
-            }
-        }
-        envFile.close();
-    }
-    return "";
-}
 
 std::string Encryption::encrypt(const std::string& data) {
     std::vector<unsigned char> encrypted;
-    std::string key = getEncryptionKey();
-    size_t keyLen = key.length();
+    size_t keyLen = _key.length();
 
     for (size_t i = 0; i < data.length(); ++i) {
-        encrypted.push_back(static_cast<unsigned char>(data[i] ^ key[i % keyLen]));
+        encrypted.push_back(static_cast<unsigned char>(data[i] ^ _key[i % keyLen]));
     }
     return base64Encode(encrypted);
 }
@@ -74,11 +28,10 @@ std::string Encryption::encrypt(const std::string& data) {
 std::string Encryption::decrypt(const std::string& encryptedData) {
     std::vector<unsigned char> decoded = base64Decode(encryptedData);
     std::string decrypted;
-    std::string key = getEncryptionKey();
-    size_t keyLen = key.length();
+    size_t keyLen = _key.length();
 
     for (size_t i = 0; i < decoded.size(); ++i) {
-        decrypted += static_cast<char>(decoded[i] ^ key[i % keyLen]);
+        decrypted += static_cast<char>(decoded[i] ^ _key[i % keyLen]);
     }
     return decrypted;
 }
