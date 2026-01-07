@@ -233,6 +233,8 @@ void rserv::Server::processIncomingPackets() {
         this->processRegistration(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_LOGIN) {
         this->processLogin(std::make_pair(received.first, received.second));
+    } else if (this->_packet->getType() == constants::PACKET_REQUEST_LEADERBOARD) {
+        this->processLeaderboardRequest(received.first);
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "

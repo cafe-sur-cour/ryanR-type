@@ -135,6 +135,8 @@ void ClientNetwork::connect() {
     this->_connectionAttemptTime = std::chrono::steady_clock::now();
     this->_shouldConnect = true;
     if (this->_network->getConnectionState() == net::ConnectionState::DISCONNECTED) {
+        this->_idClient = 0;
+        this->_sequenceNumber = 0;
         debug::Debug::printDebug(this->_isDebug,
             "Attempting to connect to server...",
             debug::debugType::NETWORK,
@@ -152,6 +154,8 @@ void ClientNetwork::stop() {
     this->_isConnected = false;
     this->_ready = false;
     this->_shouldConnect = false;
+    this->_idClient = 0;
+    this->_sequenceNumber = 0;
 }
 
 uint16_t ClientNetwork::getPort() const {

@@ -289,15 +289,19 @@ MainMenuState::MainMenuState(
     _leaderboardButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _leaderboardButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _leaderboardButton->setOnRelease([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<LeaderboardState>(stateMachine,
-                this->_resourceManager));
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->sendRequestLeaderboardPacket();
+        } else {
+            std::cout << "Cannot request leaderboard: Not connected to server" << std::endl;
         }
     });
     _leaderboardButton->setOnActivated([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<LeaderboardState>(stateMachine,
-                this->_resourceManager));
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->sendRequestLeaderboardPacket();
+        } else {
+            std::cout << "Cannot request leaderboard: Not connected to server" << std::endl;
         }
     });
 

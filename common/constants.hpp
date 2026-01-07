@@ -271,8 +271,9 @@ namespace constants {
     constexpr std::uint8_t PACKET_CONNECT_USER = 0x15;
     constexpr std::uint8_t PACKET_LOGIN = 0x16;
     constexpr std::uint8_t PACKET_REQUEST_LEADERBOARD = 0x17;
+    constexpr std::uint8_t PACKET_LEADERBOARD = 0x18;
 
-    const int MAX_INDEX_PACKET_TYPE = 24;
+    const int MAX_INDEX_PACKET_TYPE = 26;
     const int MAX_CLIENT_PER_LOBBY = 4;
 
     /* Scripting constant */
