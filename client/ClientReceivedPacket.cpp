@@ -34,6 +34,7 @@ void ClientNetwork::handleConnectionAcceptation() {
         this->_isConnected = true;
         this->_network->setConnectionState(net::ConnectionState::CONNECTED);
         this->_packet->reset();
+        this->_isConnected = true;
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Connection accepted, assigned ID: " +
             std::to_string(static_cast<int>(id)),
