@@ -12,9 +12,9 @@ runs:
           vcpkg
           build/unix/bin/vcpkg_installed
           ~/.cache/vcpkg/archives
-        key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json', '**/CMakeLists.txt') }}
+        key: ${{ runner.os }}-vcpkg-v2-${{ hashFiles('**/vcpkg.json', '**/CMakeLists.txt') }}
         restore-keys: |
-          ${{ runner.os }}-vcpkg-
+          ${{ runner.os }}-vcpkg-v2-
 
     - name: CACHE VCPKG (Windows)
       if: runner.os == 'Windows'
@@ -24,9 +24,9 @@ runs:
           vcpkg
           build/windows/bin/vcpkg_installed
           C:\Users\runneradmin\AppData\Local\vcpkg\archives
-        key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json', '**/CMakeLists.txt') }}
+        key: ${{ runner.os }}-vcpkg-v2-${{ hashFiles('**/vcpkg.json', '**/CMakeLists.txt') }}
         restore-keys: |
-          ${{ runner.os }}-vcpkg-
+          ${{ runner.os }}-vcpkg-v2-
 
     - name: INSTALL VCPKG (Unix)
       if: runner.os != 'Windows'
