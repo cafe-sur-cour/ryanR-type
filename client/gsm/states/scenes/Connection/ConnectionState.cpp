@@ -80,7 +80,7 @@ ConnectionState::ConnectionState(
                 network->setIp(ip);
                 network->setPort(port);
                 network->connect();
-            } catch (const std::exception& e) {
+            } catch ([[maybe_unused]] const std::exception& e) {
                 std::cerr << "Invalid port: " << portStr << std::endl;
             }
         }
@@ -95,7 +95,7 @@ ConnectionState::ConnectionState(
                 network->setIp(ip);
                 network->setPort(port);
                 network->connect();
-            } catch (const std::exception& e) {
+            } catch ([[maybe_unused]] const std::exception& e) {
                 std::cerr << "Invalid port: " << portStr << std::endl;
             }
         }

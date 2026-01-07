@@ -13,12 +13,32 @@
 #include <vector>
 #include <string>
 
+#ifdef _WIN32
+#include <stdlib.h>
+#endif
+
 namespace utils {
 
+static std::string getEnvVar(const char* name) {
+#ifdef _WIN32
+    char* value = nullptr;
+    size_t len;
+    if (_dupenv_s(&value, &len, name) == 0 && value) {
+        std::string result(value);
+        free(value);
+        return result;
+    }
+    return "";
+#else
+    const char* value = std::getenv(name);
+    return value ? std::string(value) : "";
+#endif
+}
+
 std::string Encryption::getEncryptionKey() {
-    const char* envKey = std::getenv("ENCRYPTION_KEY");
-    if (envKey && std::string(envKey).length() > 0) {
-        return std::string(envKey);
+    std::string envKey = getEnvVar("ENCRYPTION_KEY");
+    if (!envKey.empty()) {
+        return envKey;
     }
 
     std::ifstream envFile("common/utils/.env");

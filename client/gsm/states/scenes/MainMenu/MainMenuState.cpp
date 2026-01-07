@@ -313,17 +313,17 @@ MainMenuState::MainMenuState(
     _disconnectButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
     _disconnectButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
     _disconnectButton->setOnRelease([this]() {
-        auto config = this->_resourceManager->get<SettingsConfig>();
-        if (config) {
-            config->setUsername("");
-            config->saveSettings();
+        auto settingsConfig = this->_resourceManager->get<SettingsConfig>();
+        if (settingsConfig) {
+            settingsConfig->setUsername("");
+            settingsConfig->saveSettings();
         }
     });
     _disconnectButton->setOnActivated([this]() {
-        auto config = this->_resourceManager->get<SettingsConfig>();
-        if (config) {
-            config->setUsername("");
-            config->saveSettings();
+        auto settingsConfig = this->_resourceManager->get<SettingsConfig>();
+        if (settingsConfig) {
+            settingsConfig->setUsername("");
+            settingsConfig->saveSettings();
         }
     });
 
