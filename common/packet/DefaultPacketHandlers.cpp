@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** Default packet handlers registration (common)
+** Default packet handlers
 */
 
 #include "DefaultPacketHandlers.hpp"
@@ -15,14 +15,7 @@
 #include "../../common/translationToECS.hpp"
 #include "../constants.hpp"
 
-using SerializerPtr = std::shared_ptr<pm::ISerializer>;
-using pm::BigEndianSerialization;
-
 namespace common::packet {
-
-static SerializerPtr makeSerializer() {
-    return std::make_shared<BigEndianSerialization>();
-}
 
 static void registerMultiUCharPacket(
     std::shared_ptr<pm::IPacketManager> packet,
@@ -333,9 +326,21 @@ bool registerDefaultPacketHandlers(
         return false;
     registerOptionalULongPacket(packet, ser, REQUEST_LOBBY_PACKET);
     registerMultiUCharPacket(packet, ser, SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
+    registerMultiUCharPacket(packet, ser, CONNECT_TO_LOBBY, LENGTH_LOBBY_CODE_PACKET);
+    registerMultiUCharPacket(packet, ser, LOBBY_MASTER_REQUEST_START,
+        LENGTH_LOBBY_CODE_PACKET);
+    registerSingleUCharPacket(packet, ser, LOBBY_CONNECT_VALUE,
+        LENGTH_CONNECT_TO_LOBBY_PACKET);
 
+    registerOptionalULongPacket(packet, ser, LEVEL_COMPLETE_PACKET);
+    registerOptionalULongPacket(packet, ser, NEXT_LEVEL_PACKET);
+
+    packet->registerLength(LOBBY_CONNECT_VALUE, LENGTH_CONNECT_TO_LOBBY_PACKET);
     packet->registerLength(REQUEST_LOBBY_PACKET, LENGTH_REQUEST_LOBBY_PACKET);
     packet->registerLength(SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
+    packet->registerLength(CONNECT_TO_LOBBY, LENGTH_LOBBY_CODE_PACKET);
+    packet->registerLength(LOBBY_MASTER_REQUEST_START, LENGTH_LOBBY_CODE_PACKET);
+
     packet->registerLength(CONNECTION_CLIENT_PACKET, LENGTH_CONNECTION_PACKET);
     packet->registerLength(ACCEPTATION_PACKET, LENGTH_ACCEPTATION_PACKET);
     packet->registerLength(DISCONNECTION_PACKET, LENGTH_DISCONNECTION_PACKET);

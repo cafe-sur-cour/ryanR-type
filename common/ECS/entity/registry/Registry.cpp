@@ -17,6 +17,12 @@ Registry::Registry() : _nextEntityId(1), _onEntityDestroyed(nullptr) {
     this->_components = std::unordered_map<std::string, std::shared_ptr<IComponentArray>>();
 }
 
+Registry::Registry(Entity nextEntityId) : _nextEntityId(nextEntityId),
+    _onEntityDestroyed(nullptr) {
+    this->_components = std::unordered_map<std::string,
+        std::shared_ptr<IComponentArray>>();
+}
+
 Registry::~Registry() {
 }
 
@@ -45,6 +51,14 @@ void Registry::destroyEntity(Entity entityId) {
     for (auto& pair : _components) {
         pair.second->removeComponents(entityId);
     }
+}
+
+void Registry::clearAllEntities() {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
+    for (auto& pair : _components) {
+        pair.second->clear();
+    }
+    _nextEntityId = 1;
 }
 
 void Registry::setOnEntityDestroyed(std::function<void(Entity)> callback) {

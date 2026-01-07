@@ -11,7 +11,7 @@
 #include "../../core/AFocusableElement.hpp"
 #include <string>
 #include <functional>
-#include "../../../../libs/Multimedia/IWindow.hpp"
+#include "../../../../common/interfaces/IWindow.hpp"
 #include "../../../constants.hpp"
 #include "../../../colors.hpp"
 
@@ -66,7 +66,7 @@ class Slider : public AFocusableElement {
 
         std::string _label;
         gfx::color_t _labelColor = colors::SLIDER_LABEL;
-        std::string _fontPath = "assets/fonts/abduction2002.ttf";
+        std::string _fontPath = constants::MAIN_FONT;
         size_t _baseFontSize = constants::BUTTON_FONT_SIZE_BASE;
         float _outlineThickness = 2.0f;
         bool _showPercentage = true;

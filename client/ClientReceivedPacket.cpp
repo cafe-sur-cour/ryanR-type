@@ -17,6 +17,7 @@
 #include "DeathAnimationSpawner.hpp"
 #include "gsm/states/scenes/InGame/InGameState.hpp"
 #include "gsm/states/scenes/Results/ResultsState.hpp"
+#include "gsm/states/scenes/LevelComplete/LevelCompleteState.hpp"
 #include "./components/rendering/AnimationComponent.hpp"
 
 /* Packet Handlers */
@@ -98,6 +99,11 @@ void ClientNetwork::handleGameState() {
                 debug::debugLevel::WARNING);
         }
     }
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Applied game state updates for entity " +
+        std::to_string(entityId),
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
 }
 
 void ClientNetwork::handleEndGame() {
@@ -148,7 +154,7 @@ void ClientNetwork::handleCanStart() {
     std::vector<uint64_t> whoamiPayload;
     std::vector<uint8_t> whoamiPacket = _packet->pack(_idClient, _sequenceNumber,
         constants::PACKET_WHOAMI, whoamiPayload);
-    this->_network->sendTo(_serverEndpoint, whoamiPacket);
+    this->_network->sendTo(*_serverEndpoint, whoamiPacket);
     _sequenceNumber++;
 
     if (this->_gsm) {
@@ -195,6 +201,20 @@ void ClientNetwork::handleEntitySpawn() {
                 " mapped to local " + std::to_string(newEntity),
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
+
+        if (clientId == this->_idClient) {
+            auto registry = _resourceManager->get<ecs::Registry>();
+            registry->registerComponent<ecs::LocalPlayerTag>();
+            if (!registry->hasComponent<ecs::LocalPlayerTag>(newEntity)) {
+                registry->addComponent<ecs::LocalPlayerTag>(newEntity,
+                    std::make_shared<ecs::LocalPlayerTag>());
+            }
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Added LocalPlayerTag to entity " + std::to_string(newEntity) +
+                " for local client " + std::to_string(clientId),
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
     } catch (const std::exception& e) {
         debug::Debug::printDebug(this->_isDebug,
             std::string("[CLIENT] Error creating entity from prefab '")
@@ -289,7 +309,6 @@ void ClientNetwork::handleServerStatus() {
             debug::debugLevel::WARNING);
         return;
     }
-
     this->_connectedClients = static_cast<size_t>(payload.at(0));
     this->_readyClients = static_cast<size_t>(payload.at(1));
     this->_clientId = static_cast<uint8_t>(payload.at(2));
@@ -325,4 +344,74 @@ void ClientNetwork::handleCode() {
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
     _lobbyCode = lobbyCode;
+    _isLobbyMaster = true;
+    _isConnectedToLobby = true;
+}
+
+void ClientNetwork::handleLobbyConnectValue() {
+    auto payload = _packet->getPayload();
+
+    if (payload.size() < 1) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] LOBBY_CONNECT_VALUE packet is invalid",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+    bool isSuccess = false;
+    if (payload[0] == static_cast<uint64_t>('t')) {
+        isSuccess = true;
+    }
+    if (isSuccess) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Successfully connected to lobby",
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
+        _isConnectedToLobby = true;
+    } else {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Failed to connect to lobby",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        this->_lobbyCode = "";
+        _isConnectedToLobby = false;
+        _isLobbyMaster = false;
+    }
+}
+
+void ClientNetwork::handleLevelComplete() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received level complete packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    if (this->_gsm) {
+        this->_gsm->requestStateChange(
+            std::make_shared<gsm::LevelCompleteState>
+                (this->_gsm, this->_resourceManager)
+        );
+    }
+}
+
+void ClientNetwork::handleNextLevel() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received next level packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    _serverToLocalEntityMap.clear();
+
+    if (this->_resourceManager->has<ecs::Registry>()) {
+        auto registry = this->_resourceManager->get<ecs::Registry>();
+        if (registry) {
+            registry->clearAllEntities();
+        }
+    }
+
+    if (this->_gsm) {
+        this->_gsm->requestStateChange(
+            std::make_shared<gsm::InGameState>
+                (this->_gsm, this->_resourceManager)
+        );
+    }
 }

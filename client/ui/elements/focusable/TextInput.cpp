@@ -8,8 +8,7 @@
 #include "TextInput.hpp"
 #include <algorithm>
 #include <string>
-#include "../../../../libs/Multimedia/IWindow.hpp"
-#include "../../../constants.hpp"
+#include "../../../../common/interfaces/IWindow.hpp"
 #include "../../../../libs/Multimedia/EventTypes.hpp"
 
 namespace ui {

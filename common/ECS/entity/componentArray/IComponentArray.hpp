@@ -19,6 +19,7 @@ class IComponentArray {
         virtual Entity getMaxEntityId() const = 0;
         virtual void removeComponents(Entity entityId) = 0;
         virtual void removeOneComponent(Entity entityId) = 0;
+        virtual void clear() = 0;
 };
 
 } // namespace ecs

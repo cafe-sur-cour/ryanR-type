@@ -25,4 +25,3 @@ target_link_libraries(${PREFAB_LIB} PUBLIC
     ERROR
     nlohmann_json::nlohmann_json
 )
-

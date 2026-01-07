@@ -8,6 +8,7 @@
 #include <cstring>
 #include <iostream>
 #include <vector>
+#include <string>
 
 #include "ClientNetwork.hpp"
 #include "../common/Error/ClientNetworkError.hpp"
@@ -30,7 +31,7 @@ void ClientNetwork::connectionPacket() {
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
 
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
 
@@ -59,7 +60,7 @@ void ClientNetwork::eventPacket(const constants::EventType &eventType,
         + ", Depth=" + std::to_string(depth),
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
 
@@ -89,32 +90,7 @@ void ClientNetwork::disconnectionPacket() {
     std::vector<uint8_t> header = this->_packet->pack(this->_idClient,
         this->_sequenceNumber, constants::PACKET_DISC, payload);
 
-    this->_network->sendTo(this->_serverEndpoint, header);
-    this->_sequenceNumber++;
-}
-
-void ClientNetwork::sendReady() {
-    if (!_network) {
-        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
-            err::ClientNetworkError::INTERNAL_ERROR);
-    }
-    if (this->_idClient == 0) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[Client] Warning: Client ID is 0, cannot send ready packet",
-            debug::debugType::NETWORK,
-            debug::debugLevel::WARNING);
-        return;
-    }
-    std::vector<uint64_t> payload = {};
-    std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
-        this->_sequenceNumber, constants::PACKET_CLIENT_READY, payload);
-
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Sending ready packet",
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
-
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, header);
     this->_sequenceNumber++;
 }
 
@@ -139,7 +115,7 @@ void ClientNetwork::sendWhoAmI() {
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
 
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
 
@@ -163,7 +139,62 @@ void ClientNetwork::requestCode() {
         "[CLIENT] Sending request code packet",
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
-    std::cout << std::endl;
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, packet);
+    this->_sequenceNumber++;
+}
+
+void ClientNetwork::sendLobbyConnection(std::string lobbyCode) {
+    if (!this->_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
+    }
+    if (this->_idClient == 0 || lobbyCode.empty()) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[Client] Warning: Client ID is 0, cannot send request code packet",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+    std::vector<uint64_t> payload;
+    for (char c : this->_lobbyCode) {
+        payload.push_back(static_cast<uint64_t>(c));
+    }
+    std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
+        this->_sequenceNumber, constants::PACKET_CONNECT_TO_LOBBY, payload);
+
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Sending lobby connection packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    this->_lobbyCode = lobbyCode;
+    this->_network->sendTo(*this->_serverEndpoint, packet);
+    this->_sequenceNumber++;
+}
+
+void ClientNetwork::sendMasterStartGame() {
+    if (!this->_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
+    }
+    if (this->_idClient == 0) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[Client] Warning: Client ID is 0, cannot send start game packet",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+    std::vector<uint64_t> payload;
+    for (char c : this->_lobbyCode) {
+        payload.push_back(static_cast<uint64_t>(c));
+    }
+    std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
+        this->_sequenceNumber, constants::PACKET_LOBBY_MASTER_REQUEST_START, payload);
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Sending start game packet as lobby master",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }

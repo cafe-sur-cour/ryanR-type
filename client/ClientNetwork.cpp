@@ -16,6 +16,7 @@
 #include <memory>
 
 #include "ClientNetwork.hpp"
+#include "../libs/Network/common.hpp"
 #include "constants.hpp"
 #include "../common/Error/ClientNetworkError.hpp"
 #include "../common/translationToECS.hpp"
@@ -44,8 +45,11 @@ ClientNetwork::ClientNetwork() {
     this->_clientNames = {};
     this->_serverEndpoint = {};
     this->_lobbyCode = "";
+    this->_isConnectedToLobby = false;
+    this->_isLobbyMaster = false;
 
     this->_shouldConnect = false;
+    this->_connectionAttemptTime = std::chrono::steady_clock::now();
 
     this->_connectedClients = 0;
     this->_readyClients = 0;
@@ -66,6 +70,10 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_WHOAMI] = &ClientNetwork::handleWhoAmI;
     _packetHandlers[constants::PACKET_SERVER_STATUS] = &ClientNetwork::handleServerStatus;
     _packetHandlers[constants::PACKET_SEND_LOBBY_CODE] = &ClientNetwork::handleCode;
+    _packetHandlers[constants::PACKET_LEVEL_COMPLETE] = &ClientNetwork::handleLevelComplete;
+    _packetHandlers[constants::PACKET_NEXT_LEVEL] = &ClientNetwork::handleNextLevel;
+    _packetHandlers[constants::PACKET_LOBBY_CONNECT_VALUE] =
+        &ClientNetwork::handleLobbyConnectValue;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
@@ -118,13 +126,12 @@ void ClientNetwork::init() {
         this->_port,
         this->_ip
     );
-    this->_serverEndpoint = asio::ip::udp::endpoint(
-        asio::ip::address::from_string(this->_ip),
-        static_cast<uint16_t>(this->_port)
-    );
+    this->_serverEndpoint = std::make_shared<NetworkEndpoint>(this->_ip,
+        static_cast<uint16_t>(this->_port));
 }
 
 void ClientNetwork::connect() {
+    this->_connectionAttemptTime = std::chrono::steady_clock::now();
     this->_shouldConnect = true;
     if (this->_network->getConnectionState() == net::ConnectionState::DISCONNECTED) {
         debug::Debug::printDebug(this->_isDebug,
@@ -162,11 +169,17 @@ void ClientNetwork::setIp(const std::string &ip) {
     _ip = ip;
 }
 
+std::string ClientNetwork::getLobbyCode() const {
+    return this->_lobbyCode;
+}
+
+void ClientNetwork::setLobbyCode(std::string lobbyCode) {
+    this->_lobbyCode = lobbyCode;
+}
+
 void ClientNetwork::redoServerEndpoint() {
-    this->_serverEndpoint = asio::ip::udp::endpoint(
-        asio::ip::address::from_string(this->_ip),
-        static_cast<uint16_t>(this->_port)
-    );
+    this->_serverEndpoint = std::make_shared<NetworkEndpoint>(this->_ip,
+        static_cast<uint16_t>(this->_port));
 }
 
 void ClientNetwork::setDebugMode(bool isDebug) {
@@ -186,7 +199,7 @@ void ClientNetwork::sendConnectionData(std::vector<uint8_t> packet) {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);
     }
-    this->_network->sendTo(this->_serverEndpoint, packet);
+    this->_network->sendTo(*this->_serverEndpoint, packet);
 }
 
 std::string ClientNetwork::getName() const {
@@ -219,6 +232,14 @@ bool ClientNetwork::isConnected() const {
 
 bool ClientNetwork::isReady() const {
     return this->_ready.load();
+}
+
+bool ClientNetwork::isConnectedToLobby() const {
+    return this->_isConnectedToLobby.load();
+}
+
+bool ClientNetwork::isLobbyMaster() const {
+    return this->_isLobbyMaster.load();
 }
 
 void ClientNetwork::handlePacketType(uint8_t type) {
@@ -266,6 +287,23 @@ void ClientNetwork::start() {
     while (!Signal::stopFlag) {
         std::tie(retryCount, lastRetryTime) = tryConnection(maxRetries, retryCount,
             lastRetryTime);
+
+        if (this->_shouldConnect && !this->_isConnected.load() &&
+            std::chrono::duration_cast<std::chrono::seconds>(
+                std::chrono::steady_clock::now() - this->_connectionAttemptTime).count() >
+                constants::CONNECTION_ATTEMPT_TIMEOUT) {
+            this->_shouldConnect = false;
+            this->_network->setConnectionState(net::ConnectionState::DISCONNECTED);
+            debug::Debug::printDebug(this->_isDebug,
+                "Connection attempt timed out after " +
+                std::to_string(constants::CONNECTION_ATTEMPT_TIMEOUT) + " seconds",
+                debug::debugType::NETWORK,
+                debug::debugLevel::ERROR);
+            auto mainMenuState =
+                std::make_shared<gsm::MainMenuState>(this->_gsm, this->_resourceManager);
+            this->_gsm->changeState(mainMenuState);
+        }
+
         std::vector<uint8_t> receivedData = this->_network->receiveFrom(this->_idClient);
         if (receivedData.size() > 0) {
             if (this->_packet->unpack(receivedData)) {
@@ -320,10 +358,6 @@ uint8_t ClientNetwork::getClientId() const {
 
 bool ClientNetwork::getClientReadyStatus() const {
     return this->_clientReadyStatus.load();
-}
-
-std::string ClientNetwork::getLobbyCode() const {
-    return this->_lobbyCode;
 }
 
 void ClientNetwork::addToEventQueue(const NetworkEvent &event) {

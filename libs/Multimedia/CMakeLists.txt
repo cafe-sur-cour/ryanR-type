@@ -1,7 +1,5 @@
 set(MULTIMEDIA_LIB_NAME Multimedia)
 
-find_package(SFML COMPONENTS Graphics Window System Audio REQUIRED)
-
 set(EMBEDDED_ASSET_FILES "")
 set(ASSET_COUNT 0)
 
@@ -23,30 +21,9 @@ foreach(asset_file ${EMBEDDED_ASSET_FILES})
 endforeach()
 
 add_library(${MULTIMEDIA_LIB_NAME} SHARED
-    IAudio.hpp
-    IEvent.hpp
-    IWindow.hpp
-    SfmlWindow.cpp
-    SfmlWindow.hpp
-    SfmlEvent.cpp
-    SfmlEvent.hpp
-    SfmlAudio.cpp
-    SfmlAudio.hpp
-    SfmlKeyMappings.cpp
-    SfmlKeyMappings.hpp
-    TextureManager.cpp
-    TextureManager.hpp
-    FontManager.cpp
-    FontManager.hpp
-    ShaderManager.cpp
-    ShaderManager.hpp
-    RoundedRectangleShape.cpp
-    RoundedRectangleShape.hpp
-    SfmlEntry.cpp
     EventTypes.hpp
     ${CMAKE_BINARY_DIR}/EmbeddedAssets.cpp
     ${EMBEDDED_ASSET_FILES}
-    ${CMAKE_SOURCE_DIR}/common/types/FRect.cpp
 )
 
 if(WIN32)
@@ -56,6 +33,7 @@ if(WIN32)
 endif()
 
 add_subdirectory(AssetManager)
+add_subdirectory(SFML)
 
 if(TARGET generate_embedded_assets)
     add_dependencies(${MULTIMEDIA_LIB_NAME} generate_embedded_assets)
@@ -76,10 +54,14 @@ target_include_directories(${MULTIMEDIA_LIB_NAME}
 )
 
 target_link_libraries(${MULTIMEDIA_LIB_NAME}
-    PUBLIC SFML::Graphics SFML::Window SFML::System SFML::Audio
     PUBLIC ECS
     PUBLIC COLLISION_RULES
+    PUBLIC ENTITY_PREFAB_MANAGER
 )
+
+if(USE_PCH)
+    target_precompile_headers(${MULTIMEDIA_LIB_NAME} PRIVATE ${PCH_HEADERS})
+endif()
 
 add_custom_command(TARGET ${MULTIMEDIA_LIB_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${MULTIMEDIA_LIB_NAME}> ${CMAKE_SOURCE_DIR}/libraries/

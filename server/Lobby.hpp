@@ -1,0 +1,158 @@
+/*
+** EPITECH PROJECT, 2026
+** ryanR-type
+** File description:
+** Lobby
+*/
+
+#ifndef LOBBY_HPP_
+#define LOBBY_HPP_
+#ifdef _WIN32
+    #ifndef _WIN32_WINNT
+        #define _WIN32_WINNT 0x0A00
+    #endif
+
+    #ifndef WIN32_LEAN_AND_MEAN
+        #define WIN32_LEAN_AND_MEAN
+    #endif
+#endif
+
+#include <queue>
+#include <map>
+#include <memory>
+#include <mutex>
+
+#include "LobbyStruct.hpp"
+#include "ServerConfig.hpp"
+#include "deltaTracker/ComponentDeltaTracker.hpp"
+#include "deltaTracker/ComponentSerializer.hpp"
+#include "../common/interfaces/INetwork.hpp"
+#include "../common/interfaces/IBuffer.hpp"
+#include "../common/DLLoader/DLLoader.hpp"
+#include "../common/DLLoader/LoaderType.hpp"
+#include "../common/constants.hpp"
+#include "../common/InputMapping/InputAction.hpp"
+#include "../common/resourceManager/ResourceManager.hpp"
+#include "../common/ECS/entity/registry/Registry.hpp"
+#include "gsm/machine/GameStateMachine.hpp"
+#include "Signal.hpp"
+
+namespace rserv {
+
+class Lobby {
+        public:
+            Lobby(std::shared_ptr<net::INetwork> network,
+                std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> lobbyPlayerInfo,
+                std::string lobbyCode, bool debug);
+            ~Lobby();
+            void stop();
+
+            void startNetworkThread();
+            void startGameThread();
+            void networkLoop();
+            void gameLoop();
+
+            void setIsDebug(bool debug);
+            bool getIsDebug() const;
+
+            std::vector<uint8_t> getConnectedClients() const;
+            std::vector<std::shared_ptr<net::INetworkEndpoint>> getConnectedClientEndpoints() const;
+            size_t getClientCount() const;
+            std::string getLobbyCode() const;
+            std::shared_ptr<net::INetwork> getNetwork() const;
+
+            std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> getEventQueue();
+            bool hasEvents() const;
+
+            void enqueuePacket(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> packet);
+
+            /* Received Packet Handling */
+            void processIncomingPackets();
+            bool processDisconnections(uint8_t idClient);
+            bool processEvents(uint8_t idClient);
+            bool processEndOfGame(uint8_t idClient);
+            bool processWhoAmI(uint8_t idClient);
+
+            /* Sent Packet Handling */
+            bool gameStatePacket();
+            bool endGamePacket(bool isWin);
+            std::vector<uint64_t> spawnPacket(size_t entity, const std::string prefabName);
+            std::vector<uint64_t> deathPacket(size_t entity);
+            bool serverStatusPacket();
+
+            bool levelCompletePacket();
+            bool nextLevelPacket();
+
+            bool isGameStarted() const;
+            bool allClientsReady() const;
+
+            uint32_t getSequenceNumber() const;
+
+            void setPacketManager(std::shared_ptr<pm::IPacketManager> packet);
+            std::shared_ptr<pm::IPacketManager> getPacketManager() const;
+            void incrementSequenceNumber();
+            void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
+            void clearEntityDeltaCache(uint8_t clientId, uint32_t entityId);
+            void clearDeltaTrackerCaches();
+            void createPlayerEntities();
+            void processLobbyEvents();
+
+        private:
+            bool _isDebug;
+
+            /* Network handling variable*/
+            std::shared_ptr<net::INetwork> _network;
+            std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> _clients;
+            std::string _lobbyCode;
+            std::map<uint8_t, bool> _clientsReady;
+            std::shared_ptr<pm::IPacketManager> _packet;
+            uint32_t _sequenceNumber;
+            std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> _eventQueue;
+
+            /* Packet queue for incoming packets */
+            std::queue<std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>>> _incomingPackets;
+            std::mutex _packetMutex;
+
+            /* ECS/Game handling variable */
+            bool _gameStarted;
+            std::shared_ptr<ResourceManager> _resourceManager;
+            std::shared_ptr<gsm::GameStateMachine> _gsm;
+            std::chrono::steady_clock::time_point _lastGameStateTime;
+            float _statusUpdateTimer;
+
+            /* Threading */
+            std::atomic_bool _running;
+            std::thread _networkThread;
+            std::thread _gameThread;
+            mutable std::mutex _eventMutex;
+
+
+            ComponentDeltaTracker _deltaTracker;
+            /* Functions to build game state packets */
+            std::vector<std::function<std::vector<uint64_t>(std::shared_ptr<ecs::Registry>, ecs::Entity)>> _convertFunctions;
+        protected:
+            std::vector<uint64_t> convertTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertTransformComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertSpeedComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertHealthComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertColliderComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertShootStatComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertScoreComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertDamageComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertLifetimeComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertVelocityComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertControllableTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertEnemyProjectileTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertGameZoneColliderTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertMobTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertObstacleTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertPlayerProjectileTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertShooterTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertProjectilePassThroughTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertProjectilePrefabComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertGameZoneComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+
+    };
+} // namespace rserv = r-type server
+
+#endif /* !LOBBY_HPP_ */

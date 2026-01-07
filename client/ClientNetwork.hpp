@@ -16,13 +16,15 @@
 #include <condition_variable>
 #include <atomic>
 #include <map>
+#include <chrono>
 
 #include "../common/DLLoader/DLLoader.hpp"
 #include "../common/DLLoader/LoaderType.hpp"
-#include "../libs/Network/INetwork.hpp"
+#include "../common/interfaces/INetwork.hpp"
 #include "../common/constants.hpp"
 #include "../common/resourceManager/ResourceManager.hpp"
 #include "../common/gsm/IGameStateMachine.hpp"
+#include "gsm/states/scenes/MainMenu/MainMenuState.hpp"
 
 namespace ecs {
     class Registry;
@@ -66,15 +68,19 @@ class ClientNetwork {
         uint8_t getIdClient() const;
         void setIdClient(uint8_t idClient);
 
+        std::string getLobbyCode() const;
+        void setLobbyCode(std::string lobbyCode);
+
         net::ConnectionState getConnectionState() const;
 
         /* Packet Handling */
         void eventPacket(const constants::EventType &eventType, double depth);
         void disconnectionPacket();
         void connectionPacket();
-        void sendReady();
         void sendWhoAmI();
         void requestCode();
+        void sendLobbyConnection(std::string lobbyCode);
+        void sendMasterStartGame();
 
         void addToEventQueue(const NetworkEvent &event);
 
@@ -85,10 +91,14 @@ class ClientNetwork {
         size_t getReadyClients() const;
         uint8_t getClientId() const;
         bool getClientReadyStatus() const;
-        std::string getLobbyCode() const;
+
+        bool isConnectedToLobby() const;
+        bool isLobbyMaster() const;
 
         std::atomic<bool> _isConnected;
         std::atomic<bool> _ready;
+        std::atomic<bool> _isConnectedToLobby;
+        std::atomic<bool> _isLobbyMaster;
 
         std::atomic<size_t> _connectedClients;
         std::atomic<size_t> _readyClients;
@@ -119,6 +129,9 @@ class ClientNetwork {
         void handleWhoAmI();
         void handleServerStatus();
         void handleCode();
+        void handleLevelComplete();
+        void handleNextLevel();
+        void handleLobbyConnectValue();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;
@@ -166,7 +179,7 @@ class ClientNetwork {
 
 
         uint8_t _idClient;
-        asio::ip::udp::endpoint _serverEndpoint;
+        std::shared_ptr<net::INetworkEndpoint> _serverEndpoint;
 
         std::queue<NetworkEvent> _eventQueue;
         std::mutex _queueMutex;
@@ -176,6 +189,8 @@ class ClientNetwork {
 
         std::string _lobbyCode;
         bool _shouldConnect;
+
+        std::chrono::steady_clock::time_point _connectionAttemptTime;
 };
 
 #endif /* !CLIENTNETWORK_HPP_ */

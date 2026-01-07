@@ -36,7 +36,7 @@ target_link_libraries(${CLIENT_BIN_NAME}
         DEBUG
         InputNormalizer
         NETWORK_INTERPOLATION
-        asio::asio
+        AsioNetwork
         nlohmann_json::nlohmann_json
         Packet
         Client::PacketHandlers
@@ -46,9 +46,12 @@ target_include_directories(${CLIENT_BIN_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/common
 target_include_directories(${CLIENT_BIN_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_compile_definitions(${CLIENT_BIN_NAME}
-    PUBLIC ASIO_STANDALONE
     PUBLIC R_TYPE_CLIENT
 )
+
+if(USE_PCH)
+    target_precompile_headers(${CLIENT_BIN_NAME} PRIVATE ${PCH_HEADERS})
+endif()
 
 add_subdirectory(initResourcesManager)
 add_subdirectory(gsm)

@@ -1,22 +1,20 @@
 set(SERVER_LIB_NAME r-type_server_lib)
 
 add_library(${SERVER_LIB_NAME}
-    IServer.hpp
     ServerConfig.hpp
     ServerConfig.cpp
     Server.hpp
     Server.cpp
+    Lobby.cpp
+    Lobby.hpp
     ServerLibsLoading.cpp
     ServerReceivePacket.cpp
     ServerSentPacket.cpp
     ECSConversions.cpp
     Utils.cpp
     Utils.hpp
-    Core.cpp
-    Core.hpp
+    LobbyStruct.hpp
 )
-
-find_package(asio CONFIG REQUIRED)
 
 target_link_libraries(${SERVER_LIB_NAME}
     PUBLIC
@@ -29,7 +27,6 @@ target_link_libraries(${SERVER_LIB_NAME}
         NetworkClient
         DEBUG
         Packet
-        asio::asio
         nlohmann_json::nlohmann_json
         PARSER
         PREFAB
@@ -42,6 +39,10 @@ target_link_libraries(${SERVER_LIB_NAME}
 
 target_include_directories(${SERVER_LIB_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/common)
 target_include_directories(${SERVER_LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(USE_PCH)
+    target_precompile_headers(${SERVER_LIB_NAME} PRIVATE ${PCH_HEADERS})
+endif()
 
 add_subdirectory(packet)
 add_subdirectory(gsm)
