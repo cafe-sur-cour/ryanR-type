@@ -36,6 +36,7 @@ namespace constants {
         RIGHT = 3,
         SHOOT = 4,
         STOP = 5,
+        FORCE = 6,
     };
     constexpr int MAX_RETRY_CONNECTIONS = 3;
     /* Paths */
@@ -110,6 +111,8 @@ namespace constants {
     const std::string G_FIELD = "g";
     const std::string B_FIELD = "b";
 
+    const std::string FORCE_TYPE = "force";
+    const std::string FORCE_TYPE_FIELD = "forceType";
     const std::string STATES_FIELD = "states";
     const std::string INITIALSTATE_FIELD = "initialState";
     const std::string TRANSITIONS_FIELD = "transitions";
@@ -161,6 +164,7 @@ namespace constants {
     const std::string TOSELF_FIELD = "toSelf";
 
     const std::string POWERUP_TAG = "PowerUpTag";
+    const std::string FORCE_TAG = "ForceTag";
 
     const std::string MUSICCOMPONENT = "MusicComponent";
     const std::string MUSICFILE_FIELD = "musicFile";
@@ -236,6 +240,7 @@ namespace constants {
     const std::string DEALDAMAGE_ACTION = "DealDamage";
     const std::string TAKEDAMAGE_ACTION = "TakeDamage";
     const std::string ADDLIFE_ACTION = "AddLife";
+    const std::string INTERACTION_CALL_SCRIPTING_ACTION = "InteractionCallScripting";
 
     /* Prefabs */
     const std::string GAME_ZONE_PREFAB = "gamezone";
@@ -278,6 +283,8 @@ namespace constants {
     const std::string INIT_FUNCTION = "init";
     const std::string UPDATE_FUNCTION = "update";
     const std::string DEATH_FUNCTION = "death";
+    const std::string ONINTERACT_FUNCTION = "OnInteract";
+    const std::string  ACTIVATE_OR_DEACTIVATE_FORCE_FUNCTION = "ActivateOrDeactivateForce";
 
     /* Constants for Scripting API */
     const std::string PRINT_FUNCTION = "print";
@@ -296,6 +303,12 @@ namespace constants {
     const std::string IS_ENTITY_ALIVE_FUNCTION = "isEntityAlive";
     const std::string GET_PARENT_ID_FUNCTION = "getParentId";
     const std::string REMOVE_PART_ID_FUNCTION = "removePartId";
+    const std::string IS_ENTITY_PLAYER_FUNCTION = "isEntityPlayer";
+    const std::string GET_ENTITY_SIZE_FUNCTION = "getEntitySize";
+    const std::string SET_POSITION_FUNCTION = "setPosition";
+    const std::string SET_PROJECTILE_PREFAB_FUNCTION = "setProjectilePrefab";
+    const std::string COUNT_FORCES_BY_TYPE_FUNCTION = "countForcesByType";
+    const std::string GET_FORCE_POSITION_BY_TYPE_FUNCTION = "getForcePositionByType";
 }
 
 #endif /* !CONSTANTS_HPP_ */

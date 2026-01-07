@@ -14,6 +14,7 @@ enum class InputAction {
     MOVE_X,
     MOVE_Y,
     SHOOT,
+    FORCE,
     PAUSE,
     MENU_UP,
     MENU_DOWN,
@@ -29,6 +30,7 @@ enum class RemappableAction {
     MOVE_UP,
     MOVE_DOWN,
     SHOOT,
+    FORCE,
 };
 
 }  // namespace ecs

@@ -35,6 +35,7 @@ target_link_libraries(${SERVER_LIB_NAME}
         InputNormalizer
         ServerMovementInputSystem
         ServerShootInputSystem
+        ServerForceInputSystem
         EndOfMapDetectionSystem
         Server::PacketHandlers
 )
