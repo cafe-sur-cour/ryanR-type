@@ -4,4 +4,6 @@ target_sources(${PACKET_LIB_NAME} PUBLIC
     BigEndianSerialization.cpp
     LittleEndianSerialization.hpp
     LittleEndianSerialization.cpp
+    Varint.hpp
+    Varint.cpp
 )

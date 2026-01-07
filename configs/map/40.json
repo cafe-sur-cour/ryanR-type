@@ -1,131 +1,18 @@
 {
-    "index": 1,
     "name": "Level 1",
     "background": "background",
     "scrollSpeed": 100.0,
     "music": "music",
-    "powerUps": [
-        {
-            "name": "flyingForce",
-            "position": {
-            "posY": 400.0,
-            "posX": 500.0
-            }
-        },
-        {
-            "name": "flyingForce",
-            "position": {
-            "posY": 100.0,
-            "posX": 500.0
-            }
-        },
-        {
-            "name": "flyingForce",
-            "position": {
-            "posY": 700.0,
-            "posX": 500.0
-            }
-        },
-        {
-            "name": "force",
-            "position": {
-            "posY": 700.0,
-            "posX": 700.0
-            }
-        }
-    ],
+    "powerUps": [],
     "mapLength": 6500.0,
     "obstacles": [
-        {
-            "name": "obstacle1",
-            "positions": [
-                {
-                    "type": "horizontalLine",
-                    "fromX": 500.0,
-                    "posY": 0.0,
-                    "count": 10
-                },
-                {
-                    "type": "horizontalLine",
-                    "fromX": 500.0,
-                    "posY":  1000.0,
-                    "count": 14
-                },
-                {
-                    "type": "verticalLine",
-                    "fromY": 400.0,
-                    "posX": 1000.0,
-                    "count": 5
-                },
-                {
-                    "type": "verticalLine",
-                    "fromY": 100.0,
-                    "posX": 1650.0,
-                    "count": 10
-                },
-                {
-                    "type": "horizontalLine",
-                    "fromX": 2200.0,
-                    "posY": 100.0,
-                    "count": 8
-                },
-                {
-                    "type": "horizontalLine",
-                    "fromX": 2200.0,
-                    "posY": 900.0,
-                    "count": 8
-                },
-                {
-                    "type": "verticalLine",
-                    "fromY": 200.0,
-                    "posX": 3000.0,
-                    "count": 12
-                },
-                {
-                    "type": "horizontalLine",
-                    "fromX": 4500.0,
-                    "posY": 80.0,
-                    "count": 10
-                },
-                {
-                    "type": "horizontalLine",
-                    "fromX": 4500.0,
-                    "posY": 920.0,
-                    "count": 10
-                },
-                {
-                    "type": "verticalLine",
-                    "fromY": 0.0,
-                    "posX": 6000.0,
-                    "count": 5
-                },
-                {
-                    "type": "verticalLine",
-                    "fromY": 680.0,
-                    "posX": 6000.0,
-                    "count": 5
-                },
-                {
-                    "type": "horizontalLine",
-                    "fromX": 6000.0,
-                    "posY": 680.0,
-                    "count": 20
-                },
-                {
-                    "type": "horizontalLine",
-                    "fromX": 6000.0,
-                    "posY": 400.0,
-                    "count": 20
-                }
-            ]
-        }
     ],
     "waves": [
         {
             "gameXTrigger": 200.0,
             "enemies": [
                 {
-                    "type": "enemy1",
+                    "type": "enemy2",
                     "distributionX": {
                         "min": 95,
                         "max": 100,
@@ -136,7 +23,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 3
+                    "count": 2
                 }
             ]
         },
@@ -155,7 +42,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 4
+                    "count": 2
                 }
             ]
         },
@@ -174,10 +61,10 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 3
+                    "count": 2
                 },
                 {
-                    "type": "enemy1",
+                    "type": "enemy2",
                     "distributionX": {
                         "min": 85,
                         "max": 90,
@@ -188,7 +75,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 3
+                    "count": 1
                 }
             ]
         },
@@ -207,7 +94,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 5
+                    "count": 2
                 }
             ]
         },
@@ -226,7 +113,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 4
+                    "count": 2
                 },
                 {
                     "type": "enemy1",
@@ -240,7 +127,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 4
+                    "count": 2
                 }
             ]
         },
@@ -259,7 +146,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 6
+                    "count": 2
                 }
             ]
         },
@@ -278,7 +165,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 4
+                    "count": 1
                 },
                 {
                     "type": "enemy1",
@@ -292,7 +179,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 3
+                    "count": 2
                 }
             ]
         },
@@ -311,7 +198,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 5
+                    "count": 2
                 }
             ]
         },
@@ -330,7 +217,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 5
+                    "count": 1
                 },
                 {
                     "type": "enemy1",
@@ -344,7 +231,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 4
+                    "count": 2
                 }
             ]
         },
@@ -363,7 +250,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 6
+                    "count": 1
                 }
             ]
         },
@@ -382,21 +269,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 4
-                },
-                {
-                    "type": "enemy1",
-                    "distributionX": {
-                        "min": 50,
-                        "max": 55,
-                        "type": "random"
-                    },
-                    "distributionY": {
-                        "min": 10,
-                        "max": 90,
-                        "type": "uniform"
-                    },
-                    "count": 4
+                    "count": 2
                 }
             ]
         },
@@ -415,7 +288,7 @@
                         "max": 90,
                         "type": "uniform"
                     },
-                    "count": 6
+                    "count": 2
                 }
             ]
         }
