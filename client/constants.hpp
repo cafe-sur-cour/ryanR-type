@@ -60,6 +60,7 @@ namespace constants {
     const std::string SETTINGS_SCREEN_RESOLUTION = "screenResolution";
     const std::string SETTINGS_TARGET_FPS = "targetFPS";
     const std::string SETTINGS_RENDER_QUALITY = "renderQuality";
+    const std::string SETTINGS_USERNAME = "username";
     const std::string KEYBIND_PRIMARY = "primary";
     const std::string KEYBIND_SECONDARY = "secondary";
     const std::string KEYBIND_TOGGLE_MODE = "toggle_mode";
@@ -70,6 +71,8 @@ namespace constants {
     const std::string ACCESSIBILITY_FILE_PATH = "saves/accessibility.json";
     const std::string SETTINGS_FILE_PATH = "saves/settings.json";
     const std::string UI_BACKGROUND_EARTH_PATH = "assets/ui/earth.jpg";
+    const std::string HOW_TO_PLAY_PATH = "assets/sprites/how_to_play.png";
+    const std::string LEADERBOARD_PATH = "assets/sprites/leaderboard.png";
 
     const std::string MAIN_FONT = "assets/fonts/abduction2002.ttf";
 
