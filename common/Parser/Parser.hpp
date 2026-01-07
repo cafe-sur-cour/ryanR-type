@@ -32,12 +32,6 @@ class Parser {
         void parseAllEntities(std::string directoryPath);
         void parseEntity(std::string entityPath);
 
-        void instanciateComponentDefinitions();
-        void instanciateComponentCreators();
-
-        template<typename T>
-        void registerComponent(const ComponentCreator& creator);
-
         const std::map<std::type_index, ComponentAdder>& getComponentAdders() const;
         ParsingType getParsingType() const;
         bool isClientParsing() const;
@@ -45,6 +39,7 @@ class Parser {
         bool shouldParseComponent(std::map<std::string, std::shared_ptr<FieldValue>> fields) const;
 
         void parseMapFromFile(const std::string& filePath);
+        void parseMapFromJson(const nlohmann::json& mapJson);
 
         std::shared_ptr<MapParser> getMapParser() const;
         void setRegistry(std::shared_ptr<ecs::Registry> registry);

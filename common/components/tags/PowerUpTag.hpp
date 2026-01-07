@@ -8,9 +8,9 @@
 #ifndef POWERUPTAG_HPP_
 #define POWERUPTAG_HPP_
 
-namespace ecs {
-
 #include "../base/AComponent.hpp"
+
+namespace ecs {
 
 class PowerUpTag : public AComponent {
     public:

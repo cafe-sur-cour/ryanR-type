@@ -53,6 +53,14 @@ void Registry::destroyEntity(Entity entityId) {
     }
 }
 
+void Registry::clearAllEntities() {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
+    for (auto& pair : _components) {
+        pair.second->clear();
+    }
+    _nextEntityId = 1;
+}
+
 void Registry::setOnEntityDestroyed(std::function<void(Entity)> callback) {
     std::lock_guard<std::recursive_mutex> lock(_mutex);
     _onEntityDestroyed = callback;

@@ -12,6 +12,8 @@
 #include <vector>
 #include <functional>
 #include <string>
+#include <memory>
+#include <algorithm>
 #include "../../../common/components/base/AComponent.hpp"
 #include "../../../common/types/FRect.hpp"
 #include "../../../common/ECS/entity/Entity.hpp"

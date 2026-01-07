@@ -6,7 +6,6 @@
 */
 
 #include "EntityParser.hpp"
-#include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <memory>
@@ -16,6 +15,8 @@
 #include <utility>
 #include "../../Error/ParserError.hpp"
 #include "../../Prefab/ParsedEntityPrefab.hpp"
+#include "../Utils/JsonLoader.hpp"
+#include "../Utils/JsonValidation.hpp"
 
 EntityParser::EntityParser(std::shared_ptr<const std::map<std::string,
     std::pair<std::type_index, std::vector<Field>>>> componentDefinitions,
@@ -30,18 +31,19 @@ EntityParser::~EntityParser() {
 }
 
 std::shared_ptr<IPrefab> EntityParser::parseEntity(const std::string &filePath) {
-    std::ifstream file(filePath);
-    if (!file.is_open()) {
-        throw err::ParserError("Cannot open file: " + filePath,
-            err::ParserError::FILE_NOT_FOUND);
-    }
+    nlohmann::json jsonData = parser::JsonLoader::loadFromFile(filePath);
 
-    nlohmann::json jsonData;
-    try {
-        file >> jsonData;
-    } catch (const nlohmann::detail::exception &e) {
-        throw err::ParserError(std::string("Invalid JSON format in file: " ) +
-        filePath + " (" + e.what() + ")", err::ParserError::INVALID_FORMAT);
+    auto validation = parser::JsonValidation::hasRequiredFields(
+        jsonData,
+        {"name", "components"},
+        "Entity file: " + filePath
+    );
+    if (!validation) {
+        std::string errorMsg = "Invalid entity file: " + filePath + "\\n";
+        for (const auto& error : validation.errors) {
+            errorMsg += "  - " + error + "\\n";
+        }
+        throw err::ParserError(errorMsg, err::ParserError::INVALID_FORMAT);
     }
 
     auto prefab = std::make_shared<ParsedEntityPrefab>(jsonData["name"], _componentAdders);

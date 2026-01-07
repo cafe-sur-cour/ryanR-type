@@ -97,7 +97,6 @@ namespace rserv {
             std::shared_ptr<pm::IPacketManager> createNewPacketManager();
             uint32_t getNextEntityId();
             void incrementSequenceNumber();
-
         private:
             void loadNetworkLibrary();
             void loadBufferLibrary();

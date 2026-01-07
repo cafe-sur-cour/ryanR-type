@@ -1,11 +1,45 @@
 set(ECS_LIB_NAME ECS)
 set(ERROR_LIB ERROR)
 
+# ============================================================================
+# Precompiled Headers Configuration
+# ============================================================================
+set(PCH_HEADERS
+    <vector>
+    <map>
+    <unordered_map>
+    <set>
+    <unordered_set>
+    <string>
+    <string_view>
+    <memory>
+    <functional>
+    <optional>
+    <variant>
+    <array>
+    <tuple>
+    <algorithm>
+    <utility>
+    <type_traits>
+    <chrono>
+    <cstdint>
+    <cstddef>
+    <cassert>
+    <iostream>
+    <fstream>
+    <sstream>
+    <stdexcept>
+)
+
+if(USE_PCH)
+    message(STATUS "Precompiled headers enabled")
+endif()
+
 add_subdirectory(DLLoader)
+add_subdirectory(types)
 add_subdirectory(ECS)
 add_subdirectory(components)
 add_subdirectory(systems)
-add_subdirectory(types)
 add_subdirectory(Error)
 add_subdirectory(Signal)
 add_subdirectory(Prefab)
@@ -28,3 +62,7 @@ target_sources(${DEBUG_LIB_NAME} PUBLIC
     debug.cpp
     debug.hpp
 )
+
+if(USE_PCH)
+    target_precompile_headers(${DEBUG_LIB_NAME} PRIVATE ${PCH_HEADERS})
+endif()

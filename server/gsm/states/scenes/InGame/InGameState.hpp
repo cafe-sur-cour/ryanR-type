@@ -20,6 +20,7 @@ public:
     ~InGameState() override = default;
 
     void enter() override;
+    void exit() override;
 
     void update(float deltaTime) override;
     private:
