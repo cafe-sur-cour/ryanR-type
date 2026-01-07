@@ -66,10 +66,10 @@ void FRect::setHeight(float rectHeight) {
 }
 
 bool FRect::contains(float x, float y) const {
-    float minX = std::min(left, left + width);
-    float maxX = std::max(left, left + width);
-    float minY = std::min(top, top + height);
-    float maxY = std::max(top, top + height);
+    float minX = (std::min)(left, left + width);
+    float maxX = (std::max)(left, left + width);
+    float minY = (std::min)(top, top + height);
+    float maxY = (std::max)(top, top + height);
 
     return (x >= minX) && (x < maxX) && (y >= minY) && (y < maxY);
 }
@@ -80,20 +80,20 @@ bool FRect::intersects(FRect const &other) const {
 }
 
 bool FRect::intersects(FRect const &other, FRect &intersection) const {
-    float r1MinX = std::min(left, left + width);
-    float r1MaxX = std::max(left, left + width);
-    float r1MinY = std::min(top, top + height);
-    float r1MaxY = std::max(top, top + height);
+    float r1MinX = (std::min)(left, left + width);
+    float r1MaxX = (std::max)(left, left + width);
+    float r1MinY = (std::min)(top, top + height);
+    float r1MaxY = (std::max)(top, top + height);
 
-    float r2MinX = std::min(other.left, other.left + other.width);
-    float r2MaxX = std::max(other.left, other.left + other.width);
-    float r2MinY = std::min(other.top, other.top + other.height);
-    float r2MaxY = std::max(other.top, other.top + other.height);
+    float r2MinX = (std::min)(other.left, other.left + other.width);
+    float r2MaxX = (std::max)(other.left, other.left + other.width);
+    float r2MinY = (std::min)(other.top, other.top + other.height);
+    float r2MaxY = (std::max)(other.top, other.top + other.height);
 
-    float interLeft = std::max(r1MinX, r2MinX);
-    float interTop = std::max(r1MinY, r2MinY);
-    float interRight = std::min(r1MaxX, r2MaxX);
-    float interBottom = std::min(r1MaxY, r2MaxY);
+    float interLeft = (std::max)(r1MinX, r2MinX);
+    float interTop = (std::max)(r1MinY, r2MinY);
+    float interRight = (std::min)(r1MaxX, r2MaxX);
+    float interBottom = (std::min)(r1MaxY, r2MaxY);
 
     if ((interLeft < interRight) && (interTop < interBottom)) {
         intersection = FRect(interLeft, interTop, interRight - interLeft,

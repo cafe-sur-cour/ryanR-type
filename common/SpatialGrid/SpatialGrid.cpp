@@ -103,8 +103,8 @@ size_t SpatialGrid::getCellIndex(float x, float y) const {
     int col = static_cast<int>(std::floor((localX + _padding) / _cellSize));
     int row = static_cast<int>(std::floor((localY + _padding) / _cellSize));
 
-    col = std::max(0, std::min(col, static_cast<int>(_numCols) - 1));
-    row = std::max(0, std::min(row, static_cast<int>(_numRows) - 1));
+    col = (std::max)(0, (std::min)(col, static_cast<int>(_numCols) - 1));
+    row = (std::max)(0, (std::min)(row, static_cast<int>(_numRows) - 1));
 
     return static_cast<size_t>(row) * _numCols + static_cast<size_t>(col);
 }
@@ -122,10 +122,10 @@ std::vector<size_t> SpatialGrid::getCellIndices(const math::FRect& bounds) const
     int minRow = static_cast<int>(std::floor((top + _padding) / _cellSize));
     int maxRow = static_cast<int>(std::floor((bottom + _padding) / _cellSize));
 
-    minCol = std::max(0, minCol);
-    maxCol = std::min(maxCol, static_cast<int>(_numCols) - 1);
-    minRow = std::max(0, minRow);
-    maxRow = std::min(maxRow, static_cast<int>(_numRows) - 1);
+    minCol = (std::max)(0, minCol);
+    maxCol = (std::min)(maxCol, static_cast<int>(_numCols) - 1);
+    minRow = (std::max)(0, minRow);
+    maxRow = (std::min)(maxRow, static_cast<int>(_numRows) - 1);
 
     for (int row = minRow; row <= maxRow; ++row) {
         for (int col = minCol; col <= maxCol; ++col) {

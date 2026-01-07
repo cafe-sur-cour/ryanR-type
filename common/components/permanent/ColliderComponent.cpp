@@ -91,10 +91,10 @@ math::FRect ColliderComponent::getHitbox(math::Vector2f entityPosition,
         double ry = rel_x * sin_theta + rel_y * cos_theta;
         float world_x = center.getX() + static_cast<float>(rx);
         float world_y = center.getY() + static_cast<float>(ry);
-        min_x = std::min(min_x, world_x);
-        max_x = std::max(max_x, world_x);
-        min_y = std::min(min_y, world_y);
-        max_y = std::max(max_y, world_y);
+        min_x = (std::min)(min_x, world_x);
+        max_x = (std::max)(max_x, world_x);
+        min_y = (std::min)(min_y, world_y);
+        max_y = (std::max)(max_y, world_y);
     }
     return math::FRect(min_x, min_y, max_x - min_x, max_y - min_y);
 }

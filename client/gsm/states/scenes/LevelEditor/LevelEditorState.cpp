@@ -994,8 +994,8 @@ void LevelEditorState::renderLevelPreview() {
     const float borderThickness = 2.0f;
 
     if (levelY >= canvasTop && levelY < canvasBottom) {
-        float topX = std::max(levelX, canvasLeft);
-        float topXEnd = std::min(levelX + levelWidth, canvasRight);
+        float topX = (std::max)(levelX, canvasLeft);
+        float topXEnd = (std::min)(levelX + levelWidth, canvasRight);
         float topWidth = topXEnd - topX;
         if (topWidth > 0) {
             window->drawFilledRectangle(
@@ -1009,8 +1009,8 @@ void LevelEditorState::renderLevelPreview() {
 
     float bottomY = levelY + levelHeight - borderThickness;
     if (bottomY >= canvasTop && bottomY < canvasBottom) {
-        float bottomX = std::max(levelX, canvasLeft);
-        float bottomXEnd = std::min(levelX + levelWidth, canvasRight);
+        float bottomX = (std::max)(levelX, canvasLeft);
+        float bottomXEnd = (std::min)(levelX + levelWidth, canvasRight);
         float bottomWidth = bottomXEnd - bottomX;
         if (bottomWidth > 0) {
             window->drawFilledRectangle(
@@ -1023,8 +1023,8 @@ void LevelEditorState::renderLevelPreview() {
     }
 
     if (levelX >= canvasLeft && levelX < canvasRight) {
-        float leftY = std::max(levelY, canvasTop);
-        float leftYEnd = std::min(levelY + levelHeight, canvasBottom);
+        float leftY = (std::max)(levelY, canvasTop);
+        float leftYEnd = (std::min)(levelY + levelHeight, canvasBottom);
         float leftHeight = leftYEnd - leftY;
         if (leftHeight > 0) {
             window->drawFilledRectangle(
@@ -1038,8 +1038,8 @@ void LevelEditorState::renderLevelPreview() {
 
     float rightX = levelX + levelWidth - borderThickness;
     if (rightX >= canvasLeft && rightX < canvasRight) {
-        float rightY = std::max(levelY, canvasTop);
-        float rightYEnd = std::min(levelY + levelHeight, canvasBottom);
+        float rightY = (std::max)(levelY, canvasTop);
+        float rightYEnd = (std::min)(levelY + levelHeight, canvasBottom);
         float rightHeight = rightYEnd - rightY;
         if (rightHeight > 0) {
             window->drawFilledRectangle(
