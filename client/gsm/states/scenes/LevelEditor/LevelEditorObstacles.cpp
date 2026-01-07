@@ -387,4 +387,110 @@ void LevelEditorState::handleObstacleClick(
     }
 }
 
+void LevelEditorState::startObstacleDrag(
+    math::Vector2f mousePos,
+    float viewportZoom,
+    float sidePanelWidth
+) {
+    if (!_selectedObstacle.has_value()) {
+        _isDraggingObstacle = false;
+        return;
+    }
+
+    const auto& sel = _selectedObstacle.value();
+    float obstacleWorldX = 0.0f;
+    float obstacleWorldY = 0.0f;
+
+    if (sel.type == "unique") {
+        obstacleWorldX = _obstaclesByName[sel.prefabName].uniques[
+            static_cast<size_t>(sel.index)].posX;
+        obstacleWorldY = _obstaclesByName[sel.prefabName].uniques[
+            static_cast<size_t>(sel.index)].posY;
+    } else if (sel.type == "horizontal") {
+        obstacleWorldX = _obstaclesByName[sel.prefabName].horizontalLines[
+            static_cast<size_t>(sel.index)].fromX;
+        obstacleWorldY = _obstaclesByName[sel.prefabName].horizontalLines[
+            static_cast<size_t>(sel.index)].posY;
+    } else if (sel.type == "vertical") {
+        obstacleWorldX = _obstaclesByName[sel.prefabName].verticalLines[
+            static_cast<size_t>(sel.index)].posX;
+        obstacleWorldY = _obstaclesByName[sel.prefabName].verticalLines[
+            static_cast<size_t>(sel.index)].fromY;
+    }
+
+    float obstacleScreenX =
+        sidePanelWidth + (obstacleWorldX - _viewportOffset.getX()) * viewportZoom;
+    float obstacleScreenY = (obstacleWorldY - _viewportOffset.getY()) * viewportZoom;
+
+    _dragObstacleOffset = math::Vector2f(
+        obstacleScreenX - mousePos.getX(),
+        obstacleScreenY - mousePos.getY()
+    );
+}
+
+void LevelEditorState::handleObstacleDrag(
+    math::Vector2f mousePos,
+    float viewportZoom,
+    float sidePanelWidth
+) {
+    if (!_selectedObstacle.has_value()) {
+        _isDraggingObstacle = false;
+        return;
+    }
+
+    const auto& sel = _selectedObstacle.value();
+
+    float newScreenX = mousePos.getX() + _dragObstacleOffset.getX();
+    float newScreenY = mousePos.getY() + _dragObstacleOffset.getY();
+
+    float newWorldX = _viewportOffset.getX() + (newScreenX - sidePanelWidth) / viewportZoom;
+    float newWorldY = _viewportOffset.getY() + newScreenY / viewportZoom;
+
+    if (sel.type == "unique") {
+        _obstaclesByName[sel.prefabName].uniques[
+            static_cast<size_t>(sel.index)].posX = newWorldX;
+        _obstaclesByName[sel.prefabName].uniques[
+            static_cast<size_t>(sel.index)].posY = newWorldY;
+    } else if (sel.type == "horizontal") {
+        _obstaclesByName[sel.prefabName].horizontalLines[
+            static_cast<size_t>(sel.index)].fromX = newWorldX;
+        _obstaclesByName[sel.prefabName].horizontalLines[
+            static_cast<size_t>(sel.index)].posY = newWorldY;
+    } else if (sel.type == "vertical") {
+        _obstaclesByName[sel.prefabName].verticalLines[
+            static_cast<size_t>(sel.index)].posX = newWorldX;
+        _obstaclesByName[sel.prefabName].verticalLines[
+            static_cast<size_t>(sel.index)].fromY = newWorldY;
+    }
+
+    float posX = 0.0f;
+    float posY = 0.0f;
+    if (sel.type == "unique") {
+        const auto& obstacle = _obstaclesByName[sel.prefabName].uniques[
+            static_cast<size_t>(sel.index)];
+        posX = obstacle.posX;
+        posY = obstacle.posY;
+    } else if (sel.type == "horizontal") {
+        const auto& obstacle = _obstaclesByName[sel.prefabName].horizontalLines[
+            static_cast<size_t>(sel.index)];
+        posX = obstacle.fromX;
+        posY = obstacle.posY;
+    } else if (sel.type == "vertical") {
+        const auto& obstacle = _obstaclesByName[sel.prefabName].verticalLines[
+            static_cast<size_t>(sel.index)];
+        posX = obstacle.posX;
+        posY = obstacle.fromY;
+    }
+
+    if (_obstaclePosXInput) {
+        _obstaclePosXInput->setText(std::to_string(static_cast<int>(posX)));
+    }
+    if (_obstaclePosYInput) {
+        _obstaclePosYInput->setText(std::to_string(static_cast<int>(posY)));
+    }
+
+    _hasUnsavedChanges = true;
+    updateSaveButtonText();
+}
+
 }  // namespace gsm

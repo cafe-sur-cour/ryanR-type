@@ -162,13 +162,41 @@ void LevelEditorState::update(float deltaTime) {
     bool leftMousePressed = _mouseHandler->isMouseButtonPressed(
         static_cast<int>(constants::MouseButton::LEFT));
 
-    if (isInCanvas && !leftMousePressed && _leftMousePressedLastFrame && !_isDragging) {
+    if (isInCanvas && !leftMousePressed && _leftMousePressedLastFrame &&
+        !_isDragging && !_isDraggingObstacle) {
         float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
         if (mapLength > 0.0f) {
             float levelX = sidePanelWidth - (_viewportOffset.getX() * _viewportZoom);
             float levelY = -(_viewportOffset.getY() * _viewportZoom);
             handleObstacleClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
         }
+    }
+
+    if (leftMousePressed && isInCanvas) {
+        if (_selectedObstacle.has_value()) {
+            float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
+            if (mapLength > 0.0f) {
+                if (_isDraggingObstacle) {
+                    handleObstacleDrag(mousePos, _viewportZoom, sidePanelWidth);
+                } else {
+                    float levelX = sidePanelWidth - (_viewportOffset.getX() * _viewportZoom);
+                    float levelY = -(_viewportOffset.getY() * _viewportZoom);
+                    auto clickedObstacle = getObstacleAtPosition(
+                        mousePos.getX(), mousePos.getY(), levelX, levelY);
+
+                    if (clickedObstacle.has_value() &&
+                        clickedObstacle.value().prefabName ==
+                            _selectedObstacle.value().prefabName &&
+                        clickedObstacle.value().type == _selectedObstacle.value().type &&
+                        clickedObstacle.value().index == _selectedObstacle.value().index) {
+                        _isDraggingObstacle = true;
+                        startObstacleDrag(mousePos, _viewportZoom, sidePanelWidth);
+                    }
+                }
+            }
+        }
+    } else {
+        _isDraggingObstacle = false;
     }
 
     _leftMousePressedLastFrame = leftMousePressed;
