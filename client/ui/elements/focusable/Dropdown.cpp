@@ -84,39 +84,7 @@ void Dropdown::renderClosed() {
     float arrowX = absPos.getX() + absSize.getX() - arrowSize - 10.0f;
     float arrowY = absPos.getY() + (absSize.getY() - arrowSize) / 2.0f;
 
-    if (_direction == DropdownDirection::Down) {
-        resourceManager->get<gfx::IWindow>()->drawFilledRectangle(
-            _textColor,
-            {static_cast<size_t>(arrowX), static_cast<size_t>(arrowY)},
-            {static_cast<size_t>(arrowSize), static_cast<size_t>(2)}
-        );
-        resourceManager->get<gfx::IWindow>()->drawFilledRectangle(
-            _textColor,
-            {static_cast<size_t>(arrowX + 2), static_cast<size_t>(arrowY + 2)},
-            {static_cast<size_t>(arrowSize - 4), static_cast<size_t>(2)}
-        );
-        resourceManager->get<gfx::IWindow>()->drawFilledRectangle(
-            _textColor,
-            {static_cast<size_t>(arrowX + 4), static_cast<size_t>(arrowY + 4)},
-            {static_cast<size_t>(arrowSize - 8), static_cast<size_t>(2)}
-        );
-    } else {
-        resourceManager->get<gfx::IWindow>()->drawFilledRectangle(
-            _textColor,
-            {static_cast<size_t>(arrowX), static_cast<size_t>(arrowY + arrowSize - 2)},
-            {static_cast<size_t>(arrowSize), static_cast<size_t>(2)}
-        );
-        resourceManager->get<gfx::IWindow>()->drawFilledRectangle(
-            _textColor,
-            {static_cast<size_t>(arrowX + 2), static_cast<size_t>(arrowY + arrowSize - 4)},
-            {static_cast<size_t>(arrowSize - 4), static_cast<size_t>(2)}
-        );
-        resourceManager->get<gfx::IWindow>()->drawFilledRectangle(
-            _textColor,
-            {static_cast<size_t>(arrowX + 4), static_cast<size_t>(arrowY + arrowSize - 6)},
-            {static_cast<size_t>(arrowSize - 8), static_cast<size_t>(2)}
-        );
-    }
+    drawArrow(arrowX, arrowY, arrowSize);
 }
 
 void Dropdown::renderOpen() {
@@ -405,6 +373,43 @@ gfx::color_t Dropdown::_getCurrentColor() const {
             return _focusedColor;
         default:
             return _normalColor;
+    }
+}
+
+void Dropdown::drawArrow(float arrowX, float arrowY, float arrowSize) {
+    auto resourceManager = _resourceManager.lock();
+    if (!resourceManager) {
+        return;
+    }
+
+    struct ArrowSegment {
+        float offsetX;
+        float offsetY;
+        float width;
+        float height;
+    };
+
+    std::vector<ArrowSegment> segments;
+
+    if (_direction == DropdownDirection::Down) {
+        segments = {{0, 0, arrowSize, 2}, {2, 2, arrowSize - 4, 2}, {4, 4, arrowSize - 8, 2}};
+    } else if (_direction == DropdownDirection::Up) {
+        segments = {{0, arrowSize - 2, arrowSize, 2}, {2, arrowSize - 4, arrowSize - 4, 2},
+            {4, arrowSize - 6, arrowSize - 8, 2}};
+    } else if (_direction == DropdownDirection::Right) {
+        segments = {{0, 0, 2, arrowSize}, {2, 2, 2, arrowSize - 4}, {4, 4, 2, arrowSize - 8}};
+    } else if (_direction == DropdownDirection::Left) {
+        segments = {{arrowSize - 2, 0, 2, arrowSize}, {arrowSize - 4, 2, 2, arrowSize - 4},
+            {arrowSize - 6, 4, 2, arrowSize - 8}};
+    }
+
+    for (const auto& segment : segments) {
+        resourceManager->get<gfx::IWindow>()->drawFilledRectangle(
+            _textColor,
+            {static_cast<size_t>(arrowX + segment.offsetX),
+                static_cast<size_t>(arrowY + segment.offsetY)},
+            {static_cast<size_t>(segment.width), static_cast<size_t>(segment.height)}
+        );
     }
 }
 
