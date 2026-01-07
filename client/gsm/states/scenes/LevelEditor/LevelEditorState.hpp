@@ -24,6 +24,7 @@
 #include "../../../../ui/elements/focusable/Dropdown.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
+#include "../../../../ui/elements/SpritePreview.hpp"
 #include "../../../../SettingsConfig.hpp"
 
 namespace gsm {
@@ -65,6 +66,8 @@ private:
     std::shared_ptr<ui::Dropdown> _editorModeDropdown;
     std::shared_ptr<ui::Text> _obstaclePrefabLabel;
     std::shared_ptr<ui::Dropdown> _obstaclePrefabDropdown;
+    std::shared_ptr<ui::Panel> _spritePreviewPanel;
+    std::shared_ptr<ui::SpritePreview> _spritePreview;
     std::shared_ptr<ui::Button> _saveButton;
     std::shared_ptr<ui::Button> _backButton;
     std::shared_ptr<ui::Text> _nameLabel;
