@@ -334,6 +334,19 @@ void LevelEditorState::handleObstacleClick(
             _editorModeDropdown->setSelectedIndex(0);
         }
 
+        if (_obstacleTypeDropdown) {
+            const auto& obstacleType = selection.value().type;
+            size_t typeIndex = 0;
+            if (obstacleType == "unique") {
+                typeIndex = 0;
+            } else if (obstacleType == "horizontal") {
+                typeIndex = 1;
+            } else if (obstacleType == "vertical") {
+                typeIndex = 2;
+            }
+            _obstacleTypeDropdown->setSelectedIndex(typeIndex);
+        }
+
         const auto& sel = selection.value();
         float posX = 0.0f;
         float posY = 0.0f;
@@ -371,7 +384,6 @@ void LevelEditorState::handleObstacleClick(
         }
     } else {
         _selectedObstacle = std::nullopt;
-        // Hide position fields
         if (_obstaclePosXInput) {
             _obstaclePosXInput->setVisible(false);
         }
