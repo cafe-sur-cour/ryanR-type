@@ -106,7 +106,7 @@ void TextInput::setMaxLength(size_t maxLength) {
     _maxLength = maxLength;
     if (_maxLength > 0 && _text.length() > _maxLength) {
         _text = _text.substr(0, _maxLength);
-        _cursorPosition = std::min(_cursorPosition, _text.length());
+        _cursorPosition = (std::min)(_cursorPosition, _text.length());
     }
 }
 

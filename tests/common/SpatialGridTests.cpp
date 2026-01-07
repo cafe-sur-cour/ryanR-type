@@ -135,7 +135,7 @@ TEST(SpatialGridTest, GetPotentialPairsSingleCell) {
     std::set<std::pair<size_t, size_t>> expectedPairs = {{1,2}, {1,3}, {2,3}};
     std::set<std::pair<size_t, size_t>> actualPairs;
     for (const auto& p : pairs) {
-        actualPairs.insert({std::min(p.first, p.second), std::max(p.first, p.second)});
+        actualPairs.insert({(std::min)(p.first, p.second), (std::max)(p.first, p.second)});
     }
     EXPECT_EQ(actualPairs, expectedPairs);
 }
