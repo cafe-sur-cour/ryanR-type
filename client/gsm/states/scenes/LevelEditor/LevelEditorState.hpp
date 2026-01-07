@@ -108,6 +108,8 @@ private:
     std::shared_ptr<ui::Dropdown> _obstaclePrefabDropdown;
     std::shared_ptr<ui::Panel> _spritePreviewPanel;
     std::shared_ptr<ui::SpritePreview> _spritePreview;
+    std::shared_ptr<ui::Text> _spriteWidthLabel;
+    std::shared_ptr<ui::Text> _spriteHeightLabel;
     std::shared_ptr<ui::Button> _saveButton;
     std::shared_ptr<ui::Button> _backButton;
     std::shared_ptr<ui::Text> _nameLabel;
