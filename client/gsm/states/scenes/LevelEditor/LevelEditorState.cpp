@@ -12,6 +12,9 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <sstream>
+#include <algorithm>
+#include <utility>
 #include <nlohmann/json.hpp>
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
@@ -64,6 +67,7 @@ LevelEditorState::LevelEditorState(
     _uiManager->addElement(_background);
 
     createUI();
+    initializeViewport();
 }
 
 void LevelEditorState::enter() {
@@ -140,6 +144,37 @@ void LevelEditorState::update(float deltaTime) {
     }
 
     _uiManager->update(deltaTime);
+
+    handleZoom(deltaTime);
+    handleCanvasDrag(deltaTime);
+
+    const float sidePanelWidth = 300.0f;
+    const float bottomPanelHeight = 200.0f;
+    const float canvasHeight = constants::MAX_HEIGHT - bottomPanelHeight;
+
+    bool isInCanvas = mousePos.getX() >= sidePanelWidth &&
+                      mousePos.getX() <= constants::MAX_WIDTH &&
+                      mousePos.getY() >= 0.0f &&
+                      mousePos.getY() <= canvasHeight;
+
+    if (isInCanvas) {
+        float cursorMapX =
+            _viewportOffset.getX() + (mousePos.getX() - sidePanelWidth) / _viewportZoom;
+        float cursorMapY =
+            _viewportOffset.getY() + mousePos.getY() / _viewportZoom;
+
+        std::stringstream ssX;
+        ssX << "Level X:  " << static_cast<int>(cursorMapX);
+        _cursorPosLabel->setText(ssX.str());
+
+        std::stringstream ssY;
+        ssY << "Level Y:  " << static_cast<int>(cursorMapY);
+        _cursorPosYLabel->setText(ssY.str());
+    } else {
+        _cursorPosLabel->setText("Level X:  N/A");
+        _cursorPosYLabel->setText("Level Y:  N/A");
+    }
+
     renderUI();
 
     if (_hasPendingChange) {
@@ -154,6 +189,7 @@ void LevelEditorState::update(float deltaTime) {
 
 void LevelEditorState::renderUI() {
     _uiManager->render();
+    renderLevelPreview();
 }
 
 std::vector<std::string> LevelEditorState::loadAvailableMusics() {
@@ -517,6 +553,20 @@ void LevelEditorState::createUI() {
     const float buttonWidth = (sidePanelWidth - 35.0f) / 2.0f;
     const float buttonY = constants::MAX_HEIGHT - 60.0f;
 
+    _cursorPosLabel = std::make_shared<ui::Text>(_resourceManager);
+    _cursorPosLabel->setPosition(math::Vector2f(10.0f, buttonY - 110.0f));
+    _cursorPosLabel->setText("Level X:  0");
+    _cursorPosLabel->setFontSize(28);
+    _cursorPosLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _sidePanel->addChild(_cursorPosLabel);
+
+    _cursorPosYLabel = std::make_shared<ui::Text>(_resourceManager);
+    _cursorPosYLabel->setPosition(math::Vector2f(10.0f, buttonY - 70.0f));
+    _cursorPosYLabel->setText("Level Y:  0");
+    _cursorPosYLabel->setFontSize(28);
+    _cursorPosYLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _sidePanel->addChild(_cursorPosYLabel);
+
     _undoButton = std::make_shared<ui::Button>(_resourceManager);
     _undoButton->setPosition(math::Vector2f(10.0f, buttonY));
     _undoButton->setSize(math::Vector2f(buttonWidth, 40.0f));
@@ -639,6 +689,8 @@ void LevelEditorState::exit() {
     _backgroundDropdown.reset();
     _undoButton.reset();
     _redoButton.reset();
+    _cursorPosLabel.reset();
+    _cursorPosYLabel.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
@@ -720,6 +772,156 @@ void LevelEditorState::updateHistoryButtons() {
     }
     if (_redoButton) {
         _redoButton->setState(canRedo ? ui::UIState::Normal : ui::UIState::Disabled);
+    }
+}
+
+void LevelEditorState::initializeViewport() {
+    const float bottomPanelHeight = 200.0f;
+    const float canvasHeight = constants::MAX_HEIGHT - bottomPanelHeight;
+    _viewportZoom = canvasHeight / constants::MAX_HEIGHT;
+    _viewportOffset = math::Vector2f(0.0f, 0.0f);
+}
+
+void LevelEditorState::handleZoom([[maybe_unused]] float deltaTime) {
+    auto event = _resourceManager->get<gfx::IEvent>();
+
+    bool zoomIn = event->isKeyPressed(gfx::EventType::NUMPAD_ADD);
+    bool zoomOut = event->isKeyPressed(gfx::EventType::NUMPAD_SUBTRACT);
+
+    if (zoomIn || zoomOut) {
+        float zoomFactor = zoomIn ? 1.1f : 0.9f;
+        float newZoom = _viewportZoom * zoomFactor;
+
+        if (newZoom > _maxZoom) {
+            newZoom = _maxZoom;
+        }
+
+        if (newZoom < _minZoom) {
+            newZoom = _minZoom;
+        }
+
+        _viewportZoom = newZoom;
+    }
+}
+
+void LevelEditorState::handleCanvasDrag([[maybe_unused]] float deltaTime) {
+    const float sidePanelWidth = 300.0f;
+    const float bottomPanelHeight = 200.0f;
+    const float canvasHeight = constants::MAX_HEIGHT - bottomPanelHeight;
+
+    math::Vector2f mousePos = _mouseHandler->getWorldMousePosition();
+    bool rightMousePressed = _mouseHandler->isMouseButtonPressed(
+        static_cast<int>(constants::MouseButton::RIGHT));
+
+    bool isInCanvas = mousePos.getX() >= sidePanelWidth &&
+                      mousePos.getX() <= constants::MAX_WIDTH &&
+                      mousePos.getY() >= 0.0f &&
+                      mousePos.getY() <= canvasHeight;
+
+    if (rightMousePressed && isInCanvas) {
+        if (!_isDragging) {
+            _isDragging = true;
+            _dragStartPos = mousePos;
+            _lastMousePos = mousePos;
+        } else {
+            math::Vector2f mouseDelta = mousePos - _lastMousePos;
+
+            _viewportOffset.setX(_viewportOffset.getX() - mouseDelta.getX() / _viewportZoom);
+            _viewportOffset.setY(_viewportOffset.getY() - mouseDelta.getY() / _viewportZoom);
+            _lastMousePos = mousePos;
+        }
+    } else {
+        _isDragging = false;
+    }
+}
+
+void LevelEditorState::renderLevelPreview() {
+    const float sidePanelWidth = 300.0f;
+    const float bottomPanelHeight = 200.0f;
+    const float canvasHeight = constants::MAX_HEIGHT - bottomPanelHeight;
+
+    float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
+
+    if (mapLength <= 0.0f) {
+        return;
+    }
+
+    float levelWidth = mapLength * _viewportZoom;
+    float levelHeight = constants::MAX_HEIGHT * _viewportZoom;
+    float levelX = sidePanelWidth - (_viewportOffset.getX() * _viewportZoom);
+    float levelY = -(_viewportOffset.getY() * _viewportZoom);
+
+    const float canvasLeft = sidePanelWidth;
+    const float canvasRight = constants::MAX_WIDTH;
+    const float canvasTop = 0.0f;
+    const float canvasBottom = canvasHeight;
+
+    if (levelX + levelWidth < canvasLeft || levelX > canvasRight ||
+        levelY + levelHeight < canvasTop || levelY > canvasBottom) {
+        return;
+    }
+
+    auto window = _resourceManager->get<gfx::IWindow>();
+    gfx::color_t red = colors::RED;
+
+    const float borderThickness = 2.0f;
+
+    if (levelY >= canvasTop && levelY < canvasBottom) {
+        float topX = std::max(levelX, canvasLeft);
+        float topXEnd = std::min(levelX + levelWidth, canvasRight);
+        float topWidth = topXEnd - topX;
+        if (topWidth > 0) {
+            window->drawFilledRectangle(
+                red,
+                std::make_pair(static_cast<size_t>(topX), static_cast<size_t>(levelY)),
+                std::make_pair(static_cast<size_t>(topWidth),
+                    static_cast<size_t>(borderThickness))
+            );
+        }
+    }
+
+    float bottomY = levelY + levelHeight - borderThickness;
+    if (bottomY >= canvasTop && bottomY < canvasBottom) {
+        float bottomX = std::max(levelX, canvasLeft);
+        float bottomXEnd = std::min(levelX + levelWidth, canvasRight);
+        float bottomWidth = bottomXEnd - bottomX;
+        if (bottomWidth > 0) {
+            window->drawFilledRectangle(
+                red,
+                std::make_pair(static_cast<size_t>(bottomX), static_cast<size_t>(bottomY)),
+                std::make_pair(static_cast<size_t>(bottomWidth),
+                    static_cast<size_t>(borderThickness))
+            );
+        }
+    }
+
+    if (levelX >= canvasLeft && levelX < canvasRight) {
+        float leftY = std::max(levelY, canvasTop);
+        float leftYEnd = std::min(levelY + levelHeight, canvasBottom);
+        float leftHeight = leftYEnd - leftY;
+        if (leftHeight > 0) {
+            window->drawFilledRectangle(
+                red,
+                std::make_pair(static_cast<size_t>(levelX), static_cast<size_t>(leftY)),
+                std::make_pair(static_cast<size_t>(borderThickness),
+                    static_cast<size_t>(leftHeight))
+            );
+        }
+    }
+
+    float rightX = levelX + levelWidth - borderThickness;
+    if (rightX >= canvasLeft && rightX < canvasRight) {
+        float rightY = std::max(levelY, canvasTop);
+        float rightYEnd = std::min(levelY + levelHeight, canvasBottom);
+        float rightHeight = rightYEnd - rightY;
+        if (rightHeight > 0) {
+            window->drawFilledRectangle(
+                red,
+                std::make_pair(static_cast<size_t>(rightX), static_cast<size_t>(rightY)),
+                std::make_pair(static_cast<size_t>(borderThickness),
+                    static_cast<size_t>(rightHeight))
+            );
+        }
     }
 }
 
