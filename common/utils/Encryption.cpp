@@ -57,7 +57,7 @@ std::string Encryption::getEncryptionKey() {
         }
         envFile.close();
     }
-    return nullptr;
+    return "";
 }
 
 std::string Encryption::encrypt(const std::string& data) {
