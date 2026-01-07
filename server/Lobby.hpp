@@ -80,6 +80,9 @@ class Lobby {
             std::vector<uint64_t> deathPacket(size_t entity);
             bool serverStatusPacket();
 
+            bool levelCompletePacket();
+            bool nextLevelPacket();
+
             bool isGameStarted() const;
             bool allClientsReady() const;
 
@@ -90,6 +93,7 @@ class Lobby {
             void incrementSequenceNumber();
             void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
             void clearEntityDeltaCache(uint8_t clientId, uint32_t entityId);
+            void clearDeltaTrackerCaches();
             void createPlayerEntities();
             void processLobbyEvents();
 

@@ -40,6 +40,7 @@ private:
     std::shared_ptr<ui::Button> _playButton;
     std::shared_ptr<ui::Button> _settingsButton;
     std::shared_ptr<ui::Button> _replayButton;
+    std::shared_ptr<ui::Button> _levelEditorButton;
     std::shared_ptr<ui::Button> _quitButton;
     std::shared_ptr<ui::Button> _connectButton;
     std::shared_ptr<ui::Button> _requestCodeButton;

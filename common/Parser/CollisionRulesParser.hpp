@@ -13,6 +13,7 @@ class CollisionRulesParser {
     public:
         static CollisionRulesData parseFromFile(const std::string& filePath);
         static CollisionRulesData parseFromJsonString(const std::string& jsonString);
+        static CollisionRulesData parseFromJson(const nlohmann::json& json);
 
     private:
         static void parseRulesForType(

@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** Default packet handlers registration (common)
+** Default packet handlers
 */
 
 #include "DefaultPacketHandlers.hpp"
@@ -21,10 +21,6 @@ using pm::BigEndianSerialization;
 
 
 namespace common::packet {
-
-static SerializerPtr makeSerializer() {
-    return std::make_shared<BigEndianSerialization>();
-}
 
 static void registerMultiUCharPacket(
     std::shared_ptr<pm::IPacketManager> packet,
@@ -342,6 +338,9 @@ bool registerDefaultPacketHandlers(
         LENGTH_LOBBY_CODE_PACKET);
     registerSingleUCharPacket(packet, ser, LOBBY_CONNECT_VALUE,
         LENGTH_CONNECT_TO_LOBBY_PACKET);
+
+    registerOptionalULongPacket(packet, ser, LEVEL_COMPLETE_PACKET);
+    registerOptionalULongPacket(packet, ser, NEXT_LEVEL_PACKET);
 
     packet->registerLength(LOBBY_CONNECT_VALUE, LENGTH_CONNECT_TO_LOBBY_PACKET);
     packet->registerLength(REQUEST_LOBBY_PACKET, LENGTH_REQUEST_LOBBY_PACKET);

@@ -18,6 +18,8 @@
 #ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wfloat-equal"
 #endif
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -63,6 +65,12 @@ class ScriptingComponent : public AComponent {
         void removeFunction(const std::string& name) { _functions.erase(name); };
         bool isInitialized() const { return _initialized; };
         void setInitialized(bool value) { _initialized = value; };
+        
+        void clearLuaReferences() {
+            _functions.clear();
+            _env = sol::nil;
+            _initialized = false;
+        }
     protected:
     private:
         std::string _scriptName;

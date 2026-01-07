@@ -29,6 +29,8 @@ class HealthComponent : public AComponent {
         ecs::Entity getLastDamageSource() const { return _lastDamageSource; }
         void setLastDamageSource(ecs::Entity source) { _lastDamageSource = source; }
 
+        void increaseHealth(float quantity) { _health += quantity; };
+
     private:
         float _health;
         float _baseHealth;

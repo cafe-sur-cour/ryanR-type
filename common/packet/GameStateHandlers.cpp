@@ -14,14 +14,7 @@
 #include "../../libs/Packet/serializer/BigEndianSerialization.hpp"
 #include "../../common/translationToECS.hpp"
 
-using SerializerPtr = std::shared_ptr<pm::ISerializer>;
-using pm::BigEndianSerialization;
-
 namespace common::packet {
-
-static SerializerPtr makeSerializer() {
-    return std::make_shared<BigEndianSerialization>();
-}
 
 static void registerGameStatePackers(
     std::shared_ptr<pm::IPacketManager> packet,

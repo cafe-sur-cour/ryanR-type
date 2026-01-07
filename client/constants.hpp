@@ -13,6 +13,7 @@
 namespace constants {
     /* Timeout */
     constexpr int NETWORK_TIMEOUT = 5;
+    constexpr int CONNECTION_ATTEMPT_TIMEOUT = 5;
 
     /* Window */
     constexpr int WINDOW_WIDTH = 1920;
@@ -70,8 +71,12 @@ namespace constants {
     const std::string SETTINGS_FILE_PATH = "saves/settings.json";
     const std::string UI_BACKGROUND_EARTH_PATH = "assets/ui/earth.jpg";
 
+    const std::string MAIN_FONT = "assets/fonts/abduction2002.ttf";
+
     const std::string WIN_TEXT = "YOU WIN!";
     const std::string LOSE_TEXT = "YOU LOSE!";
+    const std::string LEVEL_COMPLETE_TITLE_TEXT = "LEVEL COMPLETE!";
+    const std::string LEVEL_COMPLETE_SUB_TITLE_TEXT = "Going to the next level...";
 
     /* Home page input place holders */
     const std::string IP_PLACEHOLDER = "Enter an IP address";
@@ -136,6 +141,13 @@ namespace constants {
     const std::string REPLAY_TYPE_RECTANGLE = "rectangle";
     const std::string REPLAY_TYPE_HITBOX = "hitbox";
     const std::string REPLAY_TYPE_SOUND = "sound";
+
+    /* Level Constants */
+    const std::string LEVEL_DIRECTORY = "configs/map";
+    const std::string LEVEL_FILE_PREFIX = "level";
+    const std::string LEVEL_FILE_EXTENSION = ".json";
+    const std::string LEVEL_INDEX_FIELD = "index";
+    const std::string LEVEL_NAME_FIELD = "name";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
