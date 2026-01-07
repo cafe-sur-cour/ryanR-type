@@ -20,4 +20,6 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     GameZoneColliderTag.cpp
     ClientEffectTag.hpp
     ClientEffectTag.cpp
+    PowerUpTag.hpp
+    PowerUpTag.cpp
 )
