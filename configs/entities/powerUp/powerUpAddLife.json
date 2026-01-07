@@ -1,0 +1,58 @@
+{
+    "name": "powerUpAddLife",
+    "components": {
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 300.0, "y": 300.0 },
+            "scale": { "x": 1.5, "y": 1.5 },
+            "rotation": 0.0
+        },
+        "HealthComponent": { "target": "both", "health": 20.0 },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 200.0 },
+
+
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/enemy_follow_border.lua"
+        },
+
+
+
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/power-up/powerup4.png",
+                    "frameWidth": 100.0,
+                    "frameHeight": 100.0,
+                    "frameCount": 60,
+                    "startWidth": 29.0,
+                    "startHeight": 29.0,
+                    "speed": 0.05,
+                    "loop": true
+                }
+            },
+            "initialState": "idle"
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 48, "y": 38.0 },
+            "type": "Trigger"
+        },
+        "PowerUpTag": { "target": "both" },
+
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerTag"],
+                    "toEntity": ["AddLife"],
+                    "toSelf": ["TakeDeath"]
+                }
+            ]
+        }
+
+    }
+}
