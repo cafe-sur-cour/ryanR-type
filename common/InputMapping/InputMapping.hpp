@@ -40,6 +40,7 @@ struct InputMapping {
                 case RemappableAction::MOVE_UP: inputAction = InputAction::MOVE_Y; break;
                 case RemappableAction::MOVE_DOWN: inputAction = InputAction::MOVE_Y; break;
                 case RemappableAction::SHOOT: inputAction = InputAction::SHOOT; break;
+                case RemappableAction::FORCE: inputAction = InputAction::FORCE; break;
             }
 
             float value = (action == RemappableAction::MOVE_LEFT ||
