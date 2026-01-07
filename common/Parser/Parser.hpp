@@ -32,12 +32,6 @@ class Parser {
         void parseAllEntities(std::string directoryPath);
         void parseEntity(std::string entityPath);
 
-        void instanciateComponentDefinitions();
-        void instanciateComponentCreators();
-
-        template<typename T>
-        void registerComponent(const ComponentCreator& creator);
-
         const std::map<std::type_index, ComponentAdder>& getComponentAdders() const;
         ParsingType getParsingType() const;
         bool isClientParsing() const;
