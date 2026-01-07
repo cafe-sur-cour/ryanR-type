@@ -11,4 +11,5 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     GameZoneColliderTag.hpp
     ClientEffectTag.hpp
     PowerUpTag.hpp
+    ForceTag.hpp
 )

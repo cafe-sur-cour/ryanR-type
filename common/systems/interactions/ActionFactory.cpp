@@ -15,6 +15,7 @@
 #include "../../components/permanent/DamageComponent.hpp"
 #include "../../constants.hpp"
 #include "../../components/permanent/HealthComponent.hpp"
+#include "../../components/permanent/ScriptingComponent.hpp"
 
 const ActionFactory& ActionFactory::getInstance() {
     static ActionFactory instance;
@@ -104,6 +105,20 @@ void ActionFactory::initializeConditions() {
             if (lifeCompSelf && lifeCompOther) {
                 lifeCompOther->increaseHealth(lifeCompSelf->getHealth());
                 lifeCompSelf->setHealth(0);
+            }
+        });
+
+    registerAction(constants::INTERACTION_CALL_SCRIPTING_ACTION,
+        [](std::shared_ptr<ecs::Registry> reg,
+            ecs::Entity selfEntity,
+            ecs::Entity otherEntity
+        ) {
+            if (reg->hasComponent<ecs::ScriptingComponent>(selfEntity)) {
+                auto scriptingComp = reg->getComponent<ecs::ScriptingComponent>(selfEntity);
+                if (scriptingComp) {
+                    scriptingComp->getFunction
+                        (constants::ONINTERACT_FUNCTION)(selfEntity, otherEntity);
+                }
             }
         });
 }

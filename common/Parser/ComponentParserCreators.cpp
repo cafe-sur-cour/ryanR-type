@@ -48,6 +48,7 @@
 #include "../components/permanent/ScriptingComponent.hpp"
 #include "../components/permanent/EntityPartsComponent.hpp"
 #include "../components/tags/PowerUpTag.hpp"
+#include "../components/tags/ForceTag.hpp"
 
 void Parser::instanciateComponentDefinitions() {
     std::map<std::string, std::pair<std::type_index,
@@ -232,6 +233,11 @@ void Parser::instanciateComponentDefinitions() {
         {constants::POWERUP_TAG, {
             std::type_index(typeid(ecs::PowerUpTag)), {
             {constants::TARGET_FIELD, FieldType::STRING}
+        }}},
+        {constants::FORCE_TAG, {
+            std::type_index(typeid(ecs::ForceTag)), {
+            {constants::TARGET_FIELD, FieldType::STRING},
+            {constants::FORCE_TYPE_FIELD, FieldType::STRING}
         }}}
     };
     _componentDefinitions = std::make_shared<std::map<std::string,
@@ -633,6 +639,15 @@ void Parser::instanciateComponentCreators() {
     registerComponent<ecs::PowerUpTag>([]([[maybe_unused]] const std::map<std::string,
         std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
         return std::make_shared<ecs::PowerUpTag>();
+    });
+
+    registerComponent<ecs::ForceTag>([](const std::map<std::string,
+        std::shared_ptr<FieldValue>>& fields) -> std::shared_ptr<ecs::IComponent> {
+        std::string forceType = "";
+        if (fields.find(constants::FORCE_TYPE_FIELD) != fields.end()) {
+            forceType = std::get<std::string>(*fields.at(constants::FORCE_TYPE_FIELD));
+        }
+        return std::make_shared<ecs::ForceTag>(forceType);
     });
 }
 
