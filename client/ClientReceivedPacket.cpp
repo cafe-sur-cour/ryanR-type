@@ -105,6 +105,62 @@ void ClientNetwork::handleGameState() {
         debug::debugLevel::INFO);
 }
 
+void ClientNetwork::handleBatchedGameState() {
+    auto batchedPayloads = _packet->getBatchedPayloads();
+    if (batchedPayloads.empty()) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Batched game state packet is empty",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    if (!this->_resourceManager->has<ecs::Registry>()) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Registry not found in ResourceManager",
+            debug::debugType::NETWORK,
+            debug::debugLevel::ERROR);
+        return;
+    }
+
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+
+    for (const auto& payload : batchedPayloads) {
+        if (payload.empty()) continue;
+
+        size_t index = 0;
+        size_t serverEntityId = static_cast<size_t>(payload[index++]);
+        auto it = _serverToLocalEntityMap.find(serverEntityId);
+        if (it == _serverToLocalEntityMap.end()) {
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Entity with server ID " +
+                std::to_string(serverEntityId) + " not found in map",
+                debug::debugType::NETWORK,
+                debug::debugLevel::WARNING);
+            continue;
+        }
+        ecs::Entity entityId = it->second;
+        while (index < payload.size()) {
+            uint64_t componentType = payload[index++];
+            auto parserIt = _componentParsers.find(componentType);
+            if (parserIt != _componentParsers.end()) {
+                index = (this->*(parserIt->second))(payload, index, entityId);
+            } else {
+                debug::Debug::printDebug(this->_isDebug,
+                    "[CLIENT] Unknown component type: " + std::to_string(componentType),
+                    debug::debugType::NETWORK,
+                    debug::debugLevel::WARNING);
+            }
+        }
+    }
+
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Applied batched game state updates for " +
+        std::to_string(batchedPayloads.size()) + " entities",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+}
+
 void ClientNetwork::handleEndGame() {
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Received end game packet",
