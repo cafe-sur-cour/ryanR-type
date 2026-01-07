@@ -10,6 +10,7 @@
 
 #include <filesystem>  // NOLINT(build/c++17)
 #include <optional>
+#include <map>
 #include <nlohmann/json.hpp>
 #include "../../base/AGameState.hpp"
 #include "../../../../constants.hpp"
@@ -28,6 +29,29 @@
 #include "../../../../SettingsConfig.hpp"
 
 namespace gsm {
+
+struct HorizontalLineObstacle {
+    float fromX;
+    float posY;
+    int count;
+};
+
+struct VerticalLineObstacle {
+    float fromY;
+    float posX;
+    int count;
+};
+
+struct UniqueObstacle {
+    float posX;
+    float posY;
+};
+
+struct ObstacleGroup {
+    std::vector<HorizontalLineObstacle> horizontalLines;
+    std::vector<VerticalLineObstacle> verticalLines;
+    std::vector<UniqueObstacle> uniques;
+};
 
 class LevelEditorState : public AGameState {
 public:
@@ -54,6 +78,7 @@ private:
     void handleZoom(float deltaTime, gfx::EventType eventResult);
     void handleCanvasDrag(float deltaTime);
     void renderLevelPreview();
+    void parseObstacles();
 
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
@@ -107,6 +132,8 @@ private:
     bool _isDragging = false;
     math::Vector2f _lastMousePos;
     math::Vector2f _dragStartPos;
+
+    std::map<std::string, ObstacleGroup> _obstaclesByName;
 
 };
 
