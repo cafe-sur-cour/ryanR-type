@@ -104,6 +104,8 @@
             "target": "both",
             "score": 0
         },
-        "HealthBarComponent": { "target": "client" }
+        "HealthBarComponent": { "target": "client" },
+        "EntityPartsComponent": { "target": "both" }
+
     }
 }
