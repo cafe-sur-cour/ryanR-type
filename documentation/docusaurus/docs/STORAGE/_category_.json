@@ -1,4 +1,8 @@
 {
-  "label": "STORAGE",
-  "position": 1
+  "label": "Storage",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "Storage and data management"
+  }
 }
