@@ -43,6 +43,10 @@ private:
     bool validateFields();
     std::vector<std::string> loadAvailableMusics();
     std::vector<std::string> loadAvailableBackgrounds();
+    void saveToHistory();
+    void loadFromHistory(size_t index);
+    void updateHistoryButtons();
+
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::unique_ptr<ui::UIManager> _uiManager;
@@ -63,13 +67,25 @@ private:
     std::shared_ptr<ui::Dropdown> _musicDropdown;
     std::shared_ptr<ui::Text> _backgroundLabel;
     std::shared_ptr<ui::Dropdown> _backgroundDropdown;
+    std::shared_ptr<ui::Button> _undoButton;
+    std::shared_ptr<ui::Button> _redoButton;
 
     bool _hasUnsavedChanges = false;
 
     std::optional<std::filesystem::path> _levelPath;
     nlohmann::json _levelData;
+
+    std::vector<nlohmann::json> _history;
+    size_t _currentHistoryIndex = 0;
+    float _lastChangeTime = constants::CHANGE_DEBOUNCE_TIME + 1.0f;
+    bool _hasPendingChange = false;
+    bool _isLoadingFromHistory = false;
+    bool _undoPressedLastFrame = false;
+    bool _redoPressedLastFrame = false;
+
 };
 
 }  // namespace gsm
+
 
 #endif /* !LEVELEDITORSTATE_HPP_ */
