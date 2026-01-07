@@ -53,6 +53,16 @@ struct ObstacleGroup {
     std::vector<UniqueObstacle> uniques;
 };
 
+struct LevelPreviewSprite {
+    std::string texturePath;
+    float width;
+    float height;
+    float posX;
+    float posY;
+    float scale;
+    float rotation;
+};
+
 class LevelEditorState : public AGameState {
 public:
     LevelEditorState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager, std::optional<std::filesystem::path> levelPath = std::nullopt);
@@ -78,7 +88,9 @@ private:
     void handleZoom(float deltaTime, gfx::EventType eventResult);
     void handleCanvasDrag(float deltaTime);
     void renderLevelPreview();
+    void renderSpriteInLevelPreview(const LevelPreviewSprite& spriteData, float screenX, float screenY);
     void parseObstacles();
+    LevelPreviewSprite extractSpriteDataFromPrefab(const std::string& prefabPath);
 
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;

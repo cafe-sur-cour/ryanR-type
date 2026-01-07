@@ -1087,6 +1087,34 @@ void LevelEditorState::renderLevelPreview() {
             );
         }
     }
+
+    LevelPreviewSprite spriteData =
+        extractSpriteDataFromPrefab("configs/entities/obstacles/obstacle1.json");
+    if (!spriteData.texturePath.empty()) {
+        float screenX = levelX + (0.0f * _viewportZoom);
+        float screenY = levelY + (0.0f * _viewportZoom);
+        renderSpriteInLevelPreview(spriteData, screenX, screenY);
+    }
+}
+
+void LevelEditorState::renderSpriteInLevelPreview(
+    const LevelPreviewSprite& spriteData,
+    float screenX,
+    float screenY
+) {
+    auto window = _resourceManager->get<gfx::IWindow>();
+
+    float finalScaleX = _viewportZoom * spriteData.scale;
+    float finalScaleY = _viewportZoom * spriteData.scale;
+
+    window->drawSprite(
+        spriteData.texturePath,
+        screenX,
+        screenY,
+        finalScaleX,
+        finalScaleY,
+        spriteData.rotation
+    );
 }
 
 void LevelEditorState::parseObstacles() {
@@ -1164,6 +1192,82 @@ void LevelEditorState::parseObstacles() {
             }
         }
     }
+}
+
+LevelPreviewSprite LevelEditorState::extractSpriteDataFromPrefab(
+    const std::string& prefabPath
+) {
+    LevelPreviewSprite result;
+    result.texturePath = "";
+    result.width = 0.0f;
+    result.height = 0.0f;
+    result.scale = 1.0f;
+    result.rotation = 0.0f;
+
+    try {
+        std::ifstream file(prefabPath);
+        if (!file.is_open()) {
+            return result;
+        }
+
+        nlohmann::json prefabData;
+        file >> prefabData;
+        file.close();
+
+        if (!prefabData.contains(constants::PREFAB_COMPONENTS_FIELD)) {
+            return result;
+        }
+
+        const auto& components = prefabData[constants::PREFAB_COMPONENTS_FIELD];
+
+        if (components.contains(constants::PREFAB_ANIMATION_COMPONENT)) {
+            const auto& animComponent = components[constants::PREFAB_ANIMATION_COMPONENT];
+            if (animComponent.contains(constants::PREFAB_TEXTURE_PATH_FIELD)) {
+                result.texturePath =
+                    animComponent[constants::PREFAB_TEXTURE_PATH_FIELD].get<std::string>();
+            }
+        } else if (components.contains(constants::PREFAB_SPRITE_COMPONENT)) {
+            const auto& spriteComponent = components[constants::PREFAB_SPRITE_COMPONENT];
+            if (spriteComponent.contains(constants::PREFAB_FILEPATH_FIELD)) {
+                result.texturePath =
+                    spriteComponent[constants::PREFAB_FILEPATH_FIELD].get<std::string>();
+            }
+        }
+
+        if (components.contains(constants::PREFAB_COLLIDER_COMPONENT)) {
+            const auto& colliderComponent = components[constants::PREFAB_COLLIDER_COMPONENT];
+            if (colliderComponent.contains(constants::PREFAB_SIZE_FIELD)) {
+                const auto& size = colliderComponent[constants::PREFAB_SIZE_FIELD];
+                if (size.contains(constants::PREFAB_X_FIELD)) {
+                    result.width = size[constants::PREFAB_X_FIELD].get<float>();
+                }
+                if (size.contains(constants::PREFAB_Y_FIELD)) {
+                    result.height = size[constants::PREFAB_Y_FIELD].get<float>();
+                }
+            }
+        }
+
+        if (components.contains(constants::PREFAB_TRANSFORM_COMPONENT)) {
+            const auto& transformComponent =
+                components[constants::PREFAB_TRANSFORM_COMPONENT];
+            if (transformComponent.contains(constants::PREFAB_SCALE_FIELD)) {
+                const auto& scale = transformComponent[constants::PREFAB_SCALE_FIELD];
+                if (scale.contains(constants::PREFAB_X_FIELD)) {
+                    result.scale = scale[constants::PREFAB_X_FIELD].get<float>();
+                }
+            }
+            if (transformComponent.contains(constants::PREFAB_ROTATION_FIELD)) {
+                result.rotation =
+                    transformComponent[constants::PREFAB_ROTATION_FIELD].get<float>();
+            }
+        }
+
+        result.width *= result.scale;
+        result.height *= result.scale;
+    } catch (const std::exception&) {
+    }
+
+    return result;
 }
 
 }  // namespace gsm
