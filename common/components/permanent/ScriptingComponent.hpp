@@ -65,10 +65,10 @@ class ScriptingComponent : public AComponent {
         void removeFunction(const std::string& name) { _functions.erase(name); };
         bool isInitialized() const { return _initialized; };
         void setInitialized(bool value) { _initialized = value; };
-        
+
         void clearLuaReferences() {
             _functions.clear();
-            _env = sol::nil;
+            _env = sol::lua_nil;
             _initialized = false;
         }
     protected:

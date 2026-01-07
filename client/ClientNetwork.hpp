@@ -81,6 +81,8 @@ class ClientNetwork {
         void requestCode();
         void sendLobbyConnection(std::string lobbyCode);
         void sendMasterStartGame();
+        void sendRegisterPacket(const std::string &username, const std::string &password);
+        void sendLoginPacket(const std::string &username, const std::string &password);
 
         void addToEventQueue(const NetworkEvent &event);
 
@@ -133,6 +135,7 @@ class ClientNetwork {
         void handleLevelComplete();
         void handleNextLevel();
         void handleLobbyConnectValue();
+        void handleConnectUser();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;
@@ -177,6 +180,7 @@ class ClientNetwork {
         std::string _name;
         std::vector<std::string> _clientNames;
         bool _isDebug;
+        bool _expectingLoginResponse = false;
 
 
         uint8_t _idClient;
