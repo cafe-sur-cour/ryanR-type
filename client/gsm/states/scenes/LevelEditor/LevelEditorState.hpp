@@ -127,8 +127,10 @@ private:
     std::shared_ptr<ui::Text> _cursorPosLabel;
     std::shared_ptr<ui::Text> _cursorPosYLabel;
     std::shared_ptr<ui::Button> _resetViewButton;
+    std::shared_ptr<ui::Button> _showHitboxesButton;
 
     bool _hasUnsavedChanges = false;
+    bool _showHitboxes = false;
 
     std::optional<std::filesystem::path> _levelPath;
     nlohmann::json _levelData;
