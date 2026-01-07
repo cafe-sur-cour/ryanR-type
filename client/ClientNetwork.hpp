@@ -120,6 +120,7 @@ class ClientNetwork {
         void handleNoOp();
         void handleConnectionAcceptation();
         void handleGameState();
+        void handleBatchedGameState();
         void handleEndGame();
         void handleCanStart();
         void handleEntitySpawn();
