@@ -79,6 +79,13 @@ gfx::IEvent::event_t SfmlEvent::pollEvents() {
         } else if (auto mouseReleased = event->getIf<sf::Event::MouseButtonReleased>()) {
             if (!isFocused) continue;
             lastEvent = processMouseReleaseEvent(*mouseReleased);
+        } else if (auto mouseWheelScrolled = event->getIf<sf::Event::MouseWheelScrolled>()) {
+            if (!isFocused) continue;
+            if (mouseWheelScrolled->delta > 0) {
+                lastEvent = event_t::MOUSEWHEELUP;
+            } else if (mouseWheelScrolled->delta < 0) {
+                lastEvent = event_t::MOUSEWHEELDOWN;
+            }
         } else if (auto joystickPressed = event->getIf<sf::Event::JoystickButtonPressed>()) {
             if (!isFocused) continue;
             lastEvent = processJoystickButtonEvent(*joystickPressed);
