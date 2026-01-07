@@ -479,6 +479,52 @@ SettingsState::SettingsState(
     _shootLayout->addElement(_shootLabel);
     _shootLayout->addElement(shootButtonsLayout);
 
+    _forceLayout = std::make_shared<ui::UILayout>(resourceManager, mappingVerticalConfig);
+    _forceLayout->setSize(math::Vector2f(380.f, 85.f));
+
+    _forceLabel = std::make_shared<ui::Text>(resourceManager);
+    _forceLabel->setText("Force");
+    _forceLabel->setFontSize(20);
+    _forceLabel->setSize(math::Vector2f(380.f, 30.f));
+
+    auto forceButtonsLayout =
+        std::make_shared<ui::UILayout>(resourceManager, horizontalConfig);
+    forceButtonsLayout->setSize(math::Vector2f(380.f, 55.f));
+
+    _forcePrimaryButton = std::make_shared<ui::Button>(resourceManager);
+    _forcePrimaryButton->setSize(math::Vector2f(180.f, 50.f));
+    _forcePrimaryButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _forcePrimaryButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _forcePrimaryButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _forcePrimaryButton->setText("1");
+    updateKeyBindingButtonText(_forcePrimaryButton, ecs::RemappableAction::FORCE, true);
+    _forcePrimaryButton->setOnRelease([this]() {
+        startKeyRebind(ecs::RemappableAction::FORCE, true, _forcePrimaryButton);
+    });
+    _forcePrimaryButton->setOnActivated([this]() {
+        startKeyRebind(ecs::RemappableAction::FORCE, true, _forcePrimaryButton);
+    });
+
+    _forceSecondaryButton = std::make_shared<ui::Button>(resourceManager);
+    _forceSecondaryButton->setSize(math::Vector2f(180.f, 50.f));
+    _forceSecondaryButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _forceSecondaryButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _forceSecondaryButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _forceSecondaryButton->setText("2");
+    updateKeyBindingButtonText(_forceSecondaryButton, ecs::RemappableAction::FORCE, false);
+    _forceSecondaryButton->setOnRelease([this]() {
+        startKeyRebind(ecs::RemappableAction::FORCE, false, _forceSecondaryButton);
+    });
+    _forceSecondaryButton->setOnActivated([this]() {
+        startKeyRebind(ecs::RemappableAction::FORCE, false, _forceSecondaryButton);
+    });
+
+    forceButtonsLayout->addElement(_forcePrimaryButton);
+    forceButtonsLayout->addElement(_forceSecondaryButton);
+
+    _forceLayout->addElement(_forceLabel);
+    _forceLayout->addElement(forceButtonsLayout);
+
     _toggleLayout = std::make_shared<ui::UILayout>(resourceManager, mappingVerticalConfig);
     _toggleLayout->setSize(math::Vector2f(380.f, 85.f));
     _toggleLayout->addElement(_toggleLabel);
@@ -497,6 +543,7 @@ SettingsState::SettingsState(
     _rightColumnLayout->addElement(_moveLeftLayout);
     _rightColumnLayout->addElement(_moveRightLayout);
     _rightColumnLayout->addElement(_shootLayout);
+    _rightColumnLayout->addElement(_forceLayout);
     _rightColumnLayout->addElement(_toggleLayout);
 
     _centerColumnLayout->addElement(_fpsSlider);
@@ -935,6 +982,7 @@ std::string SettingsState::getRemappableActionName(ecs::RemappableAction action)
         case ecs::RemappableAction::MOVE_UP: return "Move Up";
         case ecs::RemappableAction::MOVE_DOWN: return "Move Down";
         case ecs::RemappableAction::SHOOT: return "Shoot";
+        case ecs::RemappableAction::FORCE: return "Force";
         default: return "Unknown";
     }
 }

@@ -6,10 +6,31 @@
     "music": "music",
     "powerUps": [
         {
-            "name": "powerUpAddLife",
+            "name": "flyingForce",
             "position": {
-                "posY": 500.0,
-                "posX": 500.0
+            "posY": 400.0,
+            "posX": 500.0
+            }
+        },
+        {
+            "name": "flyingForce",
+            "position": {
+            "posY": 100.0,
+            "posX": 500.0
+            }
+        },
+        {
+            "name": "flyingForce",
+            "position": {
+            "posY": 700.0,
+            "posX": 500.0
+            }
+        },
+        {
+            "name": "force",
+            "position": {
+            "posY": 700.0,
+            "posX": 700.0
             }
         }
     ],

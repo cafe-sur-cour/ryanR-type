@@ -56,6 +56,7 @@ class ServerInputProvider : public IInputProvider {
         void handleRight(size_t clientID, float value);
         void handleStop(size_t clientID, float value);
         void handleShoot(size_t clientID, float value);
+        void handleForce(size_t clientID, float value);
 };
 
 } // namespace ecs
