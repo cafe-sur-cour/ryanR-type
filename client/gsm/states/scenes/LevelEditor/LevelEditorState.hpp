@@ -46,6 +46,10 @@ private:
     void saveToHistory();
     void loadFromHistory(size_t index);
     void updateHistoryButtons();
+    void initializeViewport();
+    void handleZoom(float deltaTime);
+    void handleCanvasDrag(float deltaTime);
+    void renderLevelPreview();
 
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
@@ -69,6 +73,8 @@ private:
     std::shared_ptr<ui::Dropdown> _backgroundDropdown;
     std::shared_ptr<ui::Button> _undoButton;
     std::shared_ptr<ui::Button> _redoButton;
+    std::shared_ptr<ui::Text> _cursorPosLabel;
+    std::shared_ptr<ui::Text> _cursorPosYLabel;
 
     bool _hasUnsavedChanges = false;
 
@@ -82,6 +88,15 @@ private:
     bool _isLoadingFromHistory = false;
     bool _undoPressedLastFrame = false;
     bool _redoPressedLastFrame = false;
+
+    math::Vector2f _viewportOffset;
+    float _viewportZoom = 1.0f;
+    float _minZoom = 0.1f;
+    float _maxZoom = 2.0f;
+
+    bool _isDragging = false;
+    math::Vector2f _lastMousePos;
+    math::Vector2f _dragStartPos;
 
 };
 
