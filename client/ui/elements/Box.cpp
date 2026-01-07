@@ -50,7 +50,6 @@ void Box::render() {
     math::Vector2f absolutePos = getAbsolutePosition();
     math::Vector2f absoluteSize = getAbsoluteSize();
 
-    // Dessiner le fond du rectangle
     window->drawFilledRectangle(
         _backgroundColor,
         std::make_pair(static_cast<size_t>(absolutePos.getX()),
@@ -59,7 +58,6 @@ void Box::render() {
             static_cast<size_t>(absoluteSize.getY()))
     );
 
-    // Dessiner la bordure si thickness > 0
     if (_borderThickness > 0) {
         window->drawRectangleOutline(
             _borderColor,
@@ -70,7 +68,6 @@ void Box::render() {
         );
     }
 
-    // Render children
     for (auto& child : _children) {
         if (child) {
             child->render();
