@@ -102,6 +102,8 @@ private:
     void renderAllObstacles(float levelX, float levelY, float canvasLeft, float canvasRight, float canvasTop, float canvasBottom);
     void saveObstacles();
     void handleObstacleClick(float mouseX, float mouseY, float levelX, float levelY);
+    void startObstacleDrag(math::Vector2f mousePos, float viewportZoom, float sidePanelWidth);
+    void handleObstacleDrag(math::Vector2f mousePos, float viewportZoom, float sidePanelWidth);
     std::optional<ObstacleSelection> getObstacleAtPosition(float mouseX, float mouseY, float levelX, float levelY);
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
@@ -164,6 +166,8 @@ private:
     bool _isDragging = false;
     math::Vector2f _lastMousePos;
     math::Vector2f _dragStartPos;
+    bool _isDraggingObstacle = false;
+    math::Vector2f _dragObstacleOffset;
 
     std::map<std::string, ObstacleGroup> _obstaclesByName;
     std::optional<ObstacleSelection> _selectedObstacle;
