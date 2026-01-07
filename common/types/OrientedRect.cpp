@@ -76,16 +76,16 @@ bool OrientedRect::overlapOnAxis(OrientedRect const &other, Vector2f axis) const
     float max1 = std::numeric_limits<float>::lowest();
     for (auto& p : corners1) {
         float proj = projectPoint(p, axis);
-        min1 = std::min(min1, proj);
-        max1 = std::max(max1, proj);
+        min1 = (std::min)(min1, proj);
+        max1 = (std::max)(max1, proj);
     }
 
     float min2 = std::numeric_limits<float>::max();
     float max2 = std::numeric_limits<float>::lowest();
     for (auto& p : corners2) {
         float proj = projectPoint(p, axis);
-        min2 = std::min(min2, proj);
-        max2 = std::max(max2, proj);
+        min2 = (std::min)(min2, proj);
+        max2 = (std::max)(max2, proj);
     }
 
     return !(max1 < min2 || max2 < min1);

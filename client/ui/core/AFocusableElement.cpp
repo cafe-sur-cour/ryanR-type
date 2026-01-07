@@ -33,7 +33,7 @@ bool AFocusableElement::isFocused() const {
 }
 
 bool AFocusableElement::canBeFocused() const {
-    return isVisible() && getState() != UIState::Disabled;
+    return isVisible() && isFocusEnabled() && getState() != UIState::Disabled;
 }
 
 void AFocusableElement::onFocusGained() {

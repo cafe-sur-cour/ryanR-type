@@ -73,13 +73,13 @@ void MapGeneratorSystem::generateObstaclesAt(
 
     float floorY = floorNoise * 450.0f;
     float ceilingY = floorY + minPassageHeight + ceilingNoise * 400.0f;
-    ceilingY = std::min(ceilingY, 1000.0f);
+    ceilingY = (std::min)(ceilingY, 1000.0f);
 
     float floorNoise2 = noise(x * 0.1f + 200.0f);
     float ceilingNoise2 = noise(x * 0.1f + 300.0f);
     float floorY2 = floorNoise2 * 450.0f;
     float ceilingY2 = floorY2 + minPassageHeight + ceilingNoise2 * 400.0f;
-    ceilingY2 = std::min(ceilingY2, 1000.0f);
+    ceilingY2 = (std::min)(ceilingY2, 1000.0f);
 
     for (int row = 0; row < numRows; ++row) {
         float y = static_cast<float>(row) * obstacleSize - obstacleSize / 2.0f;

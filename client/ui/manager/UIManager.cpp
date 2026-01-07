@@ -98,6 +98,22 @@ void UIManager::handleMouseInput(const math::Vector2f& mousePos, bool mousePress
             element->handleInput(mousePos, mousePressed);
         }
     }
+
+    if (mousePressed) {
+        bool clickedOnFocusable = false;
+        for (auto& element : _elements) {
+            if (element && element->isVisible() && element->containsPoint(mousePos)) {
+                auto focusable = std::dynamic_pointer_cast<IFocusable>(element);
+                if (focusable && focusable->canBeFocused()) {
+                    clickedOnFocusable = true;
+                    break;
+                }
+            }
+        }
+        if (!clickedOnFocusable) {
+            _navigationManager->clearFocus();
+        }
+    }
 }
 
 bool UIManager::handleNavigationInput(ecs::InputAction action) {
@@ -129,12 +145,16 @@ bool UIManager::handleNavigationInputs(
     auto focusedElement = getFocusedElement();
 
     if (inputProvider->isActionPressed(ecs::InputAction::MENU_UP)) {
-        handleNavigationInput(ecs::InputAction::MENU_UP);
-        navigationTriggered = true;
+        if (_blockedActions.find(ecs::InputAction::MENU_UP) == _blockedActions.end()) {
+            handleNavigationInput(ecs::InputAction::MENU_UP);
+            navigationTriggered = true;
+        }
     }
     if (inputProvider->isActionPressed(ecs::InputAction::MENU_DOWN)) {
-        handleNavigationInput(ecs::InputAction::MENU_DOWN);
-        navigationTriggered = true;
+        if (_blockedActions.find(ecs::InputAction::MENU_DOWN) == _blockedActions.end()) {
+            handleNavigationInput(ecs::InputAction::MENU_DOWN);
+            navigationTriggered = true;
+        }
     }
     if (
         inputProvider->isActionPressed(ecs::InputAction::MENU_LEFT) &&
@@ -158,6 +178,8 @@ bool UIManager::handleNavigationInputs(
     if (navigationTriggered)
         _navigationCooldown = constants::NAVIGATION_COOLDOWN_TIME;
 
+    _consumedTextKeys.clear();
+    _blockedActions.clear();
     return navigationTriggered;
 }
 
@@ -165,6 +187,19 @@ void UIManager::handleKeyboardInput(gfx::EventType event) {
     auto focusedElement = getFocusedElement();
     if (focusedElement) {
         if (auto textInput = std::dynamic_pointer_cast<TextInput>(focusedElement)) {
+            bool isLetterKey = (event >= gfx::EventType::A && event <= gfx::EventType::Z);
+            if (isLetterKey) {
+                _consumedTextKeys.insert(event);
+                if (event == gfx::EventType::Z) {
+                    _blockedActions.insert(ecs::InputAction::MENU_UP);
+                } else if (event == gfx::EventType::S) {
+                    _blockedActions.insert(ecs::InputAction::MENU_DOWN);
+                } else if (event == gfx::EventType::Q) {
+                    _blockedActions.insert(ecs::InputAction::MENU_LEFT);
+                } else if (event == gfx::EventType::D) {
+                    _blockedActions.insert(ecs::InputAction::MENU_RIGHT);
+                }
+            }
             textInput->handleKeyboardInput(event);
         }
     }

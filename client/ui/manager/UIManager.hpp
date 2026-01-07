@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <vector>
+#include <set>
 #include "../elements/base/UIElement.hpp"
 #include "../navigation/UINavigationManager.hpp"
 #include "../../../common/InputMapping/InputAction.hpp"
@@ -65,6 +66,9 @@ class UIManager {
         float _navigationCooldown = 0.0f;
         UIScale _globalScale = UIScale::Normal;
         std::function<void()> _onBack;
+        bool _textInputNavigationBlocked = false;
+        std::set<gfx::EventType> _consumedTextKeys;
+        std::set<ecs::InputAction> _blockedActions;
 
         bool hasMouseMoved(const math::Vector2f& mousePos);
 
