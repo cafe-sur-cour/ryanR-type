@@ -79,6 +79,8 @@ void LevelEditorState::enter() {
 
     _background->addLayer(constants::UI_BACKGROUND_EARTH_PATH, 0.0f, 0.0f,
         math::Vector2f(5376.0f, 3584.0f));
+
+    parseObstacles();
 }
 
 void LevelEditorState::update(float deltaTime) {
@@ -1083,6 +1085,83 @@ void LevelEditorState::renderLevelPreview() {
                 std::make_pair(static_cast<size_t>(borderThickness),
                     static_cast<size_t>(rightHeight))
             );
+        }
+    }
+}
+
+void LevelEditorState::parseObstacles() {
+    _obstaclesByName.clear();
+
+    if (!_levelData.contains(constants::OBSTACLES_FIELD) ||
+        !_levelData[constants::OBSTACLES_FIELD].is_array()) {
+        return;
+    }
+
+    const auto& obstacles = _levelData[constants::OBSTACLES_FIELD];
+
+    for (const auto& obstacle : obstacles) {
+        if (!obstacle.contains(constants::OBSTACLE_NAME_FIELD)) {
+            continue;
+        }
+        std::string obstacleName =
+            obstacle[constants::OBSTACLE_NAME_FIELD].get<std::string>();
+
+        if (_obstaclesByName.find(obstacleName) == _obstaclesByName.end()) {
+            _obstaclesByName[obstacleName] = ObstacleGroup();
+        }
+        ObstacleGroup& group = _obstaclesByName[obstacleName];
+
+        if (!obstacle.contains(constants::OBSTACLE_POSITIONS_FIELD) ||
+            !obstacle[constants::OBSTACLE_POSITIONS_FIELD].is_array()) {
+            continue;
+        }
+
+        const auto& positions = obstacle[constants::OBSTACLE_POSITIONS_FIELD];
+
+        for (const auto& position : positions) {
+            if (!position.contains(constants::OBSTACLE_TYPE_FIELD)) {
+                continue;
+            }
+
+            std::string type = position[constants::OBSTACLE_TYPE_FIELD].get<std::string>();
+            if (type == constants::OBSTACLE_HORIZONTAL_LINE_TYPE) {
+                if (!position.contains(constants::OBSTACLE_FROMX_FIELD) ||
+                    !position.contains(constants::OBSTACLE_POSY_FIELD) ||
+                    !position.contains(constants::OBSTACLE_COUNT_FIELD)) {
+                    continue;
+                }
+
+                HorizontalLineObstacle hLine;
+                hLine.fromX = position[constants::OBSTACLE_FROMX_FIELD].get<float>();
+                hLine.posY = position[constants::OBSTACLE_POSY_FIELD].get<float>();
+                hLine.count = position[constants::OBSTACLE_COUNT_FIELD].get<int>();
+
+                group.horizontalLines.push_back(hLine);
+            } else if (type == constants::OBSTACLE_VERTICAL_LINE_TYPE) {
+                if (!position.contains(constants::OBSTACLE_FROMY_FIELD) ||
+                    !position.contains(constants::OBSTACLE_POSX_FIELD) ||
+                    !position.contains(constants::OBSTACLE_COUNT_FIELD)) {
+                    continue;
+                }
+
+                VerticalLineObstacle vLine;
+                vLine.fromY = position[constants::OBSTACLE_FROMY_FIELD].get<float>();
+                vLine.posX = position[constants::OBSTACLE_POSX_FIELD].get<float>();
+                vLine.count = position[constants::OBSTACLE_COUNT_FIELD].get<int>();
+
+                group.verticalLines.push_back(vLine);
+            } else if (type == constants::OBSTACLE_UNIQUE_TYPE) {
+                if (!position.contains(constants::OBSTACLE_POSX_FIELD) ||
+                    !position.contains(constants::OBSTACLE_POSY_FIELD)) {
+                    continue;
+                }
+
+                UniqueObstacle unique;
+                unique.posX = position[constants::OBSTACLE_POSX_FIELD].get<float>();
+                unique.posY = position[constants::OBSTACLE_POSY_FIELD].get<float>();
+
+                group.uniques.push_back(unique);
+            }
         }
     }
 }

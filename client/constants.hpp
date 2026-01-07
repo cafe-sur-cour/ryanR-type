@@ -187,6 +187,19 @@ namespace constants {
     const std::string PREFAB_ROTATION_FIELD = "rotation";
     const std::string PREFAB_X_FIELD = "x";
     const std::string PREFAB_Y_FIELD = "y";
+
+    /* Obstacle types and fields */
+    const std::string OBSTACLE_HORIZONTAL_LINE_TYPE = "horizontalLine";
+    const std::string OBSTACLE_VERTICAL_LINE_TYPE = "verticalLine";
+    const std::string OBSTACLE_UNIQUE_TYPE = "unique";
+    const std::string OBSTACLE_NAME_FIELD = "name";
+    const std::string OBSTACLE_POSITIONS_FIELD = "positions";
+    const std::string OBSTACLE_TYPE_FIELD = "type";
+    const std::string OBSTACLE_FROMX_FIELD = "fromX";
+    const std::string OBSTACLE_FROMY_FIELD = "fromY";
+    const std::string OBSTACLE_POSX_FIELD = "posX";
+    const std::string OBSTACLE_POSY_FIELD = "posY";
+    const std::string OBSTACLE_COUNT_FIELD = "count";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
