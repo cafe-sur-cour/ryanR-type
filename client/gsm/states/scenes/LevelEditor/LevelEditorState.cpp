@@ -694,6 +694,12 @@ void LevelEditorState::createBottomPanel() {
         if (_spritePreview) {
             _spritePreview->setVisible(showObstacles);
         }
+        if (_spriteWidthLabel) {
+            _spriteWidthLabel->setVisible(showObstacles);
+        }
+        if (_spriteHeightLabel) {
+            _spriteHeightLabel->setVisible(showObstacles);
+        }
     });
     _editorModeDropdown->setScalingEnabled(false);
     _editorModeDropdown->setFocusEnabled(true);
@@ -720,6 +726,15 @@ void LevelEditorState::createBottomPanel() {
                     constants::LEVEL_FILE_EXTENSION);
             if (_spritePreview && std::filesystem::exists(prefabPath)) {
                 _spritePreview->loadPrefab(prefabPath);
+
+                LevelPreviewSprite spriteData =
+                    extractSpriteDataFromPrefab(prefabPath.string());
+                std::string widthStr = "Width: " +
+                    std::to_string(static_cast<int>(spriteData.width));
+                std::string heightStr = "Height: " +
+                    std::to_string(static_cast<int>(spriteData.height));
+                _spriteWidthLabel->setText(widthStr);
+                _spriteHeightLabel->setText(heightStr);
             }
         }
     });
@@ -745,6 +760,23 @@ void LevelEditorState::createBottomPanel() {
     );
     _spritePreview->setVisible(true);
     _spritePreviewPanel->addChild(_spritePreview);
+
+    const float labelStartX = 250.0f + previewPanelSize + 15.0f;
+    _spriteWidthLabel = std::make_shared<ui::Text>(_resourceManager);
+    _spriteWidthLabel->setPosition(math::Vector2f(labelStartX, 130.0f));
+    _spriteWidthLabel->setText("Width: 0");
+    _spriteWidthLabel->setFontSize(24);
+    _spriteWidthLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _spriteWidthLabel->setVisible(true);
+    _bottomPanel->addChild(_spriteWidthLabel);
+
+    _spriteHeightLabel = std::make_shared<ui::Text>(_resourceManager);
+    _spriteHeightLabel->setPosition(math::Vector2f(labelStartX, 165.0f));
+    _spriteHeightLabel->setText("Height: 0");
+    _spriteHeightLabel->setFontSize(24);
+    _spriteHeightLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _spriteHeightLabel->setVisible(true);
+    _bottomPanel->addChild(_spriteHeightLabel);
 
     /* DropDowns are added at the end */
     _bottomPanel->addChild(_obstaclePrefabDropdown);
@@ -810,6 +842,8 @@ void LevelEditorState::exit() {
     _canvasPanel.reset();
     _spritePreviewPanel.reset();
     _spritePreview.reset();
+    _spriteWidthLabel.reset();
+    _spriteHeightLabel.reset();
     _saveButton.reset();
     _backButton.reset();
     _nameLabel.reset();
