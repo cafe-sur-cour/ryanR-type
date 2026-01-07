@@ -88,10 +88,12 @@ private:
     void handleZoom(float deltaTime, gfx::EventType eventResult);
     void handleCanvasDrag(float deltaTime);
     void renderLevelPreview();
-    void renderSpriteInLevelPreview(const LevelPreviewSprite& spriteData, float screenX, float screenY);
-    void parseObstacles();
+    void renderSpriteInLevelPreview(const LevelPreviewSprite& spriteData, float screenX, float screenY, float canvasLeft, float canvasRight, float canvasTop, float canvasBottom);
     LevelPreviewSprite extractSpriteDataFromPrefab(const std::string& prefabPath);
 
+    /* Obstacles methods */
+    void parseObstacles();
+    void renderAllObstacles(float levelX, float levelY, float canvasLeft, float canvasRight, float canvasTop, float canvasBottom);
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::unique_ptr<ui::UIManager> _uiManager;
