@@ -1003,6 +1003,61 @@ void LevelEditorState::createBottomPanel() {
     });
     _bottomPanel->addChild(_obstaclePosYInput);
 
+    _obstacleCountLabel = std::make_shared<ui::Text>(_resourceManager);
+    _obstacleCountLabel->setPosition(math::Vector2f(740.0f, 92.5f));
+    _obstacleCountLabel->setText("Count");
+    _obstacleCountLabel->setFontSize(16);
+    _obstacleCountLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _obstacleCountLabel->setVisible(false);
+    _bottomPanel->addChild(_obstacleCountLabel);
+
+    _obstacleCountInput = std::make_shared<ui::TextInput>(_resourceManager);
+    _obstacleCountInput->setPosition(math::Vector2f(740.0f, 115.0f));
+    _obstacleCountInput->setSize(math::Vector2f(100.0f, 30.0f));
+    _obstacleCountInput->setPlaceholder("Count...");
+    _obstacleCountInput->setVisible(false);
+    _obstacleCountInput->setScalingEnabled(false);
+    _obstacleCountInput->setFocusEnabled(true);
+    _obstacleCountInput->setOnTextChanged([this](const std::string& text) {
+        std::string filteredText;
+        for (char c : text) {
+            if ((c >= '0' && c <= '9')) {
+                filteredText += c;
+            }
+        }
+
+        if (filteredText != text) {
+            _obstacleCountInput->setText(filteredText);
+            return;
+        }
+
+        if (!_selectedObstacle.has_value()) {
+            return;
+        }
+        const auto& sel = _selectedObstacle.value();
+        try {
+            if (!filteredText.empty()) {
+                int newCount = std::stoi(filteredText);
+                if (sel.type == "horizontal") {
+                    _obstaclesByName[sel.prefabName].horizontalLines[
+                        static_cast<size_t>(sel.index)].count = newCount;
+                } else if (sel.type == "vertical") {
+                    _obstaclesByName[sel.prefabName].verticalLines[
+                        static_cast<size_t>(sel.index)].count = newCount;
+                }
+                _hasUnsavedChanges = true;
+                updateSaveButtonText();
+            }
+        } catch (const std::exception&) {
+        }
+    });
+    _obstacleCountInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_obstacleCountInput);
+    });
+    _bottomPanel->addChild(_obstacleCountInput);
+
     /* DropDowns are added at the end */
     _bottomPanel->addChild(_obstaclePrefabDropdown);
     _bottomPanel->addChild(_editorModeDropdown);
@@ -1096,6 +1151,8 @@ void LevelEditorState::exit() {
     _obstaclePosXInput.reset();
     _obstaclePosYLabel.reset();
     _obstaclePosYInput.reset();
+    _obstacleCountLabel.reset();
+    _obstacleCountInput.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
