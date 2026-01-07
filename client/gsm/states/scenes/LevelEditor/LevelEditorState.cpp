@@ -684,10 +684,15 @@ void LevelEditorState::createBottomPanel() {
         if (_obstaclePrefabDropdown) {
             _obstaclePrefabDropdown->setVisible(showObstacles);
         }
+        if (_spritePreviewPanel) {
+            _spritePreviewPanel->setVisible(showObstacles);
+        }
+        if (_spritePreview) {
+            _spritePreview->setVisible(showObstacles);
+        }
     });
     _editorModeDropdown->setScalingEnabled(false);
     _editorModeDropdown->setFocusEnabled(true);
-    _bottomPanel->addChild(_editorModeDropdown);
 
     _obstaclePrefabLabel = std::make_shared<ui::Text>(_resourceManager);
     _obstaclePrefabLabel->setPosition(math::Vector2f(10.0f, 100.0f));
@@ -705,13 +710,41 @@ void LevelEditorState::createBottomPanel() {
     _obstaclePrefabDropdown->setPlaceholder("Prefab...");
     _obstaclePrefabDropdown->setOnSelectionChanged(
         [this](const std::string& obstacle, [[maybe_unused]] size_t index) {
-        (void)obstacle;
+        if (!obstacle.empty()) {
+            std::filesystem::path prefabPath =
+                std::filesystem::path(constants::OBSTACLES_DIRECTORY) / (obstacle +
+                    constants::LEVEL_FILE_EXTENSION);
+            if (_spritePreview && std::filesystem::exists(prefabPath)) {
+                _spritePreview->loadPrefab(prefabPath);
+            }
+        }
     });
     _obstaclePrefabDropdown->setScalingEnabled(false);
     _obstaclePrefabDropdown->setFocusEnabled(true);
     _obstaclePrefabDropdown->setDirection(ui::DropdownDirection::Right);
     _obstaclePrefabDropdown->setVisible(true);
+
+    const float previewPanelSize = 180.0f;
+    _spritePreviewPanel = std::make_shared<ui::Panel>(_resourceManager);
+    _spritePreviewPanel->setPosition(math::Vector2f(250.0f, 12.5f));
+    _spritePreviewPanel->setSize(math::Vector2f(previewPanelSize, previewPanelSize));
+    _spritePreviewPanel->setBackgroundColor(colors::WHITE);
+    _spritePreviewPanel->setBorderColor(colors::GRAY);
+    _spritePreviewPanel->setVisible(true);
+    _bottomPanel->addChild(_spritePreviewPanel);
+
+    _spritePreview = std::make_shared<ui::SpritePreview>(_resourceManager);
+    float previewElementSize = previewPanelSize - 10.0f;
+    _spritePreview->setDisplayBounds(
+        math::Vector2f(5.0f, 5.0f),
+        math::Vector2f(previewElementSize, previewElementSize)
+    );
+    _spritePreview->setVisible(true);
+    _spritePreviewPanel->addChild(_spritePreview);
+
+    /* DropDowns are added at the end */
     _bottomPanel->addChild(_obstaclePrefabDropdown);
+    _bottomPanel->addChild(_editorModeDropdown);
 }
 
 void LevelEditorState::updateSaveButtonText() {
@@ -771,6 +804,8 @@ void LevelEditorState::exit() {
     _sidePanel.reset();
     _bottomPanel.reset();
     _canvasPanel.reset();
+    _spritePreviewPanel.reset();
+    _spritePreview.reset();
     _saveButton.reset();
     _backButton.reset();
     _nameLabel.reset();
