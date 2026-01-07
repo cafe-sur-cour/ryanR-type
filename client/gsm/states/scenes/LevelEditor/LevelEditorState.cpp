@@ -32,7 +32,7 @@ LevelEditorState::LevelEditorState(
             std::ifstream file(*_levelPath);
             file >> _levelData;
             file.close();
-        } catch (const std::exception& e) {
+        } catch (const std::exception&) {
             if (auto stateMachine = gsm) {
                 stateMachine->requestStatePop();
             }
@@ -178,7 +178,7 @@ std::vector<std::string> LevelEditorState::loadAvailableMusics() {
                     std::string musicName = musicData[constants::LEVEL_NAME_FIELD];
                     musics.push_back(musicName);
                 }
-            } catch (const std::exception& e) {
+            } catch (const std::exception&) {
             }
         }
     }
@@ -209,7 +209,7 @@ std::vector<std::string> LevelEditorState::loadAvailableBackgrounds() {
                     std::string backgroundName = backgroundData[constants::LEVEL_NAME_FIELD];
                     backgrounds.push_back(backgroundName);
                 }
-            } catch (const std::exception& e) {
+            } catch (const std::exception&) {
             }
         }
     }
