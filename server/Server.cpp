@@ -102,7 +102,6 @@ void rserv::Server::start() {
     Signal::setupSignalHandlers();
     while (this->getState() == 1 && !Signal::stopFlag) {
         this->processIncomingPackets();
-        /* Replace the game stat packet by the monitoring of the threads and call lobby loop*/
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         if (std::cin.eof()) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -210,7 +209,7 @@ void rserv::Server::processIncomingPackets() {
 
     this->_packet->unpack(received.second);
     if (this->_packet->getType() == constants::PACKET_CONNECTION) {
-            this->processConnections(std::make_pair(received.first, received.second));
+        this->processConnections(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_CLIENT_READY) {
         this->onPacketReceived(this->_packet->getIdClient(), *this->_packet);
     } else if (this->_packet->getType() == constants::PACKET_REQUEST_LOBBY) {
@@ -230,6 +229,10 @@ void rserv::Server::processIncomingPackets() {
                 std::to_string(idClient),
                 debug::debugType::NETWORK, debug::debugLevel::WARNING);
         }
+    } else if (this->_packet->getType() == constants::PACKET_REGISTER) {
+        this->processRegistration(std::make_pair(received.first, received.second));
+    } else if (this->_packet->getType() == constants::PACKET_LOGIN) {
+        this->processLogin(std::make_pair(received.first, received.second));
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "

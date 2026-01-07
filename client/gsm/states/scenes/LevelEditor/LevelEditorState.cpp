@@ -234,7 +234,7 @@ void LevelEditorState::createLevelSelectionUI() {
             levelButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
             levelButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
 
-            levelButton->setOnRelease([this, levelPath]() {
+            levelButton->setOnRelease([levelPath]() {
                 // TODO(anyone): Switch to level editing scene
             });
 

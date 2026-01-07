@@ -37,28 +37,27 @@ private:
 
 private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
-    std::shared_ptr<ui::Button> _playButton;
+    std::shared_ptr<ui::Button> _usernameButton;
     std::shared_ptr<ui::Button> _settingsButton;
     std::shared_ptr<ui::Button> _replayButton;
     std::shared_ptr<ui::Button> _levelEditorButton;
     std::shared_ptr<ui::Button> _quitButton;
-    std::shared_ptr<ui::Button> _connectButton;
     std::shared_ptr<ui::Button> _requestCodeButton;
     std::shared_ptr<ui::Button> _lobbyConnectButton;
     std::unique_ptr<ui::UIManager> _uiManager;
-    std::shared_ptr<ui::UILayout> _leftLayout;
     std::shared_ptr<ui::UILayout> _mainMenuLayout;
-
+    std::shared_ptr<ui::UILayout> _headerLayout;
+    std::shared_ptr<ui::UILayout> _topLeftLayout;
     std::shared_ptr<ui::UILayout> _rightLayout;
     std::shared_ptr<ui::Button> _devButton;
+    std::shared_ptr<ui::Button> _howToPlayButton;
+    std::shared_ptr<ui::Button> _leaderboardButton;
+    std::shared_ptr<ui::Button> _registerButton;
+    std::shared_ptr<ui::Button> _loginButton;
+    std::shared_ptr<ui::Button> _disconnectButton;
     std::shared_ptr<ui::Button> _infiniteButton;
 
-    std::shared_ptr<ui::TextInput> _ipInput;
-    std::shared_ptr<ui::TextInput> _portInput;
     std::shared_ptr<ui::TextInput> _lobbyCodeInput;
-
-    std::shared_ptr<ui::Text> _connectionStatusText;
-    std::shared_ptr<ui::Text> _serverStatusText;
 
     std::shared_ptr<ui::Background> _background;
 

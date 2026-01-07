@@ -8,6 +8,7 @@
 #include "ReplayState.hpp"
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <filesystem>  // NOLINT(build/c++17)
 #include <cmath>
 #include <algorithm>
