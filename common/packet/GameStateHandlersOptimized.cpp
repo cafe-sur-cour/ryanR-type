@@ -308,7 +308,7 @@ static void registerOptimizedGameStateUnpackers(
             auto vals = packet->getPayload();
             vals.push_back(static_cast<uint64_t>(TRANSFORM));
 
-            unsigned int offset = i + 1;
+            size_t offset = i + 1;
             auto [posX, s1] = readVarintAt(payload, offset); offset += s1;
             auto [posY, s2] = readVarintAt(payload, offset); offset += s2;
             auto [rotation, s3] = readVarintAt(payload, offset); offset += s3;
@@ -321,7 +321,7 @@ static void registerOptimizedGameStateUnpackers(
             vals.push_back(scaleX);
             vals.push_back(scaleY);
             packet->setPayload(vals);
-            return offset - i;
+            return static_cast<unsigned int>(offset - i);
         }
         return 0;
     });
@@ -337,7 +337,7 @@ static void registerOptimizedGameStateUnpackers(
             auto [speed, s1] = readVarintAt(payload, i + 1);
             vals.push_back(speed);
             packet->setPayload(vals);
-            return 1 + s1;
+            return static_cast<unsigned int>(1 + s1);
         }
         return 0;
     });
@@ -350,14 +350,14 @@ static void registerOptimizedGameStateUnpackers(
             auto vals = packet->getPayload();
             vals.push_back(static_cast<uint64_t>(HEALTH));
 
-            unsigned int offset = i + 1;
+            size_t offset = i + 1;
             auto [health, s1] = readVarintAt(payload, offset); offset += s1;
             auto [baseHealth, s2] = readVarintAt(payload, offset); offset += s2;
 
             vals.push_back(health);
             vals.push_back(baseHealth);
             packet->setPayload(vals);
-            return offset - i;
+            return static_cast<unsigned int>(offset - i);
         }
         return 0;
     });
@@ -370,7 +370,7 @@ static void registerOptimizedGameStateUnpackers(
             auto vals = packet->getPayload();
             vals.push_back(static_cast<uint64_t>(COLLIDER));
 
-            unsigned int offset = i + 1;
+            size_t offset = i + 1;
             auto [offsetX, s1] = readVarintAt(payload, offset); offset += s1;
             auto [offsetY, s2] = readVarintAt(payload, offset); offset += s2;
             auto [sizeX, s3] = readVarintAt(payload, offset); offset += s3;
@@ -383,7 +383,7 @@ static void registerOptimizedGameStateUnpackers(
             vals.push_back(sizeY);
             vals.push_back(collisionType);
             packet->setPayload(vals);
-            return offset - i;
+            return static_cast<unsigned int>(offset - i);
         }
         return 0;
     });
@@ -396,7 +396,7 @@ static void registerOptimizedGameStateUnpackers(
             auto vals = packet->getPayload();
             vals.push_back(static_cast<uint64_t>(SHOOTING_STATS));
 
-            unsigned int offset = i + 1;
+            size_t offset = i + 1;
             auto [fireRate, s1] = readVarintAt(payload, offset); offset += s1;
             auto [cooldownTimer, s2] = readVarintAt(payload, offset); offset += s2;
             auto [shotCount, s3] = readVarintAt(payload, offset); offset += s3;
@@ -409,7 +409,7 @@ static void registerOptimizedGameStateUnpackers(
             vals.push_back(angleSpread);
             vals.push_back(offsetDistance);
             packet->setPayload(vals);
-            return offset - i;
+            return static_cast<unsigned int>(offset - i);
         }
         return 0;
     });
@@ -425,7 +425,7 @@ static void registerOptimizedGameStateUnpackers(
             auto [score, s1] = readVarintAt(payload, i + 1);
             vals.push_back(score);
             packet->setPayload(vals);
-            return 1 + s1;
+            return static_cast<unsigned int>(1 + s1);
         }
         return 0;
     });
@@ -438,7 +438,7 @@ static void registerOptimizedGameStateUnpackers(
             auto vals = packet->getPayload();
             vals.push_back(static_cast<uint64_t>(AI_MOVEMENT_PATTERN));
 
-            unsigned int offset = i + 1;
+            size_t offset = i + 1;
             uint64_t patternType = payload.at(offset); offset += 1;
             auto [v1, s1] = readVarintAt(payload, offset); offset += s1;
             auto [v2, s2] = readVarintAt(payload, offset); offset += s2;
@@ -453,7 +453,7 @@ static void registerOptimizedGameStateUnpackers(
             vals.push_back(v4);
             vals.push_back(v5);
             packet->setPayload(vals);
-            return offset - i;
+            return static_cast<unsigned int>(offset - i);
         }
         return 0;
     });
@@ -469,7 +469,7 @@ static void registerOptimizedGameStateUnpackers(
             auto [damage, s1] = readVarintAt(payload, i + 1);
             vals.push_back(damage);
             packet->setPayload(vals);
-            return 1 + s1;
+            return static_cast<unsigned int>(1 + s1);
         }
         return 0;
     });
@@ -485,7 +485,7 @@ static void registerOptimizedGameStateUnpackers(
             auto [lifetime, s1] = readVarintAt(payload, i + 1);
             vals.push_back(lifetime);
             packet->setPayload(vals);
-            return 1 + s1;
+            return static_cast<unsigned int>(1 + s1);
         }
         return 0;
     });
@@ -498,14 +498,14 @@ static void registerOptimizedGameStateUnpackers(
             auto vals = packet->getPayload();
             vals.push_back(static_cast<uint64_t>(VELOCITY));
 
-            unsigned int offset = i + 1;
+            size_t offset = i + 1;
             auto [velX, s1] = readSignedVarintAt(payload, offset); offset += s1;
             auto [velY, s2] = readSignedVarintAt(payload, offset); offset += s2;
 
             vals.push_back(static_cast<uint64_t>(velX));
             vals.push_back(static_cast<uint64_t>(velY));
             packet->setPayload(vals);
-            return offset - i;
+            return static_cast<unsigned int>(offset - i);
         }
         return 0;
     });
@@ -557,7 +557,7 @@ static void registerOptimizedGameStateUnpackers(
             auto vals = packet->getPayload();
             vals.push_back(static_cast<uint64_t>(GAME_ZONE));
 
-            unsigned int offset = i + 1;
+            size_t offset = i + 1;
             auto [v1, s1] = readVarintAt(payload, offset); offset += s1;
             auto [v2, s2] = readVarintAt(payload, offset); offset += s2;
             auto [v3, s3] = readVarintAt(payload, offset); offset += s3;
@@ -568,7 +568,7 @@ static void registerOptimizedGameStateUnpackers(
             vals.push_back(v3);
             vals.push_back(v4);
             packet->setPayload(vals);
-            return offset - i;
+            return static_cast<unsigned int>(offset - i);
         }
         return 0;
     });
