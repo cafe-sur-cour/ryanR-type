@@ -165,6 +165,7 @@ private:
     void startWaveDrag(math::Vector2f mousePos, float viewportZoom, float sidePanelWidth);
     void handleWaveDrag(math::Vector2f mousePos, float viewportZoom, float sidePanelWidth);
     std::optional<WaveSelection> getWaveAtPosition(float mouseX, float mouseY, float levelX, float levelY);
+    void updateEnemyUI();
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::unique_ptr<ui::UIManager> _uiManager;
@@ -222,6 +223,32 @@ private:
     std::shared_ptr<ui::Text> _waveTriggerXLabel;
     std::shared_ptr<ui::TextInput> _waveTriggerXInput;
 
+    // Enemy UI elements
+    std::shared_ptr<ui::Text> _enemyLabel;
+    std::shared_ptr<ui::Text> _enemyIndexLabel;
+    std::shared_ptr<ui::Button> _enemyPrevButton;
+    std::shared_ptr<ui::Button> _enemyNextButton;
+    std::shared_ptr<ui::Button> _enemyAddButton;
+    std::shared_ptr<ui::Button> _enemyDeleteButton;
+    std::shared_ptr<ui::Text> _enemyTypeLabel;
+    std::shared_ptr<ui::TextInput> _enemyTypeInput;
+    std::shared_ptr<ui::Button> _enemyApplyTypeButton;
+    std::shared_ptr<ui::Text> _enemyAppliedTypeLabel;
+    std::shared_ptr<ui::Text> _enemyCountLabel;
+    std::shared_ptr<ui::TextInput> _enemyCountInput;
+    std::shared_ptr<ui::Text> _enemyDistXMinLabel;
+    std::shared_ptr<ui::TextInput> _enemyDistXMinInput;
+    std::shared_ptr<ui::Text> _enemyDistXMaxLabel;
+    std::shared_ptr<ui::TextInput> _enemyDistXMaxInput;
+    std::shared_ptr<ui::Text> _enemyDistYMinLabel;
+    std::shared_ptr<ui::TextInput> _enemyDistYMinInput;
+    std::shared_ptr<ui::Text> _enemyDistYMaxLabel;
+    std::shared_ptr<ui::TextInput> _enemyDistYMaxInput;
+    std::shared_ptr<ui::Text> _enemyDistXTypeLabel;
+    std::shared_ptr<ui::Dropdown> _enemyDistXTypeDropdown;
+    std::shared_ptr<ui::Text> _enemyDistYTypeLabel;
+    std::shared_ptr<ui::Dropdown> _enemyDistYTypeDropdown;
+
     bool _hasUnsavedChanges = false;
     bool _showHitboxes = false;
 
@@ -259,6 +286,8 @@ private:
     std::vector<Wave> _waves;
     std::optional<WaveSelection> _selectedWave;
     int _currentWaveIndex = 0;
+    int _currentEnemyIndex = 0;
+    std::vector<std::string> _availableEnemies;
 
     std::map<std::string, LevelPreviewSprite> _obstacleAnimationData;
     std::map<std::string, float> _obstacleAnimationFrames;
