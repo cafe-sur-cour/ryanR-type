@@ -704,7 +704,7 @@ void LevelEditorState::createBottomPanel() {
     _obstaclePrefabDropdown->setOptions(availableObstacles);
     _obstaclePrefabDropdown->setPlaceholder("Prefab...");
     _obstaclePrefabDropdown->setOnSelectionChanged(
-        [this](const std::string& obstacle, [[maybe_unused]] size_t index) {
+        [](const std::string& obstacle, [[maybe_unused]] size_t index) {
         (void)obstacle;
     });
     _obstaclePrefabDropdown->setScalingEnabled(false);

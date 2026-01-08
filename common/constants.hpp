@@ -276,10 +276,12 @@ namespace constants {
     constexpr std::uint8_t PACKET_CONNECT_USER = 0x15;
     constexpr std::uint8_t PACKET_LOGIN = 0x16;
     constexpr std::uint8_t PACKET_GAME_STATE_BATCH = 0x17;
-    constexpr std::uint8_t PACKET_REQUEST_LEADERBOARD = 0x18;
-    constexpr std::uint8_t PACKET_LEADERBOARD = 0x19;
+    constexpr std::uint8_t PACKET_GAME_STATE_BATCH_COMPRESSED = 0x18;
+    constexpr std::uint8_t PACKET_GAME_STATE_COMPRESSED = 0x19;
+    constexpr std::uint8_t PACKET_REQUEST_LEADERBOARD = 0x1A;
+    constexpr std::uint8_t PACKET_LEADERBOARD = 0x1B;
 
-    const int MAX_INDEX_PACKET_TYPE = 24;
+    const int MAX_INDEX_PACKET_TYPE = 28;
     const int MAX_CLIENT_PER_LOBBY = 4;
 
     /* Scripting constant */

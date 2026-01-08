@@ -371,7 +371,7 @@ void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
     this->_queueCond.notify_one();
 }
 
-const std::vector<std::pair<std::string, int>>& ClientNetwork::getLeaderboardData() const {
+const std::vector<std::pair<std::string, std::string>>& ClientNetwork::getLeaderboardData() const {
     return _leaderboardData;
 }
 

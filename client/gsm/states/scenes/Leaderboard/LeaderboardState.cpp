@@ -75,7 +75,6 @@ LeaderboardState::LeaderboardState(
     _mainLayout = std::make_shared<ui::UILayout>(_resourceManager, mainConfig);
     _mainLayout->setSize(math::Vector2f(800.f, 600.f));
 
-    // Create leaderboard entries
     for (int i = 0; i < 10; ++i) {
         auto entryBox = std::make_shared<ui::Box>(_resourceManager);
         entryBox->setSize(math::Vector2f(750.f, 50.f));
@@ -124,7 +123,6 @@ LeaderboardState::LeaderboardState(
 
     _uiManager->addElement(_mainLayout);
 
-    // Bouton Back
     _backButton = std::make_shared<ui::Button>(_resourceManager);
     _backButton->setText("Back");
     _backButton->setSize(math::Vector2f(500.f, 70.f));
@@ -163,18 +161,15 @@ void LeaderboardState::loadLeaderboardData() {
     if (network) {
         auto data = network->getLeaderboardData();
         if (!data.empty()) {
-            // use data
-            std::vector<std::pair<std::string, int>> leaderboard = data;
-            // sort if needed, but server sends sorted
-            // then update UI
+            std::vector<std::pair<std::string, std::string>> leaderboard = data;
             size_t numEntries = std::min(leaderboard.size(), _leaderTexts.size() / 3);
             for (size_t i = 0; i < numEntries; ++i) {
                 size_t textIndex = i * 3;
                 _leaderTexts[textIndex]->setText(std::to_string(i + 1) + ".");
                 _leaderTexts[textIndex + 1]->setText(leaderboard[i].first);
-                _leaderTexts[textIndex + 2]->setText(std::to_string(leaderboard[i].second));
+                _leaderTexts[textIndex + 2]->setText(leaderboard[i].second);
             }
-            // Clear remaining
+
             for (size_t i = numEntries; i < 10; ++i) {
                 size_t textIndex = i * 3;
                 _leaderTexts[textIndex]->setText(std::to_string(i + 1) + ".");
@@ -184,38 +179,39 @@ void LeaderboardState::loadLeaderboardData() {
             return;
         }
     }
-    // else load local
+
     try {
         nlohmann::json usersData = utils::SecureJsonManager::readSecureJson("saves/users.json");
         if (!usersData.is_array()) {
             return;
         }
 
-        std::vector<std::pair<std::string, int>> leaderboard;
+        std::vector<std::pair<std::string, std::string>> leaderboard;
         for (const auto& user : usersData) {
             if (user.contains("username") && user.contains("highScore")) {
                 std::string username = user["username"];
-                int highScore = user["highScore"];
+                std::string highScore = std::to_string(user["highScore"].get<int>());
                 leaderboard.emplace_back(username, highScore);
             }
         }
 
-        // Sort by score descending
         std::sort(leaderboard.begin(), leaderboard.end(),
-            [](const std::pair<std::string, int>& a, const std::pair<std::string, int>& b) {
-                return a.second > b.second;
+            [](const std::pair<std::string, std::string>& a, const std::pair<std::string, std::string>& b) {
+                try {
+                    return std::stoi(a.second) > std::stoi(b.second);
+                } catch (const std::exception&) {
+                    return false;
+                }
             });
 
-        // Update UI
         size_t numEntries = std::min(leaderboard.size(), _leaderTexts.size() / 3);
         for (size_t i = 0; i < numEntries; ++i) {
             size_t textIndex = i * 3;
             _leaderTexts[textIndex]->setText(std::to_string(i + 1) + ".");
             _leaderTexts[textIndex + 1]->setText(leaderboard[i].first);
-            _leaderTexts[textIndex + 2]->setText(std::to_string(leaderboard[i].second));
+            _leaderTexts[textIndex + 2]->setText(leaderboard[i].second);
         }
 
-        // Clear remaining entries if less than 10
         for (size_t i = numEntries; i < 10; ++i) {
             size_t textIndex = i * 3;
             _leaderTexts[textIndex]->setText(std::to_string(i + 1) + ".");
@@ -223,7 +219,6 @@ void LeaderboardState::loadLeaderboardData() {
             _leaderTexts[textIndex + 2]->setText("0");
         }
     } catch (const std::exception&) {
-        // If loading fails, keep default data
     }
 }
 

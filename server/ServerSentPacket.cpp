@@ -289,6 +289,16 @@ bool rserv::Server::leaderboardPacket(const net::INetworkEndpoint &endpoint) {
         payload.insert(payload.end(), scoreData.begin(), scoreData.end());
     }
 
+    std::vector<uint64_t> emptyEntryName = this->_packet->formatString("N/A");
+    std::vector<uint64_t> emptyEntryScore = this->_packet->formatString("---");
+    for (size_t i = payload.size(); i < 160; i += 16) {
+        payload.insert(payload.end(), emptyEntryName.begin(),
+            emptyEntryName.end());
+        payload.insert(payload.end(), emptyEntryScore.begin(),
+            emptyEntryScore.end());
+    }
+
+    std::cout << std::endl;
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
         this->_sequenceNumber, constants::PACKET_LEADERBOARD, payload);
     if (!this->_network->sendTo(endpoint, packet)) {
