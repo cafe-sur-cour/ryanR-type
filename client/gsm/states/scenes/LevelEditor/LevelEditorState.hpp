@@ -184,7 +184,6 @@ private:
     std::map<std::string, ObstacleGroup> _obstaclesByName;
     std::optional<ObstacleSelection> _selectedObstacle;
 
-    // Animation tracking for obstacles (prefabName -> animation data)
     std::map<std::string, LevelPreviewSprite> _obstacleAnimationData;
     std::map<std::string, float> _obstacleAnimationFrames;
     std::map<std::string, float> _obstacleAnimationTimes;
