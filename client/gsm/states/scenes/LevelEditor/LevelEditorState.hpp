@@ -67,6 +67,13 @@ struct LevelPreviewSprite {
     float posY;
     float scale;
     float rotation;
+
+    bool isAnimation = false;
+    float frameCount = 0.0f;
+    float frameWidth = 0.0f;
+    float frameHeight = 0.0f;
+    float animationSpeed = 0.1f;
+    bool animationLoop = true;
 };
 
 class LevelEditorState : public AGameState {
@@ -94,7 +101,7 @@ private:
     void handleZoom(float deltaTime, gfx::EventType eventResult);
     void handleCanvasDrag(float deltaTime);
     void renderLevelPreview();
-    void renderSpriteInLevelPreview(const LevelPreviewSprite& spriteData, float screenX, float screenY, float canvasLeft, float canvasRight, float canvasTop, float canvasBottom);
+    void renderSpriteInLevelPreview(const LevelPreviewSprite& spriteData, const std::string& prefabName, float screenX, float screenY, float canvasLeft, float canvasRight, float canvasTop, float canvasBottom);
     LevelPreviewSprite extractSpriteDataFromPrefab(const std::string& prefabPath);
 
     /* Obstacles methods */
@@ -176,6 +183,11 @@ private:
 
     std::map<std::string, ObstacleGroup> _obstaclesByName;
     std::optional<ObstacleSelection> _selectedObstacle;
+
+    // Animation tracking for obstacles (prefabName -> animation data)
+    std::map<std::string, LevelPreviewSprite> _obstacleAnimationData;
+    std::map<std::string, float> _obstacleAnimationFrames;
+    std::map<std::string, float> _obstacleAnimationTimes;
 
 };
 

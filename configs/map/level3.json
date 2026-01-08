@@ -21,18 +21,6 @@
                     "type": "horizontalLine"
                 },
                 {
-                    "count": 5,
-                    "fromY": 400.0,
-                    "posX": 1000.0,
-                    "type": "verticalLine"
-                },
-                {
-                    "count": 10,
-                    "fromY": 100.0,
-                    "posX": 1650.0,
-                    "type": "verticalLine"
-                },
-                {
                     "count": 8,
                     "fromX": 2200.0,
                     "posY": 100.0,
@@ -43,12 +31,6 @@
                     "fromX": 2200.0,
                     "posY": 900.0,
                     "type": "horizontalLine"
-                },
-                {
-                    "count": 12,
-                    "fromY": 200.0,
-                    "posX": 3000.0,
-                    "type": "verticalLine"
                 },
                 {
                     "count": 10,
@@ -63,6 +45,42 @@
                     "type": "horizontalLine"
                 },
                 {
+                    "count": 20,
+                    "fromX": 6000.0,
+                    "posY": 680.0,
+                    "type": "horizontalLine"
+                },
+                {
+                    "count": 20,
+                    "fromX": 6000.0,
+                    "posY": 400.0,
+                    "type": "horizontalLine"
+                },
+                {
+                    "count": 15,
+                    "fromX": 455.0,
+                    "posY": 318.0,
+                    "type": "horizontalLine"
+                },
+                {
+                    "count": 5,
+                    "fromY": 400.0,
+                    "posX": 1000.0,
+                    "type": "verticalLine"
+                },
+                {
+                    "count": 10,
+                    "fromY": 100.0,
+                    "posX": 1650.0,
+                    "type": "verticalLine"
+                },
+                {
+                    "count": 12,
+                    "fromY": 200.0,
+                    "posX": 3000.0,
+                    "type": "verticalLine"
+                },
+                {
                     "count": 5,
                     "fromY": 0.0,
                     "posX": 6000.0,
@@ -75,16 +93,9 @@
                     "type": "verticalLine"
                 },
                 {
-                    "count": 20,
-                    "fromX": 6000.0,
-                    "posY": 680.0,
-                    "type": "horizontalLine"
-                },
-                {
-                    "count": 20,
-                    "fromX": 6000.0,
-                    "posY": 400.0,
-                    "type": "horizontalLine"
+                    "posX": 500.0,
+                    "posY": 100.0,
+                    "type": "unique"
                 }
             ]
         }

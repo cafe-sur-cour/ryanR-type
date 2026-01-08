@@ -16,6 +16,9 @@ namespace gsm {
 
 void LevelEditorState::parseObstacles() {
     _obstaclesByName.clear();
+    _obstacleAnimationData.clear();
+    _obstacleAnimationFrames.clear();
+    _obstacleAnimationTimes.clear();
 
     if (!_levelData.contains(constants::OBSTACLES_FIELD) ||
         !_levelData[constants::OBSTACLES_FIELD].is_array()) {
@@ -88,6 +91,18 @@ void LevelEditorState::parseObstacles() {
                 group.uniques.push_back(unique);
             }
         }
+
+        std::filesystem::path prefabPath =
+            std::filesystem::path(constants::OBSTACLES_DIRECTORY) / (obstacleName +
+                constants::LEVEL_FILE_EXTENSION);
+        if (std::filesystem::exists(prefabPath)) {
+            LevelPreviewSprite spriteData = extractSpriteDataFromPrefab(prefabPath.string());
+            _obstacleAnimationData[obstacleName] = spriteData;
+            if (spriteData.isAnimation) {
+                _obstacleAnimationFrames[obstacleName] = 0.0f;
+                _obstacleAnimationTimes[obstacleName] = 0.0f;
+            }
+        }
     }
 }
 
@@ -103,13 +118,25 @@ void LevelEditorState::renderAllObstacles(
     gfx::color_t lightBlue = {100, 200, 255, 255};
 
     for (const auto& [prefabName, obstacleGroup] : _obstaclesByName) {
-        std::string prefabPath =
-            constants::OBSTACLES_DIRECTORY + "/" +
-                prefabName + constants::LEVEL_FILE_EXTENSION;
-        LevelPreviewSprite spriteData = extractSpriteDataFromPrefab(prefabPath);
+        LevelPreviewSprite spriteData;
+        if (_obstacleAnimationData.find(prefabName) != _obstacleAnimationData.end()) {
+            spriteData = _obstacleAnimationData[prefabName];
+        } else {
+            std::string prefabPath =
+                constants::OBSTACLES_DIRECTORY + "/" +
+                    prefabName + constants::LEVEL_FILE_EXTENSION;
+            spriteData = extractSpriteDataFromPrefab(prefabPath);
+            _obstacleAnimationData[prefabName] = spriteData;
+        }
 
         if (spriteData.texturePath.empty()) {
             continue;
+        }
+
+        if (spriteData.isAnimation && _obstacleAnimationFrames.find(prefabName)
+            == _obstacleAnimationFrames.end()) {
+            _obstacleAnimationFrames[prefabName] = 0.0f;
+            _obstacleAnimationTimes[prefabName] = 0.0f;
         }
 
         float scaledWidth = spriteData.width * _viewportZoom;
@@ -125,7 +152,7 @@ void LevelEditorState::renderAllObstacles(
                 float screenY = levelY + (worldY * _viewportZoom);
 
                 renderSpriteInLevelPreview(
-                    spriteData, screenX, screenY, canvasLeft,
+                    spriteData, prefabName, screenX, screenY, canvasLeft,
                     canvasRight, canvasTop, canvasBottom);
             }
 
@@ -159,7 +186,7 @@ void LevelEditorState::renderAllObstacles(
                 float screenY = levelY + (worldY * _viewportZoom);
 
                 renderSpriteInLevelPreview(
-                    spriteData, screenX, screenY, canvasLeft,
+                    spriteData, prefabName, screenX, screenY, canvasLeft,
                     canvasRight, canvasTop, canvasBottom);
             }
 
@@ -189,7 +216,7 @@ void LevelEditorState::renderAllObstacles(
             float screenY = levelY + (unique.posY * _viewportZoom);
 
             renderSpriteInLevelPreview(
-                spriteData, screenX, screenY, canvasLeft,
+                spriteData, prefabName, screenX, screenY, canvasLeft,
                 canvasRight, canvasTop, canvasBottom);
 
             if (_selectedObstacle.has_value() &&
