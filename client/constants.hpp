@@ -205,6 +205,18 @@ namespace constants {
     /* PowerUp types and fields */
     const std::string POWERUP_NAME_FIELD = "name";
     const std::string POWERUP_POSITION_FIELD = "position";
+
+    /* Wave types and fields */
+    const std::string WAVE_GAMEX_TRIGGER_FIELD = "gameXTrigger";
+    const std::string WAVE_ENEMIES_FIELD = "enemies";
+    const std::string WAVE_ENEMY_TYPE_FIELD = "type";
+    const std::string WAVE_ENEMY_COUNT_FIELD = "count";
+    const std::string WAVE_DISTRIBUTION_X_FIELD = "distributionX";
+    const std::string WAVE_DISTRIBUTION_Y_FIELD = "distributionY";
+    const std::string WAVE_DISTRIBUTION_MIN_FIELD = "min";
+    const std::string WAVE_DISTRIBUTION_MAX_FIELD = "max";
+    const std::string WAVE_DISTRIBUTION_TYPE_FIELD = "type";
+    const std::string ENEMIES_DIRECTORY = "configs/entities/enemies";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
