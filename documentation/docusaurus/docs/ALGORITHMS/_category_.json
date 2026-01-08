@@ -1,4 +1,8 @@
 {
-  "label": "ALGORITHMS",
-  "position": 1
+  "label": "Algorithms",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "Algorithms and data structures"
+  }
 }

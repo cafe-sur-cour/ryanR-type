@@ -38,7 +38,7 @@ function HomepageHeader() {
           <Link className="button button--secondary button--lg" to="docs/category/network-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
             🌐 Network
           </Link>
-          <Link className="button button--secondary button--lg" to="docs/category/security-documentation" style={{ margin: '1rem', fontSize: '1.2rem' }}>
+          <Link className="button button--secondary button--lg" to="docs/category/security" style={{ margin: '1rem', fontSize: '1.2rem' }}>
             🔒️ Security
           </Link>
           <Link className="button button--secondary button--lg" to="docs/category/cicd" style={{ margin: '1rem', fontSize: '1.2rem' }}>

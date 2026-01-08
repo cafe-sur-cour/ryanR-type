@@ -70,6 +70,8 @@ For contribution guidelines, including prerequisites and commit conventions, ple
 
 The **Docusaurus** documentation regroups the entirety of the project documentation, protocole server gui and clinet information, but also how to contribute to the project and how to use the project itlsef.
 
+Access the documentation at https://albanrss.github.io/doc-rtype/
+
 To run the documentation travel to the `/documentation` folder than run the following :
 
 ``` bash
