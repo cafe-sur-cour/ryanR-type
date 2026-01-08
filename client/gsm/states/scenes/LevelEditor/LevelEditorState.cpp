@@ -150,6 +150,31 @@ void LevelEditorState::update(float deltaTime) {
     handleZoom(deltaTime, eventResult);
     handleCanvasDrag(deltaTime);
 
+    for (auto& [prefabName, spriteData] : _obstacleAnimationData) {
+        if (spriteData.isAnimation) {
+            if (_obstacleAnimationTimes.find(prefabName) == _obstacleAnimationTimes.end()) {
+                _obstacleAnimationTimes[prefabName] = 0.0f;
+                _obstacleAnimationFrames[prefabName] = 0.0f;
+            }
+
+            _obstacleAnimationTimes[prefabName] += deltaTime;
+            float frameDuration = spriteData.animationSpeed;
+
+            if (_obstacleAnimationTimes[prefabName] >= frameDuration) {
+                _obstacleAnimationTimes[prefabName] = 0.0f;
+                _obstacleAnimationFrames[prefabName] += 1.0f;
+
+                if (_obstacleAnimationFrames[prefabName] >= spriteData.frameCount) {
+                    if (spriteData.animationLoop) {
+                        _obstacleAnimationFrames[prefabName] = 0.0f;
+                    } else {
+                        _obstacleAnimationFrames[prefabName] = spriteData.frameCount - 1.0f;
+                    }
+                }
+            }
+        }
+    }
+
     const float sidePanelWidth = 300.0f;
     const float bottomPanelHeight = 200.0f;
     const float canvasHeight = constants::MAX_HEIGHT - bottomPanelHeight;
@@ -800,6 +825,12 @@ void LevelEditorState::createBottomPanel() {
                     std::to_string(static_cast<int>(spriteData.height));
                 _spriteWidthLabel->setText(widthStr);
                 _spriteHeightLabel->setText(heightStr);
+
+                _obstacleAnimationData[obstacle] = spriteData;
+                if (spriteData.isAnimation) {
+                    _obstacleAnimationFrames[obstacle] = 0.0f;
+                    _obstacleAnimationTimes[obstacle] = 0.0f;
+                }
             }
         }
     });
@@ -1491,6 +1522,7 @@ void LevelEditorState::renderLevelPreview() {
 
 void LevelEditorState::renderSpriteInLevelPreview(
     const LevelPreviewSprite& spriteData,
+    const std::string& prefabName,
     float screenX,
     float screenY,
     float canvasLeft,
@@ -1512,14 +1544,36 @@ void LevelEditorState::renderSpriteInLevelPreview(
         float finalScaleX = _viewportZoom * spriteData.scale;
         float finalScaleY = _viewportZoom * spriteData.scale;
 
-        window->drawSprite(
-            spriteData.texturePath,
-            screenX,
-            screenY,
-            finalScaleX,
-            finalScaleY,
-            spriteData.rotation
-        );
+        if (spriteData.isAnimation && spriteData.frameCount > 0.0f) {
+            float currentFrameFloat = 0.0f;
+            if (_obstacleAnimationFrames.find(prefabName) != _obstacleAnimationFrames.end()) {
+                currentFrameFloat = _obstacleAnimationFrames[prefabName];
+            }
+            int currentFrameIndex = static_cast<int>(currentFrameFloat);
+            float frameX = currentFrameIndex * spriteData.frameWidth;
+            float frameY = 0.0f;
+            math::FRect frameRect(
+                frameX, frameY, spriteData.frameWidth, spriteData.frameHeight);
+
+            window->drawSprite(
+                spriteData.texturePath,
+                screenX,
+                screenY,
+                frameRect,
+                finalScaleX,
+                finalScaleY,
+                spriteData.rotation
+            );
+        } else {
+            window->drawSprite(
+                spriteData.texturePath,
+                screenX,
+                screenY,
+                finalScaleX,
+                finalScaleY,
+                spriteData.rotation
+            );
+        }
 
         if (_showHitboxes) {
             gfx::color_t green = colors::GREEN;
@@ -1566,6 +1620,32 @@ LevelPreviewSprite LevelEditorState::extractSpriteDataFromPrefab(
             if (animComponent.contains(constants::PREFAB_TEXTURE_PATH_FIELD)) {
                 result.texturePath =
                     animComponent[constants::PREFAB_TEXTURE_PATH_FIELD].get<std::string>();
+            }
+
+            result.isAnimation = true;
+            if (animComponent.contains(constants::PREFAB_STATES_FIELD)) {
+                const auto& states = animComponent[constants::PREFAB_STATES_FIELD];
+                if (!states.empty()) {
+                    auto it = states.begin();
+                    const auto& firstState = it.value();
+
+                    if (result.texturePath.empty() &&
+                        firstState.contains(constants::PREFAB_TEXTURE_PATH_FIELD)) {
+                        result.texturePath = firstState[
+                            constants::PREFAB_TEXTURE_PATH_FIELD].get<std::string>();
+                    }
+
+                    result.frameCount = firstState.value(
+                        constants::PREFAB_FRAME_COUNT_FIELD, 1.0f);
+                    result.frameWidth = firstState.value(
+                        constants::PREFAB_FRAME_WIDTH_FIELD, 0.0f);
+                    result.frameHeight = firstState.value(
+                        constants::PREFAB_FRAME_HEIGHT_FIELD, 0.0f);
+                    result.animationSpeed = firstState.value(
+                        constants::PREFAB_SPEED_FIELD, 0.1f);
+                    result.animationLoop = firstState.value(
+                        constants::PREFAB_LOOP_FIELD, true);
+                }
             }
         } else if (components.contains(constants::PREFAB_SPRITE_COMPONENT)) {
             const auto& spriteComponent = components[constants::PREFAB_SPRITE_COMPONENT];
