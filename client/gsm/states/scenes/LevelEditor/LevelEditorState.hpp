@@ -301,6 +301,12 @@ private:
     std::map<std::string, float> _powerUpAnimationFrames;
     std::map<std::string, float> _powerUpAnimationTimes;
 
+    std::optional<ObstacleSelection> _clipboardObstacle;
+    std::optional<PowerUpSelection> _clipboardPowerUp;
+    std::optional<WaveSelection> _clipboardWave;
+    bool _copyPressedLastFrame = false;
+    bool _pastePressedLastFrame = false;
+
 };
 
 }  // namespace gsm
