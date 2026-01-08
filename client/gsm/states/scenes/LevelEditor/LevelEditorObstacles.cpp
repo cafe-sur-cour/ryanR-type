@@ -362,6 +362,27 @@ void LevelEditorState::handleObstacleClick(
         if (_waveIndexLabel) _waveIndexLabel->setVisible(false);
         if (_wavePrevButton) _wavePrevButton->setVisible(false);
         if (_waveNextButton) _waveNextButton->setVisible(false);
+
+        if (_enemyLabel) _enemyLabel->setVisible(false);
+        if (_enemyIndexLabel) _enemyIndexLabel->setVisible(false);
+        if (_enemyPrevButton) _enemyPrevButton->setVisible(false);
+        if (_enemyNextButton) _enemyNextButton->setVisible(false);
+        if (_enemyAddButton) _enemyAddButton->setVisible(false);
+        if (_enemyDeleteButton) _enemyDeleteButton->setVisible(false);
+        if (_enemyTypeLabel) _enemyTypeLabel->setVisible(false);
+        if (_enemyTypeInput) _enemyTypeInput->setVisible(false);
+        if (_enemyApplyTypeButton) _enemyApplyTypeButton->setVisible(false);
+        if (_enemyAppliedTypeLabel) _enemyAppliedTypeLabel->setVisible(false);
+        if (_enemyCountLabel) _enemyCountLabel->setVisible(false);
+        if (_enemyCountInput) _enemyCountInput->setVisible(false);
+        if (_enemyDistXMinLabel) _enemyDistXMinLabel->setVisible(false);
+        if (_enemyDistXMinInput) _enemyDistXMinInput->setVisible(false);
+        if (_enemyDistXMaxLabel) _enemyDistXMaxLabel->setVisible(false);
+        if (_enemyDistXMaxInput) _enemyDistXMaxInput->setVisible(false);
+        if (_enemyDistYMinLabel) _enemyDistYMinLabel->setVisible(false);
+        if (_enemyDistYMinInput) _enemyDistYMinInput->setVisible(false);
+        if (_enemyDistYMaxLabel) _enemyDistYMaxLabel->setVisible(false);
+        if (_enemyDistYMaxInput) _enemyDistYMaxInput->setVisible(false);
         if (_obstaclePrefabDropdown) {
             const auto& prefabName = selection.value().prefabName;
             auto options = _obstaclePrefabDropdown->getOptions();

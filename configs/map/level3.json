@@ -130,13 +130,13 @@
                 {
                     "count": 3,
                     "distributionX": {
-                        "max": 100,
-                        "min": 95,
+                        "max": 100.0,
+                        "min": 95.0,
                         "type": "random"
                     },
                     "distributionY": {
-                        "max": 90,
-                        "min": 10,
+                        "max": 90.0,
+                        "min": 10.0,
                         "type": "uniform"
                     },
                     "type": "enemy1"
@@ -149,13 +149,13 @@
                 {
                     "count": 3,
                     "distributionX": {
-                        "max": 15,
-                        "min": 10,
+                        "max": 15.0,
+                        "min": 10.0,
                         "type": "random"
                     },
                     "distributionY": {
-                        "max": 90,
-                        "min": 10,
+                        "max": 90.0,
+                        "min": 10.0,
                         "type": "uniform"
                     },
                     "type": "enemy3"
@@ -163,13 +163,13 @@
                 {
                     "count": 3,
                     "distributionX": {
-                        "max": 90,
-                        "min": 85,
+                        "max": 90.0,
+                        "min": 85.0,
                         "type": "random"
                     },
                     "distributionY": {
-                        "max": 90,
-                        "min": 10,
+                        "max": 90.0,
+                        "min": 10.0,
                         "type": "uniform"
                     },
                     "type": "enemy1"

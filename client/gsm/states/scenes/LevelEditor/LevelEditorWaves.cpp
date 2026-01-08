@@ -145,6 +145,39 @@ void LevelEditorState::renderAllWaves(
             );
         }
 
+        if (_selectedWave.has_value() &&
+            _selectedWave.value().waveIndex == static_cast<int>(waveIdx)) {
+            float zoneScreenX = levelX + (wave.gameXTrigger * _viewportZoom);
+            float zoneScreenY = levelY;
+            float zoneWidth = constants::MAX_WIDTH * _viewportZoom;
+            float zoneHeight = constants::MAX_HEIGHT * _viewportZoom;
+
+            float clippedX = (std::max)(zoneScreenX, canvasLeft);
+            float clippedXEnd = (std::min)(zoneScreenX + zoneWidth, canvasRight);
+            float clippedY = (std::max)(zoneScreenY, canvasTop);
+            float clippedYEnd = (std::min)(zoneScreenY + zoneHeight, canvasBottom);
+
+            float clippedWidth = clippedXEnd - clippedX;
+            float clippedHeight = clippedYEnd - clippedY;
+
+            if (clippedWidth > 0 && clippedHeight > 0) {
+                gfx::color_t zoneColor = {
+                    static_cast<uint8_t>(255),
+                    static_cast<uint8_t>(255),
+                    static_cast<uint8_t>(255),
+                    40
+                };
+
+                window->drawFilledRectangle(
+                    zoneColor,
+                    std::make_pair(static_cast<size_t>(clippedX),
+                        static_cast<size_t>(clippedY)),
+                    std::make_pair(static_cast<size_t>(clippedWidth),
+                        static_cast<size_t>(clippedHeight))
+                );
+            }
+        }
+
         for (size_t enemyIdx = 0; enemyIdx < wave.enemies.size(); ++enemyIdx) {
             const auto& enemy = wave.enemies[enemyIdx];
 
@@ -314,6 +347,10 @@ void LevelEditorState::handleWaveClick(
     float mouseX, float mouseY, float levelX, float levelY
 ) {
     auto selection = getWaveAtPosition(mouseX, mouseY, levelX, levelY);
+    std::string editorMode = "";
+    if (_editorModeDropdown) {
+        editorMode = _editorModeDropdown->getSelectedOption();
+    }
 
     if (selection.has_value()) {
         _selectedWave = selection;
@@ -365,12 +402,9 @@ void LevelEditorState::handleWaveClick(
         if (_waveDeleteButton) {
             _waveDeleteButton->setVisible(true);
         }
-    } else {
-        std::string editorMode = "";
-        if (_editorModeDropdown) {
-            editorMode = _editorModeDropdown->getSelectedOption();
-        }
 
+        updateEnemyUI();
+    } else {
         if (editorMode == "Waves" && !_selectedWave.has_value()) {
             const float sidePanelWidth = 300.0f;
             float cursorMapX =
@@ -406,6 +440,8 @@ void LevelEditorState::handleWaveClick(
                 _waveDeleteButton->setVisible(true);
             }
 
+            updateEnemyUI();
+
             _hasUnsavedChanges = true;
             updateSaveButtonText();
         } else {
@@ -417,8 +453,34 @@ void LevelEditorState::handleWaveClick(
             if (_waveIndexLabel) {
                 _waveIndexLabel->setText("0 / " + std::to_string(_waves.size()));
             }
-            if (_wavePrevButton) _wavePrevButton->setVisible(false);
-            if (_waveNextButton) _waveNextButton->setVisible(false);
+
+            bool showNavButtons = (editorMode == "Waves" && !_waves.empty());
+            if (_wavePrevButton) _wavePrevButton->setVisible(showNavButtons);
+            if (_waveNextButton) _waveNextButton->setVisible(showNavButtons);
+
+            if (_enemyLabel) _enemyLabel->setVisible(false);
+            if (_enemyIndexLabel) _enemyIndexLabel->setVisible(false);
+            if (_enemyPrevButton) _enemyPrevButton->setVisible(false);
+            if (_enemyNextButton) _enemyNextButton->setVisible(false);
+            if (_enemyAddButton) _enemyAddButton->setVisible(false);
+            if (_enemyDeleteButton) _enemyDeleteButton->setVisible(false);
+            if (_enemyTypeLabel) _enemyTypeLabel->setVisible(false);
+            if (_enemyTypeInput) _enemyTypeInput->setVisible(false);
+            if (_enemyApplyTypeButton) _enemyApplyTypeButton->setVisible(false);
+            if (_enemyCountLabel) _enemyCountLabel->setVisible(false);
+            if (_enemyCountInput) _enemyCountInput->setVisible(false);
+            if (_enemyDistXMinLabel) _enemyDistXMinLabel->setVisible(false);
+            if (_enemyDistXMinInput) _enemyDistXMinInput->setVisible(false);
+            if (_enemyDistXMaxLabel) _enemyDistXMaxLabel->setVisible(false);
+            if (_enemyDistXMaxInput) _enemyDistXMaxInput->setVisible(false);
+            if (_enemyDistYMinLabel) _enemyDistYMinLabel->setVisible(false);
+            if (_enemyDistYMinInput) _enemyDistYMinInput->setVisible(false);
+            if (_enemyDistYMaxLabel) _enemyDistYMaxLabel->setVisible(false);
+            if (_enemyDistYMaxInput) _enemyDistYMaxInput->setVisible(false);
+            if (_enemyDistXTypeLabel) _enemyDistXTypeLabel->setVisible(false);
+            if (_enemyDistXTypeDropdown) _enemyDistXTypeDropdown->setVisible(false);
+            if (_enemyDistYTypeLabel) _enemyDistYTypeLabel->setVisible(false);
+            if (_enemyDistYTypeDropdown) _enemyDistYTypeDropdown->setVisible(false);
         }
     }
 }
@@ -474,6 +536,148 @@ void LevelEditorState::handleWaveDrag(
 
     _hasUnsavedChanges = true;
     updateSaveButtonText();
+}
+
+void LevelEditorState::updateEnemyUI() {
+    if (!_selectedWave.has_value()) {
+        if (_enemyLabel) _enemyLabel->setVisible(false);
+        if (_enemyIndexLabel) _enemyIndexLabel->setVisible(false);
+        if (_enemyPrevButton) _enemyPrevButton->setVisible(false);
+        if (_enemyNextButton) _enemyNextButton->setVisible(false);
+        if (_enemyAddButton) _enemyAddButton->setVisible(false);
+        if (_enemyDeleteButton) _enemyDeleteButton->setVisible(false);
+        if (_enemyTypeLabel) _enemyTypeLabel->setVisible(false);
+        if (_enemyTypeInput) _enemyTypeInput->setVisible(false);
+        if (_enemyCountLabel) _enemyCountLabel->setVisible(false);
+        if (_enemyCountInput) _enemyCountInput->setVisible(false);
+        if (_enemyDistXMinLabel) _enemyDistXMinLabel->setVisible(false);
+        if (_enemyDistXMinInput) _enemyDistXMinInput->setVisible(false);
+        if (_enemyDistXMaxLabel) _enemyDistXMaxLabel->setVisible(false);
+        if (_enemyDistXMaxInput) _enemyDistXMaxInput->setVisible(false);
+        if (_enemyDistYMinLabel) _enemyDistYMinLabel->setVisible(false);
+        if (_enemyDistYMinInput) _enemyDistYMinInput->setVisible(false);
+        if (_enemyDistYMaxLabel) _enemyDistYMaxLabel->setVisible(false);
+        if (_enemyDistYMaxInput) _enemyDistYMaxInput->setVisible(false);
+        return;
+    }
+
+    int waveIdx = _selectedWave.value().waveIndex;
+    int enemyIdx = _selectedWave.value().enemyIndex;
+
+    if (waveIdx < 0 || waveIdx >= static_cast<int>(_waves.size())) {
+        return;
+    }
+
+    auto& wave = _waves[static_cast<size_t>(waveIdx)];
+
+    if (_enemyLabel) _enemyLabel->setVisible(true);
+    if (_enemyAddButton) _enemyAddButton->setVisible(true);
+
+    if (_enemyIndexLabel) {
+        if (wave.enemies.empty()) {
+            _enemyIndexLabel->setText("0 / 0");
+            _enemyIndexLabel->setVisible(true);
+        } else {
+            _enemyIndexLabel->setText(std::to_string(enemyIdx + 1) + " / " +
+                std::to_string(wave.enemies.size()));
+            _enemyIndexLabel->setVisible(true);
+        }
+    }
+
+    bool hasEnemies = !wave.enemies.empty();
+    bool enemySelected = enemyIdx >= 0 && enemyIdx < static_cast<int>(wave.enemies.size());
+
+    if (_enemyPrevButton) _enemyPrevButton->setVisible(hasEnemies);
+    if (_enemyNextButton) _enemyNextButton->setVisible(hasEnemies);
+    if (_enemyDeleteButton) _enemyDeleteButton->setVisible(hasEnemies && enemySelected);
+
+    if (enemySelected) {
+        const auto& enemy = wave.enemies[static_cast<size_t>(enemyIdx)];
+
+        if (_enemyTypeLabel) {
+            _enemyTypeLabel->setText("Type: " + enemy.type);
+            _enemyTypeLabel->setVisible(true);
+        }
+        if (_enemyTypeInput) {
+            _enemyTypeInput->setText(enemy.type);
+            _enemyTypeInput->setVisible(true);
+        }
+
+        if (_enemyApplyTypeButton) {
+            _enemyApplyTypeButton->setVisible(true);
+            bool isValid = std::find(_availableEnemies.begin(),
+                _availableEnemies.end(), enemy.type) != _availableEnemies.end();
+            _enemyApplyTypeButton->setState(
+                isValid ? ui::UIState::Normal : ui::UIState::Disabled);
+        }
+
+        if (_enemyCountLabel) _enemyCountLabel->setVisible(true);
+        if (_enemyCountInput) {
+            _enemyCountInput->setText(std::to_string(enemy.count));
+            _enemyCountInput->setVisible(true);
+        }
+
+        if (_enemyDistXMinLabel) _enemyDistXMinLabel->setVisible(true);
+        if (_enemyDistXMinInput) {
+            _enemyDistXMinInput->setText(std::to_string(
+                static_cast<int>(enemy.distributionX.min)));
+            _enemyDistXMinInput->setVisible(true);
+        }
+
+        if (_enemyDistXMaxLabel) _enemyDistXMaxLabel->setVisible(true);
+        if (_enemyDistXMaxInput) {
+            _enemyDistXMaxInput->setText(std::to_string(
+                static_cast<int>(enemy.distributionX.max)));
+            _enemyDistXMaxInput->setVisible(true);
+        }
+
+        if (_enemyDistYMinLabel) _enemyDistYMinLabel->setVisible(true);
+        if (_enemyDistYMinInput) {
+            _enemyDistYMinInput->setText(std::to_string(
+                static_cast<int>(enemy.distributionY.min)));
+            _enemyDistYMinInput->setVisible(true);
+        }
+
+        if (_enemyDistYMaxLabel) _enemyDistYMaxLabel->setVisible(true);
+        if (_enemyDistYMaxInput) {
+            _enemyDistYMaxInput->setText(std::to_string(
+                static_cast<int>(enemy.distributionY.max)));
+            _enemyDistYMaxInput->setVisible(true);
+        }
+
+        if (_enemyDistXTypeLabel) _enemyDistXTypeLabel->setVisible(true);
+        if (_enemyDistXTypeDropdown) {
+            size_t typeIndex = (enemy.distributionX.type == "uniform") ? 0 : 1;
+            _enemyDistXTypeDropdown->setSelectedIndex(typeIndex);
+            _enemyDistXTypeDropdown->setVisible(true);
+        }
+
+        if (_enemyDistYTypeLabel) _enemyDistYTypeLabel->setVisible(true);
+        if (_enemyDistYTypeDropdown) {
+            size_t typeIndex = (enemy.distributionY.type == "uniform") ? 0 : 1;
+            _enemyDistYTypeDropdown->setSelectedIndex(typeIndex);
+            _enemyDistYTypeDropdown->setVisible(true);
+        }
+    } else {
+        if (_enemyTypeLabel) _enemyTypeLabel->setVisible(false);
+        if (_enemyTypeInput) _enemyTypeInput->setVisible(false);
+        if (_enemyApplyTypeButton) _enemyApplyTypeButton->setVisible(false);
+        if (_enemyAppliedTypeLabel) _enemyAppliedTypeLabel->setVisible(false);
+        if (_enemyCountLabel) _enemyCountLabel->setVisible(false);
+        if (_enemyCountInput) _enemyCountInput->setVisible(false);
+        if (_enemyDistXMinLabel) _enemyDistXMinLabel->setVisible(false);
+        if (_enemyDistXMinInput) _enemyDistXMinInput->setVisible(false);
+        if (_enemyDistXMaxLabel) _enemyDistXMaxLabel->setVisible(false);
+        if (_enemyDistXMaxInput) _enemyDistXMaxInput->setVisible(false);
+        if (_enemyDistYMinLabel) _enemyDistYMinLabel->setVisible(false);
+        if (_enemyDistYMinInput) _enemyDistYMinInput->setVisible(false);
+        if (_enemyDistYMaxLabel) _enemyDistYMaxLabel->setVisible(false);
+        if (_enemyDistYMaxInput) _enemyDistYMaxInput->setVisible(false);
+        if (_enemyDistXTypeLabel) _enemyDistXTypeLabel->setVisible(false);
+        if (_enemyDistXTypeDropdown) _enemyDistXTypeDropdown->setVisible(false);
+        if (_enemyDistYTypeLabel) _enemyDistYTypeLabel->setVisible(false);
+        if (_enemyDistYTypeDropdown) _enemyDistYTypeDropdown->setVisible(false);
+    }
 }
 
 }  // namespace gsm
