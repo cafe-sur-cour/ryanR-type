@@ -30,6 +30,7 @@ class PacketManager : public IPacketManager {
         uint8_t getType() const override;
         uint8_t getIdClient() const override;
         std::vector<uint64_t> getPayload() const override;
+        std::vector<std::vector<uint64_t>> getBatchedPayloads() const;
 
         void setType(uint8_t type) override;
         void setLength(uint32_t length) override;
@@ -39,6 +40,7 @@ class PacketManager : public IPacketManager {
 
         std::vector<uint64_t> formatString(const std::string str) override;
         std::vector<uint8_t> pack(uint8_t idClient, uint32_t sequenceNumber, uint8_t type, std::vector<uint64_t> payload) override;
+        std::vector<uint8_t> packBatchedGameState(uint8_t idClient, uint32_t sequenceNumber, const std::vector<std::vector<uint64_t>>& entities) override;
         bool unpack(std::vector<uint8_t> data) override;
 
         void reset() override;
@@ -68,6 +70,9 @@ class PacketManager : public IPacketManager {
 
         /* Unpack Game State */
         std::vector<std::function<unsigned int(const std::vector<uint8_t>, unsigned int)>> _unpackGSFunction;
+
+        /* Batched Game State */
+        std::vector<std::vector<uint64_t>> _batchedPayloads;
 };
 } // namespace pm
 

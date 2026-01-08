@@ -50,6 +50,13 @@
             [["PlayerProjectileTag"], ["EnnemyProjectileTag"]],
             [["EnnemyProjectileTag"], ["PlayerProjectileTag"]],
 
+            [["EnnemyProjectileTag"], ["PowerUpTag"]],
+            [["PowerUpTag"], ["EnnemyProjectileTag"]],
+
+            [["MobTag"], ["PowerUpTag"]],
+            [["PowerUpTag"], ["MobTag"]],
+
+
             [["PlayerTag"], ["MobTag"]],
             [["MobTag"], ["PlayerTag"]],
 

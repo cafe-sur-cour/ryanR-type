@@ -25,7 +25,9 @@
 #include "../../components/temporary/ShootIntentComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
-
+#include "../../components/permanent/ColliderComponent.hpp"
+#include "../../components/permanent/ProjectilePrefabComponent.hpp"
+#include "../../components/tags/ForceTag.hpp"
 namespace ecs {
 
 
@@ -192,6 +194,87 @@ void ScriptingSystem::bindAPI() {
                 comp->partIds.erase(it);
             }
         }
+    });
+
+    lua.set_function(constants::IS_ENTITY_PLAYER_FUNCTION,
+        [this](size_t entityId) {
+        Entity e = static_cast<Entity>(entityId);
+        return registry->hasComponent<PlayerTag>(e);
+    });
+
+    lua.set_function(constants::GET_ENTITY_SIZE_FUNCTION,
+        [this](size_t entityId) -> std::tuple<float, float> {
+        Entity e = static_cast<Entity>(entityId);
+        if (registry->hasComponent<ColliderComponent>(e) &&
+            registry->hasComponent<TransformComponent>(e)) {
+            auto hitbox = registry->getComponent<ColliderComponent>(e);
+            auto transform = registry->getComponent<TransformComponent>(e);
+            auto size = hitbox->getSize();
+            auto scale = transform->getScale();
+            return {size.getX() * scale.getX(), size.getY() * scale.getY()};
+        }
+        return {0.0f, 0.0f};
+    });
+
+    lua.set_function(constants::SET_POSITION_FUNCTION,
+        [this](size_t entityId, float x, float y) {
+        Entity e = static_cast<Entity>(entityId);
+        if (registry->hasComponent<TransformComponent>(e)) {
+            auto transform = registry->getComponent<TransformComponent>(e);
+            transform->setPosition(math::Vector2f(x, y));
+        }
+    });
+
+    lua.set_function(constants::SET_PROJECTILE_PREFAB_FUNCTION,
+        [this](size_t entityId, const std::string& prefabName) {
+        Entity e = static_cast<Entity>(entityId);
+        if (registry->hasComponent<ProjectilePrefabComponent>(e)) {
+            auto shootComp = registry->getComponent<ProjectilePrefabComponent>(e);
+            shootComp->setPrefabName(prefabName);
+        }
+    });
+
+    lua.set_function(constants::COUNT_FORCES_BY_TYPE_FUNCTION,
+        [this](size_t playerEntityId, const std::string& forceType) -> int {
+        Entity playerEntity = static_cast<Entity>(playerEntityId);
+        int count = 0;
+        if (!registry->hasComponent<EntityPartsComponent>(playerEntity))
+            return 0;
+        auto partsComp = registry->getComponent<EntityPartsComponent>(playerEntity);
+        for (size_t partId : partsComp->partIds) {
+            Entity part = static_cast<Entity>(partId);
+            if (registry->hasComponent<ForceTag>(part)) {
+                auto forceTag = registry->getComponent<ForceTag>(part);
+                if (forceTag->getForceType() == forceType) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    });
+
+    lua.set_function(constants::GET_FORCE_POSITION_BY_TYPE_FUNCTION,
+        [this](size_t entityId, size_t playerEntityId, const std::string& forceType) -> int {
+        Entity entity = static_cast<Entity>(entityId);
+        Entity playerEntity = static_cast<Entity>(playerEntityId);
+        int position = 0;
+
+        if (!registry->hasComponent<EntityPartsComponent>(playerEntity))
+            return 0;
+        auto partsComp = registry->getComponent<EntityPartsComponent>(playerEntity);
+        for (size_t partId : partsComp->partIds) {
+            Entity part = static_cast<Entity>(partId);
+            if (registry->hasComponent<ForceTag>(part)) {
+                auto forceTag = registry->getComponent<ForceTag>(part);
+                if (forceTag->getForceType() == forceType) {
+                    position++;
+                    if (part == entity) {
+                        return position;
+                    }
+                }
+            }
+        }
+        return 0;
     });
 }
 

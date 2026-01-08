@@ -1,14 +1,16 @@
 {
-    "name": "heavy_shot",
+    "name": "force",
     "components": {
-        "PlayerProjectileTag": { "target": "both" },
         "TransformComponent": {
             "target": "both",
-            "position": { "x": 0.0, "y": 0.0 },
+            "position": { "x": 300.0, "y": 300.0 },
             "scale": { "x": 3.0, "y": 3.0 },
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 500.0 },
+
+
         "AnimationComponent": {
             "target": "client",
             "states": {
@@ -30,45 +32,43 @@
         "ColliderComponent": {
             "target": "both",
             "offset": { "x": 0.0, "y": 0.0 },
-            "size": { "x": 16.0, "y": 4.0 },
+            "size": { "x": 17.0, "y": 18.0 },
             "type": "Trigger"
         },
         "DamageComponent": {
             "target": "both",
-            "damage": 25.0
+            "damage": 50.0
         },
-        "SpeedComponent": {
+        "PowerUpTag": { "target": "both" },
+        "ForceTag": {
             "target": "both",
-            "speed": 1000.0
+            "forceType": "force"
         },
-        "LifetimeComponent": {
-            "target": "both",
-            "lifetime": 2.0
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/force.lua",
+            "additionalFunctions": ["OnInteract", "ActivateOrDeactivateForce"]
         },
         "InteractionConfigComponent": {
             "target": "both",
             "mappings": [
                 {
+                    "tags": ["PlayerTag"],
+                    "toEntity": [],
+                    "toSelf": ["InteractionCallScripting"]
+                },
+                {
                     "tags": ["MobTag"],
                     "toEntity": ["DealDamage"],
-                    "toSelf": ["TakeDeath"]
+                    "toSelf": []
                 },
                 {
                     "tags": ["EnnemyProjectileTag"],
-                    "toEntity": ["DealDeath"],
-                    "toSelf": ["TakeDeath"]
-                },
-                {
-                    "tags": ["ObstacleTag"],
-                    "toEntity": [],
-                    "toSelf": ["TakeDeath"]
+                    "toEntity": ["DealDamage"],
+                    "toSelf": []
                 }
             ]
         },
-        "SoundIntentComponent": {
-            "target": "client",
-            "soundFile": "sounds/shooting.wav",
-            "volume": 50.0
-        }
+        "HitboxRenderComponent": { "target": "client" }
     }
 }
