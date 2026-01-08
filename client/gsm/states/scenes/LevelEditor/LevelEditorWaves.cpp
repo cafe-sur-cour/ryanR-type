@@ -402,6 +402,9 @@ void LevelEditorState::handleWaveClick(
         if (_waveDeleteButton) {
             _waveDeleteButton->setVisible(true);
         }
+        if (_waveDuplicateButton) {
+            _waveDuplicateButton->setVisible(true);
+        }
 
         updateEnemyUI();
     } else {
@@ -441,6 +444,9 @@ void LevelEditorState::handleWaveClick(
             if (_waveDeleteButton) {
                 _waveDeleteButton->setVisible(true);
             }
+            if (_waveDuplicateButton) {
+                _waveDuplicateButton->setVisible(true);
+            }
 
             updateEnemyUI();
 
@@ -452,6 +458,7 @@ void LevelEditorState::handleWaveClick(
             if (_waveTriggerXInput) _waveTriggerXInput->setVisible(false);
             if (_waveTriggerXLabel) _waveTriggerXLabel->setVisible(false);
             if (_waveDeleteButton) _waveDeleteButton->setVisible(false);
+            if (_waveDuplicateButton) _waveDuplicateButton->setVisible(false);
             if (_waveIndexLabel) {
                 _waveIndexLabel->setText("0 / " + std::to_string(_waves.size()));
             }

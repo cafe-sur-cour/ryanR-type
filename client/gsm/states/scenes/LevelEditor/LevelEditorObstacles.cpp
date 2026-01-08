@@ -478,6 +478,9 @@ void LevelEditorState::handleObstacleClick(
         if (_obstacleDeleteButton) {
             _obstacleDeleteButton->setVisible(true);
         }
+        if (_obstacleDuplicateButton) {
+            _obstacleDuplicateButton->setVisible(true);
+        }
     } else {
         bool inObstaclesMode = (_editorModeDropdown &&
             _editorModeDropdown->getSelectedOption() == "Obstacles");
@@ -597,6 +600,9 @@ void LevelEditorState::handleObstacleClick(
             if (_obstacleDeleteButton) {
                 _obstacleDeleteButton->setVisible(true);
             }
+            if (_obstacleDuplicateButton) {
+                _obstacleDuplicateButton->setVisible(true);
+            }
 
             _hasUnsavedChanges = true;
             updateSaveButtonText();
@@ -622,6 +628,9 @@ void LevelEditorState::handleObstacleClick(
             }
             if (_obstacleDeleteButton) {
                 _obstacleDeleteButton->setVisible(false);
+            }
+            if (_obstacleDuplicateButton) {
+                _obstacleDuplicateButton->setVisible(false);
             }
         }
     }

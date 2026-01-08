@@ -211,16 +211,19 @@ private:
     std::shared_ptr<ui::Text> _obstacleCountLabel;
     std::shared_ptr<ui::TextInput> _obstacleCountInput;
     std::shared_ptr<ui::Button> _obstacleDeleteButton;
+    std::shared_ptr<ui::Button> _obstacleDuplicateButton;
     std::shared_ptr<ui::Text> _powerUpPosXLabel;
     std::shared_ptr<ui::TextInput> _powerUpPosXInput;
     std::shared_ptr<ui::Text> _powerUpPosYLabel;
     std::shared_ptr<ui::TextInput> _powerUpPosYInput;
     std::shared_ptr<ui::Button> _powerUpDeleteButton;
+    std::shared_ptr<ui::Button> _powerUpDuplicateButton;
     std::shared_ptr<ui::Text> _waveLabel;
     std::shared_ptr<ui::Text> _waveIndexLabel;
     std::shared_ptr<ui::Button> _wavePrevButton;
     std::shared_ptr<ui::Button> _waveNextButton;
     std::shared_ptr<ui::Button> _waveDeleteButton;
+    std::shared_ptr<ui::Button> _waveDuplicateButton;
     std::shared_ptr<ui::Text> _waveTriggerXLabel;
     std::shared_ptr<ui::TextInput> _waveTriggerXInput;
 

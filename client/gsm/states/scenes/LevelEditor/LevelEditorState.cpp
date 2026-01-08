@@ -1533,6 +1533,117 @@ void LevelEditorState::createBottomPanel() {
     });
     _bottomPanel->addChild(_obstacleDeleteButton);
 
+    _obstacleDuplicateButton = std::make_shared<ui::Button>(_resourceManager);
+    _obstacleDuplicateButton->setPosition(math::Vector2f(1490, 92.0f));
+    _obstacleDuplicateButton->setSize(math::Vector2f(110.0f, 40.0f));
+    _obstacleDuplicateButton->setText("Dup");
+    _obstacleDuplicateButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _obstacleDuplicateButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _obstacleDuplicateButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _obstacleDuplicateButton->setVisible(false);
+    _obstacleDuplicateButton->setScalingEnabled(false);
+    _obstacleDuplicateButton->setFocusEnabled(true);
+    _obstacleDuplicateButton->setOnRelease([this]() {
+        if (!_selectedObstacle.has_value()) {
+            return;
+        }
+
+        const auto& sel = _selectedObstacle.value();
+
+        if (sel.type == "unique") {
+            auto& uniques = _obstaclesByName[sel.prefabName].uniques;
+            if (sel.index < static_cast<int>(uniques.size())) {
+                auto newObstacle = uniques[static_cast<size_t>(sel.index)];
+                newObstacle.posX += 25.0f;
+                newObstacle.posY += 25.0f;
+                uniques.push_back(newObstacle);
+
+                ObstacleSelection newSel;
+                newSel.prefabName = sel.prefabName;
+                newSel.type = sel.type;
+                newSel.index = static_cast<int>(uniques.size()) - 1;
+                _selectedObstacle = newSel;
+
+                if (_obstaclePosXInput) {
+                    _obstaclePosXInput->setText(std::to_string(
+                        static_cast<int>(newObstacle.posX)));
+                }
+                if (_obstaclePosYInput) {
+                    _obstaclePosYInput->setText(std::to_string(
+                        static_cast<int>(newObstacle.posY)));
+                }
+                if (_obstacleCountInput) {
+                    _obstacleCountInput->setVisible(false);
+                }
+                if (_obstacleCountLabel) {
+                    _obstacleCountLabel->setVisible(false);
+                }
+
+                _hasUnsavedChanges = true;
+                updateSaveButtonText();
+            }
+        } else if (sel.type == "horizontal") {
+            auto& horizontals = _obstaclesByName[sel.prefabName].horizontalLines;
+            if (sel.index < static_cast<int>(horizontals.size())) {
+                auto newObstacle = horizontals[static_cast<size_t>(sel.index)];
+                newObstacle.fromX += 25.0f;
+                newObstacle.posY += 25.0f;
+                horizontals.push_back(newObstacle);
+
+                ObstacleSelection newSel;
+                newSel.prefabName = sel.prefabName;
+                newSel.type = sel.type;
+                newSel.index = static_cast<int>(horizontals.size()) - 1;
+                _selectedObstacle = newSel;
+
+                if (_obstaclePosXInput) {
+                    _obstaclePosXInput->setText(std::to_string(
+                        static_cast<int>(newObstacle.fromX)));
+                }
+                if (_obstaclePosYInput) {
+                    _obstaclePosYInput->setText(std::to_string(
+                        static_cast<int>(newObstacle.posY)));
+                }
+                if (_obstacleCountInput) {
+                    _obstacleCountInput->setText(std::to_string(newObstacle.count));
+                }
+
+                _hasUnsavedChanges = true;
+                updateSaveButtonText();
+            }
+        } else if (sel.type == "vertical") {
+            auto& verticals = _obstaclesByName[sel.prefabName].verticalLines;
+            if (sel.index < static_cast<int>(verticals.size())) {
+                auto newObstacle = verticals[static_cast<size_t>(sel.index)];
+                newObstacle.posX += 25.0f;
+                newObstacle.fromY += 25.0f;
+                verticals.push_back(newObstacle);
+
+                ObstacleSelection newSel;
+                newSel.prefabName = sel.prefabName;
+                newSel.type = sel.type;
+                newSel.index = static_cast<int>(verticals.size()) - 1;
+                _selectedObstacle = newSel;
+
+                if (_obstaclePosXInput) {
+                    _obstaclePosXInput->setText(std::to_string(
+                        static_cast<int>(newObstacle.posX)));
+                }
+                if (_obstaclePosYInput) {
+                    _obstaclePosYInput->setText(std::to_string(
+                        static_cast<int>(newObstacle.fromY)));
+                }
+                if (_obstacleCountInput) {
+                    _obstacleCountInput->setText(std::to_string(newObstacle.count));
+                }
+
+                _hasUnsavedChanges = true;
+                updateSaveButtonText();
+            }
+        }
+    });
+    _bottomPanel->addChild(_obstacleDuplicateButton);
+
     /* PowerUp UI elements */
     _powerUpPrefabLabel = std::make_shared<ui::Text>(_resourceManager);
     _powerUpPrefabLabel->setPosition(math::Vector2f(10.0f, 100.0f));
@@ -1725,6 +1836,47 @@ void LevelEditorState::createBottomPanel() {
     });
     _bottomPanel->addChild(_powerUpDeleteButton);
 
+    _powerUpDuplicateButton = std::make_shared<ui::Button>(_resourceManager);
+    _powerUpDuplicateButton->setPosition(math::Vector2f(1490, 92.0f));
+    _powerUpDuplicateButton->setSize(math::Vector2f(110.0f, 40.0f));
+    _powerUpDuplicateButton->setText("Dup");
+    _powerUpDuplicateButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _powerUpDuplicateButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _powerUpDuplicateButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _powerUpDuplicateButton->setVisible(false);
+    _powerUpDuplicateButton->setScalingEnabled(false);
+    _powerUpDuplicateButton->setFocusEnabled(true);
+    _powerUpDuplicateButton->setOnRelease([this]() {
+        if (!_selectedPowerUp.has_value()) {
+            return;
+        }
+
+        const auto& sel = _selectedPowerUp.value();
+        auto& powerUps = _powerUpsByName[sel.prefabName];
+        if (sel.index < static_cast<int>(powerUps.size())) {
+            auto newPowerUp = powerUps[static_cast<size_t>(sel.index)];
+            newPowerUp.posX += 25.0f;
+            newPowerUp.posY += 25.0f;
+            powerUps.push_back(newPowerUp);
+
+            PowerUpSelection newSel;
+            newSel.prefabName = sel.prefabName;
+            newSel.index = static_cast<int>(powerUps.size()) - 1;
+            _selectedPowerUp = newSel;
+
+            if (_powerUpPosXInput) {
+                _powerUpPosXInput->setText(std::to_string(static_cast<int>(newPowerUp.posX)));
+            }
+            if (_powerUpPosYInput) {
+                _powerUpPosYInput->setText(std::to_string(static_cast<int>(newPowerUp.posY)));
+            }
+
+            _hasUnsavedChanges = true;
+            updateSaveButtonText();
+        }
+    });
+    _bottomPanel->addChild(_powerUpDuplicateButton);
+
     _waveLabel = std::make_shared<ui::Text>(_resourceManager);
     _waveLabel->setPosition(math::Vector2f(10.0f, 100.0f));
     _waveLabel->setText("Wave:");
@@ -1847,6 +1999,47 @@ void LevelEditorState::createBottomPanel() {
         }
     });
     _bottomPanel->addChild(_waveDeleteButton);
+
+    _waveDuplicateButton = std::make_shared<ui::Button>(_resourceManager);
+    _waveDuplicateButton->setPosition(math::Vector2f(1490.0f, 92.0f));
+    _waveDuplicateButton->setSize(math::Vector2f(110.0f, 40.0f));
+    _waveDuplicateButton->setText("Dup");
+    _waveDuplicateButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _waveDuplicateButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _waveDuplicateButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _waveDuplicateButton->setVisible(false);
+    _waveDuplicateButton->setScalingEnabled(false);
+    _waveDuplicateButton->setFocusEnabled(true);
+    _waveDuplicateButton->setOnRelease([this]() {
+        if (_selectedWave.has_value() && _selectedWave.value().waveIndex >= 0 &&
+            _selectedWave.value().waveIndex < static_cast<int>(_waves.size())) {
+            auto newWave = _waves[static_cast<size_t>(_selectedWave.value().waveIndex)];
+            newWave.gameXTrigger += 25.0f;
+            _waves.push_back(newWave);
+
+            WaveSelection newSel;
+            newSel.waveIndex = static_cast<int>(_waves.size()) - 1;
+            newSel.enemyIndex = -1;
+            _selectedWave = newSel;
+            _currentWaveIndex = newSel.waveIndex;
+
+            if (_waveIndexLabel) {
+                _waveIndexLabel->setText(std::to_string(_currentWaveIndex + 1) +
+                    " / " + std::to_string(_waves.size()));
+            }
+
+            if (_waveTriggerXInput) {
+                _waveTriggerXInput->setText(std::to_string(
+                    static_cast<int>(newWave.gameXTrigger)));
+            }
+
+            updateEnemyUI();
+
+            _hasUnsavedChanges = true;
+            updateSaveButtonText();
+        }
+    });
+    _bottomPanel->addChild(_waveDuplicateButton);
 
     _waveTriggerXLabel = std::make_shared<ui::Text>(_resourceManager);
     _waveTriggerXLabel->setPosition(math::Vector2f(175.0f, 100.0f));
