@@ -848,7 +848,7 @@ void LevelEditorState::createBottomPanel() {
     _obstacleTypeLabel->setText("Type");
     _obstacleTypeLabel->setFontSize(16);
     _obstacleTypeLabel->setTextColor(colors::BUTTON_PRIMARY);
-    _obstacleTypeLabel->setVisible(false);
+    _obstacleTypeLabel->setVisible(true);
     _bottomPanel->addChild(_obstacleTypeLabel);
 
     _obstacleTypeDropdown = std::make_shared<ui::Dropdown>(_resourceManager);
@@ -859,7 +859,8 @@ void LevelEditorState::createBottomPanel() {
     _obstacleTypeDropdown->addOption("unique");
     _obstacleTypeDropdown->addOption("horizontal");
     _obstacleTypeDropdown->addOption("vertical");
-    _obstacleTypeDropdown->setVisible(false);
+    _obstacleTypeDropdown->setSelectedIndex(0);
+    _obstacleTypeDropdown->setVisible(true);
     _obstacleTypeDropdown->setOnSelectionChanged(
         [this](const std::string& selectedText, size_t selectedIndex) {
         (void)selectedText;
