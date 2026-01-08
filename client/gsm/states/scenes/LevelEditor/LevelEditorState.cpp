@@ -162,6 +162,9 @@ void LevelEditorState::update(float deltaTime) {
         float worldY = (mousePos.getY() - levelY) / _viewportZoom;
 
         if (_clipboardObstacle.has_value()) {
+            if (_displayFilter != "All" && _displayFilter != "Obstacles") {
+                _displayFilter = "All";
+            }
             const auto& clipSel = _clipboardObstacle.value();
             if (clipSel.type == "unique") {
                 auto& uniques = _obstaclesByName[clipSel.prefabName].uniques;
@@ -211,6 +214,7 @@ void LevelEditorState::update(float deltaTime) {
 
                     _hasUnsavedChanges = true;
                     updateSaveButtonText();
+                    saveToHistory();
                 }
             } else if (clipSel.type == "horizontal") {
                 auto& horizontals = _obstaclesByName[clipSel.prefabName].horizontalLines;
@@ -263,6 +267,7 @@ void LevelEditorState::update(float deltaTime) {
 
                     _hasUnsavedChanges = true;
                     updateSaveButtonText();
+                    saveToHistory();
                 }
             } else if (clipSel.type == "vertical") {
                 auto& verticals = _obstaclesByName[clipSel.prefabName].verticalLines;
@@ -315,9 +320,13 @@ void LevelEditorState::update(float deltaTime) {
 
                     _hasUnsavedChanges = true;
                     updateSaveButtonText();
+                    saveToHistory();
                 }
             }
         } else if (_clipboardPowerUp.has_value()) {
+            if (_displayFilter != "All" && _displayFilter != "PowerUps") {
+                _displayFilter = "All";
+            }
             const auto& clipSel = _clipboardPowerUp.value();
             auto& powerUps = _powerUpsByName[clipSel.prefabName];
             if (clipSel.index < static_cast<int>(powerUps.size())) {
@@ -365,8 +374,12 @@ void LevelEditorState::update(float deltaTime) {
 
                 _hasUnsavedChanges = true;
                 updateSaveButtonText();
+                saveToHistory();
             }
         } else if (_clipboardWave.has_value()) {
+            if (_displayFilter != "All" && _displayFilter != "Waves") {
+                _displayFilter = "All";
+            }
             const auto& clipSel = _clipboardWave.value();
             if (clipSel.waveIndex >= 0 &&
                 clipSel.waveIndex < static_cast<int>(_waves.size())) {
@@ -415,6 +428,7 @@ void LevelEditorState::update(float deltaTime) {
 
                 _hasUnsavedChanges = true;
                 updateSaveButtonText();
+                saveToHistory();
             }
         }
         _pastePressedLastFrame = true;
@@ -1825,6 +1839,7 @@ void LevelEditorState::createBottomPanel() {
 
         _hasUnsavedChanges = true;
         updateSaveButtonText();
+        saveToHistory();
     });
     _bottomPanel->addChild(_obstacleDeleteButton);
 
@@ -1934,6 +1949,7 @@ void LevelEditorState::createBottomPanel() {
 
                 _hasUnsavedChanges = true;
                 updateSaveButtonText();
+                saveToHistory();
             }
         }
     });
@@ -2128,6 +2144,7 @@ void LevelEditorState::createBottomPanel() {
 
         _hasUnsavedChanges = true;
         updateSaveButtonText();
+        saveToHistory();
     });
     _bottomPanel->addChild(_powerUpDeleteButton);
 
@@ -2168,6 +2185,7 @@ void LevelEditorState::createBottomPanel() {
 
             _hasUnsavedChanges = true;
             updateSaveButtonText();
+            saveToHistory();
         }
     });
     _bottomPanel->addChild(_powerUpDuplicateButton);
@@ -2291,6 +2309,7 @@ void LevelEditorState::createBottomPanel() {
 
             _hasUnsavedChanges = true;
             updateSaveButtonText();
+            saveToHistory();
         }
     });
     _bottomPanel->addChild(_waveDeleteButton);
@@ -2332,6 +2351,7 @@ void LevelEditorState::createBottomPanel() {
 
             _hasUnsavedChanges = true;
             updateSaveButtonText();
+            saveToHistory();
         }
     });
     _bottomPanel->addChild(_waveDuplicateButton);
@@ -2962,6 +2982,10 @@ void LevelEditorState::exit() {
 }
 
 void LevelEditorState::saveToHistory() {
+    saveObstacles();
+    savePowerUps();
+    saveWaves();
+
     if (_currentHistoryIndex + 1 < _history.size()) {
         _history.erase(_history.begin() + static_cast<
             std::vector<nlohmann::json>::difference_type>(
@@ -3026,6 +3050,7 @@ void LevelEditorState::loadFromHistory(size_t index) {
 
     parseObstacles();
     parsePowerUps();
+    parseWaves();
 
     _isLoadingFromHistory = false;
     _hasPendingChange = false;

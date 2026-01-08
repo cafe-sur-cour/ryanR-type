@@ -322,6 +322,7 @@ void LevelEditorState::handlePowerUpClick(
 
             _hasUnsavedChanges = true;
             updateSaveButtonText();
+            saveToHistory();
         } else {
             _selectedPowerUp = std::nullopt;
             if (_powerUpPosXInput) {
