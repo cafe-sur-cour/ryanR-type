@@ -81,6 +81,7 @@ void LevelEditorState::enter() {
         math::Vector2f(5376.0f, 3584.0f));
 
     parseObstacles();
+    parsePowerUps();
 }
 
 void LevelEditorState::update(float deltaTime) {
@@ -175,6 +176,31 @@ void LevelEditorState::update(float deltaTime) {
         }
     }
 
+    for (auto& [prefabName, spriteData] : _powerUpAnimationData) {
+        if (spriteData.isAnimation) {
+            if (_powerUpAnimationTimes.find(prefabName) == _powerUpAnimationTimes.end()) {
+                _powerUpAnimationTimes[prefabName] = 0.0f;
+                _powerUpAnimationFrames[prefabName] = 0.0f;
+            }
+
+            _powerUpAnimationTimes[prefabName] += deltaTime;
+            float frameDuration = spriteData.animationSpeed;
+
+            if (_powerUpAnimationTimes[prefabName] >= frameDuration) {
+                _powerUpAnimationTimes[prefabName] = 0.0f;
+                _powerUpAnimationFrames[prefabName] += 1.0f;
+
+                if (_powerUpAnimationFrames[prefabName] >= spriteData.frameCount) {
+                    if (spriteData.animationLoop) {
+                        _powerUpAnimationFrames[prefabName] = 0.0f;
+                    } else {
+                        _powerUpAnimationFrames[prefabName] = spriteData.frameCount - 1.0f;
+                    }
+                }
+            }
+        }
+    }
+
     const float sidePanelWidth = 300.0f;
     const float bottomPanelHeight = 200.0f;
     const float canvasHeight = constants::MAX_HEIGHT - bottomPanelHeight;
@@ -188,12 +214,46 @@ void LevelEditorState::update(float deltaTime) {
         static_cast<int>(constants::MouseButton::LEFT));
 
     if (isInCanvas && !leftMousePressed && _leftMousePressedLastFrame &&
-        !_isDragging && !_isDraggingObstacle) {
+        !_isDragging && !_isDraggingObstacle && !_isDraggingPowerUp) {
         float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
         if (mapLength > 0.0f) {
             float levelX = sidePanelWidth - (_viewportOffset.getX() * _viewportZoom);
             float levelY = -(_viewportOffset.getY() * _viewportZoom);
-            handleObstacleClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
+
+            std::string editorMode = "";
+            if (_editorModeDropdown) {
+                editorMode = _editorModeDropdown->getSelectedOption();
+            }
+
+            if (editorMode == "Obstacles") {
+                auto obstacleSelection = getObstacleAtPosition(
+                    mousePos.getX(), mousePos.getY(), levelX, levelY);
+                if (obstacleSelection.has_value()) {
+                    handleObstacleClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
+                } else {
+                    auto powerUpSelection = getPowerUpAtPosition(
+                        mousePos.getX(), mousePos.getY(), levelX, levelY);
+                    if (powerUpSelection.has_value()) {
+                        handlePowerUpClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
+                    } else {
+                        handleObstacleClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
+                    }
+                }
+            } else if (editorMode == "PowerUps") {
+                auto powerUpSelection = getPowerUpAtPosition(
+                    mousePos.getX(), mousePos.getY(), levelX, levelY);
+                if (powerUpSelection.has_value()) {
+                    handlePowerUpClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
+                } else {
+                    auto obstacleSelection = getObstacleAtPosition(
+                        mousePos.getX(), mousePos.getY(), levelX, levelY);
+                    if (obstacleSelection.has_value()) {
+                        handleObstacleClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
+                    } else {
+                        handlePowerUpClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
+                    }
+                }
+            }
         }
     }
 
@@ -220,8 +280,30 @@ void LevelEditorState::update(float deltaTime) {
                 }
             }
         }
+        if (_selectedPowerUp.has_value()) {
+            float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
+            if (mapLength > 0.0f) {
+                if (_isDraggingPowerUp) {
+                    handlePowerUpDrag(mousePos, _viewportZoom, sidePanelWidth);
+                } else {
+                    float levelX = sidePanelWidth - (_viewportOffset.getX() * _viewportZoom);
+                    float levelY = -(_viewportOffset.getY() * _viewportZoom);
+                    auto clickedPowerUp = getPowerUpAtPosition(
+                        mousePos.getX(), mousePos.getY(), levelX, levelY);
+
+                    if (clickedPowerUp.has_value() &&
+                        clickedPowerUp.value().prefabName ==
+                            _selectedPowerUp.value().prefabName &&
+                        clickedPowerUp.value().index == _selectedPowerUp.value().index) {
+                        _isDraggingPowerUp = true;
+                        startPowerUpDrag(mousePos, _viewportZoom, sidePanelWidth);
+                    }
+                }
+            }
+        }
     } else {
         _isDraggingObstacle = false;
+        _isDraggingPowerUp = false;
     }
 
     _leftMousePressedLastFrame = leftMousePressed;
@@ -324,7 +406,7 @@ std::vector<std::string> LevelEditorState::loadAvailableBackgrounds() {
 
 std::vector<std::string> LevelEditorState::loadAvailableObstacles() {
     std::vector<std::string> obstacles;
-    std::filesystem::path obstaclesPath = "configs/entities/obstacles";
+    std::filesystem::path obstaclesPath = constants::OBSTACLES_DIRECTORY;
 
     if (!std::filesystem::exists(obstaclesPath) ||
         !std::filesystem::is_directory(obstaclesPath)) {
@@ -332,15 +414,17 @@ std::vector<std::string> LevelEditorState::loadAvailableObstacles() {
     }
 
     for (const auto& entry : std::filesystem::directory_iterator(obstaclesPath)) {
-        if (entry.is_regular_file() && entry.path().extension() == ".json") {
+        if (entry.is_regular_file() && entry.path().extension() ==
+            constants::LEVEL_FILE_EXTENSION) {
             try {
                 std::ifstream file(entry.path());
                 nlohmann::json obstacleData;
                 file >> obstacleData;
                 file.close();
 
-                if (obstacleData.contains("name") && obstacleData["name"].is_string()) {
-                    std::string obstacleName = obstacleData["name"];
+                if (obstacleData.contains(constants::LEVEL_NAME_FIELD) &&
+                    obstacleData[constants::LEVEL_NAME_FIELD].is_string()) {
+                    std::string obstacleName = obstacleData[constants::LEVEL_NAME_FIELD];
                     obstacles.push_back(obstacleName);
                 }
             } catch (const std::exception&) {
@@ -349,6 +433,37 @@ std::vector<std::string> LevelEditorState::loadAvailableObstacles() {
     }
 
     return obstacles;
+}
+
+std::vector<std::string> LevelEditorState::loadAvailablePowerUps() {
+    std::vector<std::string> powerUps;
+    std::filesystem::path powerUpsPath = constants::POWERUPS_DIRECTORY;
+
+    if (!std::filesystem::exists(powerUpsPath) ||
+        !std::filesystem::is_directory(powerUpsPath)) {
+        return powerUps;
+    }
+
+    for (const auto& entry : std::filesystem::directory_iterator(powerUpsPath)) {
+        if (entry.is_regular_file() && entry.path().extension() ==
+            constants::LEVEL_FILE_EXTENSION) {
+            try {
+                std::ifstream file(entry.path());
+                nlohmann::json powerUpData;
+                file >> powerUpData;
+                file.close();
+
+                if (powerUpData.contains(constants::LEVEL_NAME_FIELD) &&
+                    powerUpData[constants::LEVEL_NAME_FIELD].is_string()) {
+                    std::string powerUpName = powerUpData[constants::LEVEL_NAME_FIELD];
+                    powerUps.push_back(powerUpName);
+                }
+            } catch (const std::exception&) {
+            }
+        }
+    }
+
+    return powerUps;
 }
 
 void LevelEditorState::createUI() {
@@ -392,6 +507,7 @@ void LevelEditorState::createUI() {
         }
 
         saveObstacles();
+        savePowerUps();
 
         std::filesystem::path savePath = *_levelPath;
 
@@ -766,23 +882,94 @@ void LevelEditorState::createBottomPanel() {
     _editorModeDropdown->setOnSelectionChanged(
         [this](const std::string& mode, [[maybe_unused]] size_t index) {
         bool showObstacles = (mode == "Obstacles");
+        bool showPowerUps = (mode == "PowerUps");
+
+        if (showObstacles && _selectedPowerUp.has_value()) {
+            _selectedPowerUp = std::nullopt;
+            if (_powerUpPosXInput) _powerUpPosXInput->setVisible(false);
+            if (_powerUpPosXLabel) _powerUpPosXLabel->setVisible(false);
+            if (_powerUpPosYInput) _powerUpPosYInput->setVisible(false);
+            if (_powerUpPosYLabel) _powerUpPosYLabel->setVisible(false);
+            if (_powerUpDeleteButton) _powerUpDeleteButton->setVisible(false);
+        }
+        if (showPowerUps && _selectedObstacle.has_value()) {
+            _selectedObstacle = std::nullopt;
+            if (_obstaclePosXInput) _obstaclePosXInput->setVisible(false);
+            if (_obstaclePosXLabel) _obstaclePosXLabel->setVisible(false);
+            if (_obstaclePosYInput) _obstaclePosYInput->setVisible(false);
+            if (_obstaclePosYLabel) _obstaclePosYLabel->setVisible(false);
+            if (_obstacleCountInput) _obstacleCountInput->setVisible(false);
+            if (_obstacleCountLabel) _obstacleCountLabel->setVisible(false);
+            if (_obstacleDeleteButton) _obstacleDeleteButton->setVisible(false);
+        }
+
+        if (_spritePreview) {
+            _spritePreview->clear();
+        }
+        if (_spriteWidthLabel) {
+            _spriteWidthLabel->setText("Width: 0");
+        }
+        if (_spriteHeightLabel) {
+            _spriteHeightLabel->setText("Height: 0");
+        }
+
+        if (showObstacles && _obstaclePrefabDropdown) {
+            std::string selectedPrefab = _obstaclePrefabDropdown->getSelectedOption();
+            if (!selectedPrefab.empty()) {
+                std::filesystem::path prefabPath =
+                    std::filesystem::path(constants::OBSTACLES_DIRECTORY) / (selectedPrefab +
+                        constants::LEVEL_FILE_EXTENSION);
+                if (_spritePreview && std::filesystem::exists(prefabPath)) {
+                    _spritePreview->loadPrefab(prefabPath);
+                    LevelPreviewSprite spriteData =
+                        extractSpriteDataFromPrefab(prefabPath.string());
+                    _spriteWidthLabel->setText(
+                        "Width: " + std::to_string(static_cast<int>(spriteData.width)));
+                    _spriteHeightLabel->setText(
+                        "Height: " + std::to_string(static_cast<int>(spriteData.height)));
+                }
+            }
+        } else if (showPowerUps && _powerUpPrefabDropdown) {
+            std::string selectedPrefab = _powerUpPrefabDropdown->getSelectedOption();
+            if (!selectedPrefab.empty()) {
+                std::filesystem::path prefabPath =
+                    std::filesystem::path(constants::POWERUPS_DIRECTORY) / (selectedPrefab +
+                        constants::LEVEL_FILE_EXTENSION);
+                if (_spritePreview && std::filesystem::exists(prefabPath)) {
+                    _spritePreview->loadPrefab(prefabPath);
+                    LevelPreviewSprite spriteData =
+                        extractSpriteDataFromPrefab(prefabPath.string());
+                    _spriteWidthLabel->setText(
+                        "Width: " + std::to_string(static_cast<int>(spriteData.width)));
+                    _spriteHeightLabel->setText(
+                        "Height: " + std::to_string(static_cast<int>(spriteData.height)));
+                }
+            }
+        }
+
         if (_obstaclePrefabLabel) {
             _obstaclePrefabLabel->setVisible(showObstacles);
         }
         if (_obstaclePrefabDropdown) {
             _obstaclePrefabDropdown->setVisible(showObstacles);
         }
+        if (_powerUpPrefabLabel) {
+            _powerUpPrefabLabel->setVisible(showPowerUps);
+        }
+        if (_powerUpPrefabDropdown) {
+            _powerUpPrefabDropdown->setVisible(showPowerUps);
+        }
         if (_spritePreviewPanel) {
-            _spritePreviewPanel->setVisible(showObstacles);
+            _spritePreviewPanel->setVisible(showObstacles || showPowerUps);
         }
         if (_spritePreview) {
-            _spritePreview->setVisible(showObstacles);
+            _spritePreview->setVisible(showObstacles || showPowerUps);
         }
         if (_spriteWidthLabel) {
-            _spriteWidthLabel->setVisible(showObstacles);
+            _spriteWidthLabel->setVisible(showObstacles || showPowerUps);
         }
         if (_spriteHeightLabel) {
-            _spriteHeightLabel->setVisible(showObstacles);
+            _spriteHeightLabel->setVisible(showObstacles || showPowerUps);
         }
         if (_obstacleTypeLabel) {
             _obstacleTypeLabel->setVisible(showObstacles);
@@ -1161,8 +1348,201 @@ void LevelEditorState::createBottomPanel() {
     });
     _bottomPanel->addChild(_obstacleDeleteButton);
 
+    /* PowerUp UI elements */
+    _powerUpPrefabLabel = std::make_shared<ui::Text>(_resourceManager);
+    _powerUpPrefabLabel->setPosition(math::Vector2f(10.0f, 100.0f));
+    _powerUpPrefabLabel->setText("Prefab");
+    _powerUpPrefabLabel->setFontSize(16);
+    _powerUpPrefabLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _powerUpPrefabLabel->setVisible(false);
+    _bottomPanel->addChild(_powerUpPrefabLabel);
+
+    _powerUpPrefabDropdown = std::make_shared<ui::Dropdown>(_resourceManager);
+    _powerUpPrefabDropdown->setPosition(math::Vector2f(10.0f, 130.0f));
+    _powerUpPrefabDropdown->setSize(math::Vector2f(200.0f, 40.0f));
+    auto availablePowerUps = loadAvailablePowerUps();
+    _powerUpPrefabDropdown->setOptions(availablePowerUps);
+    _powerUpPrefabDropdown->setPlaceholder("Prefab...");
+    _powerUpPrefabDropdown->setOnSelectionChanged(
+        [this](const std::string& powerUp, [[maybe_unused]] size_t index) {
+        if (!powerUp.empty()) {
+            std::filesystem::path prefabPath =
+                std::filesystem::path(constants::POWERUPS_DIRECTORY) / (powerUp +
+                    constants::LEVEL_FILE_EXTENSION);
+            if (_spritePreview && std::filesystem::exists(prefabPath)) {
+                _spritePreview->loadPrefab(prefabPath);
+
+                LevelPreviewSprite spriteData =
+                    extractSpriteDataFromPrefab(prefabPath.string());
+                std::string widthStr = "Width: " +
+                    std::to_string(static_cast<int>(spriteData.width));
+                std::string heightStr = "Height: " +
+                    std::to_string(static_cast<int>(spriteData.height));
+                _spriteWidthLabel->setText(widthStr);
+                _spriteHeightLabel->setText(heightStr);
+
+                _powerUpAnimationData[powerUp] = spriteData;
+                if (spriteData.isAnimation) {
+                    _powerUpAnimationFrames[powerUp] = 0.0f;
+                    _powerUpAnimationTimes[powerUp] = 0.0f;
+                }
+            }
+        }
+    });
+    _powerUpPrefabDropdown->setScalingEnabled(false);
+    _powerUpPrefabDropdown->setFocusEnabled(true);
+    _powerUpPrefabDropdown->setDirection(ui::DropdownDirection::Right);
+    _powerUpPrefabDropdown->setVisible(false);
+
+    _powerUpPosXLabel = std::make_shared<ui::Text>(_resourceManager);
+    _powerUpPosXLabel->setPosition(math::Vector2f(450.0f, 92.5f));
+    _powerUpPosXLabel->setText("Pos X");
+    _powerUpPosXLabel->setFontSize(16);
+    _powerUpPosXLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _powerUpPosXLabel->setVisible(false);
+    _bottomPanel->addChild(_powerUpPosXLabel);
+
+    _powerUpPosXInput = std::make_shared<ui::TextInput>(_resourceManager);
+    _powerUpPosXInput->setPosition(math::Vector2f(450.0f, 115.0f));
+    _powerUpPosXInput->setSize(math::Vector2f(130.0f, 30.0f));
+    _powerUpPosXInput->setPlaceholder("X...");
+    _powerUpPosXInput->setVisible(false);
+    _powerUpPosXInput->setScalingEnabled(false);
+    _powerUpPosXInput->setFocusEnabled(true);
+    _powerUpPosXInput->setOnTextChanged([this](const std::string& text) {
+        std::string filteredText;
+        for (char c : text) {
+            if ((c >= '0' && c <= '9') || c == '-' || c == '.') {
+                filteredText += c;
+            }
+        }
+
+        if (filteredText != text) {
+            _powerUpPosXInput->setText(filteredText);
+            return;
+        }
+
+        if (!_selectedPowerUp.has_value()) {
+            return;
+        }
+        const auto& sel = _selectedPowerUp.value();
+        try {
+            if (!filteredText.empty()) {
+                float newPosX = std::stof(filteredText);
+                _powerUpsByName[sel.prefabName][static_cast<
+                    size_t>(sel.index)].posX = newPosX;
+                _hasUnsavedChanges = true;
+                updateSaveButtonText();
+            }
+        } catch (const std::exception&) {
+        }
+    });
+    _powerUpPosXInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_powerUpPosXInput);
+    });
+    _bottomPanel->addChild(_powerUpPosXInput);
+
+    _powerUpPosYLabel = std::make_shared<ui::Text>(_resourceManager);
+    _powerUpPosYLabel->setPosition(math::Vector2f(595.0f, 92.5f));
+    _powerUpPosYLabel->setText("Pos Y");
+    _powerUpPosYLabel->setFontSize(16);
+    _powerUpPosYLabel->setTextColor(colors::BUTTON_PRIMARY);
+    _powerUpPosYLabel->setVisible(false);
+    _bottomPanel->addChild(_powerUpPosYLabel);
+
+    _powerUpPosYInput = std::make_shared<ui::TextInput>(_resourceManager);
+    _powerUpPosYInput->setPosition(math::Vector2f(595.0f, 115.0f));
+    _powerUpPosYInput->setSize(math::Vector2f(130.0f, 30.0f));
+    _powerUpPosYInput->setPlaceholder("Y...");
+    _powerUpPosYInput->setVisible(false);
+    _powerUpPosYInput->setScalingEnabled(false);
+    _powerUpPosYInput->setFocusEnabled(true);
+    _powerUpPosYInput->setOnTextChanged([this](const std::string& text) {
+        std::string filteredText;
+        for (char c : text) {
+            if ((c >= '0' && c <= '9') || c == '-' || c == '.') {
+                filteredText += c;
+            }
+        }
+
+        if (filteredText != text) {
+            _powerUpPosYInput->setText(filteredText);
+            return;
+        }
+
+        if (!_selectedPowerUp.has_value()) {
+            return;
+        }
+        const auto& sel = _selectedPowerUp.value();
+        try {
+            if (!filteredText.empty()) {
+                float newPosY = std::stof(filteredText);
+                _powerUpsByName[sel.prefabName][static_cast<
+                    size_t>(sel.index)].posY = newPosY;
+                _hasUnsavedChanges = true;
+                updateSaveButtonText();
+            }
+        } catch (const std::exception&) {
+        }
+    });
+    _powerUpPosYInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_powerUpPosYInput);
+    });
+    _bottomPanel->addChild(_powerUpPosYInput);
+
+    _powerUpDeleteButton = std::make_shared<ui::Button>(_resourceManager);
+    _powerUpDeleteButton->setPosition(math::Vector2f(1490, 145.0f));
+    _powerUpDeleteButton->setSize(math::Vector2f(110.0f, 40.0f));
+    _powerUpDeleteButton->setText("Delete");
+    _powerUpDeleteButton->setNormalColor(colors::BUTTON_DANGER);
+    _powerUpDeleteButton->setHoveredColor(colors::BUTTON_DANGER_HOVER);
+    _powerUpDeleteButton->setPressedColor(colors::BUTTON_DANGER_PRESSED);
+    _powerUpDeleteButton->setVisible(false);
+    _powerUpDeleteButton->setScalingEnabled(false);
+    _powerUpDeleteButton->setFocusEnabled(true);
+    _powerUpDeleteButton->setOnRelease([this]() {
+        if (!_selectedPowerUp.has_value()) {
+            return;
+        }
+
+        const auto& sel = _selectedPowerUp.value();
+        auto& powerUps = _powerUpsByName[sel.prefabName];
+        if (sel.index < static_cast<int>(powerUps.size())) {
+            powerUps.erase(powerUps.begin() + sel.index);
+        }
+
+        _selectedPowerUp = std::nullopt;
+        if (_powerUpPosXInput) {
+            _powerUpPosXInput->setVisible(false);
+        }
+        if (_powerUpPosXLabel) {
+            _powerUpPosXLabel->setVisible(false);
+        }
+        if (_powerUpPosYInput) {
+            _powerUpPosYInput->setVisible(false);
+        }
+        if (_powerUpPosYLabel) {
+            _powerUpPosYLabel->setVisible(false);
+        }
+        if (_powerUpDeleteButton) {
+            _powerUpDeleteButton->setVisible(false);
+        }
+        if (_powerUpPrefabDropdown) {
+            _powerUpPrefabDropdown->setSelectedIndex(0);
+        }
+
+        _hasUnsavedChanges = true;
+        updateSaveButtonText();
+    });
+    _bottomPanel->addChild(_powerUpDeleteButton);
+
     /* DropDowns are added at the end */
     _bottomPanel->addChild(_obstaclePrefabDropdown);
+    _bottomPanel->addChild(_powerUpPrefabDropdown);
     _bottomPanel->addChild(_editorModeDropdown);
 }
 
@@ -1323,6 +1703,9 @@ void LevelEditorState::loadFromHistory(size_t index) {
     _hasUnsavedChanges = true;
     updateSaveButtonText();
     updateHistoryButtons();
+
+    parseObstacles();
+    parsePowerUps();
 
     _isLoadingFromHistory = false;
     _hasPendingChange = false;
@@ -1518,6 +1901,7 @@ void LevelEditorState::renderLevelPreview() {
     }
 
     renderAllObstacles(levelX, levelY, canvasLeft, canvasRight, canvasTop, canvasBottom);
+    renderAllPowerUps(levelX, levelY, canvasLeft, canvasRight, canvasTop, canvasBottom);
 }
 
 void LevelEditorState::renderSpriteInLevelPreview(
@@ -1548,6 +1932,9 @@ void LevelEditorState::renderSpriteInLevelPreview(
             float currentFrameFloat = 0.0f;
             if (_obstacleAnimationFrames.find(prefabName) != _obstacleAnimationFrames.end()) {
                 currentFrameFloat = _obstacleAnimationFrames[prefabName];
+            } else if (_powerUpAnimationFrames.find(prefabName) !=
+                _powerUpAnimationFrames.end()) {
+                currentFrameFloat = _powerUpAnimationFrames[prefabName];
             }
             int currentFrameIndex = static_cast<int>(currentFrameFloat);
             float frameX = currentFrameIndex * spriteData.frameWidth;
