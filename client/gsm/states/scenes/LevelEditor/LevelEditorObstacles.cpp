@@ -455,20 +455,23 @@ void LevelEditorState::handleObstacleClick(
                 newObstacle.posY = levelMouseY;
                 newObstacle.count = 1;
                 _obstaclesByName[selectedPrefab].horizontalLines.push_back(newObstacle);
-                newIndex = static_cast<int>(_obstaclesByName[selectedPrefab].horizontalLines.size() - 1);
+                newIndex = static_cast<int>(
+                    _obstaclesByName[selectedPrefab].horizontalLines.size() - 1);
             } else if (obstacleType == "vertical") {
                 VerticalLineObstacle newObstacle;
                 newObstacle.posX = levelMouseX;
                 newObstacle.fromY = levelMouseY;
                 newObstacle.count = 1;
                 _obstaclesByName[selectedPrefab].verticalLines.push_back(newObstacle);
-                newIndex = static_cast<int>(_obstaclesByName[selectedPrefab].verticalLines.size() - 1);
+                newIndex = static_cast<int>(
+                    _obstaclesByName[selectedPrefab].verticalLines.size() - 1);
             } else {
                 UniqueObstacle newObstacle;
                 newObstacle.posX = levelMouseX;
                 newObstacle.posY = levelMouseY;
                 _obstaclesByName[selectedPrefab].uniques.push_back(newObstacle);
-                newIndex = static_cast<int>(_obstaclesByName[selectedPrefab].uniques.size() - 1);
+                newIndex = static_cast<int>(
+                    _obstaclesByName[selectedPrefab].uniques.size() - 1);
             }
 
             newSelection.index = newIndex;
