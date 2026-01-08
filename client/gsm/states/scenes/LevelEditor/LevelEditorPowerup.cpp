@@ -263,6 +263,9 @@ void LevelEditorState::handlePowerUpClick(
         if (_powerUpDeleteButton) {
             _powerUpDeleteButton->setVisible(true);
         }
+        if (_powerUpDuplicateButton) {
+            _powerUpDuplicateButton->setVisible(true);
+        }
     } else {
         bool inPowerUpsMode = (_editorModeDropdown &&
             _editorModeDropdown->getSelectedOption() == "PowerUps");
@@ -313,6 +316,9 @@ void LevelEditorState::handlePowerUpClick(
             if (_powerUpDeleteButton) {
                 _powerUpDeleteButton->setVisible(true);
             }
+            if (_powerUpDuplicateButton) {
+                _powerUpDuplicateButton->setVisible(true);
+            }
 
             _hasUnsavedChanges = true;
             updateSaveButtonText();
@@ -332,6 +338,9 @@ void LevelEditorState::handlePowerUpClick(
             }
             if (_powerUpDeleteButton) {
                 _powerUpDeleteButton->setVisible(false);
+            }
+            if (_powerUpDuplicateButton) {
+                _powerUpDuplicateButton->setVisible(false);
             }
         }
     }
