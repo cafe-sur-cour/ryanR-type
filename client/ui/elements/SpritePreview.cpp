@@ -268,4 +268,11 @@ void SpritePreview::update(float deltaTime) {
     }
 }
 
+void SpritePreview::clear() {
+    _type = PreviewType::None;
+    _loaded = false;
+    _currentFrame = 0.0f;
+    _animationTime = 0.0f;
+}
+
 }  // namespace ui

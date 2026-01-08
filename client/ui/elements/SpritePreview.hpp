@@ -30,6 +30,8 @@ class SpritePreview : public UIElement {
         void render() override;
         void update(float deltaTime) override;
 
+        void clear();
+
     private:
         struct SpriteData {
             std::string texturePath;
