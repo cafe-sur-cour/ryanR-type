@@ -45,7 +45,7 @@ float Background::calculateScale(const Layer& layer, float screenWidth) {
     const float screenHeight = constants::MAX_HEIGHT;
     float scaleX = screenWidth / layer.sourceSize.getX();
     float scaleY = screenHeight / layer.sourceSize.getY();
-    return std::max(scaleX, scaleY);
+    return (std::max)(scaleX, scaleY);
 }
 
 void Background::render() {

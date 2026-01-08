@@ -60,6 +60,10 @@
 #define REQUEST_LEADERBOARD_PACKET 0x17
 #define LEADERBOARD_PACKET 0x18
 
+#define GAME_STATE_BATCH_PACKET 0x17
+#define GAME_STATE_BATCH_COMPRESSED_PACKET 0x18
+#define GAME_STATE_COMPRESSED_PACKET 0x19
+
 namespace pm {
 
     class IPacketManager {
@@ -70,6 +74,7 @@ namespace pm {
         virtual uint32_t getSequenceNumber() const = 0;
         virtual uint8_t getType() const = 0;
         virtual std::vector<uint64_t> getPayload() const = 0;
+        virtual std::vector<std::vector<uint64_t>> getBatchedPayloads() const = 0;
         virtual uint8_t getIdClient() const = 0;
 
         virtual void setType(uint8_t type) = 0;
@@ -80,6 +85,7 @@ namespace pm {
 
         virtual std::vector<uint64_t> formatString(const std::string str) = 0;
         virtual std::vector<uint8_t> pack(uint8_t idClient, uint32_t sequenceNumber, uint8_t type, std::vector<uint64_t> payload) = 0;
+        virtual std::vector<uint8_t> packBatchedGameState(uint8_t idClient, uint32_t sequenceNumber, const std::vector<std::vector<uint64_t>>& entities) = 0;
         virtual bool unpack(std::vector<uint8_t> data) = 0;
 
         virtual void reset() = 0;

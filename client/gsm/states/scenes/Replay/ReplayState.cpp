@@ -188,18 +188,18 @@ void ReplayState::update(float deltaTime) {
                           event->isKeyPressed(gfx::EventType::GAMEPAD_LEFT_STICK_DOWN);
 
         if (leftPressed) {
-            _replayTime = std::max(0.0f, _replayTime - deltaTime * 5.0f);
+            _replayTime = (std::max)(0.0f, _replayTime - deltaTime * 5.0f);
         }
         if (rightPressed) {
-            _replayTime = std::min(_totalReplayTime, _replayTime + deltaTime * 5.0f);
+            _replayTime = (std::min)(_totalReplayTime, _replayTime + deltaTime * 5.0f);
         }
 
         if (upPressed && _spacePressCooldown <= 0.0f) {
-            _playbackSpeed = std::min(2.0f, _playbackSpeed + 0.1f);
+            _playbackSpeed = (std::min)(2.0f, _playbackSpeed + 0.1f);
             _spacePressCooldown = 0.15f;
         }
         if (downPressed && _spacePressCooldown <= 0.0f) {
-            _playbackSpeed = std::max(0.1f, _playbackSpeed - 0.1f);
+            _playbackSpeed = (std::max)(0.1f, _playbackSpeed - 0.1f);
             _spacePressCooldown = 0.15f;
         }
 
@@ -439,7 +439,7 @@ void ReplayState::renderParallaxBackground(
             if (scaleModeInt == 0) {
                 float scaleX = screenWidth / sourceSize.getX();
                 float scaleY = screenHeight / sourceSize.getY();
-                float uniformScale = std::max(scaleX, scaleY);
+                float uniformScale = (std::max)(scaleX, scaleY);
                 finalScale = math::Vector2f(uniformScale, uniformScale);
             } else if (scaleModeInt == 1) {
                 float scaleX = screenWidth / sourceSize.getX();
@@ -870,10 +870,10 @@ void ReplayState::createPlaybackControlsUI() {
     _decreaseSpeedButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
     _decreaseSpeedButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
     _decreaseSpeedButton->setOnRelease([this]() {
-        _playbackSpeed = std::max(0.1f, _playbackSpeed - 0.1f);
+        _playbackSpeed = (std::max)(0.1f, _playbackSpeed - 0.1f);
     });
     _decreaseSpeedButton->setOnActivated([this]() {
-        _playbackSpeed = std::max(0.1f, _playbackSpeed - 0.1f);
+        _playbackSpeed = (std::max)(0.1f, _playbackSpeed - 0.1f);
     });
 
     _increaseSpeedButton = std::make_shared<ui::Button>(_resourceManager);
@@ -883,10 +883,10 @@ void ReplayState::createPlaybackControlsUI() {
     _increaseSpeedButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
     _increaseSpeedButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
     _increaseSpeedButton->setOnRelease([this]() {
-        _playbackSpeed = std::min(2.0f, _playbackSpeed + 0.1f);
+        _playbackSpeed = (std::min)(2.0f, _playbackSpeed + 0.1f);
     });
     _increaseSpeedButton->setOnActivated([this]() {
-        _playbackSpeed = std::min(2.0f, _playbackSpeed + 0.1f);
+        _playbackSpeed = (std::min)(2.0f, _playbackSpeed + 0.1f);
     });
 
     buttonsLayout->addElement(_replayBackButton);

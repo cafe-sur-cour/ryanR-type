@@ -1,0 +1,86 @@
+{
+    "name": "flyingForce",
+    "components": {
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 300.0, "y": 300.0 },
+            "scale": { "x": 2.0, "y": 2.0 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 500.0 },
+
+
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/player_ship/flyingforce.png",
+                    "frameWidth": 17.0,
+                    "frameHeight": 18.0,
+                    "frameCount": 12,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.5,
+                    "loop": true
+                }
+            },
+            "transitions": [
+            ],
+            "initialState": "idle"
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 17.0, "y": 18.0 },
+            "type": "Trigger"
+        },
+        "DamageComponent": {
+            "target": "both",
+            "damage": 50.0
+        },
+        "PowerUpTag": { "target": "both" },
+        "ForceTag": {
+            "target": "both",
+            "forceType": "flyingForce"
+        },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/flyingForce.lua",
+            "additionalFunctions": ["OnInteract"]
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerTag"],
+                    "toEntity": [],
+                    "toSelf": ["InteractionCallScripting"]
+                },
+                {
+                    "tags": ["MobTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": []
+                },
+                {
+                    "tags": ["EnnemyProjectileTag"],
+                    "toEntity": ["DealDeath"],
+                    "toSelf": []
+                }
+            ]
+        },
+        "HitboxRenderComponent": { "target": "client" },
+                "ProjectilePrefabComponent": {
+            "target": "both",
+            "prefabName": "basic_shot"
+        },
+        "ShootingStatsComponent": {
+            "target": "both",
+            "fireRate": 5.0,
+            "shotCount": 1,
+            "angleOffset": 0.0,
+            "spreadAngle": 0.0
+        },
+        "ShooterTag": { "target": "both" }
+    }
+}

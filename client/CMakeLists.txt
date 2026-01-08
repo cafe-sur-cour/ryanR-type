@@ -79,3 +79,7 @@ if(WIN32)
         COMMENT "Copying vcpkg PDBs to root directory (Debug only)"
     )
 endif()
+
+if(USE_UNITY_BUILD)
+    set_target_properties(${CLIENT_BIN_NAME} PROPERTIES UNITY_BUILD ON)
+endif()

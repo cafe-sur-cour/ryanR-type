@@ -110,6 +110,11 @@ private:
     std::shared_ptr<ui::Button> _shootPrimaryButton;
     std::shared_ptr<ui::Button> _shootSecondaryButton;
 
+    std::shared_ptr<ui::UILayout> _forceLayout;
+    std::shared_ptr<ui::Text> _forceLabel;
+    std::shared_ptr<ui::Button> _forcePrimaryButton;
+    std::shared_ptr<ui::Button> _forceSecondaryButton;
+
     bool _isWaitingForKey = false;
     std::optional<ecs::RemappableAction> _actionToRebind;
     bool _rebindingPrimary = true;

@@ -22,7 +22,8 @@ ServerInputProvider::ServerInputProvider() {
         &ServerInputProvider::handleLeft,
         &ServerInputProvider::handleRight,
         &ServerInputProvider::handleShoot,
-        &ServerInputProvider::handleStop
+        &ServerInputProvider::handleStop,
+        &ServerInputProvider::handleForce
     };
     this->_inputMapping = std::vector<std::tuple<size_t, size_t, InputMapping>>();
     this->_clientAxisValues = std::map<size_t, std::map<ecs::InputAction, float>>();
@@ -94,6 +95,9 @@ void ServerInputProvider::handleShoot(size_t clientID, float value) {
     setAxisValue(ecs::InputAction::SHOOT, value, clientID);
 }
 
+void ServerInputProvider::handleForce(size_t clientID, float value) {
+    setAxisValue(ecs::InputAction::FORCE, value, clientID);
+}
 
 
 void ServerInputProvider::updateInputFromEvent

@@ -1,9 +1,9 @@
 {
     "background": "background",
     "index": 3,
-    "mapLength": 6500.0,
+    "mapLength": 10000.0,
     "music": "music",
-    "name": "Level 3",
+    "name": "Level FRANQUET",
     "obstacles": [
         {
             "name": "obstacle1",
@@ -90,7 +90,7 @@
         }
     ],
     "powerUps": [],
-    "scrollSpeed": 100.0,
+    "scrollSpeed": 100,
     "waves": [
         {
             "enemies": [

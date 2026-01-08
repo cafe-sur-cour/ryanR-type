@@ -35,6 +35,7 @@ target_link_libraries(${SERVER_LIB_NAME}
         InputNormalizer
         ServerMovementInputSystem
         ServerShootInputSystem
+        ServerForceInputSystem
         EndOfMapDetectionSystem
         Server::PacketHandlers
 )
@@ -78,4 +79,8 @@ if(WIN32)
         COMMAND powershell -Command "if ('$<CONFIG>' -eq 'Debug') { Get-ChildItem -Path '${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/bin/*.pdb' -ErrorAction SilentlyContinue | ForEach-Object { Copy-Item $_.FullName -Destination '${CMAKE_SOURCE_DIR}/' -Force } }"
         COMMENT "Copying vcpkg PDBs to root directory (Debug only)"
     )
+endif()
+
+if(USE_UNITY_BUILD)
+    set_target_properties(${SERVER_BIN_NAME} PROPERTIES UNITY_BUILD ON)
 endif()

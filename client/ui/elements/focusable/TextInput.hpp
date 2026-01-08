@@ -37,6 +37,7 @@ class TextInput : public AFocusableElement {
 
         void setOnTextChanged(std::function<void(const std::string&)> callback);
         void setOnSubmit(std::function<void(const std::string&)> callback);
+        void setOnFocusLost(std::function<void()> callback);
         void setMaxLength(size_t maxLength);
 
         virtual void handleInput(const math::Vector2f& mousePos, bool mousePressed) override;
@@ -60,6 +61,7 @@ class TextInput : public AFocusableElement {
 
         std::function<void(const std::string&)> _onTextChanged;
         std::function<void(const std::string&)> _onSubmit;
+        std::function<void()> _onFocusLost;
 
         void insertChar(char c);
         void deleteChar();

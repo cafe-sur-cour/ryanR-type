@@ -27,6 +27,20 @@ target_include_directories(ServerShootInputSystem PRIVATE
     ${CMAKE_SOURCE_DIR}/server
 )
 
+add_library(ServerForceInputSystem STATIC
+    input/ServerForceInputSystem.cpp
+)
+
+target_link_libraries(ServerForceInputSystem
+    ECS
+    ${SERVER_LIB_NAME}
+)
+
+target_include_directories(ServerForceInputSystem PRIVATE
+    ${CMAKE_SOURCE_DIR}/common
+    ${CMAKE_SOURCE_DIR}/server
+)
+
 add_library(EndOfMapDetectionSystem STATIC
     gameEnd/EndOfMapDetectionSystem.cpp
 )
