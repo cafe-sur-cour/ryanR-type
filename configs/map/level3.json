@@ -147,25 +147,6 @@
         {
             "enemies": [
                 {
-                    "count": 4,
-                    "distributionX": {
-                        "max": 95,
-                        "min": 90,
-                        "type": "random"
-                    },
-                    "distributionY": {
-                        "max": 90,
-                        "min": 10,
-                        "type": "uniform"
-                    },
-                    "type": "enemy2"
-                }
-            ],
-            "gameXTrigger": 600.0
-        },
-        {
-            "enemies": [
-                {
                     "count": 3,
                     "distributionX": {
                         "max": 15,
@@ -195,25 +176,6 @@
                 }
             ],
             "gameXTrigger": 1000.0
-        },
-        {
-            "enemies": [
-                {
-                    "count": 5,
-                    "distributionX": {
-                        "max": 55,
-                        "min": 50,
-                        "type": "random"
-                    },
-                    "distributionY": {
-                        "max": 90,
-                        "min": 10,
-                        "type": "uniform"
-                    },
-                    "type": "enemy2"
-                }
-            ],
-            "gameXTrigger": 1400.0
         }
     ]
 }

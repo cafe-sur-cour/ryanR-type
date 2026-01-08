@@ -82,6 +82,7 @@ void LevelEditorState::enter() {
 
     parseObstacles();
     parsePowerUps();
+    parseWaves();
 }
 
 void LevelEditorState::update(float deltaTime) {
@@ -236,7 +237,15 @@ void LevelEditorState::update(float deltaTime) {
                     if (powerUpSelection.has_value()) {
                         handlePowerUpClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
                     } else {
-                        handleObstacleClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
+                        auto waveSelection = getWaveAtPosition(
+                            mousePos.getX(), mousePos.getY(), levelX, levelY);
+                        if (waveSelection.has_value()) {
+                            handleWaveClick(
+                                mousePos.getX(), mousePos.getY(), levelX, levelY);
+                        } else {
+                            handleObstacleClick(
+                                mousePos.getX(), mousePos.getY(), levelX, levelY);
+                        }
                     }
                 }
             } else if (editorMode == "PowerUps") {
@@ -248,9 +257,39 @@ void LevelEditorState::update(float deltaTime) {
                     auto obstacleSelection = getObstacleAtPosition(
                         mousePos.getX(), mousePos.getY(), levelX, levelY);
                     if (obstacleSelection.has_value()) {
+                        handleObstacleClick(
+                            mousePos.getX(), mousePos.getY(), levelX, levelY);
+                    } else {
+                        auto waveSelection = getWaveAtPosition(
+                            mousePos.getX(), mousePos.getY(), levelX, levelY);
+                        if (waveSelection.has_value()) {
+                            handleWaveClick(
+                                mousePos.getX(), mousePos.getY(), levelX, levelY);
+                        } else {
+                            handlePowerUpClick(
+                                mousePos.getX(), mousePos.getY(), levelX, levelY);
+                        }
+                    }
+                }
+            } else if (editorMode == "Waves") {
+                auto waveSelection = getWaveAtPosition(
+                    mousePos.getX(), mousePos.getY(), levelX, levelY);
+                if (waveSelection.has_value()) {
+                    handleWaveClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
+                } else {
+                    auto obstacleSelection = getObstacleAtPosition(
+                        mousePos.getX(), mousePos.getY(), levelX, levelY);
+                    if (obstacleSelection.has_value()) {
                         handleObstacleClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
                     } else {
-                        handlePowerUpClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
+                        auto powerUpSelection = getPowerUpAtPosition(
+                            mousePos.getX(), mousePos.getY(), levelX, levelY);
+                        if (powerUpSelection.has_value()) {
+                            handlePowerUpClick(
+                                mousePos.getX(), mousePos.getY(), levelX, levelY);
+                        } else {
+                            handleWaveClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
+                        }
                     }
                 }
             }
@@ -301,9 +340,29 @@ void LevelEditorState::update(float deltaTime) {
                 }
             }
         }
+        if (_selectedWave.has_value()) {
+            float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
+            if (mapLength > 0.0f) {
+                if (_isDraggingWave) {
+                    handleWaveDrag(mousePos, _viewportZoom, sidePanelWidth);
+                } else {
+                    float levelX = sidePanelWidth - (_viewportOffset.getX() * _viewportZoom);
+                    float levelY = -(_viewportOffset.getY() * _viewportZoom);
+                    auto clickedWave = getWaveAtPosition(
+                        mousePos.getX(), mousePos.getY(), levelX, levelY);
+
+                    if (clickedWave.has_value() &&
+                        clickedWave.value().waveIndex == _selectedWave.value().waveIndex) {
+                        _isDraggingWave = true;
+                        startWaveDrag(mousePos, _viewportZoom, sidePanelWidth);
+                    }
+                }
+            }
+        }
     } else {
         _isDraggingObstacle = false;
         _isDraggingPowerUp = false;
+        _isDraggingWave = false;
     }
 
     _leftMousePressedLastFrame = leftMousePressed;
@@ -466,6 +525,37 @@ std::vector<std::string> LevelEditorState::loadAvailablePowerUps() {
     return powerUps;
 }
 
+std::vector<std::string> LevelEditorState::loadAvailableEnemies() {
+    std::vector<std::string> enemies;
+    std::filesystem::path enemiesPath = constants::ENEMIES_DIRECTORY;
+
+    if (!std::filesystem::exists(enemiesPath) ||
+        !std::filesystem::is_directory(enemiesPath)) {
+        return enemies;
+    }
+
+    for (const auto& entry : std::filesystem::directory_iterator(enemiesPath)) {
+        if (entry.is_regular_file() && entry.path().extension() ==
+            constants::LEVEL_FILE_EXTENSION) {
+            try {
+                std::ifstream file(entry.path());
+                nlohmann::json enemyData;
+                file >> enemyData;
+                file.close();
+
+                if (enemyData.contains(constants::LEVEL_NAME_FIELD) &&
+                    enemyData[constants::LEVEL_NAME_FIELD].is_string()) {
+                    std::string enemyName = enemyData[constants::LEVEL_NAME_FIELD];
+                    enemies.push_back(enemyName);
+                }
+            } catch (const std::exception&) {
+            }
+        }
+    }
+
+    return enemies;
+}
+
 void LevelEditorState::createUI() {
     const float sidePanelWidth = 300.0f;
     const float bottomPanelHeight = 200.0f;
@@ -508,6 +598,7 @@ void LevelEditorState::createUI() {
 
         saveObstacles();
         savePowerUps();
+        saveWaves();
 
         std::filesystem::path savePath = *_levelPath;
 
@@ -721,7 +812,6 @@ void LevelEditorState::createUI() {
     });
     _musicDropdown->setScalingEnabled(false);
     _musicDropdown->setFocusEnabled(true);
-    /* musicDropdown will be added after background dropDown */
 
     currentY += 40.0f + elementSpacing;
     _backgroundLabel = std::make_shared<ui::Text>(_resourceManager);
@@ -762,9 +852,6 @@ void LevelEditorState::createUI() {
     });
     _backgroundDropdown->setScalingEnabled(false);
     _backgroundDropdown->setFocusEnabled(true);
-    _sidePanel->addChild(_backgroundDropdown);
-    /* musicDropdown is added after background dropDown to ensure proper z order */
-    _sidePanel->addChild(_musicDropdown);
 
     currentY += 60.0f + elementSpacing;
     _showHitboxesButton = std::make_shared<ui::Button>(_resourceManager);
@@ -782,6 +869,9 @@ void LevelEditorState::createUI() {
     _showHitboxesButton->setScalingEnabled(false);
     _showHitboxesButton->setFocusEnabled(true);
     _sidePanel->addChild(_showHitboxesButton);
+
+    _sidePanel->addChild(_backgroundDropdown);
+    _sidePanel->addChild(_musicDropdown);
 
     const float buttonWidth = (sidePanelWidth - 35.0f) / 2.0f;
     const float buttonY = constants::MAX_HEIGHT - 60.0f;
@@ -883,6 +973,7 @@ void LevelEditorState::createBottomPanel() {
         [this](const std::string& mode, [[maybe_unused]] size_t index) {
         bool showObstacles = (mode == "Obstacles");
         bool showPowerUps = (mode == "PowerUps");
+        bool showWaves = (mode == "Waves");
 
         if (showObstacles && _selectedPowerUp.has_value()) {
             _selectedPowerUp = std::nullopt;
@@ -892,7 +983,7 @@ void LevelEditorState::createBottomPanel() {
             if (_powerUpPosYLabel) _powerUpPosYLabel->setVisible(false);
             if (_powerUpDeleteButton) _powerUpDeleteButton->setVisible(false);
         }
-        if (showPowerUps && _selectedObstacle.has_value()) {
+        if ((showPowerUps || showWaves) && _selectedObstacle.has_value()) {
             _selectedObstacle = std::nullopt;
             if (_obstaclePosXInput) _obstaclePosXInput->setVisible(false);
             if (_obstaclePosXLabel) _obstaclePosXLabel->setVisible(false);
@@ -976,6 +1067,46 @@ void LevelEditorState::createBottomPanel() {
         }
         if (_obstacleTypeDropdown) {
             _obstacleTypeDropdown->setVisible(showObstacles);
+        }
+
+        if (_waveLabel) {
+            _waveLabel->setVisible(showWaves);
+        }
+        if (_waveIndexLabel) {
+            _waveIndexLabel->setVisible(showWaves);
+            if (showWaves) {
+                if (_selectedWave.has_value() && !_waves.empty()) {
+                    _waveIndexLabel->setText(std::to_string(_currentWaveIndex + 1) +
+                        " / " + std::to_string(_waves.size()));
+                } else {
+                    _waveIndexLabel->setText("0 / " + std::to_string(_waves.size()));
+                }
+            }
+        }
+        if (_wavePrevButton) {
+            _wavePrevButton->setVisible(
+                showWaves && !_waves.empty() && _selectedWave.has_value());
+        }
+        if (_waveNextButton) {
+            _waveNextButton->setVisible(
+                showWaves && !_waves.empty() && _selectedWave.has_value());
+        }
+        if (_waveTriggerXLabel) {
+            _waveTriggerXLabel->setVisible(showWaves && _selectedWave.has_value());
+        }
+        if (_waveTriggerXInput) {
+            _waveTriggerXInput->setVisible(showWaves && _selectedWave.has_value());
+        }
+        if (_waveDeleteButton) {
+            _waveDeleteButton->setVisible(showWaves && _selectedWave.has_value());
+        }
+
+        // Hide wave selection when not in waves mode
+        if (!showWaves) {
+            _selectedWave = std::nullopt;
+            if (_waveTriggerXInput) _waveTriggerXInput->setVisible(false);
+            if (_waveTriggerXLabel) _waveTriggerXLabel->setVisible(false);
+            if (_waveDeleteButton) _waveDeleteButton->setVisible(false);
         }
     });
     _editorModeDropdown->setScalingEnabled(false);
@@ -1540,6 +1671,169 @@ void LevelEditorState::createBottomPanel() {
     });
     _bottomPanel->addChild(_powerUpDeleteButton);
 
+    _waveLabel = std::make_shared<ui::Text>(_resourceManager);
+    _waveLabel->setPosition(math::Vector2f(10.0f, 100.0f));
+    _waveLabel->setText("Wave:");
+    _waveLabel->setFontSize(18);
+    _waveLabel->setVisible(false);
+    _bottomPanel->addChild(_waveLabel);
+
+    _waveIndexLabel = std::make_shared<ui::Text>(_resourceManager);
+    _waveIndexLabel->setPosition(math::Vector2f(80.0f, 100.0f));
+    _waveIndexLabel->setText("1 / 1");
+    _waveIndexLabel->setFontSize(18);
+    _waveIndexLabel->setVisible(false);
+    _bottomPanel->addChild(_waveIndexLabel);
+
+    _wavePrevButton = std::make_shared<ui::Button>(_resourceManager);
+    _wavePrevButton->setPosition(math::Vector2f(10.0f, 135.0f));
+    _wavePrevButton->setSize(math::Vector2f(40.0f, 40.0f));
+    _wavePrevButton->setText("-");
+    _wavePrevButton->setVisible(false);
+    _wavePrevButton->setScalingEnabled(false);
+    _wavePrevButton->setFocusEnabled(true);
+    _wavePrevButton->setOnRelease([this]() {
+        if (!_waves.empty()) {
+            _currentWaveIndex = (_currentWaveIndex - 1 + static_cast<int>(
+                _waves.size())) % static_cast<int>(_waves.size());
+            _selectedWave = WaveSelection{_currentWaveIndex, -1};
+            const auto& wave = _waves[static_cast<size_t>(_currentWaveIndex)];
+
+            if (_waveIndexLabel) {
+                _waveIndexLabel->setText(std::to_string(_currentWaveIndex + 1) +
+                    " / " + std::to_string(_waves.size()));
+            }
+            if (_waveTriggerXInput) {
+                _waveTriggerXInput->setText(
+                    std::to_string(static_cast<int>(wave.gameXTrigger)));
+                _waveTriggerXInput->setVisible(true);
+            }
+            if (_waveTriggerXLabel) {
+                _waveTriggerXLabel->setVisible(true);
+            }
+            if (_waveDeleteButton) {
+                _waveDeleteButton->setVisible(true);
+            }
+        }
+    });
+    _bottomPanel->addChild(_wavePrevButton);
+
+    _waveNextButton = std::make_shared<ui::Button>(_resourceManager);
+    _waveNextButton->setPosition(math::Vector2f(75.0f, 135.0f));
+    _waveNextButton->setSize(math::Vector2f(40.0f, 40.0f));
+    _waveNextButton->setText("+");
+    _waveNextButton->setVisible(false);
+    _waveNextButton->setScalingEnabled(false);
+    _waveNextButton->setFocusEnabled(true);
+    _waveNextButton->setOnRelease([this]() {
+        if (!_waves.empty()) {
+            _currentWaveIndex = (_currentWaveIndex + 1) % static_cast<int>(_waves.size());
+            _selectedWave = WaveSelection{_currentWaveIndex, -1};
+            const auto& wave = _waves[static_cast<size_t>(_currentWaveIndex)];
+
+            if (_waveIndexLabel) {
+                _waveIndexLabel->setText(std::to_string(_currentWaveIndex + 1) +
+                    " / " + std::to_string(_waves.size()));
+            }
+            if (_waveTriggerXInput) {
+                _waveTriggerXInput->setText(std::to_string(static_cast<int>(
+                    wave.gameXTrigger)));
+                _waveTriggerXInput->setVisible(true);
+            }
+            if (_waveTriggerXLabel) {
+                _waveTriggerXLabel->setVisible(true);
+            }
+            if (_waveDeleteButton) {
+                _waveDeleteButton->setVisible(true);
+            }
+        }
+    });
+    _bottomPanel->addChild(_waveNextButton);
+
+    _waveDeleteButton = std::make_shared<ui::Button>(_resourceManager);
+    _waveDeleteButton->setPosition(math::Vector2f(1490.0f, 145.0f));
+    _waveDeleteButton->setSize(math::Vector2f(110.0f, 40.0f));
+    _waveDeleteButton->setText("Delete");
+    _waveDeleteButton->setNormalColor(colors::BUTTON_DANGER);
+    _waveDeleteButton->setHoveredColor(colors::BUTTON_DANGER_HOVER);
+    _waveDeleteButton->setPressedColor(colors::BUTTON_DANGER_PRESSED);
+    _waveDeleteButton->setVisible(false);
+    _waveDeleteButton->setScalingEnabled(false);
+    _waveDeleteButton->setFocusEnabled(true);
+    _waveDeleteButton->setOnRelease([this]() {
+        if (_selectedWave.has_value() && _selectedWave.value().waveIndex >= 0 &&
+            _selectedWave.value().waveIndex < static_cast<int>(_waves.size())) {
+            _waves.erase(_waves.begin() + _selectedWave.value().waveIndex);
+            _selectedWave = std::nullopt;
+
+            if (_waves.empty()) {
+                _currentWaveIndex = 0;
+                if (_waveIndexLabel) _waveIndexLabel->setVisible(false);
+                if (_wavePrevButton) _wavePrevButton->setVisible(false);
+                if (_waveNextButton) _waveNextButton->setVisible(false);
+            } else {
+                if (_currentWaveIndex >= static_cast<int>(_waves.size())) {
+                    _currentWaveIndex = static_cast<int>(_waves.size()) - 1;
+                }
+                _selectedWave = WaveSelection{_currentWaveIndex, -1};
+                const auto& wave = _waves[static_cast<size_t>(_currentWaveIndex)];
+
+                if (_waveIndexLabel) {
+                    _waveIndexLabel->setText(std::to_string(_currentWaveIndex + 1) +
+                        " / " + std::to_string(_waves.size()));
+                }
+                if (_waveTriggerXInput) {
+                    _waveTriggerXInput->setText(std::to_string(static_cast<int>(
+                        wave.gameXTrigger)));
+                }
+            }
+
+            if (_waves.empty()) {
+                if (_waveTriggerXInput) _waveTriggerXInput->setVisible(false);
+                if (_waveTriggerXLabel) _waveTriggerXLabel->setVisible(false);
+                if (_waveDeleteButton) _waveDeleteButton->setVisible(false);
+            }
+
+            _hasUnsavedChanges = true;
+            updateSaveButtonText();
+        }
+    });
+    _bottomPanel->addChild(_waveDeleteButton);
+
+    _waveTriggerXLabel = std::make_shared<ui::Text>(_resourceManager);
+    _waveTriggerXLabel->setPosition(math::Vector2f(175.0f, 100.0f));
+    _waveTriggerXLabel->setText("Trigger X:");
+    _waveTriggerXLabel->setFontSize(18);
+    _waveTriggerXLabel->setVisible(false);
+    _bottomPanel->addChild(_waveTriggerXLabel);
+
+    _waveTriggerXInput = std::make_shared<ui::TextInput>(_resourceManager);
+    _waveTriggerXInput->setPosition(math::Vector2f(175.0f, 135.0f));
+    _waveTriggerXInput->setSize(math::Vector2f(120.0f, 40.0f));
+    _waveTriggerXInput->setVisible(false);
+    _waveTriggerXInput->setScalingEnabled(false);
+    _waveTriggerXInput->setFocusEnabled(true);
+    _waveTriggerXInput->setOnTextChanged([this](const std::string& text) {
+        if (_selectedWave.has_value()) {
+            const auto& sel = _selectedWave.value();
+            if (sel.waveIndex >= 0 && sel.waveIndex < static_cast<int>(_waves.size())) {
+                try {
+                    float triggerX = std::stof(text);
+                    _waves[static_cast<size_t>(sel.waveIndex)].gameXTrigger = triggerX;
+                    _hasUnsavedChanges = true;
+                    updateSaveButtonText();
+                } catch (const std::exception&) {
+                }
+            }
+        }
+    });
+    _waveTriggerXInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_waveTriggerXInput);
+    });
+    _bottomPanel->addChild(_waveTriggerXInput);
+
     /* DropDowns are added at the end */
     _bottomPanel->addChild(_obstaclePrefabDropdown);
     _bottomPanel->addChild(_powerUpPrefabDropdown);
@@ -1902,6 +2196,7 @@ void LevelEditorState::renderLevelPreview() {
 
     renderAllObstacles(levelX, levelY, canvasLeft, canvasRight, canvasTop, canvasBottom);
     renderAllPowerUps(levelX, levelY, canvasLeft, canvasRight, canvasTop, canvasBottom);
+    renderAllWaves(levelX, levelY, canvasLeft, canvasRight, canvasTop, canvasBottom);
 }
 
 void LevelEditorState::renderSpriteInLevelPreview(

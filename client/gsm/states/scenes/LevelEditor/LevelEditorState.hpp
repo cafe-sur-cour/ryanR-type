@@ -63,6 +63,29 @@ struct PowerUpSelection {
     int index;
 };
 
+struct WaveDistribution {
+    float min;
+    float max;
+    std::string type;
+};
+
+struct WaveEnemy {
+    std::string type;
+    WaveDistribution distributionX;
+    WaveDistribution distributionY;
+    int count;
+};
+
+struct Wave {
+    float gameXTrigger;
+    std::vector<WaveEnemy> enemies;
+};
+
+struct WaveSelection {
+    int waveIndex;
+    int enemyIndex;
+};
+
 struct ObstacleGroup {
     std::vector<HorizontalLineObstacle> horizontalLines;
     std::vector<VerticalLineObstacle> verticalLines;
@@ -105,6 +128,7 @@ private:
     std::vector<std::string> loadAvailableBackgrounds();
     std::vector<std::string> loadAvailableObstacles();
     std::vector<std::string> loadAvailablePowerUps();
+    std::vector<std::string> loadAvailableEnemies();
     void saveToHistory();
     void loadFromHistory(size_t index);
     void updateHistoryButtons();
@@ -132,6 +156,15 @@ private:
     void startPowerUpDrag(math::Vector2f mousePos, float viewportZoom, float sidePanelWidth);
     void handlePowerUpDrag(math::Vector2f mousePos, float viewportZoom, float sidePanelWidth);
     std::optional<PowerUpSelection> getPowerUpAtPosition(float mouseX, float mouseY, float levelX, float levelY);
+
+    /* Waves methods */
+    void parseWaves();
+    void renderAllWaves(float levelX, float levelY, float canvasLeft, float canvasRight, float canvasTop, float canvasBottom);
+    void saveWaves();
+    void handleWaveClick(float mouseX, float mouseY, float levelX, float levelY);
+    void startWaveDrag(math::Vector2f mousePos, float viewportZoom, float sidePanelWidth);
+    void handleWaveDrag(math::Vector2f mousePos, float viewportZoom, float sidePanelWidth);
+    std::optional<WaveSelection> getWaveAtPosition(float mouseX, float mouseY, float levelX, float levelY);
 
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::unique_ptr<ui::UIManager> _uiManager;
@@ -181,6 +214,13 @@ private:
     std::shared_ptr<ui::Text> _powerUpPosYLabel;
     std::shared_ptr<ui::TextInput> _powerUpPosYInput;
     std::shared_ptr<ui::Button> _powerUpDeleteButton;
+    std::shared_ptr<ui::Text> _waveLabel;
+    std::shared_ptr<ui::Text> _waveIndexLabel;
+    std::shared_ptr<ui::Button> _wavePrevButton;
+    std::shared_ptr<ui::Button> _waveNextButton;
+    std::shared_ptr<ui::Button> _waveDeleteButton;
+    std::shared_ptr<ui::Text> _waveTriggerXLabel;
+    std::shared_ptr<ui::TextInput> _waveTriggerXInput;
 
     bool _hasUnsavedChanges = false;
     bool _showHitboxes = false;
@@ -209,11 +249,16 @@ private:
     math::Vector2f _dragObstacleOffset;
     bool _isDraggingPowerUp = false;
     math::Vector2f _dragPowerUpOffset;
+    bool _isDraggingWave = false;
+    float _dragWaveOffsetX = 0.0f;
 
     std::map<std::string, ObstacleGroup> _obstaclesByName;
     std::optional<ObstacleSelection> _selectedObstacle;
     std::map<std::string, std::vector<PowerUpData>> _powerUpsByName;
     std::optional<PowerUpSelection> _selectedPowerUp;
+    std::vector<Wave> _waves;
+    std::optional<WaveSelection> _selectedWave;
+    int _currentWaveIndex = 0;
 
     std::map<std::string, LevelPreviewSprite> _obstacleAnimationData;
     std::map<std::string, float> _obstacleAnimationFrames;
