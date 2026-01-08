@@ -28,6 +28,7 @@
 #include "../Profile/ProfileState.hpp"
 #include "../HowToPlay/HowToPlayState.hpp"
 #include "../Connection/ConnectionState.hpp"
+#include "../Leaderboard/LeaderboardState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -292,6 +293,10 @@ MainMenuState::MainMenuState(
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
             network->sendRequestLeaderboardPacket();
+            if (auto stateMachine = this->_gsm.lock()) {
+                stateMachine->requestStatePush(std::make_shared<LeaderboardState>(stateMachine,
+                    this->_resourceManager));
+            }
         } else {
             std::cout << "Cannot request leaderboard: Not connected to server" << std::endl;
         }
@@ -300,6 +305,10 @@ MainMenuState::MainMenuState(
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
             network->sendRequestLeaderboardPacket();
+            if (auto stateMachine = this->_gsm.lock()) {
+                stateMachine->requestStatePush(std::make_shared<LeaderboardState>(stateMachine,
+                    this->_resourceManager));
+            }
         } else {
             std::cout << "Cannot request leaderboard: Not connected to server" << std::endl;
         }

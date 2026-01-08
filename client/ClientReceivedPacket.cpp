@@ -441,3 +441,38 @@ void ClientNetwork::handleConnectUser() {
         this->_expectingLoginResponse = false;
     }
 }
+
+void ClientNetwork::handleLeaderboard() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received leaderboard packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    std::vector<std::pair<std::string, int>> leaderboardData;
+    for (size_t i = 0; i < payload.size(); i += 16) {
+        if (i + 16 > payload.size()) break;
+        std::string username, scoreStr;
+        size_t j = 0;
+        for (; j < 8; ++j) {
+            char c = static_cast<char>(payload.at(i + j) & 0xFF);
+            if (c != '\0')
+                username += c;
+        }
+        for (; j < 16; ++j) {
+            char c = static_cast<char>(payload.at(i + j) & 0xFF);
+            if (c != '\0')
+                scoreStr += c;
+        }
+        if (!scoreStr.empty()) {
+            try {
+                int score = std::stoi(scoreStr);
+                leaderboardData.emplace_back(username, score);
+            } catch (const std::exception&) {
+                // Invalid score, skip
+            }
+        }
+    }
+    _leaderboardData = leaderboardData;
+    _leaderboardDataUpdated = true;
+}

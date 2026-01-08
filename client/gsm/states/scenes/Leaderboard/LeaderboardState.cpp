@@ -18,6 +18,7 @@
 #include "../../../../colors.hpp"
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
+#include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/utils/SecureJsonManager.hpp"
 #include "../../../../ui/elements/Box.hpp"
 
@@ -158,6 +159,32 @@ LeaderboardState::LeaderboardState(
 }
 
 void LeaderboardState::loadLeaderboardData() {
+    auto network = _resourceManager->get<ClientNetwork>();
+    if (network) {
+        auto data = network->getLeaderboardData();
+        if (!data.empty()) {
+            // use data
+            std::vector<std::pair<std::string, int>> leaderboard = data;
+            // sort if needed, but server sends sorted
+            // then update UI
+            size_t numEntries = std::min(leaderboard.size(), _leaderTexts.size() / 3);
+            for (size_t i = 0; i < numEntries; ++i) {
+                size_t textIndex = i * 3;
+                _leaderTexts[textIndex]->setText(std::to_string(i + 1) + ".");
+                _leaderTexts[textIndex + 1]->setText(leaderboard[i].first);
+                _leaderTexts[textIndex + 2]->setText(std::to_string(leaderboard[i].second));
+            }
+            // Clear remaining
+            for (size_t i = numEntries; i < 10; ++i) {
+                size_t textIndex = i * 3;
+                _leaderTexts[textIndex]->setText(std::to_string(i + 1) + ".");
+                _leaderTexts[textIndex + 1]->setText("---");
+                _leaderTexts[textIndex + 2]->setText("0");
+            }
+            return;
+        }
+    }
+    // else load local
     try {
         nlohmann::json usersData = utils::SecureJsonManager::readSecureJson("saves/users.json");
         if (!usersData.is_array()) {
@@ -179,7 +206,7 @@ void LeaderboardState::loadLeaderboardData() {
                 return a.second > b.second;
             });
 
-        // Update UI texts
+        // Update UI
         size_t numEntries = std::min(leaderboard.size(), _leaderTexts.size() / 3);
         for (size_t i = 0; i < numEntries; ++i) {
             size_t textIndex = i * 3;
@@ -230,6 +257,12 @@ void LeaderboardState::update(float deltaTime) {
     if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
+    }
+
+    auto network = _resourceManager->get<ClientNetwork>();
+    if (network && network->isLeaderboardDataUpdated()) {
+        loadLeaderboardData();
+        network->clearLeaderboardDataUpdateFlag();
     }
 
     _uiManager->update(deltaTime);
