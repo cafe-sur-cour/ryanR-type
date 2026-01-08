@@ -106,6 +106,5 @@
         },
         "HealthBarComponent": { "target": "client" },
         "EntityPartsComponent": { "target": "both" }
-
     }
 }
