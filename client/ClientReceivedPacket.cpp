@@ -15,6 +15,8 @@
 #include "../common/Parser/Parser.hpp"
 #include "../common/ECS/entity/EntityCreationContext.hpp"
 #include "../common/components/tags/LocalPlayerTag.hpp"
+#include "../common/components/tags/PlayerTag.hpp"
+#include "../common/components/permanent/ScoreComponent.hpp"
 #include "DeathAnimationSpawner.hpp"
 #include "gsm/states/scenes/InGame/InGameState.hpp"
 #include "gsm/states/scenes/Results/ResultsState.hpp"
@@ -174,6 +176,7 @@ void ClientNetwork::handleEndGame() {
     if (!payload.empty()) {
         isWin = payload[0] != 0;
     }
+
     if (this->_gsm) {
         this->_gsm->requestStateChange(
             std::make_shared<gsm::ResultsState>

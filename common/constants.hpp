@@ -280,8 +280,9 @@ namespace constants {
     constexpr std::uint8_t PACKET_GAME_STATE_COMPRESSED = 0x19;
     constexpr std::uint8_t PACKET_REQUEST_LEADERBOARD = 0x1A;
     constexpr std::uint8_t PACKET_LEADERBOARD = 0x1B;
+    constexpr std::uint8_t PACKET_NEW_SCORE = 0x1C;
 
-    const int MAX_INDEX_PACKET_TYPE = 28;
+    const int MAX_INDEX_PACKET_TYPE = 29;
     const int MAX_CLIENT_PER_LOBBY = 4;
 
     /* Scripting constant */

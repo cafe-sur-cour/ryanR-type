@@ -19,7 +19,7 @@ namespace gsm {
 
 class ResultsState : public AGameState {
     public:
-        ResultsState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager, bool isWin, int score = 0);
+        ResultsState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager, bool isWin);
         ~ResultsState() override = default;
 
         void enter() override;
@@ -30,7 +30,6 @@ class ResultsState : public AGameState {
         void updateUserStats();
 
         bool _isWin;
-        int _score;
         std::unique_ptr<ui::UIManager> _uiManager;
         std::shared_ptr<ui::Text> _resultText;
 };
