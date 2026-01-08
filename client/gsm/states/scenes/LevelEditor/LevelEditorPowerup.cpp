@@ -188,6 +188,23 @@ void LevelEditorState::handlePowerUpClick(
     auto selection = getPowerUpAtPosition(mouseX, mouseY, levelX, levelY);
     if (selection.has_value()) {
         _selectedPowerUp = selection;
+        _selectedObstacle = std::nullopt;
+        _selectedWave = std::nullopt;
+
+        if (_obstaclePosXInput) _obstaclePosXInput->setVisible(false);
+        if (_obstaclePosXLabel) _obstaclePosXLabel->setVisible(false);
+        if (_obstaclePosYInput) _obstaclePosYInput->setVisible(false);
+        if (_obstaclePosYLabel) _obstaclePosYLabel->setVisible(false);
+        if (_obstacleCountInput) _obstacleCountInput->setVisible(false);
+        if (_obstacleCountLabel) _obstacleCountLabel->setVisible(false);
+        if (_obstacleDeleteButton) _obstacleDeleteButton->setVisible(false);
+
+        if (_waveTriggerXInput) _waveTriggerXInput->setVisible(false);
+        if (_waveTriggerXLabel) _waveTriggerXLabel->setVisible(false);
+        if (_waveDeleteButton) _waveDeleteButton->setVisible(false);
+        if (_waveIndexLabel) _waveIndexLabel->setVisible(false);
+        if (_wavePrevButton) _wavePrevButton->setVisible(false);
+        if (_waveNextButton) _waveNextButton->setVisible(false);
         if (_powerUpPrefabDropdown) {
             const auto& prefabName = selection.value().prefabName;
             auto options = _powerUpPrefabDropdown->getOptions();
