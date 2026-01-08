@@ -85,6 +85,10 @@ class ClientNetwork {
         void sendLoginPacket(const std::string &username, const std::string &password);
         void sendRequestLeaderboardPacket();
 
+        const std::vector<std::pair<std::string, int>>& getLeaderboardData() const;
+        bool isLeaderboardDataUpdated() const;
+        void clearLeaderboardDataUpdateFlag();
+
         void addToEventQueue(const NetworkEvent &event);
 
         bool isConnected() const;
@@ -136,6 +140,7 @@ class ClientNetwork {
         void handleNextLevel();
         void handleLobbyConnectValue();
         void handleConnectUser();
+        void handleLeaderboard();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;
@@ -194,6 +199,9 @@ class ClientNetwork {
 
         std::string _lobbyCode;
         bool _shouldConnect;
+
+        std::vector<std::pair<std::string, int>> _leaderboardData;
+        bool _leaderboardDataUpdated = false;
 
         std::chrono::steady_clock::time_point _connectionAttemptTime;
 };

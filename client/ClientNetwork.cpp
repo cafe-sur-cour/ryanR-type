@@ -75,6 +75,7 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_LOBBY_CONNECT_VALUE] =
         &ClientNetwork::handleLobbyConnectValue;
     _packetHandlers[constants::PACKET_CONNECT_USER] = &ClientNetwork::handleConnectUser;
+    _packetHandlers[constants::PACKET_LEADERBOARD] = &ClientNetwork::handleLeaderboard;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
@@ -369,4 +370,16 @@ void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
     std::lock_guard<std::mutex> lock(this->_queueMutex);
     this->_eventQueue.push(event);
     this->_queueCond.notify_one();
+}
+
+const std::vector<std::pair<std::string, int>>& ClientNetwork::getLeaderboardData() const {
+    return _leaderboardData;
+}
+
+bool ClientNetwork::isLeaderboardDataUpdated() const {
+    return _leaderboardDataUpdated;
+}
+
+void ClientNetwork::clearLeaderboardDataUpdateFlag() {
+    _leaderboardDataUpdated = false;
 }
