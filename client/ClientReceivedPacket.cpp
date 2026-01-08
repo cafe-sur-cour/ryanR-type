@@ -506,7 +506,7 @@ void ClientNetwork::handleLeaderboard() {
         debug::debugLevel::INFO);
 
     auto payload = _packet->getPayload();
-    std::vector<std::pair<std::string, int>> leaderboardData;
+    std::vector<std::pair<std::string, std::string>> leaderboardData;
     for (size_t i = 0; i < payload.size(); i += 16) {
         if (i + 16 > payload.size()) break;
         std::string username, scoreStr;
@@ -522,12 +522,7 @@ void ClientNetwork::handleLeaderboard() {
                 scoreStr += c;
         }
         if (!scoreStr.empty()) {
-            try {
-                int score = std::stoi(scoreStr);
-                leaderboardData.emplace_back(username, score);
-            } catch (const std::exception&) {
-                // Invalid score, skip
-            }
+            leaderboardData.emplace_back(username, scoreStr);
         }
     }
     _leaderboardData = leaderboardData;

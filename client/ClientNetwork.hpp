@@ -85,7 +85,7 @@ class ClientNetwork {
         void sendLoginPacket(const std::string &username, const std::string &password);
         void sendRequestLeaderboardPacket();
 
-        const std::vector<std::pair<std::string, int>>& getLeaderboardData() const;
+        const std::vector<std::pair<std::string, std::string>>& getLeaderboardData() const;
         bool isLeaderboardDataUpdated() const;
         void clearLeaderboardDataUpdateFlag();
 
@@ -201,7 +201,7 @@ class ClientNetwork {
         std::string _lobbyCode;
         bool _shouldConnect;
 
-        std::vector<std::pair<std::string, int>> _leaderboardData;
+        std::vector<std::pair<std::string, std::string>> _leaderboardData;
         bool _leaderboardDataUpdated = false;
 
         std::chrono::steady_clock::time_point _connectionAttemptTime;
