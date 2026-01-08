@@ -416,27 +416,143 @@ void LevelEditorState::handleObstacleClick(
             _obstacleDeleteButton->setVisible(true);
         }
     } else {
-        _selectedObstacle = std::nullopt;
-        if (_obstaclePosXInput) {
-            _obstaclePosXInput->setVisible(false);
+        bool inObstaclesMode = (_editorModeDropdown &&
+            _editorModeDropdown->getSelectedOption() == "Obstacles");
+
+        std::string selectedPrefab;
+        if (_obstaclePrefabDropdown) {
+            selectedPrefab = _obstaclePrefabDropdown->getSelectedOption();
         }
-        if (_obstaclePosXLabel) {
-            _obstaclePosXLabel->setVisible(false);
-        }
-        if (_obstaclePosYInput) {
-            _obstaclePosYInput->setVisible(false);
-        }
-        if (_obstaclePosYLabel) {
-            _obstaclePosYLabel->setVisible(false);
-        }
-        if (_obstacleCountInput) {
-            _obstacleCountInput->setVisible(false);
-        }
-        if (_obstacleCountLabel) {
-            _obstacleCountLabel->setVisible(false);
-        }
-        if (_obstacleDeleteButton) {
-            _obstacleDeleteButton->setVisible(false);
+
+        if (inObstaclesMode && !selectedPrefab.empty() && !_selectedObstacle.has_value()) {
+            float levelMouseX = (mouseX - levelX) / _viewportZoom;
+            float levelMouseY = (mouseY - levelY) / _viewportZoom;
+
+            std::string obstacleType = "unique";
+            if (_obstacleTypeDropdown) {
+                size_t typeIndex = _obstacleTypeDropdown->getSelectedIndex();
+                if (typeIndex == 1) {
+                    obstacleType = "horizontal";
+                } else if (typeIndex == 2) {
+                    obstacleType = "vertical";
+                } else {
+                    obstacleType = "unique";
+                }
+            }
+
+            if (_obstaclesByName.find(selectedPrefab) == _obstaclesByName.end()) {
+                _obstaclesByName[selectedPrefab] = ObstacleGroup();
+            }
+
+            int newIndex = 0;
+            ObstacleSelection newSelection;
+            newSelection.prefabName = selectedPrefab;
+            newSelection.type = obstacleType;
+
+            if (obstacleType == "horizontal") {
+                HorizontalLineObstacle newObstacle;
+                newObstacle.fromX = levelMouseX;
+                newObstacle.posY = levelMouseY;
+                newObstacle.count = 1;
+                _obstaclesByName[selectedPrefab].horizontalLines.push_back(newObstacle);
+                newIndex = static_cast<int>(_obstaclesByName[selectedPrefab].horizontalLines.size() - 1);
+            } else if (obstacleType == "vertical") {
+                VerticalLineObstacle newObstacle;
+                newObstacle.posX = levelMouseX;
+                newObstacle.fromY = levelMouseY;
+                newObstacle.count = 1;
+                _obstaclesByName[selectedPrefab].verticalLines.push_back(newObstacle);
+                newIndex = static_cast<int>(_obstaclesByName[selectedPrefab].verticalLines.size() - 1);
+            } else {
+                UniqueObstacle newObstacle;
+                newObstacle.posX = levelMouseX;
+                newObstacle.posY = levelMouseY;
+                _obstaclesByName[selectedPrefab].uniques.push_back(newObstacle);
+                newIndex = static_cast<int>(_obstaclesByName[selectedPrefab].uniques.size() - 1);
+            }
+
+            newSelection.index = newIndex;
+            _selectedObstacle = newSelection;
+
+            if (_obstacleTypeDropdown) {
+                if (obstacleType == "horizontal") {
+                    _obstacleTypeDropdown->setSelectedIndex(1);
+                } else if (obstacleType == "vertical") {
+                    _obstacleTypeDropdown->setSelectedIndex(2);
+                } else {
+                    _obstacleTypeDropdown->setSelectedIndex(0);
+                }
+            }
+
+            if (_obstaclePosXInput) {
+                if (obstacleType == "vertical") {
+                    _obstaclePosXInput->setText(std::to_string(static_cast<int>(levelMouseX)));
+                } else {
+                    _obstaclePosXInput->setText(std::to_string(static_cast<int>(levelMouseX)));
+                }
+                _obstaclePosXInput->setVisible(true);
+            }
+            if (_obstaclePosXLabel) {
+                _obstaclePosXLabel->setVisible(true);
+            }
+            if (_obstaclePosYInput) {
+                if (obstacleType == "vertical") {
+                    _obstaclePosYInput->setText(std::to_string(static_cast<int>(levelMouseY)));
+                } else {
+                    _obstaclePosYInput->setText(std::to_string(static_cast<int>(levelMouseY)));
+                }
+                _obstaclePosYInput->setVisible(true);
+            }
+            if (_obstaclePosYLabel) {
+                _obstaclePosYLabel->setVisible(true);
+            }
+
+            if (obstacleType == "horizontal" || obstacleType == "vertical") {
+                if (_obstacleCountInput) {
+                    _obstacleCountInput->setText("1");
+                    _obstacleCountInput->setVisible(true);
+                }
+                if (_obstacleCountLabel) {
+                    _obstacleCountLabel->setVisible(true);
+                }
+            } else {
+                if (_obstacleCountInput) {
+                    _obstacleCountInput->setVisible(false);
+                }
+                if (_obstacleCountLabel) {
+                    _obstacleCountLabel->setVisible(false);
+                }
+            }
+
+            if (_obstacleDeleteButton) {
+                _obstacleDeleteButton->setVisible(true);
+            }
+
+            _hasUnsavedChanges = true;
+            updateSaveButtonText();
+        } else {
+            _selectedObstacle = std::nullopt;
+            if (_obstaclePosXInput) {
+                _obstaclePosXInput->setVisible(false);
+            }
+            if (_obstaclePosXLabel) {
+                _obstaclePosXLabel->setVisible(false);
+            }
+            if (_obstaclePosYInput) {
+                _obstaclePosYInput->setVisible(false);
+            }
+            if (_obstaclePosYLabel) {
+                _obstaclePosYLabel->setVisible(false);
+            }
+            if (_obstacleCountInput) {
+                _obstacleCountInput->setVisible(false);
+            }
+            if (_obstacleCountLabel) {
+                _obstacleCountLabel->setVisible(false);
+            }
+            if (_obstacleDeleteButton) {
+                _obstacleDeleteButton->setVisible(false);
+            }
         }
     }
 }
