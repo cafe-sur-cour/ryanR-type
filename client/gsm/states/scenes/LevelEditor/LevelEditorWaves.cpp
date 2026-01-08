@@ -405,7 +405,9 @@ void LevelEditorState::handleWaveClick(
 
         updateEnemyUI();
     } else {
-        if (editorMode == "Waves" && !_selectedWave.has_value()) {
+        bool filterAllowsCreation = (_displayFilter == "All" || _displayFilter == "Waves");
+
+        if (editorMode == "Waves" && !_selectedWave.has_value() && filterAllowsCreation) {
             const float sidePanelWidth = 300.0f;
             float cursorMapX =
                 _viewportOffset.getX() + (mouseX - sidePanelWidth) / _viewportZoom;

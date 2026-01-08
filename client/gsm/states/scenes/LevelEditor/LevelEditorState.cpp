@@ -230,17 +230,20 @@ void LevelEditorState::update(float deltaTime) {
             if (editorMode == "Obstacles") {
                 auto obstacleSelection = getObstacleAtPosition(
                     mousePos.getX(), mousePos.getY(), levelX, levelY);
-                if (obstacleSelection.has_value()) {
+                if (obstacleSelection.has_value() && (_displayFilter == "All" ||
+                    _displayFilter == "Obstacles")) {
                     handleObstacleClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
                 } else {
                     auto powerUpSelection = getPowerUpAtPosition(
                         mousePos.getX(), mousePos.getY(), levelX, levelY);
-                    if (powerUpSelection.has_value()) {
+                    if (powerUpSelection.has_value() && (_displayFilter == "All" ||
+                        _displayFilter == "PowerUps")) {
                         handlePowerUpClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
                     } else {
                         auto waveSelection = getWaveAtPosition(
                             mousePos.getX(), mousePos.getY(), levelX, levelY);
-                        if (waveSelection.has_value()) {
+                        if (waveSelection.has_value() && (_displayFilter == "All" ||
+                            _displayFilter == "Waves")) {
                             handleWaveClick(
                                 mousePos.getX(), mousePos.getY(), levelX, levelY);
                         } else {
@@ -252,18 +255,21 @@ void LevelEditorState::update(float deltaTime) {
             } else if (editorMode == "PowerUps") {
                 auto powerUpSelection = getPowerUpAtPosition(
                     mousePos.getX(), mousePos.getY(), levelX, levelY);
-                if (powerUpSelection.has_value()) {
+                if (powerUpSelection.has_value() && (_displayFilter == "All" ||
+                        _displayFilter == "PowerUps")) {
                     handlePowerUpClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
                 } else {
                     auto obstacleSelection = getObstacleAtPosition(
                         mousePos.getX(), mousePos.getY(), levelX, levelY);
-                    if (obstacleSelection.has_value()) {
+                    if (obstacleSelection.has_value() && (_displayFilter == "All" ||
+                            _displayFilter == "Obstacles")) {
                         handleObstacleClick(
                             mousePos.getX(), mousePos.getY(), levelX, levelY);
                     } else {
                         auto waveSelection = getWaveAtPosition(
                             mousePos.getX(), mousePos.getY(), levelX, levelY);
-                        if (waveSelection.has_value()) {
+                        if (waveSelection.has_value() && (_displayFilter == "All" ||
+                            _displayFilter == "Waves")) {
                             handleWaveClick(
                                 mousePos.getX(), mousePos.getY(), levelX, levelY);
                         } else {
@@ -275,17 +281,20 @@ void LevelEditorState::update(float deltaTime) {
             } else if (editorMode == "Waves") {
                 auto waveSelection = getWaveAtPosition(
                     mousePos.getX(), mousePos.getY(), levelX, levelY);
-                if (waveSelection.has_value()) {
+                if (waveSelection.has_value() && (_displayFilter == "All" ||
+                        _displayFilter == "Waves")) {
                     handleWaveClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
                 } else {
                     auto obstacleSelection = getObstacleAtPosition(
                         mousePos.getX(), mousePos.getY(), levelX, levelY);
-                    if (obstacleSelection.has_value()) {
+                    if (obstacleSelection.has_value() && (_displayFilter == "All" ||
+                        _displayFilter == "Obstacles")) {
                         handleObstacleClick(mousePos.getX(), mousePos.getY(), levelX, levelY);
                     } else {
                         auto powerUpSelection = getPowerUpAtPosition(
                             mousePos.getX(), mousePos.getY(), levelX, levelY);
-                        if (powerUpSelection.has_value()) {
+                        if (powerUpSelection.has_value() && (_displayFilter == "All" ||
+                            _displayFilter == "PowerUps")) {
                             handlePowerUpClick(
                                 mousePos.getX(), mousePos.getY(), levelX, levelY);
                         } else {
@@ -870,6 +879,30 @@ void LevelEditorState::createUI() {
     _showHitboxesButton->setScalingEnabled(false);
     _showHitboxesButton->setFocusEnabled(true);
     _sidePanel->addChild(_showHitboxesButton);
+
+    currentY += 60.0f;
+    _filterButton = std::make_shared<ui::Button>(_resourceManager);
+    _filterButton->setPosition(math::Vector2f(10.0f, currentY));
+    _filterButton->setSize(math::Vector2f(sidePanelWidth - 25.0f, 40.0f));
+    _filterButton->setText("Show: All");
+    _filterButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _filterButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _filterButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _filterButton->setOnRelease([this]() {
+        if (_displayFilter == "All") {
+            _displayFilter = "Obstacles";
+        } else if (_displayFilter == "Obstacles") {
+            _displayFilter = "PowerUps";
+        } else if (_displayFilter == "PowerUps") {
+            _displayFilter = "Waves";
+        } else {
+            _displayFilter = "All";
+        }
+        _filterButton->setText("Show: " + _displayFilter);
+    });
+    _filterButton->setScalingEnabled(false);
+    _filterButton->setFocusEnabled(true);
+    _sidePanel->addChild(_filterButton);
 
     _sidePanel->addChild(_backgroundDropdown);
     _sidePanel->addChild(_musicDropdown);
@@ -2699,9 +2732,15 @@ void LevelEditorState::renderLevelPreview() {
         }
     }
 
-    renderAllObstacles(levelX, levelY, canvasLeft, canvasRight, canvasTop, canvasBottom);
-    renderAllPowerUps(levelX, levelY, canvasLeft, canvasRight, canvasTop, canvasBottom);
-    renderAllWaves(levelX, levelY, canvasLeft, canvasRight, canvasTop, canvasBottom);
+    if (_displayFilter == "All" || _displayFilter == "Obstacles") {
+        renderAllObstacles(levelX, levelY, canvasLeft, canvasRight, canvasTop, canvasBottom);
+    }
+    if (_displayFilter == "All" || _displayFilter == "PowerUps") {
+        renderAllPowerUps(levelX, levelY, canvasLeft, canvasRight, canvasTop, canvasBottom);
+    }
+    if (_displayFilter == "All" || _displayFilter == "Waves") {
+        renderAllWaves(levelX, levelY, canvasLeft, canvasRight, canvasTop, canvasBottom);
+    }
 }
 
 void LevelEditorState::renderSpriteInLevelPreview(

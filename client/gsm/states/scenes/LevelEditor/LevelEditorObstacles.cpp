@@ -487,7 +487,11 @@ void LevelEditorState::handleObstacleClick(
             selectedPrefab = _obstaclePrefabDropdown->getSelectedOption();
         }
 
-        if (inObstaclesMode && !selectedPrefab.empty() && !_selectedObstacle.has_value()) {
+        bool filterAllowsCreation =
+            (_displayFilter == "All" || _displayFilter == "Obstacles");
+
+        if (inObstaclesMode && !selectedPrefab.empty() && !_selectedObstacle.has_value() &&
+            filterAllowsCreation) {
             float levelMouseX = (mouseX - levelX) / _viewportZoom;
             float levelMouseY = (mouseY - levelY) / _viewportZoom;
 
