@@ -50,7 +50,7 @@ bool SpritePreview::loadPrefab(const std::filesystem::path& prefabPath) {
         }
 
         return false;
-    } catch (const std::exception& ex) {
+    } catch (const std::exception&) {
         return false;
     }
 }
@@ -107,7 +107,7 @@ bool SpritePreview::extractSpriteFromPrefab(const nlohmann::json& prefab) {
         }
 
         return true;
-    } catch (const std::exception& ex) {
+    } catch (const std::exception&) {
         return false;
     }
 }
@@ -157,7 +157,7 @@ bool SpritePreview::extractAnimationFromPrefab(const nlohmann::json& prefab) {
         _animationTime = 0.0f;
 
         return true;
-    } catch (const std::exception& ex) {
+    } catch (const std::exception&) {
         return false;
     }
 }
@@ -210,7 +210,7 @@ void SpritePreview::renderSprite() {
             scaleX,
             scaleY
         );
-    } catch (const std::exception& ex) {
+    } catch (const std::exception&) {
     }
 }
 
@@ -242,7 +242,7 @@ void SpritePreview::renderAnimation() {
             scaleX,
             scaleY
         );
-    } catch (const std::exception& ex) {
+    } catch (const std::exception&) {
     }
 }
 
