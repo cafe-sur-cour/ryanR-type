@@ -272,7 +272,10 @@ void LevelEditorState::handlePowerUpClick(
             selectedPrefab = _powerUpPrefabDropdown->getSelectedOption();
         }
 
-        if (inPowerUpsMode && !selectedPrefab.empty() && !_selectedPowerUp.has_value()) {
+        bool filterAllowsCreation = (_displayFilter == "All" || _displayFilter == "PowerUps");
+
+        if (inPowerUpsMode && !selectedPrefab.empty() && !_selectedPowerUp.has_value() &&
+            filterAllowsCreation) {
             float levelMouseX = (mouseX - levelX) / _viewportZoom;
             float levelMouseY = (mouseY - levelY) / _viewportZoom;
 

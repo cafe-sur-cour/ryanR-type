@@ -200,6 +200,7 @@ private:
     std::shared_ptr<ui::Text> _cursorPosLabel;
     std::shared_ptr<ui::Text> _cursorPosYLabel;
     std::shared_ptr<ui::Button> _resetViewButton;
+    std::shared_ptr<ui::Button> _filterButton;
     std::shared_ptr<ui::Button> _showHitboxesButton;
     std::shared_ptr<ui::Text> _obstacleTypeLabel;
     std::shared_ptr<ui::Dropdown> _obstacleTypeDropdown;
@@ -251,6 +252,7 @@ private:
 
     bool _hasUnsavedChanges = false;
     bool _showHitboxes = false;
+    std::string _displayFilter = "All"; // "All", "Obstacles", "PowerUps", "Waves"
 
     std::optional<std::filesystem::path> _levelPath;
     nlohmann::json _levelData;
