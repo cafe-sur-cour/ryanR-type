@@ -606,6 +606,7 @@ void LevelEditorState::handleObstacleClick(
 
             _hasUnsavedChanges = true;
             updateSaveButtonText();
+            saveToHistory();
         } else {
             _selectedObstacle = std::nullopt;
             if (_obstaclePosXInput) {

@@ -452,6 +452,7 @@ void LevelEditorState::handleWaveClick(
 
             _hasUnsavedChanges = true;
             updateSaveButtonText();
+            saveToHistory();
         } else {
             _selectedWave = std::nullopt;
 
