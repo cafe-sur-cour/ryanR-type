@@ -100,7 +100,29 @@
             ]
         }
     ],
-    "powerUps": [],
+    "powerUps": [
+        {
+            "name": "flyingForce",
+            "position": {
+                "posX": 500.0,
+                "posY": 700.0
+            }
+        },
+        {
+            "name": "force",
+            "position": {
+                "posX": 700.0,
+                "posY": 700.0
+            }
+        },
+        {
+            "name": "powerUpAddLife",
+            "position": {
+                "posX": 398.0,
+                "posY": 668.0
+            }
+        }
+    ],
     "scrollSpeed": 100,
     "waves": [
         {
