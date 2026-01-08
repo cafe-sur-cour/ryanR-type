@@ -65,7 +65,7 @@ bool CircularBuffer::writeBuffer(
     if (this->_capacity == 0)
         return false;
 
-    size_t actualSize = std::min(size, data.size());
+    size_t actualSize = (std::min)(size, data.size());
     if (actualSize > this->_capacity) {
         if (this->_overflowPolicy == OverflowPolicy::REJECT) {
             return false;
@@ -84,10 +84,10 @@ bool CircularBuffer::writeBuffer(
             _advanceReadPos(1);
         }
         size_t contiguousSpace = _capacity - _writePos;
-        size_t writeChunk = std::min(bytesToWrite, contiguousSpace);
+        size_t writeChunk = (std::min)(bytesToWrite, contiguousSpace);
 
         if (this->_overflowPolicy == OverflowPolicy::REJECT) {
-            writeChunk = std::min(writeChunk, getAvailableSize());
+            writeChunk = (std::min)(writeChunk, getAvailableSize());
         }
 
         std::memcpy(this->_buffer.data() + this->_writePos,
@@ -105,12 +105,12 @@ bool CircularBuffer::writeBuffer(
 std::shared_ptr<std::vector<uint64_t>> CircularBuffer::readBuffer(size_t size) {
     if (this->_buffer.empty() || size == 0 || isEmpty())
         return std::make_unique<std::vector<uint64_t>>();
-    size_t bytesToRead = std::min(size, this->_usedSize);
+    size_t bytesToRead = (std::min)(size, this->_usedSize);
     auto data = std::make_unique<std::vector<uint64_t>>(bytesToRead);
     size_t bytesRead = 0;
 
     while (bytesRead < bytesToRead) {
-        size_t contiguousData = std::min(
+        size_t contiguousData = (std::min)(
             this->_capacity - this->_readPos,
             bytesToRead - bytesRead);
         std::memcpy(data->data() + bytesRead,
@@ -127,13 +127,13 @@ std::shared_ptr<std::vector<uint64_t>> CircularBuffer::peek(
     if (this->_buffer.empty() || size == 0 || isEmpty() ||
         offset >= this->_usedSize)
         return std::make_unique<std::vector<uint64_t>>();
-    size_t bytesToPeek = std::min(size, this->_usedSize - offset);
+    size_t bytesToPeek = (std::min)(size, this->_usedSize - offset);
     auto data = std::make_unique<std::vector<uint64_t>>(bytesToPeek);
     size_t peekPos = _getNextPos(this->_readPos, offset);
     size_t bytesPeeked = 0;
 
     while (bytesPeeked < bytesToPeek) {
-        size_t contiguousData = std::min(
+        size_t contiguousData = (std::min)(
             this->_capacity - peekPos,
             bytesToPeek - bytesPeeked);
         std::memcpy(data->data() + bytesPeeked,
@@ -185,7 +185,7 @@ void CircularBuffer::_advanceReadPos(size_t count) {
 
 void CircularBuffer::_advanceWritePos(size_t count) {
     this->_writePos = _getNextPos(this->_writePos, count);
-    this->_usedSize = std::min(this->_usedSize + count, this->_capacity);
+    this->_usedSize = (std::min)(this->_usedSize + count, this->_capacity);
 }
 
 extern "C" {

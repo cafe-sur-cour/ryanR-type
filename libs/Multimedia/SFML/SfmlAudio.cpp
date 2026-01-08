@@ -66,7 +66,7 @@ void SfmlAudio::resumeMusic() {
 }
 
 void SfmlAudio::setMusicVolume(float volume) {
-    _musicVolume = std::max(0.0f, std::min(100.0f, volume));
+    _musicVolume = (std::max)(0.0f, (std::min)(100.0f, volume));
     _music.setVolume(_musicVolume);
 }
 
@@ -129,7 +129,7 @@ void SfmlAudio::playSound(const std::string& soundPath, float volume, float pitc
     std::string soundKey = soundPath + "_" + std::to_string(soundCounter++);
 
     auto sound = std::make_shared<sf::Sound>(*_soundBuffers[soundPath]);
-    sound->setVolume(std::max(0.0f, std::min(100.0f, volume)) * (_soundVolume / 100.0f));
+    sound->setVolume((std::max)(0.0f, (std::min)(100.0f, volume)) * (_soundVolume / 100.0f));
     sound->setPitch(pitch);
     sound->play();
 
@@ -137,7 +137,7 @@ void SfmlAudio::playSound(const std::string& soundPath, float volume, float pitc
 }
 
 void SfmlAudio::setSoundVolume(float volume) {
-    _soundVolume = std::max(0.0f, std::min(100.0f, volume));
+    _soundVolume = (std::max)(0.0f, (std::min)(100.0f, volume));
 
     for (auto& [key, sound] : _sounds) {
         sound->setVolume(_soundVolume);
