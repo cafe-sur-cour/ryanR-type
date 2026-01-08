@@ -165,6 +165,7 @@ namespace constants {
     const std::string MUSIC_DIRECTORY = "configs/entities/musics";
     const std::string BACKGROUNDS_DIRECTORY = "configs/entities/backgrounds";
     const std::string OBSTACLES_DIRECTORY = "configs/entities/obstacles";
+    const std::string POWERUPS_DIRECTORY = "configs/entities/powerUp";
 
     /* Prefab JSON field constants */
     const std::string PREFAB_COMPONENTS_FIELD = "components";
@@ -200,6 +201,10 @@ namespace constants {
     const std::string OBSTACLE_POSX_FIELD = "posX";
     const std::string OBSTACLE_POSY_FIELD = "posY";
     const std::string OBSTACLE_COUNT_FIELD = "count";
+
+    /* PowerUp types and fields */
+    const std::string POWERUP_NAME_FIELD = "name";
+    const std::string POWERUP_POSITION_FIELD = "position";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
