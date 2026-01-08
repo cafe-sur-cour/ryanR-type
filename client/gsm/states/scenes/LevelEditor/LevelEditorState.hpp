@@ -49,8 +49,18 @@ struct UniqueObstacle {
 
 struct ObstacleSelection {
     std::string prefabName;
-    std::string type;  // "unique", "horizontal", "vertical"
-    int index;  // index dans le vecteur correspondant
+    std::string type;
+    int index;
+};
+
+struct PowerUpData {
+    float posX;
+    float posY;
+};
+
+struct PowerUpSelection {
+    std::string prefabName;
+    int index;
 };
 
 struct ObstacleGroup {
@@ -94,6 +104,7 @@ private:
     std::vector<std::string> loadAvailableMusics();
     std::vector<std::string> loadAvailableBackgrounds();
     std::vector<std::string> loadAvailableObstacles();
+    std::vector<std::string> loadAvailablePowerUps();
     void saveToHistory();
     void loadFromHistory(size_t index);
     void updateHistoryButtons();
@@ -113,6 +124,15 @@ private:
     void handleObstacleDrag(math::Vector2f mousePos, float viewportZoom, float sidePanelWidth);
     std::optional<ObstacleSelection> getObstacleAtPosition(float mouseX, float mouseY, float levelX, float levelY);
 
+    /* PowerUps methods */
+    void parsePowerUps();
+    void renderAllPowerUps(float levelX, float levelY, float canvasLeft, float canvasRight, float canvasTop, float canvasBottom);
+    void savePowerUps();
+    void handlePowerUpClick(float mouseX, float mouseY, float levelX, float levelY);
+    void startPowerUpDrag(math::Vector2f mousePos, float viewportZoom, float sidePanelWidth);
+    void handlePowerUpDrag(math::Vector2f mousePos, float viewportZoom, float sidePanelWidth);
+    std::optional<PowerUpSelection> getPowerUpAtPosition(float mouseX, float mouseY, float levelX, float levelY);
+
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::unique_ptr<ui::UIManager> _uiManager;
 
@@ -123,6 +143,8 @@ private:
     std::shared_ptr<ui::Dropdown> _editorModeDropdown;
     std::shared_ptr<ui::Text> _obstaclePrefabLabel;
     std::shared_ptr<ui::Dropdown> _obstaclePrefabDropdown;
+    std::shared_ptr<ui::Text> _powerUpPrefabLabel;
+    std::shared_ptr<ui::Dropdown> _powerUpPrefabDropdown;
     std::shared_ptr<ui::Panel> _spritePreviewPanel;
     std::shared_ptr<ui::SpritePreview> _spritePreview;
     std::shared_ptr<ui::Text> _spriteWidthLabel;
@@ -154,6 +176,11 @@ private:
     std::shared_ptr<ui::Text> _obstacleCountLabel;
     std::shared_ptr<ui::TextInput> _obstacleCountInput;
     std::shared_ptr<ui::Button> _obstacleDeleteButton;
+    std::shared_ptr<ui::Text> _powerUpPosXLabel;
+    std::shared_ptr<ui::TextInput> _powerUpPosXInput;
+    std::shared_ptr<ui::Text> _powerUpPosYLabel;
+    std::shared_ptr<ui::TextInput> _powerUpPosYInput;
+    std::shared_ptr<ui::Button> _powerUpDeleteButton;
 
     bool _hasUnsavedChanges = false;
     bool _showHitboxes = false;
@@ -180,13 +207,20 @@ private:
     math::Vector2f _dragStartPos;
     bool _isDraggingObstacle = false;
     math::Vector2f _dragObstacleOffset;
+    bool _isDraggingPowerUp = false;
+    math::Vector2f _dragPowerUpOffset;
 
     std::map<std::string, ObstacleGroup> _obstaclesByName;
     std::optional<ObstacleSelection> _selectedObstacle;
+    std::map<std::string, std::vector<PowerUpData>> _powerUpsByName;
+    std::optional<PowerUpSelection> _selectedPowerUp;
 
     std::map<std::string, LevelPreviewSprite> _obstacleAnimationData;
     std::map<std::string, float> _obstacleAnimationFrames;
     std::map<std::string, float> _obstacleAnimationTimes;
+    std::map<std::string, LevelPreviewSprite> _powerUpAnimationData;
+    std::map<std::string, float> _powerUpAnimationFrames;
+    std::map<std::string, float> _powerUpAnimationTimes;
 
 };
 
