@@ -290,6 +290,19 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] User registered successfully: " + username,
             debug::debugType::NETWORK, debug::debugLevel::INFO);
+        
+        for (auto &clientTuple : this->_clients) {
+            if (std::get<1>(clientTuple) && client.first &&
+                std::get<1>(clientTuple)->getAddress() == client.first->getAddress() &&
+                std::get<1>(clientTuple)->getPort() == client.first->getPort()) {
+                std::get<2>(clientTuple) = username;
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] Updated username for newly registered client: " + username,
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+                break;
+            }
+        }
+        
         if (!this->connectUserPacket(*client.first, username)) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER] Error: Failed to send CONNECT_USER packet",
@@ -359,6 +372,19 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] User logged in successfully: " + username,
             debug::debugType::NETWORK, debug::debugLevel::INFO);
+        
+        for (auto &clientTuple : this->_clients) {
+            if (std::get<1>(clientTuple) && client.first &&
+                std::get<1>(clientTuple)->getAddress() == client.first->getAddress() &&
+                std::get<1>(clientTuple)->getPort() == client.first->getPort()) {
+                std::get<2>(clientTuple) = username;
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] Updated username for client: " + username,
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+                break;
+            }
+        }
+        
         if (!this->connectUserPacket(*client.first, username)) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER] Error: Failed to send CONNECT_USER packet",

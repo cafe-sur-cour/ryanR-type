@@ -13,6 +13,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 #include "Lobby.hpp"
 #include "Constants.hpp"
@@ -27,6 +29,7 @@
 #include "../../common/systems/systemManager/SystemManager.hpp"
 #include "../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../common/components/permanent/ScriptingComponent.hpp"
+#include "../common/components/permanent/ScoreComponent.hpp"
 
 rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
     std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>,
@@ -38,6 +41,7 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
     this->_isDebug = debug;
 
     this->_clientsReady = std::map<uint8_t, bool>();
+    this->_clientToEntity = std::map<uint8_t, ecs::Entity>();
     this->_packet = nullptr;
     this->_sequenceNumber = 0;
     this->_resourceManager = nullptr;
@@ -200,6 +204,7 @@ bool rserv::Lobby::processDisconnections(uint8_t idClient) {
             this->_clients.erase(
                 std::remove(this->_clients.begin(), this->_clients.end(), client),
                 this->_clients.end());
+            this->_clientToEntity.erase(idClient);
             /* Send to server who disconnected ? */
             debug::Debug::printDebug(this->getIsDebug(),
                 "Client " + std::to_string(idClient)
@@ -239,19 +244,6 @@ bool rserv::Lobby::processEvents(uint8_t idClient) {
     return true;
 }
 
-bool rserv::Lobby::processEndOfGame(uint8_t idClient) {
-    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
-        this->_sequenceNumber, constants::PACKET_END_GAME,
-        std::vector<uint64_t>{static_cast<uint64_t>(idClient)});
-    if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
-        debug::Debug::printDebug(this->getIsDebug(),
-            "[SERVER NETWORK] Failed to broadcast end of game packet",
-            debug::debugType::NETWORK, debug::debugLevel::ERROR);
-        return false;
-    }
-    return true;
-}
-
 bool rserv::Lobby::processWhoAmI(uint8_t idClient) {
     debug::Debug::printDebug(this->getIsDebug(),
         "[SERVER] Processing WHOAMI request from client: "
@@ -266,22 +258,15 @@ bool rserv::Lobby::processWhoAmI(uint8_t idClient) {
     }
 
     auto registry = this->_resourceManager->get<ecs::Registry>();
-    auto playerView = registry->view<ecs::PlayerTag>();
-
-    ecs::Entity playerEntity = 0;
-    for (auto entityId : playerView) {
-        if (entityId == idClient) {
-            playerEntity = entityId;
-            break;
-        }
-    }
-
-    if (playerEntity == 0) {
+    auto it = this->_clientToEntity.find(idClient);
+    if (it == this->_clientToEntity.end()) {
         debug::Debug::printDebug(this->getIsDebug(),
             "[SERVER] No player entity found for client " + std::to_string(idClient),
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
+
+    ecs::Entity playerEntity = it->second;
 
     std::vector<uint64_t> payload;
     payload.push_back(static_cast<uint64_t>(playerEntity));
@@ -442,6 +427,68 @@ bool rserv::Lobby::gameStatePacket() {
 }
 
 bool rserv::Lobby::endGamePacket(bool isWin) {
+    if (this->_resourceManager && this->_resourceManager->has<ecs::Registry>()) {
+        auto registry = this->_resourceManager->get<ecs::Registry>();
+        const std::string filepath = constants::SCORES_JSON_PATH;
+        nlohmann::json scores;
+        std::ifstream scoresFile(filepath);
+        if (scoresFile.is_open()) {
+            try {
+                scoresFile >> scores;
+            } catch (const std::exception&) {
+                scores = nlohmann::json::object();
+            }
+            scoresFile.close();
+        } else {
+            scores = nlohmann::json::object();
+        }
+
+        for (const auto& client : this->_clients) {
+            uint8_t clientId = std::get<0>(client);
+            std::string username = std::get<2>(client);
+            auto it = this->_clientToEntity.find(clientId);
+            if (it == this->_clientToEntity.end()) {
+                debug::Debug::printDebug(this->getIsDebug(),
+                    "[SERVER] No entity found for client " + std::to_string(clientId),
+                    debug::debugType::NETWORK, debug::debugLevel::WARNING);
+                continue;
+            }
+            ecs::Entity entity = it->second;
+            if (!registry->hasComponent<ecs::ScoreComponent>(entity)) {
+                debug::Debug::printDebug(this->getIsDebug(),
+                    "[SERVER] ScoreComponent not found for entity " + std::to_string(entity),
+                    debug::debugType::NETWORK, debug::debugLevel::WARNING);
+                continue;
+            }
+            auto scoreComp = registry->getComponent<ecs::ScoreComponent>(entity);
+            int score = scoreComp->getScore();
+            if (!scores.contains(username)) {
+                scores[username] = {{"scores", nlohmann::json::array()}};
+            }
+            scores[username]["scores"].push_back(score);
+            debug::Debug::printDebug(this->getIsDebug(),
+                "[SERVER] Saved score " + std::to_string(score) + " for user " + username,
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+        }
+
+        std::ofstream outFile(filepath);
+        if (outFile.is_open()) {
+            outFile << scores.dump(4);
+            outFile.close();
+            debug::Debug::printDebug(this->getIsDebug(),
+                "[SERVER] Successfully saved scores to file",
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+        } else {
+            debug::Debug::printDebug(this->getIsDebug(),
+                "[SERVER] Failed to save scores to file",
+                debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        }
+    } else {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[SERVER] Registry not found, cannot save scores",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+    }
+
     std::vector<uint64_t> payload;
     payload.push_back(isWin ? 1 : 0);
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
@@ -705,6 +752,8 @@ void rserv::Lobby::createPlayerEntities() {
             registry,
             ecs::EntityCreationContext::forServer()
         );
+
+        this->_clientToEntity[clientId] = playerEntity;
 
         debug::Debug::printDebug(this->getIsDebug(),
             "[LOBBY] Created player entity " + std::to_string(playerEntity) +

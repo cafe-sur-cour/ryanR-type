@@ -12,6 +12,7 @@
 #include <utility>
 #include <thread>
 #include <chrono>
+#include <fstream>
 #include <nlohmann/json.hpp>
 #include <algorithm>
 #include "Server.hpp"
@@ -254,7 +255,19 @@ bool rserv::Server::leaderboardPacket(const net::INetworkEndpoint &endpoint) {
     }
 
     const std::string filepath = constants::SCORES_JSON_PATH;
-    nlohmann::json scores = utils::SecureJsonManager::readSecureJson(filepath);
+
+    nlohmann::json scores;
+    std::ifstream scoresFile(filepath);
+    if (scoresFile.is_open()) {
+        try {
+            scoresFile >> scores;
+        } catch (const std::exception&) {
+            scores = nlohmann::json::object();
+        }
+        scoresFile.close();
+    } else {
+        scores = nlohmann::json::object();
+    }
 
     if (!scores.is_object()) {
         scores = nlohmann::json::object();
