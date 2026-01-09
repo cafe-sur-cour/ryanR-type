@@ -164,6 +164,7 @@ namespace constants {
     const std::string CHANGING_FIELD = "CHANGING";
 
     const std::string MAXCHARGE_FIELD = "maxCharge";
+    const std::string CHARGERELOADTIME_FIELD = "chargeReloadTime";
 
     const std::string STRAIGHT_LINE_VALUE = "StraightLine";
     const std::string ZIGZAG_VALUE = "Zigzag";
