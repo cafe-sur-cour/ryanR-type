@@ -259,7 +259,6 @@ ProfileState::ProfileState(
     buttonsSection->addElement(_button2);
     buttonsSection->addElement(_button3);
 
-    // Bouton Back
     _backButton = std::make_shared<ui::Button>(_resourceManager);
     _backButton->setText("Back");
     _backButton->setSize(math::Vector2f(500.f, 70.f));
@@ -304,7 +303,6 @@ void ProfileState::loadUserData() {
         return;
     }
 
-    // Only update UI if profile data has been updated
     if (network->isProfileDataUpdated()) {
         auto profileData = network->getProfileData();
         if (profileData.size() >= 5) {
@@ -314,13 +312,11 @@ void ProfileState::loadUserData() {
             _gamesPlayedText->setText("Games Played: " + profileData[3]);
         }
 
-        // Clear the update flag
         network->clearProfileDataUpdateFlag();
     }
 }
 
 void ProfileState::enter() {
-    // Send profile request packet only if authenticated
     auto network = _resourceManager->get<ClientNetwork>();
     if (network && !network->getName().empty()) {
         network->sendRequestProfilePacket();

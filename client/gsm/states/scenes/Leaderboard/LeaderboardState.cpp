@@ -9,11 +9,8 @@
 
 #include <memory>
 #include <string>
-#include <fstream>
-#include <algorithm>
-#include <utility>
 #include <vector>
-#include <nlohmann/json.hpp>
+#include <sstream>
 
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
@@ -99,17 +96,23 @@ LeaderboardState::LeaderboardState(
         entryLayout->setSize(math::Vector2f(750.f, 50.f));
 
         auto rankText = std::make_shared<ui::Text>(_resourceManager);
-        rankText->setText(std::to_string(i + 1) + ".");
+        std::stringstream ss;
+        ss << (i + 1) << ".";
+        rankText->setText(ss.str());
         rankText->setSize(math::Vector2f(50.f, 30.f));
         rankText->setTextColor(gfx::color_t{255, 255, 255, 255});
 
         auto nameText = std::make_shared<ui::Text>(_resourceManager);
-        nameText->setText("Player " + std::to_string(i + 1));
+        std::stringstream ss2;
+        ss2 << "Player " << (i + 1);
+        nameText->setText(ss2.str());
         nameText->setSize(math::Vector2f(400.f, 30.f));
         nameText->setTextColor(gfx::color_t{255, 255, 100, 255});
 
         auto scoreText = std::make_shared<ui::Text>(_resourceManager);
-        scoreText->setText(std::to_string((10 - i) * 1000));
+        std::stringstream ss3;
+        ss3 << ((10 - i) * 1000);
+        scoreText->setText(ss3.str());
         scoreText->setSize(math::Vector2f(200.f, 30.f));
         scoreText->setTextColor(gfx::color_t{100, 255, 150, 255});
 
@@ -169,14 +172,18 @@ void LeaderboardState::loadLeaderboardData() {
             size_t numEntries = std::min(leaderboard.size(), _leaderTexts.size() / 3);
             for (size_t i = 0; i < numEntries; ++i) {
                 size_t textIndex = i * 3;
-                _leaderTexts[textIndex]->setText(std::to_string(i + 1) + ".");
+                std::stringstream ss;
+                ss << (i + 1) << ".";
+                _leaderTexts[textIndex]->setText(ss.str());
                 _leaderTexts[textIndex + 1]->setText(leaderboard[i].first);
                 _leaderTexts[textIndex + 2]->setText(leaderboard[i].second);
             }
 
             for (size_t i = numEntries; i < 10; ++i) {
                 size_t textIndex = i * 3;
-                _leaderTexts[textIndex]->setText(std::to_string(i + 1) + ".");
+                std::stringstream ss;
+                ss << (i + 1) << ".";
+                _leaderTexts[textIndex]->setText(ss.str());
                 _leaderTexts[textIndex + 1]->setText("---");
                 _leaderTexts[textIndex + 2]->setText("0");
             }
@@ -184,53 +191,13 @@ void LeaderboardState::loadLeaderboardData() {
         }
     }
 
-    try {
-        nlohmann::json usersData;
-        std::ifstream file("saves/users.json");
-        if (file.is_open()) {
-            file >> usersData;
-            file.close();
-        } else {
-            return;
-        }
-        if (!usersData.is_array()) {
-            return;
-        }
-
-        std::vector<std::pair<std::string, std::string>> leaderboard;
-        for (const auto& user : usersData) {
-            if (user.contains("username") && user.contains("highScore")) {
-                std::string username = user["username"];
-                std::string highScore = std::to_string(user["highScore"].get<int>());
-                leaderboard.emplace_back(username, highScore);
-            }
-        }
-
-        std::sort(leaderboard.begin(), leaderboard.end(),
-            [](const std::pair<std::string, std::string>& a,
-                const std::pair<std::string, std::string>& b) {
-                try {
-                    return std::stoi(a.second) > std::stoi(b.second);
-                } catch (const std::exception&) {
-                    return false;
-                }
-            });
-
-        size_t numEntries = std::min(leaderboard.size(), _leaderTexts.size() / 3);
-        for (size_t i = 0; i < numEntries; ++i) {
-            size_t textIndex = i * 3;
-            _leaderTexts[textIndex]->setText(std::to_string(i + 1) + ".");
-            _leaderTexts[textIndex + 1]->setText(leaderboard[i].first);
-            _leaderTexts[textIndex + 2]->setText(leaderboard[i].second);
-        }
-
-        for (size_t i = numEntries; i < 10; ++i) {
-            size_t textIndex = i * 3;
-            _leaderTexts[textIndex]->setText(std::to_string(i + 1) + ".");
-            _leaderTexts[textIndex + 1]->setText("---");
-            _leaderTexts[textIndex + 2]->setText("0");
-        }
-    } catch (const std::exception&) {
+    for (size_t i = 0; i < 10; ++i) {
+        size_t textIndex = i * 3;
+        std::stringstream ss;
+        ss << (i + 1) << ".";
+        _leaderTexts[textIndex]->setText(ss.str());
+        _leaderTexts[textIndex + 1]->setText("---");
+        _leaderTexts[textIndex + 2]->setText("0");
     }
 }
 

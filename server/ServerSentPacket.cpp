@@ -274,9 +274,9 @@ bool rserv::Server::leaderboardPacket(const net::INetworkEndpoint &endpoint) {
 
     std::vector<std::pair<std::string, int>> leaderboard;
     for (const auto& [username, userData] : scores.items()) {
-        if (userData.is_object() && userData.contains("scores") &&
-            userData["scores"].is_array()) {
-            const auto& scoreArray = userData["scores"];
+        if (userData.is_object() && userData.contains(constants::SCORE_JSON_WARD) &&
+            userData[constants::SCORE_JSON_WARD].is_array()) {
+            const auto& scoreArray = userData[constants::SCORE_JSON_WARD];
             for (const auto& score : scoreArray) {
                 if (score.is_number()) {
                     leaderboard.emplace_back(username, score.get<int>());
@@ -397,9 +397,9 @@ bool rserv::Server::profilePacket(const net::INetworkEndpoint &endpoint) {
 
     int wins = 0;
     int highScore = 0;
-    if (scores.contains(username) && scores[username].contains("scores") &&
-        scores[username]["scores"].is_array()) {
-        const auto& scoreArray = scores[username]["scores"];
+    if (scores.contains(username) && scores[username].contains(constants::SCORE_JSON_WARD) &&
+        scores[username][constants::SCORE_JSON_WARD].is_array()) {
+        const auto& scoreArray = scores[username][constants::SCORE_JSON_WARD];
         wins = static_cast<int>(scoreArray.size());
         for (const auto& score : scoreArray) {
             if (score.is_number()) {
