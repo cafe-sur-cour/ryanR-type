@@ -168,13 +168,6 @@ namespace constants {
 
     /* Prefab JSON field constants */
     const std::string PREFAB_COMPONENTS_FIELD = "components";
-    const std::string PREFAB_SPRITE_COMPONENT = "SpriteComponent";
-    const std::string PREFAB_ANIMATION_COMPONENT = "AnimationComponent";
-    const std::string PREFAB_COLLIDER_COMPONENT = "ColliderComponent";
-    const std::string PREFAB_TRANSFORM_COMPONENT = "TransformComponent";
-    const std::string PREFAB_FILEPATH_FIELD = "filePath";
-    const std::string PREFAB_STATES_FIELD = "states";
-    const std::string PREFAB_TEXTURE_PATH_FIELD = "texturePath";
     const std::string PREFAB_FRAME_WIDTH_FIELD = "frameWidth";
     const std::string PREFAB_FRAME_HEIGHT_FIELD = "frameHeight";
     const std::string PREFAB_FRAME_COUNT_FIELD = "frameCount";

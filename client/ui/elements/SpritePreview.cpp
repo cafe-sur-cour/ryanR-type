@@ -31,7 +31,7 @@ bool SpritePreview::loadPrefab(const std::filesystem::path& prefabPath) {
 
         if (prefab.contains(constants::PREFAB_COMPONENTS_FIELD) &&
             prefab[constants::PREFAB_COMPONENTS_FIELD].contains(
-                constants::PREFAB_ANIMATION_COMPONENT)) {
+                constants::ANIMATIONCOMPONENT)) {
             if (extractAnimationFromPrefab(prefab)) {
                 _type = PreviewType::Animation;
                 _loaded = true;
@@ -41,7 +41,7 @@ bool SpritePreview::loadPrefab(const std::filesystem::path& prefabPath) {
 
         if (prefab.contains(constants::PREFAB_COMPONENTS_FIELD) &&
             prefab[constants::PREFAB_COMPONENTS_FIELD].contains(
-                constants::PREFAB_SPRITE_COMPONENT)) {
+                constants::SPRITECOMPONENT)) {
             if (extractSpriteFromPrefab(prefab)) {
                 _type = PreviewType::Sprite;
                 _loaded = true;
@@ -59,24 +59,24 @@ bool SpritePreview::extractSpriteFromPrefab(const nlohmann::json& prefab) {
     try {
         const auto& components = prefab[constants::PREFAB_COMPONENTS_FIELD];
 
-        if (!components.contains(constants::PREFAB_SPRITE_COMPONENT)) {
+        if (!components.contains(constants::SPRITECOMPONENT)) {
             return false;
         }
 
-        const auto& spriteComp = components[constants::PREFAB_SPRITE_COMPONENT];
+        const auto& spriteComp = components[constants::SPRITECOMPONENT];
 
-        if (!spriteComp.contains(constants::PREFAB_FILEPATH_FIELD)) {
+        if (!spriteComp.contains(constants::FILEPATH_FIELD)) {
             return false;
         }
 
         _spriteData.texturePath =
-            spriteComp[constants::PREFAB_FILEPATH_FIELD].get<std::string>();
+            spriteComp[constants::FILEPATH_FIELD].get<std::string>();
 
         float frameWidth = 0.0f;
         float frameHeight = 0.0f;
 
-        if (components.contains(constants::PREFAB_COLLIDER_COMPONENT)) {
-            const auto& collider = components[constants::PREFAB_COLLIDER_COMPONENT];
+        if (components.contains(constants::COLLIDERCOMPONENT)) {
+            const auto& collider = components[constants::COLLIDERCOMPONENT];
             if (collider.contains(constants::PREFAB_SIZE_FIELD)) {
                 frameWidth = collider[constants::PREFAB_SIZE_FIELD].value(
                     constants::PREFAB_X_FIELD, 0.0f);
@@ -87,8 +87,8 @@ bool SpritePreview::extractSpriteFromPrefab(const nlohmann::json& prefab) {
 
         _spriteData.frameSize = math::Vector2f(frameWidth, frameHeight);
 
-        if (components.contains(constants::PREFAB_TRANSFORM_COMPONENT)) {
-            const auto& transform = components[constants::PREFAB_TRANSFORM_COMPONENT];
+        if (components.contains(constants::TRANSFORMCOMPONENT)) {
+            const auto& transform = components[constants::TRANSFORMCOMPONENT];
 
             if (transform.contains(constants::PREFAB_SCALE_FIELD)) {
                 _spriteData.scale = math::Vector2f(
@@ -116,17 +116,17 @@ bool SpritePreview::extractAnimationFromPrefab(const nlohmann::json& prefab) {
     try {
         const auto& components = prefab[constants::PREFAB_COMPONENTS_FIELD];
 
-        if (!components.contains(constants::PREFAB_ANIMATION_COMPONENT)) {
+        if (!components.contains(constants::ANIMATIONCOMPONENT)) {
             return false;
         }
 
-        const auto& animComp = components[constants::PREFAB_ANIMATION_COMPONENT];
+        const auto& animComp = components[constants::ANIMATIONCOMPONENT];
 
-        if (!animComp.contains(constants::PREFAB_STATES_FIELD)) {
+        if (!animComp.contains(constants::STATES_FIELD)) {
             return false;
         }
 
-        const auto& states = animComp[constants::PREFAB_STATES_FIELD];
+        const auto& states = animComp[constants::STATES_FIELD];
         if (states.empty()) {
             return false;
         }
@@ -134,12 +134,12 @@ bool SpritePreview::extractAnimationFromPrefab(const nlohmann::json& prefab) {
         auto it = states.begin();
         const auto& firstState = it.value();
 
-        if (!firstState.contains(constants::PREFAB_TEXTURE_PATH_FIELD)) {
+        if (!firstState.contains(constants::TEXTUREPATH_FIELD)) {
             return false;
         }
 
         _animationData.texturePath =
-            firstState[constants::PREFAB_TEXTURE_PATH_FIELD].get<std::string>();
+            firstState[constants::TEXTUREPATH_FIELD].get<std::string>();
         _animationData.frameSize = math::Vector2f(
             firstState.value(constants::PREFAB_FRAME_WIDTH_FIELD, 0.0f),
             firstState.value(constants::PREFAB_FRAME_HEIGHT_FIELD, 0.0f)

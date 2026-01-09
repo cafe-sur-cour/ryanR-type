@@ -3379,24 +3379,24 @@ LevelPreviewSprite LevelEditorState::extractSpriteDataFromPrefab(
 
         const auto& components = prefabData[constants::PREFAB_COMPONENTS_FIELD];
 
-        if (components.contains(constants::PREFAB_ANIMATION_COMPONENT)) {
-            const auto& animComponent = components[constants::PREFAB_ANIMATION_COMPONENT];
-            if (animComponent.contains(constants::PREFAB_TEXTURE_PATH_FIELD)) {
+        if (components.contains(constants::ANIMATIONCOMPONENT)) {
+            const auto& animComponent = components[constants::ANIMATIONCOMPONENT];
+            if (animComponent.contains(constants::TEXTUREPATH_FIELD)) {
                 result.texturePath =
-                    animComponent[constants::PREFAB_TEXTURE_PATH_FIELD].get<std::string>();
+                    animComponent[constants::TEXTUREPATH_FIELD].get<std::string>();
             }
 
             result.isAnimation = true;
-            if (animComponent.contains(constants::PREFAB_STATES_FIELD)) {
-                const auto& states = animComponent[constants::PREFAB_STATES_FIELD];
+            if (animComponent.contains(constants::STATES_FIELD)) {
+                const auto& states = animComponent[constants::STATES_FIELD];
                 if (!states.empty()) {
                     auto it = states.begin();
                     const auto& firstState = it.value();
 
                     if (result.texturePath.empty() &&
-                        firstState.contains(constants::PREFAB_TEXTURE_PATH_FIELD)) {
+                        firstState.contains(constants::TEXTUREPATH_FIELD)) {
                         result.texturePath = firstState[
-                            constants::PREFAB_TEXTURE_PATH_FIELD].get<std::string>();
+                            constants::TEXTUREPATH_FIELD].get<std::string>();
                     }
 
                     result.frameCount = firstState.value(
@@ -3411,16 +3411,16 @@ LevelPreviewSprite LevelEditorState::extractSpriteDataFromPrefab(
                         constants::PREFAB_LOOP_FIELD, true);
                 }
             }
-        } else if (components.contains(constants::PREFAB_SPRITE_COMPONENT)) {
-            const auto& spriteComponent = components[constants::PREFAB_SPRITE_COMPONENT];
-            if (spriteComponent.contains(constants::PREFAB_FILEPATH_FIELD)) {
+        } else if (components.contains(constants::SPRITECOMPONENT)) {
+            const auto& spriteComponent = components[constants::SPRITECOMPONENT];
+            if (spriteComponent.contains(constants::FILEPATH_FIELD)) {
                 result.texturePath =
-                    spriteComponent[constants::PREFAB_FILEPATH_FIELD].get<std::string>();
+                    spriteComponent[constants::FILEPATH_FIELD].get<std::string>();
             }
         }
 
-        if (components.contains(constants::PREFAB_COLLIDER_COMPONENT)) {
-            const auto& colliderComponent = components[constants::PREFAB_COLLIDER_COMPONENT];
+        if (components.contains(constants::COLLIDERCOMPONENT)) {
+            const auto& colliderComponent = components[constants::COLLIDERCOMPONENT];
             if (colliderComponent.contains(constants::PREFAB_SIZE_FIELD)) {
                 const auto& size = colliderComponent[constants::PREFAB_SIZE_FIELD];
                 if (size.contains(constants::PREFAB_X_FIELD)) {
@@ -3432,9 +3432,9 @@ LevelPreviewSprite LevelEditorState::extractSpriteDataFromPrefab(
             }
         }
 
-        if (components.contains(constants::PREFAB_TRANSFORM_COMPONENT)) {
+        if (components.contains(constants::TRANSFORMCOMPONENT)) {
             const auto& transformComponent =
-                components[constants::PREFAB_TRANSFORM_COMPONENT];
+                components[constants::TRANSFORMCOMPONENT];
             if (transformComponent.contains(constants::PREFAB_SCALE_FIELD)) {
                 const auto& scale = transformComponent[constants::PREFAB_SCALE_FIELD];
                 if (scale.contains(constants::PREFAB_X_FIELD)) {
