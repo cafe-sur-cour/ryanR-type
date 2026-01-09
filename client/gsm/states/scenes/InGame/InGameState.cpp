@@ -225,6 +225,8 @@ void InGameState::drawHealthHUD(
     std::string healthText = healthSs.str();
 
     float healthRatio = (maxHealth > 0.0f) ? health / maxHealth : 0.0f;
+    if (healthRatio < 0.0f) healthRatio = 0.0f;
+    if (healthRatio > 1.0f) healthRatio = 1.0f;
     uint8_t red = static_cast<uint8_t>((1.0f - healthRatio) * 255.0f);
     uint8_t green = static_cast<uint8_t>(healthRatio * 255.0f);
     gfx::color_t barColor = {red, green, 0, 255};
