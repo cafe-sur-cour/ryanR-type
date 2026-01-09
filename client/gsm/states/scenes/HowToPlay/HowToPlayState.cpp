@@ -25,6 +25,7 @@ std::string getControlDisplayName(gfx::EventType eventType) {
     if (eventType >= gfx::EventType::UP && eventType <= gfx::EventType::NUMPAD_ENTER) {
         return ecs::InputMappingManager::eventTypeToString(eventType);
     }
+    return "Unknown";
 }
 
 HowToPlayState::HowToPlayState(
