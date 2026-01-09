@@ -346,6 +346,7 @@ void LevelEditorState::handleObstacleClick(
 ) {
     auto selection = getObstacleAtPosition(mouseX, mouseY, levelX, levelY);
     if (selection.has_value()) {
+        _isSelectingObject = true;
         _selectedObstacle = selection;
         _selectedPowerUp = std::nullopt;
         _selectedWave = std::nullopt;
@@ -481,6 +482,7 @@ void LevelEditorState::handleObstacleClick(
         if (_obstacleDuplicateButton) {
             _obstacleDuplicateButton->setVisible(true);
         }
+        _isSelectingObject = false;
     } else {
         bool inObstaclesMode = (_editorModeDropdown &&
             _editorModeDropdown->getSelectedOption() == "Obstacles");

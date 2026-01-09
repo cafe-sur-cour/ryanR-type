@@ -353,6 +353,7 @@ void LevelEditorState::handleWaveClick(
     }
 
     if (selection.has_value()) {
+        _isSelectingObject = true;
         _selectedWave = selection;
         _selectedObstacle = std::nullopt;
         _selectedPowerUp = std::nullopt;
@@ -407,6 +408,7 @@ void LevelEditorState::handleWaveClick(
         }
 
         updateEnemyUI();
+        _isSelectingObject = false;
     } else {
         bool filterAllowsCreation = (_displayFilter == "All" || _displayFilter == "Waves");
 
