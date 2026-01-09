@@ -12,12 +12,20 @@
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/constants.hpp"
+#include "../../../../../common/InputMapping/IInputProvider.hpp"
+#include "../../../../../common/InputMapping/InputMappingManager.hpp"
 #include "../../../../constants.hpp"
 #include "../../../../colors.hpp"
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 
 namespace gsm {
+
+std::string getControlDisplayName(gfx::EventType eventType) {
+    if (eventType >= gfx::EventType::UP && eventType <= gfx::EventType::NUMPAD_ENTER) {
+        return ecs::InputMappingManager::eventTypeToString(eventType);
+    }
+}
 
 HowToPlayState::HowToPlayState(
     std::shared_ptr<IGameStateMachine> gsm,
@@ -117,11 +125,47 @@ HowToPlayState::HowToPlayState(
     controlsTitleLayout->addElement(controlsTitle);
     controlsSection->addElement(controlsTitleLayout);
 
-    std::vector<std::pair<std::string, gfx::color_t>> controls = {
-        {"ARROWS : Move Ship", gfx::color_t{200, 230, 255, 255}},
-        {"SPACE : Shoot", gfx::color_t{255, 200, 100, 255}},
-        {"ESC : Menu", gfx::color_t{255, 150, 150, 255}}
-    };
+    auto inputMappingManager = _resourceManager->get<ecs::InputMappingManager>();
+    std::vector<std::pair<std::string, gfx::color_t>> controls;
+
+    if (inputMappingManager) {
+        auto leftKey = inputMappingManager->getKeyForRemappableAction(
+            ecs::RemappableAction::MOVE_LEFT, true);
+        auto rightKey = inputMappingManager->getKeyForRemappableAction(
+            ecs::RemappableAction::MOVE_RIGHT, true);
+        auto upKey = inputMappingManager->getKeyForRemappableAction(
+            ecs::RemappableAction::MOVE_UP, true);
+        auto downKey = inputMappingManager->getKeyForRemappableAction(
+            ecs::RemappableAction::MOVE_DOWN, true);
+
+        std::string keyboardMove = getControlDisplayName(leftKey) + "/" +
+            getControlDisplayName(upKey) + "/" +
+            getControlDisplayName(downKey) + "/" + getControlDisplayName(rightKey);
+
+        auto shootKey = inputMappingManager->getKeyForRemappableAction(
+            ecs::RemappableAction::SHOOT, true);
+        auto forceKey = inputMappingManager->getKeyForRemappableAction(
+            ecs::RemappableAction::FORCE, true);
+
+        std::string gamepadShoot = "A";
+        std::string gamepadForce = "X/Y";
+
+        controls = {
+            {keyboardMove + " / Left Stick : Move Ship", gfx::color_t{200, 230, 255, 255}},
+            {getControlDisplayName(shootKey) + " / " + gamepadShoot + " : Shoot",
+                gfx::color_t{255, 200, 100, 255}},
+            {getControlDisplayName(forceKey) + " / " + gamepadForce + " : Force",
+                gfx::color_t{255, 100, 200, 255}},
+            {"ESC : Menu", gfx::color_t{255, 150, 150, 255}}
+        };
+    } else {
+        controls = {
+            {"Q/W/S/D / Left Stick : Move Ship", gfx::color_t{200, 230, 255, 255}},
+            {"SPACE / A : Shoot", gfx::color_t{255, 200, 100, 255}},
+            {"F / X/Y : Force", gfx::color_t{255, 100, 200, 255}},
+            {"ESC : Menu", gfx::color_t{255, 150, 150, 255}}
+        };
+    }
 
     for (const auto& [text, color] : controls) {
         auto controlBox = std::make_shared<ui::Box>(_resourceManager);
