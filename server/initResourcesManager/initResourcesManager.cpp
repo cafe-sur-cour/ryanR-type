@@ -21,6 +21,7 @@
 #include "../../common/systems/systemManager/SystemManager.hpp"
 #include "../gsm/machine/GameStateMachine.hpp"
 #include "../../common/debug.hpp"
+#include "../../common/GameRules.hpp"
 #include "../../common/constants.hpp"
 #include "initResourcesManager.hpp"
 #include "../gsm/gsmStates.hpp"
@@ -127,5 +128,10 @@ std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Ser
     resourceManager->add<gsm::GameStateMachine>(gameStateMachine);
     resourceManager->add<gsm::GameStateType>(
         std::make_shared<gsm::GameStateType>(gsm::BOOT));
+
+    auto gameRules = std::make_shared<GameRules>();
+    gameRules->setDifficulty(Difficulty::NORMAL);
+    resourceManager->add<GameRules>(gameRules);
+
     return resourceManager;
 }
