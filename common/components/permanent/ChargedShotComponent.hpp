@@ -15,7 +15,11 @@ namespace ecs {
 
 class ChargedShotComponent : public AComponent {
     public:
-        ChargedShotComponent(const float &charge = 0, const float &maxCharge = 0) : _charge(charge), _maxCharge(maxCharge) {};
+        ChargedShotComponent(
+            const float &charge = 0,
+            const float &maxCharge = 0,
+            const float &chargeReloadTime = 0
+        ) : _charge(charge), _maxCharge(maxCharge), _chargeReloadTime(chargeReloadTime) {};
         ~ChargedShotComponent() = default;
 
         float getCharge() const { return _charge; };
@@ -24,9 +28,13 @@ class ChargedShotComponent : public AComponent {
         float getMaxCharge() const { return _maxCharge; };
         void setMaxCharge(const float &maxCharge) { _maxCharge = maxCharge; };
 
+        float getReloadTime() const { return _chargeReloadTime; };
+        void setReloadTime(const float &reloadTime) { _chargeReloadTime = reloadTime; };
+
     private:
         float _charge;
         float _maxCharge;
+        float _chargeReloadTime;
 };
 
 }
