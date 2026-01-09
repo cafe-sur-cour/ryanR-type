@@ -89,6 +89,8 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
         std::bind(&rserv::Lobby::convertProjectilePrefabComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertGameZoneComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Lobby::convertAnimationStateComponent, this,
             std::placeholders::_1, std::placeholders::_2)
     };
 }
