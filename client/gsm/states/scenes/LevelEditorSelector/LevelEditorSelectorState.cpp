@@ -204,7 +204,7 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
                 file >> levelData;
                 file.close();
                 levelName = levelData.value(
-                    constants::LEVEL_NAME_FIELD, levelPath.stem().string());
+                    constants::NAME_FIELD, levelPath.stem().string());
             } catch (const std::exception&) {
                 levelName = levelPath.stem().string();
             }
@@ -324,9 +324,9 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
             auto deleteButton = std::make_shared<ui::Button>(_resourceManager);
             deleteButton->setText("Delete");
             deleteButton->setSize(math::Vector2f(110.f, 40.f));
-            deleteButton->setNormalColor(gfx::color_t{255, 100, 100, 255});
-            deleteButton->setHoveredColor(gfx::color_t{255, 150, 150, 255});
-            deleteButton->setPressedColor(gfx::color_t{255, 50, 50, 255});
+            deleteButton->setNormalColor(colors::BUTTON_DANGER);
+            deleteButton->setHoveredColor(colors::BUTTON_DANGER_HOVER);
+            deleteButton->setPressedColor(colors::BUTTON_DANGER_PRESSED);
 
             deleteButton->setOnRelease([this, levelPath, levelName]() {
                 showDeleteConfirmation(levelPath, levelName);
@@ -463,9 +463,9 @@ std::vector<
                     file >> levelData;
                     file.close();
 
-                    int index = levelData.value(constants::LEVEL_INDEX_FIELD, -1);
+                    int index = levelData.value(constants::INDEX_FIELD, -1);
                     std::string name = levelData.value(
-                        constants::LEVEL_NAME_FIELD, entry.path().stem().string());
+                        constants::NAME_FIELD, entry.path().stem().string());
 
                     levels.emplace_back(entry.path(), index);
                 } catch (const std::exception&) {
@@ -496,7 +496,7 @@ void LevelEditorSelectorState::swapLevels(
         nlohmann::json data1;
         file1 >> data1;
         file1.close();
-        index1 = data1.value(constants::LEVEL_INDEX_FIELD, -1);
+        index1 = data1.value(constants::INDEX_FIELD, -1);
     } catch (const std::exception&) {
         return;
     }
@@ -506,7 +506,7 @@ void LevelEditorSelectorState::swapLevels(
         nlohmann::json data2;
         file2 >> data2;
         file2.close();
-        index2 = data2.value(constants::LEVEL_INDEX_FIELD, -1);
+        index2 = data2.value(constants::INDEX_FIELD, -1);
     } catch (const std::exception&) {
         return;
     }
@@ -517,7 +517,7 @@ void LevelEditorSelectorState::swapLevels(
         file1 >> data1;
         file1.close();
 
-        data1[constants::LEVEL_INDEX_FIELD] = index2;
+        data1[constants::INDEX_FIELD] = index2;
 
         std::ofstream outFile1(path1);
         outFile1 << data1.dump(4);
@@ -532,7 +532,7 @@ void LevelEditorSelectorState::swapLevels(
         file2 >> data2;
         file2.close();
 
-        data2[constants::LEVEL_INDEX_FIELD] = index1;
+        data2[constants::INDEX_FIELD] = index1;
 
         std::ofstream outFile2(path2);
         outFile2 << data2.dump(4);
@@ -754,9 +754,9 @@ void LevelEditorSelectorState::confirmDuplicate() {
                 }
             }
 
-            levelData[constants::LEVEL_INDEX_FIELD] = nextIndex;
+            levelData[constants::INDEX_FIELD] = nextIndex;
             std::string newName = _pendingDuplicateName + " (copy)";
-            levelData[constants::LEVEL_NAME_FIELD] = newName;
+            levelData[constants::NAME_FIELD] = newName;
 
             std::string newFileName = constants::LEVEL_FILE_PREFIX +
                 std::to_string(nextIndex) + constants::LEVEL_FILE_EXTENSION;
@@ -907,15 +907,15 @@ std::optional<std::filesystem::path> LevelEditorSelectorState::createNewLevel() 
     }
 
     nlohmann::json newLevelData;
-    newLevelData[constants::LEVEL_INDEX_FIELD] = nextIndex;
-    newLevelData[constants::LEVEL_NAME_FIELD] = "New Level";
-    newLevelData[constants::LEVEL_BACKGROUND_FIELD] = "";
-    newLevelData[constants::LEVEL_SCROLL_SPEED_FIELD] = 100.0;
-    newLevelData[constants::LEVEL_MUSIC_FIELD] = "";
-    newLevelData[constants::LEVEL_POWER_UPS_FIELD] = nlohmann::json::array();
-    newLevelData[constants::LEVEL_MAP_LENGTH_FIELD] = 0.0;
-    newLevelData[constants::LEVEL_OBSTACLES_FIELD] = nlohmann::json::array();
-    newLevelData[constants::LEVEL_WAVES_FIELD] = nlohmann::json::array();
+    newLevelData[constants::INDEX_FIELD] = nextIndex;
+    newLevelData[constants::NAME_FIELD] = "New Level";
+    newLevelData[constants::BACKGROUND_FIELD] = "";
+    newLevelData[constants::BACKGROUND_SCROLL_SPEED_FIELD] = 100.0;
+    newLevelData[constants::MUSIC_FIELD] = "";
+    newLevelData[constants::POWERUPS_FIELD] = nlohmann::json::array();
+    newLevelData[constants::MAP_LENGTH_FIELD] = 0.0;
+    newLevelData[constants::OBSTACLES_FIELD] = nlohmann::json::array();
+    newLevelData[constants::WAVES_FIELD] = nlohmann::json::array();
 
     std::string newFileName = constants::LEVEL_FILE_PREFIX +
         std::to_string(nextIndex) + constants::LEVEL_FILE_EXTENSION;

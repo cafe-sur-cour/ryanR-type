@@ -184,6 +184,7 @@ namespace constants {
     const float OUT_OF_BOUNDS_MARGIN = 200.0f;
 
     /* Map parsing constants */
+    const std::string COMPONENTS_FIELD = "components";
     const std::string BACKGROUND_FIELD = "background";
     const std::string BACKGROUND_SCROLL_SPEED_FIELD = "scrollSpeed";
     const std::string MUSIC_FIELD = "music";
