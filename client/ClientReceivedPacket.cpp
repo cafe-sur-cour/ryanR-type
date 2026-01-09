@@ -499,6 +499,11 @@ void ClientNetwork::handleConnectUser() {
             gsm->requestStatePop();
         }
         this->_expectingLoginResponse = false;
+    } else if (this->_expectingRegisterResponse) {
+        if (auto gsm = this->_gsm) {
+            gsm->requestStatePop();
+        }
+        this->_expectingRegisterResponse = false;
     }
 }
 
@@ -530,4 +535,29 @@ void ClientNetwork::handleLeaderboard() {
     }
     _leaderboardData = leaderboardData;
     _leaderboardDataUpdated = true;
+}
+
+void ClientNetwork::handleRegisterFail() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received register fail packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    std::string errorMessage;
+    for (size_t i = 0; i < payload.size() && payload.at(i) != '\0'; ++i) {
+        char c = static_cast<char>(payload.at(i) & 0xFF);
+        errorMessage += c;
+    }
+
+    if (errorMessage.empty()) {
+        errorMessage = "Registration failed";
+    }
+
+    // Set the error message in the resource manager for the register state to pick up
+    if (_resourceManager) {
+        _resourceManager->add<std::string>(std::make_shared<std::string>(errorMessage));
+    }
+
+    this->_expectingRegisterResponse = false;
 }

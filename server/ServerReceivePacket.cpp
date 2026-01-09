@@ -274,6 +274,16 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER] Registration failed: Username already exists",
                 debug::debugType::NETWORK, debug::debugLevel::WARNING);
+
+            std::vector<uint64_t> payload;
+            std::string errorStr = "Username already exists";
+            for (char c : errorStr) {
+                payload.push_back(static_cast<uint64_t>(c));
+            }
+            payload.push_back(0); // null terminator
+            std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+                this->_sequenceNumber++, constants::PACKET_REGISTER_FAIL, payload);
+            this->_network->sendTo(*client.first, packet);
             return false;
         }
     }
@@ -290,7 +300,7 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] User registered successfully: " + username,
             debug::debugType::NETWORK, debug::debugLevel::INFO);
-        
+
         for (auto &clientTuple : this->_clients) {
             if (std::get<1>(clientTuple) && client.first &&
                 std::get<1>(clientTuple)->getAddress() == client.first->getAddress() &&
@@ -302,7 +312,7 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
                 break;
             }
         }
-        
+
         if (!this->connectUserPacket(*client.first, username)) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER] Error: Failed to send CONNECT_USER packet",
@@ -372,7 +382,7 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] User logged in successfully: " + username,
             debug::debugType::NETWORK, debug::debugLevel::INFO);
-        
+
         for (auto &clientTuple : this->_clients) {
             if (std::get<1>(clientTuple) && client.first &&
                 std::get<1>(clientTuple)->getAddress() == client.first->getAddress() &&
@@ -384,7 +394,7 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
                 break;
             }
         }
-        
+
         if (!this->connectUserPacket(*client.first, username)) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER] Error: Failed to send CONNECT_USER packet",
