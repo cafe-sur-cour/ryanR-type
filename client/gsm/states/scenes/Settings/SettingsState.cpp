@@ -35,6 +35,12 @@ SettingsState::SettingsState(
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
 
+    _uiManager->setCursorCallback([this](bool isHovering) {
+        if (_resourceManager->has<gfx::IWindow>()) {
+            _resourceManager->get<gfx::IWindow>()->setCursor(isHovering);
+        }
+    });
+
     _background = std::make_shared<ui::Background>(_resourceManager);
 
     auto config = _resourceManager->get<SettingsConfig>();
@@ -623,9 +629,6 @@ void SettingsState::update(float deltaTime) {
         static_cast<int>(constants::MouseButton::LEFT));
 
     _uiManager->handleMouseInput(mousePos, mousePressed);
-
-    bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
-    _resourceManager->get<gfx::IWindow>()->setCursor(isHoveringUI);
 
     if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();

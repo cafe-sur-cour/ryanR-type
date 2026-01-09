@@ -38,6 +38,12 @@ ConnectionState::ConnectionState(
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
 
+    _uiManager->setCursorCallback([this](bool isHovering) {
+        if (_resourceManager->has<gfx::IWindow>()) {
+            _resourceManager->get<gfx::IWindow>()->setCursor(isHovering);
+        }
+    });
+
     auto config = _resourceManager->get<SettingsConfig>();
     _uiManager->setGlobalScale(config->getUIScale());
 
@@ -209,7 +215,6 @@ void ConnectionState::update(float deltaTime) {
     _uiManager->handleMouseInput(mousePos, mousePressed);
 
     bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
-    _resourceManager->get<gfx::IWindow>()->setCursor(isHoveringUI);
 
     if (mousePressed && !isHoveringUI && navManager) {
         navManager->clearFocus();
