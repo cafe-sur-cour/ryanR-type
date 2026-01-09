@@ -19,10 +19,13 @@
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/permanent/SpeedComponent.hpp"
 #include "../../components/permanent/OwnerComponent.hpp"
+#include "../../components/permanent/ChargedShotComponent.hpp"
+#include "../../components/permanent/DamageComponent.hpp"
 #include "../../constants.hpp"
 #include "../../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../ECS/entity/EntityCreationContext.hpp"
+
 namespace ecs {
 
 ShootingSystem::ShootingSystem() {
@@ -59,7 +62,6 @@ void ShootingSystem::update(
 
         auto prefabManager = resourceManager->get<EntityPrefabManager>();
         std::string prefabName = projectilePrefabComponent->getPrefabName();
-        auto prefab = prefabManager->getPrefab(prefabName);
 
         auto pattern = shootingStats->getMultiShotPattern();
 
@@ -138,6 +140,28 @@ void ShootingSystem::spawnProjectile(
     if (velocity) {
         math::Vector2f projectileVelocity = calculateProjectileVelocity(angle, speed);
         velocity->setVelocity(projectileVelocity);
+    }
+
+    auto chargeComp = registry->getComponent<ChargedShotComponent>(shooterEntity);
+    auto damageComp = registry->getComponent<DamageComponent>(projectileEntity);
+    auto transformComp = registry->getComponent<TransformComponent>(projectileEntity);
+    if (chargeComp && damageComp) {
+        float charge = chargeComp->getCharge();
+        float maxCharge = chargeComp->getMaxCharge();
+        float multCharge = charge / maxCharge;
+        float baseDamage = damageComp->getDamage();
+        damageComp->setDamage(baseDamage + baseDamage * multCharge);
+
+        chargeComp->setCharge(0.0f);
+
+        if (transformComp) {
+            auto scale = transformComp->getScale();
+            float scaleX = scale.getX();
+            float scaleY = scale.getY();
+            transformComp->setScale(
+                {scaleX + scaleX * multCharge, scaleY + scaleY * multCharge}
+            );
+        }
     }
 }
 
