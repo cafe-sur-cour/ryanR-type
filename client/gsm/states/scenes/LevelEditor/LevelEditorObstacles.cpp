@@ -351,39 +351,10 @@ void LevelEditorState::handleObstacleClick(
         _selectedPowerUp = std::nullopt;
         _selectedWave = std::nullopt;
 
-        if (_powerUpPosXInput) _powerUpPosXInput->setVisible(false);
-        if (_powerUpPosXLabel) _powerUpPosXLabel->setVisible(false);
-        if (_powerUpPosYInput) _powerUpPosYInput->setVisible(false);
-        if (_powerUpPosYLabel) _powerUpPosYLabel->setVisible(false);
-        if (_powerUpDeleteButton) _powerUpDeleteButton->setVisible(false);
+        hidePowerUpUI();
+        hideWaveUI();
+        hideEnemyUI();
 
-        if (_waveTriggerXInput) _waveTriggerXInput->setVisible(false);
-        if (_waveTriggerXLabel) _waveTriggerXLabel->setVisible(false);
-        if (_waveDeleteButton) _waveDeleteButton->setVisible(false);
-        if (_waveIndexLabel) _waveIndexLabel->setVisible(false);
-        if (_wavePrevButton) _wavePrevButton->setVisible(false);
-        if (_waveNextButton) _waveNextButton->setVisible(false);
-
-        if (_enemyLabel) _enemyLabel->setVisible(false);
-        if (_enemyIndexLabel) _enemyIndexLabel->setVisible(false);
-        if (_enemyPrevButton) _enemyPrevButton->setVisible(false);
-        if (_enemyNextButton) _enemyNextButton->setVisible(false);
-        if (_enemyAddButton) _enemyAddButton->setVisible(false);
-        if (_enemyDeleteButton) _enemyDeleteButton->setVisible(false);
-        if (_enemyTypeLabel) _enemyTypeLabel->setVisible(false);
-        if (_enemyTypeInput) _enemyTypeInput->setVisible(false);
-        if (_enemyApplyTypeButton) _enemyApplyTypeButton->setVisible(false);
-        if (_enemyAppliedTypeLabel) _enemyAppliedTypeLabel->setVisible(false);
-        if (_enemyCountLabel) _enemyCountLabel->setVisible(false);
-        if (_enemyCountInput) _enemyCountInput->setVisible(false);
-        if (_enemyDistXMinLabel) _enemyDistXMinLabel->setVisible(false);
-        if (_enemyDistXMinInput) _enemyDistXMinInput->setVisible(false);
-        if (_enemyDistXMaxLabel) _enemyDistXMaxLabel->setVisible(false);
-        if (_enemyDistXMaxInput) _enemyDistXMaxInput->setVisible(false);
-        if (_enemyDistYMinLabel) _enemyDistYMinLabel->setVisible(false);
-        if (_enemyDistYMinInput) _enemyDistYMinInput->setVisible(false);
-        if (_enemyDistYMaxLabel) _enemyDistYMaxLabel->setVisible(false);
-        if (_enemyDistYMaxInput) _enemyDistYMaxInput->setVisible(false);
         if (_obstaclePrefabDropdown) {
             const auto& prefabName = selection.value().prefabName;
             auto options = _obstaclePrefabDropdown->getOptions();
@@ -434,54 +405,25 @@ void LevelEditorState::handleObstacleClick(
 
         if (_obstaclePosXInput) {
             _obstaclePosXInput->setText(std::to_string(static_cast<int>(posX)));
-            _obstaclePosXInput->setVisible(true);
-        }
-        if (_obstaclePosXLabel) {
-            _obstaclePosXLabel->setVisible(true);
         }
         if (_obstaclePosYInput) {
             _obstaclePosYInput->setText(std::to_string(static_cast<int>(posY)));
-            _obstaclePosYInput->setVisible(true);
-        }
-        if (_obstaclePosYLabel) {
-            _obstaclePosYLabel->setVisible(true);
         }
 
-        if (sel.type == "horizontal") {
-            const auto& obstacle = _obstaclesByName[sel.prefabName].horizontalLines[
-                static_cast<size_t>(sel.index)];
+        bool showCount = (sel.type == "horizontal" || sel.type == "vertical");
+        if (showCount) {
+            int count = (sel.type == "horizontal")
+                ? _obstaclesByName[sel.prefabName].horizontalLines[
+                    static_cast<size_t>(sel.index)].count
+                : _obstaclesByName[sel.prefabName].verticalLines[
+                    static_cast<size_t>(sel.index)].count;
+
             if (_obstacleCountInput) {
-                _obstacleCountInput->setText(std::to_string(obstacle.count));
-                _obstacleCountInput->setVisible(true);
-            }
-            if (_obstacleCountLabel) {
-                _obstacleCountLabel->setVisible(true);
-            }
-        } else if (sel.type == "vertical") {
-            const auto& obstacle = _obstaclesByName[sel.prefabName].verticalLines[
-                static_cast<size_t>(sel.index)];
-            if (_obstacleCountInput) {
-                _obstacleCountInput->setText(std::to_string(obstacle.count));
-                _obstacleCountInput->setVisible(true);
-            }
-            if (_obstacleCountLabel) {
-                _obstacleCountLabel->setVisible(true);
-            }
-        } else {
-            if (_obstacleCountInput) {
-                _obstacleCountInput->setVisible(false);
-            }
-            if (_obstacleCountLabel) {
-                _obstacleCountLabel->setVisible(false);
+                _obstacleCountInput->setText(std::to_string(count));
             }
         }
 
-        if (_obstacleDeleteButton) {
-            _obstacleDeleteButton->setVisible(true);
-        }
-        if (_obstacleDuplicateButton) {
-            _obstacleDuplicateButton->setVisible(true);
-        }
+        showObstacleUI(showCount);
         _isSelectingObject = false;
     } else {
         bool inObstaclesMode = (_editorModeDropdown &&
@@ -611,30 +553,7 @@ void LevelEditorState::handleObstacleClick(
             saveToHistory();
         } else {
             _selectedObstacle = std::nullopt;
-            if (_obstaclePosXInput) {
-                _obstaclePosXInput->setVisible(false);
-            }
-            if (_obstaclePosXLabel) {
-                _obstaclePosXLabel->setVisible(false);
-            }
-            if (_obstaclePosYInput) {
-                _obstaclePosYInput->setVisible(false);
-            }
-            if (_obstaclePosYLabel) {
-                _obstaclePosYLabel->setVisible(false);
-            }
-            if (_obstacleCountInput) {
-                _obstacleCountInput->setVisible(false);
-            }
-            if (_obstacleCountLabel) {
-                _obstacleCountLabel->setVisible(false);
-            }
-            if (_obstacleDeleteButton) {
-                _obstacleDeleteButton->setVisible(false);
-            }
-            if (_obstacleDuplicateButton) {
-                _obstacleDuplicateButton->setVisible(false);
-            }
+            hideObstacleUI();
         }
     }
 }

@@ -358,19 +358,8 @@ void LevelEditorState::handleWaveClick(
         _selectedObstacle = std::nullopt;
         _selectedPowerUp = std::nullopt;
 
-        if (_obstaclePosXInput) _obstaclePosXInput->setVisible(false);
-        if (_obstaclePosXLabel) _obstaclePosXLabel->setVisible(false);
-        if (_obstaclePosYInput) _obstaclePosYInput->setVisible(false);
-        if (_obstaclePosYLabel) _obstaclePosYLabel->setVisible(false);
-        if (_obstacleCountInput) _obstacleCountInput->setVisible(false);
-        if (_obstacleCountLabel) _obstacleCountLabel->setVisible(false);
-        if (_obstacleDeleteButton) _obstacleDeleteButton->setVisible(false);
-
-        if (_powerUpPosXInput) _powerUpPosXInput->setVisible(false);
-        if (_powerUpPosXLabel) _powerUpPosXLabel->setVisible(false);
-        if (_powerUpPosYInput) _powerUpPosYInput->setVisible(false);
-        if (_powerUpPosYLabel) _powerUpPosYLabel->setVisible(false);
-        if (_powerUpDeleteButton) _powerUpDeleteButton->setVisible(false);
+        hideObstacleUI();
+        hidePowerUpUI();
 
         if (_editorModeDropdown) {
             _editorModeDropdown->setSelectedIndex(2);
@@ -394,19 +383,9 @@ void LevelEditorState::handleWaveClick(
 
         if (_waveTriggerXInput) {
             _waveTriggerXInput->setText(std::to_string(static_cast<int>(wave.gameXTrigger)));
-            _waveTriggerXInput->setVisible(true);
-        }
-        if (_waveTriggerXLabel) {
-            _waveTriggerXLabel->setVisible(true);
         }
 
-        if (_waveDeleteButton) {
-            _waveDeleteButton->setVisible(true);
-        }
-        if (_waveDuplicateButton) {
-            _waveDuplicateButton->setVisible(true);
-        }
-
+        showWaveUI();
         updateEnemyUI();
         _isSelectingObject = false;
     } else {
@@ -438,18 +417,9 @@ void LevelEditorState::handleWaveClick(
             if (_waveTriggerXInput) {
                 _waveTriggerXInput->setText(std::to_string(static_cast<int>(
                     newWave.gameXTrigger)));
-                _waveTriggerXInput->setVisible(true);
-            }
-            if (_waveTriggerXLabel) {
-                _waveTriggerXLabel->setVisible(true);
-            }
-            if (_waveDeleteButton) {
-                _waveDeleteButton->setVisible(true);
-            }
-            if (_waveDuplicateButton) {
-                _waveDuplicateButton->setVisible(true);
             }
 
+            showWaveUI();
             updateEnemyUI();
 
             _hasUnsavedChanges = true;
@@ -458,10 +428,7 @@ void LevelEditorState::handleWaveClick(
         } else {
             _selectedWave = std::nullopt;
 
-            if (_waveTriggerXInput) _waveTriggerXInput->setVisible(false);
-            if (_waveTriggerXLabel) _waveTriggerXLabel->setVisible(false);
-            if (_waveDeleteButton) _waveDeleteButton->setVisible(false);
-            if (_waveDuplicateButton) _waveDuplicateButton->setVisible(false);
+            hideWaveUI();
             if (_waveIndexLabel) {
                 _waveIndexLabel->setText("0 / " + std::to_string(_waves.size()));
             }
@@ -470,29 +437,7 @@ void LevelEditorState::handleWaveClick(
             if (_wavePrevButton) _wavePrevButton->setVisible(showNavButtons);
             if (_waveNextButton) _waveNextButton->setVisible(showNavButtons);
 
-            if (_enemyLabel) _enemyLabel->setVisible(false);
-            if (_enemyIndexLabel) _enemyIndexLabel->setVisible(false);
-            if (_enemyPrevButton) _enemyPrevButton->setVisible(false);
-            if (_enemyNextButton) _enemyNextButton->setVisible(false);
-            if (_enemyAddButton) _enemyAddButton->setVisible(false);
-            if (_enemyDeleteButton) _enemyDeleteButton->setVisible(false);
-            if (_enemyTypeLabel) _enemyTypeLabel->setVisible(false);
-            if (_enemyTypeInput) _enemyTypeInput->setVisible(false);
-            if (_enemyApplyTypeButton) _enemyApplyTypeButton->setVisible(false);
-            if (_enemyCountLabel) _enemyCountLabel->setVisible(false);
-            if (_enemyCountInput) _enemyCountInput->setVisible(false);
-            if (_enemyDistXMinLabel) _enemyDistXMinLabel->setVisible(false);
-            if (_enemyDistXMinInput) _enemyDistXMinInput->setVisible(false);
-            if (_enemyDistXMaxLabel) _enemyDistXMaxLabel->setVisible(false);
-            if (_enemyDistXMaxInput) _enemyDistXMaxInput->setVisible(false);
-            if (_enemyDistYMinLabel) _enemyDistYMinLabel->setVisible(false);
-            if (_enemyDistYMinInput) _enemyDistYMinInput->setVisible(false);
-            if (_enemyDistYMaxLabel) _enemyDistYMaxLabel->setVisible(false);
-            if (_enemyDistYMaxInput) _enemyDistYMaxInput->setVisible(false);
-            if (_enemyDistXTypeLabel) _enemyDistXTypeLabel->setVisible(false);
-            if (_enemyDistXTypeDropdown) _enemyDistXTypeDropdown->setVisible(false);
-            if (_enemyDistYTypeLabel) _enemyDistYTypeLabel->setVisible(false);
-            if (_enemyDistYTypeDropdown) _enemyDistYTypeDropdown->setVisible(false);
+            hideEnemyUI();
         }
     }
 }
