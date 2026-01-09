@@ -19,6 +19,7 @@ add_executable(${CLIENT_BIN_NAME}
     DeathAnimationSpawner.hpp
     ../common/utils/SecureJsonManager.cpp
     ../common/utils/Encryption.cpp
+    ../common/GameRules.cpp
 )
 
 add_subdirectory(packet)
