@@ -214,12 +214,16 @@ ProfileState::ProfileState(
     buttonsSection->setSize(math::Vector2f(500.f, 350.f));
 
     _button1 = std::make_shared<ui::Button>(_resourceManager);
-    _button1->setText("Button 1");
+    _button1->setText("Refresh Profile");
     _button1->setSize(math::Vector2f(500.f, 60.f));
     _button1->setNormalColor(colors::BUTTON_SECONDARY);
     _button1->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _button1->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
-    _button1->setOnRelease([]() {
+    _button1->setOnRelease([this]() {
+        auto network = _resourceManager->get<ClientNetwork>();
+        if (network) {
+            network->sendRequestProfilePacket();
+        }
     });
 
     _button2 = std::make_shared<ui::Button>(_resourceManager);
@@ -284,13 +288,33 @@ ProfileState::ProfileState(
 }
 
 void ProfileState::loadUserData() {
-    auto config = _resourceManager->get<SettingsConfig>();
-    if (!config) {
+    auto network = _resourceManager->get<ClientNetwork>();
+    if (!network) {
         return;
+    }
+
+    // Only update UI if profile data has been updated
+    if (network->isProfileDataUpdated()) {
+        auto profileData = network->getProfileData();
+        if (profileData.size() >= 5) {
+            _usernameText->setText("Username: " + profileData[0]);
+            _winsText->setText("Wins: " + profileData[1]);
+            _highScoreText->setText("High Score: " + profileData[2]);
+            _gamesPlayedText->setText("Games Played: " + profileData[3]);
+        }
+
+        // Clear the update flag
+        network->clearProfileDataUpdateFlag();
     }
 }
 
 void ProfileState::enter() {
+    // Send profile request packet
+    auto network = _resourceManager->get<ClientNetwork>();
+    if (network) {
+        network->sendRequestProfilePacket();
+    }
+
     loadUserData();
 }
 
@@ -320,6 +344,12 @@ void ProfileState::update(float deltaTime) {
     if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
+    }
+
+    auto network = _resourceManager->get<ClientNetwork>();
+    if (network && network->isProfileDataUpdated()) {
+        loadUserData();
+        network->clearProfileDataUpdateFlag();
     }
 
     _uiManager->update(deltaTime);
