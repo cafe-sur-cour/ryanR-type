@@ -77,11 +77,11 @@ bool SpritePreview::extractSpriteFromPrefab(const nlohmann::json& prefab) {
 
         if (components.contains(constants::COLLIDERCOMPONENT)) {
             const auto& collider = components[constants::COLLIDERCOMPONENT];
-            if (collider.contains(constants::PREFAB_SIZE_FIELD)) {
-                frameWidth = collider[constants::PREFAB_SIZE_FIELD].value(
-                    constants::PREFAB_X_FIELD, 0.0f);
-                frameHeight = collider[constants::PREFAB_SIZE_FIELD].value(
-                    constants::PREFAB_Y_FIELD, 0.0f);
+            if (collider.contains(constants::SIZE_FIELD)) {
+                frameWidth = collider[constants::SIZE_FIELD].value(
+                    constants::X_FIELD, 0.0f);
+                frameHeight = collider[constants::SIZE_FIELD].value(
+                    constants::Y_FIELD, 0.0f);
             }
         }
 
@@ -90,18 +90,18 @@ bool SpritePreview::extractSpriteFromPrefab(const nlohmann::json& prefab) {
         if (components.contains(constants::TRANSFORMCOMPONENT)) {
             const auto& transform = components[constants::TRANSFORMCOMPONENT];
 
-            if (transform.contains(constants::PREFAB_SCALE_FIELD)) {
+            if (transform.contains(constants::SCALE_FIELD)) {
                 _spriteData.scale = math::Vector2f(
-                    transform[constants::PREFAB_SCALE_FIELD].value(
-                        constants::PREFAB_X_FIELD, 1.0f),
-                    transform[constants::PREFAB_SCALE_FIELD].value(
-                        constants::PREFAB_Y_FIELD, 1.0f)
+                    transform[constants::SCALE_FIELD].value(
+                        constants::X_FIELD, 1.0f),
+                    transform[constants::SCALE_FIELD].value(
+                        constants::Y_FIELD, 1.0f)
                 );
             } else {
                 _spriteData.scale = math::Vector2f(1.0f, 1.0f);
             }
 
-            _spriteData.rotation = transform.value(constants::PREFAB_ROTATION_FIELD, 0.0f);
+            _spriteData.rotation = transform.value(constants::ROTATION_FIELD, 0.0f);
         } else {
             _spriteData.scale = math::Vector2f(1.0f, 1.0f);
         }
@@ -141,17 +141,17 @@ bool SpritePreview::extractAnimationFromPrefab(const nlohmann::json& prefab) {
         _animationData.texturePath =
             firstState[constants::TEXTUREPATH_FIELD].get<std::string>();
         _animationData.frameSize = math::Vector2f(
-            firstState.value(constants::PREFAB_FRAME_WIDTH_FIELD, 0.0f),
-            firstState.value(constants::PREFAB_FRAME_HEIGHT_FIELD, 0.0f)
+            firstState.value(constants::FRAMEWIDTH_FIELD, 0.0f),
+            firstState.value(constants::FRAMEHEIGHT_FIELD, 0.0f)
         );
         _animationData.frameCount =
-            firstState.value(constants::PREFAB_FRAME_COUNT_FIELD, 1.0f);
+            firstState.value(constants::FRAMECOUNT_FIELD, 1.0f);
         _animationData.startWidth =
-            firstState.value(constants::PREFAB_START_WIDTH_FIELD, 0.0f);
+            firstState.value(constants::STARTWIDTH_FIELD, 0.0f);
         _animationData.startHeight =
-            firstState.value(constants::PREFAB_START_HEIGHT_FIELD, 0.0f);
-        _animationData.speed = firstState.value(constants::PREFAB_SPEED_FIELD, 0.1f);
-        _animationData.loop = firstState.value(constants::PREFAB_LOOP_FIELD, true);
+            firstState.value(constants::STARTHEIGHT_FIELD, 0.0f);
+        _animationData.speed = firstState.value(constants::SPEED_FIELD, 0.1f);
+        _animationData.loop = firstState.value(constants::LOOP_FIELD, true);
 
         _currentFrame = 0.0f;
         _animationTime = 0.0f;
