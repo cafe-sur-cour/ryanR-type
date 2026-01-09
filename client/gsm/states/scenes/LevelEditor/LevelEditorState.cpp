@@ -3400,15 +3400,15 @@ LevelPreviewSprite LevelEditorState::extractSpriteDataFromPrefab(
                     }
 
                     result.frameCount = firstState.value(
-                        constants::PREFAB_FRAME_COUNT_FIELD, 1.0f);
+                        constants::FRAMECOUNT_FIELD, 1.0f);
                     result.frameWidth = firstState.value(
-                        constants::PREFAB_FRAME_WIDTH_FIELD, 0.0f);
+                        constants::FRAMEWIDTH_FIELD, 0.0f);
                     result.frameHeight = firstState.value(
-                        constants::PREFAB_FRAME_HEIGHT_FIELD, 0.0f);
+                        constants::FRAMEHEIGHT_FIELD, 0.0f);
                     result.animationSpeed = firstState.value(
-                        constants::PREFAB_SPEED_FIELD, 0.1f);
+                        constants::SPEED_FIELD, 0.1f);
                     result.animationLoop = firstState.value(
-                        constants::PREFAB_LOOP_FIELD, true);
+                        constants::LOOP_FIELD, true);
                 }
             }
         } else if (components.contains(constants::SPRITECOMPONENT)) {
@@ -3421,13 +3421,13 @@ LevelPreviewSprite LevelEditorState::extractSpriteDataFromPrefab(
 
         if (components.contains(constants::COLLIDERCOMPONENT)) {
             const auto& colliderComponent = components[constants::COLLIDERCOMPONENT];
-            if (colliderComponent.contains(constants::PREFAB_SIZE_FIELD)) {
-                const auto& size = colliderComponent[constants::PREFAB_SIZE_FIELD];
-                if (size.contains(constants::PREFAB_X_FIELD)) {
-                    result.width = size[constants::PREFAB_X_FIELD].get<float>();
+            if (colliderComponent.contains(constants::SIZE_FIELD)) {
+                const auto& size = colliderComponent[constants::SIZE_FIELD];
+                if (size.contains(constants::X_FIELD)) {
+                    result.width = size[constants::X_FIELD].get<float>();
                 }
-                if (size.contains(constants::PREFAB_Y_FIELD)) {
-                    result.height = size[constants::PREFAB_Y_FIELD].get<float>();
+                if (size.contains(constants::Y_FIELD)) {
+                    result.height = size[constants::Y_FIELD].get<float>();
                 }
             }
         }
@@ -3435,15 +3435,15 @@ LevelPreviewSprite LevelEditorState::extractSpriteDataFromPrefab(
         if (components.contains(constants::TRANSFORMCOMPONENT)) {
             const auto& transformComponent =
                 components[constants::TRANSFORMCOMPONENT];
-            if (transformComponent.contains(constants::PREFAB_SCALE_FIELD)) {
-                const auto& scale = transformComponent[constants::PREFAB_SCALE_FIELD];
-                if (scale.contains(constants::PREFAB_X_FIELD)) {
-                    result.scale = scale[constants::PREFAB_X_FIELD].get<float>();
+            if (transformComponent.contains(constants::SCALE_FIELD)) {
+                const auto& scale = transformComponent[constants::SCALE_FIELD];
+                if (scale.contains(constants::X_FIELD)) {
+                    result.scale = scale[constants::X_FIELD].get<float>();
                 }
             }
-            if (transformComponent.contains(constants::PREFAB_ROTATION_FIELD)) {
+            if (transformComponent.contains(constants::ROTATION_FIELD)) {
                 result.rotation =
-                    transformComponent[constants::PREFAB_ROTATION_FIELD].get<float>();
+                    transformComponent[constants::ROTATION_FIELD].get<float>();
             }
         }
 
