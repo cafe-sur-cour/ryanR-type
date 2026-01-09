@@ -199,6 +199,7 @@ namespace constants {
     const std::string POSY_FIELD = "posY";
     const std::string COUNT_FIELD = "count";
     const std::string GAMEXTRIGGER_FIELD = "gameXTrigger";
+    const std::string GAME_ZONE_STOP_AT_X_FIELD = "gameZoneStopAtX";
     const std::string DISTRIBUTIONX_FIELD = "distributionX";
     const std::string DISTRIBUTIONY_FIELD = "distributionY";
     const std::string ENEMIES_FIELD = "enemies";
@@ -231,6 +232,7 @@ namespace constants {
     const std::string PARALLAXCOMPONENT = "ParallaxComponent";
     const std::string GAMEZONECOMPONENT = "GameZoneComponent";
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
+    const std::string GAME_ZONE_STOP_TAG = "GameZoneStopTag";
     const std::string OBSTACLETAG = "ObstacleTag";
     const std::string CLIENTEFFECTTAG = "ClientEffectTag";
 
