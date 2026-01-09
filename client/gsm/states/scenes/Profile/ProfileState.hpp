@@ -16,8 +16,11 @@
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../ui/elements/Background.hpp"
+#include "../../../../ClientNetwork.hpp"
 
 namespace gsm {
+
+class ReplayState;
 
 class ProfileState : public AGameState {
 public:
