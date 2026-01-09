@@ -325,16 +325,26 @@ MainMenuState::MainMenuState(
     _disconnectButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
     _disconnectButton->setOnRelease([this]() {
         auto settingsConfig = this->_resourceManager->get<SettingsConfig>();
+        auto network = this->_resourceManager->get<ClientNetwork>();
         if (settingsConfig) {
             settingsConfig->setUsername("");
             settingsConfig->saveSettings();
         }
+        if (network) {
+            network->setName("");
+            network->setLobbyCode("");
+        }
     });
     _disconnectButton->setOnActivated([this]() {
         auto settingsConfig = this->_resourceManager->get<SettingsConfig>();
+        auto network = this->_resourceManager->get<ClientNetwork>();
         if (settingsConfig) {
             settingsConfig->setUsername("");
             settingsConfig->saveSettings();
+        }
+        if (network) {
+            network->setName("");
+            network->setLobbyCode("");
         }
     });
 
@@ -473,7 +483,7 @@ void MainMenuState::updateUIStatus() {
 
     if (network->getName().empty()) {
         if (config->getUsername().empty()) {
-            _usernameButton->setText("Not connected to server");
+            _usernameButton->setText("Not logged in");
         } else {
             _usernameButton->setText(config->getUsername() + " (not logged in)");
         }
