@@ -708,7 +708,7 @@ void LevelEditorState::update(float deltaTime) {
 
     if (_hasPendingChange) {
         _lastChangeTime += deltaTime;
-        if (_lastChangeTime >= constants::CHANGE_DEBOUNCE_TIME) {
+        if (_lastChangeTime >= _currentDebounceTime) {
             saveToHistory();
             _hasPendingChange = false;
             _lastChangeTime = 0.0f;
@@ -1576,7 +1576,7 @@ void LevelEditorState::createBottomPanel() {
     _obstacleTypeDropdown->setOnSelectionChanged(
         [this](const std::string& selectedText, size_t selectedIndex) {
         (void)selectedText;
-        if (!_selectedObstacle.has_value()) {
+        if (!_selectedObstacle.has_value() || _isLoadingFromHistory || _isSelectingObject) {
             return;
         }
 
@@ -1592,17 +1592,99 @@ void LevelEditorState::createBottomPanel() {
             return;
         }
 
-        if (newType != sel.type) {
-            size_t currentTypeIndex = 0;
-            if (sel.type == "unique") {
-                currentTypeIndex = 0;
-            } else if (sel.type == "horizontal") {
-                currentTypeIndex = 1;
-            } else if (sel.type == "vertical") {
-                currentTypeIndex = 2;
-            }
-            _obstacleTypeDropdown->setSelectedIndex(currentTypeIndex);
+        if (newType == sel.type) {
+            return;
         }
+
+        auto& group = _obstaclesByName[sel.prefabName];
+        float posX = 0.0f;
+        float posY = 0.0f;
+        int count = 1;
+
+        if (sel.type == "unique") {
+            if (sel.index >= 0 && sel.index < static_cast<int>(group.uniques.size())) {
+                const auto& oldObst = group.uniques[static_cast<size_t>(sel.index)];
+                posX = oldObst.posX;
+                posY = oldObst.posY;
+                group.uniques.erase(group.uniques.begin() + sel.index);
+            }
+        } else if (sel.type == "horizontal") {
+            if (sel.index >= 0 && sel.index < static_cast<int>(group.horizontalLines.size())) {
+                const auto& oldObst = group.horizontalLines[static_cast<size_t>(sel.index)];
+                posX = oldObst.fromX;
+                posY = oldObst.posY;
+                count = oldObst.count;
+                group.horizontalLines.erase(group.horizontalLines.begin() + sel.index);
+            }
+        } else if (sel.type == "vertical") {
+            if (sel.index >= 0 && sel.index < static_cast<int>(group.verticalLines.size())) {
+                const auto& oldObst = group.verticalLines[static_cast<size_t>(sel.index)];
+                posX = oldObst.posX;
+                posY = oldObst.fromY;
+                count = oldObst.count;
+                group.verticalLines.erase(group.verticalLines.begin() + sel.index);
+            }
+        }
+
+        int newIndex = 0;
+        _isSelectingObject = true;
+
+        if (newType == "unique") {
+            UniqueObstacle newObst;
+            newObst.posX = posX;
+            newObst.posY = posY;
+            group.uniques.push_back(newObst);
+            newIndex = static_cast<int>(group.uniques.size()) - 1;
+
+            if (_obstacleCountInput) _obstacleCountInput->setVisible(false);
+            if (_obstacleCountLabel) _obstacleCountLabel->setVisible(false);
+        } else if (newType == "horizontal") {
+            HorizontalLineObstacle newObst;
+            newObst.fromX = posX;
+            newObst.posY = posY;
+            newObst.count = count;
+            group.horizontalLines.push_back(newObst);
+            newIndex = static_cast<int>(group.horizontalLines.size()) - 1;
+
+            if (_obstacleCountInput) {
+                _obstacleCountInput->setText(std::to_string(count));
+                _obstacleCountInput->setVisible(true);
+            }
+            if (_obstacleCountLabel) _obstacleCountLabel->setVisible(true);
+        } else if (newType == "vertical") {
+            VerticalLineObstacle newObst;
+            newObst.posX = posX;
+            newObst.fromY = posY;
+            newObst.count = count;
+            group.verticalLines.push_back(newObst);
+            newIndex = static_cast<int>(group.verticalLines.size()) - 1;
+
+            if (_obstacleCountInput) {
+                _obstacleCountInput->setText(std::to_string(count));
+                _obstacleCountInput->setVisible(true);
+            }
+            if (_obstacleCountLabel) _obstacleCountLabel->setVisible(true);
+        }
+
+        ObstacleSelection newSel;
+        newSel.prefabName = sel.prefabName;
+        newSel.type = newType;
+        newSel.index = newIndex;
+        _selectedObstacle = newSel;
+
+        if (_obstaclePosXInput) {
+            _obstaclePosXInput->setText(std::to_string(static_cast<int>(posX)));
+        }
+        if (_obstaclePosYInput) {
+            _obstaclePosYInput->setText(std::to_string(static_cast<int>(posY)));
+        }
+
+        _isSelectingObject = false;
+        _hasUnsavedChanges = true;
+        updateSaveButtonText();
+        _hasPendingChange = true;
+        _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME_SHORT;
+        _lastChangeTime = 0.0f;
     });
     _bottomPanel->addChild(_obstacleTypeDropdown);
 
@@ -1657,6 +1739,7 @@ void LevelEditorState::createBottomPanel() {
                 _hasUnsavedChanges = true;
                 updateSaveButtonText();
                 _hasPendingChange = true;
+                _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME;
                 _lastChangeTime = 0.0f;
             }
         } catch (const std::exception&) {
@@ -1720,6 +1803,7 @@ void LevelEditorState::createBottomPanel() {
                 _hasUnsavedChanges = true;
                 updateSaveButtonText();
                 _hasPendingChange = true;
+                _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME;
                 _lastChangeTime = 0.0f;
             }
         } catch (const std::exception&) {
@@ -1780,6 +1864,7 @@ void LevelEditorState::createBottomPanel() {
                 _hasUnsavedChanges = true;
                 updateSaveButtonText();
                 _hasPendingChange = true;
+                _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME;
                 _lastChangeTime = 0.0f;
             }
         } catch (const std::exception&) {
@@ -2059,6 +2144,7 @@ void LevelEditorState::createBottomPanel() {
                 _hasUnsavedChanges = true;
                 updateSaveButtonText();
                 _hasPendingChange = true;
+                _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME;
                 _lastChangeTime = 0.0f;
             }
         } catch (const std::exception&) {
@@ -2114,6 +2200,7 @@ void LevelEditorState::createBottomPanel() {
                 _hasUnsavedChanges = true;
                 updateSaveButtonText();
                 _hasPendingChange = true;
+                _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME;
                 _lastChangeTime = 0.0f;
             }
         } catch (const std::exception&) {
@@ -2407,6 +2494,7 @@ void LevelEditorState::createBottomPanel() {
                     _hasUnsavedChanges = true;
                     updateSaveButtonText();
                     _hasPendingChange = true;
+                    _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME;
                     _lastChangeTime = 0.0f;
                 } catch (const std::exception&) {
                 }
@@ -2669,6 +2757,7 @@ void LevelEditorState::createBottomPanel() {
                         _hasUnsavedChanges = true;
                         updateSaveButtonText();
                         _hasPendingChange = true;
+                        _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME;
                         _lastChangeTime = 0.0f;
                     } catch (const std::exception&) {
                     }
@@ -2713,6 +2802,7 @@ void LevelEditorState::createBottomPanel() {
                         _hasUnsavedChanges = true;
                         updateSaveButtonText();
                         _hasPendingChange = true;
+                        _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME;
                         _lastChangeTime = 0.0f;
                     } catch (const std::exception&) {
                     }
@@ -2757,6 +2847,7 @@ void LevelEditorState::createBottomPanel() {
                         _hasUnsavedChanges = true;
                         updateSaveButtonText();
                         _hasPendingChange = true;
+                        _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME;
                         _lastChangeTime = 0.0f;
                     } catch (const std::exception&) {
                     }
@@ -2801,6 +2892,7 @@ void LevelEditorState::createBottomPanel() {
                         _hasUnsavedChanges = true;
                         updateSaveButtonText();
                         _hasPendingChange = true;
+                        _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME;
                         _lastChangeTime = 0.0f;
                     } catch (const std::exception&) {
                     }
@@ -2845,6 +2937,7 @@ void LevelEditorState::createBottomPanel() {
                         _hasUnsavedChanges = true;
                         updateSaveButtonText();
                         _hasPendingChange = true;
+                        _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME;
                         _lastChangeTime = 0.0f;
                     } catch (const std::exception&) {
                     }
@@ -2890,6 +2983,7 @@ void LevelEditorState::createBottomPanel() {
                     _hasUnsavedChanges = true;
                     updateSaveButtonText();
                     _hasPendingChange = true;
+                    _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME_SHORT;
                     _lastChangeTime = 0.0f;
                 }
             }
@@ -2932,6 +3026,7 @@ void LevelEditorState::createBottomPanel() {
                     _hasUnsavedChanges = true;
                     updateSaveButtonText();
                     _hasPendingChange = true;
+                    _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME_SHORT;
                     _lastChangeTime = 0.0f;
                 }
             }

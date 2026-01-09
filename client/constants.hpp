@@ -147,7 +147,8 @@ namespace constants {
 
     /* Level Constants */
     const size_t MAX_HISTORY_SIZE = 50;
-    const float CHANGE_DEBOUNCE_TIME = 2.0f;
+    const float CHANGE_DEBOUNCE_TIME = 1.0f;
+    const float CHANGE_DEBOUNCE_TIME_SHORT = 0.25f;
 
     const std::string LEVEL_DIRECTORY = "configs/map";
     const std::string LEVEL_FILE_PREFIX = "level";

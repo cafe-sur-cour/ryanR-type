@@ -263,6 +263,7 @@ private:
     std::vector<nlohmann::json> _history;
     size_t _currentHistoryIndex = 0;
     float _lastChangeTime = constants::CHANGE_DEBOUNCE_TIME + 1.0f;
+    float _currentDebounceTime = constants::CHANGE_DEBOUNCE_TIME;
     bool _hasPendingChange = false;
     bool _isLoadingFromHistory = false;
     bool _isSelectingObject = false;
