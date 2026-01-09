@@ -5,8 +5,10 @@
 ** LittleEndianSerialization
 */
 
+#include <utility>
 #include <vector>
 #include "LittleEndianSerialization.hpp"
+#include "Varint.hpp"
 
 pm::LittleEndianSerialization::LittleEndianSerialization() {
 }
@@ -121,4 +123,22 @@ uint64_t pm::LittleEndianSerialization::deserializeUChar(
         return 0;
     }
     return static_cast<uint64_t>(data[0]);
+}
+
+std::vector<uint8_t> pm::LittleEndianSerialization::serializeVarint(uint64_t value) {
+    return Varint::encode(value);
+}
+
+std::vector<uint8_t> pm::LittleEndianSerialization::serializeSignedVarint(int64_t value) {
+    return Varint::encodeSigned(value);
+}
+
+std::pair<uint64_t, size_t> pm::LittleEndianSerialization::deserializeVarint(
+    const std::vector<uint8_t>& data, size_t offset) {
+    return Varint::decode(data, offset);
+}
+
+std::pair<int64_t, size_t> pm::LittleEndianSerialization::deserializeSignedVarint(
+    const std::vector<uint8_t>& data, size_t offset) {
+    return Varint::decodeSigned(data, offset);
 }

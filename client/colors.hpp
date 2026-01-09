@@ -41,6 +41,9 @@ namespace colors {
     const gfx::color_t BUTTON_SECONDARY = {100, 0, 150};                        // Purple
     const gfx::color_t BUTTON_SECONDARY_HOVER = {150, 0, 200};                  // Bright purple
     const gfx::color_t BUTTON_SECONDARY_PRESSED = {75, 0, 112};                 // Dark purple
+    const gfx::color_t BUTTON_DANGER = {200, 50, 50};                           // Red danger
+    const gfx::color_t BUTTON_DANGER_HOVER = {255, 100, 100};                   // Bright red hover
+    const gfx::color_t BUTTON_DANGER_PRESSED = {150, 30, 30};                   // Dark red pressed
 
     // Panel/Frame Colors
     const gfx::color_t PANEL_BACKGROUND = {20, 20, 50};                         // Slightly lighter than UI background
@@ -62,10 +65,12 @@ namespace colors {
     const gfx::color_t TOGGLE_ON = {150, 0, 200};                               // Purple on
     const gfx::color_t TOGGLE_OFF = {50, 0, 100};                               // Dark purple off
 
-    // General UI States
     const gfx::color_t UI_HOVER = {0, 150, 255};                                // Bright blue hover
     const gfx::color_t UI_FOCUSED = {0, 200, 255};                              // Cyan focused
     const gfx::color_t UI_DISABLED = {100, 100, 100};                           // Gray disabled
+
+    const gfx::color_t LEVEL_EDITOR_PANEL_BACKGROUND = {15, 10, 25};            // Dark with slight purple tint
+    const gfx::color_t LEVEL_EDITOR_PANEL_BORDER = {200, 200, 200};             // Light gray border
 }
 
 #endif  // COLORS_HPP_

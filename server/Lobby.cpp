@@ -54,19 +54,9 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertTransformComponent, this,
             std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Lobby::convertSpeedComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertHealthComponent, this,
             std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Lobby::convertColliderComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Lobby::convertShootStatComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertScoreComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Lobby::convertDamageComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Lobby::convertLifetimeComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertVelocityComponent, this,
             std::placeholders::_1, std::placeholders::_2),
@@ -74,11 +64,7 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertEnemyProjectileTagComponent, this,
             std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Lobby::convertGameZoneColliderTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertMobTagComponent, this,
-            std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Lobby::convertObstacleTagComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertPlayerProjectileTagComponent, this,
             std::placeholders::_1, std::placeholders::_2),
@@ -395,8 +381,16 @@ bool rserv::Lobby::gameStatePacket() {
 
         serializedEntities.push_back(std::move(entityData));
     }
+
+    constexpr size_t MAX_BATCH_SIZE = 20;
+    constexpr size_t MAX_PACKET_SIZE = 1400;
+
     for (auto& client : this->_clients) {
         uint8_t clientId = std::get<0>(client);
+
+        std::vector<std::vector<uint64_t>> batchedEntities;
+        batchedEntities.reserve(MAX_BATCH_SIZE);
+        size_t estimatedSize = 2;
 
         for (const auto& entityData : serializedEntities) {
             std::vector<uint64_t> delta = this->_deltaTracker.createEntityDelta(
@@ -411,16 +405,41 @@ bool rserv::Lobby::gameStatePacket() {
             payload.insert(payload.end(), entityData.componentData.begin(),
                 entityData.componentData.end());
 
-            std::vector<uint8_t> packet = this->_packet->pack(
+            size_t entityEstimate = 3 + payload.size() * 2;
+            if (batchedEntities.size() >= MAX_BATCH_SIZE ||
+                (estimatedSize + entityEstimate > MAX_PACKET_SIZE &&
+                !batchedEntities.empty())) {
+                std::vector<uint8_t> packet = this->_packet->packBatchedGameState(
+                    constants::ID_SERVER,
+                    this->_sequenceNumber++,
+                    batchedEntities
+                );
+
+                if (!this->_network->sendTo(*std::get<1>(client), packet)) {
+                    debug::Debug::printDebug(this->getIsDebug(),
+                        "[SERVER NETWORK] Failed to send batched game state " +
+                        std::to_string(static_cast<int>(clientId)),
+                        debug::debugType::NETWORK, debug::debugLevel::ERROR);
+                    return false;
+                }
+                batchedEntities.clear();
+                estimatedSize = 2;
+            }
+
+            batchedEntities.push_back(std::move(payload));
+            estimatedSize += entityEstimate;
+        }
+
+        if (!batchedEntities.empty()) {
+            std::vector<uint8_t> packet = this->_packet->packBatchedGameState(
                 constants::ID_SERVER,
                 this->_sequenceNumber++,
-                constants::PACKET_GAME_STATE,
-                payload
+                batchedEntities
             );
 
             if (!this->_network->sendTo(*std::get<1>(client), packet)) {
                 debug::Debug::printDebug(this->getIsDebug(),
-                    "[SERVER NETWORK] Failed to send game state packet to client " +
+                    "[SERVER NETWORK] Failed to send batched game state packet to client " +
                     std::to_string(static_cast<int>(clientId)),
                     debug::debugType::NETWORK, debug::debugLevel::ERROR);
                 return false;

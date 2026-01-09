@@ -63,6 +63,10 @@ if(USE_PCH)
     target_precompile_headers(${MULTIMEDIA_LIB_NAME} PRIVATE ${PCH_HEADERS})
 endif()
 
+if(USE_UNITY_BUILD)
+    set_target_properties(${MULTIMEDIA_LIB_NAME} PROPERTIES UNITY_BUILD ON)
+endif()
+
 add_custom_command(TARGET ${MULTIMEDIA_LIB_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${MULTIMEDIA_LIB_NAME}> ${CMAKE_SOURCE_DIR}/libraries/
 )

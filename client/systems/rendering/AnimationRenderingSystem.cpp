@@ -112,7 +112,7 @@ void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
                 frameIndex = static_cast<int>(animation->getTimer() /
                     clip->speed) % clip->frameCount;
             } else {
-                frameIndex = std::min(static_cast<int>(animation->getTimer() /
+                frameIndex = (std::min)(static_cast<int>(animation->getTimer() /
                     clip->speed), clip->frameCount - 1);
             }
         }

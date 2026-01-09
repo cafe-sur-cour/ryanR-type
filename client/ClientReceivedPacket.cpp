@@ -10,6 +10,7 @@
 #include <memory>
 #include <unordered_map>
 #include "ClientNetwork.hpp"
+#include "SettingsConfig.hpp"
 #include "../common/debug.hpp"
 #include "../common/Parser/Parser.hpp"
 #include "../common/ECS/entity/EntityCreationContext.hpp"
@@ -33,6 +34,7 @@ void ClientNetwork::handleConnectionAcceptation() {
         this->_isConnected = true;
         this->_network->setConnectionState(net::ConnectionState::CONNECTED);
         this->_packet->reset();
+        this->_isConnected = true;
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Connection accepted, assigned ID: " +
             std::to_string(static_cast<int>(id)),
@@ -102,6 +104,62 @@ void ClientNetwork::handleGameState() {
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Applied game state updates for entity " +
         std::to_string(entityId),
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+}
+
+void ClientNetwork::handleBatchedGameState() {
+    auto batchedPayloads = _packet->getBatchedPayloads();
+    if (batchedPayloads.empty()) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Batched game state packet is empty",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    if (!this->_resourceManager->has<ecs::Registry>()) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Registry not found in ResourceManager",
+            debug::debugType::NETWORK,
+            debug::debugLevel::ERROR);
+        return;
+    }
+
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+
+    for (const auto& payload : batchedPayloads) {
+        if (payload.empty()) continue;
+
+        size_t index = 0;
+        size_t serverEntityId = static_cast<size_t>(payload[index++]);
+        auto it = _serverToLocalEntityMap.find(serverEntityId);
+        if (it == _serverToLocalEntityMap.end()) {
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Entity with server ID " +
+                std::to_string(serverEntityId) + " not found in map",
+                debug::debugType::NETWORK,
+                debug::debugLevel::WARNING);
+            continue;
+        }
+        ecs::Entity entityId = it->second;
+        while (index < payload.size()) {
+            uint64_t componentType = payload[index++];
+            auto parserIt = _componentParsers.find(componentType);
+            if (parserIt != _componentParsers.end()) {
+                index = (this->*(parserIt->second))(payload, index, entityId);
+            } else {
+                debug::Debug::printDebug(this->_isDebug,
+                    "[CLIENT] Unknown component type: " + std::to_string(componentType),
+                    debug::debugType::NETWORK,
+                    debug::debugLevel::WARNING);
+            }
+        }
+    }
+
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Applied batched game state updates for " +
+        std::to_string(batchedPayloads.size()) + " entities",
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
 }
@@ -413,5 +471,30 @@ void ClientNetwork::handleNextLevel() {
             std::make_shared<gsm::InGameState>
                 (this->_gsm, this->_resourceManager)
         );
+    }
+}
+
+void ClientNetwork::handleConnectUser() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received connection user packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    std::string username;
+    for (size_t i = 0; i < payload.size() && payload.at(i) != '\0'; ++i) {
+        char c = static_cast<char>(payload.at(i) & 0xFF);
+        username += c;
+    }
+
+    this->setName(username);
+    this->_resourceManager->get<SettingsConfig>()->setUsername(username);
+    this->_isConnected = true;
+
+    if (this->_expectingLoginResponse) {
+        if (auto gsm = this->_gsm) {
+            gsm->requestStatePop();
+        }
+        this->_expectingLoginResponse = false;
     }
 }

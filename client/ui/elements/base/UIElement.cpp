@@ -44,7 +44,10 @@ math::Vector2f UIElement::getAbsolutePosition() const {
 }
 
 math::Vector2f UIElement::getAbsoluteSize() const {
-    return _size * getScaleFactor();
+    if (_scalingEnabled) {
+        return _size * getScaleFactor();
+    }
+    return _size;
 }
 
 void UIElement::addChild(std::shared_ptr<UIElement> child) {
@@ -140,6 +143,22 @@ void UIElement::setVisible(bool visible) {
 
 bool UIElement::isVisible() const {
     return _visible;
+}
+
+void UIElement::setScalingEnabled(bool enabled) {
+    _scalingEnabled = enabled;
+}
+
+bool UIElement::isScalingEnabled() const {
+    return _scalingEnabled;
+}
+
+void UIElement::setFocusEnabled(bool enabled) {
+    _focusEnabled = enabled;
+}
+
+bool UIElement::isFocusEnabled() const {
+    return _focusEnabled;
 }
 
 void UIElement::setState(UIState state) {

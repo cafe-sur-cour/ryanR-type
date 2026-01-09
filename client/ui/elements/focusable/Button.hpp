@@ -34,6 +34,9 @@ class Button : public AFocusableElement {
         void setBaseFontSize(size_t fontSize);
         size_t getBaseFontSize() const;
 
+        void setIconPath(const std::string& iconPath);
+        void setIconSize(const math::Vector2f& size);
+
         virtual void render() override;
 
     private:
@@ -47,6 +50,9 @@ class Button : public AFocusableElement {
         gfx::color_t _disabledColor = colors::UI_DISABLED;
         gfx::color_t _focusedColor = colors::UI_FOCUSED;
         size_t _baseFontSize = constants::BUTTON_FONT_SIZE_BASE;
+
+        std::string _iconPath;
+        math::Vector2f _iconSize = math::Vector2f(0.f, 0.f);
 
         gfx::color_t getCurrentColor() const;
         size_t getFontSize() const;

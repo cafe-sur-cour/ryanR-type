@@ -37,6 +37,8 @@ class TextInput : public AFocusableElement {
 
         void setOnTextChanged(std::function<void(const std::string&)> callback);
         void setOnSubmit(std::function<void(const std::string&)> callback);
+        void setOnFocusLost(std::function<void()> callback);
+        void setMaxLength(size_t maxLength);
 
         virtual void handleInput(const math::Vector2f& mousePos, bool mousePressed) override;
         void handleKeyboardInput(gfx::EventType event);
@@ -50,6 +52,7 @@ class TextInput : public AFocusableElement {
         size_t _cursorPosition = 0;
         float _cursorBlinkTimer = 0.0f;
         bool _showCursor = true;
+        size_t _maxLength = 0;
 
         gfx::color_t _textColor = {0, 0, 0};
         gfx::color_t _placeholderColor = {128, 128, 128};
@@ -58,6 +61,7 @@ class TextInput : public AFocusableElement {
 
         std::function<void(const std::string&)> _onTextChanged;
         std::function<void(const std::string&)> _onSubmit;
+        std::function<void()> _onFocusLost;
 
         void insertChar(char c);
         void deleteChar();

@@ -10,10 +10,15 @@
 #include <memory>
 #include <vector>
 #include "GameStateHandlers.hpp"
+#include "GameStateHandlersOptimized.hpp"
 #include "../../libs/Packet/serializer/BigEndianSerialization.hpp"
 #include "../../libs/Packet/PacketManager.hpp"
 #include "../../common/translationToECS.hpp"
 #include "../constants.hpp"
+
+using SerializerPtr = std::shared_ptr<pm::ISerializer>;
+using pm::BigEndianSerialization;
+
 
 namespace common::packet {
 
@@ -302,7 +307,7 @@ bool registerDefaultPacketHandlers(
         return true;
     };
 
-    registerMultiUCharPacket(packet, ser, CONNECTION_CLIENT_PACKET, LENGTH_CONNECTION_PACKET);
+    registerOptionalULongPacket(packet, ser, CONNECTION_CLIENT_PACKET);
     registerSingleUCharPacket(packet, ser, ACCEPTATION_PACKET, LENGTH_ACCEPTATION_PACKET);
     registerSingleUCharPacket(packet, ser, DISCONNECTION_PACKET, LENGTH_DISCONNECTION_PACKET);
 
@@ -322,10 +327,14 @@ bool registerDefaultPacketHandlers(
 
     registerOptionalULongPacket(packet, ser, END_GAME_PACKET);
 
-    if (!registerGameStateHandlers(packet))
+
+    if (!registerOptimizedGameStateHandlers(packet))
         return false;
+
     registerOptionalULongPacket(packet, ser, REQUEST_LOBBY_PACKET);
     registerMultiUCharPacket(packet, ser, SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
+    registerMultiUCharPacket(packet, ser, REGISTER_PACKET, LENGTH_REGISTER_PACKET);
+    registerMultiUCharPacket(packet, ser, LOGIN_PACKET, LENGTH_LOGIN_PACKET);
     registerMultiUCharPacket(packet, ser, CONNECT_TO_LOBBY, LENGTH_LOBBY_CODE_PACKET);
     registerMultiUCharPacket(packet, ser, LOBBY_MASTER_REQUEST_START,
         LENGTH_LOBBY_CODE_PACKET);
@@ -334,6 +343,7 @@ bool registerDefaultPacketHandlers(
 
     registerOptionalULongPacket(packet, ser, LEVEL_COMPLETE_PACKET);
     registerOptionalULongPacket(packet, ser, NEXT_LEVEL_PACKET);
+    registerMultiUCharPacket(packet, ser, CONNECT_USER_PACKET, LENGTH_CONNECT_USER_PACKET);
 
     packet->registerLength(LOBBY_CONNECT_VALUE, LENGTH_CONNECT_TO_LOBBY_PACKET);
     packet->registerLength(REQUEST_LOBBY_PACKET, LENGTH_REQUEST_LOBBY_PACKET);
@@ -349,6 +359,9 @@ bool registerDefaultPacketHandlers(
     packet->registerLength(WHOAMI_PACKET, LENGTH_WHOAMI_PACKET);
     packet->registerLength(SERVER_STATUS_PACKET, LENGTH_SERVER_STATUS_PACKET);
     packet->registerLength(END_GAME_PACKET, LENGTH_END_GAME_PACKET);
+    packet->registerLength(REGISTER_PACKET, LENGTH_REGISTER_PACKET);
+    packet->registerLength(CONNECT_USER_PACKET, LENGTH_CONNECT_USER_PACKET);
+    packet->registerLength(LOGIN_PACKET, LENGTH_LOGIN_PACKET);
 
     packet->registerLengthCombEntry(TRANSFORM, 41, 6);
     packet->registerLengthCombEntry(SPEED_COMP, 9, 2);
