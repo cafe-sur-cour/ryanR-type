@@ -192,41 +192,10 @@ void LevelEditorState::handlePowerUpClick(
         _selectedObstacle = std::nullopt;
         _selectedWave = std::nullopt;
 
-        if (_obstaclePosXInput) _obstaclePosXInput->setVisible(false);
-        if (_obstaclePosXLabel) _obstaclePosXLabel->setVisible(false);
-        if (_obstaclePosYInput) _obstaclePosYInput->setVisible(false);
-        if (_obstaclePosYLabel) _obstaclePosYLabel->setVisible(false);
-        if (_obstacleCountInput) _obstacleCountInput->setVisible(false);
-        if (_obstacleCountLabel) _obstacleCountLabel->setVisible(false);
-        if (_obstacleDeleteButton) _obstacleDeleteButton->setVisible(false);
+        hideObstacleUI();
+        hideWaveUI();
+        hideEnemyUI();
 
-        if (_waveTriggerXInput) _waveTriggerXInput->setVisible(false);
-        if (_waveTriggerXLabel) _waveTriggerXLabel->setVisible(false);
-        if (_waveDeleteButton) _waveDeleteButton->setVisible(false);
-        if (_waveIndexLabel) _waveIndexLabel->setVisible(false);
-        if (_wavePrevButton) _wavePrevButton->setVisible(false);
-        if (_waveNextButton) _waveNextButton->setVisible(false);
-
-        if (_enemyLabel) _enemyLabel->setVisible(false);
-        if (_enemyIndexLabel) _enemyIndexLabel->setVisible(false);
-        if (_enemyPrevButton) _enemyPrevButton->setVisible(false);
-        if (_enemyNextButton) _enemyNextButton->setVisible(false);
-        if (_enemyAddButton) _enemyAddButton->setVisible(false);
-        if (_enemyDeleteButton) _enemyDeleteButton->setVisible(false);
-        if (_enemyTypeLabel) _enemyTypeLabel->setVisible(false);
-        if (_enemyTypeInput) _enemyTypeInput->setVisible(false);
-        if (_enemyApplyTypeButton) _enemyApplyTypeButton->setVisible(false);
-        if (_enemyAppliedTypeLabel) _enemyAppliedTypeLabel->setVisible(false);
-        if (_enemyCountLabel) _enemyCountLabel->setVisible(false);
-        if (_enemyCountInput) _enemyCountInput->setVisible(false);
-        if (_enemyDistXMinLabel) _enemyDistXMinLabel->setVisible(false);
-        if (_enemyDistXMinInput) _enemyDistXMinInput->setVisible(false);
-        if (_enemyDistXMaxLabel) _enemyDistXMaxLabel->setVisible(false);
-        if (_enemyDistXMaxInput) _enemyDistXMaxInput->setVisible(false);
-        if (_enemyDistYMinLabel) _enemyDistYMinLabel->setVisible(false);
-        if (_enemyDistYMinInput) _enemyDistYMinInput->setVisible(false);
-        if (_enemyDistYMaxLabel) _enemyDistYMaxLabel->setVisible(false);
-        if (_enemyDistYMaxInput) _enemyDistYMaxInput->setVisible(false);
         if (_powerUpPrefabDropdown) {
             const auto& prefabName = selection.value().prefabName;
             auto options = _powerUpPrefabDropdown->getOptions();
@@ -249,24 +218,12 @@ void LevelEditorState::handlePowerUpClick(
 
         if (_powerUpPosXInput) {
             _powerUpPosXInput->setText(std::to_string(static_cast<int>(posX)));
-            _powerUpPosXInput->setVisible(true);
-        }
-        if (_powerUpPosXLabel) {
-            _powerUpPosXLabel->setVisible(true);
         }
         if (_powerUpPosYInput) {
             _powerUpPosYInput->setText(std::to_string(static_cast<int>(posY)));
-            _powerUpPosYInput->setVisible(true);
         }
-        if (_powerUpPosYLabel) {
-            _powerUpPosYLabel->setVisible(true);
-        }
-        if (_powerUpDeleteButton) {
-            _powerUpDeleteButton->setVisible(true);
-        }
-        if (_powerUpDuplicateButton) {
-            _powerUpDuplicateButton->setVisible(true);
-        }
+
+        showPowerUpUI();
         _isSelectingObject = false;
     } else {
         bool inPowerUpsMode = (_editorModeDropdown &&
@@ -327,24 +284,7 @@ void LevelEditorState::handlePowerUpClick(
             saveToHistory();
         } else {
             _selectedPowerUp = std::nullopt;
-            if (_powerUpPosXInput) {
-                _powerUpPosXInput->setVisible(false);
-            }
-            if (_powerUpPosXLabel) {
-                _powerUpPosXLabel->setVisible(false);
-            }
-            if (_powerUpPosYInput) {
-                _powerUpPosYInput->setVisible(false);
-            }
-            if (_powerUpPosYLabel) {
-                _powerUpPosYLabel->setVisible(false);
-            }
-            if (_powerUpDeleteButton) {
-                _powerUpDeleteButton->setVisible(false);
-            }
-            if (_powerUpDuplicateButton) {
-                _powerUpDuplicateButton->setVisible(false);
-            }
+            hidePowerUpUI();
         }
     }
 }

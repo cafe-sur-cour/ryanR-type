@@ -139,6 +139,22 @@ private:
     void renderSpriteInLevelPreview(const LevelPreviewSprite& spriteData, const std::string& prefabName, float screenX, float screenY, float canvasLeft, float canvasRight, float canvasTop, float canvasBottom);
     LevelPreviewSprite extractSpriteDataFromPrefab(const std::string& prefabPath);
 
+    void hideAllUIElements();
+    void hideObstacleUI();
+    void hidePowerUpUI();
+    void hideWaveUI();
+    void hideEnemyUI();
+    void showObstacleUI(bool showCount);
+    void showPowerUpUI();
+    void showWaveUI();
+    struct WorldCoordinates {
+        float worldX;
+        float worldY;
+        float levelX;
+        float levelY;
+    };
+    WorldCoordinates extractWorldCoordinates(const math::Vector2f& mousePos, float sidePanelWidth) const;
+
     /* Obstacles methods */
     void parseObstacles();
     void renderAllObstacles(float levelX, float levelY, float canvasLeft, float canvasRight, float canvasTop, float canvasBottom);
