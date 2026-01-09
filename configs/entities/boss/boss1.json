@@ -1,0 +1,97 @@
+{
+    "name": "boss1",
+    "components": {
+        "MobTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 100.0, "y": 100.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 150.0 },
+        "HealthComponent": { "target": "both", "health": 2000.0 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 100 },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/boss1.lua",
+            "additionalFunctions": ["death"]
+        },
+        "ProjectilePrefabComponent": {
+            "target": "both",
+            "prefabName": "blimpShoot"
+        },
+        "ShootingStatsComponent": {
+            "target": "both",
+            "fireRate": 0.1,
+            "projectileSpeed": 500.0,
+            "shotCount": 1,
+            "angleOffset": 0.0,
+            "spreadAngle": 0.0
+        },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/idle/blimp_idle.png",
+                    "frameWidth": 359.0,
+                    "frameHeight": 393.0,
+                    "frameCount": 21,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "summoning": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/summon/blimp_summon.png",
+                    "frameWidth": 391.0,
+                    "frameHeight": 433.0,
+                    "frameCount": 20,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                },
+                "dash": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/dash/blimp_dash.png",
+                    "frameWidth": 882.0,
+                    "frameHeight": 415.0,
+                    "frameCount": 24,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                }
+            },
+            "initialState": "idle",
+            "transitions": []
+        },
+        "ColliderComponent":
+        [
+            {
+                "target": "both",
+                "offset": { "x": 0.0, "y": 0.0 },
+                "size" : { "x": 359.0, "y": 393.0 },
+                "type": "Trigger"
+            }
+        ]
+        ,
+        "DamageComponent": {
+            "target": "both",
+            "damage": 25.0
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDamage"]
+                }
+            ]
+        },
+        "ShooterTag": { "target": "both" },
+        "HealthBarComponent": { "target": "client" },
+        "HitboxRenderComponent": { "target": "client" }
+    }
+}
