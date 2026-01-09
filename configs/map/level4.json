@@ -1,0 +1,16 @@
+{
+    "background": "background",
+    "index": 4,
+    "mapLength": 2000.0,
+    "music": "music",
+    "name": "smarties",
+    "obstacles": [],
+    "powerUps": [],
+    "scrollSpeed": 100,
+    "waves": [
+        {
+            "enemies": [],
+            "gameXTrigger": 255.0
+        }
+    ]
+}
