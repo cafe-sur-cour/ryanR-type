@@ -447,7 +447,7 @@ void LevelEditorState::update(float deltaTime) {
 
     if (isInCanvas && !leftMousePressed && _leftMousePressedLastFrame &&
         !_isDragging && !_isDraggingObstacle && !_isDraggingPowerUp) {
-        float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
+        float mapLength = _levelData.value(constants::MAP_LENGTH_FIELD, 0.0f);
         if (mapLength > 0.0f) {
             float levelX = sidePanelWidth - (_viewportOffset.getX() * _viewportZoom);
             float levelY = -(_viewportOffset.getY() * _viewportZoom);
@@ -538,7 +538,7 @@ void LevelEditorState::update(float deltaTime) {
 
     if (leftMousePressed && isInCanvas) {
         if (_selectedObstacle.has_value()) {
-            float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
+            float mapLength = _levelData.value(constants::MAP_LENGTH_FIELD, 0.0f);
             if (mapLength > 0.0f) {
                 if (_isDraggingObstacle) {
                     handleObstacleDrag(mousePos, _viewportZoom, sidePanelWidth);
@@ -560,7 +560,7 @@ void LevelEditorState::update(float deltaTime) {
             }
         }
         if (_selectedPowerUp.has_value()) {
-            float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
+            float mapLength = _levelData.value(constants::MAP_LENGTH_FIELD, 0.0f);
             if (mapLength > 0.0f) {
                 if (_isDraggingPowerUp) {
                     handlePowerUpDrag(mousePos, _viewportZoom, sidePanelWidth);
@@ -581,7 +581,7 @@ void LevelEditorState::update(float deltaTime) {
             }
         }
         if (_selectedWave.has_value()) {
-            float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
+            float mapLength = _levelData.value(constants::MAP_LENGTH_FIELD, 0.0f);
             if (mapLength > 0.0f) {
                 if (_isDraggingWave) {
                     handleWaveDrag(mousePos, _viewportZoom, sidePanelWidth);
@@ -826,13 +826,13 @@ void LevelEditorState::createUI() {
 
         try {
             float mapLength = std::stof(mapLengthStr);
-            _levelData[constants::LEVEL_MAP_LENGTH_FIELD] = mapLength;
+            _levelData[constants::MAP_LENGTH_FIELD] = mapLength;
         } catch (const std::exception&) {
         }
 
         try {
             int scrollSpeed = std::stoi(scrollSpeedStr);
-            _levelData[constants::LEVEL_SCROLL_SPEED_FIELD] = scrollSpeed;
+            _levelData[constants::BACKGROUND_SCROLL_SPEED_FIELD] = scrollSpeed;
         } catch (const std::exception&) {
         }
 
@@ -920,7 +920,7 @@ void LevelEditorState::createUI() {
     _mapLengthInput->setPosition(math::Vector2f(10.0f, currentY));
     _mapLengthInput->setSize(math::Vector2f(sidePanelWidth - 25.0f, 30.0f));
     _mapLengthInput->setText(std::to_string(
-        static_cast<int>(_levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0))));
+        static_cast<int>(_levelData.value(constants::MAP_LENGTH_FIELD, 0.0))));
     _mapLengthInput->setPlaceholder("Enter map length...");
     _mapLengthInput->setOnTextChanged([this](const std::string& text) {
         if (_isLoadingFromHistory) {
@@ -941,7 +941,7 @@ void LevelEditorState::createUI() {
 
         try {
             float mapLength = std::stof(filteredText);
-            _levelData[constants::LEVEL_MAP_LENGTH_FIELD] = mapLength;
+            _levelData[constants::MAP_LENGTH_FIELD] = mapLength;
             _hasPendingChange = true;
             _lastChangeTime = 0.0f;
         } catch (const std::exception&) {
@@ -973,7 +973,7 @@ void LevelEditorState::createUI() {
     _scrollSpeedInput->setPosition(math::Vector2f(10.0f, currentY));
     _scrollSpeedInput->setSize(math::Vector2f(sidePanelWidth - 25.0f, 30.0f));
     _scrollSpeedInput->setText(std::to_string(
-        static_cast<int>(_levelData.value(constants::LEVEL_SCROLL_SPEED_FIELD, 1))));
+        static_cast<int>(_levelData.value(constants::BACKGROUND_SCROLL_SPEED_FIELD, 1))));
     _scrollSpeedInput->setPlaceholder("Enter scroll speed...");
     _scrollSpeedInput->setOnTextChanged([this](const std::string& text) {
         if (_isLoadingFromHistory) {
@@ -994,7 +994,7 @@ void LevelEditorState::createUI() {
 
         try {
             int scrollSpeed = std::stoi(filteredText);
-            _levelData[constants::LEVEL_SCROLL_SPEED_FIELD] = scrollSpeed;
+            _levelData[constants::BACKGROUND_SCROLL_SPEED_FIELD] = scrollSpeed;
             _hasPendingChange = true;
             _lastChangeTime = 0.0f;
         } catch (const std::exception&) {
@@ -1029,7 +1029,7 @@ void LevelEditorState::createUI() {
     _musicDropdown->setOptions(availableMusics);
     _musicDropdown->setPlaceholder("Select music...");
 
-    std::string currentMusic = _levelData.value(constants::LEVEL_MUSIC_FIELD, "");
+    std::string currentMusic = _levelData.value(constants::MUSIC_FIELD, "");
     if (!currentMusic.empty()) {
         auto options = _musicDropdown->getOptions();
         for (size_t i = 0; i < options.size(); ++i) {
@@ -1045,7 +1045,7 @@ void LevelEditorState::createUI() {
         if (_isLoadingFromHistory) {
             return;
         }
-        _levelData[constants::LEVEL_MUSIC_FIELD] = musicName;
+        _levelData[constants::MUSIC_FIELD] = musicName;
         saveToHistory();
         _hasUnsavedChanges = true;
         updateSaveButtonText();
@@ -1069,7 +1069,7 @@ void LevelEditorState::createUI() {
     _backgroundDropdown->setOptions(availableBackgrounds);
     _backgroundDropdown->setPlaceholder("Select background...");
 
-    std::string currentBackground = _levelData.value(constants::LEVEL_BACKGROUND_FIELD, "");
+    std::string currentBackground = _levelData.value(constants::BACKGROUND_FIELD, "");
     if (!currentBackground.empty()) {
         auto options = _backgroundDropdown->getOptions();
         for (size_t i = 0; i < options.size(); ++i) {
@@ -1085,7 +1085,7 @@ void LevelEditorState::createUI() {
         if (_isLoadingFromHistory) {
             return;
         }
-        _levelData[constants::LEVEL_BACKGROUND_FIELD] = backgroundName;
+        _levelData[constants::BACKGROUND_FIELD] = backgroundName;
         saveToHistory();
         _hasUnsavedChanges = true;
         updateSaveButtonText();
@@ -3024,11 +3024,11 @@ void LevelEditorState::loadFromHistory(size_t index) {
 
     _levelNameInput->setText(_levelData.value(constants::NAME_FIELD, "New Level"));
     _mapLengthInput->setText(std::to_string(
-        static_cast<int>(_levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0))));
+        static_cast<int>(_levelData.value(constants::MAP_LENGTH_FIELD, 0.0))));
     _scrollSpeedInput->setText(std::to_string(
-        static_cast<int>(_levelData.value(constants::LEVEL_SCROLL_SPEED_FIELD, 1))));
+        static_cast<int>(_levelData.value(constants::BACKGROUND_SCROLL_SPEED_FIELD, 1))));
 
-    std::string currentMusic = _levelData.value(constants::LEVEL_MUSIC_FIELD, "");
+    std::string currentMusic = _levelData.value(constants::MUSIC_FIELD, "");
     if (!currentMusic.empty()) {
         auto options = _musicDropdown->getOptions();
         for (size_t i = 0; i < options.size(); ++i) {
@@ -3041,7 +3041,7 @@ void LevelEditorState::loadFromHistory(size_t index) {
         _musicDropdown->setSelectedIndex(static_cast<size_t>(-1));
     }
 
-    std::string currentBackground = _levelData.value(constants::LEVEL_BACKGROUND_FIELD, "");
+    std::string currentBackground = _levelData.value(constants::BACKGROUND_FIELD, "");
     if (!currentBackground.empty()) {
         auto options = _backgroundDropdown->getOptions();
         for (size_t i = 0; i < options.size(); ++i) {
@@ -3186,7 +3186,7 @@ void LevelEditorState::renderLevelPreview() {
     const float bottomPanelHeight = 200.0f;
     const float canvasHeight = constants::MAX_HEIGHT - bottomPanelHeight;
 
-    float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
+    float mapLength = _levelData.value(constants::MAP_LENGTH_FIELD, 0.0f);
 
     if (mapLength <= 0.0f) {
         return;
@@ -3373,11 +3373,11 @@ LevelPreviewSprite LevelEditorState::extractSpriteDataFromPrefab(
         file >> prefabData;
         file.close();
 
-        if (!prefabData.contains(constants::PREFAB_COMPONENTS_FIELD)) {
+        if (!prefabData.contains(constants::COMPONENTS_FIELD)) {
             return result;
         }
 
-        const auto& components = prefabData[constants::PREFAB_COMPONENTS_FIELD];
+        const auto& components = prefabData[constants::COMPONENTS_FIELD];
 
         if (components.contains(constants::ANIMATIONCOMPONENT)) {
             const auto& animComponent = components[constants::ANIMATIONCOMPONENT];

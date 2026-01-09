@@ -150,25 +150,14 @@ namespace constants {
     const float CHANGE_DEBOUNCE_TIME = 1.0f;
     const float CHANGE_DEBOUNCE_TIME_SHORT = 0.25f;
 
-    const std::string LEVEL_DIRECTORY = "configs/map";
     const std::string LEVEL_FILE_PREFIX = "level";
     const std::string LEVEL_FILE_EXTENSION = ".json";
-    const std::string LEVEL_BACKGROUND_FIELD = "background";
-    const std::string LEVEL_SCROLL_SPEED_FIELD = "scrollSpeed";
-    const std::string LEVEL_MUSIC_FIELD = "music";
-    const std::string LEVEL_POWER_UPS_FIELD = "powerUps";
-    const std::string LEVEL_MAP_LENGTH_FIELD = "mapLength";
-    const std::string LEVEL_OBSTACLES_FIELD = "obstacles";
-    const std::string LEVEL_WAVES_FIELD = "waves";
-
+    const std::string LEVEL_DIRECTORY = "configs/map";
     const std::string MUSIC_DIRECTORY = "configs/entities/musics";
     const std::string BACKGROUNDS_DIRECTORY = "configs/entities/backgrounds";
     const std::string OBSTACLES_DIRECTORY = "configs/entities/obstacles";
     const std::string POWERUPS_DIRECTORY = "configs/entities/powerUp";
     const std::string ENEMIES_DIRECTORY = "configs/entities/enemies";
-
-    /* Prefab JSON field constants */
-    const std::string PREFAB_COMPONENTS_FIELD = "components";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */

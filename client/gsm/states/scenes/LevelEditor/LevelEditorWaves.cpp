@@ -18,12 +18,12 @@ namespace gsm {
 void LevelEditorState::parseWaves() {
     _waves.clear();
 
-    if (!_levelData.contains(constants::LEVEL_WAVES_FIELD) ||
-        !_levelData[constants::LEVEL_WAVES_FIELD].is_array()) {
+    if (!_levelData.contains(constants::WAVES_FIELD) ||
+        !_levelData[constants::WAVES_FIELD].is_array()) {
         return;
     }
 
-    const auto& wavesArray = _levelData[constants::LEVEL_WAVES_FIELD];
+    const auto& wavesArray = _levelData[constants::WAVES_FIELD];
 
     for (const auto& waveJson : wavesArray) {
         Wave wave;
@@ -84,7 +84,7 @@ void LevelEditorState::renderAllWaves(
 ) {
     auto window = _resourceManager->get<gfx::IWindow>();
 
-    float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
+    float mapLength = _levelData.value(constants::MAP_LENGTH_FIELD, 0.0f);
     if (mapLength <= 0.0f) {
         return;
     }
@@ -289,13 +289,13 @@ void LevelEditorState::saveWaves() {
         wavesArray.push_back(waveJson);
     }
 
-    _levelData[constants::LEVEL_WAVES_FIELD] = wavesArray;
+    _levelData[constants::WAVES_FIELD] = wavesArray;
 }
 
 std::optional<WaveSelection> LevelEditorState::getWaveAtPosition(
     float mouseX, float mouseY, float levelX, float levelY
 ) {
-    float mapLength = _levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0f);
+    float mapLength = _levelData.value(constants::MAP_LENGTH_FIELD, 0.0f);
     if (mapLength <= 0.0f) {
         return std::nullopt;
     }
