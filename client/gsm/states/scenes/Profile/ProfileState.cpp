@@ -18,6 +18,7 @@
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../ui/elements/Box.hpp"
+#include "../Replay/ReplayState.hpp"
 
 namespace gsm {
 
@@ -221,18 +222,28 @@ ProfileState::ProfileState(
     _button1->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _button1->setOnRelease([this]() {
         auto network = _resourceManager->get<ClientNetwork>();
-        if (network) {
+        if (network && !network->getName().empty()) {
             network->sendRequestProfilePacket();
         }
     });
 
     _button2 = std::make_shared<ui::Button>(_resourceManager);
-    _button2->setText("Button 2");
+    _button2->setText(constants::REPLAY_BUTTON_TEXT);
     _button2->setSize(math::Vector2f(500.f, 60.f));
     _button2->setNormalColor(colors::BUTTON_SECONDARY);
     _button2->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _button2->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
-    _button2->setOnRelease([]() {
+    _button2->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<ReplayState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _button2->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<ReplayState>(stateMachine,
+                this->_resourceManager));
+        }
     });
 
     _button3 = std::make_shared<ui::Button>(_resourceManager);
@@ -309,9 +320,9 @@ void ProfileState::loadUserData() {
 }
 
 void ProfileState::enter() {
-    // Send profile request packet
+    // Send profile request packet only if authenticated
     auto network = _resourceManager->get<ClientNetwork>();
-    if (network) {
+    if (network && !network->getName().empty()) {
         network->sendRequestProfilePacket();
     }
 
