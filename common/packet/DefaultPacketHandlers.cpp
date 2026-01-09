@@ -333,6 +333,7 @@ bool registerDefaultPacketHandlers(
         return false;
 
     registerOptionalULongPacket(packet, ser, REQUEST_LOBBY_PACKET);
+    registerOptionalULongPacket(packet, ser, REGISTER_FAIL_PACKET);
     registerMultiUCharPacket(packet, ser, SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
     registerMultiUCharPacket(packet, ser, REGISTER_PACKET, LENGTH_REGISTER_PACKET);
     registerMultiUCharPacket(packet, ser, LOGIN_PACKET, LENGTH_LOGIN_PACKET);
@@ -352,6 +353,7 @@ bool registerDefaultPacketHandlers(
     packet->registerLength(SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
     packet->registerLength(CONNECT_TO_LOBBY, LENGTH_LOBBY_CODE_PACKET);
     packet->registerLength(LOBBY_MASTER_REQUEST_START, LENGTH_LOBBY_CODE_PACKET);
+    packet->registerLength(REGISTER_FAIL_PACKET, LENGTH_FAIL_REGISTER_PACKET);
 
     packet->registerLength(CONNECTION_CLIENT_PACKET, LENGTH_CONNECTION_PACKET);
     packet->registerLength(ACCEPTATION_PACKET, LENGTH_ACCEPTATION_PACKET);
