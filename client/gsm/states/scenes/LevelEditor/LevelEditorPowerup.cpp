@@ -45,14 +45,14 @@ void LevelEditorState::parsePowerUps() {
 
         const auto& position = powerUp[constants::POWERUP_POSITION_FIELD];
 
-        if (!position.contains(constants::OBSTACLE_POSX_FIELD) ||
-            !position.contains(constants::OBSTACLE_POSY_FIELD)) {
+        if (!position.contains(constants::POSX_FIELD) ||
+            !position.contains(constants::POSY_FIELD)) {
             continue;
         }
 
         PowerUpData data;
-        data.posX = position[constants::OBSTACLE_POSX_FIELD].get<float>();
-        data.posY = position[constants::OBSTACLE_POSY_FIELD].get<float>();
+        data.posX = position[constants::POSX_FIELD].get<float>();
+        data.posY = position[constants::POSY_FIELD].get<float>();
 
         _powerUpsByName[powerUpName].push_back(data);
 
@@ -140,8 +140,8 @@ void LevelEditorState::savePowerUps() {
             powerUpEntry[constants::POWERUP_NAME_FIELD] = prefabName;
 
             nlohmann::json position;
-            position[constants::OBSTACLE_POSX_FIELD] = powerUp.posX;
-            position[constants::OBSTACLE_POSY_FIELD] = powerUp.posY;
+            position[constants::POSX_FIELD] = powerUp.posX;
+            position[constants::POSY_FIELD] = powerUp.posY;
 
             powerUpEntry[constants::POWERUP_POSITION_FIELD] = position;
             powerUpsArray.push_back(powerUpEntry);
