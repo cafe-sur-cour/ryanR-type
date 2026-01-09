@@ -104,6 +104,7 @@
             "target": "both",
             "score": 0
         },
+        "DamageCooldownComponent": { "target": "both" },
         "HealthBarComponent": { "target": "client" },
         "EntityPartsComponent": { "target": "both" }
 
