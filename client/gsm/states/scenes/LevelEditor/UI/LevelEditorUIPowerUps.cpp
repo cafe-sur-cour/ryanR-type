@@ -249,6 +249,7 @@ void LevelEditorState::createPowerUpUI() {
         }
     });
     _bottomPanel->addChild(_powerUpDuplicateButton);
+    _bottomPanel->addChild(_powerUpPrefabDropdown);
 }
 
 }  // namespace gsm
