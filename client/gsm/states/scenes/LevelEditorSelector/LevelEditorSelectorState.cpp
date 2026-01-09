@@ -909,13 +909,13 @@ std::optional<std::filesystem::path> LevelEditorSelectorState::createNewLevel() 
     nlohmann::json newLevelData;
     newLevelData[constants::INDEX_FIELD] = nextIndex;
     newLevelData[constants::NAME_FIELD] = "New Level";
-    newLevelData[constants::LEVEL_BACKGROUND_FIELD] = "";
-    newLevelData[constants::LEVEL_SCROLL_SPEED_FIELD] = 100.0;
-    newLevelData[constants::LEVEL_MUSIC_FIELD] = "";
-    newLevelData[constants::LEVEL_POWER_UPS_FIELD] = nlohmann::json::array();
-    newLevelData[constants::LEVEL_MAP_LENGTH_FIELD] = 0.0;
-    newLevelData[constants::LEVEL_OBSTACLES_FIELD] = nlohmann::json::array();
-    newLevelData[constants::LEVEL_WAVES_FIELD] = nlohmann::json::array();
+    newLevelData[constants::BACKGROUND_FIELD] = "";
+    newLevelData[constants::BACKGROUND_SCROLL_SPEED_FIELD] = 100.0;
+    newLevelData[constants::MUSIC_FIELD] = "";
+    newLevelData[constants::POWERUPS_FIELD] = nlohmann::json::array();
+    newLevelData[constants::MAP_LENGTH_FIELD] = 0.0;
+    newLevelData[constants::OBSTACLES_FIELD] = nlohmann::json::array();
+    newLevelData[constants::WAVES_FIELD] = nlohmann::json::array();
 
     std::string newFileName = constants::LEVEL_FILE_PREFIX +
         std::to_string(nextIndex) + constants::LEVEL_FILE_EXTENSION;

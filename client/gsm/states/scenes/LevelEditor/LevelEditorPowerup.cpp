@@ -21,12 +21,12 @@ void LevelEditorState::parsePowerUps() {
     _powerUpAnimationFrames.clear();
     _powerUpAnimationTimes.clear();
 
-    if (!_levelData.contains(constants::LEVEL_POWER_UPS_FIELD) ||
-        !_levelData[constants::LEVEL_POWER_UPS_FIELD].is_array()) {
+    if (!_levelData.contains(constants::POWERUPS_FIELD) ||
+        !_levelData[constants::POWERUPS_FIELD].is_array()) {
         return;
     }
 
-    const auto& powerUps = _levelData[constants::LEVEL_POWER_UPS_FIELD];
+    const auto& powerUps = _levelData[constants::POWERUPS_FIELD];
 
     for (const auto& powerUp : powerUps) {
         if (!powerUp.contains(constants::NAME_FIELD)) {
@@ -148,7 +148,7 @@ void LevelEditorState::savePowerUps() {
         }
     }
 
-    _levelData[constants::LEVEL_POWER_UPS_FIELD] = powerUpsArray;
+    _levelData[constants::POWERUPS_FIELD] = powerUpsArray;
 }
 
 std::optional<PowerUpSelection> LevelEditorState::getPowerUpAtPosition(

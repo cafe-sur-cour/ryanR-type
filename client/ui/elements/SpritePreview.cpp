@@ -29,8 +29,8 @@ bool SpritePreview::loadPrefab(const std::filesystem::path& prefabPath) {
         file >> prefab;
         file.close();
 
-        if (prefab.contains(constants::PREFAB_COMPONENTS_FIELD) &&
-            prefab[constants::PREFAB_COMPONENTS_FIELD].contains(
+        if (prefab.contains(constants::COMPONENTS_FIELD) &&
+            prefab[constants::COMPONENTS_FIELD].contains(
                 constants::ANIMATIONCOMPONENT)) {
             if (extractAnimationFromPrefab(prefab)) {
                 _type = PreviewType::Animation;
@@ -39,8 +39,8 @@ bool SpritePreview::loadPrefab(const std::filesystem::path& prefabPath) {
             }
         }
 
-        if (prefab.contains(constants::PREFAB_COMPONENTS_FIELD) &&
-            prefab[constants::PREFAB_COMPONENTS_FIELD].contains(
+        if (prefab.contains(constants::COMPONENTS_FIELD) &&
+            prefab[constants::COMPONENTS_FIELD].contains(
                 constants::SPRITECOMPONENT)) {
             if (extractSpriteFromPrefab(prefab)) {
                 _type = PreviewType::Sprite;
@@ -57,7 +57,7 @@ bool SpritePreview::loadPrefab(const std::filesystem::path& prefabPath) {
 
 bool SpritePreview::extractSpriteFromPrefab(const nlohmann::json& prefab) {
     try {
-        const auto& components = prefab[constants::PREFAB_COMPONENTS_FIELD];
+        const auto& components = prefab[constants::COMPONENTS_FIELD];
 
         if (!components.contains(constants::SPRITECOMPONENT)) {
             return false;
@@ -114,7 +114,7 @@ bool SpritePreview::extractSpriteFromPrefab(const nlohmann::json& prefab) {
 
 bool SpritePreview::extractAnimationFromPrefab(const nlohmann::json& prefab) {
     try {
-        const auto& components = prefab[constants::PREFAB_COMPONENTS_FIELD];
+        const auto& components = prefab[constants::COMPONENTS_FIELD];
 
         if (!components.contains(constants::ANIMATIONCOMPONENT)) {
             return false;
