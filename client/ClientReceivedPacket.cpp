@@ -15,6 +15,8 @@
 #include "../common/Parser/Parser.hpp"
 #include "../common/ECS/entity/EntityCreationContext.hpp"
 #include "../common/components/tags/LocalPlayerTag.hpp"
+#include "../common/components/tags/PlayerTag.hpp"
+#include "../common/components/permanent/ScoreComponent.hpp"
 #include "DeathAnimationSpawner.hpp"
 #include "gsm/states/scenes/InGame/InGameState.hpp"
 #include "gsm/states/scenes/Results/ResultsState.hpp"
@@ -174,6 +176,7 @@ void ClientNetwork::handleEndGame() {
     if (!payload.empty()) {
         isWin = payload[0] != 0;
     }
+
     if (this->_gsm) {
         this->_gsm->requestStateChange(
             std::make_shared<gsm::ResultsState>
@@ -496,5 +499,87 @@ void ClientNetwork::handleConnectUser() {
             gsm->requestStatePop();
         }
         this->_expectingLoginResponse = false;
+    } else if (this->_expectingRegisterResponse) {
+        if (auto gsm = this->_gsm) {
+            gsm->requestStatePop();
+        }
+        this->_expectingRegisterResponse = false;
     }
+}
+
+void ClientNetwork::handleLeaderboard() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received leaderboard packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    std::vector<std::pair<std::string, std::string>> leaderboardData;
+    for (size_t i = 0; i < payload.size(); i += 16) {
+        if (i + 16 > payload.size()) break;
+        std::string username, scoreStr;
+        size_t j = 0;
+        for (; j < 8; ++j) {
+            char c = static_cast<char>(payload.at(i + j) & 0xFF);
+            if (c != '\0')
+                username += c;
+        }
+        for (; j < 16; ++j) {
+            char c = static_cast<char>(payload.at(i + j) & 0xFF);
+            if (c != '\0')
+                scoreStr += c;
+        }
+        if (!scoreStr.empty()) {
+            leaderboardData.emplace_back(username, scoreStr);
+        }
+    }
+    _leaderboardData = leaderboardData;
+    _leaderboardDataUpdated = true;
+}
+
+void ClientNetwork::handleRegisterFail() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received register fail packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    std::string errorMessage;
+    for (size_t i = 0; i < payload.size() && payload.at(i) != '\0'; ++i) {
+        char c = static_cast<char>(payload.at(i) & 0xFF);
+        errorMessage += c;
+    }
+
+    if (errorMessage.empty()) {
+        errorMessage = "Registration failed";
+    }
+
+    if (_resourceManager) {
+        _resourceManager->add<std::string>(std::make_shared<std::string>(errorMessage));
+    }
+
+    this->_expectingRegisterResponse = false;
+}
+
+void ClientNetwork::handleProfile() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received profile packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    std::vector<std::string> profileData;
+    for (size_t i = 0; i < payload.size(); i += 8) {
+        if (i + 8 > payload.size()) break;
+        std::string field;
+        for (size_t j = 0; j < 8; ++j) {
+            char c = static_cast<char>(payload.at(i + j) & 0xFF);
+            if (c != '\0')
+                field += c;
+        }
+        profileData.push_back(field);
+    }
+    _profileData = profileData;
+    _profileDataUpdated = true;
+    this->_expectingProfileResponse = false;
 }

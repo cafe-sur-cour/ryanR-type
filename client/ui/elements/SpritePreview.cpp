@@ -229,7 +229,7 @@ void SpritePreview::renderAnimation() {
         float scaleY = absSize.getY() / _animationData.frameSize.getY();
 
         int currentFrameIndex = static_cast<int>(_currentFrame);
-        float frameX = currentFrameIndex * _animationData.frameSize.getX();
+        float frameX = static_cast<float>(currentFrameIndex) * _animationData.frameSize.getX();
         float frameY = 0.0f;
         math::FRect frameRect(
             frameX, frameY, _animationData.frameSize.getX(), _animationData.frameSize.getY());

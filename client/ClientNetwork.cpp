@@ -77,6 +77,9 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_LOBBY_CONNECT_VALUE] =
         &ClientNetwork::handleLobbyConnectValue;
     _packetHandlers[constants::PACKET_CONNECT_USER] = &ClientNetwork::handleConnectUser;
+    _packetHandlers[constants::PACKET_LEADERBOARD] = &ClientNetwork::handleLeaderboard;
+    _packetHandlers[constants::PACKET_REGISTER_FAIL] = &ClientNetwork::handleRegisterFail;
+    _packetHandlers[constants::PACKET_PROFILE] = &ClientNetwork::handleProfile;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
@@ -137,6 +140,8 @@ void ClientNetwork::connect() {
     this->_connectionAttemptTime = std::chrono::steady_clock::now();
     this->_shouldConnect = true;
     if (this->_network->getConnectionState() == net::ConnectionState::DISCONNECTED) {
+        this->_idClient = 0;
+        this->_sequenceNumber = 0;
         debug::Debug::printDebug(this->_isDebug,
             "Attempting to connect to server...",
             debug::debugType::NETWORK,
@@ -154,6 +159,8 @@ void ClientNetwork::stop() {
     this->_isConnected = false;
     this->_ready = false;
     this->_shouldConnect = false;
+    this->_idClient = 0;
+    this->_sequenceNumber = 0;
 }
 
 uint16_t ClientNetwork::getPort() const {
@@ -293,7 +300,6 @@ void ClientNetwork::start() {
                 std::chrono::steady_clock::now() - this->_connectionAttemptTime).count() >
                 constants::CONNECTION_ATTEMPT_TIMEOUT) {
             this->_shouldConnect = false;
-            this->_network->setConnectionState(net::ConnectionState::DISCONNECTED);
             debug::Debug::printDebug(this->_isDebug,
                 "Connection attempt timed out after " +
                 std::to_string(constants::CONNECTION_ATTEMPT_TIMEOUT) + " seconds",
@@ -301,7 +307,6 @@ void ClientNetwork::start() {
                 debug::debugLevel::ERROR);
             auto mainMenuState =
                 std::make_shared<gsm::MainMenuState>(this->_gsm, this->_resourceManager);
-            this->_gsm->changeState(mainMenuState);
         }
 
         std::vector<uint8_t> receivedData = this->_network->receiveFrom(this->_idClient);
@@ -364,4 +369,29 @@ void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
     std::lock_guard<std::mutex> lock(this->_queueMutex);
     this->_eventQueue.push(event);
     this->_queueCond.notify_one();
+}
+
+const std::vector<std::pair<std::string, std::string>>&
+    ClientNetwork::getLeaderboardData() const {
+    return _leaderboardData;
+}
+
+bool ClientNetwork::isLeaderboardDataUpdated() const {
+    return _leaderboardDataUpdated;
+}
+
+void ClientNetwork::clearLeaderboardDataUpdateFlag() {
+    _leaderboardDataUpdated = false;
+}
+
+const std::vector<std::string>& ClientNetwork::getProfileData() const {
+    return _profileData;
+}
+
+bool ClientNetwork::isProfileDataUpdated() const {
+    return _profileDataUpdated;
+}
+
+void ClientNetwork::clearProfileDataUpdateFlag() {
+    _profileDataUpdated = false;
 }
