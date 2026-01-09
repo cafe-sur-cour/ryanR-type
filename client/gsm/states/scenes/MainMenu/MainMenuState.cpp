@@ -141,6 +141,7 @@ MainMenuState::MainMenuState(
         }
     });
     _usernameButton->setOnActivated([this]() {
+        this->_resourceManager->get<ClientNetwork>()->sendRequestProfilePacket();
         if (auto stateMachine = this->_gsm.lock()) {
             stateMachine->requestStatePush(std::make_shared<ProfileState>(stateMachine,
                 this->_resourceManager));

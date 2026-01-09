@@ -79,6 +79,7 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_CONNECT_USER] = &ClientNetwork::handleConnectUser;
     _packetHandlers[constants::PACKET_LEADERBOARD] = &ClientNetwork::handleLeaderboard;
     _packetHandlers[constants::PACKET_REGISTER_FAIL] = &ClientNetwork::handleRegisterFail;
+    _packetHandlers[constants::PACKET_PROFILE] = &ClientNetwork::handleProfile;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
@@ -372,7 +373,8 @@ void ClientNetwork::addToEventQueue(const NetworkEvent &event) {
     this->_queueCond.notify_one();
 }
 
-const std::vector<std::pair<std::string, std::string>>& ClientNetwork::getLeaderboardData() const {
+const std::vector<std::pair<std::string, std::string>>&
+    ClientNetwork::getLeaderboardData() const {
     return _leaderboardData;
 }
 
@@ -382,4 +384,16 @@ bool ClientNetwork::isLeaderboardDataUpdated() const {
 
 void ClientNetwork::clearLeaderboardDataUpdateFlag() {
     _leaderboardDataUpdated = false;
+}
+
+const std::vector<std::string>& ClientNetwork::getProfileData() const {
+    return _profileData;
+}
+
+bool ClientNetwork::isProfileDataUpdated() const {
+    return _profileDataUpdated;
+}
+
+void ClientNetwork::clearProfileDataUpdateFlag() {
+    _profileDataUpdated = false;
 }

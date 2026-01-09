@@ -84,10 +84,15 @@ class ClientNetwork {
         void sendRegisterPacket(const std::string &username, const std::string &password);
         void sendLoginPacket(const std::string &username, const std::string &password);
         void sendRequestLeaderboardPacket();
+        void sendRequestProfilePacket();
 
         const std::vector<std::pair<std::string, std::string>>& getLeaderboardData() const;
         bool isLeaderboardDataUpdated() const;
         void clearLeaderboardDataUpdateFlag();
+
+        const std::vector<std::string>& getProfileData() const;
+        bool isProfileDataUpdated() const;
+        void clearProfileDataUpdateFlag();
 
         const std::string& getRegisterErrorMessage() const;
         bool isExpectingRegisterResponse() const;
@@ -146,6 +151,7 @@ class ClientNetwork {
         void handleLobbyConnectValue();
         void handleConnectUser();
         void handleLeaderboard();
+        void handleProfile();
         void handleRegisterFail();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
@@ -192,6 +198,7 @@ class ClientNetwork {
         std::vector<std::string> _clientNames;
         bool _isDebug;
         bool _expectingLoginResponse = false;
+        bool _expectingProfileResponse = false;
         bool _expectingRegisterResponse = false;
 
 
@@ -209,6 +216,8 @@ class ClientNetwork {
 
         std::vector<std::pair<std::string, std::string>> _leaderboardData;
         bool _leaderboardDataUpdated = false;
+        std::vector<std::string> _profileData;
+        bool _profileDataUpdated = false;
 
         std::chrono::steady_clock::time_point _connectionAttemptTime;
 };

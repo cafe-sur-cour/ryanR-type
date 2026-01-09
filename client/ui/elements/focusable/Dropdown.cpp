@@ -302,16 +302,20 @@ math::Vector2f Dropdown::getOptionPosition(size_t optionIndex) const {
     switch (_direction) {
         case DropdownDirection::Down:
             return {basePos.getX(), basePos.getY() + size.getY() +
-                OPTION_SPACING + (size.getY() + OPTION_SPACING) * static_cast<float>(optionIndex)};
+                OPTION_SPACING + (size.getY() + OPTION_SPACING) *
+                    static_cast<float>(optionIndex)};
         case DropdownDirection::Up:
             return {basePos.getX(), basePos.getY() - size.getY() -
-                OPTION_SPACING - (size.getY() + OPTION_SPACING) * static_cast<float>(optionIndex)};
+                OPTION_SPACING - (size.getY() + OPTION_SPACING) *
+                    static_cast<float>(optionIndex)};
         case DropdownDirection::Right:
             return {basePos.getX() + size.getX() + OPTION_SPACING +
-                (size.getX() + OPTION_SPACING) * static_cast<float>(optionIndex), basePos.getY()};
+                (size.getX() + OPTION_SPACING) *
+                    static_cast<float>(optionIndex), basePos.getY()};
         case DropdownDirection::Left:
             return {basePos.getX() - size.getX() - OPTION_SPACING -
-                (size.getX() + OPTION_SPACING) * static_cast<float>(optionIndex), basePos.getY()};
+                (size.getX() + OPTION_SPACING) *
+                    static_cast<float>(optionIndex), basePos.getY()};
         default:
             return basePos;
     }

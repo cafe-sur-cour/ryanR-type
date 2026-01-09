@@ -6,11 +6,15 @@
 */
 
 #include "LeaderboardState.hpp"
+
 #include <memory>
 #include <string>
 #include <fstream>
-#include <nlohmann/json.hpp>
 #include <algorithm>
+#include <utility>
+#include <vector>
+#include <nlohmann/json.hpp>
+
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/constants.hpp"
@@ -181,7 +185,14 @@ void LeaderboardState::loadLeaderboardData() {
     }
 
     try {
-        nlohmann::json usersData = utils::SecureJsonManager::readSecureJson("saves/users.json");
+        nlohmann::json usersData;
+        std::ifstream file("saves/users.json");
+        if (file.is_open()) {
+            file >> usersData;
+            file.close();
+        } else {
+            return;
+        }
         if (!usersData.is_array()) {
             return;
         }
@@ -196,7 +207,8 @@ void LeaderboardState::loadLeaderboardData() {
         }
 
         std::sort(leaderboard.begin(), leaderboard.end(),
-            [](const std::pair<std::string, std::string>& a, const std::pair<std::string, std::string>& b) {
+            [](const std::pair<std::string, std::string>& a,
+                const std::pair<std::string, std::string>& b) {
                 try {
                     return std::stoi(a.second) > std::stoi(b.second);
                 } catch (const std::exception&) {

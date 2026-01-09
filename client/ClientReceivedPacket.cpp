@@ -554,10 +554,32 @@ void ClientNetwork::handleRegisterFail() {
         errorMessage = "Registration failed";
     }
 
-    // Set the error message in the resource manager for the register state to pick up
     if (_resourceManager) {
         _resourceManager->add<std::string>(std::make_shared<std::string>(errorMessage));
     }
 
     this->_expectingRegisterResponse = false;
+}
+
+void ClientNetwork::handleProfile() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received profile packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    std::vector<std::string> profileData;
+    for (size_t i = 0; i < payload.size(); i += 8) {
+        if (i + 8 > payload.size()) break;
+        std::string field;
+        for (size_t j = 0; j < 8; ++j) {
+            char c = static_cast<char>(payload.at(i + j) & 0xFF);
+            if (c != '\0')
+                field += c;
+        }
+        profileData.push_back(field);
+    }
+    _profileData = profileData;
+    _profileDataUpdated = true;
+    this->_expectingProfileResponse = false;
 }

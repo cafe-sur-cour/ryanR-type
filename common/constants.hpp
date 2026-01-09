@@ -281,8 +281,10 @@ namespace constants {
     constexpr std::uint8_t PACKET_REQUEST_LEADERBOARD = 0x1A;
     constexpr std::uint8_t PACKET_LEADERBOARD = 0x1B;
     constexpr std::uint8_t PACKET_REGISTER_FAIL = 0x1C;
+    constexpr std::uint8_t PACKET_REQUEST_PROFILE = 0x1D;
+    constexpr std::uint8_t PACKET_PROFILE = 0x1E;
 
-    const int MAX_INDEX_PACKET_TYPE = 29;
+    const int MAX_INDEX_PACKET_TYPE = 31;
     const int MAX_CLIENT_PER_LOBBY = 4;
 
     /* Scripting constant */
