@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <string>
 #include <utility>
+#include <algorithm>
 #include "../../../../colors.hpp"
 #include "../../../../../common/ECS/entity/Entity.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
@@ -34,8 +35,6 @@
 #include "../../../../systems/audio/SoundSystem.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
-#include "../../../../../common/systems/shooting/ShootingSystem.hpp"
-#include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
 #include "../../../../systems/effects/ClientEffectCleanupSystem.hpp"
@@ -57,6 +56,7 @@
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../../common/components/permanent/HealthComponent.hpp"
+#include "../../../../../common/components/permanent/ChargedShotComponent.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
 
@@ -168,6 +168,9 @@ void InGameState::renderHUD() {
     int score = 0;
     float health = 0.0f;
     float maxHealth = 0.0f;
+    float shotCharge = 0.0f;
+    float maxShotCharge = 0.0f;
+
     auto view = _registry->view<ecs::PlayerTag, ecs::LocalPlayerTag>();
     for (auto entity : view) {
         if (_registry->hasComponent<ecs::ScoreComponent>(entity)) {
@@ -178,6 +181,11 @@ void InGameState::renderHUD() {
             auto healthComp = _registry->getComponent<ecs::HealthComponent>(entity);
             health = healthComp->getHealth();
             maxHealth = healthComp->getBaseHealth();
+        }
+        if (_registry->hasComponent<ecs::ChargedShotComponent>(entity)) {
+            auto chargeComp = _registry->getComponent<ecs::ChargedShotComponent>(entity);
+            shotCharge = (std::max)(chargeComp->getCharge(), 0.0f);
+            maxShotCharge = chargeComp->getMaxCharge();
         }
         break;
     }
@@ -204,6 +212,7 @@ void InGameState::renderHUD() {
 
     drawHealthHUD(window, health, maxHealth);
     drawScoreHUD(window, score);
+    drawShotChargeHUD(window, shotCharge, maxShotCharge);
 
     window->setViewCenter(currentCenter.getX(), currentCenter.getY());
 }
@@ -301,6 +310,56 @@ void InGameState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) 
             constants::MAIN_FONT, 28
         );
     }
+}
+
+void InGameState::drawShotChargeHUD(
+    std::shared_ptr<gfx::IWindow> window,
+    float shotCharge,
+    float maxShotCharge
+) {
+    size_t barX = 380;
+    size_t barY = static_cast<size_t>(constants::MAX_HEIGHT - 35);
+    float barWidth = 200.0f;
+    size_t barHeight = 20;
+    size_t textOffsetY = 35;
+
+    std::stringstream chargeSs;
+    chargeSs << "ChargedShot: " << static_cast<int>(
+        shotCharge / (std::max)(0.0f, maxShotCharge) * 100
+    ) << "%";
+    std::string chargeText = chargeSs.str();
+
+    float chargeRatio = (maxShotCharge > 0.0f) ? shotCharge / maxShotCharge : 0.0f;
+    uint8_t red = static_cast<uint8_t>((1.0f - chargeRatio) * 255.0f);
+    uint8_t green = static_cast<uint8_t>(chargeRatio * 255.0f);
+    gfx::color_t barColor = {red, green, 0, 255};
+
+    std::pair<size_t, size_t> barPosition = {barX, barY};
+
+    std::pair<size_t, size_t> barSize = {
+        static_cast<size_t>(barWidth * chargeRatio),
+        barHeight
+    };
+
+    window->drawRoundedRectangleFilled(
+        colors::BLACK, barPosition, {static_cast<size_t>(barWidth), barHeight}, 5.0f
+    );
+    window->drawRoundedRectangleFilled(
+        barColor, barPosition, barSize, 5.0f
+    );
+    window->drawRoundedRectangleOutline(
+        colors::WHITE, barPosition, {static_cast<size_t>(barWidth), barHeight}, 5.0f
+    );
+
+    std::pair<size_t, size_t> chargeTextPosition = {
+        barX,
+        static_cast<size_t>(barY - textOffsetY)
+    };
+
+    window->drawText(
+        chargeText, colors::WHITE, chargeTextPosition,
+        constants::MAIN_FONT, 20, colors::BLACK, 1.0f
+    );
 }
 
 void InGameState::exit() {
