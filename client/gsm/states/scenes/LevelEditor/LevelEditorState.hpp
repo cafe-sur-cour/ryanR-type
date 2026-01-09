@@ -243,7 +243,6 @@ private:
     std::shared_ptr<ui::Text> _waveTriggerXLabel;
     std::shared_ptr<ui::TextInput> _waveTriggerXInput;
 
-    // Enemy UI elements
     std::shared_ptr<ui::Text> _enemyLabel;
     std::shared_ptr<ui::Text> _enemyIndexLabel;
     std::shared_ptr<ui::Button> _enemyPrevButton;
