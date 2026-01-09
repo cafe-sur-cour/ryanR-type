@@ -29,21 +29,21 @@ void LevelEditorState::parsePowerUps() {
     const auto& powerUps = _levelData[constants::LEVEL_POWER_UPS_FIELD];
 
     for (const auto& powerUp : powerUps) {
-        if (!powerUp.contains(constants::POWERUP_NAME_FIELD)) {
+        if (!powerUp.contains(constants::NAME_FIELD)) {
             continue;
         }
         std::string powerUpName =
-            powerUp[constants::POWERUP_NAME_FIELD].get<std::string>();
+            powerUp[constants::NAME_FIELD].get<std::string>();
 
         if (_powerUpsByName.find(powerUpName) == _powerUpsByName.end()) {
             _powerUpsByName[powerUpName] = std::vector<PowerUpData>();
         }
 
-        if (!powerUp.contains(constants::POWERUP_POSITION_FIELD)) {
+        if (!powerUp.contains(constants::POSITION_FIELD)) {
             continue;
         }
 
-        const auto& position = powerUp[constants::POWERUP_POSITION_FIELD];
+        const auto& position = powerUp[constants::POSITION_FIELD];
 
         if (!position.contains(constants::POSX_FIELD) ||
             !position.contains(constants::POSY_FIELD)) {
@@ -137,13 +137,13 @@ void LevelEditorState::savePowerUps() {
     for (const auto& [prefabName, powerUpVec] : _powerUpsByName) {
         for (const auto& powerUp : powerUpVec) {
             nlohmann::json powerUpEntry;
-            powerUpEntry[constants::POWERUP_NAME_FIELD] = prefabName;
+            powerUpEntry[constants::NAME_FIELD] = prefabName;
 
             nlohmann::json position;
             position[constants::POSX_FIELD] = powerUp.posX;
             position[constants::POSY_FIELD] = powerUp.posY;
 
-            powerUpEntry[constants::POWERUP_POSITION_FIELD] = position;
+            powerUpEntry[constants::POSITION_FIELD] = position;
             powerUpsArray.push_back(powerUpEntry);
         }
     }

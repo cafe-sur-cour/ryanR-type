@@ -28,42 +28,42 @@ void LevelEditorState::parseWaves() {
     for (const auto& waveJson : wavesArray) {
         Wave wave;
 
-        if (!waveJson.contains(constants::WAVE_GAMEX_TRIGGER_FIELD)) {
+        if (!waveJson.contains(constants::GAMEXTRIGGER_FIELD)) {
             continue;
         }
-        wave.gameXTrigger = waveJson[constants::WAVE_GAMEX_TRIGGER_FIELD].get<float>();
+        wave.gameXTrigger = waveJson[constants::GAMEXTRIGGER_FIELD].get<float>();
 
-        if (waveJson.contains(constants::WAVE_ENEMIES_FIELD) &&
-            waveJson[constants::WAVE_ENEMIES_FIELD].is_array()) {
-            const auto& enemiesArray = waveJson[constants::WAVE_ENEMIES_FIELD];
+        if (waveJson.contains(constants::ENEMIES_FIELD) &&
+            waveJson[constants::ENEMIES_FIELD].is_array()) {
+            const auto& enemiesArray = waveJson[constants::ENEMIES_FIELD];
 
             for (const auto& enemyJson : enemiesArray) {
                 WaveEnemy enemy;
 
-                if (!enemyJson.contains(constants::WAVE_ENEMY_TYPE_FIELD)) {
+                if (!enemyJson.contains(constants::TYPE_FIELD)) {
                     continue;
                 }
-                enemy.type = enemyJson[constants::WAVE_ENEMY_TYPE_FIELD].get<std::string>();
-                enemy.count = enemyJson.value(constants::WAVE_ENEMY_COUNT_FIELD, 1);
+                enemy.type = enemyJson[constants::TYPE_FIELD].get<std::string>();
+                enemy.count = enemyJson.value(constants::COUNT_FIELD, 1);
 
-                if (enemyJson.contains(constants::WAVE_DISTRIBUTION_X_FIELD)) {
-                    const auto& distX = enemyJson[constants::WAVE_DISTRIBUTION_X_FIELD];
+                if (enemyJson.contains(constants::DISTRIBUTIONX_FIELD)) {
+                    const auto& distX = enemyJson[constants::DISTRIBUTIONX_FIELD];
                     enemy.distributionX.min =
-                        distX.value(constants::WAVE_DISTRIBUTION_MIN_FIELD, 0.0f);
+                        distX.value(constants::MIN_FIELD, 0.0f);
                     enemy.distributionX.max =
-                        distX.value(constants::WAVE_DISTRIBUTION_MAX_FIELD, 100.0f);
+                        distX.value(constants::MAX_FIELD, 100.0f);
                     enemy.distributionX.type =
-                        distX.value(constants::WAVE_DISTRIBUTION_TYPE_FIELD, "uniform");
+                        distX.value(constants::TYPE_FIELD, "uniform");
                 }
 
-                if (enemyJson.contains(constants::WAVE_DISTRIBUTION_Y_FIELD)) {
-                    const auto& distY = enemyJson[constants::WAVE_DISTRIBUTION_Y_FIELD];
+                if (enemyJson.contains(constants::DISTRIBUTIONY_FIELD)) {
+                    const auto& distY = enemyJson[constants::DISTRIBUTIONY_FIELD];
                     enemy.distributionY.min =
-                        distY.value(constants::WAVE_DISTRIBUTION_MIN_FIELD, 0.0f);
+                        distY.value(constants::MIN_FIELD, 0.0f);
                     enemy.distributionY.max =
-                        distY.value(constants::WAVE_DISTRIBUTION_MAX_FIELD, 100.0f);
+                        distY.value(constants::MAX_FIELD, 100.0f);
                     enemy.distributionY.type =
-                        distY.value(constants::WAVE_DISTRIBUTION_TYPE_FIELD, "uniform");
+                        distY.value(constants::TYPE_FIELD, "uniform");
                 }
 
                 wave.enemies.push_back(enemy);
@@ -262,29 +262,29 @@ void LevelEditorState::saveWaves() {
 
     for (const auto& wave : _waves) {
         nlohmann::json waveJson;
-        waveJson[constants::WAVE_GAMEX_TRIGGER_FIELD] = wave.gameXTrigger;
+        waveJson[constants::GAMEXTRIGGER_FIELD] = wave.gameXTrigger;
 
         nlohmann::json enemiesArray = nlohmann::json::array();
         for (const auto& enemy : wave.enemies) {
             nlohmann::json enemyJson;
-            enemyJson[constants::WAVE_ENEMY_TYPE_FIELD] = enemy.type;
-            enemyJson[constants::WAVE_ENEMY_COUNT_FIELD] = enemy.count;
+            enemyJson[constants::TYPE_FIELD] = enemy.type;
+            enemyJson[constants::COUNT_FIELD] = enemy.count;
 
             nlohmann::json distX;
-            distX[constants::WAVE_DISTRIBUTION_MIN_FIELD] = enemy.distributionX.min;
-            distX[constants::WAVE_DISTRIBUTION_MAX_FIELD] = enemy.distributionX.max;
-            distX[constants::WAVE_DISTRIBUTION_TYPE_FIELD] = enemy.distributionX.type;
-            enemyJson[constants::WAVE_DISTRIBUTION_X_FIELD] = distX;
+            distX[constants::MIN_FIELD] = enemy.distributionX.min;
+            distX[constants::MAX_FIELD] = enemy.distributionX.max;
+            distX[constants::TYPE_FIELD] = enemy.distributionX.type;
+            enemyJson[constants::DISTRIBUTIONX_FIELD] = distX;
 
             nlohmann::json distY;
-            distY[constants::WAVE_DISTRIBUTION_MIN_FIELD] = enemy.distributionY.min;
-            distY[constants::WAVE_DISTRIBUTION_MAX_FIELD] = enemy.distributionY.max;
-            distY[constants::WAVE_DISTRIBUTION_TYPE_FIELD] = enemy.distributionY.type;
-            enemyJson[constants::WAVE_DISTRIBUTION_Y_FIELD] = distY;
+            distY[constants::MIN_FIELD] = enemy.distributionY.min;
+            distY[constants::MAX_FIELD] = enemy.distributionY.max;
+            distY[constants::TYPE_FIELD] = enemy.distributionY.type;
+            enemyJson[constants::DISTRIBUTIONY_FIELD] = distY;
 
             enemiesArray.push_back(enemyJson);
         }
-        waveJson[constants::WAVE_ENEMIES_FIELD] = enemiesArray;
+        waveJson[constants::ENEMIES_FIELD] = enemiesArray;
 
         wavesArray.push_back(waveJson);
     }
