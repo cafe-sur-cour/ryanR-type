@@ -1,9 +1,6 @@
 {
     "solid": {
         "allow": [
-            [["PlayerTag"], ["MobTag"]],
-            [["MobTag"], ["PlayerTag"]],
-
             [["PlayerTag"], ["ObstacleTag"]],
             [["ObstacleTag"], ["PlayerTag"]],
 
