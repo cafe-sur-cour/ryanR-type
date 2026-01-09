@@ -12,6 +12,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ShootingStatsComponent.hpp"
@@ -146,21 +147,17 @@ void ShootingSystem::spawnProjectile(
     auto damageComp = registry->getComponent<DamageComponent>(projectileEntity);
     auto transformComp = registry->getComponent<TransformComponent>(projectileEntity);
     if (chargeComp && damageComp) {
-        float charge = chargeComp->getCharge();
+        float charge = (std::max)(chargeComp->getCharge(), 0.0f);
         float maxCharge = chargeComp->getMaxCharge();
-        float multCharge = charge / maxCharge;
-        float baseDamage = damageComp->getDamage();
-        damageComp->setDamage(baseDamage + baseDamage * multCharge);
+        float multCharge = charge / maxCharge + 1;
 
-        chargeComp->setCharge(0.0f);
+        damageComp->setDamage(damageComp->getDamage() * multCharge);
+
+        chargeComp->setCharge(0.0f - chargeComp->getReloadTime());
 
         if (transformComp) {
             auto scale = transformComp->getScale();
-            float scaleX = scale.getX();
-            float scaleY = scale.getY();
-            transformComp->setScale(
-                {scaleX + scaleX * multCharge, scaleY + scaleY * multCharge}
-            );
+            transformComp->setScale({scale.getX() * multCharge, scale.getY() * multCharge});
         }
     }
 }
