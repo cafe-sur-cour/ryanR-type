@@ -659,9 +659,9 @@ std::vector<std::string> LevelEditorState::loadAvailableMusics() {
                 file >> musicData;
                 file.close();
 
-                if (musicData.contains(constants::LEVEL_NAME_FIELD) &&
-                    musicData[constants::LEVEL_NAME_FIELD].is_string()) {
-                    std::string musicName = musicData[constants::LEVEL_NAME_FIELD];
+                if (musicData.contains(constants::NAME_FIELD) &&
+                    musicData[constants::NAME_FIELD].is_string()) {
+                    std::string musicName = musicData[constants::NAME_FIELD];
                     musics.push_back(musicName);
                 }
             } catch (const std::exception&) {
@@ -690,9 +690,9 @@ std::vector<std::string> LevelEditorState::loadAvailableBackgrounds() {
                 file >> backgroundData;
                 file.close();
 
-                if (backgroundData.contains(constants::LEVEL_NAME_FIELD) &&
-                    backgroundData[constants::LEVEL_NAME_FIELD].is_string()) {
-                    std::string backgroundName = backgroundData[constants::LEVEL_NAME_FIELD];
+                if (backgroundData.contains(constants::NAME_FIELD) &&
+                    backgroundData[constants::NAME_FIELD].is_string()) {
+                    std::string backgroundName = backgroundData[constants::NAME_FIELD];
                     backgrounds.push_back(backgroundName);
                 }
             } catch (const std::exception&) {
@@ -721,9 +721,9 @@ std::vector<std::string> LevelEditorState::loadAvailableObstacles() {
                 file >> obstacleData;
                 file.close();
 
-                if (obstacleData.contains(constants::LEVEL_NAME_FIELD) &&
-                    obstacleData[constants::LEVEL_NAME_FIELD].is_string()) {
-                    std::string obstacleName = obstacleData[constants::LEVEL_NAME_FIELD];
+                if (obstacleData.contains(constants::NAME_FIELD) &&
+                    obstacleData[constants::NAME_FIELD].is_string()) {
+                    std::string obstacleName = obstacleData[constants::NAME_FIELD];
                     obstacles.push_back(obstacleName);
                 }
             } catch (const std::exception&) {
@@ -752,9 +752,9 @@ std::vector<std::string> LevelEditorState::loadAvailablePowerUps() {
                 file >> powerUpData;
                 file.close();
 
-                if (powerUpData.contains(constants::LEVEL_NAME_FIELD) &&
-                    powerUpData[constants::LEVEL_NAME_FIELD].is_string()) {
-                    std::string powerUpName = powerUpData[constants::LEVEL_NAME_FIELD];
+                if (powerUpData.contains(constants::NAME_FIELD) &&
+                    powerUpData[constants::NAME_FIELD].is_string()) {
+                    std::string powerUpName = powerUpData[constants::NAME_FIELD];
                     powerUps.push_back(powerUpName);
                 }
             } catch (const std::exception&) {
@@ -783,9 +783,9 @@ std::vector<std::string> LevelEditorState::loadAvailableEnemies() {
                 file >> enemyData;
                 file.close();
 
-                if (enemyData.contains(constants::LEVEL_NAME_FIELD) &&
-                    enemyData[constants::LEVEL_NAME_FIELD].is_string()) {
-                    std::string enemyName = enemyData[constants::LEVEL_NAME_FIELD];
+                if (enemyData.contains(constants::NAME_FIELD) &&
+                    enemyData[constants::NAME_FIELD].is_string()) {
+                    std::string enemyName = enemyData[constants::NAME_FIELD];
                     enemies.push_back(enemyName);
                 }
             } catch (const std::exception&) {
@@ -822,7 +822,7 @@ void LevelEditorState::createUI() {
         std::string mapLengthStr = _mapLengthInput->getText();
         std::string scrollSpeedStr = _scrollSpeedInput->getText();
 
-        _levelData[constants::LEVEL_NAME_FIELD] = levelName;
+        _levelData[constants::NAME_FIELD] = levelName;
 
         try {
             float mapLength = std::stof(mapLengthStr);
@@ -885,13 +885,13 @@ void LevelEditorState::createUI() {
     _levelNameInput = std::make_shared<ui::TextInput>(_resourceManager);
     _levelNameInput->setPosition(math::Vector2f(10.0f, currentY));
     _levelNameInput->setSize(math::Vector2f(sidePanelWidth - 25.0f, 30.0f));
-    _levelNameInput->setText(_levelData.value(constants::LEVEL_NAME_FIELD, "New Level"));
+    _levelNameInput->setText(_levelData.value(constants::NAME_FIELD, "New Level"));
     _levelNameInput->setPlaceholder("Enter level name...");
     _levelNameInput->setOnTextChanged([this](const std::string& text) {
         if (_isLoadingFromHistory) {
             return;
         }
-        _levelData[constants::LEVEL_NAME_FIELD] = text;
+        _levelData[constants::NAME_FIELD] = text;
         _hasPendingChange = true;
         _lastChangeTime = 0.0f;
         _hasUnsavedChanges = true;
@@ -3022,7 +3022,7 @@ void LevelEditorState::loadFromHistory(size_t index) {
     _levelData = _history[index];
     _currentHistoryIndex = index;
 
-    _levelNameInput->setText(_levelData.value(constants::LEVEL_NAME_FIELD, "New Level"));
+    _levelNameInput->setText(_levelData.value(constants::NAME_FIELD, "New Level"));
     _mapLengthInput->setText(std::to_string(
         static_cast<int>(_levelData.value(constants::LEVEL_MAP_LENGTH_FIELD, 0.0))));
     _scrollSpeedInput->setText(std::to_string(
