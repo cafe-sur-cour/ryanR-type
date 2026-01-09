@@ -262,7 +262,8 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
         this->_network,
         _clientInfo,
         lobbyCode,
-        this->_config->getIsDebug()
+        this->_config->getIsDebug(),
+        this->_config->getTps()
     ));
     auto lobby = this->_lobbies.back();
     for (const auto& client : _clientInfo) {
