@@ -108,7 +108,8 @@
         "EntityPartsComponent": { "target": "both" },
         "ChargedShotComponent": {
             "target": "both",
-            "maxCharge": 2.0
+            "maxCharge": 2.0,
+            "chargeReloadTime": 1.0
         }
     }
 }
