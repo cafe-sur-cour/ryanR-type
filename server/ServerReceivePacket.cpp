@@ -275,14 +275,8 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
                 "[SERVER] Registration failed: Username already exists",
                 debug::debugType::NETWORK, debug::debugLevel::WARNING);
 
-            std::vector<uint64_t> payload;
-            std::string errorStr = "Username already exists";
-            for (char c : errorStr) {
-                payload.push_back(static_cast<uint64_t>(c));
-            }
-            payload.push_back(0); // null terminator
             std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
-                this->_sequenceNumber++, constants::PACKET_REGISTER_FAIL, payload);
+                this->_sequenceNumber++, constants::PACKET_REGISTER_FAIL, {});
             this->_network->sendTo(*client.first, packet);
             return false;
         }

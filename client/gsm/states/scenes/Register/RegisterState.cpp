@@ -225,7 +225,6 @@ void RegisterState::update(float deltaTime) {
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
     }
 
-    // Check for register error from server
     if (_resourceManager->has<std::string>()) {
         auto error = _resourceManager->get<std::string>();
         _errorMessage->setText(*error);
