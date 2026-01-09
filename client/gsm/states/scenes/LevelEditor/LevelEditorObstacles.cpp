@@ -145,7 +145,7 @@ void LevelEditorState::renderAllObstacles(
         for (size_t hIdx = 0; hIdx < obstacleGroup.horizontalLines.size(); ++hIdx) {
             const auto& hLine = obstacleGroup.horizontalLines[hIdx];
             for (int i = 0; i < hLine.count; ++i) {
-                float worldX = hLine.fromX + (i * spriteData.width);
+                float worldX = hLine.fromX + (static_cast<float>(i) * spriteData.width);
                 float worldY = hLine.posY;
 
                 float screenX = levelX + (worldX * _viewportZoom);
@@ -162,7 +162,7 @@ void LevelEditorState::renderAllObstacles(
                 _selectedObstacle.value().index == static_cast<int>(hIdx)) {
                 float screenX = levelX + (hLine.fromX * _viewportZoom);
                 float screenY = levelY + (hLine.posY * _viewportZoom);
-                float totalWidth = hLine.count * scaledWidth;
+                float totalWidth = static_cast<float>(hLine.count) * scaledWidth;
                 float totalHeight = scaledHeight;
 
                 window->drawRectangleOutline(
@@ -180,7 +180,7 @@ void LevelEditorState::renderAllObstacles(
             const auto& vLine = obstacleGroup.verticalLines[vIdx];
             for (int i = 0; i < vLine.count; ++i) {
                 float worldX = vLine.posX;
-                float worldY = vLine.fromY + (i * spriteData.height);
+                float worldY = vLine.fromY + (static_cast<float>(i) * spriteData.height);
 
                 float screenX = levelX + (worldX * _viewportZoom);
                 float screenY = levelY + (worldY * _viewportZoom);
@@ -197,7 +197,7 @@ void LevelEditorState::renderAllObstacles(
                 float screenX = levelX + (vLine.posX * _viewportZoom);
                 float screenY = levelY + (vLine.fromY * _viewportZoom);
                 float totalWidth = scaledWidth;
-                float totalHeight = vLine.count * scaledHeight;
+                float totalHeight = static_cast<float>(vLine.count) * scaledHeight;
 
                 window->drawRectangleOutline(
                     lightBlue,
@@ -310,7 +310,7 @@ std::optional<ObstacleSelection> LevelEditorState::getObstacleAtPosition(
         for (size_t i = 0; i < obstacleGroup.horizontalLines.size(); ++i) {
             const auto& hLine = obstacleGroup.horizontalLines[i];
             for (int j = 0; j < hLine.count; ++j) {
-                float worldX = hLine.fromX + (j * spriteData.width);
+                float worldX = hLine.fromX + (static_cast<float>(j) * spriteData.width);
                 float worldY = hLine.posY;
                 float screenX = levelX + (worldX * _viewportZoom);
                 float screenY = levelY + (worldY * _viewportZoom);
@@ -326,7 +326,7 @@ std::optional<ObstacleSelection> LevelEditorState::getObstacleAtPosition(
             const auto& vLine = obstacleGroup.verticalLines[i];
             for (int j = 0; j < vLine.count; ++j) {
                 float worldX = vLine.posX;
-                float worldY = vLine.fromY + (j * spriteData.height);
+                float worldY = vLine.fromY + (static_cast<float>(j) * spriteData.height);
                 float screenX = levelX + (worldX * _viewportZoom);
                 float screenY = levelY + (worldY * _viewportZoom);
 
