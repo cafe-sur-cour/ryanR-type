@@ -37,6 +37,7 @@ namespace constants {
     const std::string WINS_JSON_WARD = "wins";
     const std::string HIGH_SCORE_JSON_WARD = "high_score";
     const std::string TIME_SPENT_JSON_WARD = "time_spent";
+    const std::string SCORE_JSON_WARD = "scores";
 }
 
 #endif /* !SERVER_CONSTANTS */

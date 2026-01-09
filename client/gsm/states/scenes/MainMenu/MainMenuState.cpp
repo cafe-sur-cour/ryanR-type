@@ -61,8 +61,6 @@ MainMenuState::MainMenuState(
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
             network->requestCode();
-        } else {
-            std::cout << "Cannot request code: Not connected to server" << std::endl;
         }
     });
 
@@ -262,8 +260,6 @@ MainMenuState::MainMenuState(
                 stateMachine->requestStatePush(std::make_shared<LeaderboardState>(stateMachine,
                     this->_resourceManager));
             }
-        } else {
-            std::cout << "Cannot request leaderboard: Not connected to server" << std::endl;
         }
     });
     _leaderboardButton->setOnActivated([this]() {
@@ -274,8 +270,6 @@ MainMenuState::MainMenuState(
                 stateMachine->requestStatePush(std::make_shared<LeaderboardState>(stateMachine,
                     this->_resourceManager));
             }
-        } else {
-            std::cout << "Cannot request leaderboard: Not connected to server" << std::endl;
         }
     });
 
