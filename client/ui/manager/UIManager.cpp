@@ -35,6 +35,15 @@ void UIManager::addElement(std::shared_ptr<UIElement> element) {
         if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
             _navigationManager->addFocusableElement(focusable);
         }
+        if (auto textInput = std::dynamic_pointer_cast<TextInput>(element)) {
+            textInput->setOnNavigate([this](bool up) {
+                if (up) {
+                    _navigationManager->handleNavigationInput(ecs::InputAction::MENU_UP);
+                } else {
+                    _navigationManager->handleNavigationInput(ecs::InputAction::MENU_DOWN);
+                }
+            });
+        }
 
         refreshNavigationElements();
     }
