@@ -79,7 +79,7 @@ namespace constants {
     const std::string COLLIDERCOMPONENT = "ColliderComponent";
     const std::string PARALLAXCOMPONENT = "ParallaxComponent";
     const std::string GAMEZONECOMPONENT = "GameZoneComponent";
-    const std::string CHARGECOMPONENT = "ChargeComponent";
+    const std::string CHARGEDSHOTCOMPONENT = "ChargedShotComponent";
 
     /* Fields */
     const std::string SCRIPT_PATH_FIELD = "scriptPath";
@@ -162,6 +162,8 @@ namespace constants {
     const std::string PAUSED_FIELD = "PAUSED";
     const std::string STOPPED_FIELD = "STOPPED";
     const std::string CHANGING_FIELD = "CHANGING";
+
+    const std::string MAXCHARGE_FIELD = "maxCharge";
 
     const std::string STRAIGHT_LINE_VALUE = "StraightLine";
     const std::string ZIGZAG_VALUE = "Zigzag";
