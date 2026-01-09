@@ -9,6 +9,8 @@
 #define SPAWNSYSTEM_HPP_
 
 #include "../base/ASystem.hpp"
+#include "../../CollisionRules/CollisionRules.hpp"
+#include "../../systems/interactions/TagRegistry.hpp"
 
 namespace ecs {
 
@@ -22,6 +24,20 @@ class SpawnSystem : public ASystem {
             std::shared_ptr<Registry> registry,
             float deltaTime
         ) override;
+
+    private:
+        bool isPositionFree(
+            Entity newEntity,
+            const math::Vector2f& position,
+            std::shared_ptr<Registry> registry
+        );
+
+        math::Vector2f findNearestFreePosition(
+            Entity newEntity,
+            const math::Vector2f& originalPosition,
+            std::shared_ptr<Registry> registry,
+            float stepSize = 10.0f
+        );
 };
 
 }
