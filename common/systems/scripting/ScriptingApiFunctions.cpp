@@ -18,6 +18,9 @@
 #include "../../components/permanent/EntityPartsComponent.hpp"
 #include "../../components/permanent/CompositeEntityComponent.hpp"
 #include "../../components/temporary/SpawnIntentComponent.hpp"
+#include "../../components/permanent/GameZoneComponent.hpp"
+#include "../../components/permanent/VelocityComponent.hpp"
+#include "../../components/permanent/SpeedComponent.hpp"
 #include "../../components/tags/PlayerTag.hpp"
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../ECS/view/View.hpp"
@@ -275,6 +278,51 @@ void ScriptingSystem::bindAPI() {
             }
         }
         return 0;
+    });
+
+    lua.set_function("restartGameZone",
+        [this]() {
+
+        auto gameZoneView = registry->view<GameZoneComponent, VelocityComponent>();
+        for (auto gameZoneEntity : gameZoneView) {
+            auto velocityComp = registry->getComponent<VelocityComponent>(gameZoneEntity);
+            if (velocityComp) {
+                velocityComp->setVelocity(math::Vector2f(100.0f , 0.0f));
+            }
+        }
+    });
+
+    lua.set_function("getGameZonePosition",
+        [this]() -> std::tuple<float, float> {
+        auto gameZoneView = registry->view<GameZoneComponent>();
+        for (auto gameZoneEntity : gameZoneView) {
+            auto gameZoneComp = registry->getComponent<GameZoneComponent>(gameZoneEntity);
+            auto zone = gameZoneComp->getZone();
+            return {zone.getLeft(), zone.getTop()};
+        }
+        return {0.0f, 0.0f};
+    });
+
+    lua.set_function("getGameZoneSize",
+        [this]() -> std::tuple<float, float> {
+        auto gameZoneView = registry->view<GameZoneComponent>();
+        for (auto gameZoneEntity : gameZoneView) {
+            auto gameZoneComp = registry->getComponent<GameZoneComponent>(gameZoneEntity);
+            auto zone = gameZoneComp->getZone();
+            return {zone.getWidth(), zone.getHeight()};
+        }
+        return {0.0f, 0.0f};
+    });
+
+    lua.set_function("getGameZoneVelocity",
+        [this]() -> std::tuple<float, float> {
+        auto gameZoneView = registry->view<GameZoneComponent, VelocityComponent>();
+        for (auto gameZoneEntity : gameZoneView) {
+            auto velocityComp = registry->getComponent<VelocityComponent>(gameZoneEntity);
+            auto vel = velocityComp->getVelocity();
+            return {vel.getX(), vel.getY()};
+        }
+        return {0.0f, 0.0f};
     });
 }
 
