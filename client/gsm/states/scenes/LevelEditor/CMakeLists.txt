@@ -1,7 +1,6 @@
 target_sources(${CLIENT_BIN_NAME} PRIVATE
     LevelEditorState.hpp
     LevelEditorState.cpp
-    LevelEditorUI.cpp
     LevelEditorRender.cpp
     LevelEditorHistory.cpp
     LevelEditorUtils.cpp
@@ -9,3 +8,5 @@ target_sources(${CLIENT_BIN_NAME} PRIVATE
     LevelEditorPowerup.cpp
     LevelEditorWaves.cpp
 )
+
+include(UI/CMakeLists.txt)

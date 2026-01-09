@@ -122,6 +122,12 @@ private:
     void renderUI();
     void createUI();
     void createBottomPanel();
+    void createBottomPanelBase();
+    void createEditorModeDropdown();
+    void createObstacleUI();
+    void createPowerUpUI();
+    void createWaveUI();
+    void createEnemyUI();
     void updateSaveButtonText();
     bool validateFields();
     std::vector<std::string> loadAvailableMusics();
