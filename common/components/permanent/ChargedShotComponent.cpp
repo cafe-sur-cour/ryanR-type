@@ -17,10 +17,12 @@ REGISTER_COMPONENT(
     constants::CHARGEDSHOTCOMPONENT,
     {
         Field(constants::TARGET_FIELD, FieldType::STRING),
-        Field(constants::MAXCHARGE_FIELD, FieldType::FLOAT)
+        Field(constants::MAXCHARGE_FIELD, FieldType::FLOAT),
+        Field(constants::CHARGERELOADTIME_FIELD, FieldType::FLOAT)
     },
     [](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) {
         auto maxCharge = std::get<float>(*fields.at(constants::MAXCHARGE_FIELD));
-        return std::make_shared<ecs::ChargedShotComponent>(0.0f, maxCharge);
+        auto chargeReloadTime = std::get<float>(*fields.at(constants::CHARGERELOADTIME_FIELD));
+        return std::make_shared<ecs::ChargedShotComponent>(0.0f, maxCharge, chargeReloadTime);
     }
 )
