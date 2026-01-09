@@ -23,9 +23,8 @@ namespace gsm {
 ResultsState::ResultsState(
     std::shared_ptr<IGameStateMachine> gsm,
     std::shared_ptr<ResourceManager> resourceManager,
-    bool isWin,
-    int score)
-    : AGameState(gsm, resourceManager), _isWin(isWin), _score(score) {
+    bool isWin)
+    : AGameState(gsm, resourceManager), _isWin(isWin) {
     _uiManager = std::make_unique<ui::UIManager>();
 }
 
@@ -79,7 +78,6 @@ void ResultsState::updateUserStats() {
     if (!config || config->getUsername().empty()) {
         return;
     }
-    (void)_score;
 }
 
 }  // namespace gsm

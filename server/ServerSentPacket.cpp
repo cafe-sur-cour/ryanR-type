@@ -12,6 +12,10 @@
 #include <utility>
 #include <thread>
 #include <chrono>
+#include <fstream>
+#include <algorithm>
+#include <nlohmann/json.hpp>
+
 #include "Server.hpp"
 #include "Constants.hpp"
 #include "Utils.hpp"
@@ -20,6 +24,7 @@
 #include "../common/ECS/entity/Entity.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/Parser/Parser.hpp"
+#include "../common/utils/SecureJsonManager.hpp"
 
 bool rserv::Server::connectionPacket(const net::INetworkEndpoint& endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
@@ -132,7 +137,6 @@ bool rserv::Server::serverStatusPacket() {
 }
 
 bool rserv::Server::sendCodeLobbyPacket(const net::INetworkEndpoint &endpoint) {
-    /* Create random code */
     std::string lobbyCode;
     bool isUnique = false;
     int maxAttempts = 20;
@@ -157,7 +161,7 @@ bool rserv::Server::sendCodeLobbyPacket(const net::INetworkEndpoint &endpoint) {
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
-    /* Pack */
+
     std::vector<uint64_t> payload = this->_packet->formatString(lobbyCode);
     std::vector<uint8_t> packet = this->_packet->pack(
         constants::ID_SERVER,
@@ -171,7 +175,6 @@ bool rserv::Server::sendCodeLobbyPacket(const net::INetworkEndpoint &endpoint) {
         " (attempt " + std::to_string(attempts) + ")",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
 
-    /* Send to requested client*/
     if (!this->_network->sendTo(endpoint, packet)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER NETWORK] Failed to send lobby code packet to " +
@@ -179,7 +182,7 @@ bool rserv::Server::sendCodeLobbyPacket(const net::INetworkEndpoint &endpoint) {
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
-    /* Add to lobby vector, code and client endpoint */
+
     auto newLobby = std::make_shared<LobbyStruct>();
     newLobby->_lobbyCode = lobbyCode;
     this->_lobbyThreads.push_back(newLobby);
@@ -237,6 +240,204 @@ bool rserv::Server::connectUserPacket(const net::INetworkEndpoint &endpoint,
     }
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "[SERVER] Sent CONNECT_USER packet to client with username: " + username,
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+    this->_sequenceNumber++;
+    return true;
+}
+
+bool rserv::Server::leaderboardPacket(const net::INetworkEndpoint &endpoint) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    const std::string filepath = constants::SCORES_JSON_PATH;
+
+    nlohmann::json scores;
+    std::ifstream scoresFile(filepath);
+    if (scoresFile.is_open()) {
+        try {
+            scoresFile >> scores;
+        } catch (const std::exception&) {
+            scores = nlohmann::json::object();
+        }
+        scoresFile.close();
+    } else {
+        scores = nlohmann::json::object();
+    }
+
+    if (!scores.is_object()) {
+        scores = nlohmann::json::object();
+    }
+
+    std::vector<std::pair<std::string, int>> leaderboard;
+    for (const auto& [username, userData] : scores.items()) {
+        if (userData.is_object() && userData.contains(constants::SCORE_JSON_WARD) &&
+            userData[constants::SCORE_JSON_WARD].is_array()) {
+            const auto& scoreArray = userData[constants::SCORE_JSON_WARD];
+            for (const auto& score : scoreArray) {
+                if (score.is_number()) {
+                    leaderboard.emplace_back(username, score.get<int>());
+                }
+            }
+        }
+    }
+
+    std::sort(leaderboard.begin(), leaderboard.end(),
+        [](const std::pair<std::string, int>& a, const std::pair<std::string, int>& b) {
+            return a.second > b.second;
+        });
+
+    if (leaderboard.size() > 10) {
+        leaderboard.resize(10);
+    }
+
+    std::vector<uint64_t> payload;
+    for (const auto& entry : leaderboard) {
+        std::vector<uint64_t> nameData = this->_packet->formatString(entry.first);
+        payload.insert(payload.end(), nameData.begin(), nameData.end());
+        std::vector<uint64_t> scoreData = this->_packet->formatString(
+            std::to_string(entry.second));
+        payload.insert(payload.end(), scoreData.begin(), scoreData.end());
+    }
+
+    std::vector<uint64_t> emptyEntryName = this->_packet->formatString("N/A");
+    std::vector<uint64_t> emptyEntryScore = this->_packet->formatString("---");
+    for (size_t i = payload.size(); i < 160; i += 16) {
+        payload.insert(payload.end(), emptyEntryName.begin(),
+            emptyEntryName.end());
+        payload.insert(payload.end(), emptyEntryScore.begin(),
+            emptyEntryScore.end());
+    }
+
+    std::cout << std::endl;
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_LEADERBOARD, payload);
+    if (!this->_network->sendTo(endpoint, packet)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Failed to send LEADERBOARD response to client",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Sent LEADERBOARD packet to client with " + std::to_string(
+            leaderboard.size()) + " entries",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+    this->_sequenceNumber++;
+    return true;
+}
+
+bool rserv::Server::profilePacket(const net::INetworkEndpoint &endpoint) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    std::string username = "";
+    for (const auto &client : this->_clients) {
+        if (std::get<1>(client) && std::get<1>(client)->getAddress() ==
+            endpoint.getAddress() && std::get<1>(client)->getPort() == endpoint.getPort()) {
+            username = std::get<2>(client);
+            break;
+        }
+    }
+
+    if (username.empty()) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Error: Could not find username for profile request",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
+    const std::string filepath = constants::USERS_JSON_PATH;
+    nlohmann::json users;
+    std::ifstream file(filepath);
+    if (file.is_open()) {
+        try {
+            file >> users;
+        } catch (const std::exception&) {
+            users = nlohmann::json::array();
+        }
+        file.close();
+    } else {
+        users = nlohmann::json::array();
+    }
+
+    if (!users.is_array()) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Error: Users file is not an array",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
+    nlohmann::json userData;
+    bool found = false;
+    for (const auto& user : users) {
+        if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
+            user[constants::USERNAME_JSON_WARD] == username) {
+            userData = user;
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Error: User not found in users file",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
+    const std::string scoresPath = constants::SCORES_JSON_PATH;
+    nlohmann::json scores = utils::SecureJsonManager::readSecureJson(scoresPath);
+
+    int wins = 0;
+    int highScore = 0;
+    if (scores.contains(username) && scores[username].contains(constants::SCORE_JSON_WARD) &&
+        scores[username][constants::SCORE_JSON_WARD].is_array()) {
+        const auto& scoreArray = scores[username][constants::SCORE_JSON_WARD];
+        wins = static_cast<int>(scoreArray.size());
+        for (const auto& score : scoreArray) {
+            if (score.is_number()) {
+                int s = score.get<int>();
+                if (s > highScore) highScore = s;
+            }
+        }
+    }
+
+    std::vector<uint64_t> payload;
+    std::vector<uint64_t> nameData = this->_packet->formatString(username);
+    payload.insert(payload.end(), nameData.begin(), nameData.end());
+    std::vector<uint64_t> winsData = this->_packet->formatString(std::to_string(wins));
+    payload.insert(payload.end(), winsData.begin(), winsData.end());
+    std::vector<uint64_t> highScoreData = this->_packet->formatString(
+        std::to_string(highScore));
+    payload.insert(payload.end(), highScoreData.begin(), highScoreData.end());
+    int gamesPlayed = userData.contains(constants::GAMES_PLAYED_JSON_WARD) ?
+        userData[constants::GAMES_PLAYED_JSON_WARD].get<int>() : 0;
+    std::vector<uint64_t> gamesPlayedData = this->_packet->formatString(
+        std::to_string(gamesPlayed));
+    payload.insert(payload.end(), gamesPlayedData.begin(), gamesPlayedData.end());
+    int timeSpent = userData.contains(constants::TIME_SPENT_JSON_WARD) ?
+        userData[constants::TIME_SPENT_JSON_WARD].get<int>() : 0;
+    std::vector<uint64_t> timeSpentData = this->_packet->formatString(
+        std::to_string(timeSpent));
+    payload.insert(payload.end(), timeSpentData.begin(), timeSpentData.end());
+
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_PROFILE, payload);
+    if (!this->_network->sendTo(endpoint, packet)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Failed to send PROFILE response to client",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Sent PROFILE packet to client for username: " + username,
         debug::debugType::NETWORK, debug::debugLevel::INFO);
     this->_sequenceNumber++;
     return true;

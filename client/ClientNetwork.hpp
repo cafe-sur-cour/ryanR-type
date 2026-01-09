@@ -83,6 +83,20 @@ class ClientNetwork {
         void sendMasterStartGame();
         void sendRegisterPacket(const std::string &username, const std::string &password);
         void sendLoginPacket(const std::string &username, const std::string &password);
+        void sendRequestLeaderboardPacket();
+        void sendRequestProfilePacket();
+
+        const std::vector<std::pair<std::string, std::string>>& getLeaderboardData() const;
+        bool isLeaderboardDataUpdated() const;
+        void clearLeaderboardDataUpdateFlag();
+
+        const std::vector<std::string>& getProfileData() const;
+        bool isProfileDataUpdated() const;
+        void clearProfileDataUpdateFlag();
+
+        const std::string& getRegisterErrorMessage() const;
+        bool isExpectingRegisterResponse() const;
+        void clearRegisterErrorMessage();
 
         void addToEventQueue(const NetworkEvent &event);
 
@@ -136,6 +150,9 @@ class ClientNetwork {
         void handleNextLevel();
         void handleLobbyConnectValue();
         void handleConnectUser();
+        void handleLeaderboard();
+        void handleProfile();
+        void handleRegisterFail();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;
@@ -181,6 +198,8 @@ class ClientNetwork {
         std::vector<std::string> _clientNames;
         bool _isDebug;
         bool _expectingLoginResponse = false;
+        bool _expectingProfileResponse = false;
+        bool _expectingRegisterResponse = false;
 
 
         uint8_t _idClient;
@@ -194,6 +213,11 @@ class ClientNetwork {
 
         std::string _lobbyCode;
         bool _shouldConnect;
+
+        std::vector<std::pair<std::string, std::string>> _leaderboardData;
+        bool _leaderboardDataUpdated = false;
+        std::vector<std::string> _profileData;
+        bool _profileDataUpdated = false;
 
         std::chrono::steady_clock::time_point _connectionAttemptTime;
 };
