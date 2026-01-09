@@ -170,7 +170,7 @@ void LeaderboardState::loadLeaderboardData() {
         auto data = network->getLeaderboardData();
         if (!data.empty()) {
             std::vector<std::pair<std::string, std::string>> leaderboard = data;
-            size_t numEntries = std::min(leaderboard.size(), _leaderTexts.size() / 3);
+            size_t numEntries = (std::min)(leaderboard.size(), _leaderTexts.size() / 3);
             for (size_t i = 0; i < numEntries; ++i) {
                 size_t textIndex = i * 3;
                 std::stringstream ss;
