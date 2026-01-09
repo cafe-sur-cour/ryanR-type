@@ -16,6 +16,8 @@
 #include "../../constants.hpp"
 #include "../../components/permanent/HealthComponent.hpp"
 #include "../../components/permanent/ScriptingComponent.hpp"
+#include "../../GameRules.hpp"
+#include "../../resourceManager/ResourceManager.hpp"
 
 const ActionFactory& ActionFactory::getInstance() {
     static ActionFactory instance;
@@ -33,12 +35,13 @@ void ActionFactory::registerAction(const std::string& actionId, ActionFunction a
 void ActionFactory::executeAction(
     const std::string& actionId,
     std::shared_ptr<ecs::Registry> registry,
+    std::shared_ptr<ResourceManager> resourceManager,
     ecs::Entity self,
     ecs::Entity other
 ) const {
     auto it = _actions.find(actionId);
     if (it != _actions.end()) {
-        it->second(registry, self, other);
+        it->second(registry, resourceManager, self, other);
     }
 }
 
@@ -49,9 +52,11 @@ bool ActionFactory::hasAction(const std::string& actionId) const {
 void ActionFactory::initializeConditions() {
     registerAction(constants::DEALDEATH_ACTION,
         [](std::shared_ptr<ecs::Registry> reg,
+            std::shared_ptr<ResourceManager> resourceManager,
             ecs::Entity selfEntity,
             ecs::Entity otherEntity
         ) {
+            (void)resourceManager;
             (void)selfEntity;
             reg->addComponent<ecs::DeathIntentComponent>(otherEntity,
                 std::make_shared<ecs::DeathIntentComponent>(selfEntity));
@@ -59,9 +64,11 @@ void ActionFactory::initializeConditions() {
 
     registerAction(constants::TAKEDEATH_ACTION,
         [](std::shared_ptr<ecs::Registry> reg,
+            std::shared_ptr<ResourceManager> resourceManager,
             ecs::Entity selfEntity,
             ecs::Entity otherEntity
         ) {
+            (void)resourceManager;
             (void)otherEntity;
             reg->addComponent<ecs::DeathIntentComponent>(selfEntity,
                 std::make_shared<ecs::DeathIntentComponent>(otherEntity));
@@ -69,12 +76,33 @@ void ActionFactory::initializeConditions() {
 
     registerAction(constants::DEALDAMAGE_ACTION,
         [](std::shared_ptr<ecs::Registry> reg,
+            std::shared_ptr<ResourceManager> resourceManager,
             ecs::Entity selfEntity,
             ecs::Entity otherEntity
         ) {
             auto damageComp = reg->getComponent<ecs::DamageComponent>(selfEntity);
             if (damageComp) {
                 float damage = damageComp->getDamage();
+                auto gameRules = resourceManager->get<GameRules>();
+                if (gameRules) {
+                    Difficulty diff = gameRules->getDifficulty();
+                    float multiplier = constants::DIFFICULTY_NORMAL_MULTIPLIER;
+                    if (diff == EASY) multiplier = constants::DIFFICULTY_EASY_MULTIPLIER;
+                    else if (diff == HARD) multiplier = constants::DIFFICULTY_HARD_MULTIPLIER;
+                    bool isPlayerRelated = TagRegistry::getInstance().hasTag(
+                            reg, selfEntity, constants::PLAYERTAG) ||
+                        TagRegistry::getInstance().hasTag(
+                            reg, selfEntity, constants::PLAYERPROJECTILETAG);
+                    bool isEnemyRelated = TagRegistry::getInstance().hasTag(
+                            reg, selfEntity, constants::MOBTAG) ||
+                        TagRegistry::getInstance().hasTag(
+                            reg, selfEntity, constants::ENNEMYPROJECTILETAG);
+                    if (isPlayerRelated) {
+                        damage *= multiplier;
+                    } else if (isEnemyRelated) {
+                        damage *= (2.0f - multiplier);
+                    }
+                }
                 reg->addComponent<ecs::DamageIntentComponent>(otherEntity,
                     std::make_shared<ecs::DamageIntentComponent>(damage, selfEntity));
             }
@@ -82,6 +110,7 @@ void ActionFactory::initializeConditions() {
 
     registerAction(constants::TAKEDAMAGE_ACTION,
         [](std::shared_ptr<ecs::Registry> reg,
+            std::shared_ptr<ResourceManager> resourceManager,
             ecs::Entity selfEntity,
             ecs::Entity otherEntity
         ) {
@@ -89,6 +118,22 @@ void ActionFactory::initializeConditions() {
             auto damageComp = reg->getComponent<ecs::DamageComponent>(selfEntity);
             if (damageComp) {
                 float damage = damageComp->getDamage();
+                auto gameRules = resourceManager->get<GameRules>();
+                if (gameRules) {
+                    Difficulty diff = gameRules->getDifficulty();
+                    float multiplier = constants::DIFFICULTY_NORMAL_MULTIPLIER;
+                    if (diff == EASY) multiplier = constants::DIFFICULTY_EASY_MULTIPLIER;
+                    else if (diff == HARD) multiplier = constants::DIFFICULTY_HARD_MULTIPLIER;
+                    bool isPlayer = TagRegistry::getInstance().hasTag(
+                        reg, selfEntity, constants::PLAYERTAG);
+                    bool isMob = TagRegistry::getInstance().hasTag(
+                        reg, selfEntity, constants::MOBTAG);
+                    if (isPlayer) {
+                        damage *= (2.0f - multiplier);
+                    } else if (isMob) {
+                        damage *= multiplier;
+                    }
+                }
                 reg->addComponent<ecs::DamageIntentComponent>(selfEntity,
                     std::make_shared<ecs::DamageIntentComponent>(damage, selfEntity));
             }
@@ -96,9 +141,11 @@ void ActionFactory::initializeConditions() {
 
     registerAction(constants::ADDLIFE_ACTION,
         [](std::shared_ptr<ecs::Registry> reg,
+            std::shared_ptr<ResourceManager> resourceManager,
             ecs::Entity selfEntity,
             ecs::Entity otherEntity
         ) {
+            (void)resourceManager;
             auto lifeCompSelf = reg->getComponent<ecs::HealthComponent>(selfEntity);
             auto lifeCompOther = reg->getComponent<ecs::HealthComponent>(otherEntity);
 
@@ -110,9 +157,11 @@ void ActionFactory::initializeConditions() {
 
     registerAction(constants::INTERACTION_CALL_SCRIPTING_ACTION,
         [](std::shared_ptr<ecs::Registry> reg,
+            std::shared_ptr<ResourceManager> resourceManager,
             ecs::Entity selfEntity,
             ecs::Entity otherEntity
         ) {
+            (void)resourceManager;
             if (reg->hasComponent<ecs::ScriptingComponent>(selfEntity)) {
                 auto scriptingComp = reg->getComponent<ecs::ScriptingComponent>(selfEntity);
                 if (scriptingComp) {

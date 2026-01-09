@@ -66,14 +66,14 @@ void InteractionSystem::update(
             for (const auto& action : actionsToOther) {
                 if (!action.empty()) {
                     ActionFactory::getInstance().executeAction(action,
-                        registry, entity, otherEntity);
+                        registry, resourceManager, entity, otherEntity);
                 }
             }
 
             for (const auto& action : actionsToSelf) {
                 if (!action.empty()) {
                     ActionFactory::getInstance().executeAction(action,
-                        registry, entity, otherEntity);
+                        registry, resourceManager, entity, otherEntity);
                 }
             }
         }
