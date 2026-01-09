@@ -861,6 +861,7 @@ std::string SettingsState::getScreenResolutionText(
 void SettingsState::exit() {
     auto window = _resourceManager->get<gfx::IWindow>();
     window->setViewCenter(_savedViewCenter.getX(), _savedViewCenter.getY());
+    window->setCursor(false);
     _uiManager->clearElements();
     _backButton.reset();
     _highContrastButton.reset();
