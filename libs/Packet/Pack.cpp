@@ -41,6 +41,7 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
     if (type == GAME_STATE_PACKET) {
         length += 8;
         for (uint64_t i = 1; i < payload.size();) {
+            bool componentFound = false;
             for (const auto &[compType, compLength, compSize] : this->_lengthComb) {
                 if (payload.at(i) == compType) {
                     if (compType == PROJECTILE_PREFAB) {
@@ -56,12 +57,35 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
                         uint32_t nameLength = static_cast<uint32_t>(prefabName.size() + 4);
                         length += nameLength;
                         i = j + 3;
+                        componentFound = true;
+                        break;
+                    }
+                    if (compType == ANIMATION_STATE) {
+                        std::string stateName;
+                        uint64_t j = i + 1;
+                        while (j + 2 < payload.size() &&
+                               !(payload.at(j)     == static_cast<uint64_t>('\r') &&
+                                 payload.at(j + 1) == static_cast<uint64_t>('\n') &&
+                                 payload.at(j + 2) == static_cast<uint64_t>('\0'))) {
+                            stateName += static_cast<char>(payload.at(j));
+                            j++;
+                        }
+                        uint32_t nameLength = static_cast<uint32_t>(stateName.size() + 4);
+                        length += nameLength;
+                        i = j + 3;
+                        componentFound = true;
                         break;
                     }
                     length += compLength;
                     i += compSize;
+                    componentFound = true;
                     break;
                 }
+            }
+            if (!componentFound) {
+                std::cerr << "[ERROR] Pre-calc: No component matched for payload[" << i << "]=" << payload.at(i) << std::endl;
+                std::cerr << "[ERROR] INFINITE LOOP PREVENTION in length calculation: Breaking out!" << std::endl;
+                break;
             }
         }
 
@@ -71,13 +95,21 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
         packet.insert(packet.end(), body.begin(), body.end());
         for (uint64_t i = 1; i < payload.size();) {
             auto iPtr = std::make_shared<unsigned int>(static_cast<unsigned int>(i));
+            bool found = false;
             for (auto &func : this->_packGSFunction) {
                 std::vector<uint8_t> compData = func(payload, iPtr);
                 if (!compData.empty()) {
+                    std::cout << "[PACK-LOOP]   -> Function matched, i was " << i << " now " << *iPtr << std::endl;
                     packet.insert(packet.end(), compData.begin(), compData.end());
                     i = *iPtr;
+                    found = true;
                     break;
                 }
+            }
+            if (!found) {
+                std::cerr << "[ERROR] No pack function matched for payload[" << i << "]=" << payload.at(i) << std::endl;
+                std::cerr << "[ERROR] INFINITE LOOP PREVENTION: Breaking out!" << std::endl;
+                break;
             }
         }
         return packet;

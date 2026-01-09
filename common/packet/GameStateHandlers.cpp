@@ -248,6 +248,28 @@ static void registerGameStatePackers(
         return packetData;
     });
 
+    packet->registerGameStatePackFunction([pushUChar](
+        std::vector<uint64_t> payload,
+        std::shared_ptr<unsigned int> i) -> std::vector<uint8_t> {
+        std::vector<uint8_t> packetData = {};
+        if (payload.at(*i) == ANIMATION_STATE) {
+            pushUChar(packetData, payload.at(*i));
+            *i += 1;
+            while (*i + 2 < payload.size()
+                && !(payload.at(*i) == static_cast<uint64_t>('\r')
+                && payload.at(*i + 1) == static_cast<uint64_t>('\n')
+                && payload.at(*i + 2) == static_cast<uint64_t>('\0'))) {
+                pushUChar(packetData, payload.at(*i));
+                *i += 1;
+            }
+            pushUChar(packetData, payload.at(*i));
+            pushUChar(packetData, payload.at(*i + 1));
+            pushUChar(packetData, payload.at(*i + 2));
+            *i += 3;
+        }
+        return packetData;
+    });
+
     /* Register simple tags */
     registerSimpleTag(AI_MOVER_TAG);
     registerSimpleTag(AI_SHOOTER_TAG);
@@ -548,6 +570,40 @@ static void registerGameStateUnpackers(
             vals.push_back(top);
             packet->setPayload(vals);
             return 33;
+        }
+        return 0;
+    });
+
+    /* Animation state component */
+    packet->registerGameStateUnpackFunction([readUCharAt, packet](
+        const std::vector<uint8_t> payload,
+        unsigned int i) -> unsigned int {
+        if (payload.at(i) == ANIMATION_STATE) {
+            auto vals = packet->getPayload();
+            vals.push_back(static_cast<uint64_t>(ANIMATION_STATE));
+            std::string state = "";
+            unsigned int j = i + 1;
+            while (j < payload.size()) {
+                char c = static_cast<char>(readUCharAt(payload, j));
+                if (c == '\r') {
+                    if (j + 2 < payload.size()
+                        && static_cast<char>(readUCharAt(payload, j + 1)) == '\n'
+                        && static_cast<char>(readUCharAt(payload, j + 2)) == '\0') {
+                        j += 3;
+                        break;
+                    }
+                }
+                state += c;
+                j += 1;
+            }
+            for (char c : state) {
+                vals.push_back(static_cast<uint64_t>(c));
+            }
+            vals.push_back(static_cast<uint64_t>('\r'));
+            vals.push_back(static_cast<uint64_t>('\n'));
+            vals.push_back(static_cast<uint64_t>('\0'));
+            packet->setPayload(vals);
+            return j - i;
         }
         return 0;
     });

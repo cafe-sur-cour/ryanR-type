@@ -362,6 +362,7 @@ bool registerDefaultPacketHandlers(
     packet->registerLengthCombEntry(VELOCITY, 17, 3);
     packet->registerLengthCombEntry(PROJECTILE_PREFAB, 0, 2);
     packet->registerLengthCombEntry(GAME_ZONE, 33, 5);
+    packet->registerLengthCombEntry(ANIMATION_STATE, 0, 2);
 
     packet->registerLengthCombEntry(PLAYER_TAG, 1, 1);
     packet->registerLengthCombEntry(AI_MOVER_TAG, 1, 1);

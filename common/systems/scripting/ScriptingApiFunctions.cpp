@@ -27,6 +27,7 @@
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/permanent/ProjectilePrefabComponent.hpp"
+#include "../../components/permanent/AnimationStateComponent.hpp"
 #include "../../components/tags/ForceTag.hpp"
 namespace ecs {
 
@@ -112,7 +113,7 @@ void ScriptingSystem::bindAPI() {
         [this](Entity e, const std::string& newState) {
         (void)e;
         (void)newState;
-        // AnimationStateIntentComponent is ignored for now
+        registry->addComponent<AnimationStateComponent>(e, std::make_shared<AnimationStateComponent>(newState));
     });
 
     lua.set_function(constants::GET_ENTITY_ID_FUNCTION, [](Entity e) -> size_t {
