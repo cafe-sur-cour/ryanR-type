@@ -105,6 +105,10 @@
             "score": 0
         },
         "HealthBarComponent": { "target": "client" },
-        "EntityPartsComponent": { "target": "both" }
+        "EntityPartsComponent": { "target": "both" },
+        "ChargedShotComponent": {
+            "target": "both",
+            "maxCharge": 2.0
+        }
     }
 }
