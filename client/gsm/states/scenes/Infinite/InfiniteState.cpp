@@ -34,6 +34,7 @@
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../../common/systems/shooting/ShootingSystem.hpp"
+#include "../../../../../common/systems/shooting/ChargedShotSystem.hpp"
 #include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
@@ -96,6 +97,7 @@ void InfiniteState::enter() {
     addSystem(std::make_shared<ecs::SoundSystem>());
     addSystem(std::make_shared<ecs::ShootInputSystem>());
     addSystem(std::make_shared<ecs::ShootingSystem>());
+    addSystem(std::make_shared<ecs::ChargedShotSystem>());
     addSystem(std::make_shared<ecs::LifetimeSystem>());
     addSystem(std::make_shared<ecs::HealthSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
