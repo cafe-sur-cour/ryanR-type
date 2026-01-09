@@ -1622,6 +1622,9 @@ void LevelEditorState::createBottomPanel() {
     _obstaclePosXInput->setScalingEnabled(false);
     _obstaclePosXInput->setFocusEnabled(true);
     _obstaclePosXInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory || _isSelectingObject) {
+            return;
+        }
         std::string filteredText;
         for (char c : text) {
             if ((c >= '0' && c <= '9') || c == '-' || c == '.') {
@@ -1653,6 +1656,8 @@ void LevelEditorState::createBottomPanel() {
                 }
                 _hasUnsavedChanges = true;
                 updateSaveButtonText();
+                _hasPendingChange = true;
+                _lastChangeTime = 0.0f;
             }
         } catch (const std::exception&) {
         }
@@ -1680,6 +1685,9 @@ void LevelEditorState::createBottomPanel() {
     _obstaclePosYInput->setScalingEnabled(false);
     _obstaclePosYInput->setFocusEnabled(true);
     _obstaclePosYInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory || _isSelectingObject) {
+            return;
+        }
         std::string filteredText;
         for (char c : text) {
             if ((c >= '0' && c <= '9') || c == '-' || c == '.') {
@@ -1711,6 +1719,8 @@ void LevelEditorState::createBottomPanel() {
                 }
                 _hasUnsavedChanges = true;
                 updateSaveButtonText();
+                _hasPendingChange = true;
+                _lastChangeTime = 0.0f;
             }
         } catch (const std::exception&) {
         }
@@ -1738,6 +1748,9 @@ void LevelEditorState::createBottomPanel() {
     _obstacleCountInput->setScalingEnabled(false);
     _obstacleCountInput->setFocusEnabled(true);
     _obstacleCountInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory || _isSelectingObject) {
+            return;
+        }
         std::string filteredText;
         for (char c : text) {
             if ((c >= '0' && c <= '9')) {
@@ -1766,6 +1779,8 @@ void LevelEditorState::createBottomPanel() {
                 }
                 _hasUnsavedChanges = true;
                 updateSaveButtonText();
+                _hasPendingChange = true;
+                _lastChangeTime = 0.0f;
             }
         } catch (const std::exception&) {
         }
@@ -2017,6 +2032,9 @@ void LevelEditorState::createBottomPanel() {
     _powerUpPosXInput->setScalingEnabled(false);
     _powerUpPosXInput->setFocusEnabled(true);
     _powerUpPosXInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory || _isSelectingObject) {
+            return;
+        }
         std::string filteredText;
         for (char c : text) {
             if ((c >= '0' && c <= '9') || c == '-' || c == '.') {
@@ -2040,6 +2058,8 @@ void LevelEditorState::createBottomPanel() {
                     size_t>(sel.index)].posX = newPosX;
                 _hasUnsavedChanges = true;
                 updateSaveButtonText();
+                _hasPendingChange = true;
+                _lastChangeTime = 0.0f;
             }
         } catch (const std::exception&) {
         }
@@ -2067,6 +2087,9 @@ void LevelEditorState::createBottomPanel() {
     _powerUpPosYInput->setScalingEnabled(false);
     _powerUpPosYInput->setFocusEnabled(true);
     _powerUpPosYInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory || _isSelectingObject) {
+            return;
+        }
         std::string filteredText;
         for (char c : text) {
             if ((c >= '0' && c <= '9') || c == '-' || c == '.') {
@@ -2090,6 +2113,8 @@ void LevelEditorState::createBottomPanel() {
                     size_t>(sel.index)].posY = newPosY;
                 _hasUnsavedChanges = true;
                 updateSaveButtonText();
+                _hasPendingChange = true;
+                _lastChangeTime = 0.0f;
             }
         } catch (const std::exception&) {
         }
@@ -2370,6 +2395,9 @@ void LevelEditorState::createBottomPanel() {
     _waveTriggerXInput->setScalingEnabled(false);
     _waveTriggerXInput->setFocusEnabled(true);
     _waveTriggerXInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory || _isSelectingObject) {
+            return;
+        }
         if (_selectedWave.has_value()) {
             const auto& sel = _selectedWave.value();
             if (sel.waveIndex >= 0 && sel.waveIndex < static_cast<int>(_waves.size())) {
@@ -2378,6 +2406,8 @@ void LevelEditorState::createBottomPanel() {
                     _waves[static_cast<size_t>(sel.waveIndex)].gameXTrigger = triggerX;
                     _hasUnsavedChanges = true;
                     updateSaveButtonText();
+                    _hasPendingChange = true;
+                    _lastChangeTime = 0.0f;
                 } catch (const std::exception&) {
                 }
             }
@@ -2623,6 +2653,9 @@ void LevelEditorState::createBottomPanel() {
     _enemyCountInput->setScalingEnabled(false);
     _enemyCountInput->setFocusEnabled(true);
     _enemyCountInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory || _isSelectingObject) {
+            return;
+        }
         if (_selectedWave.has_value()) {
             int waveIdx = _selectedWave.value().waveIndex;
             int enemyIdx = _selectedWave.value().enemyIndex;
@@ -2635,6 +2668,8 @@ void LevelEditorState::createBottomPanel() {
                         wave.enemies[static_cast<size_t>(enemyIdx)].count = count;
                         _hasUnsavedChanges = true;
                         updateSaveButtonText();
+                        _hasPendingChange = true;
+                        _lastChangeTime = 0.0f;
                     } catch (const std::exception&) {
                     }
                 }
@@ -2662,6 +2697,9 @@ void LevelEditorState::createBottomPanel() {
     _enemyDistXMinInput->setScalingEnabled(false);
     _enemyDistXMinInput->setFocusEnabled(true);
     _enemyDistXMinInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory || _isSelectingObject) {
+            return;
+        }
         if (_selectedWave.has_value()) {
             int waveIdx = _selectedWave.value().waveIndex;
             int enemyIdx = _selectedWave.value().enemyIndex;
@@ -2674,6 +2712,8 @@ void LevelEditorState::createBottomPanel() {
                         wave.enemies[static_cast<size_t>(enemyIdx)].distributionX.min = val;
                         _hasUnsavedChanges = true;
                         updateSaveButtonText();
+                        _hasPendingChange = true;
+                        _lastChangeTime = 0.0f;
                     } catch (const std::exception&) {
                     }
                 }
@@ -2701,6 +2741,9 @@ void LevelEditorState::createBottomPanel() {
     _enemyDistXMaxInput->setScalingEnabled(false);
     _enemyDistXMaxInput->setFocusEnabled(true);
     _enemyDistXMaxInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory || _isSelectingObject) {
+            return;
+        }
         if (_selectedWave.has_value()) {
             int waveIdx = _selectedWave.value().waveIndex;
             int enemyIdx = _selectedWave.value().enemyIndex;
@@ -2713,6 +2756,8 @@ void LevelEditorState::createBottomPanel() {
                         wave.enemies[static_cast<size_t>(enemyIdx)].distributionX.max = val;
                         _hasUnsavedChanges = true;
                         updateSaveButtonText();
+                        _hasPendingChange = true;
+                        _lastChangeTime = 0.0f;
                     } catch (const std::exception&) {
                     }
                 }
@@ -2740,6 +2785,9 @@ void LevelEditorState::createBottomPanel() {
     _enemyDistYMinInput->setScalingEnabled(false);
     _enemyDistYMinInput->setFocusEnabled(true);
     _enemyDistYMinInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory || _isSelectingObject) {
+            return;
+        }
         if (_selectedWave.has_value()) {
             int waveIdx = _selectedWave.value().waveIndex;
             int enemyIdx = _selectedWave.value().enemyIndex;
@@ -2752,6 +2800,8 @@ void LevelEditorState::createBottomPanel() {
                         wave.enemies[static_cast<size_t>(enemyIdx)].distributionY.min = val;
                         _hasUnsavedChanges = true;
                         updateSaveButtonText();
+                        _hasPendingChange = true;
+                        _lastChangeTime = 0.0f;
                     } catch (const std::exception&) {
                     }
                 }
@@ -2779,6 +2829,9 @@ void LevelEditorState::createBottomPanel() {
     _enemyDistYMaxInput->setScalingEnabled(false);
     _enemyDistYMaxInput->setFocusEnabled(true);
     _enemyDistYMaxInput->setOnTextChanged([this](const std::string& text) {
+        if (_isLoadingFromHistory || _isSelectingObject) {
+            return;
+        }
         if (_selectedWave.has_value()) {
             int waveIdx = _selectedWave.value().waveIndex;
             int enemyIdx = _selectedWave.value().enemyIndex;
@@ -2791,6 +2844,8 @@ void LevelEditorState::createBottomPanel() {
                         wave.enemies[static_cast<size_t>(enemyIdx)].distributionY.max = val;
                         _hasUnsavedChanges = true;
                         updateSaveButtonText();
+                        _hasPendingChange = true;
+                        _lastChangeTime = 0.0f;
                     } catch (const std::exception&) {
                     }
                 }
@@ -2821,6 +2876,9 @@ void LevelEditorState::createBottomPanel() {
     _enemyDistXTypeDropdown->setFocusEnabled(true);
     _enemyDistXTypeDropdown->setOnSelectionChanged(
         [this](const std::string& type, [[maybe_unused]] size_t index) {
+        if (_isLoadingFromHistory || _isSelectingObject) {
+            return;
+        }
         if (_selectedWave.has_value()) {
             int waveIdx = _selectedWave.value().waveIndex;
             int enemyIdx = _selectedWave.value().enemyIndex;
@@ -2831,6 +2889,8 @@ void LevelEditorState::createBottomPanel() {
                     wave.enemies[static_cast<size_t>(enemyIdx)].distributionX.type = type;
                     _hasUnsavedChanges = true;
                     updateSaveButtonText();
+                    _hasPendingChange = true;
+                    _lastChangeTime = 0.0f;
                 }
             }
         }
@@ -2858,6 +2918,9 @@ void LevelEditorState::createBottomPanel() {
     _enemyDistYTypeDropdown->setFocusEnabled(true);
     _enemyDistYTypeDropdown->setOnSelectionChanged(
         [this](const std::string& type, [[maybe_unused]] size_t index) {
+        if (_isLoadingFromHistory || _isSelectingObject) {
+            return;
+        }
         if (_selectedWave.has_value()) {
             int waveIdx = _selectedWave.value().waveIndex;
             int enemyIdx = _selectedWave.value().enemyIndex;
@@ -2868,6 +2931,8 @@ void LevelEditorState::createBottomPanel() {
                     wave.enemies[static_cast<size_t>(enemyIdx)].distributionY.type = type;
                     _hasUnsavedChanges = true;
                     updateSaveButtonText();
+                    _hasPendingChange = true;
+                    _lastChangeTime = 0.0f;
                 }
             }
         }
@@ -3051,6 +3116,66 @@ void LevelEditorState::loadFromHistory(size_t index) {
     parseObstacles();
     parsePowerUps();
     parseWaves();
+
+    _selectedObstacle = std::nullopt;
+    _selectedPowerUp = std::nullopt;
+    _selectedWave = std::nullopt;
+
+    if (_obstaclePosXInput) _obstaclePosXInput->setVisible(false);
+    if (_obstaclePosXLabel) _obstaclePosXLabel->setVisible(false);
+    if (_obstaclePosYInput) _obstaclePosYInput->setVisible(false);
+    if (_obstaclePosYLabel) _obstaclePosYLabel->setVisible(false);
+    if (_obstacleCountInput) _obstacleCountInput->setVisible(false);
+    if (_obstacleCountLabel) _obstacleCountLabel->setVisible(false);
+    if (_obstacleDeleteButton) _obstacleDeleteButton->setVisible(false);
+    if (_obstacleDuplicateButton) _obstacleDuplicateButton->setVisible(false);
+
+    if (_powerUpPosXInput) _powerUpPosXInput->setVisible(false);
+    if (_powerUpPosXLabel) _powerUpPosXLabel->setVisible(false);
+    if (_powerUpPosYInput) _powerUpPosYInput->setVisible(false);
+    if (_powerUpPosYLabel) _powerUpPosYLabel->setVisible(false);
+    if (_powerUpDeleteButton) _powerUpDeleteButton->setVisible(false);
+    if (_powerUpDuplicateButton) _powerUpDuplicateButton->setVisible(false);
+
+    if (_waveTriggerXInput) _waveTriggerXInput->setVisible(false);
+    if (_waveTriggerXLabel) _waveTriggerXLabel->setVisible(false);
+    if (_waveDeleteButton) _waveDeleteButton->setVisible(false);
+    if (_waveDuplicateButton) _waveDuplicateButton->setVisible(false);
+    if (_waveIndexLabel) {
+        if (_waves.empty()) {
+            _waveIndexLabel->setText("0 / 0");
+        } else {
+            _waveIndexLabel->setText("0 / " + std::to_string(_waves.size()));
+        }
+        _waveIndexLabel->setVisible(false);
+    }
+    if (_wavePrevButton) _wavePrevButton->setVisible(false);
+    if (_waveNextButton) _waveNextButton->setVisible(false);
+
+    if (_enemyLabel) _enemyLabel->setVisible(false);
+    if (_enemyIndexLabel) _enemyIndexLabel->setVisible(false);
+    if (_enemyPrevButton) _enemyPrevButton->setVisible(false);
+    if (_enemyNextButton) _enemyNextButton->setVisible(false);
+    if (_enemyAddButton) _enemyAddButton->setVisible(false);
+    if (_enemyDeleteButton) _enemyDeleteButton->setVisible(false);
+    if (_enemyTypeLabel) _enemyTypeLabel->setVisible(false);
+    if (_enemyTypeInput) _enemyTypeInput->setVisible(false);
+    if (_enemyApplyTypeButton) _enemyApplyTypeButton->setVisible(false);
+    if (_enemyAppliedTypeLabel) _enemyAppliedTypeLabel->setVisible(false);
+    if (_enemyCountLabel) _enemyCountLabel->setVisible(false);
+    if (_enemyCountInput) _enemyCountInput->setVisible(false);
+    if (_enemyDistXMinLabel) _enemyDistXMinLabel->setVisible(false);
+    if (_enemyDistXMinInput) _enemyDistXMinInput->setVisible(false);
+    if (_enemyDistXMaxLabel) _enemyDistXMaxLabel->setVisible(false);
+    if (_enemyDistXMaxInput) _enemyDistXMaxInput->setVisible(false);
+    if (_enemyDistYMinLabel) _enemyDistYMinLabel->setVisible(false);
+    if (_enemyDistYMinInput) _enemyDistYMinInput->setVisible(false);
+    if (_enemyDistYMaxLabel) _enemyDistYMaxLabel->setVisible(false);
+    if (_enemyDistYMaxInput) _enemyDistYMaxInput->setVisible(false);
+    if (_enemyDistXTypeLabel) _enemyDistXTypeLabel->setVisible(false);
+    if (_enemyDistXTypeDropdown) _enemyDistXTypeDropdown->setVisible(false);
+    if (_enemyDistYTypeLabel) _enemyDistYTypeLabel->setVisible(false);
+    if (_enemyDistYTypeDropdown) _enemyDistYTypeDropdown->setVisible(false);
 
     _isLoadingFromHistory = false;
     _hasPendingChange = false;

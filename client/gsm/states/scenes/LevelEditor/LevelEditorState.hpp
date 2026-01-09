@@ -265,6 +265,7 @@ private:
     float _lastChangeTime = constants::CHANGE_DEBOUNCE_TIME + 1.0f;
     bool _hasPendingChange = false;
     bool _isLoadingFromHistory = false;
+    bool _isSelectingObject = false;
     bool _undoPressedLastFrame = false;
     bool _redoPressedLastFrame = false;
     bool _leftMousePressedLastFrame = false;

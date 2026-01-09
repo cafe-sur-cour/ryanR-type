@@ -187,6 +187,7 @@ void LevelEditorState::handlePowerUpClick(
 ) {
     auto selection = getPowerUpAtPosition(mouseX, mouseY, levelX, levelY);
     if (selection.has_value()) {
+        _isSelectingObject = true;
         _selectedPowerUp = selection;
         _selectedObstacle = std::nullopt;
         _selectedWave = std::nullopt;
@@ -266,6 +267,7 @@ void LevelEditorState::handlePowerUpClick(
         if (_powerUpDuplicateButton) {
             _powerUpDuplicateButton->setVisible(true);
         }
+        _isSelectingObject = false;
     } else {
         bool inPowerUpsMode = (_editorModeDropdown &&
             _editorModeDropdown->getSelectedOption() == "PowerUps");
