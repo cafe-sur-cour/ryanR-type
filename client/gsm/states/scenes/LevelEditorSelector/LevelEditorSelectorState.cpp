@@ -463,7 +463,7 @@ std::vector<
                     file >> levelData;
                     file.close();
 
-                    int index = levelData.value(constants::LEVEL_INDEX_FIELD, -1);
+                    int index = levelData.value(constants::INDEX_FIELD, -1);
                     std::string name = levelData.value(
                         constants::LEVEL_NAME_FIELD, entry.path().stem().string());
 
@@ -496,7 +496,7 @@ void LevelEditorSelectorState::swapLevels(
         nlohmann::json data1;
         file1 >> data1;
         file1.close();
-        index1 = data1.value(constants::LEVEL_INDEX_FIELD, -1);
+        index1 = data1.value(constants::INDEX_FIELD, -1);
     } catch (const std::exception&) {
         return;
     }
@@ -506,7 +506,7 @@ void LevelEditorSelectorState::swapLevels(
         nlohmann::json data2;
         file2 >> data2;
         file2.close();
-        index2 = data2.value(constants::LEVEL_INDEX_FIELD, -1);
+        index2 = data2.value(constants::INDEX_FIELD, -1);
     } catch (const std::exception&) {
         return;
     }
@@ -517,7 +517,7 @@ void LevelEditorSelectorState::swapLevels(
         file1 >> data1;
         file1.close();
 
-        data1[constants::LEVEL_INDEX_FIELD] = index2;
+        data1[constants::INDEX_FIELD] = index2;
 
         std::ofstream outFile1(path1);
         outFile1 << data1.dump(4);
@@ -532,7 +532,7 @@ void LevelEditorSelectorState::swapLevels(
         file2 >> data2;
         file2.close();
 
-        data2[constants::LEVEL_INDEX_FIELD] = index1;
+        data2[constants::INDEX_FIELD] = index1;
 
         std::ofstream outFile2(path2);
         outFile2 << data2.dump(4);
@@ -754,7 +754,7 @@ void LevelEditorSelectorState::confirmDuplicate() {
                 }
             }
 
-            levelData[constants::LEVEL_INDEX_FIELD] = nextIndex;
+            levelData[constants::INDEX_FIELD] = nextIndex;
             std::string newName = _pendingDuplicateName + " (copy)";
             levelData[constants::LEVEL_NAME_FIELD] = newName;
 
@@ -907,7 +907,7 @@ std::optional<std::filesystem::path> LevelEditorSelectorState::createNewLevel() 
     }
 
     nlohmann::json newLevelData;
-    newLevelData[constants::LEVEL_INDEX_FIELD] = nextIndex;
+    newLevelData[constants::INDEX_FIELD] = nextIndex;
     newLevelData[constants::LEVEL_NAME_FIELD] = "New Level";
     newLevelData[constants::LEVEL_BACKGROUND_FIELD] = "";
     newLevelData[constants::LEVEL_SCROLL_SPEED_FIELD] = 100.0;

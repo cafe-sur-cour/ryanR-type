@@ -153,7 +153,6 @@ namespace constants {
     const std::string LEVEL_DIRECTORY = "configs/map";
     const std::string LEVEL_FILE_PREFIX = "level";
     const std::string LEVEL_FILE_EXTENSION = ".json";
-    const std::string LEVEL_INDEX_FIELD = "index";
     const std::string LEVEL_NAME_FIELD = "name";
     const std::string LEVEL_BACKGROUND_FIELD = "background";
     const std::string LEVEL_SCROLL_SPEED_FIELD = "scrollSpeed";
