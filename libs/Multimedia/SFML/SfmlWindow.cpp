@@ -178,12 +178,12 @@ std::pair<size_t, size_t> SfmlWindow::getTextSize(
 }
 
 void SfmlWindow::drawRectangleOutline(gfx::color_t color,
-    std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) {
+    std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, size_t borderWidth) {
     sf::RectangleShape rectangle(sf::Vector2f(static_cast<float>(size.first),
     static_cast<float>(size.second)));
     rectangle.setFillColor(sf::Color::Transparent);
     rectangle.setOutlineColor(sf::Color(color.r, color.g, color.b, color.a));
-    rectangle.setOutlineThickness(5.0f);
+    rectangle.setOutlineThickness(static_cast<float>(borderWidth));
     rectangle.setPosition(sf::Vector2f(static_cast<float>(position.first),
     static_cast<float>(position.second)));
     _renderTexture.draw(rectangle);

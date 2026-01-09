@@ -38,7 +38,7 @@
         "ColliderComponent": {
             "target": "both",
             "offset": { "x": 0.0, "y": 0.0 },
-            "size": { "x": 48, "y": 38.0 },
+            "size": { "x": 100, "y": 100.0 },
             "type": "Trigger"
         },
         "PowerUpTag": { "target": "both" },
