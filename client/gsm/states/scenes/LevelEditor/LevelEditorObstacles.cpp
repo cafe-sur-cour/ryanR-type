@@ -28,65 +28,65 @@ void LevelEditorState::parseObstacles() {
     const auto& obstacles = _levelData[constants::OBSTACLES_FIELD];
 
     for (const auto& obstacle : obstacles) {
-        if (!obstacle.contains(constants::OBSTACLE_NAME_FIELD)) {
+        if (!obstacle.contains(constants::NAME_FIELD)) {
             continue;
         }
         std::string obstacleName =
-            obstacle[constants::OBSTACLE_NAME_FIELD].get<std::string>();
+            obstacle[constants::NAME_FIELD].get<std::string>();
 
         if (_obstaclesByName.find(obstacleName) == _obstaclesByName.end()) {
             _obstaclesByName[obstacleName] = ObstacleGroup();
         }
         ObstacleGroup& group = _obstaclesByName[obstacleName];
 
-        if (!obstacle.contains(constants::OBSTACLE_POSITIONS_FIELD) ||
-            !obstacle[constants::OBSTACLE_POSITIONS_FIELD].is_array()) {
+        if (!obstacle.contains(constants::POSITIONS_FIELD) ||
+            !obstacle[constants::POSITIONS_FIELD].is_array()) {
             continue;
         }
 
-        const auto& positions = obstacle[constants::OBSTACLE_POSITIONS_FIELD];
+        const auto& positions = obstacle[constants::POSITIONS_FIELD];
 
         for (const auto& position : positions) {
-            if (!position.contains(constants::OBSTACLE_TYPE_FIELD)) {
+            if (!position.contains(constants::TYPE_FIELD)) {
                 continue;
             }
 
-            std::string type = position[constants::OBSTACLE_TYPE_FIELD].get<std::string>();
-            if (type == constants::OBSTACLE_HORIZONTAL_LINE_TYPE) {
-                if (!position.contains(constants::OBSTACLE_FROMX_FIELD) ||
-                    !position.contains(constants::OBSTACLE_POSY_FIELD) ||
-                    !position.contains(constants::OBSTACLE_COUNT_FIELD)) {
+            std::string type = position[constants::TYPE_FIELD].get<std::string>();
+            if (type == constants::HORIZONTAL_LINE_TYPE) {
+                if (!position.contains(constants::FROMX_FIELD) ||
+                    !position.contains(constants::POSY_FIELD) ||
+                    !position.contains(constants::COUNT_FIELD)) {
                     continue;
                 }
 
                 HorizontalLineObstacle hLine;
-                hLine.fromX = position[constants::OBSTACLE_FROMX_FIELD].get<float>();
-                hLine.posY = position[constants::OBSTACLE_POSY_FIELD].get<float>();
-                hLine.count = position[constants::OBSTACLE_COUNT_FIELD].get<int>();
+                hLine.fromX = position[constants::FROMX_FIELD].get<float>();
+                hLine.posY = position[constants::POSY_FIELD].get<float>();
+                hLine.count = position[constants::COUNT_FIELD].get<int>();
 
                 group.horizontalLines.push_back(hLine);
-            } else if (type == constants::OBSTACLE_VERTICAL_LINE_TYPE) {
-                if (!position.contains(constants::OBSTACLE_FROMY_FIELD) ||
-                    !position.contains(constants::OBSTACLE_POSX_FIELD) ||
-                    !position.contains(constants::OBSTACLE_COUNT_FIELD)) {
+            } else if (type == constants::VERTICAL_LINE_TYPE) {
+                if (!position.contains(constants::FROMY_FIELD) ||
+                    !position.contains(constants::POSX_FIELD) ||
+                    !position.contains(constants::COUNT_FIELD)) {
                     continue;
                 }
 
                 VerticalLineObstacle vLine;
-                vLine.fromY = position[constants::OBSTACLE_FROMY_FIELD].get<float>();
-                vLine.posX = position[constants::OBSTACLE_POSX_FIELD].get<float>();
-                vLine.count = position[constants::OBSTACLE_COUNT_FIELD].get<int>();
+                vLine.fromY = position[constants::FROMY_FIELD].get<float>();
+                vLine.posX = position[constants::POSX_FIELD].get<float>();
+                vLine.count = position[constants::COUNT_FIELD].get<int>();
 
                 group.verticalLines.push_back(vLine);
-            } else if (type == constants::OBSTACLE_UNIQUE_TYPE) {
-                if (!position.contains(constants::OBSTACLE_POSX_FIELD) ||
-                    !position.contains(constants::OBSTACLE_POSY_FIELD)) {
+            } else if (type == constants::UNIQUE_TYPE) {
+                if (!position.contains(constants::POSX_FIELD) ||
+                    !position.contains(constants::POSY_FIELD)) {
                     continue;
                 }
 
                 UniqueObstacle unique;
-                unique.posX = position[constants::OBSTACLE_POSX_FIELD].get<float>();
-                unique.posY = position[constants::OBSTACLE_POSY_FIELD].get<float>();
+                unique.posX = position[constants::POSX_FIELD].get<float>();
+                unique.posY = position[constants::POSY_FIELD].get<float>();
 
                 group.uniques.push_back(unique);
             }
@@ -241,39 +241,39 @@ void LevelEditorState::saveObstacles() {
 
     for (const auto& [prefabName, obstacleGroup] : _obstaclesByName) {
         nlohmann::json obstacleEntry;
-        obstacleEntry[constants::OBSTACLE_NAME_FIELD] = prefabName;
+        obstacleEntry[constants::NAME_FIELD] = prefabName;
 
         nlohmann::json positionsArray = nlohmann::json::array();
 
         for (const auto& hLine : obstacleGroup.horizontalLines) {
             nlohmann::json position;
-            position[constants::OBSTACLE_TYPE_FIELD] =
-                constants::OBSTACLE_HORIZONTAL_LINE_TYPE;
-            position[constants::OBSTACLE_FROMX_FIELD] = hLine.fromX;
-            position[constants::OBSTACLE_POSY_FIELD] = hLine.posY;
-            position[constants::OBSTACLE_COUNT_FIELD] = hLine.count;
+            position[constants::TYPE_FIELD] =
+                constants::HORIZONTAL_LINE_TYPE;
+            position[constants::FROMX_FIELD] = hLine.fromX;
+            position[constants::POSY_FIELD] = hLine.posY;
+            position[constants::COUNT_FIELD] = hLine.count;
             positionsArray.push_back(position);
         }
 
         for (const auto& vLine : obstacleGroup.verticalLines) {
             nlohmann::json position;
-            position[constants::OBSTACLE_TYPE_FIELD] =
-                constants::OBSTACLE_VERTICAL_LINE_TYPE;
-            position[constants::OBSTACLE_FROMY_FIELD] = vLine.fromY;
-            position[constants::OBSTACLE_POSX_FIELD] = vLine.posX;
-            position[constants::OBSTACLE_COUNT_FIELD] = vLine.count;
+            position[constants::TYPE_FIELD] =
+                constants::VERTICAL_LINE_TYPE;
+            position[constants::FROMY_FIELD] = vLine.fromY;
+            position[constants::POSX_FIELD] = vLine.posX;
+            position[constants::COUNT_FIELD] = vLine.count;
             positionsArray.push_back(position);
         }
 
         for (const auto& unique : obstacleGroup.uniques) {
             nlohmann::json position;
-            position[constants::OBSTACLE_TYPE_FIELD] = constants::OBSTACLE_UNIQUE_TYPE;
-            position[constants::OBSTACLE_POSX_FIELD] = unique.posX;
-            position[constants::OBSTACLE_POSY_FIELD] = unique.posY;
+            position[constants::TYPE_FIELD] = constants::UNIQUE_TYPE;
+            position[constants::POSX_FIELD] = unique.posX;
+            position[constants::POSY_FIELD] = unique.posY;
             positionsArray.push_back(position);
         }
 
-        obstacleEntry[constants::OBSTACLE_POSITIONS_FIELD] = positionsArray;
+        obstacleEntry[constants::POSITIONS_FIELD] = positionsArray;
         obstaclesArray.push_back(obstacleEntry);
     }
 
