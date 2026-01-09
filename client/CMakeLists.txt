@@ -83,3 +83,5 @@ endif()
 if(USE_UNITY_BUILD)
     set_target_properties(${CLIENT_BIN_NAME} PROPERTIES UNITY_BUILD ON)
 endif()
+
+set_source_files_properties(gsm/states/scenes/Leaderboard/LeaderboardState.cpp PROPERTIES UNITY_BUILD OFF)
