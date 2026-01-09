@@ -220,6 +220,7 @@ void ClientNetwork::sendRegisterPacket(const std::string &username,
         debug::debugLevel::INFO);
     this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
+    this->_expectingRegisterResponse = true;
 }
 
 void ClientNetwork::sendLoginPacket(const std::string &username, const std::string &password) {

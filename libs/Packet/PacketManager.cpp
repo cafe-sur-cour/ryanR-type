@@ -143,15 +143,10 @@ void pm::PacketManager::reset() {
 }
 
 std::vector<uint64_t> pm::PacketManager::formatString(const std::string str) {
-    if (str.size() > 8) {
-        throw err::PacketError(
-            "[PacketManager] String length exceeds 8 characters",
-            err::PacketError::STRING_FORMATTING_ERROR
-        );
-    }
+    std::string truncated = str.substr(0, 8);
     int i = 0;
     std::vector<uint64_t> formatted;
-    for (char c : str) {
+    for (char c : truncated) {
         formatted.push_back(static_cast<uint64_t>(c));
         i++;
     }

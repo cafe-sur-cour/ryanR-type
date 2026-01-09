@@ -89,6 +89,10 @@ class ClientNetwork {
         bool isLeaderboardDataUpdated() const;
         void clearLeaderboardDataUpdateFlag();
 
+        const std::string& getRegisterErrorMessage() const;
+        bool isExpectingRegisterResponse() const;
+        void clearRegisterErrorMessage();
+
         void addToEventQueue(const NetworkEvent &event);
 
         bool isConnected() const;
@@ -142,6 +146,7 @@ class ClientNetwork {
         void handleLobbyConnectValue();
         void handleConnectUser();
         void handleLeaderboard();
+        void handleRegisterFail();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;
@@ -187,6 +192,7 @@ class ClientNetwork {
         std::vector<std::string> _clientNames;
         bool _isDebug;
         bool _expectingLoginResponse = false;
+        bool _expectingRegisterResponse = false;
 
 
         uint8_t _idClient;

@@ -275,6 +275,7 @@ namespace constants {
     constexpr std::uint8_t PACKET_REGISTER = 0x14;
     constexpr std::uint8_t PACKET_CONNECT_USER = 0x15;
     constexpr std::uint8_t PACKET_LOGIN = 0x16;
+    constexpr std::uint8_t PACKET_REGISTER_FAIL = 0x1A;
     constexpr std::uint8_t PACKET_GAME_STATE_BATCH = 0x17;
     constexpr std::uint8_t PACKET_GAME_STATE_BATCH_COMPRESSED = 0x18;
     constexpr std::uint8_t PACKET_GAME_STATE_COMPRESSED = 0x19;

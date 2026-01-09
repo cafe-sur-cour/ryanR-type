@@ -78,6 +78,7 @@ ClientNetwork::ClientNetwork() {
         &ClientNetwork::handleLobbyConnectValue;
     _packetHandlers[constants::PACKET_CONNECT_USER] = &ClientNetwork::handleConnectUser;
     _packetHandlers[constants::PACKET_LEADERBOARD] = &ClientNetwork::handleLeaderboard;
+    _packetHandlers[constants::PACKET_REGISTER_FAIL] = &ClientNetwork::handleRegisterFail;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;

@@ -88,20 +88,22 @@ RegisterState::RegisterState(
         std::string confirmPassword = this->_confirmPasswordInput->getText();
 
         if (username.empty() || password.empty() || confirmPassword.empty()) {
+            this->_errorMessage->setText("All fields are required");
+            this->_errorMessage->setVisible(true);
             return;
         }
 
         if (password != confirmPassword) {
+            this->_errorMessage->setText("Passwords do not match");
+            this->_errorMessage->setVisible(true);
             return;
         }
+
+        this->_errorMessage->setVisible(false);
 
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network) {
             network->sendRegisterPacket(username, password);
-        }
-
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePop();
         }
     });
     _registerButton->setOnActivated([this]() {
@@ -110,21 +112,23 @@ RegisterState::RegisterState(
         std::string confirmPassword = this->_confirmPasswordInput->getText();
 
         if (username.empty() || password.empty() || confirmPassword.empty()) {
+            this->_errorMessage->setText("All fields are required");
+            this->_errorMessage->setVisible(true);
             return;
         }
 
         if (password != confirmPassword) {
+            this->_errorMessage->setText("Passwords do not match");
+            this->_errorMessage->setVisible(true);
             return;
         }
+
+        this->_errorMessage->setVisible(false);
 
         // Send registration packet to server
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network) {
             network->sendRegisterPacket(username, password);
-        }
-
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePop();
         }
     });
 
@@ -150,6 +154,14 @@ RegisterState::RegisterState(
     _mainLayout->addElement(_confirmPasswordInput);
     _mainLayout->addElement(_registerButton);
     _mainLayout->addElement(_backButton);
+
+    _errorMessage = std::make_shared<ui::Text>(_resourceManager);
+    _errorMessage->setText("");
+    _errorMessage->setFontSize(20);
+    _errorMessage->setTextColor(colors::RED);
+    _errorMessage->setVisible(false);
+
+    _mainLayout->addElement(_errorMessage);
 
     _uiManager->addElement(_mainLayout);
 }
@@ -211,6 +223,14 @@ void RegisterState::update(float deltaTime) {
     if (_resourceManager->has<ecs::IInputProvider>() && !isTextInputFocused) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
+    }
+
+    // Check for register error from server
+    if (_resourceManager->has<std::string>()) {
+        auto error = _resourceManager->get<std::string>();
+        _errorMessage->setText(*error);
+        _errorMessage->setVisible(true);
+        _resourceManager->remove<std::string>();
     }
 
     _uiManager->update(deltaTime);
