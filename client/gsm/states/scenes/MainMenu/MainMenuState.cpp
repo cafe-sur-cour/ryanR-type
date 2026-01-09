@@ -27,6 +27,7 @@
 #include "../Profile/ProfileState.hpp"
 #include "../HowToPlay/HowToPlayState.hpp"
 #include "../Connection/ConnectionState.hpp"
+#include "../Leaderboard/LeaderboardState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -60,8 +61,6 @@ MainMenuState::MainMenuState(
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
             network->requestCode();
-        } else {
-            std::cout << "Cannot request code: Not connected to server" << std::endl;
         }
     });
 
@@ -139,6 +138,10 @@ MainMenuState::MainMenuState(
         }
     });
     _usernameButton->setOnActivated([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && !network->getName().empty()) {
+            network->sendRequestProfilePacket();
+        }
         if (auto stateMachine = this->_gsm.lock()) {
             stateMachine->requestStatePush(std::make_shared<ProfileState>(stateMachine,
                 this->_resourceManager));
@@ -164,25 +167,6 @@ MainMenuState::MainMenuState(
         }
     });
 
-    _replayButton = std::make_shared<ui::Button>(resourceManager);
-    _replayButton->setText(constants::REPLAY_BUTTON_TEXT);
-    _replayButton->setSize(math::Vector2f(576.f, 108.f));
-    _replayButton->setNormalColor(colors::BUTTON_SECONDARY);
-    _replayButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _replayButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
-    _replayButton->setOnRelease([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<ReplayState>(stateMachine,
-                this->_resourceManager));
-        }
-    });
-    _replayButton->setOnActivated([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<ReplayState>(stateMachine,
-                this->_resourceManager));
-        }
-    });
-
     _quitButton = std::make_shared<ui::Button>(resourceManager);
     _quitButton->setText("Quit");
     _quitButton->setSize(math::Vector2f(576.f, 108.f));
@@ -198,7 +182,6 @@ MainMenuState::MainMenuState(
 
     _mainMenuLayout->addElement(_usernameButton);
     _mainMenuLayout->addElement(_settingsButton);
-    _mainMenuLayout->addElement(_replayButton);
     _mainMenuLayout->addElement(_quitButton);
 
     ui::LayoutConfig rightConfig;
@@ -269,6 +252,26 @@ MainMenuState::MainMenuState(
     _leaderboardButton->setNormalColor(colors::BUTTON_SECONDARY);
     _leaderboardButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _leaderboardButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _leaderboardButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->sendRequestLeaderboardPacket();
+            if (auto stateMachine = this->_gsm.lock()) {
+                stateMachine->requestStatePush(std::make_shared<LeaderboardState>(stateMachine,
+                    this->_resourceManager));
+            }
+        }
+    });
+    _leaderboardButton->setOnActivated([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->sendRequestLeaderboardPacket();
+            if (auto stateMachine = this->_gsm.lock()) {
+                stateMachine->requestStatePush(std::make_shared<LeaderboardState>(stateMachine,
+                    this->_resourceManager));
+            }
+        }
+    });
 
     _registerButton = std::make_shared<ui::Button>(_resourceManager);
     _registerButton->setText("Register");
@@ -440,7 +443,10 @@ void MainMenuState::renderUI() {
 void MainMenuState::updateUIStatus() {
     auto config = _resourceManager->get<SettingsConfig>();
 
-    if (config->getUsername().empty()) {
+    auto network = this->_resourceManager->get<ClientNetwork>();
+    bool isAuthenticated = network && !network->getName().empty();
+
+    if (!isAuthenticated) {
         if (_usernameButton && _usernameButton->getState() != ui::UIState::Disabled) {
             _usernameButton->setState(ui::UIState::Disabled);
         }
@@ -462,7 +468,6 @@ void MainMenuState::updateUIStatus() {
         }
     }
 
-    auto network = this->_resourceManager->get<ClientNetwork>();
     if (!network) {
         if (!config->getUsername().empty()) {
             _usernameButton->setText(config->getUsername());
@@ -477,10 +482,14 @@ void MainMenuState::updateUIStatus() {
         _requestCodeButton->setVisible(true);
     }
 
-    if (config->getUsername().empty()) {
-        _usernameButton->setText("Not connected to server");
+    if (network->getName().empty()) {
+        if (config->getUsername().empty()) {
+            _usernameButton->setText("Not connected to server");
+        } else {
+            _usernameButton->setText(config->getUsername() + " (not logged in)");
+        }
     } else {
-        _usernameButton->setText(config->getUsername());
+        _usernameButton->setText(network->getName());
     }
 }
 

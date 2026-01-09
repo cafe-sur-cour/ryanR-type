@@ -17,6 +17,7 @@
 #include "../../../../ui/elements/Background.hpp"
 #include "../../../../ui/elements/focusable/TextInput.hpp"
 #include "../../../../ui/elements/Text.hpp"
+#include "../Leaderboard/LeaderboardState.hpp"
 
 
 namespace gsm {
@@ -39,7 +40,6 @@ private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::shared_ptr<ui::Button> _usernameButton;
     std::shared_ptr<ui::Button> _settingsButton;
-    std::shared_ptr<ui::Button> _replayButton;
     std::shared_ptr<ui::Button> _quitButton;
     std::shared_ptr<ui::Button> _requestCodeButton;
     std::shared_ptr<ui::Button> _lobbyConnectButton;
