@@ -6,8 +6,9 @@
 */
 
 #include "ChargedShotSystem.hpp"
+#include <memory>
 #include "../../components/permanent/ChargedShotComponent.hpp"
-#include <iostream>
+
 namespace ecs {
 
 ChargedShotSystem::ChargedShotSystem() {
