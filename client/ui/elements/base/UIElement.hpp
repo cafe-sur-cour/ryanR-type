@@ -46,6 +46,12 @@ class UIElement : public std::enable_shared_from_this<UIElement> {
         void setVisible(bool visible);
         bool isVisible() const;
 
+        void setScalingEnabled(bool enabled);
+        bool isScalingEnabled() const;
+
+        void setFocusEnabled(bool enabled);
+        bool isFocusEnabled() const;
+
         void setState(UIState state);
         UIState getState() const;
 
@@ -74,6 +80,8 @@ class UIElement : public std::enable_shared_from_this<UIElement> {
         math::Vector2f _position;
         math::Vector2f _size;
         bool _visible = true;
+        bool _scalingEnabled = true;
+        bool _focusEnabled = true;
         UIState _state = UIState::Normal;
         UIScale _scale = UIScale::Normal;
         std::weak_ptr<UIElement> _parent;

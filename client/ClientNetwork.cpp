@@ -27,7 +27,7 @@
 ClientNetwork::ClientNetwork() {
     this->_port = 0;
     this->_ip = "";
-    this->_name = "Doof";
+    this->_name = "";
     this->_idClient = 0;
     this->_eventQueue = std::queue<NetworkEvent>();
 
@@ -63,6 +63,8 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_DISC] = &ClientNetwork::handleNoOp;
     _packetHandlers[constants::PACKET_EVENT] = &ClientNetwork::handleNoOp;
     _packetHandlers[constants::PACKET_GAME_STATE] = &ClientNetwork::handleGameState;
+    _packetHandlers[constants::PACKET_GAME_STATE_BATCH] =
+        &ClientNetwork::handleBatchedGameState;
     _packetHandlers[constants::PACKET_END_GAME] = &ClientNetwork::handleEndGame;
     _packetHandlers[constants::PACKET_CAN_START] = &ClientNetwork::handleCanStart;
     _packetHandlers[constants::PACKET_SPAWN] = &ClientNetwork::handleEntitySpawn;
@@ -74,6 +76,7 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_NEXT_LEVEL] = &ClientNetwork::handleNextLevel;
     _packetHandlers[constants::PACKET_LOBBY_CONNECT_VALUE] =
         &ClientNetwork::handleLobbyConnectValue;
+    _packetHandlers[constants::PACKET_CONNECT_USER] = &ClientNetwork::handleConnectUser;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
@@ -244,9 +247,6 @@ bool ClientNetwork::isLobbyMaster() const {
 }
 
 void ClientNetwork::handlePacketType(uint8_t type) {
-    if (this->_packet->getPayload().empty()) {
-        return;
-    }
     if (type < constants::MAX_INDEX_PACKET_TYPE && this->_packetHandlers[type]) {
         (this->*_packetHandlers[type])();
     } else {

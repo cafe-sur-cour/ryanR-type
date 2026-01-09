@@ -13,7 +13,7 @@
 namespace constants {
     /* Timeout */
     constexpr int NETWORK_TIMEOUT = 5;
-    constexpr int CONNECTION_ATTEMPT_TIMEOUT = 5;
+    constexpr int CONNECTION_ATTEMPT_TIMEOUT = 10;
 
     /* Window */
     constexpr int WINDOW_WIDTH = 1920;
@@ -60,6 +60,7 @@ namespace constants {
     const std::string SETTINGS_SCREEN_RESOLUTION = "screenResolution";
     const std::string SETTINGS_TARGET_FPS = "targetFPS";
     const std::string SETTINGS_RENDER_QUALITY = "renderQuality";
+    const std::string SETTINGS_USERNAME = "username";
     const std::string KEYBIND_PRIMARY = "primary";
     const std::string KEYBIND_SECONDARY = "secondary";
     const std::string KEYBIND_TOGGLE_MODE = "toggle_mode";
@@ -70,6 +71,8 @@ namespace constants {
     const std::string ACCESSIBILITY_FILE_PATH = "saves/accessibility.json";
     const std::string SETTINGS_FILE_PATH = "saves/settings.json";
     const std::string UI_BACKGROUND_EARTH_PATH = "assets/ui/earth.jpg";
+    const std::string HOW_TO_PLAY_PATH = "assets/sprites/how_to_play.png";
+    const std::string LEADERBOARD_PATH = "assets/sprites/leaderboard.png";
 
     const std::string MAIN_FONT = "assets/fonts/abduction2002.ttf";
 
@@ -143,11 +146,18 @@ namespace constants {
     const std::string REPLAY_TYPE_SOUND = "sound";
 
     /* Level Constants */
-    const std::string LEVEL_DIRECTORY = "configs/map";
+    const size_t MAX_HISTORY_SIZE = 50;
+    const float CHANGE_DEBOUNCE_TIME = 1.0f;
+    const float CHANGE_DEBOUNCE_TIME_SHORT = 0.25f;
+
     const std::string LEVEL_FILE_PREFIX = "level";
     const std::string LEVEL_FILE_EXTENSION = ".json";
-    const std::string LEVEL_INDEX_FIELD = "index";
-    const std::string LEVEL_NAME_FIELD = "name";
+    const std::string LEVEL_DIRECTORY = "configs/map";
+    const std::string MUSIC_DIRECTORY = "configs/entities/musics";
+    const std::string BACKGROUNDS_DIRECTORY = "configs/entities/backgrounds";
+    const std::string OBSTACLES_DIRECTORY = "configs/entities/obstacles";
+    const std::string POWERUPS_DIRECTORY = "configs/entities/powerUp";
+    const std::string ENEMIES_DIRECTORY = "configs/entities/enemies";
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */

@@ -5,6 +5,8 @@ add_library(${COMMON_PACKET_HANDLERS_NAME} STATIC
     DefaultPacketHandlers.hpp
     GameStateHandlers.cpp
     GameStateHandlers.hpp
+    GameStateHandlersOptimized.cpp
+    GameStateHandlersOptimized.hpp
 )
 
 target_include_directories(${COMMON_PACKET_HANDLERS_NAME}

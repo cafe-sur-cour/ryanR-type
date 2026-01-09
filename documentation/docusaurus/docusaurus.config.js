@@ -86,6 +86,7 @@ const config = {
             sidebarId: 'tutorialSidebar',
             position: 'left',
             label: 'Documentation',
+            href: '/docs/intro'
           },
           {
             href: 'https://github.com/cafe-sur-cour/ryanR-type',

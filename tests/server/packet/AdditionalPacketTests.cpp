@@ -177,7 +177,7 @@ TEST_F(AdditionalPacketTest, ResetMultipleTimes) {
 
 // Connection packet round trip test
 TEST_F(AdditionalPacketTest, PackAndUnpackConnectionRoundTrip) {
-    std::vector<uint64_t> payload = {10, 20, 30, 40, 50, 60, 70, 80};  // 8 bytes for connection
+    std::vector<uint64_t> payload = {};  // connection packets should have empty payload
     std::vector<uint8_t> packedData = packet->pack(25, 777, CONNECTION_CLIENT_PACKET, payload);
 
     auto packet2 = std::make_shared<pm::PacketManager>(0);
@@ -190,10 +190,26 @@ TEST_F(AdditionalPacketTest, PackAndUnpackConnectionRoundTrip) {
     EXPECT_EQ(packet2->getType(), CONNECTION_CLIENT_PACKET);
 
     std::vector<uint64_t> retrieved = packet2->getPayload();
-    ASSERT_EQ(retrieved.size(), 8);
-    for (size_t i = 0; i < 8; i++) {
-        EXPECT_EQ(retrieved[i], payload[i]);
-    }
+    EXPECT_EQ(retrieved.size(), 0);  // connection packets have empty payload
+}
+
+// Test for optional ULong packet with data (using a different packet type)
+TEST_F(AdditionalPacketTest, PackAndUnpackOptionalULongWithData) {
+    std::vector<uint64_t> payload = {42};  // single ULong value
+    std::vector<uint8_t> packedData = packet->pack(25, 777, WHOAMI_PACKET, payload);
+
+    auto packet2 = std::make_shared<pm::PacketManager>(0);
+    common::packet::registerDefaultPacketHandlers(packet2);
+    bool result = packet2->unpack(packedData);
+
+    EXPECT_TRUE(result);
+    EXPECT_EQ(packet2->getIdClient(), 25);
+    EXPECT_EQ(packet2->getSequenceNumber(), 777);
+    EXPECT_EQ(packet2->getType(), WHOAMI_PACKET);
+
+    std::vector<uint64_t> retrieved = packet2->getPayload();
+    ASSERT_EQ(retrieved.size(), 1);
+    EXPECT_EQ(retrieved[0], 42);
 }
 
 int main(int argc, char **argv) {
