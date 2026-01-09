@@ -204,7 +204,7 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
                 file >> levelData;
                 file.close();
                 levelName = levelData.value(
-                    constants::LEVEL_NAME_FIELD, levelPath.stem().string());
+                    constants::NAME_FIELD, levelPath.stem().string());
             } catch (const std::exception&) {
                 levelName = levelPath.stem().string();
             }
@@ -465,7 +465,7 @@ std::vector<
 
                     int index = levelData.value(constants::INDEX_FIELD, -1);
                     std::string name = levelData.value(
-                        constants::LEVEL_NAME_FIELD, entry.path().stem().string());
+                        constants::NAME_FIELD, entry.path().stem().string());
 
                     levels.emplace_back(entry.path(), index);
                 } catch (const std::exception&) {
@@ -756,7 +756,7 @@ void LevelEditorSelectorState::confirmDuplicate() {
 
             levelData[constants::INDEX_FIELD] = nextIndex;
             std::string newName = _pendingDuplicateName + " (copy)";
-            levelData[constants::LEVEL_NAME_FIELD] = newName;
+            levelData[constants::NAME_FIELD] = newName;
 
             std::string newFileName = constants::LEVEL_FILE_PREFIX +
                 std::to_string(nextIndex) + constants::LEVEL_FILE_EXTENSION;
@@ -908,7 +908,7 @@ std::optional<std::filesystem::path> LevelEditorSelectorState::createNewLevel() 
 
     nlohmann::json newLevelData;
     newLevelData[constants::INDEX_FIELD] = nextIndex;
-    newLevelData[constants::LEVEL_NAME_FIELD] = "New Level";
+    newLevelData[constants::NAME_FIELD] = "New Level";
     newLevelData[constants::LEVEL_BACKGROUND_FIELD] = "";
     newLevelData[constants::LEVEL_SCROLL_SPEED_FIELD] = 100.0;
     newLevelData[constants::LEVEL_MUSIC_FIELD] = "";
