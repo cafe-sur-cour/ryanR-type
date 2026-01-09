@@ -10,6 +10,10 @@
 #include "../../components/permanent/HealthComponent.hpp"
 #include "../../components/temporary/DamageIntentComponent.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
+#include "../../GameRules.hpp"
+#include "../../resourceManager/ResourceManager.hpp"
+#include "../../constants.hpp"
+#include "../interactions/TagRegistry.hpp"
 
 namespace ecs {
 
@@ -21,14 +25,16 @@ void HealthSystem::update(
     std::shared_ptr<Registry> registry,
     float deltaTime
 ) {
-    (void) resourceManager;
     (void) deltaTime;
 
-    _handleDamageUpdates(registry);
+    _handleDamageUpdates(resourceManager, registry);
     _handleHealthUpdates(registry);
 }
 
-void HealthSystem::_handleDamageUpdates(std::shared_ptr<Registry> registry) {
+void HealthSystem::_handleDamageUpdates(
+    std::shared_ptr<ResourceManager> resourceManager,
+    std::shared_ptr<Registry> registry
+) {
     auto view = registry->view<HealthComponent, DamageIntentComponent>();
 
     for (auto entityId : view) {
@@ -36,6 +42,22 @@ void HealthSystem::_handleDamageUpdates(std::shared_ptr<Registry> registry) {
         auto damageComponent = registry->getComponent<DamageIntentComponent>(entityId);
 
         float damages = damageComponent->getDamages();
+        auto gameRules = resourceManager->get<GameRules>();
+        if (gameRules) {
+            Difficulty diff = gameRules->getDifficulty();
+            float multiplier = constants::DIFFICULTY_NORMAL_MULTIPLIER;
+            if (diff == EASY) multiplier = constants::DIFFICULTY_EASY_MULTIPLIER;
+            else if (diff == HARD) multiplier = constants::DIFFICULTY_HARD_MULTIPLIER;
+            bool isPlayer = TagRegistry::getInstance().hasTag(
+                registry, entityId, constants::PLAYERTAG);
+            bool isMob = TagRegistry::getInstance().hasTag(
+                registry, entityId, constants::MOBTAG);
+            if (isPlayer) {
+                damages *= (2.0f - multiplier);
+            } else if (isMob) {
+                damages *= multiplier;
+            }
+        }
         float health = healthComponent->getHealth();
 
         healthComponent->setHealth(health - damages);
