@@ -20,6 +20,8 @@
 
 namespace gsm {
 
+class ReplayState;
+
 class ProfileState : public AGameState {
 public:
     ProfileState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
