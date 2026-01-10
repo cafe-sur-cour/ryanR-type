@@ -41,6 +41,10 @@ private:
     std::shared_ptr<ui::Text> _statusText;
     std::shared_ptr<ui::Button> _startGameButton;
 
+    std::shared_ptr<ui::UILayout> _topLeftLayout;
+    std::shared_ptr<ui::Text> _difficultyLabel;
+    std::shared_ptr<ui::Button> _difficultyButton;
+
     bool _isLobbyMaster;
 };
 
