@@ -314,7 +314,6 @@ namespace constants {
     const std::string SET_PROJECTILE_PREFAB_FUNCTION = "setProjectilePrefab";
     const std::string COUNT_FORCES_BY_TYPE_FUNCTION = "countForcesByType";
     const std::string GET_FORCE_POSITION_BY_TYPE_FUNCTION = "getForcePositionByType";
-    const std::string ADD_FORCE_LEVEL_FUNCTION = "addForceLevel";
 
 }
 
