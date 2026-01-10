@@ -23,7 +23,7 @@ class ChargedShotComponent : public AComponent {
         ~ChargedShotComponent() = default;
 
         float getCharge() const { return _charge; };
-        void setCharge(const float &charge) { _charge = (std::min)(charge, _maxCharge); };
+        void setCharge(const float &charge) { _charge = charge; };
 
         float getMaxCharge() const { return _maxCharge; };
         void setMaxCharge(const float &maxCharge) { _maxCharge = maxCharge; };
