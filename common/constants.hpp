@@ -147,6 +147,7 @@ namespace constants {
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";
 
+    const std::string ANIMATIONSTATECOMPONENT = "AnimationStateComponent";
     const std::string PREFABNAME_FIELD = "prefabName";
     const std::string LIFETIMECOMPONENT = "LifetimeComponent";
     const std::string LIFETIME_FIELD = "lifetime";
@@ -184,6 +185,7 @@ namespace constants {
     const float OUT_OF_BOUNDS_MARGIN = 200.0f;
 
     /* Map parsing constants */
+    const std::string COMPONENTS_FIELD = "components";
     const std::string BACKGROUND_FIELD = "background";
     const std::string BACKGROUND_SCROLL_SPEED_FIELD = "scrollSpeed";
     const std::string MUSIC_FIELD = "music";
@@ -289,7 +291,7 @@ namespace constants {
     const std::string DEATH_FUNCTION = "death";
     const std::string ONINTERACT_FUNCTION = "OnInteract";
     const std::string  ACTIVATE_OR_DEACTIVATE_FORCE_FUNCTION = "ActivateOrDeactivateForce";
-
+    const std::string ADD_FORCE_LEVEL_FUNCTION = "addForceLevel";
     /* Constants for Scripting API */
     const std::string PRINT_FUNCTION = "print";
     const std::string CREATE_MOVE_INTENT_FUNCTION = "createMoveIntent";
@@ -297,6 +299,7 @@ namespace constants {
     const std::string GET_NEAREST_PLAYER_POSITION_FUNCTION = "getNearestPlayerPosition";
     const std::string GET_ENTITY_SPEED_FUNCTION = "getEntitySpeed";
     const std::string CREATE_SHOOT_INTENT_FUNCTION = "createShootIntent";
+    const std::string SET_ANIMATION_STATE_FUNCTION = "setAnimationState";
     const std::string SPAWN_ENTITY_FUNCTION = "spawnEntity";
     const std::string GET_ENTITY_ID_FUNCTION = "getEntityId";
     const std::string ADD_PART_ID_FUNCTION = "addPartId";
@@ -313,6 +316,7 @@ namespace constants {
     const std::string SET_PROJECTILE_PREFAB_FUNCTION = "setProjectilePrefab";
     const std::string COUNT_FORCES_BY_TYPE_FUNCTION = "countForcesByType";
     const std::string GET_FORCE_POSITION_BY_TYPE_FUNCTION = "getForcePositionByType";
+
 }
 
 #endif /* !CONSTANTS_HPP_ */

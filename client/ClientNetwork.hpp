@@ -161,6 +161,7 @@ class ClientNetwork {
         size_t parseProjectilePassThroughTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseProjectilePrefabComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseGameZoneComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseAnimationStateComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
 
         DLLoader<createNetworkLib_t> _networloader;
         DLLoader<createBuffer_t> _bufferloader;
@@ -191,6 +192,8 @@ class ClientNetwork {
         std::condition_variable _queueCond;
 
         std::unordered_map<size_t, ecs::Entity> _serverToLocalEntityMap;
+
+        std::unordered_map<ecs::Entity, std::string> _lastReceivedAnimationState;
 
         std::string _lobbyCode;
         bool _shouldConnect;

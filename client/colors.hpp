@@ -41,6 +41,9 @@ namespace colors {
     const gfx::color_t BUTTON_SECONDARY = {100, 0, 150};                        // Purple
     const gfx::color_t BUTTON_SECONDARY_HOVER = {150, 0, 200};                  // Bright purple
     const gfx::color_t BUTTON_SECONDARY_PRESSED = {75, 0, 112};                 // Dark purple
+    const gfx::color_t BUTTON_DANGER = {200, 50, 50};                           // Red danger
+    const gfx::color_t BUTTON_DANGER_HOVER = {255, 100, 100};                   // Bright red hover
+    const gfx::color_t BUTTON_DANGER_PRESSED = {150, 30, 30};                   // Dark red pressed
 
     // Panel/Frame Colors
     const gfx::color_t PANEL_BACKGROUND = {20, 20, 50};                         // Slightly lighter than UI background

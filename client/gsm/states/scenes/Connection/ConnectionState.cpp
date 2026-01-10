@@ -23,6 +23,7 @@
 #include "../../../../colors.hpp"
 #include "../../../../SettingsConfig.hpp"
 #include "../MainMenu/MainMenuState.hpp"
+#include "../LevelEditorSelector/LevelEditorSelectorState.hpp"
 
 namespace gsm {
 
@@ -101,6 +102,44 @@ ConnectionState::ConnectionState(
         }
     });
 
+    _levelEditorButton = std::make_shared<ui::Button>(_resourceManager);
+    _levelEditorButton->setText("Level Editor");
+    _levelEditorButton->setSize(math::Vector2f(300.f, 108.f));
+    _levelEditorButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _levelEditorButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _levelEditorButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _levelEditorButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(
+                std::make_shared<LevelEditorSelectorState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _levelEditorButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(
+                std::make_shared<LevelEditorSelectorState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+
+    _quitButton = std::make_shared<ui::Button>(_resourceManager);
+    _quitButton->setText("Quit");
+    _quitButton->setSize(math::Vector2f(300.f, 108.f));
+    _quitButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _quitButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _quitButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _quitButton->setOnRelease([this]() {
+        _resourceManager->get<gfx::IWindow>()->closeWindow();
+    });
+    _quitButton->setOnActivated([this]() {
+        _resourceManager->get<gfx::IWindow>()->closeWindow();
+    });
+
+    _spacer = std::make_shared<ui::Text>(_resourceManager);
+    _spacer->setText("");
+    _spacer->setSize(math::Vector2f(300.f, 20.f));
+
     ui::LayoutConfig layoutConfig;
     layoutConfig.direction = ui::LayoutDirection::Vertical;
     layoutConfig.alignment = ui::LayoutAlignment::Center;
@@ -112,10 +151,14 @@ ConnectionState::ConnectionState(
 
     _layout = std::make_shared<ui::UILayout>(_resourceManager, layoutConfig);
     _layout->setSize(math::Vector2f(300.f, 300.f));
+    _layout->setAutoResize(true);
 
     _layout->addElement(_ipInput);
     _layout->addElement(_portInput);
     _layout->addElement(_connectButton);
+    _layout->addElement(_spacer);
+    _layout->addElement(_levelEditorButton);
+    _layout->addElement(_quitButton);
 
     _uiManager->addElement(_layout);
 }
