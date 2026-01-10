@@ -21,6 +21,7 @@
 #include "../../../../../common/debug.hpp"
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../colors.hpp"
+#include "../../../../../common/GameRules.hpp"
 
 namespace gsm {
 
@@ -56,6 +57,59 @@ LobbyWaitingState::LobbyWaitingState(
     }
 
     _uiManager->addElement(_centerLayout);
+
+    ui::LayoutConfig topLeftConfig;
+    topLeftConfig.direction = ui::LayoutDirection::Vertical;
+    topLeftConfig.alignment = ui::LayoutAlignment::Start;
+    topLeftConfig.spacing = 10.0f;
+    topLeftConfig.padding = math::Vector2f(0.0f, 0.0f);
+    topLeftConfig.anchorX = ui::AnchorX::Left;
+    topLeftConfig.anchorY = ui::AnchorY::Top;
+    topLeftConfig.offset = math::Vector2f(20.0f, 20.0f);
+
+    _topLeftLayout = std::make_shared<ui::UILayout>(_resourceManager, topLeftConfig);
+    _topLeftLayout->setSize(math::Vector2f(200.f, 100.f));
+
+    _difficultyLabel = std::make_shared<ui::Text>(_resourceManager);
+    _difficultyLabel->setText("Difficulty");
+    _difficultyLabel->setSize(math::Vector2f(200.f, 30.f));
+    _difficultyLabel->setTextColor(gfx::color_t{255, 255, 255, 255});
+    _difficultyLabel->setFontSize(24);
+    _topLeftLayout->addElement(_difficultyLabel);
+
+    _difficultyButton = std::make_shared<ui::Button>(_resourceManager);
+    auto gameRules = _resourceManager->get<GameRules>();
+    std::string diffText = "Normal";
+    if (gameRules) {
+        Difficulty d = gameRules->getDifficulty();
+        if (d == EASY) diffText = "Easy";
+        else if (d == HARD) diffText = "Hard";
+    }
+    _difficultyButton->setText(diffText);
+    _difficultyButton->setSize(math::Vector2f(150.f, 50.f));
+    _difficultyButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _difficultyButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _difficultyButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _difficultyButton->setOnRelease([this]() {
+        auto gr = this->_resourceManager->get<GameRules>();
+        if (gr) {
+            Difficulty current = gr->getDifficulty();
+            Difficulty next = NORMAL;
+            if (current == NORMAL) next = HARD;
+            else if (current == HARD) next = EASY;
+            else if (current == EASY) next = NORMAL;
+            gr->setDifficulty(next);
+            std::string text = "Normal";
+            if (next == EASY) text = "Easy";
+            else if (next == HARD) text = "Hard";
+            _difficultyButton->setText(text);
+            // Placeholder for network send
+            // TODO: send difficulty change to server
+        }
+    });
+    _topLeftLayout->addElement(_difficultyButton);
+
+    _uiManager->addElement(_topLeftLayout);
 }
 
 void LobbyWaitingState::setupLobbyMasterUI() {
