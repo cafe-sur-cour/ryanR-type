@@ -393,14 +393,20 @@ size_t ClientNetwork::parseAnimationStateComponent(const std::vector<uint64_t> &
         state += static_cast<char>(charVal);
     }
 
-    auto registry = this->_resourceManager->get<ecs::Registry>();
+    auto it = _lastReceivedAnimationState.find(entityId);
+    bool isNewState = (it == _lastReceivedAnimationState.end() || it->second != state);
 
-    if (!registry->hasComponent<ecs::AnimationStateComponent>(entityId)) {
-        auto animStateComp = std::make_shared<ecs::AnimationStateComponent>(state);
-        registry->addComponent(entityId, animStateComp);
-    } else {
-        auto animStateComp = registry->getComponent<ecs::AnimationStateComponent>(entityId);
-        animStateComp->setCurrentState(state);
+    if (isNewState && !state.empty()) {
+        _lastReceivedAnimationState[entityId] = state;
+
+        auto registry = this->_resourceManager->get<ecs::Registry>();
+        if (!registry->hasComponent<ecs::AnimationStateComponent>(entityId)) {
+            auto animStateComp = std::make_shared<ecs::AnimationStateComponent>(state);
+            registry->addComponent(entityId, animStateComp);
+        } else {
+            auto animStateComp = registry->getComponent<ecs::AnimationStateComponent>(entityId);
+            animStateComp->setCurrentState(state);
+        }
     }
 
     debug::Debug::printDebug(this->_isDebug,

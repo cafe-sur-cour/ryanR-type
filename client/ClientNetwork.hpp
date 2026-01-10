@@ -193,6 +193,8 @@ class ClientNetwork {
 
         std::unordered_map<size_t, ecs::Entity> _serverToLocalEntityMap;
 
+        std::unordered_map<ecs::Entity, std::string> _lastReceivedAnimationState;
+
         std::string _lobbyCode;
         bool _shouldConnect;
 
