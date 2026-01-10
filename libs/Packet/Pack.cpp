@@ -46,13 +46,11 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
 
         for (uint64_t i = 1; i < payload.size();) {
             auto iPtr = std::make_shared<unsigned int>(static_cast<unsigned int>(i));
-            bool found = false;
             for (auto &func : this->_packGSFunction) {
                 std::vector<uint8_t> compData = func(payload, iPtr);
                 if (!compData.empty()) {
                     body.insert(body.end(), compData.begin(), compData.end());
                     i = *iPtr;
-                    found = true;
                     break;
                 }
             }
