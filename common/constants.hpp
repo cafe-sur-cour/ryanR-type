@@ -252,6 +252,7 @@ namespace constants {
     const std::string INTERACTION_CALL_SCRIPTING_ACTION = "InteractionCallScripting";
 
     /* Prefabs */
+    const std::string PLAYER_PREFAB_NAME = "player";
     const std::string GAME_ZONE_PREFAB = "gamezone";
     const std::string SMALL_EXPLOSION = "small_explosion";
     const std::string BIG_EXPLOSION = "big_explosion";
@@ -291,8 +292,10 @@ namespace constants {
     constexpr std::uint8_t PACKET_REGISTER_FAIL = 0x1C;
     constexpr std::uint8_t PACKET_REQUEST_PROFILE = 0x1D;
     constexpr std::uint8_t PACKET_PROFILE = 0x1E;
+    constexpr std::uint8_t PACKET_GAME_RULES = 0x1F;
+    constexpr std::uint8_t PACKET_REQUEST_GAME_RULES_CHANGE = 0x20;
 
-    const int MAX_INDEX_PACKET_TYPE = 31;
+    const int MAX_INDEX_PACKET_TYPE = 33;
     const int MAX_CLIENT_PER_LOBBY = 4;
 
     /* Scripting constant */

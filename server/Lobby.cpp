@@ -10,6 +10,7 @@
 #include <map>
 #include <utility>
 #include <memory>
+#include <tuple>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -30,6 +31,7 @@
 #include "../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../common/components/permanent/ScriptingComponent.hpp"
 #include "../common/components/permanent/ScoreComponent.hpp"
+#include "../common/GameRules.hpp"
 
 rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
     std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>,
@@ -131,6 +133,99 @@ size_t rserv::Lobby::getClientCount() const {
     return this->_clients.size();
 }
 
+void rserv::Lobby::addClient(
+    std::tuple<uint8_t,
+    std::shared_ptr<net::INetworkEndpoint>,
+    std::string> client
+) {
+    this->_clients.push_back(client);
+}
+
+void rserv::Lobby::createPlayerEntityForClient(uint8_t clientId) {
+    if (this->_resourceManager == nullptr) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[LOBBY] Cannot create player entity: resource manager not set",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return;
+    }
+
+    auto prefabMgr = this->_resourceManager->get<EntityPrefabManager>();
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+
+    if (prefabMgr == nullptr || registry == nullptr) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[LOBBY] Cannot create player entity: missing required components",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return;
+    }
+
+    if (this->_clientToEntity.find(clientId) != this->_clientToEntity.end()) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[LOBBY] Player entity already exists for client " +
+                std::to_string(static_cast<int>(clientId)),
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+        return;
+    }
+
+    if (this->_resourceManager->has<ecs::ServerInputProvider>()) {
+        auto inputProvider = this->_resourceManager->get<ecs::ServerInputProvider>();
+        if (inputProvider) {
+            inputProvider->registerClient(clientId);
+            debug::Debug::printDebug(this->getIsDebug(),
+                "[LOBBY] Registered client " + std::to_string(static_cast<int>(clientId)) +
+                " with input provider",
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+        }
+    }
+
+    std::string playerString = constants::PLAYER_PREFAB_NAME;
+    ecs::Entity playerEntity = prefabMgr->createEntityFromPrefab(
+        playerString,
+        registry,
+        ecs::EntityCreationContext::forServer()
+    );
+
+    this->_clientToEntity[clientId] = playerEntity;
+
+    debug::Debug::printDebug(this->getIsDebug(),
+        "[LOBBY] Created player entity " + std::to_string(playerEntity) +
+        " for client " + std::to_string(static_cast<int>(clientId)),
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+}
+
+void rserv::Lobby::syncExistingEntitiesToClient(
+    std::shared_ptr<net::INetworkEndpoint> clientEndpoint
+) {
+    if (!this->_resourceManager) {
+        return;
+    }
+
+    auto registry = this->_resourceManager->get<ecs::Registry>();
+    auto prefabMgr = this->_resourceManager->get<EntityPrefabManager>();
+
+    if (!registry || !prefabMgr) {
+        return;
+    }
+
+    for (const auto &[otherClientId, playerEntity] : this->_clientToEntity) {
+        std::vector<uint64_t> spawnPayload = this->spawnPacket(playerEntity, "player");
+        std::vector<uint8_t> spawnPacketData = this->_packet->pack(
+            constants::ID_SERVER,
+            this->_sequenceNumber,
+            constants::PACKET_SPAWN,
+            spawnPayload
+        );
+        this->_network->sendTo(*clientEndpoint, spawnPacketData);
+        this->_sequenceNumber++;
+
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[LOBBY] Sent spawn packet for existing player entity " +
+                std::to_string(playerEntity) +
+            " to new client",
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+    }
+}
+
 std::shared_ptr<net::INetwork> rserv::Lobby::getNetwork() const {
     return this->_network;
 }
@@ -159,6 +254,10 @@ void rserv::Lobby::setIsDebug(bool debug) {
 
 bool rserv::Lobby::getIsDebug() const {
     return this->_isDebug;
+}
+
+std::shared_ptr<ResourceManager> rserv::Lobby::getResourceManager() const {
+    return this->_resourceManager;
 }
 
 
@@ -512,7 +611,8 @@ bool rserv::Lobby::levelCompletePacket() {
         this->_sequenceNumber, constants::PACKET_LEVEL_COMPLETE, payload);
 
     if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
-        std::cout << "[SERVER NETWORK] Failed to broadcast level complete packet" << std::endl;
+        std::cout << "[SERVER NETWORK] Failed to broadcast level complete packet"
+            << std::endl;
         debug::Debug::printDebug(this->getIsDebug(),
             "[SERVER NETWORK] Failed to broadcast level complete packet",
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
@@ -534,6 +634,50 @@ bool rserv::Lobby::nextLevelPacket() {
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
+    this->_sequenceNumber++;
+    return true;
+}
+
+bool rserv::Lobby::gameRulesPacket() {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[LOBBY] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    if (!this->_resourceManager->has<GameRules>()) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[LOBBY] GameRules not found in resource manager",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
+    auto gameRules = this->_resourceManager->get<GameRules>();
+    Difficulty difficulty = gameRules->getDifficulty();
+
+    std::vector<uint64_t> payload;
+    payload.push_back(static_cast<uint64_t>(difficulty));
+
+    std::vector<uint8_t> packet = this->_packet->pack(
+        constants::ID_SERVER,
+        this->_sequenceNumber,
+        constants::PACKET_GAME_RULES,
+        payload
+    );
+
+    if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[LOBBY] Failed to broadcast game rules packet",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
+    debug::Debug::printDebug(this->getIsDebug(),
+        "[LOBBY] Successfully sent gameRules packet with difficulty: " +
+        std::to_string(static_cast<int>(difficulty)),
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+
     this->_sequenceNumber++;
     return true;
 }

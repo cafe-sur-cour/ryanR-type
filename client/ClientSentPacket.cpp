@@ -285,3 +285,30 @@ void ClientNetwork::sendRequestProfilePacket() {
     this->_sequenceNumber++;
     this->_expectingProfileResponse = true;
 }
+
+void ClientNetwork::sendRequestGameRulesChange() {
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
+    }
+
+    if (this->_idClient == 0) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[Client] Warning: Client ID is 0, cannot send game rules change request",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    std::vector<uint64_t> payload = {};
+    std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
+        this->_sequenceNumber, constants::PACKET_REQUEST_GAME_RULES_CHANGE, payload);
+
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Sending request game rules change packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    this->_network->sendTo(*this->_serverEndpoint, packet);
+    this->_sequenceNumber++;
+}

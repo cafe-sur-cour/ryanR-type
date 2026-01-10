@@ -9,17 +9,20 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <utility>
 #include <thread>
 #include <tuple>
 #include <fstream>
 #include <nlohmann/json.hpp>
 
 #include "Server.hpp"
+#include "Lobby.hpp"
 #include "Constants.hpp"
 #include "../../../common/utils/SecureJsonManager.hpp"
 #include "../common/debug.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
+#include "../common/GameRules.hpp"
 
 bool rserv::Server::processConnections(std::pair<std::shared_ptr<net::INetworkEndpoint>,
     std::vector<uint8_t>> client) {
@@ -120,7 +123,46 @@ bool rserv::Server::processConnectToLobby(std::pair<std::shared_ptr<net::INetwor
     if (lobbyExists) {
         for (auto &lobby : this->_lobbyThreads) {
             if (lobby->_lobbyCode == lobbyCode) {
-                lobby->_clients.push_back(clientToAdd);
+                uint8_t clientId = std::get<0>(clientToAdd);
+
+                bool alreadyInLobbyThread = false;
+                for (const auto &existingClient : lobby->_clients) {
+                    if (std::get<0>(existingClient) == clientId) {
+                        alreadyInLobbyThread = true;
+                        break;
+                    }
+                }
+
+                if (!alreadyInLobbyThread) {
+                    lobby->_clients.push_back(clientToAdd);
+                }
+
+                for (auto &actualLobby : this->_lobbies) {
+                    if (actualLobby->getLobbyCode() == lobbyCode) {
+                        auto existingClients = actualLobby->getConnectedClients();
+                        bool alreadyInLobby = false;
+                        for (uint8_t existingId : existingClients) {
+                            if (existingId == clientId) {
+                                alreadyInLobby = true;
+                                break;
+                            }
+                        }
+
+                        if (!alreadyInLobby) {
+                            actualLobby->addClient(clientToAdd);
+
+                            actualLobby->syncExistingEntitiesToClient(
+                                std::get<1>(clientToAdd));
+                            actualLobby->createPlayerEntityForClient(clientId);
+                        }
+
+                        this->_clientToLobby[clientId] = actualLobby;
+
+                        actualLobby->gameRulesPacket();
+                        break;
+                    }
+                }
+
                 debug::Debug::printDebug(this->_config->getIsDebug(),
                     "[SERVER] Client " + std::to_string(static_cast<int>
                     (std::get<0>(clientToAdd))) + " added to lobby: " + lobbyCode,
@@ -258,20 +300,24 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
     for (const auto &client : _clientInfo) {
         endpoints.push_back(std::get<1>(client));
     }
-    this->_lobbies.push_back(std::make_shared<Lobby>(
-        this->_network,
-        _clientInfo,
-        lobbyCode,
-        this->_config->getIsDebug()
-    ));
-    auto lobby = this->_lobbies.back();
-    for (const auto& client : _clientInfo) {
-        uint8_t clientId = std::get<0>(client);
-        this->_clientToLobby[clientId] = lobby;
+
+    std::shared_ptr<Lobby> lobby = nullptr;
+    for (auto &existingLobby : this->_lobbies) {
+        if (existingLobby->getLobbyCode() == lobbyCode) {
+            lobby = existingLobby;
+            break;
+        }
     }
-    lobby->setPacketManager(this->createNewPacketManager());
-    this->initRessourceManager(lobby);
+
+    if (!lobby) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Error: Lobby not found in _lobbies for code: " + lobbyCode,
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
     this->canStartPacket(endpoints);
+    lobby->gameRulesPacket();
     lobby->startNetworkThread();
     lobby->startGameThread();
     debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -521,5 +567,62 @@ bool rserv::Server::processProfileRequest(std::shared_ptr<net::INetworkEndpoint>
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
+    return true;
+}
+
+bool rserv::Server::processRequestGameRulesChange(
+    std::pair<std::shared_ptr<net::INetworkEndpoint>,
+    std::vector<uint8_t>> payload) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    this->_packet->unpack(payload.second);
+    uint8_t clientId = this->_packet->getIdClient();
+
+    auto it = this->_clientToLobby.find(clientId);
+    if (it == this->_clientToLobby.end()) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Client " + std::to_string(clientId) + " not found in any lobby",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    std::shared_ptr<Lobby> lobby = it->second;
+    if (!lobby) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Lobby is null",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
+    auto resourceManager = lobby->getResourceManager();
+    if (!resourceManager || !resourceManager->has<GameRules>()) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] GameRules not found in lobby",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+
+    auto gameRules = resourceManager->get<GameRules>();
+    Difficulty current = gameRules->getDifficulty();
+    Difficulty next = NORMAL;
+
+    if (current == NORMAL) next = HARD;
+    else if (current == HARD) next = EASY;
+    else if (current == EASY) next = NORMAL;
+
+    gameRules->setDifficulty(next);
+
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] GameRules changed to difficulty: " +
+        std::to_string(static_cast<int>(next)),
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+    lobby->gameRulesPacket();
+
     return true;
 }

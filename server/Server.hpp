@@ -88,6 +88,7 @@ namespace rserv {
             bool processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> client);
             bool processLeaderboardRequest(std::shared_ptr<net::INetworkEndpoint> client);
             bool processProfileRequest(std::shared_ptr<net::INetworkEndpoint> client);
+            bool processRequestGameRulesChange(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> payload);
 
             /* Sent Packet Handling */
             bool connectionPacket(const net::INetworkEndpoint& endpoint);
