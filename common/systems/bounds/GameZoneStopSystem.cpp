@@ -1,3 +1,4 @@
+
 /*
 ** EPITECH PROJECT, 2025
 ** ryanR-type
@@ -14,7 +15,7 @@
 #include "../../components/tags/PlayerTag.hpp"
 #include "../../components/tags/GameZoneStopTag.hpp"
 #include "../../types/FRect.hpp"
-#include <iostream>
+
 namespace ecs {
 
 GameZoneStopSystem::GameZoneStopSystem() {
@@ -47,7 +48,8 @@ void GameZoneStopSystem::update(
         playerTransform->getScale()
     );
 
-    auto stopZoneView = registry->view<GameZoneStopTag, TransformComponent, ColliderComponent>();
+    auto stopZoneView = registry->view<GameZoneStopTag, TransformComponent,
+        ColliderComponent>();
     for (auto stopZoneEntity : stopZoneView) {
         auto stopZoneTransform = registry->getComponent<TransformComponent>(stopZoneEntity);
         auto stopZoneCollider = registry->getComponent<ColliderComponent>(stopZoneEntity);

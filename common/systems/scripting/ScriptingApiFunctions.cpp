@@ -320,7 +320,6 @@ void ScriptingSystem::bindAPI() {
 
     lua.set_function("restartGameZone",
         [this]() {
-
         auto gameZoneView = registry->view<GameZoneComponent, VelocityComponent>();
         for (auto gameZoneEntity : gameZoneView) {
             auto velocityComp = registry->getComponent<VelocityComponent>(gameZoneEntity);
