@@ -24,6 +24,7 @@ int main(int ac, char **av) {
     std::cout << "------------------------" << std::endl;
     std::cout << "Port: " << core.getConfig()->getPort() << std::endl;
     std::cout << "IP: " << core.getConfig()->getIp() << std::endl;
+    std::cout << "TPS: " << core.getConfig()->getTps() << std::endl;
     std::cout << "Max Clients: " << constants::MAX_CLIENT;
     std::cout << std::endl << "------------------------" << std::endl;
     try {

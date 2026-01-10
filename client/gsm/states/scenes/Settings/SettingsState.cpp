@@ -35,6 +35,12 @@ SettingsState::SettingsState(
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
 
+    _uiManager->setCursorCallback([this](bool isHovering) {
+        if (_resourceManager->has<gfx::IWindow>()) {
+            _resourceManager->get<gfx::IWindow>()->setCursor(isHovering);
+        }
+    });
+
     _background = std::make_shared<ui::Background>(_resourceManager);
 
     auto config = _resourceManager->get<SettingsConfig>();
@@ -624,9 +630,6 @@ void SettingsState::update(float deltaTime) {
 
     _uiManager->handleMouseInput(mousePos, mousePressed);
 
-    bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
-    _resourceManager->get<gfx::IWindow>()->setCursor(isHoveringUI);
-
     if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
@@ -858,6 +861,7 @@ std::string SettingsState::getScreenResolutionText(
 void SettingsState::exit() {
     auto window = _resourceManager->get<gfx::IWindow>();
     window->setViewCenter(_savedViewCenter.getX(), _savedViewCenter.getY());
+    window->setCursor(false);
     _uiManager->clearElements();
     _backButton.reset();
     _highContrastButton.reset();

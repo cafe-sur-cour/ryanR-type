@@ -8,12 +8,12 @@
 #ifndef SERVER_CONSTANTS_HPP_
 #define SERVER_CONSTANTS_HPP_
 
+#include <cstdint>
 #include "../common/constants.hpp"
 
 namespace constants {
     /* TPS */
-    constexpr long TPS = 50;
-    constexpr long CD_TPS = 50;
+    constexpr int64_t TPS = 20;
 
     /* Core */
     constexpr long SERVER_THREAD_SLEEP_MS = 10;
