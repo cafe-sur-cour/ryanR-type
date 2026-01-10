@@ -324,7 +324,7 @@ void InGameState::drawShotChargeHUD(
     size_t textOffsetY = 35;
 
     std::stringstream chargeSs;
-    chargeSs << "ChargedShot: " << static_cast<int>(
+    chargeSs << "Charged Shot: " << static_cast<int>(
         shotCharge / (std::max)(0.0f, maxShotCharge) * 100
     ) << "%";
     std::string chargeText = chargeSs.str();
