@@ -32,7 +32,8 @@ enum componentType {
     SHOOTER_TAG = 0x14,
     PROJECTILE_PASS_THROUGH_TAG = 0x15,
     PROJECTILE_PREFAB = 0x16,
-    GAME_ZONE = 0x17
+    GAME_ZONE = 0x17,
+    CHARGED_SHOT_COMP = 0x18
 };
 
 #endif /* !TRASLATION_TO_ECS_HPP_ */

@@ -53,6 +53,7 @@ namespace constants {
     const std::string CLIENT_VALUE = "client";
     const std::string BOTH_VALUE = "both";
 
+    /* Components */
     const std::string TRANSFORMCOMPONENT = "TransformComponent";
     const std::string VELOCITYCOMPONENT = "VelocityComponent";
     const std::string SPEEDCOMPONENT = "SpeedComponent";
@@ -63,7 +64,6 @@ namespace constants {
     const std::string PROJECTILEPREFABCOMPONENT = "ProjectilePrefabComponent";
     const std::string TEXTCOMPONENT = "TextComponent";
     const std::string HEALTHBARCOMPONENT = "HealthBarComponent";
-
     const std::string SCORECOMPONENT = "ScoreComponent";
     const std::string SCOREVALUECOMPONENT = "ScoreValueComponent";
     const std::string DAMAGECOMPONENT = "DamageComponent";
@@ -71,6 +71,17 @@ namespace constants {
     const std::string HITBOXRENDERCOMPONENT = "HitboxRenderComponent";
     const std::string INTERACTIONCONFIGCOMPONENT = "InteractionConfigComponent";
     const std::string SCRIPTINGCOMPONENT = "ScriptingComponent";
+    const std::string SOUNDINTENTCOMPONENT = "SoundIntentComponent";
+    const std::string ENTITYPARTSCOMPONENT = "EntityPartsComponent";
+    const std::string LIFETIMECOMPONENT = "LifetimeComponent";
+    const std::string LIFESPANCOMPONENT = "LifeSpanComponent";
+    const std::string MUSICCOMPONENT = "MusicComponent";
+    const std::string COLLIDERCOMPONENT = "ColliderComponent";
+    const std::string PARALLAXCOMPONENT = "ParallaxComponent";
+    const std::string GAMEZONECOMPONENT = "GameZoneComponent";
+    const std::string CHARGEDSHOTCOMPONENT = "ChargedShotComponent";
+
+    /* Fields */
     const std::string SCRIPT_PATH_FIELD = "scriptPath";
     const std::string ADDITIONAL_FUNCTIONS_FIELD = "additionalFunctions";
     const std::string SCORE_FIELD = "score";
@@ -100,17 +111,12 @@ namespace constants {
     const std::string ZIGZAGFREQUENCY_FIELD = "zigzagFrequency";
     const std::string DETECTIONRANGE_FIELD = "detectionRange";
     const std::string VERTICALDEADZONE_FIELD = "verticalDeadzone";
-    const std::string STRAIGHT_LINE_VALUE = "StraightLine";
-    const std::string ZIGZAG_VALUE = "Zigzag";
-    const std::string VERTICAL_MIRROR_VALUE = "VerticalMirror";
-    const std::string FOLLOW_RIGHT_VALUE = "FollowRight";
     const std::string WIDTH_FIELD = "width";
     const std::string HEIGHT_FIELD = "height";
     const std::string COLOR_FIELD = "color";
     const std::string R_FIELD = "r";
     const std::string G_FIELD = "g";
     const std::string B_FIELD = "b";
-
     const std::string FORCE_TYPE = "force";
     const std::string FORCE_TYPE_FIELD = "forceType";
     const std::string STATES_FIELD = "states";
@@ -136,37 +142,19 @@ namespace constants {
     const std::string REWIND_FIELD = "rewind";
     const std::string TEXTUREPATH_FIELD = "texturePath";
     const std::string LOOP_FIELD = "loop";
-    const std::string SCALEMODE_FITSCREEN = "FIT_SCREEN";
-    const std::string SCALEMODE_STRETCH = "STRETCH";
-    const std::string SCALEMODE_MANUAL = "MANUAL";
-    const std::string ENTITYPARTSCOMPONENT = "EntityPartsComponent";
-    const std::string COLLISION_TYPE_SOLID = "Solid";
-    const std::string COLLISION_TYPE_TRIGGER = "Trigger";
-    const std::string COLLISION_TYPE_PUSH = "Push";
-    const std::string COLLISION_TYPE_NONE = "None";
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";
-
     const std::string PREFABNAME_FIELD = "prefabName";
-    const std::string LIFETIMECOMPONENT = "LifetimeComponent";
     const std::string LIFETIME_FIELD = "lifetime";
-    const std::string LIFESPANCOMPONENT = "LifeSpanComponent";
     const std::string LIFESPAN_FIELD = "lifespan";
-    const std::string BACKGROUNDMUSICTAG = "BackGroundMusicTag";
     const std::string TEXT_FIELD = "text";
     const std::string FONTPATH_FIELD = "fontPath";
-    const std::string SOUNDINTENTCOMPONENT = "SoundIntentComponent";
     const std::string SOUND_FILE_FIELD = "soundFile";
-
     const std::string MAPPINGS_FIELD = "mappings";
     const std::string TAGS_FIELD = "tags";
     const std::string TOENTITY_FIELD = "toEntity";
     const std::string TOSELF_FIELD = "toSelf";
 
-    const std::string POWERUP_TAG = "PowerUpTag";
-    const std::string FORCE_TAG = "ForceTag";
-
-    const std::string MUSICCOMPONENT = "MusicComponent";
     const std::string MUSICFILE_FIELD = "musicFile";
     const std::string VOLUME_FIELD = "volume";
     const std::string INITIALSTATEMUSIC_FIELD = "initialState";
@@ -174,6 +162,21 @@ namespace constants {
     const std::string PAUSED_FIELD = "PAUSED";
     const std::string STOPPED_FIELD = "STOPPED";
     const std::string CHANGING_FIELD = "CHANGING";
+
+    const std::string MAXCHARGE_FIELD = "maxCharge";
+    const std::string CHARGERELOADTIME_FIELD = "chargeReloadTime";
+
+    const std::string STRAIGHT_LINE_VALUE = "StraightLine";
+    const std::string ZIGZAG_VALUE = "Zigzag";
+    const std::string VERTICAL_MIRROR_VALUE = "VerticalMirror";
+    const std::string FOLLOW_RIGHT_VALUE = "FollowRight";
+    const std::string SCALEMODE_FITSCREEN = "FIT_SCREEN";
+    const std::string SCALEMODE_STRETCH = "STRETCH";
+    const std::string SCALEMODE_MANUAL = "MANUAL";
+    const std::string COLLISION_TYPE_SOLID = "Solid";
+    const std::string COLLISION_TYPE_TRIGGER = "Trigger";
+    const std::string COLLISION_TYPE_PUSH = "Push";
+    const std::string COLLISION_TYPE_NONE = "None";
 
     const float MAX_HEIGHT = 1080.0f;
     const float MAX_WIDTH = 1920.0f;
@@ -223,14 +226,11 @@ namespace constants {
     /* Tags */
     const std::string CONTROLLABLETAG = "ControllableTag";
     const std::string PLAYERTAG = "PlayerTag";
-    const std::string COLLIDERCOMPONENT = "ColliderComponent";
     const std::string MOBTAG = "MobTag";
     const std::string SHOOTERTAG = "ShooterTag";
     const std::string PLAYERPROJECTILETAG = "PlayerProjectileTag";
     const std::string ENNEMYPROJECTILETAG = "EnnemyProjectileTag";
     const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
-    const std::string PARALLAXCOMPONENT = "ParallaxComponent";
-    const std::string GAMEZONECOMPONENT = "GameZoneComponent";
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
     const std::string OBSTACLETAG = "ObstacleTag";
 
@@ -239,6 +239,9 @@ namespace constants {
     constexpr float DIFFICULTY_NORMAL_MULTIPLIER = 1.0f;
     constexpr float DIFFICULTY_HARD_MULTIPLIER = 0.7f;
     const std::string CLIENTEFFECTTAG = "ClientEffectTag";
+    const std::string BACKGROUNDMUSICTAG = "BackGroundMusicTag";
+    const std::string POWERUP_TAG = "PowerUpTag";
+    const std::string FORCE_TAG = "ForceTag";
 
     /* Action constants */
     const std::string DEALDEATH_ACTION = "DealDeath";
@@ -253,7 +256,6 @@ namespace constants {
     const std::string SMALL_EXPLOSION = "small_explosion";
     const std::string BIG_EXPLOSION = "big_explosion";
     const std::string OBSTACLE_1 = "obstacle1";
-
 
     constexpr float DEFAULT_TIMER = 0.0f;
 

@@ -31,6 +31,7 @@
 #include "../common/components/tags/ProjectilePassThroughTag.hpp"
 #include "../common/components/permanent/ProjectilePrefabComponent.hpp"
 #include "../common/components/permanent/GameZoneComponent.hpp"
+#include "../common/components/permanent/ChargedShotComponent.hpp"
 
 namespace {
 
@@ -284,6 +285,22 @@ std::vector<uint64_t> rserv::Lobby::convertGameZoneComponent(
             data.push_back(packFloat(gameZoneComp->getZone().getWidth()));
             data.push_back(packFloat(gameZoneComp->getZone().getLeft()));
             data.push_back(packFloat(gameZoneComp->getZone().getTop()));
+        }
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Lobby::convertChargedShotComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i
+) {
+    std::vector<uint64_t> data;
+    if (registry && registry->hasComponent<ecs::ChargedShotComponent>(i)) {
+        auto chargedShotComp = registry->getComponent<ecs::ChargedShotComponent>(i);
+        if (chargedShotComp) {
+            data.push_back(static_cast<uint64_t>(CHARGED_SHOT_COMP));
+            data.push_back(packFloat(chargedShotComp->getCharge()));
+            data.push_back(packFloat(chargedShotComp->getMaxCharge()));
+            data.push_back(packFloat(chargedShotComp->getReloadTime()));
         }
     }
     return data;

@@ -147,7 +147,7 @@ rserv::EntitySnapshot rserv::ComponentSerializer::createSnapshotFromComponents(
             continue;
         }
 
-        if (compType == SHOOTING_STATS) {
+        if (compType == SHOOTING_STATS || compType == CHARGED_SHOT_COMP) {
             if (i + 3 < componentData.size()) {
                 snapshot.componentMask |= (1u << compType);
                 snapshot.components[compType] = {
