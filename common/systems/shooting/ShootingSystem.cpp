@@ -12,6 +12,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "../../components/permanent/VelocityComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ShootingStatsComponent.hpp"
@@ -19,10 +20,13 @@
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/permanent/SpeedComponent.hpp"
 #include "../../components/permanent/OwnerComponent.hpp"
+#include "../../components/permanent/ChargedShotComponent.hpp"
+#include "../../components/permanent/DamageComponent.hpp"
 #include "../../constants.hpp"
 #include "../../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../ECS/entity/EntityCreationContext.hpp"
+
 namespace ecs {
 
 ShootingSystem::ShootingSystem() {
@@ -59,7 +63,6 @@ void ShootingSystem::update(
 
         auto prefabManager = resourceManager->get<EntityPrefabManager>();
         std::string prefabName = projectilePrefabComponent->getPrefabName();
-        auto prefab = prefabManager->getPrefab(prefabName);
 
         auto pattern = shootingStats->getMultiShotPattern();
 
@@ -138,6 +141,24 @@ void ShootingSystem::spawnProjectile(
     if (velocity) {
         math::Vector2f projectileVelocity = calculateProjectileVelocity(angle, speed);
         velocity->setVelocity(projectileVelocity);
+    }
+
+    auto chargeComp = registry->getComponent<ChargedShotComponent>(shooterEntity);
+    auto damageComp = registry->getComponent<DamageComponent>(projectileEntity);
+    auto transformComp = registry->getComponent<TransformComponent>(projectileEntity);
+    if (chargeComp && damageComp) {
+        float charge = (std::max)(chargeComp->getCharge(), 0.0f);
+        float maxCharge = chargeComp->getMaxCharge();
+        float multCharge = charge / maxCharge + 1;
+
+        damageComp->setDamage(damageComp->getDamage() * multCharge);
+
+        chargeComp->setCharge(0.0f - chargeComp->getReloadTime());
+
+        if (transformComp) {
+            auto scale = transformComp->getScale();
+            transformComp->setScale({scale.getX() * multCharge, scale.getY() * multCharge});
+        }
     }
 }
 
