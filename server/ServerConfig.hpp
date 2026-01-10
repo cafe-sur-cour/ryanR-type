@@ -29,11 +29,15 @@ namespace rserv {
 
             void setIsDebug(bool isDebug);
             bool getIsDebug() const;
+
+            void setTps(int64_t tps);
+            int64_t getTps() const;
         private:
             int _state;
             uint16_t _port;
             std::string _ip;
             bool _isDebug;
+            int64_t _tps;
     };
 } // namespace rserv = r-type server
 

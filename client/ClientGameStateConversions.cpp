@@ -18,6 +18,7 @@
 #include "../common/components/permanent/ScoreComponent.hpp"
 #include "../common/components/permanent/VelocityComponent.hpp"
 #include "../common/components/permanent/ProjectilePrefabComponent.hpp"
+#include "../common/components/permanent/ChargedShotComponent.hpp"
 #include "../common/components/tags/ObstacleTag.hpp"
 #include "../common/components/permanent/AnimationStateComponent.hpp"
 #include "interpolation/NetworkStateComponent.hpp"
@@ -417,5 +418,42 @@ size_t ClientNetwork::parseAnimationStateComponent(const std::vector<uint64_t> &
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " AnimationState: " + state,
         debug::debugType::NETWORK, debug::debugLevel::INFO);
+    return index;
+}
+
+size_t ClientNetwork::parseChargedShotComponent(
+    const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId
+) {
+    if (index + 3 <= payload.size()) {
+        float charge = unpackFloat(payload[index++]);
+        float maxCharge = unpackFloat(payload[index++]);
+        float reloadTime = unpackFloat(payload[index++]);
+
+        debug::Debug::printDebug(
+            this->_isDebug,
+            "[CLIENT] Entity " + std::to_string(entityId)
+                + " Shot Charge: " + std::to_string(charge)
+                + " Max Charge: " + std::to_string(maxCharge)
+                + " Reload time: " + std::to_string(reloadTime),
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO
+        );
+
+        auto _registry = this->_resourceManager->get<ecs::Registry>();
+
+        if (_registry->hasComponent<ecs::ChargedShotComponent>(entityId)) {
+            auto chargedShotComp = _registry->getComponent<ecs::ChargedShotComponent>(
+                entityId
+            );
+            chargedShotComp->setCharge(charge);
+            chargedShotComp->setMaxCharge(maxCharge);
+            chargedShotComp->setReloadTime(reloadTime);
+        } else {
+            _registry->addComponent<ecs::ChargedShotComponent>(
+                entityId,
+                std::make_shared<ecs::ChargedShotComponent>(charge, maxCharge, reloadTime)
+            );
+        }
+    }
     return index;
 }

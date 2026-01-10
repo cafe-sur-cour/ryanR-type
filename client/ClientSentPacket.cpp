@@ -220,6 +220,7 @@ void ClientNetwork::sendRegisterPacket(const std::string &username,
         debug::debugLevel::INFO);
     this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
+    this->_expectingRegisterResponse = true;
 }
 
 void ClientNetwork::sendLoginPacket(const std::string &username, const std::string &password) {
@@ -245,4 +246,42 @@ void ClientNetwork::sendLoginPacket(const std::string &username, const std::stri
     this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
     this->_expectingLoginResponse = true;
+}
+
+void ClientNetwork::sendRequestLeaderboardPacket() {
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
+    }
+
+    std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
+        this->_sequenceNumber, constants::PACKET_REQUEST_LEADERBOARD, {});
+
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Sending request leaderboard packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    this->_network->sendTo(*this->_serverEndpoint, packet);
+    this->_sequenceNumber++;
+    this->_expectingLoginResponse = true;
+}
+
+void ClientNetwork::sendRequestProfilePacket() {
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
+    }
+
+    std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
+        this->_sequenceNumber, constants::PACKET_REQUEST_PROFILE, {});
+
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Sending request profile packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    this->_network->sendTo(*this->_serverEndpoint, packet);
+    this->_sequenceNumber++;
+    this->_expectingProfileResponse = true;
 }

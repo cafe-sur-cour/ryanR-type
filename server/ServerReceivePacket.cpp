@@ -75,14 +75,13 @@ bool rserv::Server::requestCode(const net::INetworkEndpoint &endpoint) {
 
 bool rserv::Server::processConnectToLobby(std::pair<std::shared_ptr<net::INetworkEndpoint>,
     std::vector<uint8_t>> payload) {
-    /* Verify Network */
     if (!this->_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Network not initialized",
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
-    /* Verify that lobby exists */
+
     std::string lobbyCode = "";
     if (payload.second.size() > HEADER_SIZE)
         lobbyCode = std::string(payload.second.begin() + HEADER_SIZE, payload.second.end());
@@ -99,9 +98,8 @@ bool rserv::Server::processConnectToLobby(std::pair<std::shared_ptr<net::INetwor
             break;
         }
     }
-    /* Send successful or fail connect */
+
     this->lobbyConnectValuePacket(*payload.first, lobbyExists);
-    /* Add client to lobby */
     std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string> clientToAdd;
     bool clientFound = false;
     for (const auto &client : this->_clients) {
@@ -142,14 +140,13 @@ bool rserv::Server::processConnectToLobby(std::pair<std::shared_ptr<net::INetwor
 
 bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEndpoint>,
     std::vector<uint8_t>> payload) {
-    /* Verify Network */
     if (!this->_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Network not initialized",
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
-    /* Verify that client is lobby master */
+
     std::string lobbyCode = "";
     if (payload.second.size() > HEADER_SIZE)
         lobbyCode = std::string(payload.second.begin() + HEADER_SIZE, payload.second.end());
@@ -198,6 +195,66 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
             break;
         }
     }
+
+    const std::string filepath = constants::USERS_JSON_PATH;
+    nlohmann::json users;
+    std::ifstream file(filepath);
+    if (file.is_open()) {
+        try {
+            file >> users;
+        } catch (const std::exception&) {
+            users = nlohmann::json::array();
+        }
+        file.close();
+    } else {
+        users = nlohmann::json::array();
+    }
+    if (users.is_array()) {
+        for (const auto& client : _clientInfo) {
+            std::string username = std::get<2>(client);
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Incrementing games_played for user: " + username,
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+            for (auto& user : users) {
+                if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
+                    user[constants::USERNAME_JSON_WARD].is_string() &&
+                    user[constants::USERNAME_JSON_WARD] == username) {
+                    int gamesPlayed = 0;
+                    if (user.contains(constants::GAMES_PLAYED_JSON_WARD) &&
+                        user[constants::GAMES_PLAYED_JSON_WARD].is_number_integer()) {
+                        gamesPlayed = user[constants::GAMES_PLAYED_JSON_WARD].get<int>();
+                    }
+                    user[constants::GAMES_PLAYED_JSON_WARD] = gamesPlayed + 1;
+                    debug::Debug::printDebug(this->_config->getIsDebug(),
+                        "[SERVER] Incremented games_played to " + std::to_string(
+                            gamesPlayed + 1) + " for " + username,
+                        debug::debugType::NETWORK, debug::debugLevel::INFO);
+                    break;
+                }
+            }
+        }
+        std::ofstream outfile(filepath);
+        bool writeSuccess = false;
+        if (outfile.is_open()) {
+            outfile << users.dump(4);
+            outfile.close();
+            writeSuccess = true;
+        }
+        if (writeSuccess) {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Successfully wrote updated users.json",
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+        } else {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Failed to write users.json",
+                debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        }
+    } else {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] users.json is not an array",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+    }
+
     for (const auto &client : _clientInfo) {
         endpoints.push_back(std::get<1>(client));
     }
@@ -205,7 +262,8 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
         this->_network,
         _clientInfo,
         lobbyCode,
-        this->_config->getIsDebug()
+        this->_config->getIsDebug(),
+        this->_config->getTps()
     ));
     auto lobby = this->_lobbies.back();
     for (const auto& client : _clientInfo) {
@@ -262,7 +320,18 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
     }
 
     const std::string filepath = "saves/users.json";
-    nlohmann::json users = utils::SecureJsonManager::readSecureJson(filepath);
+    nlohmann::json users;
+    std::ifstream file(filepath);
+    if (file.is_open()) {
+        try {
+            file >> users;
+        } catch (const std::exception&) {
+            users = nlohmann::json::array();
+        }
+        file.close();
+    } else {
+        users = nlohmann::json::array();
+    }
 
     if (!users.is_array()) {
         users = nlohmann::json::array();
@@ -274,6 +343,10 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER] Registration failed: Username already exists",
                 debug::debugType::NETWORK, debug::debugLevel::WARNING);
+
+            std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+                this->_sequenceNumber++, constants::PACKET_REGISTER_FAIL, {});
+            this->_network->sendTo(*client.first, packet);
             return false;
         }
     }
@@ -286,10 +359,30 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
     newUser[constants::GAMES_PLAYED_JSON_WARD] = 0;
     newUser[constants::TIME_SPENT_JSON_WARD] = 0;
     users.push_back(newUser);
-    if (utils::SecureJsonManager::writeSecureJson(filepath, users)) {
+    std::ofstream outfile(filepath);
+    bool writeSuccess = false;
+    if (outfile.is_open()) {
+        outfile << users.dump(4);
+        outfile.close();
+        writeSuccess = true;
+    }
+    if (writeSuccess) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] User registered successfully: " + username,
             debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+        for (auto &clientTuple : this->_clients) {
+            if (std::get<1>(clientTuple) && client.first &&
+                std::get<1>(clientTuple)->getAddress() == client.first->getAddress() &&
+                std::get<1>(clientTuple)->getPort() == client.first->getPort()) {
+                std::get<2>(clientTuple) = username;
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] Updated username for newly registered client: " + username,
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+                break;
+            }
+        }
+
         if (!this->connectUserPacket(*client.first, username)) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER] Error: Failed to send CONNECT_USER packet",
@@ -338,7 +431,18 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
     }
 
     const std::string filepath = constants::USERS_JSON_PATH;
-    nlohmann::json users = utils::SecureJsonManager::readSecureJson(filepath);
+    nlohmann::json users;
+    std::ifstream file(filepath);
+    if (file.is_open()) {
+        try {
+            file >> users;
+        } catch (const std::exception&) {
+            users = nlohmann::json::array();
+        }
+        file.close();
+    } else {
+        users = nlohmann::json::array();
+    }
 
     if (!users.is_array()) {
         users = nlohmann::json::array();
@@ -359,6 +463,19 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] User logged in successfully: " + username,
             debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+        for (auto &clientTuple : this->_clients) {
+            if (std::get<1>(clientTuple) && client.first &&
+                std::get<1>(clientTuple)->getAddress() == client.first->getAddress() &&
+                std::get<1>(clientTuple)->getPort() == client.first->getPort()) {
+                std::get<2>(clientTuple) = username;
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] Updated username for client: " + username,
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+                break;
+            }
+        }
+
         if (!this->connectUserPacket(*client.first, username)) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER] Error: Failed to send CONNECT_USER packet",
@@ -372,4 +489,38 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
+}
+
+bool rserv::Server::processLeaderboardRequest(std::shared_ptr<net::INetworkEndpoint> client) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    if (!this->leaderboardPacket(*client)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Failed to send leaderboard packet",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    return true;
+}
+
+bool rserv::Server::processProfileRequest(std::shared_ptr<net::INetworkEndpoint> client) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    if (!this->profilePacket(*client)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Failed to send profile packet",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    return true;
 }

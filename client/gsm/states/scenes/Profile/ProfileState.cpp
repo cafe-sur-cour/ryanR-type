@@ -18,6 +18,7 @@
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../ui/elements/Box.hpp"
+#include "../Replay/ReplayState.hpp"
 
 namespace gsm {
 
@@ -27,6 +28,12 @@ ProfileState::ProfileState(
 ) : AGameState(gsm, resourceManager) {
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
+
+    _uiManager->setCursorCallback([this](bool isHovering) {
+        if (_resourceManager->has<gfx::IWindow>()) {
+            _resourceManager->get<gfx::IWindow>()->setCursor(isHovering);
+        }
+    });
 
     auto config = _resourceManager->get<SettingsConfig>();
     if (config) {
@@ -214,21 +221,35 @@ ProfileState::ProfileState(
     buttonsSection->setSize(math::Vector2f(500.f, 350.f));
 
     _button1 = std::make_shared<ui::Button>(_resourceManager);
-    _button1->setText("Button 1");
+    _button1->setText("Refresh Profile");
     _button1->setSize(math::Vector2f(500.f, 60.f));
     _button1->setNormalColor(colors::BUTTON_SECONDARY);
     _button1->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _button1->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
-    _button1->setOnRelease([]() {
+    _button1->setOnRelease([this]() {
+        auto network = _resourceManager->get<ClientNetwork>();
+        if (network && !network->getName().empty()) {
+            network->sendRequestProfilePacket();
+        }
     });
 
     _button2 = std::make_shared<ui::Button>(_resourceManager);
-    _button2->setText("Button 2");
+    _button2->setText(constants::REPLAY_BUTTON_TEXT);
     _button2->setSize(math::Vector2f(500.f, 60.f));
     _button2->setNormalColor(colors::BUTTON_SECONDARY);
     _button2->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _button2->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
-    _button2->setOnRelease([]() {
+    _button2->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<ReplayState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _button2->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_shared<ReplayState>(stateMachine,
+                this->_resourceManager));
+        }
     });
 
     _button3 = std::make_shared<ui::Button>(_resourceManager);
@@ -244,7 +265,6 @@ ProfileState::ProfileState(
     buttonsSection->addElement(_button2);
     buttonsSection->addElement(_button3);
 
-    // Bouton Back
     _backButton = std::make_shared<ui::Button>(_resourceManager);
     _backButton->setText("Back");
     _backButton->setSize(math::Vector2f(500.f, 70.f));
@@ -284,13 +304,30 @@ ProfileState::ProfileState(
 }
 
 void ProfileState::loadUserData() {
-    auto config = _resourceManager->get<SettingsConfig>();
-    if (!config) {
+    auto network = _resourceManager->get<ClientNetwork>();
+    if (!network) {
         return;
+    }
+
+    if (network->isProfileDataUpdated()) {
+        auto profileData = network->getProfileData();
+        if (profileData.size() >= 5) {
+            _usernameText->setText("Username: " + profileData[0]);
+            _winsText->setText("Wins: " + profileData[1]);
+            _highScoreText->setText("High Score: " + profileData[2]);
+            _gamesPlayedText->setText("Games Played: " + profileData[3]);
+        }
+
+        network->clearProfileDataUpdateFlag();
     }
 }
 
 void ProfileState::enter() {
+    auto network = _resourceManager->get<ClientNetwork>();
+    if (network && !network->getName().empty()) {
+        network->sendRequestProfilePacket();
+    }
+
     loadUserData();
 }
 
@@ -314,12 +351,15 @@ void ProfileState::update(float deltaTime) {
 
     _uiManager->handleMouseInput(mousePos, mousePressed);
 
-    bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
-    _resourceManager->get<gfx::IWindow>()->setCursor(isHoveringUI);
-
     if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
+    }
+
+    auto network = _resourceManager->get<ClientNetwork>();
+    if (network && network->isProfileDataUpdated()) {
+        loadUserData();
+        network->clearProfileDataUpdateFlag();
     }
 
     _uiManager->update(deltaTime);

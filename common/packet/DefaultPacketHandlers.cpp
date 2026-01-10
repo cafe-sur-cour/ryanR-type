@@ -308,6 +308,8 @@ bool registerDefaultPacketHandlers(
     };
 
     registerOptionalULongPacket(packet, ser, CONNECTION_CLIENT_PACKET);
+    registerOptionalULongPacket(packet, ser, REQUEST_LEADERBOARD_PACKET);
+    registerOptionalULongPacket(packet, ser, REQUEST_PROFILE_PACKET);
     registerSingleUCharPacket(packet, ser, ACCEPTATION_PACKET, LENGTH_ACCEPTATION_PACKET);
     registerSingleUCharPacket(packet, ser, DISCONNECTION_PACKET, LENGTH_DISCONNECTION_PACKET);
 
@@ -332,6 +334,7 @@ bool registerDefaultPacketHandlers(
         return false;
 
     registerOptionalULongPacket(packet, ser, REQUEST_LOBBY_PACKET);
+    registerOptionalULongPacket(packet, ser, REGISTER_FAIL_PACKET);
     registerMultiUCharPacket(packet, ser, SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
     registerMultiUCharPacket(packet, ser, REGISTER_PACKET, LENGTH_REGISTER_PACKET);
     registerMultiUCharPacket(packet, ser, LOGIN_PACKET, LENGTH_LOGIN_PACKET);
@@ -344,12 +347,15 @@ bool registerDefaultPacketHandlers(
     registerOptionalULongPacket(packet, ser, LEVEL_COMPLETE_PACKET);
     registerOptionalULongPacket(packet, ser, NEXT_LEVEL_PACKET);
     registerMultiUCharPacket(packet, ser, CONNECT_USER_PACKET, LENGTH_CONNECT_USER_PACKET);
+    registerMultiUCharPacket(packet, ser, LEADERBOARD_PACKET, LENGTH_LEADERBOARD_PACKET);
+    registerMultiUCharPacket(packet, ser, PROFILE_PACKET, LENGTH_PROFILE_PACKET);
 
     packet->registerLength(LOBBY_CONNECT_VALUE, LENGTH_CONNECT_TO_LOBBY_PACKET);
     packet->registerLength(REQUEST_LOBBY_PACKET, LENGTH_REQUEST_LOBBY_PACKET);
     packet->registerLength(SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
     packet->registerLength(CONNECT_TO_LOBBY, LENGTH_LOBBY_CODE_PACKET);
     packet->registerLength(LOBBY_MASTER_REQUEST_START, LENGTH_LOBBY_CODE_PACKET);
+    packet->registerLength(REGISTER_FAIL_PACKET, LENGTH_FAIL_REGISTER_PACKET);
 
     packet->registerLength(CONNECTION_CLIENT_PACKET, LENGTH_CONNECTION_PACKET);
     packet->registerLength(ACCEPTATION_PACKET, LENGTH_ACCEPTATION_PACKET);
@@ -362,6 +368,10 @@ bool registerDefaultPacketHandlers(
     packet->registerLength(REGISTER_PACKET, LENGTH_REGISTER_PACKET);
     packet->registerLength(CONNECT_USER_PACKET, LENGTH_CONNECT_USER_PACKET);
     packet->registerLength(LOGIN_PACKET, LENGTH_LOGIN_PACKET);
+    packet->registerLength(REQUEST_LEADERBOARD_PACKET, LENGTH_REQUEST_LEADERBOARD_PACKET);
+    packet->registerLength(LEADERBOARD_PACKET, LENGTH_LEADERBOARD_PACKET);
+    packet->registerLength(REQUEST_PROFILE_PACKET, LENGTH_REQUEST_PROFILE_PACKET);
+    packet->registerLength(PROFILE_PACKET, LENGTH_PROFILE_PACKET);
 
     packet->registerLengthCombEntry(TRANSFORM, 41, 6);
     packet->registerLengthCombEntry(SPEED_COMP, 9, 2);

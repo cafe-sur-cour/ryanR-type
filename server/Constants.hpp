@@ -8,12 +8,12 @@
 #ifndef SERVER_CONSTANTS_HPP_
 #define SERVER_CONSTANTS_HPP_
 
+#include <cstdint>
 #include "../common/constants.hpp"
 
 namespace constants {
     /* TPS */
-    constexpr long TPS = 50;
-    constexpr long CD_TPS = 50;
+    constexpr int64_t TPS = 20;
 
     /* Core */
     constexpr long SERVER_THREAD_SLEEP_MS = 10;
@@ -30,12 +30,14 @@ namespace constants {
     constexpr char END_OFSTRING_TRD = '\0';
 
     const std::string USERS_JSON_PATH = "saves/users.json";
+    const std::string SCORES_JSON_PATH = "saves/scores.json";
     const std::string USERNAME_JSON_WARD = "username";
     const std::string PASSWORD_JSON_WARD = "password";
     const std::string GAMES_PLAYED_JSON_WARD = "games_played";
     const std::string WINS_JSON_WARD = "wins";
     const std::string HIGH_SCORE_JSON_WARD = "high_score";
     const std::string TIME_SPENT_JSON_WARD = "time_spent";
+    const std::string SCORE_JSON_WARD = "scores";
 }
 
 #endif /* !SERVER_CONSTANTS */

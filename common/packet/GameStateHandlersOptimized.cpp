@@ -147,6 +147,22 @@ static void registerOptimizedGameStatePackers(
         return packetData;
     });
 
+    /* Shot Charge component */
+    packet->registerGameStatePackFunction([pushUChar, pushVarint](
+        std::vector<uint64_t> payload,
+        std::shared_ptr<unsigned int> i
+    ) -> std::vector<uint8_t> {
+        std::vector<uint8_t> packetData = {};
+        if (payload.at(*i) == CHARGED_SHOT_COMP) {
+            pushUChar(packetData, payload.at(*i));
+            pushVarint(packetData, payload.at(*i + 1));
+            pushVarint(packetData, payload.at(*i + 2));
+            pushVarint(packetData, payload.at(*i + 3));
+            *i += 4;
+        }
+        return packetData;
+    });
+
     /* AI movement pattern component */
     packet->registerGameStatePackFunction([pushUChar, pushVarint](
         std::vector<uint64_t> payload,
@@ -463,6 +479,33 @@ static void registerOptimizedGameStateUnpackers(
             vals.push_back(score);
             packet->setPayload(vals);
             return static_cast<unsigned int>(1 + s1);
+        }
+        return 0;
+    });
+
+    /* Shot Charge component */
+    packet->registerGameStateUnpackFunction([readVarintAt, packet](
+        const std::vector<uint8_t> payload,
+        unsigned int i
+    ) -> unsigned int {
+        if (payload.at(i) == CHARGED_SHOT_COMP) {
+            auto vals = packet->getPayload();
+            vals.push_back(static_cast<uint64_t>(CHARGED_SHOT_COMP));
+
+            size_t offset = i + 1;
+
+            auto [charge, s1] = readVarintAt(payload, static_cast<unsigned int>(offset));
+            offset += s1;
+            auto [maxCharge, s2] = readVarintAt(payload, static_cast<unsigned int>(offset));
+            offset += s2;
+            auto [reloadTime, s3] = readVarintAt(payload, static_cast<unsigned int>(offset));
+            offset += s3;
+
+            vals.push_back(charge);
+            vals.push_back(maxCharge);
+            vals.push_back(reloadTime);
+            packet->setPayload(vals);
+            return static_cast<unsigned int>(offset - i);
         }
         return 0;
     });

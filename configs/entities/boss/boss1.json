@@ -134,8 +134,9 @@
         ,
         "DamageComponent": {
             "target": "both",
-            "damage": 25.0
+            "damage": 15.0
         },
+        "DamageCooldownComponent": { "target": "both" },
         "InteractionConfigComponent": {
             "target": "both",
             "mappings": [

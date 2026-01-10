@@ -25,7 +25,9 @@ You can also download it in pdf format [here](../../static/pdfs/rfc-r-type.pdf)
    This document specifies the Multiplayer Game Synchronization Protocol
    (PSJM), a simple UDP-based protocol for real-time multiplayer games.
    It facilitates player connections/disconnections, position
-   synchronization, and game state updates.
+   synchronization, and game state updates. The protocol has been extended
+   to support user authentication, leaderboards, user profiles, level
+   progression, and compressed game state transmission.
 
 **Table of Contents**
 
@@ -51,6 +53,11 @@ You can also download it in pdf format [here](../../static/pdfs/rfc-r-type.pdf)
    - Player connections/disconnections
    - Position synchronization
    - Game state updates
+   - User authentication (login/register)
+   - Leaderboard system
+   - User profiles and statistics
+   - Level progression
+   - Compressed data transmission
 
 **2. Packet Format**
 
@@ -106,6 +113,19 @@ Client and Server packet types (complete list used by the codebase):
    | 0X0F   | CONNECT_TO_LOBBY          | Client connect to an existing lobby       |
    | 0x10   | LOBBY_MASTER_REQUEST_START| Client that created lobby starts the game |
    | 0x11   | LOBBY_CONNECT_VALUE       | Return sucess or failure of connection    |
+   | 0x12   | LEVEL_COMPLETE_PACKET     | Server notifies level completion          |
+   | 0x13   | NEXT_LEVEL_PACKET         | Server notifies next level transition     |
+   | 0x14   | REGISTER_PACKET           | Client registration request               |
+   | 0x15   | CONNECT_USER_PACKET       | Server confirms user authentication       |
+   | 0x16   | LOGIN_PACKET              | Client login request                      |
+   | 0x17   | GAME_STATE_BATCH_PACKET   | Server batched game state update          |
+   | 0x18   | GAME_STATE_BATCH_COMPRESSED| Compressed batched game state             |
+   | 0x19   | GAME_STATE_COMPRESSED     | Compressed game state update              |
+   | 0x1A   | REQUEST_LEADERBOARD       | Client requests leaderboard data          |
+   | 0x1B   | LEADERBOARD_PACKET        | Server sends leaderboard information      |
+   | 0x1C   | REGISTER_FAIL_PACKET      | Server notifies registration failure      |
+   | 0x1D   | REQUEST_PROFILE           | Client requests user profile data         |
+   | 0x1E   | PROFILE_PACKET            | Server sends user profile information     |
    +--------+---------------------------+-------------------------------------------+
 ```
 
@@ -147,6 +167,26 @@ Client and Server packet types (complete list used by the codebase):
 
    - Payload contains the lobby code
    - Fixed length `LENGTH_LOBBY_CODE_PACKET` (8 bytes)
+
+4.1.8 REGISTER_PACKET (0x14) – Client registration request
+
+   - Username and password for account creation
+   - Fixed length: `LENGTH_REGISTER_PACKET` (16 bytes)
+
+4.1.9 LOGIN_PACKET (0x16) – Client login request
+
+   - Username and password for authentication
+   - Fixed length: `LENGTH_LOGIN_PACKET` (16 bytes)
+
+4.1.10 REQUEST_LEADERBOARD (0x1A) – Client requests leaderboard data
+
+   - Empty payload
+   - Fixed length: `LENGTH_REQUEST_LEADERBOARD` (0 bytes)
+
+4.1.11 REQUEST_PROFILE (0x1D) – Client requests user profile data
+
+   - Empty payload
+   - Fixed length: `LENGTH_REQUEST_PROFILE` (0 bytes)
 
 **4.2 Server Details**
 
@@ -199,13 +239,35 @@ Client and Server packet types (complete list used by the codebase):
    - Payload contains char, t or f
    - Fixed length `LENGTH_LOBBY_CONNECT_VALLUE` (1 bytes)
 
-4.2.13 NO_OP_PACKET (0x00) – No operation / keep-alive
+4.2.13 LEVEL_COMPLETE_PACKET (0x12) – Server notifies level completion
 
-   - Used when there is nothing to send; helps keep sequence numbers in sync
+   - Indicates that the current level has been completed
+   - Fixed length: `LENGTH_LEVEL_COMPLETE_PACKET` (0 bytes)
+
+4.2.14 NEXT_LEVEL_PACKET (0x13) – Server notifies next level transition
+
+   - Indicates transition to the next level
+   - Fixed length: `LENGTH_NEXT_LEVEL_PACKET` (0 bytes)
+
+4.2.15 REGISTER_FAIL_PACKET (0x1C) – Server notifies registration failure
+
+   - Contains error message for failed registration
+   - Fixed length: `LENGTH_REGISTER_FAIL_PACKET` (variable)
+
+4.2.16 LEADERBOARD_PACKET (0x1B) – Server sends leaderboard information
+
+   - Contains player rankings and scores
+   - Fixed length: `LENGTH_LEADERBOARD_PACKET` (variable)
+
+4.2.17 PROFILE_PACKET (0x1E) – Server sends user profile information
+
+   - Contains user statistics (wins, high score, games played)
+   - Fixed length: `LENGTH_PROFILE_PACKET` (variable)
 
 Notes:
 - The canonical constant names and packet lengths are defined in `common/interfaces/IPacketManager.hpp`.
 - The RFC tables above were aligned to match the names used in the codebase (both client and server). Where the original RFC used a different label (for example `CONNECTIONS`), the equivalent code name `ACCEPTATION_PACKET` is used here for clarity.
+- Additional packets have been added for user authentication, leaderboards, profiles, level progression, and compressed data transmission.
 
 
 **5. Communication Example**
@@ -284,6 +346,7 @@ After connection establishment, clients must signal readiness before the game be
 
    - Encoding: UTF-8 text
    - Number format: Network order (big-endian)
+   - Compression: LZ4 compression for game state packets to reduce bandwidth usage
 
 
 **8. Map Format Protocol**
