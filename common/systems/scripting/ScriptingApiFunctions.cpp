@@ -113,7 +113,8 @@ void ScriptingSystem::bindAPI() {
         [this](Entity e, const std::string& newState) {
         (void)e;
         (void)newState;
-        registry->addComponent<AnimationStateComponent>(e, std::make_shared<AnimationStateComponent>(newState));
+        registry->addComponent<AnimationStateComponent>
+            (e, std::make_shared<AnimationStateComponent>(newState));
     });
 
     lua.set_function(constants::GET_ENTITY_ID_FUNCTION, [](Entity e) -> size_t {
@@ -285,22 +286,23 @@ void ScriptingSystem::bindAPI() {
         return 0;
     });
 
-    lua.set_function("addForceLevel",
+    lua.set_function(constants::ADD_FORCE_LEVEL_FUNCTION,
         [this](size_t entityId) {
-
-
         if (registry->hasComponent<ecs::EntityPartsComponent>(entityId)) {
-            std::vector<size_t> partsComp = registry->getComponent<ecs::EntityPartsComponent>(entityId)->partIds;
+            std::vector<size_t> partsComp =
+                registry->getComponent<ecs::EntityPartsComponent>(entityId)->partIds;
 
             for (auto partId : partsComp) {
                 Entity part = static_cast<Entity>(partId);
                 if (registry->hasComponent<ForceTag>(part) &&
-                    registry->getComponent<ecs::ForceTag>(part)->getForceType() == "force"
+                    registry->getComponent<ecs::ForceTag>(part)->getForceType() ==
+                        constants::FORCE_TYPE
                     && registry->hasComponent<ecs::ScriptingComponent>(part)) {
                     auto scriptComp = registry->getComponent<ecs::ScriptingComponent>(part);
                     auto forceTag = registry->getComponent<ForceTag>(part);
-                    if (scriptComp->hasFunction("addLevel")) {
-                        sol::function addLevelFunc = scriptComp->getFunction("addLevel");
+                    if (scriptComp->hasFunction(constants::ADD_FORCE_LEVEL_FUNCTION)) {
+                        sol::function addLevelFunc = scriptComp->
+                            getFunction(constants::ADD_FORCE_LEVEL_FUNCTION);
                         addLevelFunc(partId);
                     }
                 }

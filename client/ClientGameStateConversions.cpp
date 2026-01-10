@@ -404,7 +404,8 @@ size_t ClientNetwork::parseAnimationStateComponent(const std::vector<uint64_t> &
             auto animStateComp = std::make_shared<ecs::AnimationStateComponent>(state);
             registry->addComponent(entityId, animStateComp);
         } else {
-            auto animStateComp = registry->getComponent<ecs::AnimationStateComponent>(entityId);
+            auto animStateComp = registry->getComponent
+                <ecs::AnimationStateComponent>(entityId);
             animStateComp->setCurrentState(state);
         }
     }

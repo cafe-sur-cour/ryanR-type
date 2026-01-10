@@ -6,12 +6,13 @@
 */
 
 #include "AnimationStateSyncSystem.hpp"
+#include <memory>
+#include <string>
 #include "../../../common/ECS/entity/registry/Registry.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/components/permanent/AnimationStateComponent.hpp"
 #include "../../components/rendering/AnimationComponent.hpp"
 #include "../../../common/debug.hpp"
-#include <iostream>
 namespace ecs {
 
 void AnimationStateSyncSystem::update(std::shared_ptr<ResourceManager> resourceManager,

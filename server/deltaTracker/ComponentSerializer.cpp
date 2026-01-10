@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <utility>
+#include <string>
 #include "ComponentSerializer.hpp"
 #include "../Constants.hpp"
 
@@ -92,7 +93,8 @@ std::vector<uint64_t> rserv::ComponentSerializer::serializeGameZone(uint32_t x, 
     return {pos, size};
 }
 
-std::vector<uint64_t> rserv::ComponentSerializer::serializeAnimationState(const std::string& state) {
+std::vector<uint64_t> rserv::ComponentSerializer::serializeAnimationState
+    (const std::string& state) {
     std::vector<uint64_t> data;
     for (char c : state) {
         data.push_back(static_cast<uint64_t>(c));
@@ -103,7 +105,8 @@ std::vector<uint64_t> rserv::ComponentSerializer::serializeAnimationState(const 
     return data;
 }
 
-std::string rserv::ComponentSerializer::deserializeAnimationState(const std::vector<uint64_t>& data) {
+std::string rserv::ComponentSerializer::deserializeAnimationState
+    (const std::vector<uint64_t>& data) {
     std::string state;
     for (uint64_t val : data) {
         if (val == static_cast<uint64_t>('\r') ||
