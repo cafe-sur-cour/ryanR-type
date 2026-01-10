@@ -161,7 +161,7 @@ HowToPlayState::HowToPlayState(
         };
     } else {
         controls = {
-            {"Q/W/S/D / Left Stick : Move Ship", gfx::color_t{200, 230, 255, 255}},
+            {"Z/Q/S/D / Left Stick : Move Ship", gfx::color_t{200, 230, 255, 255}},
             {"SPACE / A : Shoot", gfx::color_t{255, 200, 100, 255}},
             {"F / X/Y : Force", gfx::color_t{255, 100, 200, 255}},
             {"ESC : Menu", gfx::color_t{255, 150, 150, 255}}
