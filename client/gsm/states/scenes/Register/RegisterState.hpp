@@ -13,6 +13,7 @@
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../ui/elements/focusable/Button.hpp"
 #include "../../../../ui/elements/focusable/TextInput.hpp"
+#include "../../../../ui/elements/Text.hpp"
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../ui/elements/Background.hpp"
@@ -41,6 +42,8 @@ private:
     std::shared_ptr<ui::TextInput> _usernameInput;
     std::shared_ptr<ui::TextInput> _passwordInput;
     std::shared_ptr<ui::TextInput> _confirmPasswordInput;
+    
+    std::shared_ptr<ui::Text> _errorMessage;
     
     std::shared_ptr<ui::Button> _registerButton;
     std::shared_ptr<ui::Button> _backButton;

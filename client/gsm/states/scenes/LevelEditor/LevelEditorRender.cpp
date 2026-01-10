@@ -234,7 +234,7 @@ void LevelEditorState::renderSpriteInLevelPreview(
                 currentFrameFloat = _powerUpAnimationFrames[prefabName];
             }
             int currentFrameIndex = static_cast<int>(currentFrameFloat);
-            float frameX = currentFrameIndex * spriteData.frameWidth;
+            float frameX = static_cast<float>(currentFrameIndex) * spriteData.frameWidth;
             float frameY = 0.0f;
             math::FRect frameRect(
                 frameX, frameY, spriteData.frameWidth, spriteData.frameHeight);

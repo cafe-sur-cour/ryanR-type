@@ -22,6 +22,8 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     OwnerComponent.hpp
     DamageComponent.hpp
     DamageComponent.cpp
+    DamageCooldownComponent.hpp
+    DamageCooldownComponent.cpp
     GameZoneComponent.hpp
     GameZoneComponent.cpp
     InteractionConfigComponent.hpp
@@ -31,6 +33,8 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     EntityPartsComponent.hpp
     EntityPartsComponent.cpp
     CompositeEntityComponent.hpp
+    ChargedShotComponent.hpp
+    ChargedShotComponent.cpp
     AnimationStateComponent.hpp
     AnimationStateComponent.cpp
 )

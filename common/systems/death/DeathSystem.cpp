@@ -81,6 +81,7 @@ void DeathSystem::update(
                 }
             }
         }
+
         if (registry->hasComponent<ecs::ScriptingComponent>(entityId)) {
             auto scriptingComp = registry->getComponent<ecs::ScriptingComponent>(entityId);
             if (scriptingComp->hasFunction(constants::DEATH_FUNCTION)) {

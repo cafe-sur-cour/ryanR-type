@@ -38,6 +38,7 @@ class InGameState : public AGameState {
         void renderHUD();
         void drawHealthHUD(std::shared_ptr<gfx::IWindow> window, float health, float maxHealth);
         void drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score);
+        void drawShotChargeHUD(std::shared_ptr<gfx::IWindow> window, float shotCharge, float maxShotCharge);
 
     private:
         std::shared_ptr<ecs::Registry> _registry;

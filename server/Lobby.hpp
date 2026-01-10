@@ -43,7 +43,7 @@ class Lobby {
         public:
             Lobby(std::shared_ptr<net::INetwork> network,
                 std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> lobbyPlayerInfo,
-                std::string lobbyCode, bool debug);
+                std::string lobbyCode, bool debug, int64_t tps);
             ~Lobby();
             void stop();
 
@@ -70,7 +70,6 @@ class Lobby {
             void processIncomingPackets();
             bool processDisconnections(uint8_t idClient);
             bool processEvents(uint8_t idClient);
-            bool processEndOfGame(uint8_t idClient);
             bool processWhoAmI(uint8_t idClient);
 
             /* Sent Packet Handling */
@@ -99,12 +98,14 @@ class Lobby {
 
         private:
             bool _isDebug;
+            int64_t _tps;
 
             /* Network handling variable*/
             std::shared_ptr<net::INetwork> _network;
             std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> _clients;
             std::string _lobbyCode;
             std::map<uint8_t, bool> _clientsReady;
+            std::map<uint8_t, ecs::Entity> _clientToEntity;
             std::shared_ptr<pm::IPacketManager> _packet;
             uint32_t _sequenceNumber;
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> _eventQueue;
@@ -152,6 +153,7 @@ class Lobby {
             std::vector<uint64_t> convertProjectilePrefabComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertGameZoneComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertAnimationStateComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
+            std::vector<uint64_t> convertChargedShotComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
 
     };
 } // namespace rserv = r-type server

@@ -92,7 +92,7 @@ void LevelEditorState::renderAllWaves(
     for (size_t waveIdx = 0; waveIdx < _waves.size(); ++waveIdx) {
         const auto& wave = _waves[waveIdx];
 
-        float hue = (waveIdx * 360.0f / 7.0f);
+        float hue = (static_cast<float>(waveIdx) * 360.0f / 7.0f);
         while (hue >= 360.0f) hue -= 360.0f;
 
         float h = hue / 60.0f;

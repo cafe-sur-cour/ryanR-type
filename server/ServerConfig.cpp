@@ -8,11 +8,11 @@
 #include <cstdint>
 #include <string>
 #include "ServerConfig.hpp"
-#include "../common/constants.hpp"
+#include "Constants.hpp"
 
 rserv::ServerConfig::ServerConfig() :
     _state(-1), _port(constants::DEFAULT_SERVER_PORT),
-    _ip(constants::DEFAULT_SERVER_IP), _isDebug(false) {
+    _ip(constants::DEFAULT_SERVER_IP), _isDebug(false), _tps(constants::TPS) {
 }
 
 rserv::ServerConfig::~ServerConfig() {
@@ -49,4 +49,12 @@ void rserv::ServerConfig::setIsDebug(bool isDebug) {
 
 bool rserv::ServerConfig::getIsDebug() const {
     return this->_isDebug;
+}
+
+void rserv::ServerConfig::setTps(int64_t tps) {
+    this->_tps = tps;
+}
+
+int64_t rserv::ServerConfig::getTps() const {
+    return this->_tps;
 }

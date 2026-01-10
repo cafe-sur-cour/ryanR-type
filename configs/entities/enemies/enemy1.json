@@ -83,6 +83,7 @@
             ]
         },
         "ShooterTag": { "target": "both" },
+        "DamageCooldownComponent": { "target": "both" },
         "HealthBarComponent": { "target": "client" }
     }
 }

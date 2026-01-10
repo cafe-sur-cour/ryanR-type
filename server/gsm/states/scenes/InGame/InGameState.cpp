@@ -16,6 +16,7 @@
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../../common/systems/movement/IntentToVelocitySystem.hpp"
 #include "../../../../../common/systems/shooting/ShootingSystem.hpp"
+#include "../../../../../common/systems/shooting/ChargedShotSystem.hpp"
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
@@ -85,6 +86,7 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::InteractionSystem>());
     addSystem(std::make_shared<ecs::MovementSystem>());
     addSystem(std::make_shared<ecs::ShootingSystem>());
+    addSystem(std::make_shared<ecs::ChargedShotSystem>());
     addSystem(std::make_shared<ecs::LifetimeSystem>());
     addSystem(std::make_shared<ecs::HealthSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());

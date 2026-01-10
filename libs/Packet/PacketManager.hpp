@@ -30,7 +30,7 @@ class PacketManager : public IPacketManager {
         uint8_t getType() const override;
         uint8_t getIdClient() const override;
         std::vector<uint64_t> getPayload() const override;
-        std::vector<std::vector<uint64_t>> getBatchedPayloads() const;
+        std::vector<std::vector<uint64_t>> getBatchedPayloads() const override;
 
         void setType(uint8_t type) override;
         void setLength(uint32_t length) override;

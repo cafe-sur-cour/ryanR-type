@@ -9,7 +9,7 @@
         },
         "VelocityComponent": { "target": "both" },
         "SpeedComponent": { "target": "both", "speed": 500.0 },
-        "HealthComponent": {"target": "both", "health": 100},
+        "HealthComponent": {"target": "both", "health": 100 },
         "AnimationComponent": {
             "target": "client",
             "states": {
@@ -104,8 +104,13 @@
             "target": "both",
             "score": 0
         },
+        "DamageCooldownComponent": { "target": "both" },
         "HealthBarComponent": { "target": "client" },
-        "EntityPartsComponent": { "target": "both" }
-
+        "EntityPartsComponent": { "target": "both" },
+        "ChargedShotComponent": {
+            "target": "both",
+            "maxCharge": 2.0,
+            "chargeReloadTime": 1.0
+        }
     }
 }
