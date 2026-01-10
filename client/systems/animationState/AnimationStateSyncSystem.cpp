@@ -11,7 +11,7 @@
 #include "../../../common/components/permanent/AnimationStateComponent.hpp"
 #include "../../components/rendering/AnimationComponent.hpp"
 #include "../../../common/debug.hpp"
-
+#include <iostream>
 namespace ecs {
 
 void AnimationStateSyncSystem::update(std::shared_ptr<ResourceManager> resourceManager,
@@ -33,15 +33,17 @@ void AnimationStateSyncSystem::update(std::shared_ptr<ResourceManager> resourceM
         std::string newState = animStateComp->getCurrentState();
 
         if (!newState.empty()) {
-            debug::Debug::printDebug(true,
-                "[AnimationStateSync] Entity " + std::to_string(entity) +
-                " changing animation state to: " + newState,
-                debug::debugType::ECS,
-                debug::debugLevel::INFO);
+            auto it = _lastAppliedState.find(entity);
+            if (it == _lastAppliedState.end() || it->second != newState) {
+                debug::Debug::printDebug(true,
+                    "[AnimationStateSync] Entity " + std::to_string(entity) +
+                    " changing animation state to: " + newState,
+                    debug::debugType::ECS,
+                    debug::debugLevel::INFO);
 
-            animComp->setCurrentState(newState);
-
-            animStateComp->setCurrentState("");
+                animComp->setCurrentState(newState);
+                _lastAppliedState[entity] = newState;
+            }
         }
     }
 }
