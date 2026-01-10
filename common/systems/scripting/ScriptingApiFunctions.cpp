@@ -105,19 +105,24 @@ void ScriptingSystem::bindAPI() {
     });
 
     lua.set_function(constants::CREATE_SHOOT_INTENT_FUNCTION,
-        [this](Entity e, float angleDegrees) {
+        [this](Entity e, float angleDegrees) -> bool {
         if (registry->hasComponent<ShootIntentComponent>(e))
-            return;
+            return false;
         auto intent = std::make_shared<ecs::ShootIntentComponent>(angleDegrees);
         registry->addComponent<ecs::ShootIntentComponent>(e, intent);
+        return true;
     });
 
     lua.set_function(constants::SET_ANIMATION_STATE_FUNCTION,
         [this](Entity e, const std::string& newState) {
-        (void)e;
-        (void)newState;
-        registry->addComponent<AnimationStateComponent>
-            (e, std::make_shared<AnimationStateComponent>(newState));
+        if (registry->hasComponent<AnimationStateComponent>(e)) {
+            auto animStateComp = registry->getComponent<AnimationStateComponent>(e);
+            animStateComp->setCurrentState(newState);
+            return;
+        } else {
+            auto animStateComp = std::make_shared<AnimationStateComponent>(newState);
+            registry->addComponent<AnimationStateComponent>(e, animStateComp);
+        }
     });
 
     lua.set_function(constants::GET_ENTITY_ID_FUNCTION, [](Entity e) -> size_t {
