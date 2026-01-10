@@ -34,17 +34,14 @@ void AnimationStateSyncSystem::update(std::shared_ptr<ResourceManager> resourceM
         std::string newState = animStateComp->getCurrentState();
 
         if (!newState.empty()) {
-            auto it = _lastAppliedState.find(entity);
-            if (it == _lastAppliedState.end() || it->second != newState) {
-                debug::Debug::printDebug(true,
-                    "[AnimationStateSync] Entity " + std::to_string(entity) +
-                    " changing animation state to: " + newState,
-                    debug::debugType::ECS,
-                    debug::debugLevel::INFO);
+            debug::Debug::printDebug(true,
+                "[AnimationStateSync] Entity " + std::to_string(entity) +
+                " changing animation state to: " + newState,
+                debug::debugType::ECS,
+                debug::debugLevel::INFO);
 
-                animComp->setCurrentState(newState);
-                _lastAppliedState[entity] = newState;
-            }
+            animComp->setCurrentState(newState);
+            animStateComp->setCurrentState("");
         }
     }
 }

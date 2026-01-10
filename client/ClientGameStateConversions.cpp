@@ -396,8 +396,10 @@ size_t ClientNetwork::parseAnimationStateComponent(const std::vector<uint64_t> &
     auto it = _lastReceivedAnimationState.find(entityId);
     bool isNewState = (it == _lastReceivedAnimationState.end() || it->second != state);
 
-    if (isNewState && !state.empty()) {
-        _lastReceivedAnimationState[entityId] = state;
+    if (!state.empty()) {
+        if (isNewState) {
+            _lastReceivedAnimationState[entityId] = state;
+        }
 
         auto registry = this->_resourceManager->get<ecs::Registry>();
         if (!registry->hasComponent<ecs::AnimationStateComponent>(entityId)) {
@@ -406,7 +408,9 @@ size_t ClientNetwork::parseAnimationStateComponent(const std::vector<uint64_t> &
         } else {
             auto animStateComp = registry->getComponent
                 <ecs::AnimationStateComponent>(entityId);
-            animStateComp->setCurrentState(state);
+            if (animStateComp->getCurrentState().empty()) {
+                animStateComp->setCurrentState(state);
+            }
         }
     }
 
