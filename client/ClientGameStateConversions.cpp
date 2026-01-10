@@ -397,7 +397,9 @@ size_t ClientNetwork::parseChargedShotComponent(
         auto _registry = this->_resourceManager->get<ecs::Registry>();
 
         if (_registry->hasComponent<ecs::ChargedShotComponent>(entityId)) {
-            auto chargedShotComp = _registry->getComponent<ecs::ChargedShotComponent>(entityId);
+            auto chargedShotComp = _registry->getComponent<ecs::ChargedShotComponent>(
+                entityId
+            );
             chargedShotComp->setCharge(charge);
             chargedShotComp->setMaxCharge(maxCharge);
             chargedShotComp->setReloadTime(reloadTime);
