@@ -23,6 +23,26 @@
                     "startHeight": 0.0,
                     "speed": 0.5,
                     "loop": true
+                },
+                "level2": {
+                    "texturePath": "assets/sprites/ennemies/red_spinning.png",
+                    "frameWidth": 33.0,
+                    "frameHeight": 36.0,
+                    "frameCount": 8,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "level3": {
+                    "texturePath": "assets/sprites/player_ship/flyingforce.png",
+                    "frameWidth": 17.0,
+                    "frameHeight": 18.0,
+                    "frameCount": 12,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.5,
+                    "loop": true
                 }
             },
             "transitions": [
@@ -47,7 +67,7 @@
         "ScriptingComponent": {
             "target": "server",
             "scriptPath": "configs/scripts/force.lua",
-            "additionalFunctions": ["OnInteract", "ActivateOrDeactivateForce"]
+            "additionalFunctions": ["OnInteract", "ActivateOrDeactivateForce", "addLevel"]
         },
         "InteractionConfigComponent": {
             "target": "both",

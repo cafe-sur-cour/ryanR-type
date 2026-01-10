@@ -90,6 +90,7 @@ ClientNetwork::ClientNetwork() {
     _componentParsers[VELOCITY] = &ClientNetwork::parseVelocityComponent;
     _componentParsers[PROJECTILE_PREFAB] = &ClientNetwork::parseProjectilePrefabComponent;
     _componentParsers[OBSTACLE_TAG] = &ClientNetwork::parseObstacleTagComponent;
+    _componentParsers[ANIMATION_STATE] = &ClientNetwork::parseAnimationStateComponent;
 }
 
 ClientNetwork::~ClientNetwork() {

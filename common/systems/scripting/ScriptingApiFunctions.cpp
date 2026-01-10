@@ -30,6 +30,7 @@
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/permanent/ProjectilePrefabComponent.hpp"
+#include "../../components/permanent/AnimationStateComponent.hpp"
 #include "../../components/tags/ForceTag.hpp"
 namespace ecs {
 
@@ -109,6 +110,14 @@ void ScriptingSystem::bindAPI() {
             return;
         auto intent = std::make_shared<ecs::ShootIntentComponent>(angleDegrees);
         registry->addComponent<ecs::ShootIntentComponent>(e, intent);
+    });
+
+    lua.set_function(constants::SET_ANIMATION_STATE_FUNCTION,
+        [this](Entity e, const std::string& newState) {
+        (void)e;
+        (void)newState;
+        registry->addComponent<AnimationStateComponent>
+            (e, std::make_shared<AnimationStateComponent>(newState));
     });
 
     lua.set_function(constants::GET_ENTITY_ID_FUNCTION, [](Entity e) -> size_t {
@@ -278,6 +287,30 @@ void ScriptingSystem::bindAPI() {
             }
         }
         return 0;
+    });
+
+    lua.set_function(constants::ADD_FORCE_LEVEL_FUNCTION,
+        [this](size_t entityId) {
+        if (registry->hasComponent<ecs::EntityPartsComponent>(entityId)) {
+            std::vector<size_t> partsComp =
+                registry->getComponent<ecs::EntityPartsComponent>(entityId)->partIds;
+
+            for (auto partId : partsComp) {
+                Entity part = static_cast<Entity>(partId);
+                if (registry->hasComponent<ForceTag>(part) &&
+                    registry->getComponent<ecs::ForceTag>(part)->getForceType() ==
+                        constants::FORCE_TYPE
+                    && registry->hasComponent<ecs::ScriptingComponent>(part)) {
+                    auto scriptComp = registry->getComponent<ecs::ScriptingComponent>(part);
+                    auto forceTag = registry->getComponent<ForceTag>(part);
+                    if (scriptComp->hasFunction(constants::ADD_FORCE_LEVEL_FUNCTION)) {
+                        sol::function addLevelFunc = scriptComp->
+                            getFunction(constants::ADD_FORCE_LEVEL_FUNCTION);
+                        addLevelFunc(partId);
+                    }
+                }
+            }
+        }
     });
 
     lua.set_function("restartGameZone",

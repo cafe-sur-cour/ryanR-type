@@ -32,7 +32,7 @@ class SfmlWindow : public gfx::IWindow {
         void drawSprite(std::string asset, gfx::color_t color, std::pair<size_t, size_t> position) override;
         void drawText(std::string text, gfx::color_t color, std::pair<size_t, size_t> position, const std::string& fontPath, size_t fontSize, gfx::color_t outlineColor = {0, 0, 0}, float outlineThickness = 0.0f) override;
         std::pair<size_t, size_t> getTextSize(const std::string& text, const std::string& fontPath, size_t fontSize) override;
-        void drawRectangleOutline(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
+        void drawRectangleOutline(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, size_t borderWidth = 5) override;
         void drawFilledRectangle(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size) override;
         void drawRoundedRectangleFilled(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, float radius) override;
         void drawRoundedRectangleOutline(gfx::color_t color, std::pair<size_t, size_t> position, std::pair<size_t, size_t> size, float radius) override;
