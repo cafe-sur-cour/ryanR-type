@@ -304,6 +304,7 @@ std::vector<uint64_t> rserv::Lobby::convertAnimationStateComponent(
             data.push_back(static_cast<uint64_t>('\r'));
             data.push_back(static_cast<uint64_t>('\n'));
             data.push_back(static_cast<uint64_t>('\0'));
+            registry->removeOneComponent<ecs::AnimationStateComponent>(i);
         }
     }
     return data;

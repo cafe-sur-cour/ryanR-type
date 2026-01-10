@@ -221,6 +221,7 @@ namespace constants {
     /* Animation conditions */
     const std::string VELOCITY_UP_CONDITION = "isVelocityUp";
     const std::string VELOCITY_DOWN_CONDITION = "isVelocityDown";
+    const std::string ANIMATION_END_CONDITION = "onAnimationEnd";
 
     /* Tags */
     const std::string CONTROLLABLETAG = "ControllableTag";
