@@ -139,9 +139,11 @@ function updateNormalMode(entity, dt)
     if bossState.attackTimer >= bossState.attackCooldown then
         local rand = math.random()
         if rand <= 0.7 then
+            setAnimationState(entity, "shooting")
             shootAtNearestPlayer(entity)
         else
             spawnBlimpEnemies(entity)
+            setAnimationState(entity, "summoning")
         end
         bossState.attackTimer = 0
         bossState.attackCount = bossState.attackCount + 1
@@ -188,6 +190,7 @@ function updateChargeMode(entity, dt)
             bossState.chargeState = "preparing"
             bossState.chargeTimer = 0
             bossState.attackTimer = 0
+            setAnimationState(entity, "dash1")
         end
     elseif bossState.chargeState == "preparing" then
         bossState.chargeTimer = bossState.chargeTimer + dt
@@ -196,6 +199,7 @@ function updateChargeMode(entity, dt)
             bossState.chargeState = "charging"
             bossState.chargeTimer = 0
             print("[Boss Charge] Charging! Count:", bossState.chargeCount + 1, "/", bossState.maxCharges)
+            setAnimationState(entity, "dash2")
         end
     elseif bossState.chargeState == "charging" then
         local targetX = gzX + (gzWidth * 0.15)
@@ -204,6 +208,7 @@ function updateChargeMode(entity, dt)
         if math.abs(dirX) > 10 then
             createMoveIntent(entity, (dirX / math.abs(dirX)) * speed, 0)
         else
+            setAnimationState(entity, "idle")
             bossState.chargeState = "returning"
             bossState.chargeTimer = 0
         end

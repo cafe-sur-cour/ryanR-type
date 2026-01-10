@@ -23,7 +23,7 @@
         },
         "ShootingStatsComponent": {
             "target": "both",
-            "fireRate": 0.1,
+            "fireRate": 5.0,
             "projectileSpeed": 500.0,
             "shotCount": 1,
             "angleOffset": 0.0,
@@ -49,22 +49,78 @@
                     "frameCount": 20,
                     "startWidth": 0.0,
                     "startHeight": 0.0,
-                    "speed": 0.1,
+                    "speed": 0.05,
                     "loop": false
                 },
-                "dash": {
-                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/dash/blimp_dash.png",
-                    "frameWidth": 882.0,
-                    "frameHeight": 415.0,
-                    "frameCount": 24,
+                "dash1": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/dash/blimp_dash1.png",
+                    "frameWidth": 369.0,
+                    "frameHeight": 401.0,
+                    "frameCount": 12,
                     "startWidth": 0.0,
                     "startHeight": 0.0,
                     "speed": 0.1,
                     "loop": false
+                },
+                "dash2": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/dash/blimp_dash2.png",
+                    "frameWidth": 882.0,
+                    "frameHeight": 415.0,
+                    "frameCount": 10,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.08,
+                    "loop": false
+                },
+                "dash3": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/dash/blimp_dash3.png",
+                    "frameWidth": 539.0,
+                    "frameHeight": 351.0,
+                    "frameCount": 3,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.08,
+                    "loop": true
+                },
+                "shooting": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/laught/blimp_shoot.png",
+                    "frameWidth": 355.0,
+                    "frameHeight": 397.0,
+                    "frameCount": 18,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.05,
+                    "loop": false
                 }
             },
             "initialState": "idle",
-            "transitions": []
+            "transitions": [
+                {
+
+                    "from": "summoning",
+                    "to": "idle",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                },
+                {
+                    "from": "shooting",
+                    "to": "idle",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                },
+                {
+                    "from": "dash2",
+                    "to": "dash3",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                }
+            ]
         },
         "ColliderComponent":
         [
@@ -87,11 +143,15 @@
                     "tags": ["PlayerProjectileTag"],
                     "toEntity": ["DealDamage"],
                     "toSelf": ["TakeDamage"]
-                }
+                },
+            {
+                "tags": ["PlayerTag"],
+                "toEntity": ["DealDamage"],
+                "toSelf": []
+            }
             ]
         },
         "ShooterTag": { "target": "both" },
-        "HealthBarComponent": { "target": "client" },
-        "HitboxRenderComponent": { "target": "client" }
+        "HealthBarComponent": { "target": "client" }
     }
 }
