@@ -574,7 +574,6 @@ static void registerGameStateUnpackers(
         return 0;
     });
 
-    /* Animation state component */
     packet->registerGameStateUnpackFunction([readUCharAt, packet](
         const std::vector<uint8_t> payload,
         unsigned int i) -> unsigned int {

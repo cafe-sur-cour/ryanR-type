@@ -289,7 +289,7 @@ namespace constants {
     const std::string DEATH_FUNCTION = "death";
     const std::string ONINTERACT_FUNCTION = "OnInteract";
     const std::string  ACTIVATE_OR_DEACTIVATE_FORCE_FUNCTION = "ActivateOrDeactivateForce";
-
+    const std::string ADD_FORCE_LEVEL_FUNCTION = "addForceLevel";
     /* Constants for Scripting API */
     const std::string PRINT_FUNCTION = "print";
     const std::string CREATE_MOVE_INTENT_FUNCTION = "createMoveIntent";
@@ -314,6 +314,8 @@ namespace constants {
     const std::string SET_PROJECTILE_PREFAB_FUNCTION = "setProjectilePrefab";
     const std::string COUNT_FORCES_BY_TYPE_FUNCTION = "countForcesByType";
     const std::string GET_FORCE_POSITION_BY_TYPE_FUNCTION = "getForcePositionByType";
+    const std::string ADD_FORCE_LEVEL_FUNCTION = "addForceLevel";
+
 }
 
 #endif /* !CONSTANTS_HPP_ */
