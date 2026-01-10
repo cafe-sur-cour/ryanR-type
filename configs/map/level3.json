@@ -58,8 +58,8 @@
                 },
                 {
                     "count": 15,
-                    "fromX": 455.0,
-                    "posY": 318.0,
+                    "fromX": 799.0,
+                    "posY": 49.0,
                     "type": "horizontalLine"
                 },
                 {
@@ -70,8 +70,8 @@
                 },
                 {
                     "count": 10,
-                    "fromY": 100.0,
-                    "posX": 1650.0,
+                    "fromY": -346.0,
+                    "posX": 1682.0,
                     "type": "verticalLine"
                 },
                 {
@@ -128,10 +128,10 @@
         {
             "enemies": [
                 {
-                    "count": 3,
+                    "count": 1,
                     "distributionX": {
                         "max": 100.0,
-                        "min": 95.0,
+                        "min": 50.0,
                         "type": "random"
                     },
                     "distributionY": {
@@ -139,7 +139,7 @@
                         "min": 10.0,
                         "type": "uniform"
                     },
-                    "type": "enemy1"
+                    "type": "snake_head"
                 }
             ],
             "gameXTrigger": 200.0
@@ -175,7 +175,7 @@
                     "type": "enemy1"
                 }
             ],
-            "gameXTrigger": 1000.0
+            "gameXTrigger": 2689.0
         }
     ]
 }

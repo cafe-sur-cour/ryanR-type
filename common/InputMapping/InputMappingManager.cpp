@@ -126,6 +126,9 @@ void InputMappingManager::loadDefault() {
     _mapping.remappableKeys[RemappableAction::SHOOT] = RemappableKeyBinding(
         gfx::EventType::SPACE, gfx::EventType::NOTHING
     );
+    _mapping.remappableKeys[RemappableAction::FORCE] = RemappableKeyBinding(
+        gfx::EventType::F, gfx::EventType::NOTHING
+    );
 
     _mapping.fixedMappings[InputAction::MOVE_X]
         [gfx::EventType::GAMEPAD_DPAD_LEFT] = -1.0f;
@@ -146,6 +149,9 @@ void InputMappingManager::loadDefault() {
         [gfx::EventType::GAMEPAD_LEFT_STICK_DOWN] = 1.0f;
 
     _mapping.fixedMappings[InputAction::SHOOT][gfx::EventType::GAMEPAD_A] = 1.0f;
+
+    _mapping.fixedMappings[InputAction::FORCE][gfx::EventType::GAMEPAD_X] = 1.0f;
+    _mapping.fixedMappings[InputAction::FORCE][gfx::EventType::GAMEPAD_Y] = 1.0f;
 
     _mapping.fixedMappings[InputAction::PAUSE][gfx::EventType::ESCAPE] = 1.0f;
     _mapping.fixedMappings[InputAction::PAUSE][gfx::EventType::GAMEPAD_START] = 1.0f;

@@ -130,8 +130,9 @@ event_t SfmlEvent::processMouseReleaseEvent
 event_t SfmlEvent::processJoystickButtonEvent
     (const sf::Event::JoystickButtonPressed& joystickPressed) {
     for (const auto& pair : _joystickButtonMap) {
-        if (pair.second == joystickPressed.button)
+        if (pair.second == joystickPressed.button) {
             return pair.first;
+        }
     }
     return event_t::NOTHING;
 }

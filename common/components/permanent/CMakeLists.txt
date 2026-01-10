@@ -22,6 +22,8 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     OwnerComponent.hpp
     DamageComponent.hpp
     DamageComponent.cpp
+    DamageCooldownComponent.hpp
+    DamageCooldownComponent.cpp
     GameZoneComponent.hpp
     GameZoneComponent.cpp
     InteractionConfigComponent.hpp
