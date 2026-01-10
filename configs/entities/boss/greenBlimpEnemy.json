@@ -42,7 +42,7 @@
                     "speed": 0.1,
                     "loop": true
                 },
-                "shoot": {
+                "shooting": {
                     "texturePath": "assets/sprites/boss/hildaBerg/blimpEnemy/a/attack/a_blimp_enemy_attack.png",
                     "frameWidth": 169.0,
                     "frameHeight": 95.0,
@@ -54,7 +54,16 @@
                 }
             },
             "initialState": "idle",
-            "transitions": []
+            "transitions": [
+                {
+                    "from": "shooting",
+                    "to": "idle",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                }
+            ]
         },
         "ColliderComponent":
         [

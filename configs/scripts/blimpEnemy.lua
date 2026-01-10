@@ -24,6 +24,8 @@ function update(entity, deltaTime)
     local dx = px - ex
     local dy = py - ey
     local angle = math.atan(dy, dx) * 180 / math.pi
-    createShootIntent(entity, angle)
+    if createShootIntent(entity, angle) == true then
+        setAnimationState(entity, "shooting")
+    end
 end
 
