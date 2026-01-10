@@ -24,7 +24,12 @@ void ChargedShotSystem::update(
     for (auto entity : entities) {
         auto comp = registry->getComponent<ChargedShotComponent>(entity);
 
-        comp->setCharge(comp->getCharge() + deltaTime);
+        comp->setCharge(
+            (std::min)(
+                comp->getCharge() + deltaTime,
+                comp->getMaxCharge()
+            )
+        );
     }
 }
 
