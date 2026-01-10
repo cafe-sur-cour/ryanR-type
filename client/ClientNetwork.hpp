@@ -85,6 +85,7 @@ class ClientNetwork {
         void sendLoginPacket(const std::string &username, const std::string &password);
         void sendRequestLeaderboardPacket();
         void sendRequestProfilePacket();
+        void sendRequestGameRulesChange();
 
         const std::vector<std::pair<std::string, std::string>>& getLeaderboardData() const;
         bool isLeaderboardDataUpdated() const;
@@ -153,6 +154,7 @@ class ClientNetwork {
         void handleLeaderboard();
         void handleProfile();
         void handleRegisterFail();
+        void handleGameRules();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;

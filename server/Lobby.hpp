@@ -55,9 +55,14 @@ class Lobby {
             void setIsDebug(bool debug);
             bool getIsDebug() const;
 
+            std::shared_ptr<ResourceManager> getResourceManager() const;
+
             std::vector<uint8_t> getConnectedClients() const;
             std::vector<std::shared_ptr<net::INetworkEndpoint>> getConnectedClientEndpoints() const;
             size_t getClientCount() const;
+            void addClient(std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string> client);
+            void createPlayerEntityForClient(uint8_t clientId);
+            void syncExistingEntitiesToClient(std::shared_ptr<net::INetworkEndpoint> clientEndpoint);
             std::string getLobbyCode() const;
             std::shared_ptr<net::INetwork> getNetwork() const;
 
@@ -81,6 +86,7 @@ class Lobby {
 
             bool levelCompletePacket();
             bool nextLevelPacket();
+            bool gameRulesPacket();
 
             bool isGameStarted() const;
             bool allClientsReady() const;

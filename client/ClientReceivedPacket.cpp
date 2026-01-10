@@ -22,6 +22,7 @@
 #include "gsm/states/scenes/Results/ResultsState.hpp"
 #include "gsm/states/scenes/LevelComplete/LevelCompleteState.hpp"
 #include "./components/rendering/AnimationComponent.hpp"
+#include "../common/GameRules.hpp"
 
 /* Packet Handlers */
 void ClientNetwork::handleNoOp() {
@@ -582,4 +583,34 @@ void ClientNetwork::handleProfile() {
     _profileData = profileData;
     _profileDataUpdated = true;
     this->_expectingProfileResponse = false;
+}
+
+void ClientNetwork::handleGameRules() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received game rules packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    if (payload.size() < 1) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Game rules packet is invalid",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    Difficulty difficulty = static_cast<Difficulty>(payload.at(0));
+
+    if (!this->_resourceManager->has<GameRules>()) {
+        this->_resourceManager->add<GameRules>(std::make_shared<GameRules>());
+    }
+
+    auto gameRules = this->_resourceManager->get<GameRules>();
+    gameRules->setDifficulty(difficulty);
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Updated GameRules to difficulty: " +
+            std::to_string(static_cast<int>(difficulty)),
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
 }

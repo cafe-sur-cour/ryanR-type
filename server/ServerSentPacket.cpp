@@ -25,6 +25,7 @@
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/Parser/Parser.hpp"
 #include "../common/utils/SecureJsonManager.hpp"
+#include "../common/GameRules.hpp"
 
 bool rserv::Server::connectionPacket(const net::INetworkEndpoint& endpoint) {
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
@@ -186,6 +187,35 @@ bool rserv::Server::sendCodeLobbyPacket(const net::INetworkEndpoint &endpoint) {
     auto newLobby = std::make_shared<LobbyStruct>();
     newLobby->_lobbyCode = lobbyCode;
     this->_lobbyThreads.push_back(newLobby);
+
+    std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>,
+        std::string>> lobbyClients;
+    for (const auto &client : this->_clients) {
+        if (std::get<1>(client) && std::get<1>(client)->getAddress() ==
+            endpoint.getAddress() &&
+            std::get<1>(client)->getPort() == endpoint.getPort()) {
+            lobbyClients.push_back(client);
+            break;
+        }
+    }
+
+    if (!lobbyClients.empty()) {
+        auto realLobby = std::make_shared<Lobby>(
+            this->_network,
+            lobbyClients,
+            lobbyCode,
+            this->_config->getIsDebug()
+        );
+        realLobby->setPacketManager(this->createNewPacketManager());
+        this->initRessourceManager(realLobby);
+        this->_lobbies.push_back(realLobby);
+
+        uint8_t clientId = std::get<0>(lobbyClients[0]);
+        this->_clientToLobby[clientId] = realLobby;
+
+        realLobby->gameRulesPacket();
+    }
+
     this->_sequenceNumber++;
     return true;
 }

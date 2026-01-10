@@ -91,20 +91,13 @@ LobbyWaitingState::LobbyWaitingState(
     _difficultyButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
     _difficultyButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
     _difficultyButton->setOnRelease([this]() {
-        auto gr = this->_resourceManager->get<GameRules>();
-        if (gr) {
-            Difficulty current = gr->getDifficulty();
-            Difficulty next = NORMAL;
-            if (current == NORMAL) next = HARD;
-            else if (current == HARD) next = EASY;
-            else if (current == EASY) next = NORMAL;
-            gr->setDifficulty(next);
-            std::string text = "Normal";
-            if (next == EASY) text = "Easy";
-            else if (next == HARD) text = "Hard";
-            _difficultyButton->setText(text);
-            // Placeholder for network send
-            // TODO: send difficulty change to server
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->sendRequestGameRulesChange();
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Requested game rules change",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
         }
     });
     _topLeftLayout->addElement(_difficultyButton);
@@ -250,9 +243,15 @@ void LobbyWaitingState::updateUIStatus() {
         }
     }
 
-    // Check if we should transition to another state
-    // This could be based on game start signal from server
-    // For now, we'll stay in this state until manually transitioned
+    if (_difficultyButton && _resourceManager->has<GameRules>()) {
+        auto gameRules = _resourceManager->get<GameRules>();
+        Difficulty d = gameRules->getDifficulty();
+        std::string diffText = "Normal";
+        if (d == EASY) diffText = "Easy";
+        else if (d == HARD) diffText = "Hard";
+
+        _difficultyButton->setText(diffText);
+    }
 }
 
 void LobbyWaitingState::exit() {
