@@ -1,4 +1,5 @@
 level = 1
+previousLevel = 0
 isequipped = false
 attachDir = 0
 playerSizeX = 0
@@ -99,14 +100,17 @@ function addLevel(entity)
         print("[force] Parent is not player, not changing projectile. Parent ID: " .. parentId)
         return
     end
-    if level == 2 then
-        setProjectilePrefab(parentId, "heavy_shot")
-        print("[force] Setting heavy shot")
-        setAnimationState(entity, "level2")
-        print("[force] Setting animation to level2")
-    end
-    if (level == 3) then
-        setAnimationState(entity, "level3")
-        setProjectilePrefab(parentId, "triple_shot")
+    if level > previousLevel then
+        previousLevel = level
+        if level == 2 then
+            setProjectilePrefab(parentId, "heavy_shot")
+            print("[force] Setting heavy shot")
+            setAnimationState(entity, "level2")
+            print("[force] Setting animation to level2")
+        end
+        if (level == 3) then
+            setAnimationState(entity, "level3")
+            setProjectilePrefab(parentId, "triple_shot")
+        end
     end
 end
