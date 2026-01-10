@@ -9,6 +9,8 @@
 #define ANIMATIONSTATESYNCSYSTEM_HPP_
 
 #include "../../../common/systems/base/ASystem.hpp"
+#include <unordered_map>
+#include <string>
 
 namespace ecs {
 
@@ -21,6 +23,8 @@ class AnimationStateSyncSystem : public ASystem {
         void update(std::shared_ptr<ResourceManager> resourceManager,
                    std::shared_ptr<Registry> registry,
                    float deltaTime) override;
+    private:
+        std::unordered_map<Entity, std::string> _lastAppliedState;
 };
 
 }  // namespace ecs
