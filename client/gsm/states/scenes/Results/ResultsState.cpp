@@ -71,40 +71,6 @@ void ResultsState::enter() {
     bottomRightConfig.anchorX = ui::AnchorX::Right;
     bottomRightConfig.anchorY = ui::AnchorY::Bottom;
     bottomRightConfig.offset = math::Vector2f(-20.0f, -20.0f);
-
-    _bottomRightLayout = std::make_shared<ui::UILayout>(_resourceManager, bottomRightConfig);
-    _bottomRightLayout->setSize(math::Vector2f(150.f, 60.f));
-
-    _leaveButton = std::make_shared<ui::Button>(_resourceManager);
-    _leaveButton->setText("Leave");
-    _leaveButton->setSize(math::Vector2f(150.f, 60.f));
-    _leaveButton->setNormalColor(colors::BUTTON_DANGER);
-    _leaveButton->setHoveredColor(colors::BUTTON_DANGER_HOVER);
-    _leaveButton->setPressedColor(colors::BUTTON_DANGER_PRESSED);
-    _leaveButton->setOnRelease([this]() {
-        try {
-            auto network = this->_resourceManager->get<ClientNetwork>();
-            if (network && network->isConnected()) {
-                network->leaveLobby();
-            }
-        } catch (const std::exception &e) {
-            debug::Debug::printDebug(true,
-                std::string("[Results] Error leaving lobby: ") + e.what(),
-                debug::debugType::NETWORK,
-                debug::debugLevel::ERROR);
-        }
-
-        if (this->_resourceManager->has<gfx::IAudio>()) {
-            this->_resourceManager->get<gfx::IAudio>()->stopMusic();
-        }
-
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePop();
-        }
-    });
-    _bottomRightLayout->addElement(_leaveButton);
-
-    _uiManager->addElement(_bottomRightLayout);
 }
 
 void ResultsState::update(float deltaTime) {

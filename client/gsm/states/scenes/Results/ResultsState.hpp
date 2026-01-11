@@ -37,8 +37,6 @@ class ResultsState : public AGameState {
         std::unique_ptr<ui::UIManager> _uiManager;
         std::unique_ptr<MouseInputHandler> _mouseHandler;
         std::shared_ptr<ui::Text> _resultText;
-        std::shared_ptr<ui::Button> _leaveButton;
-        std::shared_ptr<ui::UILayout> _bottomRightLayout;
 };
 
 }  // namespace gsm
