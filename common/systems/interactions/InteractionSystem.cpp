@@ -12,6 +12,11 @@
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../components/temporary/TriggerIntentComponent.hpp"
 #include "../../components/permanent/InteractionConfigComponent.hpp"
+#include "../../components/permanent/OwnerComponent.hpp"
+#include "../../components/tags/PlayerProjectileTag.hpp"
+#include "../../components/tags/PlayerTag.hpp"
+#include "../../GameRules.hpp"
+#include "../../constants.hpp"
 #include "ActionFactory.hpp"
 #include "TagRegistry.hpp"
 
@@ -59,6 +64,43 @@ void InteractionSystem::update(
                 actionsToOther = mapping.actionsToOther;
                 actionsToSelf = mapping.actionsToSelf;
                 break;
+            }
+        }
+
+        if (resourceManager && resourceManager->has<GameRules>()) {
+            auto gameRules = resourceManager->get<GameRules>();
+            if (gameRules && gameRules->getCrossfire()) {
+                bool isPlayerProjectile =
+                    registry->hasComponent<PlayerProjectileTag>(entity);
+                bool isPlayerTarget = registry->hasComponent<PlayerTag>(otherEntity);
+                bool reversePlayerProjectile =
+                    registry->hasComponent<PlayerProjectileTag>(otherEntity);
+                bool reversePlayerTarget = registry->hasComponent<PlayerTag>(entity);
+
+                if (isPlayerProjectile && isPlayerTarget) {
+                    auto ownerComp = registry->getComponent<OwnerComponent>(entity);
+                    if (!ownerComp || ownerComp->getOwner() != otherEntity) {
+                        ActionFactory::getInstance().executeAction(
+                            constants::DEALDAMAGE_ACTION,
+                            registry, resourceManager, entity, otherEntity);
+                        ActionFactory::getInstance().executeAction(
+                            constants::TAKEDEATH_ACTION,
+                            registry, resourceManager, entity, otherEntity);
+                        shouldInteract = true;
+                    }
+                } else if (reversePlayerProjectile && reversePlayerTarget) {
+                    auto ownerComp =
+                        registry->getComponent<OwnerComponent>(otherEntity);
+                    if (!ownerComp || ownerComp->getOwner() != entity) {
+                        ActionFactory::getInstance().executeAction(
+                            constants::DEALDAMAGE_ACTION,
+                            registry, resourceManager, otherEntity, entity);
+                        ActionFactory::getInstance().executeAction(
+                            constants::TAKEDEATH_ACTION,
+                            registry, resourceManager, otherEntity, entity);
+                        shouldInteract = true;
+                    }
+                }
             }
         }
 
