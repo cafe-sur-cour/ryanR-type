@@ -15,6 +15,11 @@ target_include_directories(${ECS_LIB_NAME}
 add_subdirectory(entity)
 add_subdirectory(view)
 
+target_sources(${ECS_LIB_NAME} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/../GameRules.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../GameRules.hpp
+)
+
 set_target_properties(${ECS_LIB_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(${ECS_LIB_NAME}
