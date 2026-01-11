@@ -45,6 +45,13 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
 
     this->_clientsReady = std::map<uint8_t, bool>();
     this->_clientToEntity = std::map<uint8_t, ecs::Entity>();
+    this->_clientLastHeartbeat = std::map<uint8_t, std::chrono::steady_clock::time_point>();
+
+    auto now = std::chrono::steady_clock::now();
+    for (const auto& client : this->_clients) {
+        this->_clientLastHeartbeat[std::get<0>(client)] = now;
+    }
+
     this->_packet = nullptr;
     this->_sequenceNumber = 0;
     this->_resourceManager = nullptr;
@@ -115,6 +122,7 @@ rserv::Lobby::~Lobby() {
 /* Client Info Getter */
 std::vector<uint8_t> rserv::Lobby::getConnectedClients() const {
     std::vector<uint8_t> clientIds;
+    std::lock_guard<std::mutex> lock(_clientsMutex);
     for (const auto &client : this->_clients) {
         clientIds.push_back(std::get<0>(client));
     }
@@ -124,6 +132,7 @@ std::vector<uint8_t> rserv::Lobby::getConnectedClients() const {
 std::vector<std::shared_ptr<net::INetworkEndpoint>>
     rserv::Lobby::getConnectedClientEndpoints() const {
     std::vector<std::shared_ptr<net::INetworkEndpoint>> endpoints;
+    std::lock_guard<std::mutex> lock(_clientsMutex);
     for (const auto &client : this->_clients) {
         endpoints.push_back(std::get<1>(client));
     }
@@ -131,7 +140,12 @@ std::vector<std::shared_ptr<net::INetworkEndpoint>>
 }
 
 size_t rserv::Lobby::getClientCount() const {
+    std::lock_guard<std::mutex> lock(_clientsMutex);
     return this->_clients.size();
+}
+
+bool rserv::Lobby::isRunning() const {
+    return this->_running.load(std::memory_order_acquire);
 }
 
 void rserv::Lobby::addClient(
@@ -139,7 +153,9 @@ void rserv::Lobby::addClient(
     std::shared_ptr<net::INetworkEndpoint>,
     std::string> client
 ) {
+    std::lock_guard<std::mutex> lock(_clientsMutex);
     this->_clients.push_back(client);
+    _clientLastHeartbeat[std::get<0>(client)] = std::chrono::steady_clock::now();
 }
 
 void rserv::Lobby::createPlayerEntityForClient(uint8_t clientId) {
@@ -285,15 +301,19 @@ void rserv::Lobby::processIncomingPackets() {
     }
 
     this->_packet->unpack(received.second);
+    uint8_t clientId = this->_packet->getIdClient();
+
+    _clientLastHeartbeat[clientId] = std::chrono::steady_clock::now();
+
     if (this->_packet->getType() == constants::PACKET_EVENT) {
-        this->processEvents(this->_packet->getIdClient());
+        this->processEvents(clientId);
     } else if (this->_packet->getType() == constants::PACKET_WHOAMI) {
-        this->processWhoAmI(this->_packet->getIdClient());
+        this->processWhoAmI(clientId);
     } else {
         debug::Debug::printDebug(this->getIsDebug(),
             "[SERVER] Packet received of type "
             + std::to_string(static_cast<int>(this->_packet->getType()))
-            + " from client: " + std::to_string(this->_packet->getIdClient()),
+            + " from client: " + std::to_string(clientId),
             debug::debugType::NETWORK, debug::debugLevel::INFO);
     }
 
@@ -301,17 +321,27 @@ void rserv::Lobby::processIncomingPackets() {
 }
 
 bool rserv::Lobby::processDisconnections(uint8_t idClient) {
+    std::lock_guard<std::mutex> lock(_clientsMutex);
+
     for (auto &client : this->_clients) {
         if (std::get<0>(client) == idClient) {
             this->_clients.erase(
                 std::remove(this->_clients.begin(), this->_clients.end(), client),
                 this->_clients.end());
             this->_clientToEntity.erase(idClient);
-            /* Send to server who disconnected ? */
+            this->_clientLastHeartbeat.erase(idClient);
             debug::Debug::printDebug(this->getIsDebug(),
                 "Client " + std::to_string(idClient)
                 + " disconnected and removed from the lobby",
                 debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+            bool shouldClose = this->_clients.empty();
+
+            if (shouldClose) {
+                debug::Debug::printDebug(this->getIsDebug(),
+                    "All clients disconnected. Closing lobby " + this->_lobbyCode,
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+            }
             return true;
         }
     }
@@ -464,8 +494,29 @@ bool rserv::Lobby::gameStatePacket() {
     constexpr size_t MAX_BATCH_SIZE = 20;
     constexpr size_t MAX_PACKET_SIZE = 1400;
 
-    for (auto& client : this->_clients) {
-        uint8_t clientId = std::get<0>(client);
+    std::vector<uint8_t> clientIds;
+    {
+        std::lock_guard<std::mutex> lock(_clientsMutex);
+        for (const auto& client : this->_clients) {
+            clientIds.push_back(std::get<0>(client));
+        }
+    }
+
+    for (uint8_t clientId : clientIds) {
+        std::shared_ptr<net::INetworkEndpoint> clientEndpoint = nullptr;
+        {
+            std::lock_guard<std::mutex> lock(_clientsMutex);
+            for (const auto& client : this->_clients) {
+                if (std::get<0>(client) == clientId) {
+                    clientEndpoint = std::get<1>(client);
+                    break;
+                }
+            }
+        }
+
+        if (!clientEndpoint) {
+            continue;
+        }
 
         std::vector<std::vector<uint64_t>> batchedEntities;
         batchedEntities.reserve(MAX_BATCH_SIZE);
@@ -494,12 +545,13 @@ bool rserv::Lobby::gameStatePacket() {
                     batchedEntities
                 );
 
-                if (!this->_network->sendTo(*std::get<1>(client), packet)) {
+                if (!this->_network->sendTo(*clientEndpoint, packet)) {
                     debug::Debug::printDebug(this->getIsDebug(),
-                        "[SERVER NETWORK] Failed to send batched game state " +
+                        "[SERVER NETWORK] Failed to send batched game state to client " +
                         std::to_string(static_cast<int>(clientId)),
                         debug::debugType::NETWORK, debug::debugLevel::ERROR);
-                    return false;
+                    this->processDisconnections(clientId);
+                    break;
                 }
                 batchedEntities.clear();
                 estimatedSize = 2;
@@ -516,12 +568,12 @@ bool rserv::Lobby::gameStatePacket() {
                 batchedEntities
             );
 
-            if (!this->_network->sendTo(*std::get<1>(client), packet)) {
+            if (!this->_network->sendTo(*clientEndpoint, packet)) {
                 debug::Debug::printDebug(this->getIsDebug(),
                     "[SERVER NETWORK] Failed to send batched game state packet to client " +
                     std::to_string(static_cast<int>(clientId)),
                     debug::debugType::NETWORK, debug::debugLevel::ERROR);
-                return false;
+                this->processDisconnections(clientId);
             }
         }
     }
@@ -711,25 +763,27 @@ std::vector<uint64_t> rserv::Lobby::deathPacket(size_t entityId) {
 }
 
 bool rserv::Lobby::serverStatusPacket() {
-    size_t connectedClients = this->_clients.size();
+    std::vector<std::tuple<
+        uint8_t, std::shared_ptr<net::INetworkEndpoint>, bool>> clientSnapshot;
+    size_t connectedClients = 0;
     size_t readyClients = 0;
 
-    for (const auto &client : this->_clients) {
-        uint8_t clientId = std::get<0>(client);
-        auto it = this->_clientsReady.find(clientId);
-        if (it != this->_clientsReady.end() && it->second) {
-            readyClients++;
+    {
+        std::lock_guard<std::mutex> lock(_clientsMutex);
+        connectedClients = this->_clients.size();
+
+        for (const auto &client : this->_clients) {
+            uint8_t clientId = std::get<0>(client);
+            auto it = this->_clientsReady.find(clientId);
+            bool isReady = it != this->_clientsReady.end() && it->second;
+            if (isReady) {
+                readyClients++;
+            }
+            clientSnapshot.push_back(std::make_tuple(clientId, std::get<1>(client), isReady));
         }
     }
 
-    for (const auto &client : this->_clients) {
-        uint8_t clientId = std::get<0>(client);
-        bool isClientReady = false;
-        auto it = this->_clientsReady.find(clientId);
-        if (it != this->_clientsReady.end() && it->second) {
-            isClientReady = true;
-        }
-
+    for (const auto &[clientId, endpoint, isClientReady] : clientSnapshot) {
         std::vector<uint64_t> payload = {
             static_cast<uint64_t>(connectedClients),
             static_cast<uint64_t>(readyClients),
@@ -744,7 +798,7 @@ bool rserv::Lobby::serverStatusPacket() {
             payload
         );
 
-        if (!this->_network->sendTo(*std::get<1>(client), packet)) {
+        if (!this->_network->sendTo(*endpoint, packet)) {
             debug::Debug::printDebug(this->getIsDebug(),
                 "[LOBBY NETWORK] Failed to send server status packet to client " +
                 std::to_string(static_cast<int>(clientId)),
@@ -766,6 +820,7 @@ bool rserv::Lobby::isGameStarted() const {
 }
 
 bool rserv::Lobby::allClientsReady() const {
+    std::lock_guard<std::mutex> lock(_clientsMutex);
     if (this->_clients.empty()) {
         return false;
     }
@@ -882,11 +937,18 @@ void rserv::Lobby::createPlayerEntities() {
         return;
     }
 
+    std::vector<uint8_t> clientIds;
+    {
+        std::lock_guard<std::mutex> lock(_clientsMutex);
+        for (const auto &client : this->_clients) {
+            clientIds.push_back(std::get<0>(client));
+        }
+    }
+
     if (this->_resourceManager->has<ecs::ServerInputProvider>()) {
         auto inputProvider = this->_resourceManager->get<ecs::ServerInputProvider>();
         if (inputProvider) {
-            for (const auto &client : this->_clients) {
-                uint8_t clientId = std::get<0>(client);
+            for (uint8_t clientId : clientIds) {
                 inputProvider->registerClient(clientId);
                 debug::Debug::printDebug(this->getIsDebug(),
                     "[LOBBY] Registered client " +
@@ -898,8 +960,7 @@ void rserv::Lobby::createPlayerEntities() {
     }
 
     std::string playerString = "player";
-    for (const auto &client : this->_clients) {
-        uint8_t clientId = std::get<0>(client);
+    for (uint8_t clientId : clientIds) {
         ecs::Entity playerEntity = prefabMgr->createEntityFromPrefab(
             playerString,
             registry,
@@ -945,15 +1006,66 @@ void rserv::Lobby::networkLoop() {
         if (this->_running == false) {
             break;
         }
-        this->processIncomingPackets();
-        if (this->_clients.size() > 0) {
-            auto now = std::chrono::steady_clock::now();
-            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
-                now - this->_lastGameStateTime).count();
-            if (elapsed >= 1000 / this->_tps) {
-                this->gameStatePacket();
-                this->_lastGameStateTime = now;
+
+        auto now = std::chrono::steady_clock::now();
+        std::vector<uint8_t> timedOutClients;
+
+        {
+            std::lock_guard<std::mutex> lock(_clientsMutex);
+            for (const auto& client : this->_clients) {
+                uint8_t clientId = std::get<0>(client);
+                auto it = _clientLastHeartbeat.find(clientId);
+
+                if (it != _clientLastHeartbeat.end()) {
+                    auto timeSinceLastHeartbeat =
+                        std::chrono::duration_cast<std::chrono::seconds>(
+                        now - it->second).count();
+
+                    if (timeSinceLastHeartbeat > constants::CLIENT_TIMEOUT_SECONDS) {
+                        debug::Debug::printDebug(this->getIsDebug(),
+                            "Client " + std::to_string(clientId) +
+                                " timed out (no activity for "
+                            + std::to_string(timeSinceLastHeartbeat) + "s)",
+                            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+                        timedOutClients.push_back(clientId);
+                    }
+                }
             }
+        }
+
+        for (uint8_t clientId : timedOutClients) {
+            this->processDisconnections(clientId);
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(_clientsMutex);
+            if (this->_clients.empty()) {
+                debug::Debug::printDebug(this->getIsDebug(),
+                    "All clients disconnected. Stopping network loop.",
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+                _running.store(false, std::memory_order_release);
+                break;
+            }
+        }
+
+        this->processIncomingPackets();
+
+        bool shouldSendGameState = false;
+        {
+            std::lock_guard<std::mutex> lock(_clientsMutex);
+            if (this->_clients.size() > 0) {
+                auto gameStateNow = std::chrono::steady_clock::now();
+                auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+                    gameStateNow - this->_lastGameStateTime).count();
+                if (elapsed >= 1000 / this->_tps) {
+                    shouldSendGameState = true;
+                    this->_lastGameStateTime = gameStateNow;
+                }
+            }
+        }
+
+        if (shouldSendGameState) {
+            this->gameStatePacket();
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -978,7 +1090,11 @@ void rserv::Lobby::gameLoop() {
         previousTime = currentTime;
 
         this->processLobbyEvents();
-        this->_gsm->update(deltaTime);
+
+        if (this->_gsm) {
+            this->_gsm->update(deltaTime);
+        }
+
         this->_statusUpdateTimer += deltaTime;
         if (this->_statusUpdateTimer >= 2.0f) {
             this->serverStatusPacket();
