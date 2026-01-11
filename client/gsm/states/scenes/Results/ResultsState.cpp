@@ -14,9 +14,13 @@
 #include "../../../common/constants.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/interfaces/IWindow.hpp"
+#include "../../../../../common/interfaces/IAudio.hpp"
+#include "../../../../../common/debug.hpp"
+#include "../../../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../../gsm/machine/AGameStateMachine.hpp"
 #include "../MainMenu/MainMenuState.hpp"
 #include "../../../../SettingsConfig.hpp"
+#include "../../../../ClientNetwork.hpp"
 
 namespace gsm {
 
@@ -31,6 +35,17 @@ ResultsState::ResultsState(
 void ResultsState::enter() {
     updateUserStats();
 
+    _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
+
+    auto window = _resourceManager->get<gfx::IWindow>();
+    window->setViewCenter(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
+
+    _uiManager->setCursorCallback([this](bool isHovering) {
+        if (_resourceManager->has<gfx::IWindow>()) {
+            _resourceManager->get<gfx::IWindow>()->setCursor(isHovering);
+        }
+    });
+
     std::string text = _isWin ? constants::WIN_TEXT : constants::LOSE_TEXT;
     gfx::color_t color = _isWin ? colors::GREEN : colors::RED;
 
@@ -41,32 +56,94 @@ void ResultsState::enter() {
     _resultText->setOutlineColor(gfx::color_t{0, 0, 0});
     _resultText->setOutlineThickness(2.0f);
 
-    auto window = _resourceManager->get<gfx::IWindow>();
     auto textSize = window->getTextSize(text, constants::MAIN_FONT, 150);
     float x = (constants::MAX_WIDTH - static_cast<float>(textSize.first)) / 2.0f;
     float y = (constants::MAX_HEIGHT - static_cast<float>(textSize.second)) / 2.0f;
     _resultText->setPosition(math::Vector2f(x, y));
 
     _uiManager->addElement(_resultText);
+
+    ui::LayoutConfig bottomRightConfig;
+    bottomRightConfig.direction = ui::LayoutDirection::Vertical;
+    bottomRightConfig.alignment = ui::LayoutAlignment::End;
+    bottomRightConfig.spacing = 10.0f;
+    bottomRightConfig.padding = math::Vector2f(0.0f, 0.0f);
+    bottomRightConfig.anchorX = ui::AnchorX::Right;
+    bottomRightConfig.anchorY = ui::AnchorY::Bottom;
+    bottomRightConfig.offset = math::Vector2f(-20.0f, -20.0f);
+
+    _bottomRightLayout = std::make_shared<ui::UILayout>(_resourceManager, bottomRightConfig);
+    _bottomRightLayout->setSize(math::Vector2f(150.f, 60.f));
+
+    _leaveButton = std::make_shared<ui::Button>(_resourceManager);
+    _leaveButton->setText("Leave");
+    _leaveButton->setSize(math::Vector2f(150.f, 60.f));
+    _leaveButton->setNormalColor(colors::BUTTON_DANGER);
+    _leaveButton->setHoveredColor(colors::BUTTON_DANGER_HOVER);
+    _leaveButton->setPressedColor(colors::BUTTON_DANGER_PRESSED);
+    _leaveButton->setOnRelease([this]() {
+        try {
+            auto network = this->_resourceManager->get<ClientNetwork>();
+            if (network && network->isConnected()) {
+                network->leaveLobby();
+            }
+        } catch (const std::exception &e) {
+            debug::Debug::printDebug(true,
+                std::string("[Results] Error leaving lobby: ") + e.what(),
+                debug::debugType::NETWORK,
+                debug::debugLevel::ERROR);
+        }
+
+        if (this->_resourceManager->has<gfx::IAudio>()) {
+            this->_resourceManager->get<gfx::IAudio>()->stopMusic();
+        }
+
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePop();
+        }
+    });
+    _bottomRightLayout->addElement(_leaveButton);
+
+    _uiManager->addElement(_bottomRightLayout);
 }
 
 void ResultsState::update(float deltaTime) {
-    auto event = _resourceManager->get<gfx::IEvent>();
-    auto eventResult = event->pollEvents();
+    auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
     if (eventResult == gfx::EventType::CLOSE) {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
         return;
     }
 
-    auto window = _resourceManager->get<gfx::IWindow>();
-    window->clear();
+    _uiManager->handleKeyboardInput(eventResult);
 
-    window->updateView();
+    math::Vector2f mousePos = _mouseHandler->getWorldMousePosition();
+    bool mousePressed = _mouseHandler->isMouseButtonPressed(
+        static_cast<int>(constants::MouseButton::LEFT));
+
+    _uiManager->handleMouseInput(mousePos, mousePressed);
+
+    if (_resourceManager->has<ecs::IInputProvider>()) {
+        auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
+        _uiManager->handleNavigationInputs(inputProvider, deltaTime);
+    }
 
     _uiManager->update(deltaTime);
-    _uiManager->render();
 
-    window->display();
+    renderUI();
+}
+
+void ResultsState::renderUI() {
+    auto window = _resourceManager->get<gfx::IWindow>();
+    if (window) {
+        auto windowSize = window->getWindowSize();
+        window->drawFilledRectangle(
+            gfx::color_t{0, 0, 0, 255},
+            {0, 0},
+            {static_cast<size_t>(windowSize.first), static_cast<size_t>(windowSize.second)}
+        );
+    }
+
+    _uiManager->render();
 }
 
 void ResultsState::exit() {
