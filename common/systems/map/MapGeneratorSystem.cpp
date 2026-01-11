@@ -11,11 +11,11 @@
 #include <algorithm>
 #include <ctime>
 #include <chrono>
-#include "../../common/components/permanent/TransformComponent.hpp"
-#include "../../common/components/permanent/GameZoneComponent.hpp"
-#include "../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
-#include "../../common/ECS/entity/Entity.hpp"
-#include "../../common/constants.hpp"
+#include "../../../common/components/permanent/TransformComponent.hpp"
+#include "../../../common/components/permanent/GameZoneComponent.hpp"
+#include "../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
+#include "../../../common/ECS/entity/Entity.hpp"
+#include "../../../common/constants.hpp"
 
 namespace ecs {
 

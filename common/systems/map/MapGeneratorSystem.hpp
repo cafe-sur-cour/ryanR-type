@@ -8,7 +8,7 @@
 #ifndef MAPGENERATORSYSTEM_HPP_
 #define MAPGENERATORSYSTEM_HPP_
 
-#include "../../common/systems/base/ASystem.hpp"
+#include "../base/ASystem.hpp"
 #include <random>
 
 namespace ecs {
