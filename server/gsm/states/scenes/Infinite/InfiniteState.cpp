@@ -33,11 +33,14 @@
 #include "../../../../systems/input/ServerMovementInputSystem.hpp"
 #include "../../../../systems/input/ServerShootInputSystem.hpp"
 #include "../../../../systems/input/ServerForceInputSystem.hpp"
+#include "../../../../systems/gameEnd/EndOfMapDetectionSystem.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/Parser/MapParser/MapHandler.hpp"
 #include "../../../../../common/systems/map/MapGeneratorSystem.hpp"
 #include "../../../gsmStates.hpp"
 #include "../GameEnd/GameEndState.hpp"
+#include "../LevelComplete/LevelCompleteState.hpp"
+#include "../../../../../common/components/tags/PlayerTag.hpp"
 
 namespace gsm {
 
@@ -85,6 +88,7 @@ void InfiniteState::enter() {
     addSystem(std::make_shared<ecs::ScoreSystem>());
     addSystem(std::make_shared<ecs::SpawnSystem>());
     addSystem(std::make_shared<ecs::MapGeneratorSystem>());
+    addSystem(std::make_shared<ecs::EndOfMapDetectionSystem>());
 }
 
 void InfiniteState::update(float deltaTime) {
@@ -93,6 +97,35 @@ void InfiniteState::update(float deltaTime) {
 
     _resourceManager->get<ecs::ISystemManager>()->updateAllSystems
         (_resourceManager, registry, deltaTime);
+
+    if (_resourceManager->has<gsm::GameStateType>()) {
+        gsm::GameStateType currentState = *(_resourceManager->get<gsm::GameStateType>());
+
+        if (currentState == gsm::LEVEL_COMPLETE) {
+            _resourceManager->get<rserv::Lobby>()->levelCompletePacket();
+
+            if (auto gsmPtr = _gsm.lock()) {
+                if (auto gsm = std::dynamic_pointer_cast<GameStateMachine>(gsmPtr)) {
+                    gsm->requestStateChange(std::make_shared<gsm::LevelCompleteState>
+                        (gsmPtr, _resourceManager));
+                }
+            }
+        } else if (currentState == gsm::GAME_END) {
+            bool isWin = false;
+            auto players = registry->view<ecs::PlayerTag>();
+
+            if (players.begin() != players.end())
+                isWin = true;
+            _resourceManager->get<rserv::Lobby>()->endGamePacket(isWin);
+
+            if (auto gsmPtr = _gsm.lock()) {
+                if (auto gsm = std::dynamic_pointer_cast<GameStateMachine>(gsmPtr)) {
+                    gsm->requestStateChange(std::make_shared<gsm::GameEndState>
+                        (gsmPtr, _resourceManager));
+                }
+            }
+        }
+    }
 }
 
 void InfiniteState::exit() {
