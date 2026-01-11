@@ -14,10 +14,18 @@ enum Difficulty {
     HARD
 };
 
+enum Gamemode {
+    CLASSIC,
+    INFINITE
+};
+
 class GameRules {
     public:
         GameRules();
         ~GameRules() = default;
+
+        void setGamemode(Gamemode gamemode);
+        Gamemode getGamemode() const;
 
         void setDifficulty(Difficulty difficulty);
         Difficulty getDifficulty() const;
@@ -26,6 +34,7 @@ class GameRules {
         bool getCrossfire() const;
 
     private:
+        Gamemode _gamemode;
         Difficulty _difficulty;
         bool _crossfire;
 };

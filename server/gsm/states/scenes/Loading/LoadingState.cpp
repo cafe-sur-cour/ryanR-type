@@ -8,10 +8,12 @@
 #include "LoadingState.hpp"
 #include <memory>
 #include "../InGame/InGameState.hpp"
+#include "../Infinite/InfiniteState.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
 #include "../../../../../common/Parser/MapParser/MapHandler.hpp"
 #include "../../../../../common/constants.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
+#include "../../../../../common/GameRules.hpp"
 #include "../../../gsmStates.hpp"
 namespace gsm {
 
@@ -35,8 +37,14 @@ void LoadingState::enter() {
     }
     *(_resourceManager->get<gsm::GameStateType>()) = gsm::LOADING;
     if (auto stateMachine = _gsm.lock()) {
-        stateMachine->requestStateChange(std::make_shared<InGameState>(stateMachine,
-            _resourceManager));
+        auto gameRules = _resourceManager->get<GameRules>();
+        if (gameRules && gameRules->getGamemode() == Gamemode::INFINITE) {
+            stateMachine->requestStateChange(std::make_shared<InfiniteState>(stateMachine,
+                _resourceManager));
+        } else {
+            stateMachine->requestStateChange(std::make_shared<InGameState>(stateMachine,
+                _resourceManager));
+        }
     }
 }
 
