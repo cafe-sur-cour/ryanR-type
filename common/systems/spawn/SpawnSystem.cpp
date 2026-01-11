@@ -27,40 +27,49 @@ bool SpawnSystem::isPositionFree(
     const math::Vector2f& position,
     std::shared_ptr<Registry> registry
 ) {
-    auto newCollider = registry->getComponent<ColliderComponent>(newEntity);
+    auto newColliders = registry->getComponents<ColliderComponent>(newEntity);
     auto newTransform = registry->getComponent<TransformComponent>(newEntity);
-    if (!newCollider || !newTransform) {
+    if (newColliders.empty() || !newTransform) {
         return true;
     }
-
-    math::FRect newHitbox = newCollider->getHitbox(
-        position, newTransform->getScale(), newTransform->getRotation());
 
     View<ColliderComponent, TransformComponent> view(registry);
     for (auto otherEntity : view) {
         if (otherEntity == newEntity) continue;
 
-        auto otherCollider = registry->getComponent<ColliderComponent>(otherEntity);
+        auto otherColliders = registry->getComponents<ColliderComponent>(otherEntity);
         auto otherTransform = registry->getComponent<TransformComponent>(otherEntity);
 
-        if (!otherCollider || !otherTransform) continue;
+        if (otherColliders.empty() || !otherTransform) continue;
 
-        math::FRect otherHitbox = otherCollider->getHitbox(
-            otherTransform->getPosition(),
-            otherTransform->getScale(),
-            otherTransform->getRotation()
-        );
+        for (auto newCollider : newColliders) {
+            math::FRect newHitbox = newCollider->getHitbox(
+                position, newTransform->getScale(), newTransform->getRotation());
 
-        if (newHitbox.intersects(otherHitbox)) {
-            const auto& tagRegistry = TagRegistry::getInstance();
-            std::vector<std::string> newTags = tagRegistry.getTags(registry, newEntity);
-            std::vector<std::string> otherTags = tagRegistry.getTags(registry, otherEntity);
-            if (CollisionRules::getInstance().canCollide(
-                CollisionType::Solid,
-                newTags,
-                otherTags
-            )) {
-                return false;
+            for (auto otherCollider : otherColliders) {
+                math::FRect otherHitbox = otherCollider->getHitbox(
+                    otherTransform->getPosition(),
+                    otherTransform->getScale(),
+                    otherTransform->getRotation()
+                );
+
+                if (newHitbox.intersects(otherHitbox)) {
+                    if (otherCollider->getType() == CollisionType::Solid) {
+                        const auto& tagRegistry = TagRegistry::getInstance();
+                        std::vector<std::string> newTags =
+                            tagRegistry.getTags(registry, newEntity);
+                        std::vector<std::string> otherTags =
+                            tagRegistry.getTags(registry, otherEntity);
+
+                        if (CollisionRules::getInstance().canCollide(
+                            CollisionType::Solid,
+                            newTags,
+                            otherTags
+                        )) {
+                            return false;
+                        }
+                    }
+                }
             }
         }
     }
