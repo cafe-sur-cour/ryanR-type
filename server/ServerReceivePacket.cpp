@@ -570,7 +570,7 @@ bool rserv::Server::processProfileRequest(std::shared_ptr<net::INetworkEndpoint>
     return true;
 }
 
-bool rserv::Server::processRequestGameRulesChange(
+bool rserv::Server::processRequestGameRulesUpdate(
     std::pair<std::shared_ptr<net::INetworkEndpoint>,
     std::vector<uint8_t>> payload) {
     if (!this->_network) {
@@ -582,6 +582,16 @@ bool rserv::Server::processRequestGameRulesChange(
 
     this->_packet->unpack(payload.second);
     uint8_t clientId = this->_packet->getIdClient();
+    auto packetPayload = this->_packet->getPayload();
+
+    if (packetPayload.size() < 2) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Invalid GameRules update packet (size < 2)",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    uint8_t ruleType = static_cast<uint8_t>(packetPayload[0]);
 
     auto it = this->_clientToLobby.find(clientId);
     if (it == this->_clientToLobby.end()) {
@@ -608,19 +618,35 @@ bool rserv::Server::processRequestGameRulesChange(
     }
 
     auto gameRules = resourceManager->get<GameRules>();
-    Difficulty current = gameRules->getDifficulty();
-    Difficulty next = NORMAL;
 
-    if (current == NORMAL) next = HARD;
-    else if (current == HARD) next = EASY;
-    else if (current == EASY) next = NORMAL;
+    if (ruleType == 0) {
+        Difficulty current = gameRules->getDifficulty();
+        Difficulty next = NORMAL;
 
-    gameRules->setDifficulty(next);
+        if (current == NORMAL) next = HARD;
+        else if (current == HARD) next = EASY;
+        else if (current == EASY) next = NORMAL;
 
-    debug::Debug::printDebug(this->_config->getIsDebug(),
-        "[SERVER] GameRules changed to difficulty: " +
-        std::to_string(static_cast<int>(next)),
-        debug::debugType::NETWORK, debug::debugLevel::INFO);
+        gameRules->setDifficulty(next);
+
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] GameRules changed to difficulty: " +
+            std::to_string(static_cast<int>(next)),
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+    } else if (ruleType == 1) {
+        bool currentCrossfire = gameRules->getCrossfire();
+        gameRules->setCrossfire(!currentCrossfire);
+
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Crossfire toggled to: " +
+            std::string(!currentCrossfire ? "ON" : "OFF"),
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+    } else {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Unknown GameRules update type: " + std::to_string(ruleType),
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
 
     lobby->gameRulesPacket();
 

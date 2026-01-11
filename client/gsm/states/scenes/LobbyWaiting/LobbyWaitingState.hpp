@@ -44,6 +44,8 @@ private:
     std::shared_ptr<ui::UILayout> _topLeftLayout;
     std::shared_ptr<ui::Text> _difficultyLabel;
     std::shared_ptr<ui::Button> _difficultyButton;
+    std::shared_ptr<ui::Text> _crossfireLabel;
+    std::shared_ptr<ui::Button> _crossfireButton;
 
     bool _isLobbyMaster;
 };
