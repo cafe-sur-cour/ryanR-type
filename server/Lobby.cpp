@@ -158,6 +158,18 @@ void rserv::Lobby::addClient(
     _clientLastHeartbeat[std::get<0>(client)] = std::chrono::steady_clock::now();
 }
 
+void rserv::Lobby::resetClientHeartbeats() {
+    std::lock_guard<std::mutex> lock(_clientsMutex);
+    auto now = std::chrono::steady_clock::now();
+    for (const auto& client : this->_clients) {
+        uint8_t clientId = std::get<0>(client);
+        _clientLastHeartbeat[clientId] = now;
+    }
+    debug::Debug::printDebug(this->getIsDebug(),
+        "[LOBBY] Reset heartbeats for all clients",
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+}
+
 void rserv::Lobby::createPlayerEntityForClient(uint8_t clientId) {
     if (this->_resourceManager == nullptr) {
         debug::Debug::printDebug(this->getIsDebug(),
@@ -1018,14 +1030,14 @@ void rserv::Lobby::networkLoop() {
 
                 if (it != _clientLastHeartbeat.end()) {
                     auto timeSinceLastHeartbeat =
-                        std::chrono::duration_cast<std::chrono::seconds>(
+                    std::chrono::duration_cast<std::chrono::seconds>(
                         now - it->second).count();
 
                     if (timeSinceLastHeartbeat > constants::CLIENT_TIMEOUT_SECONDS) {
                         debug::Debug::printDebug(this->getIsDebug(),
                             "Client " + std::to_string(clientId) +
                                 " timed out (no activity for "
-                            + std::to_string(timeSinceLastHeartbeat) + "s)",
+                                + std::to_string(timeSinceLastHeartbeat) + "s)",
                             debug::debugType::NETWORK, debug::debugLevel::WARNING);
                         timedOutClients.push_back(clientId);
                     }

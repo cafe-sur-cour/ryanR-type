@@ -120,8 +120,8 @@ bool rserv::Server::processConnectToLobby(std::pair<std::shared_ptr<net::INetwor
                 lobby->processDisconnections(clientIdToRemove);
                 this->_clientToLobby.erase(clientIdToRemove);
                 debug::Debug::printDebug(this->_config->getIsDebug(),
-                    "[SERVER] Client " + std::to_string(static_cast<int>(clientIdToRemove))
-                        + " left the lobby",
+                    "[SERVER] Client " + std::to_string(static_cast<int>(clientIdToRemove)) +
+                    " left the lobby",
                     debug::debugType::NETWORK, debug::debugLevel::INFO);
             }
         }
@@ -359,6 +359,7 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
 
     this->canStartPacket(endpoints);
     lobby->gameRulesPacket();
+    lobby->resetClientHeartbeats();
     lobby->startNetworkThread();
     lobby->startGameThread();
     debug::Debug::printDebug(this->_config->getIsDebug(),
