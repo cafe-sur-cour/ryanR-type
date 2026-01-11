@@ -130,7 +130,7 @@ std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Ser
         std::make_shared<gsm::GameStateType>(gsm::BOOT));
 
     auto gameRules = std::make_shared<GameRules>();
-    gameRules->setDifficulty(GameRules::Difficulty::NORMAL);
+    gameRules->setDifficulty(GameRulesNS::Difficulty::NORMAL);
     resourceManager->add<GameRules>(gameRules);
 
     return resourceManager;

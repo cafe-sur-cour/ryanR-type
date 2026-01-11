@@ -663,11 +663,13 @@ bool rserv::Server::processRequestGameRulesUpdate(
 
     /* ruleType: 0 = gamemode, 1 = difficulty, 2 = crossfire */
     if (ruleType == 0) {
-        GameRules::Gamemode current = gameRules->getGamemode();
-        GameRules::Gamemode next = GameRules::Gamemode::CLASSIC;
+        GameRulesNS::Gamemode current = gameRules->getGamemode();
+        GameRulesNS::Gamemode next = GameRulesNS::Gamemode::CLASSIC;
 
-        if (current == GameRules::Gamemode::CLASSIC) next = GameRules::Gamemode::INFINITE;
-        else if (current == GameRules::Gamemode::INFINITE) next = GameRules::Gamemode::CLASSIC;
+        if (current == GameRulesNS::Gamemode::CLASSIC) next =
+            GameRulesNS::Gamemode::INFINITE;
+        else if (current == GameRulesNS::Gamemode::INFINITE) next =
+            GameRulesNS::Gamemode::CLASSIC;
 
         gameRules->setGamemode(next);
 
@@ -676,12 +678,15 @@ bool rserv::Server::processRequestGameRulesUpdate(
             std::to_string(static_cast<int>(next)),
             debug::debugType::NETWORK, debug::debugLevel::INFO);
     } else if (ruleType == 1) {
-        GameRules::Difficulty current = gameRules->getDifficulty();
-        GameRules::Difficulty next = GameRules::Difficulty::NORMAL;
+        GameRulesNS::Difficulty current = gameRules->getDifficulty();
+        GameRulesNS::Difficulty next = GameRulesNS::Difficulty::NORMAL;
 
-        if (current == GameRules::Difficulty::NORMAL) next = GameRules::Difficulty::HARD;
-        else if (current == GameRules::Difficulty::HARD) next = GameRules::Difficulty::EASY;
-        else if (current == GameRules::Difficulty::EASY) next = GameRules::Difficulty::NORMAL;
+        if (current == GameRulesNS::Difficulty::NORMAL) next =
+            GameRulesNS::Difficulty::HARD;
+        else if (current == GameRulesNS::Difficulty::HARD) next =
+            GameRulesNS::Difficulty::EASY;
+        else if (current == GameRulesNS::Difficulty::EASY) next =
+            GameRulesNS::Difficulty::NORMAL;
 
         gameRules->setDifficulty(next);
 

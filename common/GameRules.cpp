@@ -8,23 +8,23 @@
 #include "GameRules.hpp"
 
 GameRules::GameRules() :
-    _gamemode(GameRules::Gamemode::CLASSIC),
-    _difficulty(GameRules::Difficulty::NORMAL),
+    _gamemode(GameRulesNS::Gamemode::CLASSIC),
+    _difficulty(GameRulesNS::Difficulty::NORMAL),
     _crossfire(false) {}
 
-void GameRules::setGamemode(GameRules::Gamemode gamemode) {
+void GameRules::setGamemode(GameRulesNS::Gamemode gamemode) {
     _gamemode = gamemode;
 }
 
-GameRules::Gamemode GameRules::getGamemode() const {
+GameRulesNS::Gamemode GameRules::getGamemode() const {
     return _gamemode;
 }
 
-void GameRules::setDifficulty(GameRules::Difficulty difficulty) {
+void GameRules::setDifficulty(GameRulesNS::Difficulty difficulty) {
     _difficulty = difficulty;
 }
 
-GameRules::Difficulty GameRules::getDifficulty() const {
+GameRulesNS::Difficulty GameRules::getDifficulty() const {
     return _difficulty;
 }
 
