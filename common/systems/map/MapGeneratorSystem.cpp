@@ -15,13 +15,16 @@
 #include "../../../common/components/permanent/GameZoneComponent.hpp"
 #include "../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../common/ECS/entity/Entity.hpp"
+#include "../../../common/components/temporary/SpawnIntentComponent.hpp"
 #include "../../../common/constants.hpp"
 
 namespace ecs {
 
 MapGeneratorSystem::MapGeneratorSystem(unsigned int seed)
     : _seed(seed), _rng(seed), _lastGeneratedX(0.0f),
-    _generationStep(50.0f), _startGenerationX(500.0f) {
+    _generationStep(50.0f), _startGenerationX(500.0f),
+    _waveTimer(0.0f), _waveInterval(5.0f),
+    _powerUpTimer(0.0f), _powerUpInterval(3.0f) {
     _lastGeneratedX = _startGenerationX - _generationStep;
     auto now = std::chrono::high_resolution_clock::now();
     _seed = static_cast<unsigned int>(now.time_since_epoch().count());
@@ -33,7 +36,8 @@ void MapGeneratorSystem::update(
     std::shared_ptr<Registry> registry,
     float deltaTime
 ) {
-    (void) deltaTime;
+    _waveTimer += deltaTime;
+    _powerUpTimer += deltaTime;
 
     auto gameZoneView = registry->view<GameZoneComponent>();
 
@@ -46,6 +50,22 @@ void MapGeneratorSystem::update(
     while (_lastGeneratedX + _generationStep < currentX + constants::MAX_WIDTH * 2) {
         generateObstaclesAt(_lastGeneratedX + _generationStep, resourceManager, registry);
         _lastGeneratedX += _generationStep;
+    }
+
+    if (_waveTimer >= _waveInterval) {
+        _waveTimer = 0.0f;
+        std::uniform_real_distribution<float> probDist(0.0f, 1.0f);
+        if (probDist(_rng) < 0.8f) {
+            generateRandomWave(resourceManager, registry, currentX);
+        }
+    }
+
+    if (_powerUpTimer >= _powerUpInterval) {
+        _powerUpTimer = 0.0f;
+        std::uniform_real_distribution<float> probDist(0.0f, 1.0f);
+        if (probDist(_rng) < 0.9f) {
+            generateRandomPowerUp(resourceManager, registry, currentX);
+        }
     }
 }
 
@@ -93,6 +113,84 @@ void MapGeneratorSystem::generateObstaclesAt(
             }
         }
     }
+}
+
+void MapGeneratorSystem::generateRandomWave(
+    std::shared_ptr<ResourceManager> resourceManager,
+    std::shared_ptr<Registry> registry,
+    float currentX
+) {
+    (void) resourceManager;
+
+    std::uniform_int_distribution<int> numDist(3, 6);
+    int numEnemies = numDist(_rng);
+
+    for (int i = 0; i < numEnemies; ++i) {
+        std::uniform_int_distribution<int> prefabDist(0, 1);
+        std::string prefabName = (prefabDist(_rng) == 0) ?
+            constants::ENEMY_1 : constants::ENEMY_2;
+
+        std::uniform_real_distribution<float> xDist(
+            constants::MAX_WIDTH - 500, constants::MAX_WIDTH);
+        std::uniform_real_distribution<float> yDist(
+            50.0f, constants::MAX_HEIGHT - 50.0f);
+        math::Vector2f relativePosition(xDist(_rng), yDist(_rng));
+
+        auto intentEntity = registry->createEntity();
+        registry->addComponent<SpawnIntentComponent>(
+            intentEntity,
+            std::make_shared<SpawnIntentComponent>(
+                prefabName,
+                relativePosition,
+                ecs::EntityCreationContext::forServer(),
+                currentX - 1.0f
+            )
+        );
+    }
+}
+
+void MapGeneratorSystem::generateRandomPowerUp(
+    std::shared_ptr<ResourceManager> resourceManager,
+    std::shared_ptr<Registry> registry,
+    float currentX
+) {
+    (void) resourceManager;
+
+    std::uniform_int_distribution<int> typeDist(0, 2);
+    std::string prefabName;
+
+    int powerUpType = typeDist(_rng);
+    switch (powerUpType) {
+        case 0:
+            prefabName = constants::POWERUP_ADD_LIFE;
+            break;
+        case 1:
+            prefabName = constants::POWERUP_FORCE;
+            break;
+        case 2:
+            prefabName = constants::POWERUP_FLYING_FORCE;
+            break;
+        default:
+            prefabName = constants::POWERUP_ADD_LIFE;
+            break;
+    }
+
+    std::uniform_real_distribution<float> xDist(
+        constants::MAX_WIDTH - 300, constants::MAX_WIDTH);
+    std::uniform_real_distribution<float> yDist(
+        100.0f, constants::MAX_HEIGHT - 100.0f);
+    math::Vector2f relativePosition(xDist(_rng), yDist(_rng));
+
+    auto intentEntity = registry->createEntity();
+    registry->addComponent<SpawnIntentComponent>(
+        intentEntity,
+        std::make_shared<SpawnIntentComponent>(
+            prefabName,
+            relativePosition,
+            ecs::EntityCreationContext::forServer(),
+            currentX - 1.0f
+        )
+    );
 }
 
 }
