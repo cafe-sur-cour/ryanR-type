@@ -154,6 +154,10 @@ void TextInput::setOnFocusLost(std::function<void()> callback) {
     _onFocusLost = callback;
 }
 
+void TextInput::setOnNavigate(std::function<void(bool up)> callback) {
+    _onNavigate = callback;
+}
+
 void TextInput::handleInput(const math::Vector2f& mousePos, bool mousePressed) {
     AFocusableElement::handleInput(mousePos, mousePressed);
 }
@@ -168,6 +172,12 @@ void TextInput::handleKeyboardInput(gfx::EventType event) {
             break;
         case gfx::EventType::LEFT: moveCursorLeft(); break;
         case gfx::EventType::RIGHT: moveCursorRight(); break;
+        case gfx::EventType::UP:
+            if (_onNavigate) _onNavigate(true);
+            break;
+        case gfx::EventType::DOWN:
+            if (_onNavigate) _onNavigate(false);
+            break;
         default: break;
     }
 }

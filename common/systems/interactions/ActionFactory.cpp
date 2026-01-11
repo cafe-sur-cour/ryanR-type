@@ -16,6 +16,7 @@
 #include "../../constants.hpp"
 #include "../../components/permanent/HealthComponent.hpp"
 #include "../../components/permanent/ScriptingComponent.hpp"
+#include "../../components/permanent/DamageCooldownComponent.hpp"
 #include "../../GameRules.hpp"
 #include "../../resourceManager/ResourceManager.hpp"
 
@@ -105,6 +106,11 @@ void ActionFactory::initializeConditions() {
                 }
                 reg->addComponent<ecs::DamageIntentComponent>(otherEntity,
                     std::make_shared<ecs::DamageIntentComponent>(damage, selfEntity));
+                auto cooldownComp =
+                    reg->getComponent<ecs::DamageCooldownComponent>(otherEntity);
+                if (cooldownComp) {
+                    cooldownComp->setLastDamageTime(0.0f);
+                }
             }
         });
 
@@ -136,6 +142,12 @@ void ActionFactory::initializeConditions() {
                 }
                 reg->addComponent<ecs::DamageIntentComponent>(selfEntity,
                     std::make_shared<ecs::DamageIntentComponent>(damage, selfEntity));
+                auto cooldownComp =
+                reg->getComponent<ecs::DamageCooldownComponent>(selfEntity);
+                reg->getComponent<ecs::DamageCooldownComponent>(selfEntity);
+                if (cooldownComp) {
+                    cooldownComp->setLastDamageTime(0.0f);
+                }
             }
         });
 

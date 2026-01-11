@@ -11,7 +11,7 @@
 #include <algorithm>
 
 #include "Utils.hpp"
-#include "../common/constants.hpp"
+#include "Constants.hpp"
 
 Utils::Utils() {
 }
@@ -43,6 +43,14 @@ void Utils::parsCli(int ac, char **av,
             isDebug = true;
             config->setIsDebug(isDebug);
         }
+        if (std::string(av[i]) == "-tps" && i + 1 < ac) {
+            int64_t tps = std::stoi(av[i + 1]);
+            if (tps <= 0) {
+                std::cerr << "[SERVER] Error: TPS must be greater than 0" << std::endl;
+                exit(84);
+            }
+            config->setTps(tps);
+        }
         if (std::string(av[i]) == "-h") {
             this->helper();
             exit(0);
@@ -58,6 +66,9 @@ void Utils::helper() {
             << constants::DEFAULT_SERVER_PORT << ")\n"
         << "\r-i <ip_address>  Specify the IP address to bind to (default: "
             << constants::DEFAULT_SERVER_IP << ")\n"
+        << "\r-tps <tps>       Specify the TPS (ticks per second) (default: "
+            << constants::TPS << ")\n"
+        << "\r-d               Enable debug mode\n"
         << "\r-h               Display this help message\n"
         << "Example:\n"
         << "  ./r-type_server -p 8080 -i 127.0.0.1\n";

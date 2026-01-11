@@ -138,9 +138,9 @@ KeyMappings::createJoystickButtonMapping() {
     return {
         {EventType::GAMEPAD_A, 0},              // A/Cross
         {EventType::GAMEPAD_B, 1},              // B/Circle
-        {EventType::GAMEPAD_X, 2},              // X/Square
+        {EventType::GAMEPAD_LEFT_BUMPER, 2},    // L1/LB
         {EventType::GAMEPAD_Y, 3},              // Y/Triangle
-        {EventType::GAMEPAD_LEFT_BUMPER, 4},    // L1/LB
+        {EventType::GAMEPAD_X, 4},              // X/Square
         {EventType::GAMEPAD_RIGHT_BUMPER, 5},   // R1/RB
         {EventType::GAMEPAD_BACK, 6},           // Back/Share
         {EventType::GAMEPAD_START, 7},          // Start/Options

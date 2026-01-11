@@ -36,11 +36,12 @@
 rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
     std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>,
     std::string>> lobbyPlayerInfo,
-    std::string lobbyCode, bool debug) {
+    std::string lobbyCode, bool debug, int64_t tps) {
     this->_network = network;
     this->_clients = lobbyPlayerInfo;
     this->_lobbyCode = lobbyCode;
     this->_isDebug = debug;
+    this->_tps = tps;
 
     this->_clientsReady = std::map<uint8_t, bool>();
     this->_clientToEntity = std::map<uint8_t, ecs::Entity>();
@@ -946,7 +947,7 @@ void rserv::Lobby::networkLoop() {
             auto now = std::chrono::steady_clock::now();
             auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
                 now - this->_lastGameStateTime).count();
-            if (elapsed >= constants::CD_TPS) {
+            if (elapsed >= 1000 / this->_tps) {
                 this->gameStatePacket();
                 this->_lastGameStateTime = now;
             }
