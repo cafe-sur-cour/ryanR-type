@@ -102,6 +102,9 @@ void rserv::Server::start() {
     Signal::setupSignalHandlers();
     while (this->getState() == 1 && !Signal::stopFlag) {
         this->processIncomingPackets();
+
+        this->cleanupClosedLobbies();
+
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         if (std::cin.eof()) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -188,6 +191,30 @@ std::shared_ptr<net::INetwork> rserv::Server::getNetwork() const {
 
 void rserv::Server::setNetwork(std::shared_ptr<net::INetwork> network) {
     _network = network;
+}
+
+void rserv::Server::cleanupClosedLobbies() {
+    auto it = this->_lobbies.begin();
+    while (it != this->_lobbies.end()) {
+        if (it->get() && it->get()->getClientCount() == 0 && !it->get()->isRunning()) {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Cleaning up closed lobby: " + it->get()->getLobbyCode(),
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+            auto clientIt = this->_clientToLobby.begin();
+            while (clientIt != this->_clientToLobby.end()) {
+                if (clientIt->second == *it) {
+                    clientIt = this->_clientToLobby.erase(clientIt);
+                } else {
+                    ++clientIt;
+                }
+            }
+
+            it = this->_lobbies.erase(it);
+        } else {
+            ++it;
+        }
+    }
 }
 
 void rserv::Server::processIncomingPackets() {
