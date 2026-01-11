@@ -57,7 +57,7 @@ void InGameState::enter() {
 
     if (!_resourceManager->has<MapHandler>()) {
         auto mapHandler = std::make_shared<MapHandler>();
-        mapHandler->parseAllLevels("configs/map/");
+        mapHandler->parseAllLevels(constants::MAPS_PATH);
         _resourceManager->add<MapHandler>(mapHandler);
     }
 
@@ -71,7 +71,7 @@ void InGameState::enter() {
     }
 
     auto collisionData = ecs::CollisionRulesParser::parseFromFile(
-        "configs/rules/collision_rules.json"
+        constants::COLLISION_RULES_PATH
     );
     *(_resourceManager->get<gsm::GameStateType>()) = gsm::IN_GAME;
     ecs::CollisionRules::initWithData(collisionData);

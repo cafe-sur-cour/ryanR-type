@@ -57,14 +57,14 @@ void InfiniteState::enter() {
     }
 
     auto collisionData =
-        ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
+        ecs::CollisionRulesParser::parseFromFile(constants::COLLISION_RULES_PATH);
     ecs::CollisionRules::initWithData(collisionData);
 
     auto registry = _resourceManager->get<ecs::Registry>();
     if (registry && parser) {
         auto mapParser = parser->getMapParser();
         if (mapParser) {
-            mapParser->parseMapFromFile("configs/map/infinite.json");
+            mapParser->parseMapFromFile(constants::INFINITE_MAP_PATH);
             mapParser->generateMapEntities();
         }
     }
