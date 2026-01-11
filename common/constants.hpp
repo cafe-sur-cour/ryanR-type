@@ -67,6 +67,7 @@ namespace constants {
     const std::string SCORECOMPONENT = "ScoreComponent";
     const std::string SCOREVALUECOMPONENT = "ScoreValueComponent";
     const std::string DAMAGECOMPONENT = "DamageComponent";
+    const std::string DAMAGECOOLDOWNCOMPONENT = "DamageCooldownComponent";
     const std::string HEALTHCOMPONENT = "HealthComponent";
     const std::string HITBOXRENDERCOMPONENT = "HitboxRenderComponent";
     const std::string INTERACTIONCONFIGCOMPONENT = "InteractionConfigComponent";
@@ -88,6 +89,7 @@ namespace constants {
     const std::string SCOREVALUE_FIELD = "scoreValue";
     const std::string DAMAGE_FIELD = "damage";
     const std::string HEALTH_FIELD = "health";
+    const std::string COOLDOWN_FIELD = "cooldown";
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
     const std::string OFFSET_FIELD = "offset";
@@ -250,6 +252,9 @@ namespace constants {
     const std::string TAKEDAMAGE_ACTION = "TakeDamage";
     const std::string ADDLIFE_ACTION = "AddLife";
     const std::string INTERACTION_CALL_SCRIPTING_ACTION = "InteractionCallScripting";
+
+    /* Cooldown constants */
+    const float TRIGGER_DAMAGE_COOLDOWN = 0.1f;
 
     /* Prefabs */
     const std::string PLAYER_PREFAB_NAME = "player";

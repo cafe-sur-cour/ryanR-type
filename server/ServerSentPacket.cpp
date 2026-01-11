@@ -204,7 +204,8 @@ bool rserv::Server::sendCodeLobbyPacket(const net::INetworkEndpoint &endpoint) {
             this->_network,
             lobbyClients,
             lobbyCode,
-            this->_config->getIsDebug()
+            this->_config->getIsDebug(),
+            this->_config->getTps()
         );
         realLobby->setPacketManager(this->createNewPacketManager());
         this->initRessourceManager(realLobby);

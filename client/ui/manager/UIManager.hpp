@@ -55,6 +55,8 @@ class UIManager {
 
         void setOnBack(std::function<void()> callback);
 
+        void setCursorCallback(std::function<void(bool)> callback);
+
         bool isMouseHoveringAnyElement(const math::Vector2f& mousePos) const;
 
     private:
@@ -66,6 +68,8 @@ class UIManager {
         float _navigationCooldown = 0.0f;
         UIScale _globalScale = UIScale::Normal;
         std::function<void()> _onBack;
+        std::function<void(bool)> _cursorCallback;
+        bool _textInputNavigationBlocked = false;
         std::set<gfx::EventType> _consumedTextKeys;
         std::set<ecs::InputAction> _blockedActions;
 

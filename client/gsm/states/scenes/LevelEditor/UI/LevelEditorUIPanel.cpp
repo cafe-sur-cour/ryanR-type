@@ -19,11 +19,11 @@ namespace gsm {
 
 void LevelEditorState::createBottomPanel() {
     createBottomPanelBase();
-    createEditorModeDropdown();
     createObstacleUI();
     createPowerUpUI();
     createWaveUI();
     createEnemyUI();
+    createEditorModeDropdown();
 }
 
 void LevelEditorState::createBottomPanelBase() {

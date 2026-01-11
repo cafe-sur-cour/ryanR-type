@@ -43,7 +43,7 @@ class Lobby {
         public:
             Lobby(std::shared_ptr<net::INetwork> network,
                 std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> lobbyPlayerInfo,
-                std::string lobbyCode, bool debug);
+                std::string lobbyCode, bool debug, int64_t tps);
             ~Lobby();
             void stop();
 
@@ -104,6 +104,7 @@ class Lobby {
 
         private:
             bool _isDebug;
+            int64_t _tps;
 
             /* Network handling variable*/
             std::shared_ptr<net::INetwork> _network;

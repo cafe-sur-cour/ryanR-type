@@ -577,6 +577,7 @@ void LevelEditorState::createObstacleUI() {
         }
     });
     _bottomPanel->addChild(_obstacleDuplicateButton);
+    _bottomPanel->addChild(_obstaclePrefabDropdown);
 }
 
 }  // namespace gsm
