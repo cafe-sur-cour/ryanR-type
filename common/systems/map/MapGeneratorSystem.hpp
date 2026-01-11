@@ -30,12 +30,26 @@ class MapGeneratorSystem : public ASystem {
             std::shared_ptr<ResourceManager> resourceManager,
             std::shared_ptr<Registry> registry
         );
+        void generateRandomWave(
+            std::shared_ptr<ResourceManager> resourceManager,
+            std::shared_ptr<Registry> registry,
+            float currentX
+        );
+        void generateRandomPowerUp(
+            std::shared_ptr<ResourceManager> resourceManager,
+            std::shared_ptr<Registry> registry,
+            float currentX
+        );
         float noise(float x);
         unsigned int _seed;
         std::mt19937 _rng;
         float _lastGeneratedX;
         const float _generationStep;
         const float _startGenerationX;
+        float _waveTimer;
+        const float _waveInterval;
+        float _powerUpTimer;
+        const float _powerUpInterval;
 };
 
 }
