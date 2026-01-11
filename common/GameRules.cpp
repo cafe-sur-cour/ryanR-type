@@ -12,7 +12,7 @@ GameRules::GameRules() :
     _difficulty(GameRules::Difficulty::NORMAL),
     _crossfire(false) {}
 
-void GameRules::setGamemode(Gamemode gamemode) {
+void GameRules::setGamemode(GameRules::Gamemode gamemode) {
     _gamemode = gamemode;
 }
 
@@ -20,7 +20,7 @@ GameRules::Gamemode GameRules::getGamemode() const {
     return _gamemode;
 }
 
-void GameRules::setDifficulty(Difficulty difficulty) {
+void GameRules::setDifficulty(GameRules::Difficulty difficulty) {
     _difficulty = difficulty;
 }
 
