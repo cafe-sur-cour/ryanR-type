@@ -69,7 +69,7 @@ void InfiniteState::enter() {
         }
     }
 
-    *(_resourceManager->get<gsm::GameStateType>()) = gsm::IN_GAME;
+    *(_resourceManager->get<gsm::GameStateType>()) = gsm::GameStateType::IN_GAME;
     addSystem(std::make_shared<ecs::ServerMovementInputSystem>());
     addSystem(std::make_shared<ecs::ServerShootInputSystem>());
     addSystem(std::make_shared<ecs::ServerForceInputSystem>());
@@ -101,7 +101,7 @@ void InfiniteState::update(float deltaTime) {
     if (_resourceManager->has<gsm::GameStateType>()) {
         gsm::GameStateType currentState = *(_resourceManager->get<gsm::GameStateType>());
 
-        if (currentState == gsm::LEVEL_COMPLETE) {
+        if (currentState == gsm::GameStateType::LEVEL_COMPLETE) {
             _resourceManager->get<rserv::Lobby>()->levelCompletePacket();
 
             if (auto gsmPtr = _gsm.lock()) {
@@ -110,7 +110,7 @@ void InfiniteState::update(float deltaTime) {
                         (gsmPtr, _resourceManager));
                 }
             }
-        } else if (currentState == gsm::GAME_END) {
+        } else if (currentState == gsm::GameStateType::GAME_END) {
             bool isWin = false;
             auto players = registry->view<ecs::PlayerTag>();
 

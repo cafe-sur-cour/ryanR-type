@@ -127,7 +127,7 @@ std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Ser
     resourceManager->add<ecs::ISystemManager>(systemsManager);
     resourceManager->add<gsm::GameStateMachine>(gameStateMachine);
     resourceManager->add<gsm::GameStateType>(
-        std::make_shared<gsm::GameStateType>(gsm::BOOT));
+        std::make_shared<gsm::GameStateType>(gsm::GameStateType::BOOT));
 
     auto gameRules = std::make_shared<GameRules>();
     gameRules->setDifficulty(GameRulesNS::Difficulty::NORMAL);

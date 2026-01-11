@@ -667,8 +667,8 @@ bool rserv::Server::processRequestGameRulesUpdate(
         GameRulesNS::Gamemode next = GameRulesNS::Gamemode::CLASSIC;
 
         if (current == GameRulesNS::Gamemode::CLASSIC) next =
-            GameRulesNS::Gamemode::INFINITE;
-        else if (current == GameRulesNS::Gamemode::INFINITE) next =
+            GameRulesNS::Gamemode::INFINITE_MODE;
+        else if (current == GameRulesNS::Gamemode::INFINITE_MODE) next =
             GameRulesNS::Gamemode::CLASSIC;
 
         gameRules->setGamemode(next);

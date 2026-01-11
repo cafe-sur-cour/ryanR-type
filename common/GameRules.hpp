@@ -10,15 +10,15 @@
 
 namespace GameRulesNS {
 
-enum Difficulty {
+enum class Difficulty {
     EASY,
     NORMAL,
     HARD
 };
 
-enum Gamemode {
+enum class Gamemode {
     CLASSIC,
-    INFINITE
+    INFINITE_MODE
 };
 
 }  // namespace GameRulesNS

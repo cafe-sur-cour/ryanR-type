@@ -53,7 +53,7 @@ void EndOfMapDetectionSystem::update(
         break;
     }
     if (!hasPlayers) {
-        *resourceManager->get<gsm::GameStateType>() = gsm::GAME_END;
+        *resourceManager->get<gsm::GameStateType>() = gsm::GameStateType::GAME_END;
         return;
     }
     auto gameEndTags = registry->view<GameEndTag>();
@@ -79,12 +79,15 @@ void EndOfMapDetectionSystem::update(
                     if (resourceManager->has<MapHandler>()) {
                         auto mapHandler = resourceManager->get<MapHandler>();
                         if (mapHandler->isLastMap()) {
-                            *resourceManager->get<gsm::GameStateType>() = gsm::GAME_END;
+                            *resourceManager->get<gsm::GameStateType>() =
+                                gsm::GameStateType::GAME_END;
                         } else {
-                            *resourceManager->get<gsm::GameStateType>() = gsm::LEVEL_COMPLETE;
+                            *resourceManager->get<gsm::GameStateType>() =
+                                gsm::GameStateType::LEVEL_COMPLETE;
                         }
                     } else {
-                        *resourceManager->get<gsm::GameStateType>() = gsm::GAME_END;
+                        *resourceManager->get<gsm::GameStateType>() =
+                            gsm::GameStateType::GAME_END;
                     }
                 }
                 return;

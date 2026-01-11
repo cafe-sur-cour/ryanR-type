@@ -89,7 +89,7 @@ LobbyWaitingState::LobbyWaitingState(
     std::string gamemodeText = "Classic";
     if (gameRules) {
         GameRulesNS::Gamemode g = gameRules->getGamemode();
-        if (g == GameRulesNS::Gamemode::INFINITE) gamemodeText = "Infinite";
+        if (g == GameRulesNS::Gamemode::INFINITE_MODE) gamemodeText = "Infinite";
     }
     _gamemodeButton->setText(gamemodeText);
     _gamemodeButton->setSize(math::Vector2f(150.f, 50.f));
