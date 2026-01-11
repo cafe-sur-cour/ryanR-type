@@ -22,8 +22,12 @@ class GameRules {
         void setDifficulty(Difficulty difficulty);
         Difficulty getDifficulty() const;
 
+        void setCrossfire(bool crossfire);
+        bool getCrossfire() const;
+
     private:
         Difficulty _difficulty;
+        bool _crossfire;
 };
 
 #endif /* !GAMERULES_HPP_ */

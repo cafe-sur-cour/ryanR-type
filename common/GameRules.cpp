@@ -16,3 +16,11 @@ void GameRules::setDifficulty(Difficulty difficulty) {
 Difficulty GameRules::getDifficulty() const {
     return _difficulty;
 }
+
+void GameRules::setCrossfire(bool crossfire) {
+    _crossfire = crossfire;
+}
+
+bool GameRules::getCrossfire() const {
+    return _crossfire;
+}
