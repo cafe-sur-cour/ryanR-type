@@ -78,7 +78,6 @@ LobbyWaitingState::LobbyWaitingState(
 
     auto gameRules = _resourceManager->get<GameRules>();
 
-    // Gamemode Label
     _gamemodeLabel = std::make_shared<ui::Text>(_resourceManager);
     _gamemodeLabel->setText("Gamemode");
     _gamemodeLabel->setSize(math::Vector2f(200.f, 30.f));
@@ -100,7 +99,6 @@ LobbyWaitingState::LobbyWaitingState(
     _gamemodeButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            // ruleType 0 = gamemode, value is ignored (cycles)
             network->sendRequestGameRulesUpdate(0, 0);
             debug::Debug::printDebug(network->isDebugMode(),
                 "[LobbyWaiting] Requested gamemode change",
@@ -132,7 +130,6 @@ LobbyWaitingState::LobbyWaitingState(
     _difficultyButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            // ruleType 1 = difficulty, value is ignored (cycles)
             network->sendRequestGameRulesUpdate(1, 0);
             debug::Debug::printDebug(network->isDebugMode(),
                 "[LobbyWaiting] Requested game rules change (difficulty)",
@@ -162,7 +159,6 @@ LobbyWaitingState::LobbyWaitingState(
     _crossfireButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            // ruleType 2 = crossfire, value is ignored (toggles)
             network->sendRequestGameRulesUpdate(2, 0);
             debug::Debug::printDebug(network->isDebugMode(),
                 "[LobbyWaiting] Requested crossfire toggle",
@@ -173,6 +169,44 @@ LobbyWaitingState::LobbyWaitingState(
     _topLeftLayout->addElement(_crossfireButton);
 
     _uiManager->addElement(_topLeftLayout);
+
+    ui::LayoutConfig bottomRightConfig;
+    bottomRightConfig.direction = ui::LayoutDirection::Horizontal;
+    bottomRightConfig.alignment = ui::LayoutAlignment::End;
+    bottomRightConfig.spacing = 10.0f;
+    bottomRightConfig.padding = math::Vector2f(0.0f, 0.0f);
+    bottomRightConfig.anchorX = ui::AnchorX::Right;
+    bottomRightConfig.anchorY = ui::AnchorY::Bottom;
+    bottomRightConfig.offset = math::Vector2f(-20.0f, -20.0f);
+
+    _bottomRightLayout = std::make_shared<ui::UILayout>(_resourceManager, bottomRightConfig);
+    _bottomRightLayout->setSize(math::Vector2f(150.f, 60.f));
+
+    _leaveButton = std::make_shared<ui::Button>(_resourceManager);
+    _leaveButton->setText("Leave");
+    _leaveButton->setSize(math::Vector2f(150.f, 60.f));
+    _leaveButton->setNormalColor(colors::BUTTON_DANGER);
+    _leaveButton->setHoveredColor(colors::BUTTON_DANGER_HOVER);
+    _leaveButton->setPressedColor(colors::BUTTON_DANGER_PRESSED);
+    _leaveButton->setOnRelease([this]() {
+        try {
+            auto network = this->_resourceManager->get<ClientNetwork>();
+            if (network && network->isConnected()) {
+                network->leaveLobby();
+            }
+        } catch (const std::exception& e) {
+            debug::Debug::printDebug(true,
+                std::string("[LobbyWaiting] Error while leaving lobby: ") + e.what(),
+                debug::debugType::NETWORK,
+                debug::debugLevel::ERROR);
+        }
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePop();
+        }
+    });
+    _bottomRightLayout->addElement(_leaveButton);
+
+    _uiManager->addElement(_bottomRightLayout);
 }
 
 void LobbyWaitingState::setupLobbyMasterUI() {
@@ -349,6 +383,8 @@ void LobbyWaitingState::exit() {
     _crossfireLabel.reset();
     _crossfireButton.reset();
     _topLeftLayout.reset();
+    _leaveButton.reset();
+    _bottomRightLayout.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }

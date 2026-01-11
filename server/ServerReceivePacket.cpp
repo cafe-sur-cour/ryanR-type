@@ -88,6 +88,47 @@ bool rserv::Server::processConnectToLobby(std::pair<std::shared_ptr<net::INetwor
     std::string lobbyCode = "";
     if (payload.second.size() > HEADER_SIZE)
         lobbyCode = std::string(payload.second.begin() + HEADER_SIZE, payload.second.end());
+
+    if (lobbyCode == constants::LOBBY_LEAVE_MARKER ||
+        lobbyCode.find(constants::LOBBY_LEAVE_KEYWORD) != std::string::npos) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Client attempting to leave lobby",
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+        uint8_t clientIdToRemove = 0;
+        bool clientFound = false;
+        for (const auto &client : this->_clients) {
+            if (std::get<1>(client) && payload.first &&
+                std::get<1>(client)->getAddress() == payload.first->getAddress() &&
+                std::get<1>(client)->getPort() == payload.first->getPort()) {
+                clientIdToRemove = std::get<0>(client);
+                clientFound = true;
+                break;
+            }
+        }
+
+        if (!clientFound) {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Error: Client not found in _clients list for lobby leave",
+                debug::debugType::NETWORK, debug::debugLevel::ERROR);
+            return false;
+        }
+
+        if (this->_clientToLobby.find(clientIdToRemove) != this->_clientToLobby.end()) {
+            auto lobby = this->_clientToLobby[clientIdToRemove];
+            if (lobby) {
+                lobby->processDisconnections(clientIdToRemove);
+                this->_clientToLobby.erase(clientIdToRemove);
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] Client " + std::to_string(static_cast<int>(clientIdToRemove))
+                        + " left the lobby",
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+            }
+        }
+        this->lobbyConnectValuePacket(*payload.first, true);
+        return true;
+    }
+
     bool lobbyExists = false;
     for (const auto &lobby : this->_lobbyThreads) {
         if (lobby->_lobbyCode == lobbyCode) {

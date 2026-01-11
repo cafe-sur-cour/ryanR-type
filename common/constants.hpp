@@ -303,6 +303,10 @@ namespace constants {
     constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 33;
     const int MAX_CLIENT_PER_LOBBY = 4;
 
+    /* Lobby connection codes */
+    const std::string LOBBY_LEAVE_MARKER = "__LEAVE__";
+    const std::string LOBBY_LEAVE_KEYWORD = "LEAVE";
+
     /* Scripting constant */
     const std::string INIT_FUNCTION = "init";
     const std::string UPDATE_FUNCTION = "update";

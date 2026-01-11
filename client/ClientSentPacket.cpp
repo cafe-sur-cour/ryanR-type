@@ -147,28 +147,39 @@ void ClientNetwork::sendLobbyConnection(std::string lobbyCode) {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);
     }
-    if (this->_idClient == 0 || lobbyCode.empty()) {
+    if (this->_idClient == 0) {
         debug::Debug::printDebug(this->_isDebug,
-            "[Client] Warning: Client ID is 0, cannot send request code packet",
+            "[Client] Warning: Client ID is 0, cannot send lobby connection packet",
             debug::debugType::NETWORK,
             debug::debugLevel::WARNING);
         return;
     }
+
+    if (lobbyCode.empty()) {
+        lobbyCode = constants::LOBBY_LEAVE_MARKER;
+    }
+
     std::vector<uint64_t> payload;
-    for (char c : this->_lobbyCode) {
+    for (char c : lobbyCode) {
         payload.push_back(static_cast<uint64_t>(c));
     }
+
     std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
         this->_sequenceNumber, constants::PACKET_CONNECT_TO_LOBBY, payload);
 
     debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Sending lobby connection packet",
+        "[CLIENT] Sending lobby " + std::string(lobbyCode ==
+            constants::LOBBY_LEAVE_MARKER ? "leave" : "connection") + " packet",
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
 
     this->_lobbyCode = lobbyCode;
     this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
+}
+
+void ClientNetwork::leaveLobby() {
+    sendLobbyConnection("");
 }
 
 void ClientNetwork::sendMasterStartGame() {
