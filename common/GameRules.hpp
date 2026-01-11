@@ -8,19 +8,19 @@
 #ifndef GAMERULES_HPP_
 #define GAMERULES_HPP_
 
-enum Difficulty {
-    EASY,
-    NORMAL,
-    HARD
-};
-
-enum Gamemode {
-    CLASSIC,
-    INFINITE
-};
-
 class GameRules {
     public:
+        enum class Difficulty {
+            EASY,
+            NORMAL,
+            HARD
+        };
+
+        enum class Gamemode {
+            CLASSIC,
+            INFINITE
+        };
+
         GameRules();
         ~GameRules() = default;
 
