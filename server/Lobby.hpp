@@ -62,6 +62,7 @@ class Lobby {
             size_t getClientCount() const;
             bool isRunning() const;
             void addClient(std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string> client);
+            void resetClientHeartbeats();
             void createPlayerEntityForClient(uint8_t clientId);
             void syncExistingEntitiesToClient(std::shared_ptr<net::INetworkEndpoint> clientEndpoint);
             std::string getLobbyCode() const;
