@@ -592,15 +592,16 @@ void ClientNetwork::handleGameRules() {
         debug::debugLevel::INFO);
 
     auto payload = _packet->getPayload();
-    if (payload.size() < 1) {
+    if (payload.size() < 2) {
         debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Game rules packet is invalid",
+            "[CLIENT] Game rules packet is invalid (size < 2)",
             debug::debugType::NETWORK,
             debug::debugLevel::WARNING);
         return;
     }
 
     Difficulty difficulty = static_cast<Difficulty>(payload.at(0));
+    bool crossfire = (payload.at(1) != 0);
 
     if (!this->_resourceManager->has<GameRules>()) {
         this->_resourceManager->add<GameRules>(std::make_shared<GameRules>());
@@ -608,9 +609,11 @@ void ClientNetwork::handleGameRules() {
 
     auto gameRules = this->_resourceManager->get<GameRules>();
     gameRules->setDifficulty(difficulty);
+    gameRules->setCrossfire(crossfire);
     debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Updated GameRules to difficulty: " +
-            std::to_string(static_cast<int>(difficulty)),
+        "[CLIENT] Updated GameRules - difficulty: " +
+            std::to_string(static_cast<int>(difficulty)) +
+            ", crossfire: " + std::string(crossfire ? "ON" : "OFF"),
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
 }

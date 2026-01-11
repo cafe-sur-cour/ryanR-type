@@ -85,7 +85,7 @@ class ClientNetwork {
         void sendLoginPacket(const std::string &username, const std::string &password);
         void sendRequestLeaderboardPacket();
         void sendRequestProfilePacket();
-        void sendRequestGameRulesChange();
+        void sendRequestGameRulesUpdate(uint8_t ruleType, uint8_t value);
 
         const std::vector<std::pair<std::string, std::string>>& getLeaderboardData() const;
         bool isLeaderboardDataUpdated() const;

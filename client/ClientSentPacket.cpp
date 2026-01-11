@@ -286,7 +286,7 @@ void ClientNetwork::sendRequestProfilePacket() {
     this->_expectingProfileResponse = true;
 }
 
-void ClientNetwork::sendRequestGameRulesChange() {
+void ClientNetwork::sendRequestGameRulesUpdate(uint8_t ruleType, uint8_t value) {
     if (!_network) {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);
@@ -294,18 +294,20 @@ void ClientNetwork::sendRequestGameRulesChange() {
 
     if (this->_idClient == 0) {
         debug::Debug::printDebug(this->_isDebug,
-            "[Client] Warning: Client ID is 0, cannot send game rules change request",
+            "[Client] Warning: Client ID is 0, cannot send game rules update request",
             debug::debugType::NETWORK,
             debug::debugLevel::WARNING);
         return;
     }
 
-    std::vector<uint64_t> payload = {};
+    std::vector<uint64_t> payload =
+        {static_cast<uint64_t>(ruleType), static_cast<uint64_t>(value)};
     std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
-        this->_sequenceNumber, constants::PACKET_REQUEST_GAME_RULES_CHANGE, payload);
+        this->_sequenceNumber, constants::PACKET_REQUEST_GAME_RULES_UPDATE, payload);
 
     debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Sending request game rules change packet",
+        "[CLIENT] Sending request game rules update packet (type: " +
+        std::to_string(ruleType) + ", value: " + std::to_string(value) + ")",
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
 

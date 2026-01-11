@@ -93,14 +93,43 @@ LobbyWaitingState::LobbyWaitingState(
     _difficultyButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            network->sendRequestGameRulesChange();
+            network->sendRequestGameRulesUpdate(0, 0);
             debug::Debug::printDebug(network->isDebugMode(),
-                "[LobbyWaiting] Requested game rules change",
+                "[LobbyWaiting] Requested game rules change (difficulty)",
                 debug::debugType::NETWORK,
                 debug::debugLevel::INFO);
         }
     });
     _topLeftLayout->addElement(_difficultyButton);
+
+    _crossfireLabel = std::make_shared<ui::Text>(_resourceManager);
+    _crossfireLabel->setText("Crossfire");
+    _crossfireLabel->setSize(math::Vector2f(200.f, 30.f));
+    _crossfireLabel->setTextColor(gfx::color_t{255, 255, 255, 255});
+    _crossfireLabel->setFontSize(24);
+    _topLeftLayout->addElement(_crossfireLabel);
+
+    _crossfireButton = std::make_shared<ui::Button>(_resourceManager);
+    std::string crossfireText = "No";
+    if (gameRules) {
+        crossfireText = gameRules->getCrossfire() ? "Yes" : "No";
+    }
+    _crossfireButton->setText(crossfireText);
+    _crossfireButton->setSize(math::Vector2f(150.f, 50.f));
+    _crossfireButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _crossfireButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _crossfireButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _crossfireButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->sendRequestGameRulesUpdate(1, 0);
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Requested crossfire toggle",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
+    });
+    _topLeftLayout->addElement(_crossfireButton);
 
     _uiManager->addElement(_topLeftLayout);
 }
@@ -252,6 +281,12 @@ void LobbyWaitingState::updateUIStatus() {
 
         _difficultyButton->setText(diffText);
     }
+
+    if (_crossfireButton && _resourceManager->has<GameRules>()) {
+        auto gameRules = _resourceManager->get<GameRules>();
+        std::string crossfireText = gameRules->getCrossfire() ? "Yes" : "No";
+        _crossfireButton->setText(crossfireText);
+    }
 }
 
 void LobbyWaitingState::exit() {
@@ -262,6 +297,11 @@ void LobbyWaitingState::exit() {
     _statusText.reset();
     _startGameButton.reset();
     _centerLayout.reset();
+    _difficultyLabel.reset();
+    _difficultyButton.reset();
+    _crossfireLabel.reset();
+    _crossfireButton.reset();
+    _topLeftLayout.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
