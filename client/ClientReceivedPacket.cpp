@@ -424,18 +424,38 @@ void ClientNetwork::handleLobbyConnectValue() {
     if (payload[0] == static_cast<uint64_t>('t')) {
         isSuccess = true;
     }
+
+    bool isLeaving =
+        this->_lobbyCode.find(constants::LOBBY_LEAVE_KEYWORD) != std::string::npos;
+
     if (isSuccess) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Successfully connected to lobby",
-            debug::debugType::NETWORK,
-            debug::debugLevel::INFO);
-        _isConnectedToLobby = true;
+        if (isLeaving) {
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Successfully left the lobby",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        } else {
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Successfully connected to lobby",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
+        _isConnectedToLobby = !isLeaving;
     } else {
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Failed to connect to lobby",
-            debug::debugType::NETWORK,
-            debug::debugLevel::WARNING);
-        this->_lobbyCode = "";
+        if (isLeaving) {
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Failed to leave the lobby",
+                debug::debugType::NETWORK,
+                debug::debugLevel::WARNING);
+        } else {
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Failed to connect to lobby",
+                debug::debugType::NETWORK,
+                debug::debugLevel::WARNING);
+        }
+        if (!isLeaving) {
+            this->_lobbyCode = "";
+        }
         _isConnectedToLobby = false;
         _isLobbyMaster = false;
     }
