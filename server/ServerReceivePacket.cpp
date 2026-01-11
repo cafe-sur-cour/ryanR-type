@@ -663,11 +663,11 @@ bool rserv::Server::processRequestGameRulesUpdate(
 
     /* ruleType: 0 = gamemode, 1 = difficulty, 2 = crossfire */
     if (ruleType == 0) {
-        Gamemode current = gameRules->getGamemode();
-        Gamemode next = CLASSIC;
+        GameRules::Gamemode current = gameRules->getGamemode();
+        GameRules::Gamemode next = GameRules::Gamemode::CLASSIC;
 
-        if (current == CLASSIC) next = INFINITE;
-        else if (current == INFINITE) next = CLASSIC;
+        if (current == GameRules::Gamemode::CLASSIC) next = GameRules::Gamemode::INFINITE;
+        else if (current == GameRules::Gamemode::INFINITE) next = GameRules::Gamemode::CLASSIC;
 
         gameRules->setGamemode(next);
 
@@ -676,12 +676,12 @@ bool rserv::Server::processRequestGameRulesUpdate(
             std::to_string(static_cast<int>(next)),
             debug::debugType::NETWORK, debug::debugLevel::INFO);
     } else if (ruleType == 1) {
-        Difficulty current = gameRules->getDifficulty();
-        Difficulty next = NORMAL;
+        GameRules::Difficulty current = gameRules->getDifficulty();
+        GameRules::Difficulty next = GameRules::Difficulty::NORMAL;
 
-        if (current == NORMAL) next = HARD;
-        else if (current == HARD) next = EASY;
-        else if (current == EASY) next = NORMAL;
+        if (current == GameRules::Difficulty::NORMAL) next = GameRules::Difficulty::HARD;
+        else if (current == GameRules::Difficulty::HARD) next = GameRules::Difficulty::EASY;
+        else if (current == GameRules::Difficulty::EASY) next = GameRules::Difficulty::NORMAL;
 
         gameRules->setDifficulty(next);
 

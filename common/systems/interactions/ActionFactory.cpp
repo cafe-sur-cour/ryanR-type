@@ -86,10 +86,12 @@ void ActionFactory::initializeConditions() {
                 float damage = damageComp->getDamage();
                 auto gameRules = resourceManager->get<GameRules>();
                 if (gameRules) {
-                    Difficulty diff = gameRules->getDifficulty();
+                    GameRules::Difficulty diff = gameRules->getDifficulty();
                     float multiplier = constants::DIFFICULTY_NORMAL_MULTIPLIER;
-                    if (diff == EASY) multiplier = constants::DIFFICULTY_EASY_MULTIPLIER;
-                    else if (diff == HARD) multiplier = constants::DIFFICULTY_HARD_MULTIPLIER;
+                    if (diff == GameRules::Difficulty::EASY) multiplier =
+                        constants::DIFFICULTY_EASY_MULTIPLIER;
+                    else if (diff == GameRules::Difficulty::HARD) multiplier =
+                        constants::DIFFICULTY_HARD_MULTIPLIER;
                     bool isPlayerRelated = TagRegistry::getInstance().hasTag(
                             reg, selfEntity, constants::PLAYERTAG) ||
                         TagRegistry::getInstance().hasTag(
@@ -126,10 +128,12 @@ void ActionFactory::initializeConditions() {
                 float damage = damageComp->getDamage();
                 auto gameRules = resourceManager->get<GameRules>();
                 if (gameRules) {
-                    Difficulty diff = gameRules->getDifficulty();
+                    GameRules::Difficulty diff = gameRules->getDifficulty();
                     float multiplier = constants::DIFFICULTY_NORMAL_MULTIPLIER;
-                    if (diff == EASY) multiplier = constants::DIFFICULTY_EASY_MULTIPLIER;
-                    else if (diff == HARD) multiplier = constants::DIFFICULTY_HARD_MULTIPLIER;
+                    if (diff == GameRules::Difficulty::EASY) multiplier =
+                        constants::DIFFICULTY_EASY_MULTIPLIER;
+                    else if (diff == GameRules::Difficulty::HARD) multiplier =
+                        constants::DIFFICULTY_HARD_MULTIPLIER;
                     bool isPlayer = TagRegistry::getInstance().hasTag(
                         reg, selfEntity, constants::PLAYERTAG);
                     bool isMob = TagRegistry::getInstance().hasTag(

@@ -719,8 +719,8 @@ bool rserv::Lobby::gameRulesPacket() {
     }
 
     auto gameRules = this->_resourceManager->get<GameRules>();
-    Gamemode gamemode = gameRules->getGamemode();
-    Difficulty difficulty = gameRules->getDifficulty();
+    GameRules::Gamemode gamemode = gameRules->getGamemode();
+    GameRules::Difficulty difficulty = gameRules->getDifficulty();
     bool crossfire = gameRules->getCrossfire();
 
     std::vector<uint64_t> payload;

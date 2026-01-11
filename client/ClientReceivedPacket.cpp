@@ -620,8 +620,8 @@ void ClientNetwork::handleGameRules() {
         return;
     }
 
-    Gamemode gamemode = static_cast<Gamemode>(payload.at(0));
-    Difficulty difficulty = static_cast<Difficulty>(payload.at(1));
+    GameRules::Gamemode gamemode = static_cast<GameRules::Gamemode>(payload.at(0));
+    GameRules::Difficulty difficulty = static_cast<GameRules::Difficulty>(payload.at(1));
     bool crossfire = (payload.at(2) != 0);
 
     if (!this->_resourceManager->has<GameRules>()) {
