@@ -10,12 +10,12 @@
 
 namespace gsm {
 
-enum GameStateType {
+enum class GameStateType {
     BOOT,
     LOBBY,
     LOADING,
     IN_GAME,
-    INFINITE,
+    INFINITE_MODE,
     LEVEL_COMPLETE,
     GAME_END,
     SHUTDOWN

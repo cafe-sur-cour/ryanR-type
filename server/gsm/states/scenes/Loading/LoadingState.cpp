@@ -35,10 +35,10 @@ void LoadingState::enter() {
         nlohmann::json currentMap = mapHandler->getCurrentMapJson();
         parser->getMapParser()->setMapJson(currentMap);
     }
-    *(_resourceManager->get<gsm::GameStateType>()) = gsm::LOADING;
+    *(_resourceManager->get<gsm::GameStateType>()) = gsm::GameStateType::LOADING;
     if (auto stateMachine = _gsm.lock()) {
         auto gameRules = _resourceManager->get<GameRules>();
-        if (gameRules && gameRules->getGamemode() == GameRulesNS::Gamemode::INFINITE) {
+        if (gameRules && gameRules->getGamemode() == GameRulesNS::Gamemode::INFINITE_MODE) {
             stateMachine->requestStateChange(std::make_shared<InfiniteState>(stateMachine,
                 _resourceManager));
         } else {
