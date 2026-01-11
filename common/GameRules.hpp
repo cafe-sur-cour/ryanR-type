@@ -8,34 +8,38 @@
 #ifndef GAMERULES_HPP_
 #define GAMERULES_HPP_
 
+namespace GameRulesNS {
+
+enum Difficulty {
+    EASY,
+    NORMAL,
+    HARD
+};
+
+enum Gamemode {
+    CLASSIC,
+    INFINITE
+};
+
+}  // namespace GameRulesNS
+
 class GameRules {
     public:
-        enum class Difficulty {
-            EASY,
-            NORMAL,
-            HARD
-        };
-
-        enum class Gamemode {
-            CLASSIC,
-            INFINITE
-        };
-
         GameRules();
         ~GameRules() = default;
 
-        void setGamemode(GameRules::Gamemode gamemode);
-        GameRules::Gamemode getGamemode() const;
+        void setGamemode(GameRulesNS::Gamemode gamemode);
+        GameRulesNS::Gamemode getGamemode() const;
 
-        void setDifficulty(GameRules::Difficulty difficulty);
-        GameRules::Difficulty getDifficulty() const;
+        void setDifficulty(GameRulesNS::Difficulty difficulty);
+        GameRulesNS::Difficulty getDifficulty() const;
 
         void setCrossfire(bool crossfire);
         bool getCrossfire() const;
 
     private:
-        GameRules::Gamemode _gamemode;
-        GameRules::Difficulty _difficulty;
+        GameRulesNS::Gamemode _gamemode;
+        GameRulesNS::Difficulty _difficulty;
         bool _crossfire;
 };
 

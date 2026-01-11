@@ -86,11 +86,11 @@ void ActionFactory::initializeConditions() {
                 float damage = damageComp->getDamage();
                 auto gameRules = resourceManager->get<GameRules>();
                 if (gameRules) {
-                    GameRules::Difficulty diff = gameRules->getDifficulty();
+                    GameRulesNS::Difficulty diff = gameRules->getDifficulty();
                     float multiplier = constants::DIFFICULTY_NORMAL_MULTIPLIER;
-                    if (diff == GameRules::Difficulty::EASY) multiplier =
+                    if (diff == GameRulesNS::Difficulty::EASY) multiplier =
                         constants::DIFFICULTY_EASY_MULTIPLIER;
-                    else if (diff == GameRules::Difficulty::HARD) multiplier =
+                    else if (diff == GameRulesNS::Difficulty::HARD) multiplier =
                         constants::DIFFICULTY_HARD_MULTIPLIER;
                     bool isPlayerRelated = TagRegistry::getInstance().hasTag(
                             reg, selfEntity, constants::PLAYERTAG) ||
@@ -128,11 +128,11 @@ void ActionFactory::initializeConditions() {
                 float damage = damageComp->getDamage();
                 auto gameRules = resourceManager->get<GameRules>();
                 if (gameRules) {
-                    GameRules::Difficulty diff = gameRules->getDifficulty();
+                    GameRulesNS::Difficulty diff = gameRules->getDifficulty();
                     float multiplier = constants::DIFFICULTY_NORMAL_MULTIPLIER;
-                    if (diff == GameRules::Difficulty::EASY) multiplier =
+                    if (diff == GameRulesNS::Difficulty::EASY) multiplier =
                         constants::DIFFICULTY_EASY_MULTIPLIER;
-                    else if (diff == GameRules::Difficulty::HARD) multiplier =
+                    else if (diff == GameRulesNS::Difficulty::HARD) multiplier =
                         constants::DIFFICULTY_HARD_MULTIPLIER;
                     bool isPlayer = TagRegistry::getInstance().hasTag(
                         reg, selfEntity, constants::PLAYERTAG);

@@ -38,7 +38,7 @@ void LoadingState::enter() {
     *(_resourceManager->get<gsm::GameStateType>()) = gsm::LOADING;
     if (auto stateMachine = _gsm.lock()) {
         auto gameRules = _resourceManager->get<GameRules>();
-        if (gameRules && gameRules->getGamemode() == GameRules::Gamemode::INFINITE) {
+        if (gameRules && gameRules->getGamemode() == GameRulesNS::Gamemode::INFINITE) {
             stateMachine->requestStateChange(std::make_shared<InfiniteState>(stateMachine,
                 _resourceManager));
         } else {

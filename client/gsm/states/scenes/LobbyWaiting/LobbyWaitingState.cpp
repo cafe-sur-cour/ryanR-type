@@ -88,8 +88,8 @@ LobbyWaitingState::LobbyWaitingState(
     _gamemodeButton = std::make_shared<ui::Button>(_resourceManager);
     std::string gamemodeText = "Classic";
     if (gameRules) {
-        GameRules::Gamemode g = gameRules->getGamemode();
-        if (g == GameRules::Gamemode::INFINITE) gamemodeText = "Infinite";
+        GameRulesNS::Gamemode g = gameRules->getGamemode();
+        if (g == GameRulesNS::Gamemode::INFINITE) gamemodeText = "Infinite";
     }
     _gamemodeButton->setText(gamemodeText);
     _gamemodeButton->setSize(math::Vector2f(150.f, 50.f));
@@ -118,9 +118,9 @@ LobbyWaitingState::LobbyWaitingState(
     _difficultyButton = std::make_shared<ui::Button>(_resourceManager);
     std::string diffText = "Normal";
     if (gameRules) {
-        GameRules::Difficulty d = gameRules->getDifficulty();
-        if (d == GameRules::Difficulty::EASY) diffText = "Easy";
-        else if (d == GameRules::Difficulty::HARD) diffText = "Hard";
+        GameRulesNS::Difficulty d = gameRules->getDifficulty();
+        if (d == GameRulesNS::Difficulty::EASY) diffText = "Easy";
+        else if (d == GameRulesNS::Difficulty::HARD) diffText = "Hard";
     }
     _difficultyButton->setText(diffText);
     _difficultyButton->setSize(math::Vector2f(150.f, 50.f));
@@ -317,17 +317,18 @@ void LobbyWaitingState::updateUIStatus() {
 
     if (_gamemodeButton && _resourceManager->has<GameRules>()) {
         auto gameRules = _resourceManager->get<GameRules>();
-        GameRules::Gamemode g = gameRules->getGamemode();
-        std::string gamemodeText = g == GameRules::Gamemode::CLASSIC ? "Classic" : "Infinite";
+        GameRulesNS::Gamemode g = gameRules->getGamemode();
+        std::string gamemodeText =
+            g == GameRulesNS::Gamemode::CLASSIC ? "Classic" : "Infinite";
         _gamemodeButton->setText(gamemodeText);
     }
 
     if (_difficultyButton && _resourceManager->has<GameRules>()) {
         auto gameRules = _resourceManager->get<GameRules>();
-        GameRules::Difficulty d = gameRules->getDifficulty();
+        GameRulesNS::Difficulty d = gameRules->getDifficulty();
         std::string diffText = "Normal";
-        if (d == GameRules::Difficulty::EASY) diffText = "Easy";
-        else if (d == GameRules::Difficulty::HARD) diffText = "Hard";
+        if (d == GameRulesNS::Difficulty::EASY) diffText = "Easy";
+        else if (d == GameRulesNS::Difficulty::HARD) diffText = "Hard";
 
         _difficultyButton->setText(diffText);
     }
