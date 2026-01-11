@@ -89,7 +89,7 @@ void InGameState::enter() {
     }
 
     auto collisionData =
-        ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
+        ecs::CollisionRulesParser::parseFromFile(constants::COLLISION_RULES_PATH);
     ecs::CollisionRules::initWithData(collisionData);
 
 

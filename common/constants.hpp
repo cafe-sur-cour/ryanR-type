@@ -42,6 +42,9 @@ namespace constants {
     constexpr int MAX_RETRY_CONNECTIONS = 3;
     /* Paths */
     const std::string CONFIG_PATH = "configs/entities/";
+    const std::string COLLISION_RULES_PATH = "configs/rules/collision_rules.json";
+    const std::string MAPS_PATH = "configs/map/";
+    const std::string INFINITE_MAP_PATH = "configs/map/infinite.json";
 
     /* Collision Rules JSON Keys */
     const std::string COLLISION_SOLID_KEY = "solid";
