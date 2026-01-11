@@ -69,6 +69,10 @@ void EndOfMapDetectionSystem::update(
             if (!endTransform || !endCollider) {
                 continue;
             }
+            if (endTransform->getPosition().getX() < 0 ||
+                endTransform->getPosition().getY() < 0) {
+                continue;
+            }
 
             if (collides(*playerTransform, *playerCollider, *endTransform, *endCollider)) {
                 if (resourceManager->has<gsm::GameStateType>()) {
