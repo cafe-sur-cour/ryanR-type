@@ -655,10 +655,12 @@ bool rserv::Lobby::gameRulesPacket() {
     }
 
     auto gameRules = this->_resourceManager->get<GameRules>();
+    Gamemode gamemode = gameRules->getGamemode();
     Difficulty difficulty = gameRules->getDifficulty();
     bool crossfire = gameRules->getCrossfire();
 
     std::vector<uint64_t> payload;
+    payload.push_back(static_cast<uint64_t>(gamemode));
     payload.push_back(static_cast<uint64_t>(difficulty));
     payload.push_back(static_cast<uint64_t>(crossfire ? 1 : 0));
 
@@ -677,7 +679,8 @@ bool rserv::Lobby::gameRulesPacket() {
     }
 
     debug::Debug::printDebug(this->getIsDebug(),
-        "[LOBBY] Successfully sent gameRules packet with difficulty: " +
+        "[LOBBY] Successfully sent gameRules packet with gamemode: " +
+        std::to_string(static_cast<int>(gamemode)) + " difficulty: " +
         std::to_string(static_cast<int>(difficulty)) + " and crossfire: " +
         (crossfire ? "ON" : "OFF"),
         debug::debugType::NETWORK, debug::debugLevel::INFO);

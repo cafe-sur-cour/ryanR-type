@@ -76,6 +76,40 @@ LobbyWaitingState::LobbyWaitingState(
     _topLeftLayout = std::make_shared<ui::UILayout>(_resourceManager, topLeftConfig);
     _topLeftLayout->setSize(math::Vector2f(200.f, 100.f));
 
+    auto gameRules = _resourceManager->get<GameRules>();
+
+    // Gamemode Label
+    _gamemodeLabel = std::make_shared<ui::Text>(_resourceManager);
+    _gamemodeLabel->setText("Gamemode");
+    _gamemodeLabel->setSize(math::Vector2f(200.f, 30.f));
+    _gamemodeLabel->setTextColor(gfx::color_t{255, 255, 255, 255});
+    _gamemodeLabel->setFontSize(24);
+    _topLeftLayout->addElement(_gamemodeLabel);
+
+    _gamemodeButton = std::make_shared<ui::Button>(_resourceManager);
+    std::string gamemodeText = "Classic";
+    if (gameRules) {
+        Gamemode g = gameRules->getGamemode();
+        if (g == INFINITE) gamemodeText = "Infinite";
+    }
+    _gamemodeButton->setText(gamemodeText);
+    _gamemodeButton->setSize(math::Vector2f(150.f, 50.f));
+    _gamemodeButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _gamemodeButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _gamemodeButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _gamemodeButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            // ruleType 0 = gamemode, value is ignored (cycles)
+            network->sendRequestGameRulesUpdate(0, 0);
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Requested gamemode change",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
+    });
+    _topLeftLayout->addElement(_gamemodeButton);
+
     _difficultyLabel = std::make_shared<ui::Text>(_resourceManager);
     _difficultyLabel->setText("Difficulty");
     _difficultyLabel->setSize(math::Vector2f(200.f, 30.f));
@@ -84,7 +118,6 @@ LobbyWaitingState::LobbyWaitingState(
     _topLeftLayout->addElement(_difficultyLabel);
 
     _difficultyButton = std::make_shared<ui::Button>(_resourceManager);
-    auto gameRules = _resourceManager->get<GameRules>();
     std::string diffText = "Normal";
     if (gameRules) {
         Difficulty d = gameRules->getDifficulty();
@@ -99,7 +132,8 @@ LobbyWaitingState::LobbyWaitingState(
     _difficultyButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            network->sendRequestGameRulesUpdate(0, 0);
+            // ruleType 1 = difficulty, value is ignored (cycles)
+            network->sendRequestGameRulesUpdate(1, 0);
             debug::Debug::printDebug(network->isDebugMode(),
                 "[LobbyWaiting] Requested game rules change (difficulty)",
                 debug::debugType::NETWORK,
@@ -128,7 +162,8 @@ LobbyWaitingState::LobbyWaitingState(
     _crossfireButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            network->sendRequestGameRulesUpdate(1, 0);
+            // ruleType 2 = crossfire, value is ignored (toggles)
+            network->sendRequestGameRulesUpdate(2, 0);
             debug::Debug::printDebug(network->isDebugMode(),
                 "[LobbyWaiting] Requested crossfire toggle",
                 debug::debugType::NETWORK,
@@ -275,6 +310,13 @@ void LobbyWaitingState::updateUIStatus() {
         }
     }
 
+    if (_gamemodeButton && _resourceManager->has<GameRules>()) {
+        auto gameRules = _resourceManager->get<GameRules>();
+        Gamemode g = gameRules->getGamemode();
+        std::string gamemodeText = g == CLASSIC ? "Classic" : "Infinite";
+        _gamemodeButton->setText(gamemodeText);
+    }
+
     if (_difficultyButton && _resourceManager->has<GameRules>()) {
         auto gameRules = _resourceManager->get<GameRules>();
         Difficulty d = gameRules->getDifficulty();
@@ -300,6 +342,8 @@ void LobbyWaitingState::exit() {
     _statusText.reset();
     _startGameButton.reset();
     _centerLayout.reset();
+    _gamemodeLabel.reset();
+    _gamemodeButton.reset();
     _difficultyLabel.reset();
     _difficultyButton.reset();
     _crossfireLabel.reset();

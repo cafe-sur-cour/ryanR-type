@@ -15,6 +15,7 @@ enum GameStateType {
     LOBBY,
     LOADING,
     IN_GAME,
+    INFINITE,
     LEVEL_COMPLETE,
     GAME_END,
     SHUTDOWN

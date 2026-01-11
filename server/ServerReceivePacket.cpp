@@ -619,7 +619,21 @@ bool rserv::Server::processRequestGameRulesUpdate(
 
     auto gameRules = resourceManager->get<GameRules>();
 
+    /* ruleType: 0 = gamemode, 1 = difficulty, 2 = crossfire */
     if (ruleType == 0) {
+        Gamemode current = gameRules->getGamemode();
+        Gamemode next = CLASSIC;
+
+        if (current == CLASSIC) next = INFINITE;
+        else if (current == INFINITE) next = CLASSIC;
+
+        gameRules->setGamemode(next);
+
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] GameRules changed to gamemode: " +
+            std::to_string(static_cast<int>(next)),
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+    } else if (ruleType == 1) {
         Difficulty current = gameRules->getDifficulty();
         Difficulty next = NORMAL;
 
@@ -633,7 +647,7 @@ bool rserv::Server::processRequestGameRulesUpdate(
             "[SERVER] GameRules changed to difficulty: " +
             std::to_string(static_cast<int>(next)),
             debug::debugType::NETWORK, debug::debugLevel::INFO);
-    } else if (ruleType == 1) {
+    } else if (ruleType == 2) {
         bool currentCrossfire = gameRules->getCrossfire();
         gameRules->setCrossfire(!currentCrossfire);
 

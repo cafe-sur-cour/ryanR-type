@@ -38,6 +38,7 @@ target_link_libraries(${SERVER_LIB_NAME}
         ServerShootInputSystem
         ServerForceInputSystem
         EndOfMapDetectionSystem
+        MapGeneratorSystem
         Server::PacketHandlers
 )
 
