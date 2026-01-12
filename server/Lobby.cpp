@@ -15,6 +15,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <filesystem>   // NOLINT(build/c++17)
 #include <nlohmann/json.hpp>
 
 #include "Lobby.hpp"
@@ -639,6 +640,7 @@ bool rserv::Lobby::endGamePacket(bool isWin) {
                 debug::debugType::NETWORK, debug::debugLevel::INFO);
         }
 
+        std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
         std::ofstream outFile(filepath);
         if (outFile.is_open()) {
             outFile << scores.dump(4);
