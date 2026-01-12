@@ -38,6 +38,11 @@ namespace constants {
         STOP = 5,
         FORCE = 6,
     };
+
+    constexpr char END_OFSTRING_ST = '\r';
+    constexpr char END_OFSTRING_ND = '\n';
+    constexpr char END_OFSTRING_TRD = '\0';
+
     constexpr int MAX_RETRY_CONNECTIONS = 3;
     /* Paths */
     const std::string CONFIG_PATH = "configs/entities/";
