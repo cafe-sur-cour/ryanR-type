@@ -62,7 +62,6 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_ACCEPT] = &ClientNetwork::handleConnectionAcceptation;
     _packetHandlers[constants::PACKET_DISC] = &ClientNetwork::handleNoOp;
     _packetHandlers[constants::PACKET_EVENT] = &ClientNetwork::handleNoOp;
-    _packetHandlers[constants::PACKET_GAME_STATE] = &ClientNetwork::handleGameState;
     _packetHandlers[constants::PACKET_GAME_STATE_BATCH] =
         &ClientNetwork::handleBatchedGameState;
     _packetHandlers[constants::PACKET_END_GAME] = &ClientNetwork::handleEndGame;

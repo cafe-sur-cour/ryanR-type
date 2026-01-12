@@ -9,7 +9,6 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include "GameStateHandlers.hpp"
 #include "GameStateHandlersOptimized.hpp"
 #include "../../libs/Packet/serializer/BigEndianSerialization.hpp"
 #include "../../libs/Packet/PacketManager.hpp"
