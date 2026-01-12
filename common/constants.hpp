@@ -39,6 +39,11 @@ namespace constants {
         FORCE = 6,
         NO_OP = 7,
     };
+
+    constexpr char END_OFSTRING_ST = '\r';
+    constexpr char END_OFSTRING_ND = '\n';
+    constexpr char END_OFSTRING_TRD = '\0';
+
     constexpr int MAX_RETRY_CONNECTIONS = 3;
     /* Paths */
     const std::string CONFIG_PATH = "configs/entities/";
@@ -150,6 +155,7 @@ namespace constants {
     const std::string LOOP_FIELD = "loop";
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";
+    const std::string ANIMATIONSTATECOMPONENT = "AnimationStateComponent";
     const std::string PREFABNAME_FIELD = "prefabName";
     const std::string LIFETIME_FIELD = "lifetime";
     const std::string LIFESPAN_FIELD = "lifespan";
@@ -209,6 +215,7 @@ namespace constants {
     const std::string POSY_FIELD = "posY";
     const std::string COUNT_FIELD = "count";
     const std::string GAMEXTRIGGER_FIELD = "gameXTrigger";
+    const std::string GAME_ZONE_STOP_AT_X_FIELD = "gameZoneStopAtX";
     const std::string DISTRIBUTIONX_FIELD = "distributionX";
     const std::string DISTRIBUTIONY_FIELD = "distributionY";
     const std::string ENEMIES_FIELD = "enemies";
@@ -228,6 +235,7 @@ namespace constants {
     /* Animation conditions */
     const std::string VELOCITY_UP_CONDITION = "isVelocityUp";
     const std::string VELOCITY_DOWN_CONDITION = "isVelocityDown";
+    const std::string ANIMATION_END_CONDITION = "onAnimationEnd";
 
     /* Tags */
     const std::string CONTROLLABLETAG = "ControllableTag";
@@ -238,6 +246,7 @@ namespace constants {
     const std::string ENNEMYPROJECTILETAG = "EnnemyProjectileTag";
     const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
+    const std::string GAME_ZONE_STOP_TAG = "GameZoneStopTag";
     const std::string OBSTACLETAG = "ObstacleTag";
 
     /* Difficulty Multipliers */
@@ -321,7 +330,7 @@ namespace constants {
     const std::string DEATH_FUNCTION = "death";
     const std::string ONINTERACT_FUNCTION = "OnInteract";
     const std::string  ACTIVATE_OR_DEACTIVATE_FORCE_FUNCTION = "ActivateOrDeactivateForce";
-
+    const std::string ADD_FORCE_LEVEL_FUNCTION = "addForceLevel";
     /* Constants for Scripting API */
     const std::string PRINT_FUNCTION = "print";
     const std::string CREATE_MOVE_INTENT_FUNCTION = "createMoveIntent";
@@ -329,6 +338,7 @@ namespace constants {
     const std::string GET_NEAREST_PLAYER_POSITION_FUNCTION = "getNearestPlayerPosition";
     const std::string GET_ENTITY_SPEED_FUNCTION = "getEntitySpeed";
     const std::string CREATE_SHOOT_INTENT_FUNCTION = "createShootIntent";
+    const std::string SET_ANIMATION_STATE_FUNCTION = "setAnimationState";
     const std::string SPAWN_ENTITY_FUNCTION = "spawnEntity";
     const std::string GET_ENTITY_ID_FUNCTION = "getEntityId";
     const std::string ADD_PART_ID_FUNCTION = "addPartId";
@@ -345,6 +355,7 @@ namespace constants {
     const std::string SET_PROJECTILE_PREFAB_FUNCTION = "setProjectilePrefab";
     const std::string COUNT_FORCES_BY_TYPE_FUNCTION = "countForcesByType";
     const std::string GET_FORCE_POSITION_BY_TYPE_FUNCTION = "getForcePositionByType";
+
 }
 
 #endif /* !CONSTANTS_HPP_ */

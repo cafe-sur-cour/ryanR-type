@@ -20,6 +20,7 @@
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
+#include "../../../../../common/systems/bounds/GameZoneStopSystem.hpp"
 #include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
 #include "../../../../../common/systems/scripting/ScriptingSystem.hpp"
@@ -89,6 +90,7 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::LifetimeSystem>());
     addSystem(std::make_shared<ecs::HealthSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
+    addSystem(std::make_shared<ecs::GameZoneStopSystem>());
     addSystem(std::make_shared<ecs::DeathSystem>());
     addSystem(std::make_shared<ecs::ScoreSystem>());
     addSystem(std::make_shared<ecs::SpawnSystem>());

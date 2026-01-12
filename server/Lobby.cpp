@@ -84,8 +84,10 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertShooterTagComponent, this,
             std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Lobby::convertChargedShotComponent, this,
+        std::bind(&rserv::Lobby::convertAnimationStateComponent, this,
             std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Lobby::convertChargedShotComponent, this,
+            std::placeholders::_1, std::placeholders::_2)
     };
 }
 

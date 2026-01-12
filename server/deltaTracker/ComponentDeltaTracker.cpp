@@ -5,6 +5,7 @@
 ** Component Delta Tracker
 */
 
+#include <iostream>
 #include <vector>
 #include <map>
 #include <set>
