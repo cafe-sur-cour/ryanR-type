@@ -28,6 +28,7 @@
 #include "../HowToPlay/HowToPlayState.hpp"
 #include "../Connection/ConnectionState.hpp"
 #include "../Leaderboard/LeaderboardState.hpp"
+#include "../Chat/ChatState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
 #include "../../../../SettingsConfig.hpp"
@@ -348,12 +349,34 @@ MainMenuState::MainMenuState(
         }
     });
 
+    _chatButton = std::make_shared<ui::Button>(_resourceManager);
+    _chatButton->setSize(math::Vector2f(80.f, 80.f));
+    _chatButton->setIconPath(constants::CHAT_PATH);
+    _chatButton->setIconSize(math::Vector2f(500.f, 500.f));
+    _chatButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _chatButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _chatButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _chatButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _chatButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+
     _headerLayout->addElement(_leaderboardButton);
     _headerLayout->addElement(_howToPlayButton);
     _headerLayout->addElement(_disconnectButton);
 
     _topLeftLayout->addElement(_registerButton);
     _topLeftLayout->addElement(_loginButton);
+    _topLeftLayout->addElement(_chatButton);
+
     _infiniteButton = std::make_shared<ui::Button>(_resourceManager);
     _infiniteButton->setText("Infinite Scene");
     _infiniteButton->setSize(math::Vector2f(400.f, 108.f));
@@ -455,6 +478,9 @@ void MainMenuState::updateUIStatus() {
         if (_lobbyConnectButton && _lobbyConnectButton->getState() != ui::UIState::Disabled) {
             _lobbyConnectButton->setState(ui::UIState::Disabled);
         }
+        if (_chatButton && _chatButton->getState() != ui::UIState::Disabled) {
+            _chatButton->setState(ui::UIState::Disabled);
+        }
     } else {
         if (_usernameButton && _usernameButton->getState() == ui::UIState::Disabled) {
             _usernameButton->setState(ui::UIState::Normal);
@@ -464,6 +490,9 @@ void MainMenuState::updateUIStatus() {
         }
         if (_lobbyConnectButton && _lobbyConnectButton->getState() == ui::UIState::Disabled) {
             _lobbyConnectButton->setState(ui::UIState::Normal);
+        }
+        if (_chatButton && _chatButton->getState() == ui::UIState::Disabled) {
+            _chatButton->setState(ui::UIState::Normal);
         }
     }
 
