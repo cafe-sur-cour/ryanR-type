@@ -94,10 +94,6 @@ class ClientNetwork {
         bool isProfileDataUpdated() const;
         void clearProfileDataUpdateFlag();
 
-        const std::string& getRegisterErrorMessage() const;
-        bool isExpectingRegisterResponse() const;
-        void clearRegisterErrorMessage();
-
         void addToEventQueue(const NetworkEvent &event);
 
         bool isConnected() const;
@@ -137,7 +133,6 @@ class ClientNetwork {
 
         void handleNoOp();
         void handleConnectionAcceptation();
-        void handleGameState();
         void handleBatchedGameState();
         void handleEndGame();
         void handleCanStart();
