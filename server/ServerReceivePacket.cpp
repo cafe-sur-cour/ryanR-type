@@ -13,6 +13,7 @@
 #include <thread>
 #include <tuple>
 #include <fstream>
+#include <filesystem>
 #include <nlohmann/json.hpp>
 
 #include "Server.hpp"
@@ -316,6 +317,7 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
                 }
             }
         }
+        std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
         std::ofstream outfile(filepath);
         bool writeSuccess = false;
         if (outfile.is_open()) {
@@ -446,6 +448,7 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
     newUser[constants::GAMES_PLAYED_JSON_WARD] = 0;
     newUser[constants::TIME_SPENT_JSON_WARD] = 0;
     users.push_back(newUser);
+    std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
     std::ofstream outfile(filepath);
     bool writeSuccess = false;
     if (outfile.is_open()) {
