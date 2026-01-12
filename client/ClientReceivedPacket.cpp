@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <utility>
 #include <unordered_map>
 #include "ClientNetwork.hpp"
 #include "SettingsConfig.hpp"

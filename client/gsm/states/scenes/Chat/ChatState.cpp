@@ -155,7 +155,8 @@ void ChatState::enter() {
     messagesWrapperConfig.anchorX = ui::AnchorX::Center;
     messagesWrapperConfig.anchorY = ui::AnchorY::Center;
 
-    auto messagesWrapper = std::make_shared<ui::UILayout>(_resourceManager, messagesWrapperConfig);
+    auto messagesWrapper = std::make_shared<ui::UILayout>(_resourceManager,
+        messagesWrapperConfig);
     messagesWrapper->setSize(math::Vector2f(1100.f, 450.f));
     messagesWrapper->addElement(_messagesContainer);
 
