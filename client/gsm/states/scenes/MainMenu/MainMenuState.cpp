@@ -376,8 +376,6 @@ MainMenuState::MainMenuState(
     _topLeftLayout->addElement(_loginButton);
     _topLeftLayout->addElement(_chatButton);
 
-    _rightLayout->addElement(_infiniteButton);
-
     _uiManager->addElement(_mainMenuLayout);
     _uiManager->addElement(_rightLayout);
     _uiManager->addElement(_topLeftLayout);
