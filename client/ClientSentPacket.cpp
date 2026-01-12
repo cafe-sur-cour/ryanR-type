@@ -21,7 +21,7 @@ void ClientNetwork::connectionPacket() {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);
     }
-
+    this->_retryCount = 0;
     std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
         this->_sequenceNumber, constants::PACKET_CONNECTION, {});
 
@@ -29,7 +29,6 @@ void ClientNetwork::connectionPacket() {
         "[CLIENT] Sending connection packet",
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
-
     this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
 }
