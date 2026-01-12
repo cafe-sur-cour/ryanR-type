@@ -11,6 +11,8 @@
 #include "../base/ASystem.hpp"
 #include "../../CollisionRules/CollisionRules.hpp"
 #include "../../systems/interactions/TagRegistry.hpp"
+#include "../../components/permanent/TransformComponent.hpp"
+#include "../../components/permanent/ColliderComponent.hpp"
 
 namespace ecs {
 
@@ -29,6 +31,8 @@ class SpawnSystem : public ASystem {
         bool isPositionFree(
             Entity newEntity,
             const math::Vector2f& position,
+            const std::vector<std::shared_ptr<ColliderComponent>>& newColliders,
+            std::shared_ptr<TransformComponent> newTransform,
             std::shared_ptr<Registry> registry
         );
 

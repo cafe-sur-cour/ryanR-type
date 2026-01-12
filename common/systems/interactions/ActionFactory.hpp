@@ -13,6 +13,8 @@
 #include <string>
 #include <unordered_map>
 #include "../../ECS/entity/Entity.hpp"
+#include "../../resourceManager/ResourceManager.hpp"
+#include "TagRegistry.hpp"
 
 namespace ecs {
     class Registry;
@@ -22,13 +24,14 @@ class ActionFactory {
     public:
         static const ActionFactory& getInstance();
 
-        using ActionFunction = std::function<void(std::shared_ptr<ecs::Registry>, ecs::Entity, ecs::Entity)>;
+        using ActionFunction = std::function<void(std::shared_ptr<ecs::Registry>, std::shared_ptr<ResourceManager>, ecs::Entity, ecs::Entity)>;
 
         void registerAction(const std::string& actionId, ActionFunction action);
 
         void executeAction(
             const std::string& actionId,
             std::shared_ptr<ecs::Registry> registry,
+            std::shared_ptr<ResourceManager> resourceManager,
             ecs::Entity self, ecs::Entity other) const;
 
         bool hasAction(const std::string& actionId) const;

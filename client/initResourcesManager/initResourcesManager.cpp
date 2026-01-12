@@ -24,6 +24,7 @@
 #include "../SettingsManager.hpp"
 #include "../constants.hpp"
 #include "../../common/Error/LibrairiesLoadError.hpp"
+#include "../../common/GameRules.hpp"
 
 std::shared_ptr<ResourceManager> initResourcesManager(
     std::shared_ptr<DLLoader<gfx::createWindow_t>> windowLoader,
@@ -97,6 +98,9 @@ std::shared_ptr<ResourceManager> initResourcesManager(
         std::make_shared<SettingsManager>(mappingManager, inputProvider, settingsConfig);
     settingsManager->loadAll();
     resourceManager->add<SettingsManager>(settingsManager);
+
+    auto gameRules = std::make_shared<GameRules>();
+    resourceManager->add<GameRules>(gameRules);
 
     settingsManager->applyAccessibilityToWindow(window);
     window->setFramerateLimit(static_cast<unsigned int>(settingsConfig->getTargetFPS()));

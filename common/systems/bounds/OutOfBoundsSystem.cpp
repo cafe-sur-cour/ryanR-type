@@ -13,6 +13,7 @@
 #include "../../components/tags/PlayerProjectileTag.hpp"
 #include "../../components/tags/EnnemyProjectileTag.hpp"
 #include "../../components/tags/MobTag.hpp"
+#include "../../components/tags/ObstacleTag.hpp"
 #include "../../constants.hpp"
 
 namespace ecs {
@@ -52,7 +53,8 @@ void OutOfBoundsSystem::update(
     for (auto entityId : view) {
         bool shouldCheck = registry->hasComponent<PlayerProjectileTag>(entityId) ||
                           registry->hasComponent<EnnemyProjectileTag>(entityId) ||
-                          registry->hasComponent<MobTag>(entityId);
+                          registry->hasComponent<MobTag>(entityId) ||
+                          registry->hasComponent<ObstacleTag>(entityId);
 
         if (!shouldCheck)
             continue;
@@ -67,8 +69,15 @@ void OutOfBoundsSystem::update(
         float x = pos.getX();
         float y = pos.getY();
 
-        if (x < leftBound || x > rightBound || y < topBound || y > bottomBound) {
-            registry->addComponent(entityId, std::make_shared<DeathIntentComponent>());
+        bool isObstacle = registry->hasComponent<ObstacleTag>(entityId);
+        if (isObstacle) {
+            if (x < leftBound || y < topBound || y > bottomBound) {
+                registry->addComponent(entityId, std::make_shared<DeathIntentComponent>());
+            }
+        } else {
+            if (x < leftBound || x > rightBound || y < topBound || y > bottomBound) {
+                registry->addComponent(entityId, std::make_shared<DeathIntentComponent>());
+            }
         }
     }
 }

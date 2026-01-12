@@ -54,7 +54,6 @@ private:
     std::shared_ptr<ui::Button> _registerButton;
     std::shared_ptr<ui::Button> _loginButton;
     std::shared_ptr<ui::Button> _disconnectButton;
-    std::shared_ptr<ui::Button> _infiniteButton;
 
     std::shared_ptr<ui::TextInput> _lobbyCodeInput;
 
