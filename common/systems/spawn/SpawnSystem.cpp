@@ -85,19 +85,19 @@ math::Vector2f SpawnSystem::findNearestFreePosition(
         for (int xOffset = -100; xOffset <= 100; xOffset += static_cast<int>(stepSize)) {
             if (xOffset == 0 && yOffset == 0) continue;
 
-            float newY = originalPosition.getY() + yOffset;
+            float newY = originalPosition.getY() + static_cast<float>(yOffset);
             if (newY > centerY) newY = centerY - (newY - centerY);
 
             if (newY < 0 || newY > constants::MAX_HEIGHT) continue;
 
-            position.setX(originalPosition.getX() + xOffset);
+            position.setX(originalPosition.getX() + static_cast<float>(xOffset));
             position.setY(newY);
 
             if (isPositionFree(newEntity, position, registry)) {
                 return position;
             }
 
-            newY = originalPosition.getY() - yOffset;
+            newY = originalPosition.getY() - static_cast<float>(yOffset);
             if (newY > centerY) newY = centerY - (newY - centerY);
 
             if (newY >= 0 && newY <= constants::MAX_HEIGHT) {
