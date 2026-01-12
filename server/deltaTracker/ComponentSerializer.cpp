@@ -99,9 +99,9 @@ std::vector<uint64_t> rserv::ComponentSerializer::serializeAnimationState
     for (char c : state) {
         data.push_back(static_cast<uint64_t>(c));
     }
-    data.push_back(static_cast<uint64_t>('\r'));
-    data.push_back(static_cast<uint64_t>('\n'));
-    data.push_back(static_cast<uint64_t>('\0'));
+    data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
+    data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
+    data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
     return data;
 }
 
@@ -109,9 +109,9 @@ std::string rserv::ComponentSerializer::deserializeAnimationState
     (const std::vector<uint64_t>& data) {
     std::string state;
     for (uint64_t val : data) {
-        if (val == static_cast<uint64_t>('\r') ||
-            val == static_cast<uint64_t>('\n') ||
-            val == static_cast<uint64_t>('\0')) {
+        if (val == static_cast<uint64_t>(constants::END_OFSTRING_ST) ||
+            val == static_cast<uint64_t>(constants::END_OFSTRING_ND) ||
+            val == static_cast<uint64_t>(constants::END_OFSTRING_TRD)) {
             break;
         }
         state += static_cast<char>(val);

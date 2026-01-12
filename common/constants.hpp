@@ -37,10 +37,19 @@ namespace constants {
         SHOOT = 4,
         STOP = 5,
         FORCE = 6,
+        NO_OP = 7,
     };
+
+    constexpr char END_OFSTRING_ST = '\r';
+    constexpr char END_OFSTRING_ND = '\n';
+    constexpr char END_OFSTRING_TRD = '\0';
+
     constexpr int MAX_RETRY_CONNECTIONS = 3;
     /* Paths */
     const std::string CONFIG_PATH = "configs/entities/";
+    const std::string COLLISION_RULES_PATH = "configs/rules/collision_rules.json";
+    const std::string MAPS_PATH = "configs/map/";
+    const std::string INFINITE_MAP_PATH = "configs/map/infinite.json";
 
     /* Collision Rules JSON Keys */
     const std::string COLLISION_SOLID_KEY = "solid";
@@ -239,6 +248,11 @@ namespace constants {
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
     const std::string GAME_ZONE_STOP_TAG = "GameZoneStopTag";
     const std::string OBSTACLETAG = "ObstacleTag";
+
+    /* Difficulty Multipliers */
+    constexpr float DIFFICULTY_EASY_MULTIPLIER = 1.3f;
+    constexpr float DIFFICULTY_NORMAL_MULTIPLIER = 1.0f;
+    constexpr float DIFFICULTY_HARD_MULTIPLIER = 0.7f;
     const std::string CLIENTEFFECTTAG = "ClientEffectTag";
     const std::string BACKGROUNDMUSICTAG = "BackGroundMusicTag";
     const std::string POWERUP_TAG = "PowerUpTag";
@@ -256,10 +270,16 @@ namespace constants {
     const float TRIGGER_DAMAGE_COOLDOWN = 0.1f;
 
     /* Prefabs */
+    const std::string PLAYER_PREFAB_NAME = "player";
     const std::string GAME_ZONE_PREFAB = "gamezone";
     const std::string SMALL_EXPLOSION = "small_explosion";
     const std::string BIG_EXPLOSION = "big_explosion";
     const std::string OBSTACLE_1 = "obstacle1";
+    const std::string ENEMY_1 = "enemy1";
+    const std::string ENEMY_2 = "enemy2";
+    const std::string POWERUP_ADD_LIFE = "powerUpAddLife";
+    const std::string POWERUP_FORCE = "force";
+    const std::string POWERUP_FLYING_FORCE = "flyingForce";
 
     constexpr float DEFAULT_TIMER = 0.0f;
 
@@ -269,35 +289,40 @@ namespace constants {
     constexpr std::uint8_t PACKET_ACCEPT = 0x02;
     constexpr std::uint8_t PACKET_DISC = 0x03;
     constexpr std::uint8_t PACKET_EVENT = 0x04;
-    constexpr std::uint8_t PACKET_GAME_STATE = 0x05;
-    constexpr std::uint8_t PACKET_END_GAME = 0x06;
-    constexpr std::uint8_t PACKET_CAN_START = 0x07;
-    constexpr std::uint8_t PACKET_CLIENT_READY = 0x08;
-    constexpr std::uint8_t PACKET_SPAWN = 0x09;
-    constexpr std::uint8_t PACKET_DEATH = 0x0A;
-    constexpr std::uint8_t PACKET_WHOAMI = 0x0B;
-    constexpr std::uint8_t PACKET_SERVER_STATUS = 0x0C;
-    constexpr std::uint8_t PACKET_REQUEST_LOBBY = 0x0D;
-    constexpr std::uint8_t PACKET_SEND_LOBBY_CODE = 0x0E;
-    constexpr std::uint8_t PACKET_CONNECT_TO_LOBBY = 0x0F;
-    constexpr std::uint8_t PACKET_LOBBY_MASTER_REQUEST_START = 0x10;
-    constexpr std::uint8_t PACKET_LOBBY_CONNECT_VALUE = 0x11;
-    constexpr std::uint8_t PACKET_LEVEL_COMPLETE = 0x12;
-    constexpr std::uint8_t PACKET_NEXT_LEVEL = 0x13;
-    constexpr std::uint8_t PACKET_REGISTER = 0x14;
-    constexpr std::uint8_t PACKET_CONNECT_USER = 0x15;
-    constexpr std::uint8_t PACKET_LOGIN = 0x16;
-    constexpr std::uint8_t PACKET_GAME_STATE_BATCH = 0x17;
-    constexpr std::uint8_t PACKET_GAME_STATE_BATCH_COMPRESSED = 0x18;
-    constexpr std::uint8_t PACKET_GAME_STATE_COMPRESSED = 0x19;
-    constexpr std::uint8_t PACKET_REQUEST_LEADERBOARD = 0x1A;
-    constexpr std::uint8_t PACKET_LEADERBOARD = 0x1B;
-    constexpr std::uint8_t PACKET_REGISTER_FAIL = 0x1C;
-    constexpr std::uint8_t PACKET_REQUEST_PROFILE = 0x1D;
-    constexpr std::uint8_t PACKET_PROFILE = 0x1E;
+    constexpr std::uint8_t PACKET_END_GAME = 0x05;
+    constexpr std::uint8_t PACKET_CAN_START = 0x06;
+    constexpr std::uint8_t PACKET_CLIENT_READY = 0x07;
+    constexpr std::uint8_t PACKET_SPAWN = 0x08;
+    constexpr std::uint8_t PACKET_DEATH = 0x09;
+    constexpr std::uint8_t PACKET_WHOAMI = 0x0A;
+    constexpr std::uint8_t PACKET_SERVER_STATUS = 0x0B;
+    constexpr std::uint8_t PACKET_REQUEST_LOBBY = 0x0C;
+    constexpr std::uint8_t PACKET_SEND_LOBBY_CODE = 0x0D;
+    constexpr std::uint8_t PACKET_CONNECT_TO_LOBBY = 0x0E;
+    constexpr std::uint8_t PACKET_LOBBY_MASTER_REQUEST_START = 0x0F;
+    constexpr std::uint8_t PACKET_LOBBY_CONNECT_VALUE = 0x10;
+    constexpr std::uint8_t PACKET_LEVEL_COMPLETE = 0x11;
+    constexpr std::uint8_t PACKET_NEXT_LEVEL = 0x12;
+    constexpr std::uint8_t PACKET_REGISTER = 0x13;
+    constexpr std::uint8_t PACKET_CONNECT_USER = 0x14;
+    constexpr std::uint8_t PACKET_LOGIN = 0x15;
+    constexpr std::uint8_t PACKET_GAME_STATE_BATCH = 0x16;
+    constexpr std::uint8_t PACKET_GAME_STATE_BATCH_COMPRESSED = 0x17;
+    constexpr std::uint8_t PACKET_GAME_STATE_COMPRESSED = 0x18;
+    constexpr std::uint8_t PACKET_REQUEST_LEADERBOARD = 0x19;
+    constexpr std::uint8_t PACKET_LEADERBOARD = 0x1A;
+    constexpr std::uint8_t PACKET_REGISTER_FAIL = 0x1B;
+    constexpr std::uint8_t PACKET_REQUEST_PROFILE = 0x1C;
+    constexpr std::uint8_t PACKET_PROFILE = 0x1D;
+    constexpr std::uint8_t PACKET_GAME_RULES = 0x1E;
+    constexpr std::uint8_t PACKET_REQUEST_GAME_RULES_UPDATE = 0x1F;
 
-    const int MAX_INDEX_PACKET_TYPE = 31;
+    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 32;
     const int MAX_CLIENT_PER_LOBBY = 4;
+
+    /* Lobby connection codes */
+    const std::string LOBBY_LEAVE_MARKER = "__LEAVE__";
+    const std::string LOBBY_LEAVE_KEYWORD = "LEAVE";
 
     /* Scripting constant */
     const std::string INIT_FUNCTION = "init";

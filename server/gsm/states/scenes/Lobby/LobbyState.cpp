@@ -24,7 +24,7 @@ void LobbyState::enter() {
 
 void LobbyState::update(float deltaTime) {
     (void)deltaTime;
-    *(_resourceManager->get<gsm::GameStateType>()) = gsm::LOBBY;
+    *(_resourceManager->get<gsm::GameStateType>()) = gsm::GameStateType::LOBBY;
     auto lobby = _resourceManager->get<rserv::Lobby>();
     if (lobby && lobby->isGameStarted()) {
         if (auto stateMachine = _gsm.lock()) {
