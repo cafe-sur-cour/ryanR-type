@@ -62,7 +62,6 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_ACCEPT] = &ClientNetwork::handleConnectionAcceptation;
     _packetHandlers[constants::PACKET_DISC] = &ClientNetwork::handleNoOp;
     _packetHandlers[constants::PACKET_EVENT] = &ClientNetwork::handleNoOp;
-    _packetHandlers[constants::PACKET_GAME_STATE] = &ClientNetwork::handleGameState;
     _packetHandlers[constants::PACKET_GAME_STATE_BATCH] =
         &ClientNetwork::handleBatchedGameState;
     _packetHandlers[constants::PACKET_END_GAME] = &ClientNetwork::handleEndGame;
@@ -80,6 +79,7 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_LEADERBOARD] = &ClientNetwork::handleLeaderboard;
     _packetHandlers[constants::PACKET_REGISTER_FAIL] = &ClientNetwork::handleRegisterFail;
     _packetHandlers[constants::PACKET_PROFILE] = &ClientNetwork::handleProfile;
+    _packetHandlers[constants::PACKET_GAME_RULES] = &ClientNetwork::handleGameRules;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;

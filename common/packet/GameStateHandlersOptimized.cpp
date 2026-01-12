@@ -14,6 +14,7 @@
 #include "../../libs/Packet/serializer/BigEndianSerialization.hpp"
 #include "../../libs/Packet/serializer/Varint.hpp"
 #include "../../common/translationToECS.hpp"
+#include "../../common/constants.hpp"
 
 using SerializerPtr = std::shared_ptr<pm::ISerializer>;
 using pm::BigEndianSerialization;
@@ -621,9 +622,12 @@ static void registerOptimizedGameStateUnpackers(
             vals.push_back(static_cast<uint64_t>(PROJECTILE_PREFAB));
             unsigned int offset = i + 1;
             while (offset + 2 < payload.size()
-                && !(payload.at(offset) == static_cast<uint8_t>('\r')
-                && payload.at(offset + 1) == static_cast<uint8_t>('\n')
-                && payload.at(offset + 2) == static_cast<uint8_t>('\0'))) {
+                && !(payload.at(offset) == static_cast<uint8_t>
+                    (constants::END_OFSTRING_ST)
+                && payload.at(offset + 1) == static_cast<uint8_t>
+                    (constants::END_OFSTRING_ND)
+                && payload.at(offset + 2) == static_cast<uint8_t>
+                    (constants::END_OFSTRING_TRD))) {
                 vals.push_back(static_cast<uint64_t>(payload.at(offset)));
                 offset++;
             }
@@ -674,10 +678,12 @@ static void registerOptimizedGameStateUnpackers(
             unsigned int j = i + 1;
             while (j < payload.size()) {
                 char c = static_cast<char>(payload.at(j));
-                if (c == '\r') {
+                if (c == constants::END_OFSTRING_ST) {
                     if (j + 2 < payload.size()
-                        && static_cast<char>(payload.at(j + 1)) == '\n'
-                        && static_cast<char>(payload.at(j + 2)) == '\0') {
+                        && static_cast<char>(payload.at(j + 1)) ==
+                            constants::END_OFSTRING_ND
+                        && static_cast<char>(payload.at(j + 2)) ==
+                            constants::END_OFSTRING_TRD) {
                         j += 3;
                         break;
                     }
@@ -688,9 +694,9 @@ static void registerOptimizedGameStateUnpackers(
             for (char c : state) {
                 vals.push_back(static_cast<uint64_t>(c));
             }
-            vals.push_back(static_cast<uint64_t>('\r'));
-            vals.push_back(static_cast<uint64_t>('\n'));
-            vals.push_back(static_cast<uint64_t>('\0'));
+            vals.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
+            vals.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
+            vals.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
             packet->setPayload(vals);
             return j - i;
         }

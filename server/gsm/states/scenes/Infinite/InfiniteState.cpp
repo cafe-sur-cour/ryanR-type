@@ -2,80 +2,74 @@
 ** EPITECH PROJECT, 2025
 ** ryanR-type
 ** File description:
-** InGameState
+** InfiniteState
 */
 
-#include "InGameState.hpp"
+#include "InfiniteState.hpp"
 #include <memory>
 #include <iostream>
 #include "../../../machine/GameStateMachine.hpp"
 #include "../../../../Lobby.hpp"
-#include "../../../../../common/gsm/IGameState.hpp"
+#include "../../../../../common/ECS/entity/Entity.hpp"
+#include "../../../../../common/gsm/IGameStateMachine.hpp"
+#include "../../../../../common/Parser/Parser.hpp"
+#include "../../../../../common/Parser/CollisionRulesParser.hpp"
+#include "../../../../../common/CollisionRules/CollisionRules.hpp"
 #include "../../../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../../common/systems/movement/IntentToVelocitySystem.hpp"
 #include "../../../../../common/systems/shooting/ShootingSystem.hpp"
 #include "../../../../../common/systems/shooting/ChargedShotSystem.hpp"
-#include "../../../../../common/systems/health/HealthSystem.hpp"
+#include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
-#include "../../../../../common/systems/bounds/GameZoneStopSystem.hpp"
-#include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
+#include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
+#include "../../../../../common/systems/interactions/TriggerSystem.hpp"
+#include "../../../../../common/systems/interactions/InteractionSystem.hpp"
+#include "../../../../../common/systems/spawn/SpawnSystem.hpp"
 #include "../../../../../common/systems/scripting/ScriptingSystem.hpp"
 #include "../../../../systems/input/ServerMovementInputSystem.hpp"
 #include "../../../../systems/input/ServerShootInputSystem.hpp"
 #include "../../../../systems/input/ServerForceInputSystem.hpp"
 #include "../../../../systems/gameEnd/EndOfMapDetectionSystem.hpp"
-#include "../../../../../common/Parser/Parser.hpp"
-#include "../../../../../common/Parser/MapParser/MapHandler.hpp"
-#include "../../../../../common/Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../../../../common/constants.hpp"
-#include "../../../../../common/ECS/entity/registry/Registry.hpp"
-#include "../../../../../common/systems/interactions/InteractionSystem.hpp"
-#include "../../../../../common/systems/interactions/TriggerSystem.hpp"
-#include "../../../../../common/Parser/CollisionRulesParser.hpp"
-#include "../../../../../common/systems/spawn/SpawnSystem.hpp"
-#include "../../../../../common/components/tags/PlayerTag.hpp"
-#include "../../../../../common/components/permanent/ScriptingComponent.hpp"
+#include "../../../../../common/Parser/MapParser/MapHandler.hpp"
+#include "../../../../../common/systems/map/MapGeneratorSystem.hpp"
 #include "../../../gsmStates.hpp"
 #include "../GameEnd/GameEndState.hpp"
 #include "../LevelComplete/LevelCompleteState.hpp"
+#include "../../../../../common/components/tags/PlayerTag.hpp"
 
 namespace gsm {
 
-InGameState::InGameState(std::shared_ptr<IGameStateMachine> gsm,
-    std::shared_ptr<ResourceManager> resourceManager)
-    : AGameState(gsm, resourceManager) {
+InfiniteState::InfiniteState(
+    std::shared_ptr<IGameStateMachine> gsm,
+    std::shared_ptr<ResourceManager> resourceManager
+) : AGameState(gsm, resourceManager) {
 }
 
-void InGameState::enter() {
+void InfiniteState::enter() {
     auto parser = _resourceManager->get<Parser>();
     if (parser) {
         parser->parseAllEntities(constants::CONFIG_PATH);
     }
 
-    if (!_resourceManager->has<MapHandler>()) {
-        auto mapHandler = std::make_shared<MapHandler>();
-        mapHandler->parseAllLevels(constants::MAPS_PATH);
-        _resourceManager->add<MapHandler>(mapHandler);
-    }
+    auto collisionData =
+        ecs::CollisionRulesParser::parseFromFile(constants::COLLISION_RULES_PATH);
+    ecs::CollisionRules::initWithData(collisionData);
 
-    auto mapHandler = _resourceManager->get<MapHandler>();
-    if (mapHandler && mapHandler->hasMaps()) {
+    auto registry = _resourceManager->get<ecs::Registry>();
+    if (registry && parser) {
         auto mapParser = parser->getMapParser();
         if (mapParser) {
-            mapParser->setMapJson(mapHandler->getCurrentMapJson());
+            mapParser->parseMapFromFile(constants::INFINITE_MAP_PATH);
             mapParser->generateMapEntities();
         }
     }
 
-    auto collisionData = ecs::CollisionRulesParser::parseFromFile(
-        constants::COLLISION_RULES_PATH
-    );
     *(_resourceManager->get<gsm::GameStateType>()) = gsm::GameStateType::IN_GAME;
-    ecs::CollisionRules::initWithData(collisionData);
     addSystem(std::make_shared<ecs::ServerMovementInputSystem>());
     addSystem(std::make_shared<ecs::ServerShootInputSystem>());
     addSystem(std::make_shared<ecs::ServerForceInputSystem>());
@@ -90,35 +84,20 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::LifetimeSystem>());
     addSystem(std::make_shared<ecs::HealthSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
-    addSystem(std::make_shared<ecs::GameZoneStopSystem>());
     addSystem(std::make_shared<ecs::DeathSystem>());
     addSystem(std::make_shared<ecs::ScoreSystem>());
     addSystem(std::make_shared<ecs::SpawnSystem>());
+    addSystem(std::make_shared<ecs::MapGeneratorSystem>());
     addSystem(std::make_shared<ecs::EndOfMapDetectionSystem>());
 }
 
-void InGameState::exit() {
+void InfiniteState::update(float deltaTime) {
     auto registry = _resourceManager->get<ecs::Registry>();
-    if (registry) {
-        auto scriptingView = registry->view<ecs::ScriptingComponent>();
-        for (auto entityId : scriptingView) {
-            auto scriptingComp = registry->getComponent<ecs::ScriptingComponent>(entityId);
-            if (scriptingComp) {
-                scriptingComp->clearLuaReferences();
-            }
-        }
-    }
+    if (!registry) return;
 
-    auto systemManager = _resourceManager->get<ecs::ISystemManager>();
-    for (auto& sys : _systems) {
-        systemManager->removeSystem(sys);
-    }
-    _systems.clear();
-}
+    _resourceManager->get<ecs::ISystemManager>()->updateAllSystems
+        (_resourceManager, registry, deltaTime);
 
-void InGameState::update(float deltaTime) {
-    AGameState::update(deltaTime);
-    auto registry = _resourceManager->get<ecs::Registry>();
     if (_resourceManager->has<gsm::GameStateType>()) {
         gsm::GameStateType currentState = *(_resourceManager->get<gsm::GameStateType>());
 
@@ -147,6 +126,9 @@ void InGameState::update(float deltaTime) {
             }
         }
     }
+}
+
+void InfiniteState::exit() {
 }
 
 }  // namespace gsm

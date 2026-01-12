@@ -9,7 +9,6 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include "GameStateHandlers.hpp"
 #include "GameStateHandlersOptimized.hpp"
 #include "../../libs/Packet/serializer/BigEndianSerialization.hpp"
 #include "../../libs/Packet/PacketManager.hpp"
@@ -349,6 +348,9 @@ bool registerDefaultPacketHandlers(
     registerMultiUCharPacket(packet, ser, CONNECT_USER_PACKET, LENGTH_CONNECT_USER_PACKET);
     registerMultiUCharPacket(packet, ser, LEADERBOARD_PACKET, LENGTH_LEADERBOARD_PACKET);
     registerMultiUCharPacket(packet, ser, PROFILE_PACKET, LENGTH_PROFILE_PACKET);
+    registerMultiUCharPacket(packet, ser, GAME_RULES_PACKET, LENGTH_GAME_RULES_PACKET);
+    registerMultiUCharPacket(packet, ser,
+        REQUEST_GAME_RULES_UPDATE_PACKET, LENGTH_REQUEST_GAME_RULES_UPDATE_PACKET);
 
     packet->registerLength(LOBBY_CONNECT_VALUE, LENGTH_CONNECT_TO_LOBBY_PACKET);
     packet->registerLength(REQUEST_LOBBY_PACKET, LENGTH_REQUEST_LOBBY_PACKET);
@@ -372,6 +374,9 @@ bool registerDefaultPacketHandlers(
     packet->registerLength(LEADERBOARD_PACKET, LENGTH_LEADERBOARD_PACKET);
     packet->registerLength(REQUEST_PROFILE_PACKET, LENGTH_REQUEST_PROFILE_PACKET);
     packet->registerLength(PROFILE_PACKET, LENGTH_PROFILE_PACKET);
+    packet->registerLength(GAME_RULES_PACKET, LENGTH_GAME_RULES_PACKET);
+    packet->registerLength(
+        REQUEST_GAME_RULES_UPDATE_PACKET, LENGTH_REQUEST_GAME_RULES_UPDATE_PACKET);
 
     packet->registerLengthCombEntry(TRANSFORM, 41, 6);
     packet->registerLengthCombEntry(SPEED_COMP, 9, 2);

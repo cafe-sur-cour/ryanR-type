@@ -332,13 +332,14 @@ size_t ClientNetwork::parseProjectilePrefabComponent(const std::vector<uint64_t>
     std::string prefabName;
     while (index < payload.size()) {
         uint64_t charVal = payload[index++];
-        if (charVal == static_cast<uint64_t>('\r')) {
-            if (index < payload.size() && payload[index] == static_cast<uint64_t>('\n')) {
+        if (charVal == static_cast<uint64_t>(constants::END_OFSTRING_ST)) {
+            if (index < payload.size() && payload[index] == static_cast<uint64_t>
+                (constants::END_OFSTRING_ND)) {
                 index++;
             }
             break;
         }
-        if (charVal == static_cast<uint64_t>('\0')) {
+        if (charVal == static_cast<uint64_t>(constants::END_OFSTRING_TRD)) {
             break;
         }
         prefabName += static_cast<char>(charVal);
@@ -382,13 +383,14 @@ size_t ClientNetwork::parseAnimationStateComponent(const std::vector<uint64_t> &
     std::string state;
     while (index < payload.size()) {
         uint64_t charVal = payload[index++];
-        if (charVal == static_cast<uint64_t>('\r')) {
-            if (index < payload.size() && payload[index] == static_cast<uint64_t>('\n')) {
+        if (charVal == static_cast<uint64_t>(constants::END_OFSTRING_ST)) {
+            if (index < payload.size() && payload[index] == static_cast<uint64_t>
+                (constants::END_OFSTRING_ND)) {
                 index++;
             }
             break;
         }
-        if (charVal == static_cast<uint64_t>('\0')) {
+        if (charVal == static_cast<uint64_t>(constants::END_OFSTRING_TRD)) {
             break;
         }
         state += static_cast<char>(charVal);

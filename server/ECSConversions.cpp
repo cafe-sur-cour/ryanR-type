@@ -267,9 +267,9 @@ std::vector<uint64_t> rserv::Lobby::convertProjectilePrefabComponent(
             for (char c : prefabName) {
                 data.push_back(static_cast<uint64_t>(c));
             }
-            data.push_back(static_cast<uint64_t>('\r'));
-            data.push_back(static_cast<uint64_t>('\n'));
-            data.push_back(static_cast<uint64_t>('\0'));
+            data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
+            data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
+            data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
         }
     }
     return data;
@@ -318,9 +318,9 @@ std::vector<uint64_t> rserv::Lobby::convertAnimationStateComponent(
             for (char c : state) {
                 data.push_back(static_cast<uint64_t>(c));
             }
-            data.push_back(static_cast<uint64_t>('\r'));
-            data.push_back(static_cast<uint64_t>('\n'));
-            data.push_back(static_cast<uint64_t>('\0'));
+            data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
+            data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
+            data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
             registry->removeOneComponent<ecs::AnimationStateComponent>(i);
         }
     }
