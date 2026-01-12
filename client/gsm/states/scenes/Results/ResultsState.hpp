@@ -13,6 +13,9 @@
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "ui/manager/UIManager.hpp"
 #include "ui/elements/Text.hpp"
+#include "ui/elements/focusable/Button.hpp"
+#include "ui/core/UILayout.hpp"
+#include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../colors.hpp"
 
 namespace gsm {
@@ -28,9 +31,11 @@ class ResultsState : public AGameState {
 
     private:
         void updateUserStats();
+        void renderUI();
 
         bool _isWin;
         std::unique_ptr<ui::UIManager> _uiManager;
+        std::unique_ptr<MouseInputHandler> _mouseHandler;
         std::shared_ptr<ui::Text> _resultText;
 };
 
