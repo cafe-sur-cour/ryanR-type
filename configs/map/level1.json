@@ -1,24 +1,20 @@
 {
-        "index": 1,
-    "name": "Level 1",
     "background": "background",
-    "scrollSpeed": 100.0,
-    "music": "music",
-    "powerUps": [
-    ],
+    "index": 3,
     "mapLength": 6500.0,
-    "obstacles": [
-    ],
+    "music": "music",
+    "name": "Level 1",
+    "obstacles": [],
+    "powerUps": [],
+    "scrollSpeed": 100.0,
     "waves": [
         {
-            "gameXTrigger": 200.0,
-            "gameZoneStopAtX": 1000.0,
             "enemies": [
                 {
-                    "type": "boss1",
+                    "count": 1,
                     "distributionX": {
-                        "min": 95,
                         "max": 100,
+                        "min": 95,
                         "type": "uniform"
                     },
                     "distributionY": {
@@ -26,9 +22,11 @@
                         "min": 10,
                         "type": "uniform"
                     },
-                    "count": 1
+                    "type": "boss1"
                 }
-            ]
+            ],
+            "gameXTrigger": 200.0,
+            "gameZoneStopAtX": 1000.0
         }
     ]
 }

@@ -1,5 +1,5 @@
 {
-    "name": "basic_shot",
+    "name": "bombShot",
     "components": {
         "PlayerProjectileTag": { "target": "both" },
         "TransformComponent": {
@@ -13,10 +13,10 @@
             "target": "client",
             "states": {
                 "idle": {
-                    "texturePath": "assets/sprites/projectiles/playerShoot1.png",
-                    "frameWidth": 76.0,
-                    "frameHeight": 29.0,
-                    "frameCount": 4,
+                    "texturePath": "assets/sprites/projectiles/miniBomb-modified.png",
+                    "frameWidth": 74.0,
+                    "frameHeight": 66.0,
+                    "frameCount": 10,
                     "startWidth": 0.0,
                     "startHeight": 0.0,
                     "speed": 0.03,
@@ -28,8 +28,8 @@
         },
         "ColliderComponent": {
             "target": "both",
-            "offset": { "x": 70.0, "y": 15.0 },
-            "size": { "x": 15.0, "y": 15.0 },
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 74.0, "y": 66.0 },
             "type": "Trigger"
         },
         "DamageComponent": {

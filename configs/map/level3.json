@@ -1,6 +1,6 @@
 {
     "background": "background",
-    "index": 3,
+    "index": 1,
     "mapLength": 10000.0,
     "music": "music",
     "name": "Level FRANQUET",
@@ -116,7 +116,7 @@
             }
         },
         {
-            "name": "powerUpAddLife",
+            "name": "powerUpAddForceLevel",
             "position": {
                 "posX": 398.0,
                 "posY": 668.0
