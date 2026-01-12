@@ -23,11 +23,7 @@ namespace constants {
     constexpr uint8_t ID_SERVER = 0;
     constexpr uint8_t BITMASK_INT = 32;
     constexpr int MAX_CLIENT = 4;
-
-    /* Packets */
-    constexpr char END_OFSTRING_ST = '\r';
-    constexpr char END_OFSTRING_ND = '\n';
-    constexpr char END_OFSTRING_TRD = '\0';
+    constexpr int CLIENT_TIMEOUT_SECONDS = 10;
 
     const std::string USERS_JSON_PATH = "saves/users.json";
     const std::string SCORES_JSON_PATH = "saves/scores.json";

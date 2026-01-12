@@ -35,4 +35,6 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     CompositeEntityComponent.hpp
     ChargedShotComponent.hpp
     ChargedShotComponent.cpp
+    AnimationStateComponent.hpp
+    AnimationStateComponent.cpp
 )

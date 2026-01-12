@@ -100,32 +100,33 @@ Client and Server packet types (complete list used by the codebase):
    | 0x02   | ACCEPTATION_PACKET        | Server acceptance / assign client ID      |
    | 0x03   | DISCONNECTION_PACKET      | Client disconnection                      |
    | 0x04   | EVENT_PACKET              | Client input/event                        |
-   | 0x05   | GAME_STATE_PACKET         | Server game state update                  |
-   | 0x06   | END_GAME_PACKET           | Server notifies end of game / winner      |
-   | 0x07   | CAN_START_PACKET          | Server tells clients they can start       |
-   | 0x08   | CLIENT_READY_PACKET       | Client signals ready state                |
-   | 0x09   | SPAWN_PLAYER_PACKET       | Server spawns a player/entity             |
-   | 0x0A   | DEATH_PLAYER_PACKET       | Server notifies a player/entity death     |
-   | 0x0B   | WHOAMI_PACKET             | Optional identification/resync packet     |
-   | 0x0C   | SERVER_STATUS_PACKET      | Server sends lobby status information     |
-   | 0X0D   | REQUEST_LOBBY_PACKET      | Client send request to create lobby       |
-   | 0x0E   | SEND_LOBBY_CODE_PACKET    | Server sends the code to whom requested   |
-   | 0X0F   | CONNECT_TO_LOBBY          | Client connect to an existing lobby       |
-   | 0x10   | LOBBY_MASTER_REQUEST_START| Client that created lobby starts the game |
-   | 0x11   | LOBBY_CONNECT_VALUE       | Return sucess or failure of connection    |
-   | 0x12   | LEVEL_COMPLETE_PACKET     | Server notifies level completion          |
-   | 0x13   | NEXT_LEVEL_PACKET         | Server notifies next level transition     |
-   | 0x14   | REGISTER_PACKET           | Client registration request               |
-   | 0x15   | CONNECT_USER_PACKET       | Server confirms user authentication       |
-   | 0x16   | LOGIN_PACKET              | Client login request                      |
-   | 0x17   | GAME_STATE_BATCH_PACKET   | Server batched game state update          |
-   | 0x18   | GAME_STATE_BATCH_COMPRESSED| Compressed batched game state             |
-   | 0x19   | GAME_STATE_COMPRESSED     | Compressed game state update              |
-   | 0x1A   | REQUEST_LEADERBOARD       | Client requests leaderboard data          |
-   | 0x1B   | LEADERBOARD_PACKET        | Server sends leaderboard information      |
-   | 0x1C   | REGISTER_FAIL_PACKET      | Server notifies registration failure      |
-   | 0x1D   | REQUEST_PROFILE           | Client requests user profile data         |
-   | 0x1E   | PROFILE_PACKET            | Server sends user profile information     |
+   | 0x05   | END_GAME_PACKET           | Server notifies end of game / winner      |
+   | 0x06   | CAN_START_PACKET          | Server tells clients they can start       |
+   | 0x07   | CLIENT_READY_PACKET       | Client signals ready state                |
+   | 0x08   | SPAWN_PLAYER_PACKET       | Server spawns a player/entity             |
+   | 0x09   | DEATH_PLAYER_PACKET       | Server notifies a player/entity death     |
+   | 0x0A   | WHOAMI_PACKET             | Optional identification/resync packet     |
+   | 0x0B   | SERVER_STATUS_PACKET      | Server sends lobby status information     |
+   | 0X0C   | REQUEST_LOBBY_PACKET      | Client send request to create lobby       |
+   | 0x0D   | SEND_LOBBY_CODE_PACKET    | Server sends the code to whom requested   |
+   | 0X0E   | CONNECT_TO_LOBBY          | Client connect to an existing lobby       |
+   | 0x0F   | LOBBY_MASTER_REQUEST_START| Client that created lobby starts the game |
+   | 0x10   | LOBBY_CONNECT_VALUE       | Return sucess or failure of connection    |
+   | 0x11   | LEVEL_COMPLETE_PACKET     | Server notifies level completion          |
+   | 0x12   | NEXT_LEVEL_PACKET         | Server notifies next level transition     |
+   | 0x13   | REGISTER_PACKET           | Client registration request               |
+   | 0x14   | CONNECT_USER_PACKET       | Server confirms user authentication       |
+   | 0x15   | LOGIN_PACKET              | Client login request                      |
+   | 0x16   | GAME_STATE_BATCH_PACKET   | Server batched game state update          |
+   | 0x17   | GAME_STATE_BATCH_COMPRESSED| Compressed batched game state             |
+   | 0x18   | GAME_STATE_COMPRESSED     | Compressed game state update              |
+   | 0x19   | REQUEST_LEADERBOARD       | Client requests leaderboard data          |
+   | 0x1A   | LEADERBOARD_PACKET        | Server sends leaderboard information      |
+   | 0x1B   | REGISTER_FAIL_PACKET      | Server notifies registration failure      |
+   | 0x1C   | REQUEST_PROFILE           | Client requests user profile data         |
+   | 0x1D   | PROFILE_PACKET            | Server sends user profile information     |
+   | 0x1E   | GAME_RULES_PACKET         | Server sends current game rules to client |
+   | 0x1F   | REQUEST_GAME_RULES_UPDATE | Client requests an update for game rules  |
    +--------+---------------------------+-------------------------------------------+
 ```
 
@@ -188,6 +189,11 @@ Client and Server packet types (complete list used by the codebase):
    - Empty payload
    - Fixed length: `LENGTH_REQUEST_PROFILE` (0 bytes)
 
+4.1.12 REQUEST_GAME_RULES_UPDATE (0x20) – Client requests an update for game rules
+
+   - Empty payload
+   - Fixed length: `LENGTH_REQUEST_GAME_RULES_UPDATE` (0 bytes)
+
 **4.2 Server Details**
 
 4.2.1 ACCEPTATION_PACKET (0x02) – Sent from Server to Client (connection accept)
@@ -195,32 +201,28 @@ Client and Server packet types (complete list used by the codebase):
    - Player ID assigned by server (1 byte)
    - Fixed length: `LENGTH_ACCEPTATION_PACKET` (1 byte)
 
-4.2.2 GAME_STATE_PACKET (0x05) – Server sends game state to clients
-
-   - Contains state of entities (position, velocity, state...) serialized
-
-4.2.3 END_GAME_PACKET (0x06) – Server notifies end of game and winner
+4.2.2 END_GAME_PACKET (0x06) – Server notifies end of game and winner
 
    - Player ID who won (1 byte)
    - Fixed length: `LENGTH_END_GAME_PACKET` (1 byte)
 
-4.2.4 CAN_START_PACKET (0x07) – Server tells clients the game can start
+4.2.3 CAN_START_PACKET (0x07) – Server tells clients the game can start
 
-4.2.5 SPAWN_PLAYER_PACKET (0x08) – Server spawns a player/entity
+4.2.4 SPAWN_PLAYER_PACKET (0x08) – Server spawns a player/entity
 
    - Payload includes entity data required for client to instantiate the entity
 
-4.2.8 DEATH_PLAYER_PACKET (0x0A) – Server notifies a player/entity death
+4.2.5 DEATH_PLAYER_PACKET (0x0A) – Server notifies a player/entity death
 
    - Payload describing the dead entity (identified, e.g., by ID)
    - Fixed length: `LENGTH_DEATH_PACKET` (8 bytes)
 
-4.2.9 WHOAMI_PACKET (0x0B) – Optional identification / resynchronization packet
+4.2.6 WHOAMI_PACKET (0x0B) – Optional identification / resynchronization packet
 
    - May be used to request/confirm identification or small resync actions
    - Fixed length: `LENGTH_WHOAMI_PACKET` (0 bytes)
 
-4.2.10 SERVER_STATUS_PACKET (0x0C) – Server sends lobby status information
+4.2.7 SERVER_STATUS_PACKET (0x0C) – Server sends lobby status information
 
    - Connected clients count (8 bytes, uint64_t)
    - Ready clients count (8 bytes, uint64_t)
@@ -229,40 +231,45 @@ Client and Server packet types (complete list used by the codebase):
    - Fixed length: `LENGTH_SERVER_STATUS_PACKET` (32 bytes)
    - Sent periodically to keep clients updated on lobby state
 
-4.2.11 SEND_LOBBY_CODE_PACKET (0x0E) Server sends the lobby code to the 'master' of the game
+4.2.8 SEND_LOBBY_CODE_PACKET (0x0E) Server sends the lobby code to the 'master' of the game
 
    - Payload contains the lobby code
    - Fixed length `LENGTH_LOBBY_CODE_PACKET` (8 bytes)
 
-4.2.12 LOBBY_CONNECT_VALUE (0x11) Server says to the client if the connection to the lobby was succesfull or not
+4.2.9 LOBBY_CONNECT_VALUE (0x11) Server says to the client if the connection to the lobby was succesfull or not
 
    - Payload contains char, t or f
    - Fixed length `LENGTH_LOBBY_CONNECT_VALLUE` (1 bytes)
 
-4.2.13 LEVEL_COMPLETE_PACKET (0x12) – Server notifies level completion
+4.2.10 LEVEL_COMPLETE_PACKET (0x12) – Server notifies level completion
 
    - Indicates that the current level has been completed
    - Fixed length: `LENGTH_LEVEL_COMPLETE_PACKET` (0 bytes)
 
-4.2.14 NEXT_LEVEL_PACKET (0x13) – Server notifies next level transition
+4.2.11 NEXT_LEVEL_PACKET (0x13) – Server notifies next level transition
 
    - Indicates transition to the next level
    - Fixed length: `LENGTH_NEXT_LEVEL_PACKET` (0 bytes)
 
-4.2.15 REGISTER_FAIL_PACKET (0x1C) – Server notifies registration failure
+4.2.12 REGISTER_FAIL_PACKET (0x1C) – Server notifies registration failure
 
    - Contains error message for failed registration
    - Fixed length: `LENGTH_REGISTER_FAIL_PACKET` (variable)
 
-4.2.16 LEADERBOARD_PACKET (0x1B) – Server sends leaderboard information
+4.2.13 LEADERBOARD_PACKET (0x1B) – Server sends leaderboard information
 
    - Contains player rankings and scores
    - Fixed length: `LENGTH_LEADERBOARD_PACKET` (variable)
 
-4.2.17 PROFILE_PACKET (0x1E) – Server sends user profile information
+4.2.14 PROFILE_PACKET (0x1E) – Server sends user profile information
 
    - Contains user statistics (wins, high score, games played)
    - Fixed length: `LENGTH_PROFILE_PACKET` (variable)
+
+4.2.15 GAME_RULES_PACKET (0x1F) – Server sends current game rules to clients
+
+   - Payload contains serialized game rules (e.g., difficulty multipliers, spawn toggles)
+   - Fixed length: `LENGTH_GAME_RULES_PACKET` (variable)
 
 Notes:
 - The canonical constant names and packet lengths are defined in `common/interfaces/IPacketManager.hpp`.

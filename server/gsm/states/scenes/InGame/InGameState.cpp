@@ -20,6 +20,7 @@
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
+#include "../../../../../common/systems/bounds/GameZoneStopSystem.hpp"
 #include "../../../../../common/systems/lifetime/LifetimeSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
 #include "../../../../../common/systems/scripting/ScriptingSystem.hpp"
@@ -57,7 +58,7 @@ void InGameState::enter() {
 
     if (!_resourceManager->has<MapHandler>()) {
         auto mapHandler = std::make_shared<MapHandler>();
-        mapHandler->parseAllLevels("configs/map/");
+        mapHandler->parseAllLevels(constants::MAPS_PATH);
         _resourceManager->add<MapHandler>(mapHandler);
     }
 
@@ -71,9 +72,9 @@ void InGameState::enter() {
     }
 
     auto collisionData = ecs::CollisionRulesParser::parseFromFile(
-        "configs/rules/collision_rules.json"
+        constants::COLLISION_RULES_PATH
     );
-    *(_resourceManager->get<gsm::GameStateType>()) = gsm::IN_GAME;
+    *(_resourceManager->get<gsm::GameStateType>()) = gsm::GameStateType::IN_GAME;
     ecs::CollisionRules::initWithData(collisionData);
     addSystem(std::make_shared<ecs::ServerMovementInputSystem>());
     addSystem(std::make_shared<ecs::ServerShootInputSystem>());
@@ -89,6 +90,7 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::LifetimeSystem>());
     addSystem(std::make_shared<ecs::HealthSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
+    addSystem(std::make_shared<ecs::GameZoneStopSystem>());
     addSystem(std::make_shared<ecs::DeathSystem>());
     addSystem(std::make_shared<ecs::ScoreSystem>());
     addSystem(std::make_shared<ecs::SpawnSystem>());
@@ -120,7 +122,7 @@ void InGameState::update(float deltaTime) {
     if (_resourceManager->has<gsm::GameStateType>()) {
         gsm::GameStateType currentState = *(_resourceManager->get<gsm::GameStateType>());
 
-        if (currentState == gsm::LEVEL_COMPLETE) {
+        if (currentState == gsm::GameStateType::LEVEL_COMPLETE) {
             _resourceManager->get<rserv::Lobby>()->levelCompletePacket();
 
             if (auto gsmPtr = _gsm.lock()) {
@@ -129,7 +131,7 @@ void InGameState::update(float deltaTime) {
                         (gsmPtr, _resourceManager));
                 }
             }
-        } else if (currentState == gsm::GAME_END) {
+        } else if (currentState == gsm::GameStateType::GAME_END) {
             bool isWin = false;
             auto players = registry->view<ecs::PlayerTag>();
 

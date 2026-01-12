@@ -53,7 +53,7 @@ void EndOfMapDetectionSystem::update(
         break;
     }
     if (!hasPlayers) {
-        *resourceManager->get<gsm::GameStateType>() = gsm::GAME_END;
+        *resourceManager->get<gsm::GameStateType>() = gsm::GameStateType::GAME_END;
         return;
     }
     auto gameEndTags = registry->view<GameEndTag>();
@@ -69,18 +69,25 @@ void EndOfMapDetectionSystem::update(
             if (!endTransform || !endCollider) {
                 continue;
             }
+            if (endTransform->getPosition().getX() < 0 ||
+                endTransform->getPosition().getY() < 0) {
+                continue;
+            }
 
             if (collides(*playerTransform, *playerCollider, *endTransform, *endCollider)) {
                 if (resourceManager->has<gsm::GameStateType>()) {
                     if (resourceManager->has<MapHandler>()) {
                         auto mapHandler = resourceManager->get<MapHandler>();
                         if (mapHandler->isLastMap()) {
-                            *resourceManager->get<gsm::GameStateType>() = gsm::GAME_END;
+                            *resourceManager->get<gsm::GameStateType>() =
+                                gsm::GameStateType::GAME_END;
                         } else {
-                            *resourceManager->get<gsm::GameStateType>() = gsm::LEVEL_COMPLETE;
+                            *resourceManager->get<gsm::GameStateType>() =
+                                gsm::GameStateType::LEVEL_COMPLETE;
                         }
                     } else {
-                        *resourceManager->get<gsm::GameStateType>() = gsm::GAME_END;
+                        *resourceManager->get<gsm::GameStateType>() =
+                            gsm::GameStateType::GAME_END;
                     }
                 }
                 return;
