@@ -21,6 +21,7 @@
 #include <queue>
 #include <map>
 #include <memory>
+#include <thread>
 
 #include "LobbyStruct.hpp"
 #include "Lobby.hpp"
@@ -37,12 +38,12 @@
 #include "../common/resourceManager/ResourceManager.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/resourceManager/ResourceManager.hpp"
-#include <thread>
 #include "../common/Parser/Parser.hpp"
 #include "../common/systems/systemManager/ISystemManager.hpp"
 #include "gsm/machine/GameStateMachine.hpp"
 #include "initResourcesManager/ServerInputProvider.hpp"
 #include "Signal.hpp"
+#include "http/HttpServer.hpp"
 
 namespace rserv {
     class Server {
@@ -130,8 +131,9 @@ namespace rserv {
             std::vector<std::shared_ptr<LobbyStruct>> _lobbyThreads;
             std::vector<std::shared_ptr<Lobby>> _lobbies;
             std::map<uint8_t, std::shared_ptr<Lobby>> _clientToLobby;
+            std::unique_ptr<HttpServer> _httpServer;
 
     };
-} // namespace rserv = r-type server
+}  // namespace rserv
 
 #endif /* !SERVER_HPP_ */
