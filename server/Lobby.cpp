@@ -129,6 +129,15 @@ std::vector<uint8_t> rserv::Lobby::getConnectedClients() const {
     return clientIds;
 }
 
+std::vector<std::tuple<uint8_t, std::string>> rserv::Lobby::getConnectedClientDetails() const {
+    std::vector<std::tuple<uint8_t, std::string>> clientDetails;
+    std::lock_guard<std::mutex> lock(_clientsMutex);
+    for (const auto &client : this->_clients) {
+        clientDetails.emplace_back(std::get<0>(client), std::get<2>(client));
+    }
+    return clientDetails;
+}
+
 std::vector<std::shared_ptr<net::INetworkEndpoint>>
     rserv::Lobby::getConnectedClientEndpoints() const {
     std::vector<std::shared_ptr<net::INetworkEndpoint>> endpoints;

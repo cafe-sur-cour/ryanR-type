@@ -16,6 +16,8 @@
 #include <httplib.h>
 #include <chrono>
 
+#include "../ServerConfig.hpp"
+
 namespace rserv {
 
 struct ServerInfo {
@@ -25,13 +27,15 @@ struct ServerInfo {
     size_t totalPlayers;
     std::vector<std::string> lobbyDetails;
     std::vector<std::string> playerDetails;
+    std::vector<std::vector<std::string>> lobbyPlayerDetails;
 };
 
 class HttpServer {
     public:
         HttpServer(
             std::function<bool()> statusChecker,
-            std::function<ServerInfo()> infoGetter
+            std::function<ServerInfo()> infoGetter,
+            std::shared_ptr<ServerConfig> serverConfig
         );
         ~HttpServer();
 
@@ -40,6 +44,7 @@ class HttpServer {
 
         void statusEndpoint(const httplib::Request &, httplib::Response &res);
         void infoEndpoint(const httplib::Request &, httplib::Response &res);
+        void configEndpoint(const httplib::Request &, httplib::Response &res);
 
     private:
         void httpLoop();
@@ -50,6 +55,7 @@ class HttpServer {
         std::atomic_bool _running;
         std::function<bool()> _statusChecker;
         std::function<ServerInfo()> _infoGetter;
+        std::shared_ptr<ServerConfig> _serverConfig;
         std::unique_ptr<httplib::Server> _server;
         std::string _password;
 };
