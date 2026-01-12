@@ -15,7 +15,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include <filesystem>
+#include <filesystem>   // NOLINT(build/c++17)
 #include <nlohmann/json.hpp>
 
 #include "Lobby.hpp"
