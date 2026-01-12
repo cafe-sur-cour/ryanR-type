@@ -204,6 +204,7 @@ LobbyWaitingState::LobbyWaitingState(
             networkPtr->setLobbyCode("");
             networkPtr->_isConnectedToLobby = false;
             networkPtr->_isLobbyMaster = false;
+            networkPtr->_ready = false;
             networkPtr->clearEntitiesAndMappings();
         }
         auto gsmPtr = _gsm.lock();
@@ -227,6 +228,7 @@ LobbyWaitingState::LobbyWaitingState(
             networkPtr->setLobbyCode("");
             networkPtr->_isConnectedToLobby = false;
             networkPtr->_isLobbyMaster = false;
+            networkPtr->_ready = false;
             networkPtr->clearEntitiesAndMappings();
         }
         auto gsmPtr = _gsm.lock();
