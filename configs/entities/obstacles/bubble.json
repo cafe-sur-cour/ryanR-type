@@ -1,0 +1,68 @@
+{
+    "name": "bubble",
+    "components": {
+        "ObstacleTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "pink": {
+                    "texturePath": "assets/sprites/sea/bubble/bubbles_b_pink.png",
+                    "frameWidth": 284.0,
+                    "frameHeight": 253.0,
+                    "frameCount": 8,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "blue": {
+                    "texturePath": "assets/sprites/sea/bubble/bubbles_b_blue.png",
+                    "frameWidth": 284.0,
+                    "frameHeight": 253.0,
+                    "frameCount": 8,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                }
+            },
+            "initialState": "pink"
+        },
+        "ColliderComponent": [
+            {
+                "target": "both",
+                "offset": { "x": 130.0, "y": 130.0 },
+                "size": { "x": 40.0, "y": 40.0 },
+                "type": "Trigger"
+            },
+            {
+                "target": "both",
+                "offset": { "x": 132.0, "y": 132.0 },
+                "size": { "x": 38.0, "y": 38.0 },
+                "type": "solid"
+            }
+        ],
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": [],
+                    "toSelf": ["TakeDeath"]
+                }
+            ]
+        },
+        "HealthComponent": { "target": "both", "health": 1.0 },
+            "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/bubble.lua",
+            "additionalFunctions": []
+        }
+    }
+}

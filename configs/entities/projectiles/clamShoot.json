@@ -1,25 +1,26 @@
 {
-    "name": "basic_shot",
+    "name": "clamShoot",
     "components": {
-        "PlayerProjectileTag": { "target": "both" },
+        "EnnemyProjectileTag": { "target": "both" },
         "TransformComponent": {
             "target": "both",
             "position": { "x": 0.0, "y": 0.0 },
-            "scale": { "x": 1.3, "y": 1.3 },
+            "scale": { "x": 1.0, "y": 1.0 },
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "both" },
+
         "AnimationComponent": {
             "target": "client",
             "states": {
                 "idle": {
-                    "texturePath": "assets/sprites/projectiles/playerShoot1.png",
-                    "frameWidth": 76.0,
-                    "frameHeight": 29.0,
-                    "frameCount": 4,
+                    "texturePath": "assets/sprites/sea/clam/clam_pearl.png",
+                    "frameWidth": 146.0,
+                    "frameHeight": 142.0,
+                    "frameCount": 16,
                     "startWidth": 0.0,
                     "startHeight": 0.0,
-                    "speed": 0.03,
+                    "speed": 0.1,
                     "loop": true
                 }
             },
@@ -28,32 +29,32 @@
         },
         "ColliderComponent": {
             "target": "both",
-            "offset": { "x": 70.0, "y": 15.0 },
-            "size": { "x": 15.0, "y": 15.0 },
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 146.0, "y": 142.0 },
             "type": "Trigger"
         },
         "DamageComponent": {
             "target": "both",
-            "damage": 25.0
+            "damage": 10.0
         },
         "SpeedComponent": {
             "target": "both",
-            "speed": 1000.0
+            "speed": 800.0
         },
         "LifetimeComponent": {
             "target": "both",
-            "lifetime": 2.0
+            "lifetime": 5.0
         },
         "InteractionConfigComponent": {
             "target": "both",
             "mappings": [
                 {
-                    "tags": ["MobTag"],
+                    "tags": ["PlayerTag"],
                     "toEntity": ["DealDamage"],
                     "toSelf": ["TakeDeath"]
                 },
                 {
-                    "tags": ["EnnemyProjectileTag"],
+                    "tags": ["PlayerProjectileTag"],
                     "toEntity": ["DealDeath"],
                     "toSelf": ["TakeDeath"]
                 },
@@ -63,11 +64,6 @@
                     "toSelf": ["TakeDeath"]
                 }
             ]
-        },
-        "SoundIntentComponent": {
-            "target": "client",
-            "soundFile": "sounds/shooting.wav",
-            "volume": 50.0
         }
     }
 }
