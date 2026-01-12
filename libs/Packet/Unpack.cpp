@@ -37,11 +37,28 @@ bool pm::PacketManager::unpack(std::vector<uint8_t> data) {
     if (data.size() - HEADER_SIZE != length) {
         return false;
     }
+
     if (length == 0) {
         this->_idClient = static_cast<uint8_t>(idClient);
         this->_sequenceNumber = static_cast<uint32_t>(sequenceNumber);
         this->_type = static_cast<uint8_t>(type);
         this->_length = static_cast<uint32_t>(length);
+        return true;
+    }
+
+    if (type == NEW_CHAT_PACKET || type == BROADCASTED_CHAT_PACKET) {
+        this->_idClient = static_cast<uint8_t>(idClient);
+        this->_sequenceNumber = static_cast<uint32_t>(sequenceNumber);
+        this->_type = static_cast<uint8_t>(type);
+        this->_length = static_cast<uint32_t>(length);
+        this->_payload.clear();
+        for (uint8_t i = 0; i < this->_length; i++) {
+            uint64_t charValue = this->_serializer->deserializeUChar(
+                std::vector<uint8_t>(data.begin() + HEADER_SIZE + i,
+                data.begin() + HEADER_SIZE + (1 + i)));
+            this->_payload.push_back(charValue);
+        }
+
         return true;
     }
 

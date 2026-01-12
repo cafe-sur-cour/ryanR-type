@@ -39,6 +39,18 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
         }
     }
 
+    if (type == NEW_CHAT_PACKET || type == BROADCASTED_CHAT_PACKET) {
+        length = static_cast<uint32_t>(payload.size());
+        size_t n = payload.size();
+        temp = this->_serializer->serializeUInt(length);
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        for (size_t i = 0; i < n ; ++i) {
+            temp = this->_serializer->serializeUChar(payload.at(i));
+            packet.insert(packet.end(), temp.begin(), temp.end());
+        }
+        return packet;
+    }
+
     if (type == GAME_STATE_PACKET) {
         std::vector<uint8_t> body;
         std::vector<uint8_t> entityIdBytes = this->_serializer->serializeVarint(payload.at(0));
