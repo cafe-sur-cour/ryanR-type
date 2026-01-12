@@ -10,6 +10,16 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: 'dist'
+    outDir: 'dist',
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Ignore les warnings "use client" de MUI
+        if (warning.message.includes('Module level directives cause errors when bundled') &&
+            warning.message.includes('"use client"')) {
+          return
+        }
+        warn(warning)
+      }
+    }
   }
 })
