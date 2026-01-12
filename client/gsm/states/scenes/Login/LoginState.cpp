@@ -29,6 +29,12 @@ LoginState::LoginState(
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
 
+    _uiManager->setCursorCallback([this](bool isHovering) {
+        if (_resourceManager->has<gfx::IWindow>()) {
+            _resourceManager->get<gfx::IWindow>()->setCursor(isHovering);
+        }
+    });
+
     auto config = _resourceManager->get<SettingsConfig>();
     if (config) {
         _uiManager->setGlobalScale(config->getUIScale());
@@ -140,24 +146,7 @@ void LoginState::update(float deltaTime) {
         return;
     }
 
-    bool isTextInputFocused = false;
-    auto navManager = _uiManager->getNavigationManager();
-    if (navManager) {
-        auto focusedElement = navManager->getFocusedElement();
-        if (focusedElement) {
-            auto textInput = std::dynamic_pointer_cast<ui::TextInput>(focusedElement);
-            isTextInputFocused = (textInput != nullptr);
-        }
-    }
-
-    bool shouldBlockKeyboardInput = isTextInputFocused &&
-        (eventResult == gfx::EventType::UP ||
-         eventResult == gfx::EventType::DOWN ||
-         eventResult == gfx::EventType::TAB);
-
-    if (!shouldBlockKeyboardInput) {
-        _uiManager->handleKeyboardInput(eventResult);
-    }
+    _uiManager->handleKeyboardInput(eventResult);
 
     if (eventResult == gfx::EventType::TEXT_INPUT) {
         std::string textInput = _resourceManager->get<gfx::IEvent>()->getLastTextInput();
@@ -173,13 +162,13 @@ void LoginState::update(float deltaTime) {
     _uiManager->handleMouseInput(mousePos, mousePressed);
 
     bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
-    _resourceManager->get<gfx::IWindow>()->setCursor(isHoveringUI);
 
+    auto navManager = _uiManager->getNavigationManager();
     if (mousePressed && !isHoveringUI && navManager) {
         navManager->clearFocus();
     }
 
-    if (_resourceManager->has<ecs::IInputProvider>() && !isTextInputFocused) {
+    if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
     }

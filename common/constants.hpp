@@ -37,10 +37,14 @@ namespace constants {
         SHOOT = 4,
         STOP = 5,
         FORCE = 6,
+        NO_OP = 7,
     };
     constexpr int MAX_RETRY_CONNECTIONS = 3;
     /* Paths */
     const std::string CONFIG_PATH = "configs/entities/";
+    const std::string COLLISION_RULES_PATH = "configs/rules/collision_rules.json";
+    const std::string MAPS_PATH = "configs/map/";
+    const std::string INFINITE_MAP_PATH = "configs/map/infinite.json";
 
     /* Collision Rules JSON Keys */
     const std::string COLLISION_SOLID_KEY = "solid";
@@ -67,6 +71,7 @@ namespace constants {
     const std::string SCORECOMPONENT = "ScoreComponent";
     const std::string SCOREVALUECOMPONENT = "ScoreValueComponent";
     const std::string DAMAGECOMPONENT = "DamageComponent";
+    const std::string DAMAGECOOLDOWNCOMPONENT = "DamageCooldownComponent";
     const std::string HEALTHCOMPONENT = "HealthComponent";
     const std::string HITBOXRENDERCOMPONENT = "HitboxRenderComponent";
     const std::string INTERACTIONCONFIGCOMPONENT = "InteractionConfigComponent";
@@ -88,6 +93,7 @@ namespace constants {
     const std::string SCOREVALUE_FIELD = "scoreValue";
     const std::string DAMAGE_FIELD = "damage";
     const std::string HEALTH_FIELD = "health";
+    const std::string COOLDOWN_FIELD = "cooldown";
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
     const std::string OFFSET_FIELD = "offset";
@@ -233,6 +239,11 @@ namespace constants {
     const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
     const std::string OBSTACLETAG = "ObstacleTag";
+
+    /* Difficulty Multipliers */
+    constexpr float DIFFICULTY_EASY_MULTIPLIER = 1.3f;
+    constexpr float DIFFICULTY_NORMAL_MULTIPLIER = 1.0f;
+    constexpr float DIFFICULTY_HARD_MULTIPLIER = 0.7f;
     const std::string CLIENTEFFECTTAG = "ClientEffectTag";
     const std::string BACKGROUNDMUSICTAG = "BackGroundMusicTag";
     const std::string POWERUP_TAG = "PowerUpTag";
@@ -246,11 +257,20 @@ namespace constants {
     const std::string ADDLIFE_ACTION = "AddLife";
     const std::string INTERACTION_CALL_SCRIPTING_ACTION = "InteractionCallScripting";
 
+    /* Cooldown constants */
+    const float TRIGGER_DAMAGE_COOLDOWN = 0.1f;
+
     /* Prefabs */
+    const std::string PLAYER_PREFAB_NAME = "player";
     const std::string GAME_ZONE_PREFAB = "gamezone";
     const std::string SMALL_EXPLOSION = "small_explosion";
     const std::string BIG_EXPLOSION = "big_explosion";
     const std::string OBSTACLE_1 = "obstacle1";
+    const std::string ENEMY_1 = "enemy1";
+    const std::string ENEMY_2 = "enemy2";
+    const std::string POWERUP_ADD_LIFE = "powerUpAddLife";
+    const std::string POWERUP_FORCE = "force";
+    const std::string POWERUP_FLYING_FORCE = "flyingForce";
 
     constexpr float DEFAULT_TIMER = 0.0f;
 
@@ -285,9 +305,15 @@ namespace constants {
     constexpr std::uint8_t PACKET_REGISTER_FAIL = 0x1C;
     constexpr std::uint8_t PACKET_REQUEST_PROFILE = 0x1D;
     constexpr std::uint8_t PACKET_PROFILE = 0x1E;
+    constexpr std::uint8_t PACKET_GAME_RULES = 0x1F;
+    constexpr std::uint8_t PACKET_REQUEST_GAME_RULES_UPDATE = 0x20;
 
-    const int MAX_INDEX_PACKET_TYPE = 31;
+    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 33;
     const int MAX_CLIENT_PER_LOBBY = 4;
+
+    /* Lobby connection codes */
+    const std::string LOBBY_LEAVE_MARKER = "__LEAVE__";
+    const std::string LOBBY_LEAVE_KEYWORD = "LEAVE";
 
     /* Scripting constant */
     const std::string INIT_FUNCTION = "init";

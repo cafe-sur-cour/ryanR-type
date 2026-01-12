@@ -35,6 +35,15 @@ void UIManager::addElement(std::shared_ptr<UIElement> element) {
         if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
             _navigationManager->addFocusableElement(focusable);
         }
+        if (auto textInput = std::dynamic_pointer_cast<TextInput>(element)) {
+            textInput->setOnNavigate([this](bool up) {
+                if (up) {
+                    _navigationManager->handleNavigationInput(ecs::InputAction::MENU_UP);
+                } else {
+                    _navigationManager->handleNavigationInput(ecs::InputAction::MENU_DOWN);
+                }
+            });
+        }
 
         refreshNavigationElements();
     }
@@ -97,6 +106,11 @@ void UIManager::handleMouseInput(const math::Vector2f& mousePos, bool mousePress
         if (element && element->isVisible()) {
             element->handleInput(mousePos, mousePressed);
         }
+    }
+
+    if (_cursorCallback) {
+        bool isHovering = isMouseHoveringAnyElement(mousePos);
+        _cursorCallback(isHovering);
     }
 
     if (mousePressed) {
@@ -307,6 +321,10 @@ void UIManager::setOnBack(std::function<void()> callback) {
     _onBack = callback;
 }
 
+void UIManager::setCursorCallback(std::function<void(bool)> callback) {
+    _cursorCallback = callback;
+}
+
 bool UIManager::isMouseHoveringAnyElement(const math::Vector2f& mousePos) const {
     std::function<bool(const std::shared_ptr<UIElement>&)> checkElementAndChildren =
         [&checkElementAndChildren, &mousePos]
@@ -315,13 +333,11 @@ bool UIManager::isMouseHoveringAnyElement(const math::Vector2f& mousePos) const 
                 return false;
             }
 
-            if (!element->containsPoint(mousePos)) {
-                return false;
-            }
-
-            if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
-                if (focusable->canBeFocused()) {
-                    return true;
+            if (element->containsPoint(mousePos)) {
+                if (auto focusable = std::dynamic_pointer_cast<IFocusable>(element)) {
+                    if (focusable->canBeFocused()) {
+                        return true;
+                    }
                 }
             }
 

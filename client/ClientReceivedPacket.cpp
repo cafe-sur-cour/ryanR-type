@@ -22,6 +22,7 @@
 #include "gsm/states/scenes/Results/ResultsState.hpp"
 #include "gsm/states/scenes/LevelComplete/LevelCompleteState.hpp"
 #include "./components/rendering/AnimationComponent.hpp"
+#include "../common/GameRules.hpp"
 
 /* Packet Handlers */
 void ClientNetwork::handleNoOp() {
@@ -364,18 +365,38 @@ void ClientNetwork::handleLobbyConnectValue() {
     if (payload[0] == static_cast<uint64_t>('t')) {
         isSuccess = true;
     }
+
+    bool isLeaving =
+        this->_lobbyCode.find(constants::LOBBY_LEAVE_KEYWORD) != std::string::npos;
+
     if (isSuccess) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Successfully connected to lobby",
-            debug::debugType::NETWORK,
-            debug::debugLevel::INFO);
-        _isConnectedToLobby = true;
+        if (isLeaving) {
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Successfully left the lobby",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        } else {
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Successfully connected to lobby",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
+        _isConnectedToLobby = !isLeaving;
     } else {
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Failed to connect to lobby",
-            debug::debugType::NETWORK,
-            debug::debugLevel::WARNING);
-        this->_lobbyCode = "";
+        if (isLeaving) {
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Failed to leave the lobby",
+                debug::debugType::NETWORK,
+                debug::debugLevel::WARNING);
+        } else {
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Failed to connect to lobby",
+                debug::debugType::NETWORK,
+                debug::debugLevel::WARNING);
+        }
+        if (!isLeaving) {
+            this->_lobbyCode = "";
+        }
         _isConnectedToLobby = false;
         _isLobbyMaster = false;
     }
@@ -523,4 +544,40 @@ void ClientNetwork::handleProfile() {
     _profileData = profileData;
     _profileDataUpdated = true;
     this->_expectingProfileResponse = false;
+}
+
+void ClientNetwork::handleGameRules() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received game rules packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    if (payload.size() < 3) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Game rules packet is invalid (size < 3)",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    GameRulesNS::Gamemode gamemode = static_cast<GameRulesNS::Gamemode>(payload.at(0));
+    GameRulesNS::Difficulty difficulty = static_cast<GameRulesNS::Difficulty>(payload.at(1));
+    bool crossfire = (payload.at(2) != 0);
+
+    if (!this->_resourceManager->has<GameRules>()) {
+        this->_resourceManager->add<GameRules>(std::make_shared<GameRules>());
+    }
+
+    auto gameRules = this->_resourceManager->get<GameRules>();
+    gameRules->setGamemode(gamemode);
+    gameRules->setDifficulty(difficulty);
+    gameRules->setCrossfire(crossfire);
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Updated GameRules - gamemode: " +
+            std::to_string(static_cast<int>(gamemode)) +
+            ", difficulty: " + std::to_string(static_cast<int>(difficulty)) +
+            ", crossfire: " + std::string(crossfire ? "ON" : "OFF"),
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
 }
