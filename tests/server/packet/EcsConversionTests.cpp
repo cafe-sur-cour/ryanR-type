@@ -37,10 +37,9 @@
 using namespace rserv;
 using namespace ecs;
 
-// Test class to expose protected convert methods
 class TestLobby : public Lobby {
 public:
-    TestLobby() : Lobby(nullptr, {}, "test", true, 0) {}
+    TestLobby() : Lobby(nullptr, {}, "test", true, 30) {}
 
     using Lobby::convertTagComponent;
     using Lobby::convertTransformComponent;
@@ -434,9 +433,9 @@ TEST_F(ECSConversionTest, ConvertProjectilePrefabComponent_WithProjectilePrefab)
         i++;
     }
     EXPECT_EQ(reconstructed, "BulletPrefab");
-    EXPECT_EQ(result[i], static_cast<uint64_t>('\r'));
-    EXPECT_EQ(result[i+1], static_cast<uint64_t>('\n'));
-    EXPECT_EQ(result[i+2], static_cast<uint64_t>('\0'));
+    EXPECT_EQ(result[i], static_cast<uint64_t>(constants::END_OFSTRING_ST));
+    EXPECT_EQ(result[i+1], static_cast<uint64_t>(constants::END_OFSTRING_ND));
+    EXPECT_EQ(result[i+2], static_cast<uint64_t>(constants::END_OFSTRING_TRD));
 }
 
 TEST_F(ECSConversionTest, ConvertProjectilePrefabComponent_WithoutProjectilePrefab) {

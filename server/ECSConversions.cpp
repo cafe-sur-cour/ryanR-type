@@ -32,6 +32,7 @@
 #include "../common/components/permanent/ProjectilePrefabComponent.hpp"
 #include "../common/components/permanent/GameZoneComponent.hpp"
 #include "../common/components/permanent/ChargedShotComponent.hpp"
+#include "../common/components/permanent/AnimationStateComponent.hpp"
 
 namespace {
 
@@ -266,9 +267,9 @@ std::vector<uint64_t> rserv::Lobby::convertProjectilePrefabComponent(
             for (char c : prefabName) {
                 data.push_back(static_cast<uint64_t>(c));
             }
-            data.push_back(static_cast<uint64_t>('\r'));
-            data.push_back(static_cast<uint64_t>('\n'));
-            data.push_back(static_cast<uint64_t>('\0'));
+            data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
+            data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
+            data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
         }
     }
     return data;
@@ -301,6 +302,26 @@ std::vector<uint64_t> rserv::Lobby::convertChargedShotComponent(
             data.push_back(packFloat(chargedShotComp->getCharge()));
             data.push_back(packFloat(chargedShotComp->getMaxCharge()));
             data.push_back(packFloat(chargedShotComp->getReloadTime()));
+        }
+    }
+    return data;
+}
+
+std::vector<uint64_t> rserv::Lobby::convertAnimationStateComponent(
+    std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
+    std::vector<uint64_t> data;
+    if (registry && registry->hasComponent<ecs::AnimationStateComponent>(i)) {
+        auto animStateComp = registry->getComponent<ecs::AnimationStateComponent>(i);
+        if (animStateComp) {
+            data.push_back(static_cast<uint64_t>(ANIMATION_STATE));
+            std::string state = animStateComp->getCurrentState();
+            for (char c : state) {
+                data.push_back(static_cast<uint64_t>(c));
+            }
+            data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
+            data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
+            data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
+            registry->removeOneComponent<ecs::AnimationStateComponent>(i);
         }
     }
     return data;
