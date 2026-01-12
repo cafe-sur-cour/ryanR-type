@@ -533,8 +533,10 @@ static void registerGameStateUnpackers(
                 char c = static_cast<char>(readUCharAt(payload, j));
                 if (c == constants::END_OFSTRING_ST) {
                     if (j + 2 < payload.size()
-                        && static_cast<char>(readUCharAt(payload, j + 1)) == constants::END_OFSTRING_ND
-                        && static_cast<char>(readUCharAt(payload, j + 2)) == constants::END_OFSTRING_TRD) {
+                        && static_cast<char>(readUCharAt(payload, j + 1)) ==
+                            constants::END_OFSTRING_ND
+                        && static_cast<char>(readUCharAt(payload, j + 2)) ==
+                            constants::END_OFSTRING_TRD) {
                         j += 3;
                         break;
                     }
@@ -587,8 +589,10 @@ static void registerGameStateUnpackers(
                 char c = static_cast<char>(readUCharAt(payload, j));
                 if (c == constants::END_OFSTRING_ST) {
                     if (j + 2 < payload.size()
-                        && static_cast<char>(readUCharAt(payload, j + 1)) == constants::END_OFSTRING_ND
-                        && static_cast<char>(readUCharAt(payload, j + 2)) == constants::END_OFSTRING_TRD) {
+                        && static_cast<char>(readUCharAt(payload, j + 1)) ==
+                            constants::END_OFSTRING_ND
+                        && static_cast<char>(readUCharAt(payload, j + 2)) ==
+                            constants::END_OFSTRING_TRD) {
                         j += 3;
                         break;
                     }

@@ -506,7 +506,8 @@ void ClientNetwork::handleConnectUser() {
 
     auto payload = _packet->getPayload();
     std::string username;
-    for (size_t i = 0; i < payload.size() && payload.at(i) != constants::END_OFSTRING_TRD; ++i) {
+    for (size_t i = 0; i < payload.size() && payload.at(i) !=
+        constants::END_OFSTRING_TRD; ++i) {
         char c = static_cast<char>(payload.at(i) & 0xFF);
         username += c;
     }
@@ -566,7 +567,8 @@ void ClientNetwork::handleRegisterFail() {
 
     auto payload = _packet->getPayload();
     std::string errorMessage;
-    for (size_t i = 0; i < payload.size() && payload.at(i) != constants::END_OFSTRING_TRD; ++i) {
+    for (size_t i = 0; i < payload.size() && payload.at(i) !=
+        constants::END_OFSTRING_TRD; ++i) {
         char c = static_cast<char>(payload.at(i) & 0xFF);
         errorMessage += c;
     }
