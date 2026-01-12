@@ -12,6 +12,7 @@
 #include <atomic>
 #include <memory>
 #include <functional>
+#include <string>
 #include <httplib.h>
 
 namespace rserv {
@@ -28,11 +29,14 @@ class HttpServer {
 
     private:
         void httpLoop();
+        void loadEnv();
+        bool checkAuth(const httplib::Request &req);
 
         std::thread _httpThread;
         std::atomic_bool _running;
         std::function<bool()> _statusChecker;
         std::unique_ptr<httplib::Server> _server;
+        std::string _password;
 };
 
 }  // namespace rserv

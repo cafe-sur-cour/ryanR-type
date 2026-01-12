@@ -25,6 +25,11 @@ namespace constants {
     constexpr int MAX_CLIENT = 4;
     constexpr int CLIENT_TIMEOUT_SECONDS = 10;
 
+    /* HTTP Server */
+    const std::string DEFAULT_HTTP_PASSWORD = "defaultpassword";
+    const std::string HTTP_ENV_FILE_PATH = "./server/http/.env";
+    constexpr int HTTP_SERVER_PORT = 5173;
+
     /* Packets */
     constexpr char END_OFSTRING_ST = '\r';
     constexpr char END_OFSTRING_ND = '\n';
