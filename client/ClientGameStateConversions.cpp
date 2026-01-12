@@ -333,7 +333,8 @@ size_t ClientNetwork::parseProjectilePrefabComponent(const std::vector<uint64_t>
     while (index < payload.size()) {
         uint64_t charVal = payload[index++];
         if (charVal == static_cast<uint64_t>(constants::END_OFSTRING_ST)) {
-            if (index < payload.size() && payload[index] == static_cast<uint64_t>(constants::END_OFSTRING_ND)) {
+            if (index < payload.size() && payload[index] == static_cast<uint64_t>
+                (constants::END_OFSTRING_ND)) {
                 index++;
             }
             break;
@@ -383,7 +384,8 @@ size_t ClientNetwork::parseAnimationStateComponent(const std::vector<uint64_t> &
     while (index < payload.size()) {
         uint64_t charVal = payload[index++];
         if (charVal == static_cast<uint64_t>(constants::END_OFSTRING_ST)) {
-            if (index < payload.size() && payload[index] == static_cast<uint64_t>(constants::END_OFSTRING_ND)) {
+            if (index < payload.size() && payload[index] == static_cast<uint64_t>
+                (constants::END_OFSTRING_ND)) {
                 index++;
             }
             break;

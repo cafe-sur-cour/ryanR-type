@@ -622,9 +622,12 @@ static void registerOptimizedGameStateUnpackers(
             vals.push_back(static_cast<uint64_t>(PROJECTILE_PREFAB));
             unsigned int offset = i + 1;
             while (offset + 2 < payload.size()
-                && !(payload.at(offset) == static_cast<uint8_t>(constants::END_OFSTRING_ST)
-                && payload.at(offset + 1) == static_cast<uint8_t>(constants::END_OFSTRING_ND)
-                && payload.at(offset + 2) == static_cast<uint8_t>(constants::END_OFSTRING_TRD))) {
+                && !(payload.at(offset) == static_cast<uint8_t>
+                    (constants::END_OFSTRING_ST)
+                && payload.at(offset + 1) == static_cast<uint8_t>
+                    (constants::END_OFSTRING_ND)
+                && payload.at(offset + 2) == static_cast<uint8_t>
+                    (constants::END_OFSTRING_TRD))) {
                 vals.push_back(static_cast<uint64_t>(payload.at(offset)));
                 offset++;
             }
@@ -677,8 +680,10 @@ static void registerOptimizedGameStateUnpackers(
                 char c = static_cast<char>(payload.at(j));
                 if (c == constants::END_OFSTRING_ST) {
                     if (j + 2 < payload.size()
-                        && static_cast<char>(payload.at(j + 1)) == constants::END_OFSTRING_ND
-                        && static_cast<char>(payload.at(j + 2)) == constants::END_OFSTRING_TRD) {
+                        && static_cast<char>(payload.at(j + 1)) ==
+                            constants::END_OFSTRING_ND
+                        && static_cast<char>(payload.at(j + 2)) ==
+                            constants::END_OFSTRING_TRD) {
                         j += 3;
                         break;
                     }
