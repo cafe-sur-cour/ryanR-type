@@ -69,6 +69,7 @@ class Lobby {
             std::string getLobbyCode() const;
             std::shared_ptr<net::INetwork> getNetwork() const;
             std::string getGameState() const;
+            std::string getGameRules() const;
 
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> getEventQueue();
             bool hasEvents() const;

@@ -14,6 +14,9 @@
 #include <utility>
 #include <cstring>
 #include <queue>
+#include <fstream>
+#include <map>
+#include <set>
 
 #include "Server.hpp"
 #include "Constants.hpp"
@@ -369,6 +372,57 @@ uint32_t rserv::Server::getNextEntityId() {
     return this->_nextEntityId++;
 }
 
+std::map<std::string, int> rserv::Server::loadUserStats(const std::string& username) const {
+    std::map<std::string, int> stats = {
+        {constants::GAMES_PLAYED_JSON_WARD, 0},
+        {constants::WINS_JSON_WARD, 0},
+        {constants::HIGH_SCORE_JSON_WARD, 0}
+    };
+
+    const std::string filepath = constants::USERS_JSON_PATH;
+    std::ifstream file(filepath);
+    if (!file.is_open()) {
+        return stats;
+    }
+
+    nlohmann::json users;
+    try {
+        file >> users;
+        file.close();
+    } catch (const std::exception&) {
+        return stats;
+    }
+
+    if (!users.is_array()) {
+        return stats;
+    }
+
+    for (const auto& user : users) {
+        if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
+            user[constants::USERNAME_JSON_WARD].is_string() &&
+                user[constants::USERNAME_JSON_WARD] == username) {
+
+            if (user.contains(constants::GAMES_PLAYED_JSON_WARD) &&
+                user[constants::GAMES_PLAYED_JSON_WARD].is_number_integer()) {
+                stats[constants::GAMES_PLAYED_JSON_WARD] =
+                    user[constants::GAMES_PLAYED_JSON_WARD];
+            }
+            if (user.contains(constants::WINS_JSON_WARD) &&
+                user[constants::WINS_JSON_WARD].is_number_integer()) {
+                stats[constants::WINS_JSON_WARD] = user[constants::WINS_JSON_WARD];
+            }
+            if (user.contains(constants::HIGH_SCORE_JSON_WARD) &&
+                user[constants::HIGH_SCORE_JSON_WARD].is_number_integer()) {
+                stats[constants::HIGH_SCORE_JSON_WARD] =
+                    user[constants::HIGH_SCORE_JSON_WARD];
+            }
+            break;
+        }
+    }
+
+    return stats;
+}
+
 rserv::ServerInfo rserv::Server::getServerInfo() const {
     ServerInfo info;
     auto now = std::chrono::steady_clock::now();
@@ -390,13 +444,16 @@ rserv::ServerInfo rserv::Server::getServerInfo() const {
     for (size_t i = 0; i < this->_lobbies.size(); ++i) {
         if (this->_lobbies[i]) {
             std::string lobbyInfo = "Lobby " +
-                std::to_string(i + 1) + ": " + this->_lobbies[i]->getGameState();
+                std::to_string(i + 1) + " (" + this->_lobbies[i]->getLobbyCode() + "): " +
+                this->_lobbies[i]->getGameState() +
+                " | " + this->_lobbies[i]->getGameRules();
             info.lobbyDetails.push_back(lobbyInfo);
 
             std::vector<std::string> lobbyPlayers;
             auto clientDetails = this->_lobbies[i]->getConnectedClientDetails();
             for (const auto& clientDetail : clientDetails) {
-                std::string playerInfo = "Player ID: " + std::to_string(std::get<0>(clientDetail)) +
+                std::string playerInfo = "Player ID: " +
+                    std::to_string(std::get<0>(clientDetail)) +
                     ", Username: " + std::get<1>(clientDetail);
                 lobbyPlayers.push_back(playerInfo);
             }
@@ -410,6 +467,35 @@ rserv::ServerInfo rserv::Server::getServerInfo() const {
             std::string playerInfo = "Player ID: " + std::to_string(std::get<0>(client)) +
                 ", Username: " + username;
             info.playerDetails.push_back(playerInfo);
+
+            auto stats = this->loadUserStats(username);
+            info.playerStats.push_back(stats);
+        }
+    }
+
+    std::set<std::string> inGameUsernames;
+    for (const auto& lobbyPtr : this->_lobbies) {
+        if (lobbyPtr) {
+            std::string gameState = lobbyPtr->getGameState();
+            if (gameState.find("Classic mode") != std::string::npos ||
+                gameState.find("Infinite Mode") != std::string::npos) {
+                auto clientDetails = lobbyPtr->getConnectedClientDetails();
+                for (const auto& clientDetail : clientDetails) {
+                    std::string username = std::get<1>(clientDetail);
+                    if (!username.empty()) {
+                        inGameUsernames.insert(username);
+                    }
+                }
+            }
+        }
+    }
+
+    for (const auto& client : this->_clients) {
+        std::string username = std::get<2>(client);
+        if (!username.empty() && inGameUsernames.count(username) > 0) {
+            std::string playerInfo = "Player ID: " + std::to_string(std::get<0>(client)) +
+                ", Username: " + username;
+            info.inGamePlayers.push_back(playerInfo);
         }
     }
 
