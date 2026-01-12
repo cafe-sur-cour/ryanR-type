@@ -51,9 +51,10 @@ function OnInteract(entity, interactorEntity)
             return
         end
 
-
+        print("[force] OnInteract - Force entity ID: " .. entity .. " Player entity ID: " .. interactorEntity)
         addPartId(interactorEntity, entity)
         setParentId(entity, interactorEntity)
+        print("[force] After setParentId, getParentId returns: " .. getParentId(entity))
         ex, _ = getEntityPosition(entity)
         ix, _ = getEntityPosition(interactorEntity)
         playerSizeX, playerSizeY = getEntitySize(getParentId(entity))
@@ -66,10 +67,10 @@ function OnInteract(entity, interactorEntity)
         isequipped = true
 
         if level == 2 then
-            setProjectilePrefab(interactorEntity, "heavy_shot")
+            setProjectilePrefab(interactorEntity, "magnet")
         end
         if (level >= 3) then
-            setProjectilePrefab(interactorEntity, "triple_shot")
+            setProjectilePrefab(interactorEntity, "bombShot")
         end
     end
 end
@@ -89,13 +90,15 @@ function ActivateOrDeactivateForce(entity, entityCaller)
     end
 end
 
-function addLevel(entity)
+function addForceLevel(entity)
     level = level + 1
     print("[force] New force level: " .. level)
     if (level > 3) then
         level = 3
     end
     local parentId = getParentId(entity)
+    print("[force] Entity ID: " .. entity .. " Parent ID from getParentId: " .. parentId)
+    print("[force] isequipped: " .. tostring(isequipped) .. " attachDir: " .. attachDir)
     if isEntityPlayer(parentId) == false then
         print("[force] Parent is not player, not changing projectile. Parent ID: " .. parentId)
         return
@@ -103,14 +106,13 @@ function addLevel(entity)
     if level > previousLevel then
         previousLevel = level
         if level == 2 then
-            setProjectilePrefab(parentId, "heavy_shot")
-            print("[force] Setting heavy shot")
+            setProjectilePrefab(parentId, "magnet")
             setAnimationState(entity, "level2")
-            print("[force] Setting animation to level2")
         end
         if (level == 3) then
+            setProjectilePrefab(parentId, "bombShot")
             setAnimationState(entity, "level3")
-            setProjectilePrefab(parentId, "triple_shot")
+            print("[force] Changed projectile to bombShot for entity ID: " .. parentId)
         end
     end
 end
