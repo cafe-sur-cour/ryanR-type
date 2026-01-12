@@ -207,7 +207,6 @@ bool rserv::Server::processConnectToLobby(std::pair<std::shared_ptr<net::INetwor
 
                             actualLobby->syncExistingEntitiesToClient(
                                 std::get<1>(clientToAdd));
-                            actualLobby->createPlayerEntityForClient(clientId);
                         }
 
                         this->_clientToLobby[clientId] = actualLobby;

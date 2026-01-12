@@ -56,6 +56,7 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
     this->_sequenceNumber = 0;
     this->_resourceManager = nullptr;
     this->_gameStarted = false;
+    this->_playerEntitiesCreated = false;
     this->_eventQueue = std::make_shared<std::queue<std::tuple<uint8_t,
         constants::EventType, double>>>();
     this->_lastGameStateTime = std::chrono::steady_clock::now();
@@ -939,7 +940,6 @@ void rserv::Lobby::setResourceManager(std::shared_ptr<ResourceManager> resourceM
             this->_resourceManager
         );
         gsm->changeState(bootState);
-        this->createPlayerEntities();
         this->_gsm = gsm;
         this->_gameStarted = true;
     } else {
@@ -1151,6 +1151,11 @@ void rserv::Lobby::networkLoop() {
 }
 
 void rserv::Lobby::gameLoop() {
+    if (!this->_playerEntitiesCreated) {
+        this->createPlayerEntities();
+        this->_playerEntitiesCreated = true;
+    }
+
     auto previousTime = std::chrono::high_resolution_clock::now();
 
     while (_running && !Signal::stopFlag) {

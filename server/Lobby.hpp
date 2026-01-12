@@ -129,6 +129,7 @@ class Lobby {
 
             /* ECS/Game handling variable */
             bool _gameStarted;
+            bool _playerEntitiesCreated;
             std::shared_ptr<ResourceManager> _resourceManager;
             std::shared_ptr<gsm::GameStateMachine> _gsm;
             std::chrono::steady_clock::time_point _lastGameStateTime;
