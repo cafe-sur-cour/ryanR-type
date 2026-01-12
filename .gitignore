@@ -29,5 +29,5 @@ vcpkg_installed/
 # Node.js / Frontend
 node_modules/
 frontend/node_modules/
-frontend/dist/
 .env
+package-lock.json
