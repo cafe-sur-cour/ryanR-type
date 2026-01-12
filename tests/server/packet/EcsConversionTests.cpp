@@ -40,7 +40,7 @@ using namespace ecs;
 // Test class to expose protected convert methods
 class TestLobby : public Lobby {
 public:
-    TestLobby() : Lobby(nullptr, {}, "test", true) {}
+    TestLobby() : Lobby(nullptr, {}, "test", true, 50) {}
 
     using Lobby::convertTagComponent;
     using Lobby::convertTransformComponent;
