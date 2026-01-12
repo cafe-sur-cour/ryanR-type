@@ -524,3 +524,22 @@ bool rserv::Server::processProfileRequest(std::shared_ptr<net::INetworkEndpoint>
     }
     return true;
 }
+
+bool rserv::Server::processNewChatMessage(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> payload) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    std::vector<uint8_t> message;
+    message.insert(message.begin(), payload.second.begin() + HEADER_SIZE, payload.second.end());
+    if (!this->newChatMessagePacket(*payload.first, message)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Failed to send profile packet",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    return true;
+}
