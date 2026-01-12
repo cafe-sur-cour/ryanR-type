@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <utility>
+#include <string>
 #include "ComponentSerializer.hpp"
 #include "../Constants.hpp"
 
@@ -92,6 +93,32 @@ std::vector<uint64_t> rserv::ComponentSerializer::serializeGameZone(uint32_t x, 
     return {pos, size};
 }
 
+std::vector<uint64_t> rserv::ComponentSerializer::serializeAnimationState
+    (const std::string& state) {
+    std::vector<uint64_t> data;
+    for (char c : state) {
+        data.push_back(static_cast<uint64_t>(c));
+    }
+    data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
+    data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
+    data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
+    return data;
+}
+
+std::string rserv::ComponentSerializer::deserializeAnimationState
+    (const std::vector<uint64_t>& data) {
+    std::string state;
+    for (uint64_t val : data) {
+        if (val == static_cast<uint64_t>(constants::END_OFSTRING_ST) ||
+            val == static_cast<uint64_t>(constants::END_OFSTRING_ND) ||
+            val == static_cast<uint64_t>(constants::END_OFSTRING_TRD)) {
+            break;
+        }
+        state += static_cast<char>(val);
+    }
+    return state;
+}
+
 rserv::EntitySnapshot rserv::ComponentSerializer::createSnapshotFromComponents(
     uint32_t entityId, const std::vector<uint64_t>& componentData) {
     EntitySnapshot snapshot;
@@ -175,7 +202,7 @@ rserv::EntitySnapshot rserv::ComponentSerializer::createSnapshotFromComponents(
             continue;
         }
 
-        if (compType == PROJECTILE_PREFAB) {
+        if (compType == PROJECTILE_PREFAB || compType == ANIMATION_STATE) {
             if (i + 1 < componentData.size()) {
                 std::vector<uint64_t> prefabData;
                 prefabData.reserve(constants::BITMASK_INT);

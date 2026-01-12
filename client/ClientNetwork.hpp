@@ -80,12 +80,14 @@ class ClientNetwork {
         void sendWhoAmI();
         void requestCode();
         void sendLobbyConnection(std::string lobbyCode);
+        void leaveLobby();
         void sendMasterStartGame();
         void sendRegisterPacket(const std::string &username, const std::string &password);
         void sendLoginPacket(const std::string &username, const std::string &password);
         void sendRequestLeaderboardPacket();
         void sendRequestProfilePacket();
         void sendMessageToServer(const std::string &message);
+        void sendRequestGameRulesUpdate(uint8_t ruleType, uint8_t value);
 
         const std::vector<std::pair<std::string, std::string>>& getLeaderboardData() const;
         bool isLeaderboardDataUpdated() const;
@@ -94,11 +96,6 @@ class ClientNetwork {
         const std::vector<std::string>& getProfileData() const;
         bool isProfileDataUpdated() const;
         void clearProfileDataUpdateFlag();
-
-        const std::string& getRegisterErrorMessage() const;
-        bool isExpectingRegisterResponse() const;
-        void clearRegisterErrorMessage();
-
         const std::vector<std::pair<std::string, std::string>>& getLastMessages() const;
 
         void addToEventQueue(const NetworkEvent &event);
@@ -140,7 +137,6 @@ class ClientNetwork {
 
         void handleNoOp();
         void handleConnectionAcceptation();
-        void handleGameState();
         void handleBatchedGameState();
         void handleEndGame();
         void handleCanStart();
@@ -157,6 +153,7 @@ class ClientNetwork {
         void handleProfile();
         void handleRegisterFail();
         void handleBroadcastedChat();
+        void handleGameRules();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;
@@ -182,6 +179,7 @@ class ClientNetwork {
         size_t parseProjectilePassThroughTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseProjectilePrefabComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseGameZoneComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseAnimationStateComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseChargedShotComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
 
         DLLoader<createNetworkLib_t> _networloader;
@@ -216,6 +214,8 @@ class ClientNetwork {
         std::condition_variable _queueCond;
 
         std::unordered_map<size_t, ecs::Entity> _serverToLocalEntityMap;
+
+        std::unordered_map<ecs::Entity, std::string> _lastReceivedAnimationState;
 
         std::string _lobbyCode;
         bool _shouldConnect;

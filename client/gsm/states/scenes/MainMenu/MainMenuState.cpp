@@ -18,7 +18,6 @@
 #include "../../../../constants.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../../common/InputMapping/IInputProvider.hpp"
-#include "../Infinite/InfiniteState.hpp"
 #include "../Settings/SettingsState.hpp"
 #include "../Replay/ReplayState.hpp"
 #include "../LobbyWaiting/LobbyWaitingState.hpp"
@@ -377,24 +376,6 @@ MainMenuState::MainMenuState(
     _topLeftLayout->addElement(_loginButton);
     _topLeftLayout->addElement(_chatButton);
 
-    _infiniteButton = std::make_shared<ui::Button>(_resourceManager);
-    _infiniteButton->setText("Infinite Scene");
-    _infiniteButton->setSize(math::Vector2f(400.f, 108.f));
-    _infiniteButton->setNormalColor(colors::BUTTON_PRIMARY);
-    _infiniteButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
-    _infiniteButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
-    _infiniteButton->setOnRelease([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<InfiniteState>(stateMachine,
-                this->_resourceManager));
-        }
-    });
-    _infiniteButton->setOnActivated([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<InfiniteState>(stateMachine,
-                this->_resourceManager));
-        }
-    });
     _rightLayout->addElement(_infiniteButton);
 
     _uiManager->addElement(_mainMenuLayout);

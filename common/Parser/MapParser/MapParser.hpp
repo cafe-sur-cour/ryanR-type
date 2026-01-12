@@ -47,6 +47,7 @@ class MapParser {
         void createMusicEntity(const std::string &prefabName);
         void createGameZoneEntity(float scrollSpeed);
         void createGameEndEntity(float mapLength);
+        void createGameZoneStopEntity(float stopAtX);
 
         void parsePowerUps(const nlohmann::json &powerUps);
         void parseObstacles(const nlohmann::json &obstacles);

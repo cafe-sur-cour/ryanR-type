@@ -25,42 +25,41 @@ SpawnSystem::SpawnSystem() {
 bool SpawnSystem::isPositionFree(
     Entity newEntity,
     const math::Vector2f& position,
+    const std::vector<std::shared_ptr<ColliderComponent>>& newColliders,
+    std::shared_ptr<TransformComponent> newTransform,
     std::shared_ptr<Registry> registry
 ) {
-    auto newCollider = registry->getComponent<ColliderComponent>(newEntity);
-    auto newTransform = registry->getComponent<TransformComponent>(newEntity);
-    if (!newCollider || !newTransform) {
+    if (newColliders.empty() || !newTransform) {
         return true;
     }
-
-    math::FRect newHitbox = newCollider->getHitbox(
-        position, newTransform->getScale(), newTransform->getRotation());
 
     View<ColliderComponent, TransformComponent> view(registry);
     for (auto otherEntity : view) {
         if (otherEntity == newEntity) continue;
 
-        auto otherCollider = registry->getComponent<ColliderComponent>(otherEntity);
+        auto otherColliders = registry->getComponents<ColliderComponent>(otherEntity);
         auto otherTransform = registry->getComponent<TransformComponent>(otherEntity);
 
-        if (!otherCollider || !otherTransform) continue;
+        if (otherColliders.empty() || !otherTransform) continue;
 
-        math::FRect otherHitbox = otherCollider->getHitbox(
-            otherTransform->getPosition(),
-            otherTransform->getScale(),
-            otherTransform->getRotation()
-        );
+        for (auto newCollider : newColliders) {
+            math::FRect newHitbox = newCollider->getHitbox(
+                position, newTransform->getScale(), newTransform->getRotation());
 
-        if (newHitbox.intersects(otherHitbox)) {
-            const auto& tagRegistry = TagRegistry::getInstance();
-            std::vector<std::string> newTags = tagRegistry.getTags(registry, newEntity);
-            std::vector<std::string> otherTags = tagRegistry.getTags(registry, otherEntity);
-            if (CollisionRules::getInstance().canCollide(
-                CollisionType::Solid,
-                newTags,
-                otherTags
-            )) {
-                return false;
+            for (auto otherCollider : otherColliders) {
+                if (otherCollider->getType() != CollisionType::Solid) {
+                    continue;
+                }
+
+                math::FRect otherHitbox = otherCollider->getHitbox(
+                    otherTransform->getPosition(),
+                    otherTransform->getScale(),
+                    otherTransform->getRotation()
+                );
+
+                if (newHitbox.intersects(otherHitbox)) {
+                    return false;
+                }
             }
         }
     }
@@ -73,36 +72,42 @@ math::Vector2f SpawnSystem::findNearestFreePosition(
     std::shared_ptr<Registry> registry,
     float stepSize
 ) {
-    math::Vector2f position = originalPosition;
-    float centerY = constants::MAX_HEIGHT / 2.0f;
+    auto newColliders = registry->getComponents<ColliderComponent>(newEntity);
+    auto newTransform = registry->getComponent<TransformComponent>(newEntity);
 
-    if (isPositionFree(newEntity, position, registry) && position.getY() >= 0 &&
+    math::Vector2f position = originalPosition;
+
+    if (isPositionFree(newEntity, position, newColliders, newTransform, registry)
+        && position.getY() >= 0 &&
         position.getY() <= constants::MAX_HEIGHT) {
         return position;
     }
 
-    for (int yOffset = 0; yOffset <= 100; yOffset += static_cast<int>(stepSize)) {
-        for (int xOffset = -100; xOffset <= 100; xOffset += static_cast<int>(stepSize)) {
+    float optimizedStep = std::max(stepSize, 30.0f);
+
+    for (int yOffset = static_cast<int>(optimizedStep); yOffset <= 200;
+        yOffset += static_cast<int>(optimizedStep)) {
+        for (int xOffset = -200; xOffset <= 200; xOffset += static_cast<int>(optimizedStep)) {
             if (xOffset == 0 && yOffset == 0) continue;
 
-            float newY = originalPosition.getY() + static_cast<float>(yOffset);
-            if (newY > centerY) newY = centerY - (newY - centerY);
+            float newY = originalPosition.getY() - yOffset;
+            if (newY >= 0 && newY <= constants::MAX_HEIGHT) {
+                position.setX(originalPosition.getX() + xOffset);
+                position.setY(newY);
 
-            if (newY < 0 || newY > constants::MAX_HEIGHT) continue;
-
-            position.setX(originalPosition.getX() + static_cast<float>(xOffset));
-            position.setY(newY);
-
-            if (isPositionFree(newEntity, position, registry)) {
-                return position;
+                if (isPositionFree(
+                    newEntity, position, newColliders, newTransform, registry)) {
+                    return position;
+                }
             }
 
-            newY = originalPosition.getY() - static_cast<float>(yOffset);
-            if (newY > centerY) newY = centerY - (newY - centerY);
-
+            newY = originalPosition.getY() + yOffset;
             if (newY >= 0 && newY <= constants::MAX_HEIGHT) {
+                position.setX(originalPosition.getX() + xOffset);
                 position.setY(newY);
-                if (isPositionFree(newEntity, position, registry)) {
+
+                if (isPositionFree(
+                    newEntity, position, newColliders, newTransform, registry)) {
                     return position;
                 }
             }
@@ -110,7 +115,7 @@ math::Vector2f SpawnSystem::findNearestFreePosition(
     }
 
     position = originalPosition;
-    position.setY(std::max(0.0f, std::min(constants::MAX_HEIGHT, position.getY())));
+    position.setY(-constants::MAX_HEIGHT);
     return position;
 }
 
@@ -158,7 +163,9 @@ void SpawnSystem::update(
                 math::Vector2f spawnPosition = realPosition;
                 transform->setPosition(spawnPosition);
 
-                if (!isPositionFree(newEntity, spawnPosition, registry)) {
+                auto newColliders = registry->getComponents<ColliderComponent>(newEntity);
+                if (!isPositionFree(
+                    newEntity, spawnPosition, newColliders, transform, registry)) {
                     spawnPosition =
                         findNearestFreePosition(newEntity, spawnPosition, registry);
                     transform->setPosition(spawnPosition);
