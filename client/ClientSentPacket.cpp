@@ -179,6 +179,7 @@ void ClientNetwork::sendLobbyConnection(std::string lobbyCode) {
 }
 
 void ClientNetwork::leaveLobby() {
+    _lastLeaveLobbyTime = std::chrono::steady_clock::now();
     sendLobbyConnection("");
 }
 

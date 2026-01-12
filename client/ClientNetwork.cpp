@@ -50,6 +50,7 @@ ClientNetwork::ClientNetwork() {
 
     this->_shouldConnect = false;
     this->_connectionAttemptTime = std::chrono::steady_clock::now();
+    this->_lastLeaveLobbyTime = std::chrono::steady_clock::now() - std::chrono::seconds(10); // Initialize to past time
 
     this->_connectedClients = 0;
     this->_readyClients = 0;

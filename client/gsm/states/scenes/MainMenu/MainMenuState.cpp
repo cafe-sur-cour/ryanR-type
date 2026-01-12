@@ -367,6 +367,13 @@ void MainMenuState::enter() {
     if (network) {
         _previousLobbyConnectedState = network->isConnectedToLobby();
         _previousLobbyMasterState = network->isLobbyMaster();
+
+        // Clear lobby code if it's a leave marker to reset UI state
+        if (network->getLobbyCode() == constants::LOBBY_LEAVE_MARKER) {
+            network->setLobbyCode("");
+            network->_isConnectedToLobby = false;
+            network->_isLobbyMaster = false;
+        }
     }
 }
 
@@ -475,6 +482,16 @@ void MainMenuState::updateUIStatus() {
 void MainMenuState::checkLobbyConnectionTransition() {
     auto network = _resourceManager->get<ClientNetwork>();
     if (!network) {
+        return;
+    }
+
+    // Prevent automatic lobby transitions for 2 seconds after leaving a lobby
+    auto now = std::chrono::steady_clock::now();
+    auto timeSinceLeave = std::chrono::duration_cast<std::chrono::seconds>(
+        now - network->_lastLeaveLobbyTime).count();
+    if (timeSinceLeave < 0.5) {
+        _previousLobbyConnectedState = network->isConnectedToLobby();
+        _previousLobbyMasterState = network->isLobbyMaster();
         return;
     }
 
