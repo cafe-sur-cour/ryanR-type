@@ -37,7 +37,8 @@ rserv::Server::Server() :
     this->_lobbies = {};
     this->_config = std::make_shared<rserv::ServerConfig>();
     this->_httpServer = std::make_unique<rserv::HttpServer>(
-        [this]() { return this->getState() == 1; }
+        [this]() { return this->getState() == 1; },
+        [this]() { return this->getServerInfo(); }
     );
 
     this->_httpServer->start();
@@ -358,4 +359,35 @@ std::shared_ptr<pm::IPacketManager> rserv::Server::createNewPacketManager() {
 
 uint32_t rserv::Server::getNextEntityId() {
     return this->_nextEntityId++;
+}
+
+rserv::ServerInfo rserv::Server::getServerInfo() const {
+    ServerInfo info;
+    auto now = std::chrono::steady_clock::now();
+
+    info.connectedClients = this->_clients.size();
+
+    static auto startTime = std::chrono::steady_clock::now();
+    info.uptime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime);
+
+    info.activeLobbies = this->_lobbies.size();
+
+    info.totalPlayers = 0;
+    for (const auto& lobbyPtr : this->_lobbies) {
+        if (lobbyPtr) {
+            info.totalPlayers += lobbyPtr->getClientCount();
+        }
+    }
+
+    for (size_t i = 0; i < this->_lobbies.size(); ++i) {
+        std::string lobbyInfo = "Lobby " + std::to_string(i + 1) + ": Active";
+        info.lobbyDetails.push_back(lobbyInfo);
+    }
+
+    for (const auto& client : this->_clients) {
+        std::string playerInfo = "Player ID: " + std::to_string(std::get<0>(client));
+        info.playerDetails.push_back(playerInfo);
+    }
+
+    return info;
 }

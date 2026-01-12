@@ -77,6 +77,8 @@ namespace rserv {
             std::vector<std::shared_ptr<net::INetworkEndpoint>> getConnectedClientEndpoints() const;
             size_t getClientCount() const;
 
+            ServerInfo getServerInfo() const;
+
 
             /* Received Packet Handling */
             void processIncomingPackets();
