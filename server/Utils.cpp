@@ -68,7 +68,7 @@ void Utils::helper() {
     std::cout << "Usage: ./r-type_server [options]\n"
         << "Options:\n"
         << "\r-p <port>        Specify the port number (default: "
-            << constants::DEFAULT_SERVER_PORT << ") (8080 is reserved for HTTP server)\n"
+            << constants::DEFAULT_SERVER_PORT << ") (5173 is reserved for HTTP server)\n"
         << "\r-i <ip_address>  Specify the IP address to bind to (default: "
             << constants::DEFAULT_SERVER_IP << ")\n"
         << "\r-tps <tps>       Specify the TPS (ticks per second) (default: "

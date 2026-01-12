@@ -53,6 +53,6 @@ void rserv::HttpServer::httpLoop() {
         this->statusEndpoint(req, res);
     });
     _server->set_mount_point("/", "./frontend/dist");
-    std::cout << "HTTP server starting on port 8080" << std::endl;
-    _server->listen("0.0.0.0", 8080);
+    std::cout << "HTTP server starting on port 5173" << std::endl;
+    _server->listen("0.0.0.0", 5173);
 }
