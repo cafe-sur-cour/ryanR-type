@@ -66,7 +66,7 @@
       </div>
 
       <!-- Detailed Information -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 gap-6">
         <!-- Lobby Details -->
         <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
           <h2 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
@@ -108,39 +108,100 @@
           </div>
         </div>
 
-        <!-- Logged in Players -->
-        <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
-          <h2 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
-            <UsersIcon class="h-5 w-5 text-green-400" />
-            <span>Logged in Players</span>
-          </h2>
-          <div v-if="serverInfo.playerDetails && serverInfo.playerDetails.length > 0" class="space-y-2">
-            <div v-for="(player, index) in serverInfo.playerDetails" :key="index"
-                 class="bg-gray-700 rounded p-3 flex justify-between items-center">
-              <span class="text-gray-300">{{ player }}</span>
-              <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+        <!-- Players Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Logged in Players -->
+          <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+            <h2 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+              <UsersIcon class="h-5 w-5 text-green-400" />
+              <span>Logged in Players</span>
+            </h2>
+            <div v-if="serverInfo.playerDetails && serverInfo.playerDetails.length > 0" class="space-y-2">
+              <div v-for="(player, index) in serverInfo.playerDetails" :key="index">
+                <div class="bg-gray-700 rounded p-3 cursor-pointer hover:bg-gray-600 transition-colors"
+                     @click="togglePlayerDetails(index)">
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-300">{{ player }}</span>
+                    <div class="flex items-center space-x-2">
+                      <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                      <svg class="w-4 h-4 text-gray-400 transform transition-transform"
+                           :class="{ 'rotate-180': selectedPlayerIndex === index }"
+                           fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <!-- Player stats -->
+                <div v-if="selectedPlayerIndex === index && serverInfo.playerStats && serverInfo.playerStats[index]"
+                     class="mt-2 ml-4 p-3 bg-gray-800 rounded border-l-4 border-green-400">
+                  <div class="grid grid-cols-3 gap-4 text-sm">
+                    <div class="text-center">
+                      <p class="text-gray-400">Games Played</p>
+                      <p class="text-white font-bold text-lg">{{ serverInfo.playerStats[index].games_played || 0 }}</p>
+                    </div>
+                    <div class="text-center">
+                      <p class="text-gray-400">Wins</p>
+                      <p class="text-white font-bold text-lg">{{ serverInfo.playerStats[index].wins || 0 }}</p>
+                    </div>
+                    <div class="text-center">
+                      <p class="text-gray-400">High Score</p>
+                      <p class="text-white font-bold text-lg">{{ serverInfo.playerStats[index].high_score || 0 }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else class="text-gray-500 text-center py-4">
+              No players logged in
             </div>
           </div>
-          <div v-else class="text-gray-500 text-center py-4">
-            No players logged in
-          </div>
-        </div>
 
-        <!-- In Game Players -->
-        <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
-          <h2 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
-            <GamepadIcon class="h-5 w-5 text-red-400" />
-            <span>In Game Players</span>
-          </h2>
-          <div v-if="getInGamePlayers().length > 0" class="space-y-2">
-            <div v-for="(player, index) in getInGamePlayers()" :key="index"
-                 class="bg-gray-700 rounded p-3 flex justify-between items-center">
-              <span class="text-gray-300">{{ player }}</span>
-              <div class="w-2 h-2 bg-red-400 rounded-full"></div>
+          <!-- In Game Players -->
+          <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+            <h2 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+              <GamepadIcon class="h-5 w-5 text-red-400" />
+              <span>In Game Players</span>
+            </h2>
+            <div v-if="getInGamePlayerIndices().length > 0" class="space-y-2">
+              <div v-for="playerIndex in getInGamePlayerIndices()" :key="playerIndex">
+                <div class="bg-gray-700 rounded p-3 cursor-pointer hover:bg-gray-600 transition-colors"
+                     @click="togglePlayerDetails(playerIndex)">
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-300">{{ serverInfo.playerDetails?.[playerIndex] }}</span>
+                    <div class="flex items-center space-x-2">
+                      <div class="w-2 h-2 bg-red-400 rounded-full"></div>
+                      <svg class="w-4 h-4 text-gray-400 transform transition-transform"
+                           :class="{ 'rotate-180': selectedPlayerIndex === playerIndex }"
+                           fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <!-- Player stats -->
+                <div v-if="selectedPlayerIndex === playerIndex && serverInfo.playerStats && serverInfo.playerStats[playerIndex]"
+                     class="mt-2 ml-4 p-3 bg-gray-800 rounded border-l-4 border-red-400">
+                  <div class="grid grid-cols-3 gap-4 text-sm">
+                    <div class="text-center">
+                      <p class="text-gray-400">Games Played</p>
+                      <p class="text-white font-bold text-lg">{{ serverInfo.playerStats[playerIndex].games_played || 0 }}</p>
+                    </div>
+                    <div class="text-center">
+                      <p class="text-gray-400">Wins</p>
+                      <p class="text-white font-bold text-lg">{{ serverInfo.playerStats[playerIndex].wins || 0 }}</p>
+                    </div>
+                    <div class="text-center">
+                      <p class="text-gray-400">High Score</p>
+                      <p class="text-white font-bold text-lg">{{ serverInfo.playerStats[playerIndex].high_score || 0 }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div v-else class="text-gray-500 text-center py-4">
-            No players in game
+            <div v-else class="text-gray-500 text-center py-4">
+              No players in game
+            </div>
           </div>
         </div>
       </div>
@@ -192,6 +253,8 @@ interface ServerInfo {
   lobbyDetails?: string[]
   playerDetails?: string[]
   lobbyPlayerDetails?: string[][]
+  playerStats?: Array<Record<string, number>>
+  inGamePlayers?: string[]
 }
 
 interface ServerConfig {
@@ -212,6 +275,7 @@ const loading = ref(false)
 const lastUpdate = ref('')
 const autoRefreshInterval = ref<NodeJS.Timeout | null>(null)
 const expandedLobbies = ref<number[]>([])
+const selectedPlayerIndex = ref<number | null>(null)
 
 const formatUptime = (seconds?: number): string => {
   if (!seconds) return '0s'
@@ -290,21 +354,28 @@ const getLobbyPlayerCount = (index: number): number => {
   return 0
 }
 
-const getInGamePlayers = (): string[] => {
-  const inGamePlayers: string[] = []
+const togglePlayerDetails = (index: number) => {
+  selectedPlayerIndex.value = selectedPlayerIndex.value === index ? null : index
+}
 
-  if (serverInfo.value.lobbyDetails && serverInfo.value.lobbyPlayerDetails) {
-    serverInfo.value.lobbyDetails.forEach((lobby, index) => {
-      // Check if lobby is in "In Game" or "Infinite Mode" state
-      if (lobby.includes("In Game") || lobby.includes("Infinite Mode")) {
-        if (serverInfo.value.lobbyPlayerDetails && serverInfo.value.lobbyPlayerDetails[index]) {
-          inGamePlayers.push(...serverInfo.value.lobbyPlayerDetails[index])
-        }
+const getInGamePlayerIndices = (): number[] => {
+  const inGameIndices: number[] = []
+
+  if (serverInfo.value.inGamePlayers && serverInfo.value.playerDetails) {
+    const playerIndexMap = new Map<string, number>()
+    serverInfo.value.playerDetails.forEach((player, index) => {
+      playerIndexMap.set(player, index)
+    })
+
+    serverInfo.value.inGamePlayers.forEach(playerDetail => {
+      const playerIndex = playerIndexMap.get(playerDetail)
+      if (playerIndex !== undefined) {
+        inGameIndices.push(playerIndex)
       }
     })
   }
 
-  return inGamePlayers
+  return inGameIndices
 }
 
 const startAutoRefresh = () => {
