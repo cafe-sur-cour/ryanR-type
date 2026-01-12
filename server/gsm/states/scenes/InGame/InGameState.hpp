@@ -23,6 +23,7 @@ public:
     void exit() override;
 
     void update(float deltaTime) override;
+    std::string getStateName() const override { return "Classic mode"; }
     private:
 
 };

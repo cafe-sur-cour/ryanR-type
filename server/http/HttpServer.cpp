@@ -6,13 +6,14 @@
 */
 
 #include "HttpServer.hpp"
-#include "../Constants.hpp"
 #include <httplib.h>
 #include <iostream>
 #include <memory>
+#include <string>
 #include <fstream>
 #include <sstream>
 #include <nlohmann/json.hpp>
+#include "../Constants.hpp"
 
 rserv::HttpServer::HttpServer(
     std::function<bool()> statusChecker,

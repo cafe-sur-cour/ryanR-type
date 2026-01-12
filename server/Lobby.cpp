@@ -263,6 +263,13 @@ std::string rserv::Lobby::getLobbyCode() const {
     return this->_lobbyCode;
 }
 
+std::string rserv::Lobby::getGameState() const {
+    if (this->_gsm) {
+        return this->_gsm->getCurrentStateName();
+    }
+    return "Not Started";
+}
+
 
 /* Event Queue hadling */
 std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>>

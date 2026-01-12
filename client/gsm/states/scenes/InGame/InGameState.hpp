@@ -33,6 +33,7 @@ class InGameState : public AGameState {
         void enter() override;
         void update(float deltaTime) override;
         void exit() override;
+        std::string getStateName() const override { return "In Game"; }
 
     private:
         void renderHUD();
