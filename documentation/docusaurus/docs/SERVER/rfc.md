@@ -126,6 +126,8 @@ Client and Server packet types (complete list used by the codebase):
    | 0x1C   | REGISTER_FAIL_PACKET      | Server notifies registration failure      |
    | 0x1D   | REQUEST_PROFILE           | Client requests user profile data         |
    | 0x1E   | PROFILE_PACKET            | Server sends user profile information     |
+   | 0x1F   | GAME_RULES_PACKET         | Server sends current game rules to client |
+   | 0x20   | REQUEST_GAME_RULES_UPDATE | Client requests an update for game rules  |
    +--------+---------------------------+-------------------------------------------+
 ```
 
@@ -187,6 +189,11 @@ Client and Server packet types (complete list used by the codebase):
 
    - Empty payload
    - Fixed length: `LENGTH_REQUEST_PROFILE` (0 bytes)
+
+4.1.12 REQUEST_GAME_RULES_UPDATE (0x20) – Client requests an update for game rules
+
+   - Empty payload
+   - Fixed length: `LENGTH_REQUEST_GAME_RULES_UPDATE` (0 bytes)
 
 **4.2 Server Details**
 
@@ -263,6 +270,11 @@ Client and Server packet types (complete list used by the codebase):
 
    - Contains user statistics (wins, high score, games played)
    - Fixed length: `LENGTH_PROFILE_PACKET` (variable)
+
+4.2.18 GAME_RULES_PACKET (0x1F) – Server sends current game rules to clients
+
+   - Payload contains serialized game rules (e.g., difficulty multipliers, spawn toggles)
+   - Fixed length: `LENGTH_GAME_RULES_PACKET` (variable)
 
 Notes:
 - The canonical constant names and packet lengths are defined in `common/interfaces/IPacketManager.hpp`.
