@@ -36,6 +36,11 @@ rserv::Server::Server() :
     this->_lobbyThreads = {};
     this->_lobbies = {};
     this->_config = std::make_shared<rserv::ServerConfig>();
+    this->_httpServer = std::make_unique<rserv::HttpServer>(
+        [this]() { return this->getState() == 1; }
+    );
+
+    this->_httpServer->start();
 }
 
 rserv::Server::~Server() {
@@ -151,6 +156,7 @@ void rserv::Server::stop() {
     if (_network) {
         _network->stop();
     }
+    this->_httpServer->stop();
     this->setState(0);
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "[SERVER] Server stopped.",

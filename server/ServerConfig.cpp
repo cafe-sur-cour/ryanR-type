@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <string>
+#include <stdexcept>
 #include "ServerConfig.hpp"
 #include "Constants.hpp"
 
@@ -28,6 +29,9 @@ int rserv::ServerConfig::getState() const {
 
 
 void rserv::ServerConfig::setPort(uint16_t port) {
+    if (port == 8080) {
+        throw std::invalid_argument("Port 8080 is reserved for HTTP server");
+    }
     this->_port = port;
 }
 
