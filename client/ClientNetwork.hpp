@@ -128,7 +128,7 @@ class ClientNetwork {
         void redoServerEndpoint();
 
     protected:
-        std::pair<int, std::chrono::steady_clock::time_point> tryConnection(const int maxRetries, int retryCount, std::chrono::steady_clock::time_point lastRetryTime);
+        std::pair<int, std::chrono::steady_clock::time_point> tryConnection(const int maxRetries, std::chrono::steady_clock::time_point lastRetryTime);
         void handlePacketType(uint8_t type);
 
     private:
@@ -218,6 +218,7 @@ class ClientNetwork {
         std::unordered_map<ecs::Entity, std::string> _lastReceivedAnimationState;
 
         std::string _lobbyCode;
+        int _retryCount;
         bool _shouldConnect;
 
         std::vector<std::pair<std::string, std::string>> _leaderboardData;
