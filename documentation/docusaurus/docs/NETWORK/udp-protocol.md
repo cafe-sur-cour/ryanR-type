@@ -25,7 +25,6 @@ Payload starts at offset 11.
 - `0x01` CONNECTION_CLIENT: payload (8 bytes) — client metadata (version, requested name hash)
 - `0x02` ACCEPTATION: payload (1 byte) — assigned client slot
 - `0x04` EVENT: payload (5 bytes) — event id + params
-- `0x05` GAME_STATE: variable — delta-encoded entities
 
 ## ACK / Reliability
 

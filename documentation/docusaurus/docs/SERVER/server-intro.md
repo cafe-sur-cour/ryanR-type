@@ -67,7 +67,6 @@ The server implements the PSJM protocol, handling the following packet types:
 | Packet Type | Code | Description |
 |------------|------|-------------|
 | `ACCEPTATION` | 0x02 | Connection acceptance with assigned client ID |
-| `GAME_STATE` | 0x05 | Game state updates (20 FPS) |
 | `END_GAME` | 0x08 | Game end with winner information |
 | `CAN_START` | 0x09 | Signal to start player movement |
 | `SPAWN_ENTITY` | 0x0A | Entity spawn notification |
