@@ -13,6 +13,7 @@
 #include "DefaultPacketHandlers.hpp"
 #include "../../libs/Packet/serializer/BigEndianSerialization.hpp"
 #include "../../common/translationToECS.hpp"
+#include "../../common/constants.hpp"
 
 namespace common::packet {
 
@@ -218,9 +219,9 @@ static void registerGameStatePackers(
             pushUChar(packetData, payload.at(*i));
             *i += 1;
             while (*i + 2 < payload.size()
-                && !(payload.at(*i) == static_cast<uint64_t>('\r')
-                && payload.at(*i + 1) == static_cast<uint64_t>('\n')
-                && payload.at(*i + 2) == static_cast<uint64_t>('\0'))) {
+                && !(payload.at(*i) == static_cast<uint64_t>(constants::END_OFSTRING_ST)
+                && payload.at(*i + 1) == static_cast<uint64_t>(constants::END_OFSTRING_ND)
+                && payload.at(*i + 2) == static_cast<uint64_t>(constants::END_OFSTRING_TRD))) {
                 pushUChar(packetData, payload.at(*i));
                 *i += 1;
             }
@@ -256,9 +257,9 @@ static void registerGameStatePackers(
             pushUChar(packetData, payload.at(*i));
             *i += 1;
             while (*i + 2 < payload.size()
-                && !(payload.at(*i) == static_cast<uint64_t>('\r')
-                && payload.at(*i + 1) == static_cast<uint64_t>('\n')
-                && payload.at(*i + 2) == static_cast<uint64_t>('\0'))) {
+                && !(payload.at(*i) == static_cast<uint64_t>(constants::END_OFSTRING_ST)
+                && payload.at(*i + 1) == static_cast<uint64_t>(constants::END_OFSTRING_ND)
+                && payload.at(*i + 2) == static_cast<uint64_t>(constants::END_OFSTRING_TRD))) {
                 pushUChar(packetData, payload.at(*i));
                 *i += 1;
             }
@@ -530,10 +531,10 @@ static void registerGameStateUnpackers(
             unsigned int j = i + 1;
             while (j < payload.size()) {
                 char c = static_cast<char>(readUCharAt(payload, j));
-                if (c == '\r') {
+                if (c == constants::END_OFSTRING_ST) {
                     if (j + 2 < payload.size()
-                        && static_cast<char>(readUCharAt(payload, j + 1)) == '\n'
-                        && static_cast<char>(readUCharAt(payload, j + 2)) == '\0') {
+                        && static_cast<char>(readUCharAt(payload, j + 1)) == constants::END_OFSTRING_ND
+                        && static_cast<char>(readUCharAt(payload, j + 2)) == constants::END_OFSTRING_TRD) {
                         j += 3;
                         break;
                     }
@@ -544,9 +545,9 @@ static void registerGameStateUnpackers(
             for (char c : prefabName) {
                 vals.push_back(static_cast<uint64_t>(c));
             }
-            vals.push_back(static_cast<uint64_t>('\r'));
-            vals.push_back(static_cast<uint64_t>('\n'));
-            vals.push_back(static_cast<uint64_t>('\0'));
+            vals.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
+            vals.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
+            vals.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
             packet->setPayload(vals);
             return j - i;
         }
@@ -584,10 +585,10 @@ static void registerGameStateUnpackers(
             unsigned int j = i + 1;
             while (j < payload.size()) {
                 char c = static_cast<char>(readUCharAt(payload, j));
-                if (c == '\r') {
+                if (c == constants::END_OFSTRING_ST) {
                     if (j + 2 < payload.size()
-                        && static_cast<char>(readUCharAt(payload, j + 1)) == '\n'
-                        && static_cast<char>(readUCharAt(payload, j + 2)) == '\0') {
+                        && static_cast<char>(readUCharAt(payload, j + 1)) == constants::END_OFSTRING_ND
+                        && static_cast<char>(readUCharAt(payload, j + 2)) == constants::END_OFSTRING_TRD) {
                         j += 3;
                         break;
                     }
@@ -598,9 +599,9 @@ static void registerGameStateUnpackers(
             for (char c : state) {
                 vals.push_back(static_cast<uint64_t>(c));
             }
-            vals.push_back(static_cast<uint64_t>('\r'));
-            vals.push_back(static_cast<uint64_t>('\n'));
-            vals.push_back(static_cast<uint64_t>('\0'));
+            vals.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
+            vals.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
+            vals.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
             packet->setPayload(vals);
             return j - i;
         }

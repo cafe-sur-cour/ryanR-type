@@ -300,10 +300,10 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
     std::string data(client.second.begin() + HEADER_SIZE, client.second.end());
 
     std::string username = data.substr(0, 8);
-    username.erase(username.find_last_not_of('\0') + 1);
+    username.erase(username.find_last_not_of(constants::END_OFSTRING_TRD) + 1);
 
     std::string password = data.substr(8, 8);
-    password.erase(password.find_last_not_of('\0') + 1);
+    password.erase(password.find_last_not_of(constants::END_OFSTRING_TRD) + 1);
 
     if (username.empty() || password.empty()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -418,10 +418,10 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
     std::string data(client.second.begin() + HEADER_SIZE, client.second.end());
 
     std::string username = data.substr(0, 8);
-    username.erase(username.find_last_not_of('\0') + 1);
+    username.erase(username.find_last_not_of(constants::END_OFSTRING_TRD) + 1);
 
     std::string password = data.substr(8, 8);
-    password.erase(password.find_last_not_of('\0') + 1);
+    password.erase(password.find_last_not_of(constants::END_OFSTRING_TRD) + 1);
 
     if (username.empty() || password.empty()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
