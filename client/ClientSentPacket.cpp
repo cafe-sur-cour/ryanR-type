@@ -285,3 +285,36 @@ void ClientNetwork::sendRequestProfilePacket() {
     this->_sequenceNumber++;
     this->_expectingProfileResponse = true;
 }
+
+void ClientNetwork::sendMessageToServer(const std::string &message) {
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
+    }
+
+    std::vector<std::vector<uint64_t>> formatMessage;
+    for (size_t i = 0; i < message.size(); i += 8) {
+        std::string _tempMessage;
+        for (size_t j = 0; j < 8 && (i + j < message.size()); ++j) {
+            char c = message[i + j];
+            _tempMessage += c;
+        }
+        std::vector<uint64_t> formattedPart = this->_packet->formatString(_tempMessage);
+        formatMessage.push_back(formattedPart);
+    }
+
+    std::vector<uint64_t> payload;
+    for (const auto &part : formatMessage) {
+        payload.insert(payload.end(), part.begin(), part.end());
+    }
+
+    std::vector<uint8_t> packet = this->_packet->pack(this->_idClient,
+        this->_sequenceNumber, constants::PACKET_NEW_CHAT, payload);
+
+    if (!this->_network->sendTo(*this->_serverEndpoint, packet)) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Failed to send chat message to server",
+            debug::debugType::NETWORK,
+            debug::debugLevel::ERROR);
+    }
+}
