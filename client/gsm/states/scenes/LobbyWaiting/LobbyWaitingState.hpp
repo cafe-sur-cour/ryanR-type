@@ -49,6 +49,9 @@ private:
     std::shared_ptr<ui::Text> _crossfireLabel;
     std::shared_ptr<ui::Button> _crossfireButton;
 
+    std::shared_ptr<ui::UILayout> _bottomRightLayout;
+    std::shared_ptr<ui::Button> _chatButton;
+
     bool _isLobbyMaster;
 };
 
