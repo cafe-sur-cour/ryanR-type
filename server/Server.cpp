@@ -24,6 +24,7 @@
 #include "../common/Error/ServerErrror.hpp"
 #include "../common/debug.hpp"
 #include "../common/constants.hpp"
+#include "../common/interfaces/IPacketManager.hpp"
 #include "Signal.hpp"
 
 rserv::Server::Server() :
@@ -273,6 +274,12 @@ void rserv::Server::processIncomingPackets() {
         this->processProfileRequest(received.first);
     } else if (this->_packet->getType() == constants::PACKET_REQUEST_GAME_RULES_UPDATE) {
         this->processRequestGameRulesUpdate(std::make_pair(received.first, received.second));
+    } else if (this->_packet->getType() == constants::PACKET_DISC) {
+        uint8_t idClient = this->_packet->getIdClient();
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Received disconnection packet from client " + std::to_string(idClient),
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+        this->processDisconnections(idClient);
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "
