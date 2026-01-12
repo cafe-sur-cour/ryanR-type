@@ -45,12 +45,6 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
 
     this->_clientsReady = std::map<uint8_t, bool>();
     this->_clientToEntity = std::map<uint8_t, ecs::Entity>();
-    this->_clientLastHeartbeat = std::map<uint8_t, std::chrono::steady_clock::time_point>();
-
-    auto now = std::chrono::steady_clock::now();
-    for (const auto& client : this->_clients) {
-        this->_clientLastHeartbeat[std::get<0>(client)] = now;
-    }
 
     this->_packet = nullptr;
     this->_sequenceNumber = 0;
@@ -165,19 +159,6 @@ void rserv::Lobby::addClient(
 ) {
     std::lock_guard<std::mutex> lock(_clientsMutex);
     this->_clients.push_back(client);
-    _clientLastHeartbeat[std::get<0>(client)] = std::chrono::steady_clock::now();
-}
-
-void rserv::Lobby::resetClientHeartbeats() {
-    std::lock_guard<std::mutex> lock(_clientsMutex);
-    auto now = std::chrono::steady_clock::now();
-    for (const auto& client : this->_clients) {
-        uint8_t clientId = std::get<0>(client);
-        _clientLastHeartbeat[clientId] = now;
-    }
-    debug::Debug::printDebug(this->getIsDebug(),
-        "[LOBBY] Reset heartbeats for all clients",
-        debug::debugType::NETWORK, debug::debugLevel::INFO);
 }
 
 void rserv::Lobby::createPlayerEntityForClient(uint8_t clientId) {
@@ -375,8 +356,6 @@ void rserv::Lobby::processIncomingPackets() {
     this->_packet->unpack(received.second);
     uint8_t clientId = this->_packet->getIdClient();
 
-    _clientLastHeartbeat[clientId] = std::chrono::steady_clock::now();
-
     if (this->_packet->getType() == constants::PACKET_EVENT) {
         this->processEvents(clientId);
     } else if (this->_packet->getType() == constants::PACKET_WHOAMI) {
@@ -401,7 +380,6 @@ bool rserv::Lobby::processDisconnections(uint8_t idClient) {
                 std::remove(this->_clients.begin(), this->_clients.end(), client),
                 this->_clients.end());
             this->_clientToEntity.erase(idClient);
-            this->_clientLastHeartbeat.erase(idClient);
             debug::Debug::printDebug(this->getIsDebug(),
                 "Client " + std::to_string(idClient)
                 + " disconnected and removed from the lobby",
@@ -1095,36 +1073,6 @@ void rserv::Lobby::networkLoop() {
     while (_running && !Signal::stopFlag) {
         if (this->_running == false) {
             break;
-        }
-
-        auto now = std::chrono::steady_clock::now();
-        std::vector<uint8_t> timedOutClients;
-
-        {
-            std::lock_guard<std::mutex> lock(_clientsMutex);
-            for (const auto& client : this->_clients) {
-                uint8_t clientId = std::get<0>(client);
-                auto it = _clientLastHeartbeat.find(clientId);
-
-                if (it != _clientLastHeartbeat.end()) {
-                    auto timeSinceLastHeartbeat =
-                    std::chrono::duration_cast<std::chrono::seconds>(
-                        now - it->second).count();
-
-                    if (timeSinceLastHeartbeat > constants::CLIENT_TIMEOUT_SECONDS) {
-                        debug::Debug::printDebug(this->getIsDebug(),
-                            "Client " + std::to_string(clientId) +
-                                " timed out (no activity for "
-                                + std::to_string(timeSinceLastHeartbeat) + "s)",
-                            debug::debugType::NETWORK, debug::debugLevel::WARNING);
-                        timedOutClients.push_back(clientId);
-                    }
-                }
-            }
-        }
-
-        for (uint8_t clientId : timedOutClients) {
-            this->processDisconnections(clientId);
         }
 
         {

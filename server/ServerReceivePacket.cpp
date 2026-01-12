@@ -63,6 +63,7 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
                 std::remove(this->_clients.begin(), this->_clients.end(), client),
                 this->_clients.end());
             this->_nextClientId--;
+            this->_clientLastHeartbeat.erase(idClient);
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "Client " + std::to_string(idClient)
                 + " disconnected and removed from server",
@@ -371,7 +372,6 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
 
     this->canStartPacket(endpoints);
     lobby->gameRulesPacket();
-    lobby->resetClientHeartbeats();
     lobby->startNetworkThread();
     lobby->startGameThread();
     debug::Debug::printDebug(this->_config->getIsDebug(),

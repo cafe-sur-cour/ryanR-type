@@ -23,7 +23,7 @@ namespace constants {
     constexpr uint8_t ID_SERVER = 0;
     constexpr uint8_t BITMASK_INT = 32;
     constexpr int MAX_CLIENT = 4;
-    constexpr int CLIENT_TIMEOUT_SECONDS = 10;
+    constexpr int CLIENT_TIMEOUT_SECONDS = 15;
 
     /* HTTP Server */
     const std::string DEFAULT_HTTP_PASSWORD = "defaultpassword";

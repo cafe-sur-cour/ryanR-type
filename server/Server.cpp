@@ -39,6 +39,7 @@ rserv::Server::Server() :
     this->_packet = nullptr;
     this->_lobbyThreads = {};
     this->_lobbies = {};
+    this->_clientLastHeartbeat = {};
     this->_config = std::make_shared<rserv::ServerConfig>();
     this->_httpServer = std::make_unique<rserv::HttpServer>(
         [this]() { return this->getState() == 1; },
@@ -113,6 +114,8 @@ void rserv::Server::start() {
     Signal::setupSignalHandlers();
     while (this->getState() == 1 && !Signal::stopFlag) {
         this->processIncomingPackets();
+
+        this->checkClientTimeouts();
 
         this->cleanupClosedLobbies();
 
@@ -205,6 +208,39 @@ void rserv::Server::setNetwork(std::shared_ptr<net::INetwork> network) {
     _network = network;
 }
 
+void rserv::Server::checkClientTimeouts() {
+    auto now = std::chrono::steady_clock::now();
+    std::vector<uint8_t> timedOutClients;
+
+    {
+        std::lock_guard<std::mutex> lock(_clientsMutex);
+        for (const auto& client : this->_clients) {
+            uint8_t clientId = std::get<0>(client);
+            auto it = _clientLastHeartbeat.find(clientId);
+
+            if (it != _clientLastHeartbeat.end()) {
+                auto timeSinceLastHeartbeat =
+                std::chrono::duration_cast<std::chrono::seconds>(
+                    now - it->second).count();
+
+                if (timeSinceLastHeartbeat > constants::CLIENT_TIMEOUT_SECONDS) {
+                    debug::Debug::printDebug(this->_config->getIsDebug(),
+                        "Client " + std::to_string(clientId) +
+                            " timed out (no healthcheck for "
+                            + std::to_string(timeSinceLastHeartbeat) + "s)",
+                        debug::debugType::NETWORK, debug::debugLevel::WARNING);
+                    timedOutClients.push_back(clientId);
+                }
+            }
+        }
+    }
+
+    for (uint8_t clientId : timedOutClients) {
+        this->_clientLastHeartbeat.erase(clientId);
+        this->processDisconnections(clientId);
+    }
+}
+
 void rserv::Server::cleanupClosedLobbies() {
     std::vector<std::shared_ptr<Lobby>> activeLobbies;
 
@@ -250,10 +286,18 @@ void rserv::Server::processIncomingPackets() {
         this->processMasterStart(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_EVENT) {
         uint8_t idClient = this->_packet->getIdClient();
+        auto payload = this->_packet->getPayload();
+        constants::EventType eventType = constants::EventType::UP;
+        if (payload.size() >= 1) {
+            eventType = static_cast<constants::EventType>(payload.at(0));
+            if (eventType == constants::EventType::HEALTHCHECK) {
+                this->_clientLastHeartbeat[idClient] = std::chrono::steady_clock::now();
+            }
+        }
         auto it = this->_clientToLobby.find(idClient);
         if (it != this->_clientToLobby.end()) {
             it->second->enqueuePacket(received);
-        } else {
+        } else if (eventType != constants::EventType::HEALTHCHECK) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER] Received event packet from unknown client: " +
                 std::to_string(idClient),
@@ -312,6 +356,7 @@ void rserv::Server::onClientConnected(uint8_t idClient) {
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "Client " + std::to_string(idClient) + " connected",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
+    this->_clientLastHeartbeat[idClient] = std::chrono::steady_clock::now();
 }
 
 void rserv::Server::onClientDisconnected(uint8_t idClient) {
