@@ -102,6 +102,8 @@ class ClientNetwork {
 
         void addToEventQueue(const NetworkEvent &event);
 
+        void clearEntitiesAndMappings();
+
         bool isConnected() const;
         bool isReady() const;
 

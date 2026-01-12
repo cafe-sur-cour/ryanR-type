@@ -435,6 +435,8 @@ void ClientNetwork::handleLobbyConnectValue() {
                 debug::debugType::NETWORK,
                 debug::debugLevel::INFO);
         } else {
+            // Clear any leftover entities when connecting to a new lobby
+            this->clearEntitiesAndMappings();
             debug::Debug::printDebug(this->_isDebug,
                 "[CLIENT] Successfully connected to lobby",
                 debug::debugType::NETWORK,

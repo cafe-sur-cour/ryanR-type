@@ -1051,6 +1051,30 @@ void rserv::Lobby::createPlayerEntities() {
 void rserv::Lobby::stop() {
     _running.store(false, std::memory_order_release);
 
+    // Clean up all entities when stopping the lobby
+    if (this->_resourceManager) {
+        auto registry = this->_resourceManager->get<ecs::Registry>();
+        if (registry) {
+            // Destroy all entities
+            registry->clearAllEntities();
+            debug::Debug::printDebug(this->getIsDebug(),
+                "[LOBBY] Cleared all entities from registry",
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+        }
+
+        // Reset GSM
+        if (this->_gsm) {
+            this->_gsm = nullptr;
+        }
+
+        // Clear client to entity mapping
+        this->_clientToEntity.clear();
+
+        // Reset game state
+        this->_gameStarted = false;
+        this->_playerEntitiesCreated = false;
+    }
+
     if (this->_networkThread.joinable()) {
         this->_networkThread.join();
     }
