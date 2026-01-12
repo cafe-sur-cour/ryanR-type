@@ -474,7 +474,8 @@ bool rserv::Server::profilePacket(const net::INetworkEndpoint &endpoint) {
     return true;
 }
 
-bool rserv::Server::newChatMessagePacket(const net::INetworkEndpoint &endpoint, std::vector<uint8_t> message) {
+bool rserv::Server::newChatMessagePacket(const net::INetworkEndpoint &endpoint,
+    std::vector<uint8_t> message) {
     if (!this->_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Network not initialized",
