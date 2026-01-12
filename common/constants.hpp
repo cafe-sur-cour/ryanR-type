@@ -37,7 +37,7 @@ namespace constants {
         SHOOT = 4,
         STOP = 5,
         FORCE = 6,
-        NO_OP = 7,
+        HEALTHCHECK = 7,
     };
     constexpr int MAX_RETRY_CONNECTIONS = 3;
     /* Paths */

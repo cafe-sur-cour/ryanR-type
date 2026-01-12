@@ -22,6 +22,8 @@
 #include <map>
 #include <memory>
 #include <thread>
+#include <chrono>
+#include <mutex>
 
 #include "LobbyStruct.hpp"
 #include "Lobby.hpp"
@@ -94,6 +96,7 @@ namespace rserv {
             bool processProfileRequest(std::shared_ptr<net::INetworkEndpoint> client);
             bool processRequestGameRulesUpdate(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> payload);
             void cleanupClosedLobbies();
+            void checkClientTimeouts();
 
             /* Sent Packet Handling */
             bool connectionPacket(const net::INetworkEndpoint& endpoint);
@@ -127,6 +130,7 @@ namespace rserv {
             uint8_t _nextClientId;
             uint32_t _sequenceNumber;
             uint32_t _nextEntityId;
+            std::mutex _clientsMutex;
 
             /* Lobby handling variables */
             std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> _clients;
@@ -135,6 +139,9 @@ namespace rserv {
             std::vector<std::shared_ptr<Lobby>> _lobbies;
             std::map<uint8_t, std::shared_ptr<Lobby>> _clientToLobby;
             std::unique_ptr<HttpServer> _httpServer;
+
+            /* Healthcheck variables */
+            std::map<uint8_t, std::chrono::steady_clock::time_point> _clientLastHeartbeat;
 
     };
 }  // namespace rserv

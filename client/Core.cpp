@@ -45,6 +45,7 @@ Core::Core() {
     this->_clientNetwork->setGameStateMachine(this->_gsm);
     this->_resourceManager->add<ecs::Registry>(this->_registry);
     this->_resourceManager->add<EntityPrefabManager>(entityPrefabManager);
+    this->_lastHealthcheckTime = std::chrono::steady_clock::now();
 }
 
 Core::~Core() {
@@ -111,6 +112,19 @@ void Core::run() {
         auto currentTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<float> deltaTime = currentTime - previousTime;
         previousTime = currentTime;
+
+        if (this->_clientNetwork && this->_clientNetwork->isConnected()) {
+            auto now = std::chrono::steady_clock::now();
+            auto timeSinceLastHealthcheck = std::chrono::duration_cast<
+                std::chrono::duration<float>>(now - _lastHealthcheckTime).count();
+            if (timeSinceLastHealthcheck >= _healthcheckInterval) {
+                NetworkEvent healthcheckEvent;
+                healthcheckEvent.eventType = constants::EventType::HEALTHCHECK;
+                healthcheckEvent.depth = 0.0;
+                this->_clientNetwork->addToEventQueue(healthcheckEvent);
+                _lastHealthcheckTime = now;
+            }
+        }
 
         this->_resourceManager->get<gfx::IWindow>()->clear();
         this->_gsm->update(deltaTime.count());

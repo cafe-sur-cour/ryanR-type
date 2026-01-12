@@ -117,7 +117,6 @@ class Lobby {
             std::string _lobbyCode;
             std::map<uint8_t, bool> _clientsReady;
             std::map<uint8_t, ecs::Entity> _clientToEntity;
-            std::map<uint8_t, std::chrono::steady_clock::time_point> _clientLastHeartbeat;
             std::shared_ptr<pm::IPacketManager> _packet;
             uint32_t _sequenceNumber;
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> _eventQueue;
