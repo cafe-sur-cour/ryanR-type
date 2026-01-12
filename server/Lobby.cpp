@@ -411,9 +411,8 @@ bool rserv::Lobby::processDisconnections(uint8_t idClient) {
 
             if (shouldClose) {
                 debug::Debug::printDebug(this->getIsDebug(),
-                    "All clients disconnected. Closing lobby " + this->_lobbyCode,
+                    "All clients disconnected. Lobby will close.",
                     debug::debugType::NETWORK, debug::debugLevel::INFO);
-                this->stop();
             }
             return true;
         }
