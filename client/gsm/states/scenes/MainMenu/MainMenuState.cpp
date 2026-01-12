@@ -18,7 +18,6 @@
 #include "../../../../constants.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../../common/InputMapping/IInputProvider.hpp"
-#include "../Infinite/InfiniteState.hpp"
 #include "../Settings/SettingsState.hpp"
 #include "../Replay/ReplayState.hpp"
 #include "../LobbyWaiting/LobbyWaitingState.hpp"
@@ -45,6 +44,12 @@ MainMenuState::MainMenuState(
 
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
+
+    _uiManager->setCursorCallback([this](bool isHovering) {
+        if (_resourceManager->has<gfx::IWindow>()) {
+            _resourceManager->get<gfx::IWindow>()->setCursor(isHovering);
+        }
+    });
 
     auto config = _resourceManager->get<SettingsConfig>();
     _uiManager->setGlobalScale(config->getUIScale());
@@ -319,16 +324,26 @@ MainMenuState::MainMenuState(
     _disconnectButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
     _disconnectButton->setOnRelease([this]() {
         auto settingsConfig = this->_resourceManager->get<SettingsConfig>();
+        auto network = this->_resourceManager->get<ClientNetwork>();
         if (settingsConfig) {
             settingsConfig->setUsername("");
             settingsConfig->saveSettings();
         }
+        if (network) {
+            network->setName("");
+            network->setLobbyCode("");
+        }
     });
     _disconnectButton->setOnActivated([this]() {
         auto settingsConfig = this->_resourceManager->get<SettingsConfig>();
+        auto network = this->_resourceManager->get<ClientNetwork>();
         if (settingsConfig) {
             settingsConfig->setUsername("");
             settingsConfig->saveSettings();
+        }
+        if (network) {
+            network->setName("");
+            network->setLobbyCode("");
         }
     });
 
@@ -338,25 +353,6 @@ MainMenuState::MainMenuState(
 
     _topLeftLayout->addElement(_registerButton);
     _topLeftLayout->addElement(_loginButton);
-    _infiniteButton = std::make_shared<ui::Button>(_resourceManager);
-    _infiniteButton->setText("Infinite Scene");
-    _infiniteButton->setSize(math::Vector2f(400.f, 108.f));
-    _infiniteButton->setNormalColor(colors::BUTTON_PRIMARY);
-    _infiniteButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
-    _infiniteButton->setFocusedColor(colors::BUTTON_PRIMARY_PRESSED);
-    _infiniteButton->setOnRelease([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<InfiniteState>(stateMachine,
-                this->_resourceManager));
-        }
-    });
-    _infiniteButton->setOnActivated([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_shared<InfiniteState>(stateMachine,
-                this->_resourceManager));
-        }
-    });
-    _rightLayout->addElement(_infiniteButton);
 
     _uiManager->addElement(_mainMenuLayout);
     _uiManager->addElement(_rightLayout);
@@ -386,24 +382,7 @@ void MainMenuState::update(float deltaTime) {
         return;
     }
 
-    bool isTextInputFocused = false;
-    auto navManager = _uiManager->getNavigationManager();
-    if (navManager) {
-        auto focusedElement = navManager->getFocusedElement();
-        if (focusedElement) {
-            auto textInput = std::dynamic_pointer_cast<ui::TextInput>(focusedElement);
-            isTextInputFocused = (textInput != nullptr);
-        }
-    }
-
-    bool shouldBlockKeyboardInput = isTextInputFocused &&
-        (eventResult == gfx::EventType::UP ||
-         eventResult == gfx::EventType::DOWN ||
-         eventResult == gfx::EventType::TAB);
-
-    if (!shouldBlockKeyboardInput) {
-        _uiManager->handleKeyboardInput(eventResult);
-    }
+    _uiManager->handleKeyboardInput(eventResult);
 
     if (eventResult == gfx::EventType::TEXT_INPUT) {
         std::string textInput = _resourceManager->get<gfx::IEvent>()->getLastTextInput();
@@ -419,13 +398,13 @@ void MainMenuState::update(float deltaTime) {
     _uiManager->handleMouseInput(mousePos, mousePressed);
 
     bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
-    _resourceManager->get<gfx::IWindow>()->setCursor(isHoveringUI);
 
+    auto navManager = _uiManager->getNavigationManager();
     if (mousePressed && !isHoveringUI && navManager) {
         navManager->clearFocus();
     }
 
-    if (_resourceManager->has<ecs::IInputProvider>() && !isTextInputFocused) {
+    if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
     }
@@ -484,7 +463,7 @@ void MainMenuState::updateUIStatus() {
 
     if (network->getName().empty()) {
         if (config->getUsername().empty()) {
-            _usernameButton->setText("Not connected to server");
+            _usernameButton->setText("Not logged in");
         } else {
             _usernameButton->setText(config->getUsername() + " (not logged in)");
         }

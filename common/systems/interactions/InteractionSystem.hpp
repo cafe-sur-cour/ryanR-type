@@ -11,6 +11,7 @@
 #include "../base/ASystem.hpp"
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace ecs {
     class Registry;
@@ -30,6 +31,11 @@ class InteractionSystem : public ASystem {
         ) override;
 
     private:
+        std::vector<std::string> filterDamageActions(
+            const std::vector<std::string>& actions,
+            std::shared_ptr<Registry> registry,
+            Entity targetEntity
+        );
 };
 
 }  // namespace ecs

@@ -43,7 +43,7 @@ class Lobby {
         public:
             Lobby(std::shared_ptr<net::INetwork> network,
                 std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> lobbyPlayerInfo,
-                std::string lobbyCode, bool debug);
+                std::string lobbyCode, bool debug, int64_t tps);
             ~Lobby();
             void stop();
 
@@ -55,9 +55,16 @@ class Lobby {
             void setIsDebug(bool debug);
             bool getIsDebug() const;
 
+            std::shared_ptr<ResourceManager> getResourceManager() const;
+
             std::vector<uint8_t> getConnectedClients() const;
             std::vector<std::shared_ptr<net::INetworkEndpoint>> getConnectedClientEndpoints() const;
             size_t getClientCount() const;
+            bool isRunning() const;
+            void addClient(std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string> client);
+            void resetClientHeartbeats();
+            void createPlayerEntityForClient(uint8_t clientId);
+            void syncExistingEntitiesToClient(std::shared_ptr<net::INetworkEndpoint> clientEndpoint);
             std::string getLobbyCode() const;
             std::shared_ptr<net::INetwork> getNetwork() const;
 
@@ -81,6 +88,7 @@ class Lobby {
 
             bool levelCompletePacket();
             bool nextLevelPacket();
+            bool gameRulesPacket();
 
             bool isGameStarted() const;
             bool allClientsReady() const;
@@ -98,6 +106,7 @@ class Lobby {
 
         private:
             bool _isDebug;
+            int64_t _tps;
 
             /* Network handling variable*/
             std::shared_ptr<net::INetwork> _network;
@@ -105,6 +114,7 @@ class Lobby {
             std::string _lobbyCode;
             std::map<uint8_t, bool> _clientsReady;
             std::map<uint8_t, ecs::Entity> _clientToEntity;
+            std::map<uint8_t, std::chrono::steady_clock::time_point> _clientLastHeartbeat;
             std::shared_ptr<pm::IPacketManager> _packet;
             uint32_t _sequenceNumber;
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> _eventQueue;
@@ -112,6 +122,7 @@ class Lobby {
             /* Packet queue for incoming packets */
             std::queue<std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>>> _incomingPackets;
             std::mutex _packetMutex;
+            mutable std::mutex _clientsMutex;
 
             /* ECS/Game handling variable */
             bool _gameStarted;

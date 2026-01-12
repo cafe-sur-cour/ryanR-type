@@ -25,7 +25,7 @@ class HealthSystem : public ASystem {
         ) override;
 
     private:
-        void _handleDamageUpdates(std::shared_ptr<Registry> registry);
+        void _handleDamageUpdates(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<Registry> registry);
         void _handleHealthUpdates(std::shared_ptr<Registry> registry);
 };
 

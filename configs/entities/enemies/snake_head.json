@@ -11,6 +11,7 @@
         "VelocityComponent": { "target": "both" },
         "SpeedComponent": { "target": "both", "speed": 120.0 },
         "HealthComponent": { "target": "both", "health": 200.0 },
+        "DamageCooldownComponent": { "target": "both" },
         "ScoreValueComponent": { "target": "both", "scoreValue": 500 },
         "ScriptingComponent": {
             "target": "server",

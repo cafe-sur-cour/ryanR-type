@@ -21,6 +21,7 @@
 #include "../../../../../common/debug.hpp"
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../colors.hpp"
+#include "../../../../../common/GameRules.hpp"
 
 namespace gsm {
 
@@ -31,6 +32,12 @@ LobbyWaitingState::LobbyWaitingState(
 ) : AGameState(gsm, resourceManager), _isLobbyMaster(isLobbyMaster) {
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
+
+    _uiManager->setCursorCallback([this](bool isHovering) {
+        if (_resourceManager->has<gfx::IWindow>()) {
+            _resourceManager->get<gfx::IWindow>()->setCursor(isHovering);
+        }
+    });
 
     auto config = _resourceManager->get<SettingsConfig>();
     if (config) {
@@ -56,6 +63,121 @@ LobbyWaitingState::LobbyWaitingState(
     }
 
     _uiManager->addElement(_centerLayout);
+
+    ui::LayoutConfig topLeftConfig;
+    topLeftConfig.direction = ui::LayoutDirection::Vertical;
+    topLeftConfig.alignment = ui::LayoutAlignment::Start;
+    topLeftConfig.spacing = 10.0f;
+    topLeftConfig.padding = math::Vector2f(0.0f, 0.0f);
+    topLeftConfig.anchorX = ui::AnchorX::Left;
+    topLeftConfig.anchorY = ui::AnchorY::Top;
+    topLeftConfig.offset = math::Vector2f(20.0f, 20.0f);
+
+    _topLeftLayout = std::make_shared<ui::UILayout>(_resourceManager, topLeftConfig);
+    _topLeftLayout->setSize(math::Vector2f(200.f, 100.f));
+
+    auto gameRules = _resourceManager->get<GameRules>();
+
+    _gamemodeLabel = std::make_shared<ui::Text>(_resourceManager);
+    _gamemodeLabel->setText("Gamemode");
+    _gamemodeLabel->setSize(math::Vector2f(200.f, 30.f));
+    _gamemodeLabel->setTextColor(gfx::color_t{255, 255, 255, 255});
+    _gamemodeLabel->setFontSize(24);
+    _topLeftLayout->addElement(_gamemodeLabel);
+
+    _gamemodeButton = std::make_shared<ui::Button>(_resourceManager);
+    std::string gamemodeText = "Classic";
+    if (gameRules) {
+        GameRulesNS::Gamemode g = gameRules->getGamemode();
+        if (g == GameRulesNS::Gamemode::INFINITE_MODE) gamemodeText = "Infinite";
+    }
+    _gamemodeButton->setText(gamemodeText);
+    _gamemodeButton->setSize(math::Vector2f(150.f, 50.f));
+    _gamemodeButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _gamemodeButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _gamemodeButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _gamemodeButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->sendRequestGameRulesUpdate(0, 0);
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Requested gamemode change",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
+    });
+    _topLeftLayout->addElement(_gamemodeButton);
+
+    _difficultyLabel = std::make_shared<ui::Text>(_resourceManager);
+    _difficultyLabel->setText("Difficulty");
+    _difficultyLabel->setSize(math::Vector2f(200.f, 30.f));
+    _difficultyLabel->setTextColor(gfx::color_t{255, 255, 255, 255});
+    _difficultyLabel->setFontSize(24);
+    _topLeftLayout->addElement(_difficultyLabel);
+
+    _difficultyButton = std::make_shared<ui::Button>(_resourceManager);
+    std::string diffText = "Normal";
+    if (gameRules) {
+        GameRulesNS::Difficulty d = gameRules->getDifficulty();
+        if (d == GameRulesNS::Difficulty::EASY) diffText = "Easy";
+        else if (d == GameRulesNS::Difficulty::HARD) diffText = "Hard";
+    }
+    _difficultyButton->setText(diffText);
+    _difficultyButton->setSize(math::Vector2f(150.f, 50.f));
+    _difficultyButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _difficultyButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _difficultyButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _difficultyButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->sendRequestGameRulesUpdate(1, 0);
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Requested game rules change (difficulty)",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
+    });
+    _topLeftLayout->addElement(_difficultyButton);
+
+    _crossfireLabel = std::make_shared<ui::Text>(_resourceManager);
+    _crossfireLabel->setText("Crossfire");
+    _crossfireLabel->setSize(math::Vector2f(200.f, 30.f));
+    _crossfireLabel->setTextColor(gfx::color_t{255, 255, 255, 255});
+    _crossfireLabel->setFontSize(24);
+    _topLeftLayout->addElement(_crossfireLabel);
+
+    _crossfireButton = std::make_shared<ui::Button>(_resourceManager);
+    std::string crossfireText = "No";
+    if (gameRules) {
+        crossfireText = gameRules->getCrossfire() ? "Yes" : "No";
+    }
+    _crossfireButton->setText(crossfireText);
+    _crossfireButton->setSize(math::Vector2f(150.f, 50.f));
+    _crossfireButton->setNormalColor(colors::BUTTON_PRIMARY);
+    _crossfireButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
+    _crossfireButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
+    _crossfireButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->sendRequestGameRulesUpdate(2, 0);
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Requested crossfire toggle",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
+    });
+    _topLeftLayout->addElement(_crossfireButton);
+
+    _uiManager->addElement(_topLeftLayout);
+
+    ui::LayoutConfig bottomRightConfig;
+    bottomRightConfig.direction = ui::LayoutDirection::Horizontal;
+    bottomRightConfig.alignment = ui::LayoutAlignment::End;
+    bottomRightConfig.spacing = 10.0f;
+    bottomRightConfig.padding = math::Vector2f(0.0f, 0.0f);
+    bottomRightConfig.anchorX = ui::AnchorX::Right;
+    bottomRightConfig.anchorY = ui::AnchorY::Bottom;
+    bottomRightConfig.offset = math::Vector2f(-20.0f, -20.0f);
 }
 
 void LobbyWaitingState::setupLobbyMasterUI() {
@@ -156,9 +278,6 @@ void LobbyWaitingState::update(float deltaTime) {
 
     _uiManager->handleMouseInput(mousePos, mousePressed);
 
-    bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
-    _resourceManager->get<gfx::IWindow>()->setCursor(isHoveringUI);
-
     if (_resourceManager->has<ecs::IInputProvider>()) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         _uiManager->handleNavigationInputs(inputProvider, deltaTime);
@@ -196,9 +315,29 @@ void LobbyWaitingState::updateUIStatus() {
         }
     }
 
-    // Check if we should transition to another state
-    // This could be based on game start signal from server
-    // For now, we'll stay in this state until manually transitioned
+    if (_gamemodeButton && _resourceManager->has<GameRules>()) {
+        auto gameRules = _resourceManager->get<GameRules>();
+        GameRulesNS::Gamemode g = gameRules->getGamemode();
+        std::string gamemodeText =
+            g == GameRulesNS::Gamemode::CLASSIC ? "Classic" : "Infinite";
+        _gamemodeButton->setText(gamemodeText);
+    }
+
+    if (_difficultyButton && _resourceManager->has<GameRules>()) {
+        auto gameRules = _resourceManager->get<GameRules>();
+        GameRulesNS::Difficulty d = gameRules->getDifficulty();
+        std::string diffText = "Normal";
+        if (d == GameRulesNS::Difficulty::EASY) diffText = "Easy";
+        else if (d == GameRulesNS::Difficulty::HARD) diffText = "Hard";
+
+        _difficultyButton->setText(diffText);
+    }
+
+    if (_crossfireButton && _resourceManager->has<GameRules>()) {
+        auto gameRules = _resourceManager->get<GameRules>();
+        std::string crossfireText = gameRules->getCrossfire() ? "Yes" : "No";
+        _crossfireButton->setText(crossfireText);
+    }
 }
 
 void LobbyWaitingState::exit() {
@@ -209,6 +348,13 @@ void LobbyWaitingState::exit() {
     _statusText.reset();
     _startGameButton.reset();
     _centerLayout.reset();
+    _gamemodeLabel.reset();
+    _gamemodeButton.reset();
+    _difficultyLabel.reset();
+    _difficultyButton.reset();
+    _crossfireLabel.reset();
+    _crossfireButton.reset();
+    _topLeftLayout.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
