@@ -37,10 +37,9 @@
 using namespace rserv;
 using namespace ecs;
 
-// Test class to expose protected convert methods
 class TestLobby : public Lobby {
 public:
-    TestLobby() : Lobby(nullptr, {}, "test", true) {}
+    TestLobby() : Lobby(nullptr, {}, "test", true, 30) {}
 
     using Lobby::convertTagComponent;
     using Lobby::convertTransformComponent;
