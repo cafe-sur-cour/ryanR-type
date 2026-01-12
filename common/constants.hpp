@@ -306,6 +306,7 @@ namespace constants {
     const std::string ONINTERACT_FUNCTION = "OnInteract";
     const std::string  ACTIVATE_OR_DEACTIVATE_FORCE_FUNCTION = "ActivateOrDeactivateForce";
     const std::string ADD_FORCE_LEVEL_FUNCTION = "addForceLevel";
+
     /* Constants for Scripting API */
     const std::string PRINT_FUNCTION = "print";
     const std::string CREATE_MOVE_INTENT_FUNCTION = "createMoveIntent";
