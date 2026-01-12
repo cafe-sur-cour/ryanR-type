@@ -46,13 +46,26 @@ bool rserv::Server::processConnections(std::pair<std::shared_ptr<net::INetworkEn
 bool rserv::Server::processDisconnections(uint8_t idClient) {
     for (auto &client : this->_clients) {
         if (std::get<0>(client) == idClient) {
+            if (this->_clientToLobby.find(idClient) != this->_clientToLobby.end()) {
+                auto lobby = this->_clientToLobby[idClient];
+                if (lobby) {
+                    lobby->processDisconnections(idClient);
+                }
+                this->_clientToLobby.erase(idClient);
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "Client " + std::to_string(idClient) + " removed from lobby",
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+                this->cleanupClosedLobbies();
+            }
+
             this->_clients.erase(
                 std::remove(this->_clients.begin(), this->_clients.end(), client),
                 this->_clients.end());
             this->_nextClientId--;
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "Client " + std::to_string(idClient)
-                + " disconnected and removed from the lobby",
+                + " disconnected and removed from server",
                 debug::debugType::NETWORK, debug::debugLevel::INFO);
             return true;
         }

@@ -206,27 +206,18 @@ void rserv::Server::setNetwork(std::shared_ptr<net::INetwork> network) {
 }
 
 void rserv::Server::cleanupClosedLobbies() {
-    auto it = this->_lobbies.begin();
-    while (it != this->_lobbies.end()) {
-        if (it->get() && it->get()->getClientCount() == 0 && !it->get()->isRunning()) {
-            debug::Debug::printDebug(this->_config->getIsDebug(),
-                "[SERVER] Cleaning up closed lobby: " + it->get()->getLobbyCode(),
-                debug::debugType::NETWORK, debug::debugLevel::INFO);
+    std::vector<std::shared_ptr<Lobby>> activeLobbies;
 
-            auto clientIt = this->_clientToLobby.begin();
-            while (clientIt != this->_clientToLobby.end()) {
-                if (clientIt->second == *it) {
-                    clientIt = this->_clientToLobby.erase(clientIt);
-                } else {
-                    ++clientIt;
-                }
-            }
-
-            it = this->_lobbies.erase(it);
+    for (const auto& lobby : this->_lobbies) {
+        if (lobby && lobby->isRunning()) {
+            activeLobbies.push_back(lobby);
         } else {
-            ++it;
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Removing closed lobby from active lobbies list",
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
         }
     }
+    this->_lobbies = activeLobbies;
 }
 
 void rserv::Server::processIncomingPackets() {
@@ -401,7 +392,6 @@ std::map<std::string, int> rserv::Server::loadUserStats(const std::string& usern
         if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
             user[constants::USERNAME_JSON_WARD].is_string() &&
                 user[constants::USERNAME_JSON_WARD] == username) {
-
             if (user.contains(constants::GAMES_PLAYED_JSON_WARD) &&
                 user[constants::GAMES_PLAYED_JSON_WARD].is_number_integer()) {
                 stats[constants::GAMES_PLAYED_JSON_WARD] =
