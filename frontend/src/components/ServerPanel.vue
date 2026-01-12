@@ -13,9 +13,6 @@
               <RefreshCwIcon class="h-4 w-4" :class="{ 'animate-spin': loading }" />
               <span>Refresh</span>
             </Button>
-            <Button @click="$emit('logout')" variant="destructive">
-              Logout
-            </Button>
           </div>
         </div>
       </div>
@@ -265,10 +262,6 @@ interface ServerConfig {
 
 const props = defineProps<Props>()
 
-const emit = defineEmits<{
-  logout: []
-}>()
-
 const serverInfo = ref<ServerInfo>({})
 const serverConfig = ref<ServerConfig>({})
 const loading = ref(false)
@@ -303,7 +296,8 @@ const fetchServerConfig = async () => {
     if (response.ok) {
       serverConfig.value = await response.json()
     } else if (response.status === 401) {
-      emit('logout')
+      alert('Session expired. Please login again.')
+      window.location.reload()
     }
   } catch (error) {
     console.error('Error fetching server config:', error)
@@ -323,7 +317,8 @@ const fetchServerInfo = async () => {
       serverInfo.value = await response.json()
       updateLastUpdate()
     } else if (response.status === 401) {
-      emit('logout')
+      alert('Session expired. Please login again.')
+      window.location.reload()
     } else {
       console.error('Failed to fetch server info')
     }
