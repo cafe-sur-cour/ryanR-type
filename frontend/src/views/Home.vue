@@ -63,15 +63,6 @@
                   Panel
                 </button>
                 <button
-                  @click="activeTab = 'logs'"
-                  :class="[
-                    'border-transparent text-gray-300 hover:border-gray-300 hover:text-white px-1 pt-1 border-b-2 text-sm font-medium',
-                    activeTab === 'logs' ? 'border-indigo-500 text-white' : ''
-                  ]"
-                >
-                  Logs
-                </button>
-                <button
                   @click="activeTab = 'commands'"
                   :class="[
                     'border-transparent text-gray-300 hover:border-gray-300 hover:text-white px-1 pt-1 border-b-2 text-sm font-medium',
@@ -102,10 +93,6 @@
           v-if="activeTab === 'panel'"
           :password="password"
         />
-        <div v-else-if="activeTab === 'logs'" class="p-6">
-          <h2 class="text-2xl font-bold text-white mb-4">Server Logs</h2>
-          <p class="text-gray-400">Logs functionality coming soon...</p>
-        </div>
         <div v-else-if="activeTab === 'commands'" class="p-6">
           <h2 class="text-2xl font-bold text-white mb-4">Server Commands</h2>
           <p class="text-gray-400">Commands functionality coming soon...</p>
