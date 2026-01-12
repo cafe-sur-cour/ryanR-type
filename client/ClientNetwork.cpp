@@ -308,7 +308,6 @@ void ClientNetwork::start() {
                 std::to_string(constants::CONNECTION_ATTEMPT_TIMEOUT) + " seconds",
                 debug::debugType::NETWORK,
                 debug::debugLevel::ERROR);
-            std::cout << "Connection attempt timed out." << std::endl;
             auto mainMenuState =
                 std::make_shared<gsm::MainMenuState>(this->_gsm, this->_resourceManager);
         }
