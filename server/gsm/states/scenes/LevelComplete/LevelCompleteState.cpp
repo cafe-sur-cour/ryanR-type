@@ -28,7 +28,7 @@ LevelCompleteState::LevelCompleteState(std::shared_ptr<IGameStateMachine> gsm,
 }
 
 void LevelCompleteState::enter() {
-    *(_resourceManager->get<gsm::GameStateType>()) = gsm::LEVEL_COMPLETE;
+    *(_resourceManager->get<gsm::GameStateType>()) = gsm::GameStateType::LEVEL_COMPLETE;
     _transitionTimer = 0.0f;
 }
 
@@ -90,7 +90,8 @@ void LevelCompleteState::update(float deltaTime) {
 
             if (auto gsmPtr = _gsm.lock()) {
                 if (auto gsm = std::dynamic_pointer_cast<GameStateMachine>(gsmPtr)) {
-                    *(_resourceManager->get<gsm::GameStateType>()) = gsm::IN_GAME;
+                    *(_resourceManager->get<gsm::GameStateType>()) =
+                        gsm::GameStateType::IN_GAME;
                     gsm->requestStateChange(std::make_shared<gsm::InGameState>
                         (gsmPtr, _resourceManager));
                 }
@@ -98,7 +99,8 @@ void LevelCompleteState::update(float deltaTime) {
         } else {
             if (auto gsmPtr = _gsm.lock()) {
                 if (auto gsm = std::dynamic_pointer_cast<GameStateMachine>(gsmPtr)) {
-                    *(_resourceManager->get<gsm::GameStateType>()) = gsm::GAME_END;
+                    *(_resourceManager->get<gsm::GameStateType>()) =
+                        gsm::GameStateType::GAME_END;
                     gsm->requestStateChange(std::make_shared<gsm::GameEndState>
                         (gsmPtr, _resourceManager));
                 }

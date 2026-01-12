@@ -16,6 +16,10 @@
 #include "../../components/temporary/TriggerIntentComponent.hpp"
 #include "../../CollisionRules/CollisionRules.hpp"
 #include "../../constants.hpp"
+#include "../../GameRules.hpp"
+#include "../../components/tags/PlayerProjectileTag.hpp"
+#include "../../components/tags/PlayerTag.hpp"
+#include "TagRegistry.hpp"
 
 namespace ecs {
 
@@ -61,7 +65,6 @@ void TriggerSystem::update(
     std::shared_ptr<Registry> registry,
     float deltaTime
 ) {
-    (void)resourceManager;
     (void)deltaTime;
 
     buildSpatialGrid(registry);
@@ -95,7 +98,8 @@ void TriggerSystem::update(
                 continue;
 
             auto otherCollider = registry->getComponent<ColliderComponent>(colliderEntity);
-            if (otherCollider && shouldCollide(registry, triggerEntity, *triggerCollider,
+            if (otherCollider && shouldCollide(
+                    resourceManager, registry, triggerEntity, *triggerCollider,
                     colliderEntity) &&
                     checkCollision(*triggerTransform, *triggerCollider,
                     *colliderTransform, *otherCollider)
@@ -122,6 +126,7 @@ bool TriggerSystem::checkCollision(
 }
 
 bool TriggerSystem::shouldCollide(
+    std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<Registry> registry,
     size_t entityA,
     const ColliderComponent& colliderA,
@@ -132,7 +137,25 @@ bool TriggerSystem::shouldCollide(
     std::vector<std::string> tagsA = tagRegistry.getTags(registry, entityA);
     std::vector<std::string> tagsB = tagRegistry.getTags(registry, entityB);
 
-    return collisionRules.canCollide(colliderA.getType(), tagsA, tagsB);
+    bool baseCollision = collisionRules.canCollide(colliderA.getType(), tagsA, tagsB);
+
+    if (resourceManager && resourceManager->has<GameRules>()) {
+        auto gameRules = resourceManager->get<GameRules>();
+        if (gameRules && gameRules->getCrossfire()) {
+            bool hasPlayerProjectile = registry->hasComponent<PlayerProjectileTag>(entityA);
+            bool hasPlayerTag = registry->hasComponent<PlayerTag>(entityB);
+            bool reversePlayerProjectile =
+                registry->hasComponent<PlayerProjectileTag>(entityB);
+            bool reversePlayerTag = registry->hasComponent<PlayerTag>(entityA);
+
+            if ((hasPlayerProjectile && hasPlayerTag) ||
+                (reversePlayerProjectile && reversePlayerTag)) {
+                return true;
+            }
+        }
+    }
+
+    return baseCollision;
 }
 
 }

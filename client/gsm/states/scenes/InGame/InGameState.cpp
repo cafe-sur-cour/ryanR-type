@@ -32,6 +32,7 @@
 #include "../../../../systems/input/MovementInputSystem.hpp"
 #include "../../../../systems/input/ShootInputSystem.hpp"
 #include "../../../../systems/input/ForceInputSystem.hpp"
+#include "../../../../systems/network/KeepAliveSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
@@ -88,7 +89,7 @@ void InGameState::enter() {
     }
 
     auto collisionData =
-        ecs::CollisionRulesParser::parseFromFile("configs/rules/collision_rules.json");
+        ecs::CollisionRulesParser::parseFromFile(constants::COLLISION_RULES_PATH);
     ecs::CollisionRules::initWithData(collisionData);
 
 
@@ -96,6 +97,7 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::ShootInputSystem>());
     addSystem(std::make_shared<ecs::ForceInputSystem>());
+    addSystem(std::make_shared<ecs::KeepAliveSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
     addSystem(std::make_shared<ecs::ClientEffectCleanupSystem>());
     addSystem(std::make_shared<ecs::GameZoneViewSystem>());
