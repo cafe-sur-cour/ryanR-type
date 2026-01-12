@@ -52,7 +52,7 @@ void rserv::HttpServer::httpLoop() {
     _server->Get("/api/status", [this](const httplib::Request &req, httplib::Response &res) {
         this->statusEndpoint(req, res);
     });
-
+    _server->set_mount_point("/", "./frontend/dist");
     std::cout << "HTTP server starting on port 8080" << std::endl;
     _server->listen("0.0.0.0", 8080);
 }
