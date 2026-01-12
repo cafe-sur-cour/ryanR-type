@@ -123,6 +123,8 @@ class ClientNetwork {
         std::atomic<uint8_t> _clientId;
         std::atomic<bool> _clientReadyStatus;
 
+        std::chrono::steady_clock::time_point _lastLeaveLobbyTime;
+
         void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
         void setGameStateMachine(std::shared_ptr<gsm::IGameStateMachine> gsm);
         std::shared_ptr<gsm::IGameStateMachine> getGameStateMachine() const;
