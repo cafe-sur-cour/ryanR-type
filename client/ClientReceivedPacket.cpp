@@ -51,65 +51,6 @@ void ClientNetwork::handleConnectionAcceptation() {
     }
 }
 
-void ClientNetwork::handleGameState() {
-    auto payload = _packet->getPayload();
-    if (payload.empty()) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Game state packet is empty",
-            debug::debugType::NETWORK,
-            debug::debugLevel::WARNING);
-        return;
-    }
-
-    if (!this->_resourceManager->has<ecs::Registry>()) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Registry not found in ResourceManager",
-            debug::debugType::NETWORK,
-            debug::debugLevel::ERROR);
-        return;
-    }
-
-    auto registry = this->_resourceManager->get<ecs::Registry>();
-    size_t index = 0;
-
-    if (index >= payload.size()) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Invalid game state packet: missing entity ID",
-            debug::debugType::NETWORK,
-            debug::debugLevel::ERROR);
-        return;
-    }
-
-    size_t serverEntityId = static_cast<size_t>(payload[index++]);
-    auto it = _serverToLocalEntityMap.find(serverEntityId);
-    if (it == _serverToLocalEntityMap.end()) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Entity with server ID " +
-            std::to_string(serverEntityId) + " not found in map",
-            debug::debugType::NETWORK,
-            debug::debugLevel::WARNING);
-        return;
-    }
-    ecs::Entity entityId = it->second;
-    while (index < payload.size()) {
-        uint64_t componentType = payload[index++];
-        auto parserIt = _componentParsers.find(componentType);
-        if (parserIt != _componentParsers.end()) {
-            index = (this->*(parserIt->second))(payload, index, entityId);
-        } else {
-            debug::Debug::printDebug(this->_isDebug,
-                "[CLIENT] Unknown component type: " + std::to_string(componentType),
-                debug::debugType::NETWORK,
-                debug::debugLevel::WARNING);
-        }
-    }
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Applied game state updates for entity " +
-        std::to_string(entityId),
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
-}
-
 void ClientNetwork::handleBatchedGameState() {
     auto batchedPayloads = _packet->getBatchedPayloads();
     if (batchedPayloads.empty()) {
