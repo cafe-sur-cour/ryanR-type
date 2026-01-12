@@ -370,9 +370,10 @@ void MainMenuState::enter() {
 
         if (network->getLobbyCode() == constants::LOBBY_LEAVE_MARKER) {
             network->setLobbyCode("");
-            network->_isConnectedToLobby = false;
-            network->_isLobbyMaster = false;
         }
+        network->_isConnectedToLobby = false;
+        network->_isLobbyMaster = false;
+        network->_ready = false;
     }
 }
 
