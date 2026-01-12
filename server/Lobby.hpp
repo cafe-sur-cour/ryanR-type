@@ -67,6 +67,7 @@ class Lobby {
             void syncExistingEntitiesToClient(std::shared_ptr<net::INetworkEndpoint> clientEndpoint);
             std::string getLobbyCode() const;
             std::shared_ptr<net::INetwork> getNetwork() const;
+            std::string getGameState() const;
 
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> getEventQueue();
             bool hasEvents() const;

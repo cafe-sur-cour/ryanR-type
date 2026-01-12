@@ -6,6 +6,7 @@
 */
 
 #include <stack>
+#include <string>
 
 #include "AGameStateMachine.hpp"
 #include "../../../common/gsm/IGameState.hpp"
@@ -58,6 +59,13 @@ void AGameStateMachine::update(float deltaTime) {
     if (!_states.empty()) {
         _states.top()->update(deltaTime);
     }
+}
+
+std::string AGameStateMachine::getCurrentStateName() const {
+    if (!_states.empty()) {
+        return _states.top()->getStateName();
+    }
+    return "Unknown";
 }
 
 }  // namespace gsm

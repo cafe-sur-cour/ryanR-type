@@ -387,8 +387,11 @@ rserv::ServerInfo rserv::Server::getServerInfo() const {
     }
 
     for (size_t i = 0; i < this->_lobbies.size(); ++i) {
-        std::string lobbyInfo = "Lobby " + std::to_string(i + 1) + ": Active";
-        info.lobbyDetails.push_back(lobbyInfo);
+        if (this->_lobbies[i]) {
+            std::string lobbyInfo = "Lobby " +
+                std::to_string(i + 1) + ": " + this->_lobbies[i]->getGameState();
+            info.lobbyDetails.push_back(lobbyInfo);
+        }
     }
 
     for (const auto& client : this->_clients) {
