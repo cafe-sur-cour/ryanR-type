@@ -13,7 +13,6 @@
 
 namespace common::packet {
 
-
 bool registerOptimizedGameStateHandlers(std::shared_ptr<pm::IPacketManager> packet);
 bool isOptimizedHandlersAvailable();
 

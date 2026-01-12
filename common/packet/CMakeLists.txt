@@ -3,8 +3,6 @@ set(COMMON_PACKET_HANDLERS_NAME CommonPacketHandlers)
 add_library(${COMMON_PACKET_HANDLERS_NAME} STATIC
     DefaultPacketHandlers.cpp
     DefaultPacketHandlers.hpp
-    GameStateHandlers.cpp
-    GameStateHandlers.hpp
     GameStateHandlersOptimized.cpp
     GameStateHandlersOptimized.hpp
 )
