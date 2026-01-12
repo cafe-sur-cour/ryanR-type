@@ -199,17 +199,17 @@ LobbyWaitingState::LobbyWaitingState(
                 debug::debugType::NETWORK,
                 debug::debugLevel::INFO);
         }
-        // Clear lobby code to reset main menu state
         auto networkPtr = this->_resourceManager->get<ClientNetwork>();
         if (networkPtr) {
             networkPtr->setLobbyCode("");
             networkPtr->_isConnectedToLobby = false;
             networkPtr->_isLobbyMaster = false;
+            networkPtr->clearEntitiesAndMappings();
         }
-        // Change to main menu state
         auto gsmPtr = _gsm.lock();
         if (gsmPtr) {
-            auto mainMenuState = std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
+            auto mainMenuState =
+            std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
             gsmPtr->requestStateChange(mainMenuState);
         }
     });
@@ -222,17 +222,17 @@ LobbyWaitingState::LobbyWaitingState(
                 debug::debugType::NETWORK,
                 debug::debugLevel::INFO);
         }
-        // Clear lobby code to reset main menu state
         auto networkPtr = this->_resourceManager->get<ClientNetwork>();
         if (networkPtr) {
             networkPtr->setLobbyCode("");
             networkPtr->_isConnectedToLobby = false;
             networkPtr->_isLobbyMaster = false;
+            networkPtr->clearEntitiesAndMappings();
         }
-        // Change to main menu state
         auto gsmPtr = _gsm.lock();
         if (gsmPtr) {
-            auto mainMenuState = std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
+            auto mainMenuState =
+            std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
             gsmPtr->requestStateChange(mainMenuState);
         }
     });
