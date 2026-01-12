@@ -37,7 +37,6 @@
 using namespace rserv;
 using namespace ecs;
 
-// Test class to expose protected convert methods
 class TestLobby : public Lobby {
 public:
     TestLobby() : Lobby(nullptr, {}, "test", true, 50) {}
