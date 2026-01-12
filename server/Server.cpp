@@ -39,7 +39,8 @@ rserv::Server::Server() :
     this->_config = std::make_shared<rserv::ServerConfig>();
     this->_httpServer = std::make_unique<rserv::HttpServer>(
         [this]() { return this->getState() == 1; },
-        [this]() { return this->getServerInfo(); }
+        [this]() { return this->getServerInfo(); },
+        this->_config
     );
 
     this->_httpServer->start();
@@ -391,12 +392,25 @@ rserv::ServerInfo rserv::Server::getServerInfo() const {
             std::string lobbyInfo = "Lobby " +
                 std::to_string(i + 1) + ": " + this->_lobbies[i]->getGameState();
             info.lobbyDetails.push_back(lobbyInfo);
+
+            std::vector<std::string> lobbyPlayers;
+            auto clientDetails = this->_lobbies[i]->getConnectedClientDetails();
+            for (const auto& clientDetail : clientDetails) {
+                std::string playerInfo = "Player ID: " + std::to_string(std::get<0>(clientDetail)) +
+                    ", Username: " + std::get<1>(clientDetail);
+                lobbyPlayers.push_back(playerInfo);
+            }
+            info.lobbyPlayerDetails.push_back(lobbyPlayers);
         }
     }
 
     for (const auto& client : this->_clients) {
-        std::string playerInfo = "Player ID: " + std::to_string(std::get<0>(client));
-        info.playerDetails.push_back(playerInfo);
+        std::string username = std::get<2>(client);
+        if (!username.empty()) {
+            std::string playerInfo = "Player ID: " + std::to_string(std::get<0>(client)) +
+                ", Username: " + username;
+            info.playerDetails.push_back(playerInfo);
+        }
     }
 
     return info;

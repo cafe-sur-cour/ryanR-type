@@ -17,11 +17,13 @@
 
 rserv::HttpServer::HttpServer(
     std::function<bool()> statusChecker,
-    std::function<ServerInfo()> infoGetter
+    std::function<ServerInfo()> infoGetter,
+    std::shared_ptr<ServerConfig> serverConfig
 ) :
     _running(false),
     _statusChecker(statusChecker),
     _infoGetter(infoGetter),
+    _serverConfig(serverConfig),
     _server(nullptr) {
     this->loadEnv();
 }
@@ -91,6 +93,9 @@ void rserv::HttpServer::httpLoop() {
     _server->Get("/api/info", [this](const httplib::Request &req, httplib::Response &res) {
         this->infoEndpoint(req, res);
     });
+    _server->Get("/api/config", [this](const httplib::Request &req, httplib::Response &res) {
+        this->configEndpoint(req, res);
+    });
     _server->set_mount_point("/", "./frontend/dist");
     std::cout << "HTTP server starting on port " << constants::HTTP_SERVER_PORT << std::endl;
     _server->listen("0.0.0.0", constants::HTTP_SERVER_PORT);
@@ -112,7 +117,8 @@ void rserv::HttpServer::infoEndpoint(const httplib::Request &req, httplib::Respo
             {"activeLobbies", info.activeLobbies},
             {"totalPlayers", info.totalPlayers},
             {"lobbyDetails", info.lobbyDetails},
-            {"playerDetails", info.playerDetails}
+            {"playerDetails", info.playerDetails},
+            {"lobbyPlayerDetails", info.lobbyPlayerDetails}
         };
 
         res.set_content(jsonResponse.dump(), "application/json");
@@ -132,5 +138,26 @@ void rserv::HttpServer::statusEndpoint(const httplib::Request &req, httplib::Res
         res.set_content("Online", "text/plain");
     } else {
         res.set_content("Offline", "text/plain");
+    }
+}
+
+void rserv::HttpServer::configEndpoint(const httplib::Request &req, httplib::Response &res) {
+    if (!this->checkAuth(req)) {
+        res.status = 401;
+        res.set_content("Unauthorized", "text/plain");
+        return;
+    }
+
+    try {
+        nlohmann::json jsonResponse = {
+            {"serverIp", _serverConfig->getIp()},
+            {"httpPort", constants::HTTP_SERVER_PORT},
+            {"gamePort", _serverConfig->getPort()}
+        };
+
+        res.set_content(jsonResponse.dump(), "application/json");
+    } catch (const std::exception &e) {
+        res.status = 500;
+        res.set_content("Internal server error", "text/plain");
     }
 }
