@@ -118,7 +118,9 @@ void rserv::HttpServer::infoEndpoint(const httplib::Request &req, httplib::Respo
             {"totalPlayers", info.totalPlayers},
             {"lobbyDetails", info.lobbyDetails},
             {"playerDetails", info.playerDetails},
-            {"lobbyPlayerDetails", info.lobbyPlayerDetails}
+            {"lobbyPlayerDetails", info.lobbyPlayerDetails},
+            {"playerStats", info.playerStats},
+            {"inGamePlayers", info.inGamePlayers}
         };
 
         res.set_content(jsonResponse.dump(), "application/json");

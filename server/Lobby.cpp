@@ -279,6 +279,49 @@ std::string rserv::Lobby::getGameState() const {
     return "Not Started";
 }
 
+std::string rserv::Lobby::getGameRules() const {
+    if (!this->_resourceManager->has<GameRules>()) {
+        return "Rules not available";
+    }
+
+    auto gameRules = this->_resourceManager->get<GameRules>();
+    std::string gamemodeStr;
+    std::string difficultyStr;
+    std::string crossfireStr;
+
+    switch (gameRules->getGamemode()) {
+        case GameRulesNS::Gamemode::CLASSIC:
+            gamemodeStr = "Classic";
+            break;
+        case GameRulesNS::Gamemode::INFINITE_MODE:
+            gamemodeStr = "Infinite Mode";
+            break;
+        default:
+            gamemodeStr = "Unknown";
+            break;
+    }
+
+    switch (gameRules->getDifficulty()) {
+        case GameRulesNS::Difficulty::EASY:
+            difficultyStr = "Easy";
+            break;
+        case GameRulesNS::Difficulty::NORMAL:
+            difficultyStr = "Normal";
+            break;
+        case GameRulesNS::Difficulty::HARD:
+            difficultyStr = "Hard";
+            break;
+        default:
+            difficultyStr = "Unknown";
+            break;
+    }
+
+    crossfireStr = gameRules->getCrossfire() ? "Enabled" : "Disabled";
+
+    return "Mode: " + gamemodeStr + " | Difficulty: " + difficultyStr +
+        " | Crossfire: " + crossfireStr;
+}
+
 
 /* Event Queue hadling */
 std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>>

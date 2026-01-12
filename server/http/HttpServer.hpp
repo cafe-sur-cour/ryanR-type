@@ -28,6 +28,8 @@ struct ServerInfo {
     std::vector<std::string> lobbyDetails;
     std::vector<std::string> playerDetails;
     std::vector<std::vector<std::string>> lobbyPlayerDetails;
+    std::vector<std::map<std::string, int>> playerStats;
+    std::vector<std::string> inGamePlayers;
 };
 
 class HttpServer {

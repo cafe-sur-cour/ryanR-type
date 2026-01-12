@@ -78,6 +78,7 @@ namespace rserv {
             size_t getClientCount() const;
 
             ServerInfo getServerInfo() const;
+            std::map<std::string, int> loadUserStats(const std::string& username) const;
 
 
             /* Received Packet Handling */
