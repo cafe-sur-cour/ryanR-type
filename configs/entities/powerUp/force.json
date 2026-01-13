@@ -84,7 +84,7 @@
                 },
                 {
                     "tags": ["EnnemyProjectileTag"],
-                    "toEntity": ["DealDamage"],
+                    "toEntity": ["DealDeath"],
                     "toSelf": []
                 }
             ]

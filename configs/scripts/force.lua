@@ -112,7 +112,6 @@ function addForceLevel(entity)
         if (level == 3) then
             setProjectilePrefab(parentId, "bombShot")
             setAnimationState(entity, "level3")
-            print("[force] Changed projectile to bombShot for entity ID: " .. parentId)
         end
     end
 end

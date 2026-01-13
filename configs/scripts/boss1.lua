@@ -40,19 +40,23 @@ local bossState = {
 -- ============================================
 function init(entity)
     print("[Boss] Initializing Boss 1 - Hilda Berg")
+    local currentX, currentY = getEntityPosition(entity)
+
     local gzX, gzY = getGameZonePosition()
     local gzWidth, gzHeight = getGameZoneSize()
     local bossWidth, bossHeight = getEntitySize(entity)
 
-    -- Position initiale: droite de la game zone
-    local initialX = gzX + (gzWidth * 0.85)
-    local initialY = gzY + (gzHeight * 0.15)
-
-    setPosition(entity, initialX, initialY)
-
-    bossState.startX = initialX
-    bossState.startY = initialY
+    if currentY < gzY or currentY > (gzY + gzHeight) then
+        currentY = gzY + (gzHeight * 0.5)
+    end
+    if currentX < gzX or currentX > (gzX + gzWidth) then
+        currentX = gzX + zWidth
+    end
+    setPosition(entity, currentX, currentY)
+    bossState.startX = currentX
+    bossState.startY = currentY
     bossState.initialized = true
+    setGameZoneVelocity(0, 0)
 end
 
 -- ============================================
@@ -97,10 +101,7 @@ end
 -- Phase 1 - Trois modes
 -- ============================================
 function updatePhase1(entity, dt)
-    local gzX, gzY = getGameZonePosition()
-    local gzWidth, gzHeight = getGameZoneSize()
-    bossState.startX = gzX + (gzWidth * 0.85)
-    bossState.startY = gzY + (gzHeight * 0.15)
+    -- Ne plus recalculer startX/startY - ils sont définis dans init()
     bossState.attackTimer = bossState.attackTimer + dt
 
     if bossState.mode == "normal" then
@@ -126,10 +127,12 @@ end
 -- Mode Normal - Mouvement en 8 vertical
 -- ============================================
 function updateNormalMode(entity, dt)
-    local gzX, gzY = getGameZonePosition()
+    -- Utiliser la position de spawn comme centre du mouvement en 8
+    local centerX = bossState.startX
+    local centerY = bossState.startY
+    
+    -- Amplitudes relatives à la taille de la game zone (pour la cohérence)
     local gzWidth, gzHeight = getGameZoneSize()
-    local centerX = gzX + (gzWidth * 0.85)
-    local centerY = gzY + (gzHeight * 0.15)
     local amplitudeX = gzWidth * 0.08
     local amplitudeY = gzHeight * 0.4
     local speed = 200
@@ -159,9 +162,12 @@ function updateChargeMode(entity, dt)
     local gzWidth, gzHeight = getGameZoneSize()
     local bossWidth, bossHeight = getEntitySize(entity)
     local currentX, currentY = getEntityPosition(entity)
-    local centerX = gzX + (gzWidth * 0.85)
-    local centerY = gzY + (gzHeight * 0.35)
+    
+    -- Utiliser la position de spawn comme centre
+    local centerX = bossState.startX
+    local centerY = bossState.startY
     local rightQuarterWidth = gzWidth * 0.125
+    
     if bossState.chargeState == "moving" then
         bossState.chargeOscillation = bossState.chargeOscillation + dt * 2
         local verticalSpeed = 180
@@ -305,5 +311,5 @@ end
 -- Callback de mort
 -- ============================================
 function death(entity)
-    restartGameZone()
+    setGameZoneVelocity(100, 0)
 end
