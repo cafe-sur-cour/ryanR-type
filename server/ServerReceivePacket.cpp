@@ -20,6 +20,7 @@
 #include "Lobby.hpp"
 #include "Constants.hpp"
 #include "../../../common/utils/SecureJsonManager.hpp"
+#include "../common/utils/Encryption.hpp"
 #include "../common/debug.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
@@ -440,9 +441,11 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
         }
     }
 
+    std::string encryptedPassword = utils::Encryption::encrypt(password);
+
     nlohmann::json newUser;
     newUser[constants::USERNAME_JSON_WARD] = username;
-    newUser[constants::PASSWORD_JSON_WARD] = password;
+    newUser[constants::PASSWORD_JSON_WARD] = encryptedPassword;
     newUser[constants::WINS_JSON_WARD] = 0;
     newUser[constants::HIGH_SCORE_JSON_WARD] = 0;
     newUser[constants::GAMES_PLAYED_JSON_WARD] = 0;
@@ -542,10 +545,13 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
     for (const auto& user : users) {
         if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
             user.contains(constants::PASSWORD_JSON_WARD) &&
-            user[constants::USERNAME_JSON_WARD] == username &&
-            user[constants::PASSWORD_JSON_WARD] == password) {
-            loginSuccess = true;
-            break;
+            user[constants::USERNAME_JSON_WARD] == username) {
+            std::string storedPassword = user[constants::PASSWORD_JSON_WARD].get<std::string>();
+            std::string decryptedPassword = utils::Encryption::decrypt(storedPassword);
+            if (decryptedPassword == password) {
+                loginSuccess = true;
+                break;
+            }
         }
     }
 
