@@ -103,7 +103,6 @@ namespace pm {
         virtual void registerLength(uint8_t type, uint32_t length) = 0;
         virtual void registerGameStatePackFunction(std::function<std::vector<uint8_t>(std::vector<uint64_t>, std::shared_ptr<unsigned int>)> func) = 0;
         virtual void registerGameStateUnpackFunction(std::function<unsigned int(const std::vector<uint8_t>, unsigned int)> func) = 0;
-        virtual void registerLengthCombEntry(uint8_t compType, uint32_t compLength, uint64_t compSize) = 0;
         virtual void clearAllHandlers() = 0;
 };
 } // namespace pm
