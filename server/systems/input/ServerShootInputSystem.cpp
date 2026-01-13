@@ -7,7 +7,6 @@
 
 #include <memory>
 #include <vector>
-#include <iostream>
 #include "ServerShootInputSystem.hpp"
 #include "../../../common/InputMapping/InputAction.hpp"
 #include "../../../common/components/tags/ShooterTag.hpp"
@@ -15,6 +14,8 @@
 #include "../../../common/components/tags/PlayerTag.hpp"
 #include "../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../common/components/temporary/ShootIntentComponent.hpp"
+#include "../../../common/components/permanent/ShootingStatsComponent.hpp"
+#include "../../constants.hpp"
 
 namespace ecs {
 
@@ -25,7 +26,6 @@ void ServerShootInputSystem::update(
     std::shared_ptr<ResourceManager> resourceManager,
     std::shared_ptr<Registry> registry,
     float deltaTime) {
-    (void)deltaTime;
 
     if (!resourceManager->has<ecs::ServerInputProvider>()) {
         return;
@@ -36,22 +36,45 @@ void ServerShootInputSystem::update(
     auto view = registry->view<ControllableTag, ShooterTag, PlayerTag>();
 
     for (auto entityId : view) {
+        if (!_cooldowns.contains(entityId))
+            _cooldowns[entityId] = 0;
+        _cooldowns[entityId] += deltaTime;
+
         size_t clientID = static_cast<size_t>(entityId);
+
         float value = serverInputProvider->getActionAxis(InputAction::SHOOT, clientID);
-        if (value > 0.0f) {
-            updateShootIntent(registry, entityId);
-            serverInputProvider->setAxisValue(InputAction::SHOOT, 0.0f, clientID);
+        if (value <= 0.0f)
+            continue;
+
+        float cooldown = constants::SHOOT_INPUT_COOLDOWN;
+        if (registry->hasComponent<ShootingStatsComponent>(entityId)) {
+            cooldown = 1.0f / registry->getComponent<ShootingStatsComponent>(entityId)->getFireRate();
         }
+
+        if (_cooldowns[entityId] > cooldown) {
+            _cooldowns[entityId] = 0.0f;
+            updateShootIntent(registry, entityId);
+        }
+        serverInputProvider->setAxisValue(InputAction::SHOOT, 0.0f, clientID);
     }
 }
 
 void ServerShootInputSystem::updateShootIntent(
     std::shared_ptr<Registry> registry,
-    Entity entityId) {
+    Entity entityId
+) {
     registry->registerComponent<ShootIntentComponent>();
 
     if (!registry->hasComponent<ShootIntentComponent>(entityId)) {
-        auto shootIntentComponent = std::make_shared<ShootIntentComponent>();
+        float angle = 0.0f;
+
+        if (registry->hasComponent<ShootingStatsComponent>(entityId)) {
+            angle = registry->getComponent<ShootingStatsComponent>(
+                entityId
+            )->getMultiShotPattern().angleOffset;
+        }
+
+        auto shootIntentComponent = std::make_shared<ShootIntentComponent>(angle);
         registry->addComponent(entityId, shootIntentComponent);
     }
 }
