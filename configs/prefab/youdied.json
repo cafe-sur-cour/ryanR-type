@@ -1,0 +1,20 @@
+{
+  "components": {
+    "AnimationComponent": {
+      "target": "youdied",
+      "states": {
+        "youdied": {
+          "texturePath": "assets/sprites/menu/you-died.png",
+          "frameWidth": 1080,
+          "frameHeight": 235.0,
+          "frameCount": 5.0,
+          "startWidth": 0.0,
+          "startHeight": 0.0,
+          "speed": 0.2,
+          "loop": true
+        }
+      },
+      "initialState": "youdied"
+    }
+  }
+}
