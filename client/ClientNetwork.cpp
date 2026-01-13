@@ -80,6 +80,8 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_LEADERBOARD] = &ClientNetwork::handleLeaderboard;
     _packetHandlers[constants::PACKET_REGISTER_FAIL] = &ClientNetwork::handleRegisterFail;
     _packetHandlers[constants::PACKET_PROFILE] = &ClientNetwork::handleProfile;
+    _packetHandlers[constants::PACKET_BROADCASTED_CHAT] =
+        &ClientNetwork::handleBroadcastedChat;
     _packetHandlers[constants::PACKET_GAME_RULES] = &ClientNetwork::handleGameRules;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
@@ -219,6 +221,11 @@ void ClientNetwork::sendConnectionData(std::vector<uint8_t> packet) {
 
 std::string ClientNetwork::getName() const {
     return this->_name;
+}
+
+const std::vector<std::pair<std::string, std::string>>&
+    ClientNetwork::getLastMessages() const {
+    return this->_lastMessages;
 }
 
 void ClientNetwork::setName(const std::string &name) {

@@ -86,6 +86,7 @@ class ClientNetwork {
         void sendLoginPacket(const std::string &username, const std::string &password);
         void sendRequestLeaderboardPacket();
         void sendRequestProfilePacket();
+        void sendMessageToServer(const std::string &message);
         void sendRequestGameRulesUpdate(uint8_t ruleType, uint8_t value);
 
         const std::vector<std::pair<std::string, std::string>>& getLeaderboardData() const;
@@ -95,6 +96,7 @@ class ClientNetwork {
         const std::vector<std::string>& getProfileData() const;
         bool isProfileDataUpdated() const;
         void clearProfileDataUpdateFlag();
+        const std::vector<std::pair<std::string, std::string>>& getLastMessages() const;
 
         void addToEventQueue(const NetworkEvent &event);
 
@@ -150,6 +152,7 @@ class ClientNetwork {
         void handleLeaderboard();
         void handleProfile();
         void handleRegisterFail();
+        void handleBroadcastedChat();
         void handleGameRules();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
@@ -196,6 +199,7 @@ class ClientNetwork {
         std::string  _ip;
         std::string _name;
         std::vector<std::string> _clientNames;
+        std::vector<std::pair<std::string, std::string>> _lastMessages;
         bool _isDebug;
         bool _expectingLoginResponse = false;
         bool _expectingProfileResponse = false;
