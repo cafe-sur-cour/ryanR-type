@@ -109,7 +109,7 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::HitboxRenderingSystem>());
     addSystem(std::make_shared<ecs::HealthBarRenderingSystem>());
     addSystem(std::make_shared<ecs::TextRenderingSystem>());
-    // addSystem(std::make_shared<ecs::ReplaySystem>());
+    addSystem(std::make_shared<ecs::ReplaySystem>());
     addSystem(std::make_shared<ecs::SoundSystem>());
     addSystem(std::make_shared<ecs::MusicSystem>());
 
