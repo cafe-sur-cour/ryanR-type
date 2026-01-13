@@ -73,21 +73,12 @@ void pm::PacketManager::registerGameStateUnpackFunction(
     this->_unpackGSFunction.push_back(func);
 }
 
-void pm::PacketManager::registerLengthCombEntry(
-    uint8_t compType,
-    uint32_t compLength,
-    uint64_t compSize
-) {
-    this->_lengthComb.push_back(std::make_tuple(compType, compLength, compSize));
-}
-
 void pm::PacketManager::clearAllHandlers() {
     this->_packetHandlers.clear();
     this->_packetReceived.clear();
     this->_packetLengths.clear();
     this->_packGSFunction.clear();
     this->_unpackGSFunction.clear();
-    this->_lengthComb.clear();
 }
 
 uint32_t pm::PacketManager::getLength() const {

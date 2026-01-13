@@ -32,9 +32,6 @@ std::shared_ptr<ResourceManager> initResourcesManager(std::shared_ptr<rserv::Ser
         std::make_shared<ResourceManager>();
 
     ecs::Entity nextEntityId = 1;
-    if (server != nullptr) {
-        nextEntityId = server->getNextEntityId();
-    }
 
     std::shared_ptr<ecs::Registry> registry = std::make_shared<ecs::Registry>(nextEntityId);
     std::shared_ptr<ecs::ISystemManager> systemsManager =

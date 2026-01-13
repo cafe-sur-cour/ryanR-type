@@ -28,6 +28,7 @@ class ConnectionState : public AGameState {
         void enter() override;
         void update(float deltaTime) override;
         void exit() override;
+        std::string getStateName() const override { return "Connecting"; }
 
     private:
         void renderUI();

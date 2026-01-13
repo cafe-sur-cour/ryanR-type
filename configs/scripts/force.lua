@@ -60,6 +60,7 @@ function OnInteract(entity, interactorEntity)
             attachDir = 1
         else
             attachDir = -1
+            reverseShootOrientation(getParentId(entity))
         end
         isequipped = true
 
@@ -77,6 +78,9 @@ function ActivateOrDeactivateForce(entity, entityCaller)
         targetX, targetY = getEntityPosition(entityCaller)
         isMovingToTarget = true
     else
+        if attachDir == -1 then
+            reverseShootOrientation(getParentId(entity))
+        end
         isequipped = false
         removePartId(getParentId(entity), entity)
         setProjectilePrefab(getParentId(entity), "basic_shot")
