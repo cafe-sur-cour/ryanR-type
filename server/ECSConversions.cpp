@@ -124,10 +124,14 @@ std::vector<uint64_t> rserv::Lobby::convertShootStatComponent(
             data.push_back(static_cast<uint64_t>(SHOOTING_STATS));
             data.push_back(quantization::packTime(shootStats->getFireRate()));
             data.push_back(quantization::packTime(shootStats->getCooldownTimer()));
-            data.push_back(static_cast<uint64_t>(shootStats->getMultiShotPattern().shotCount));
-            data.push_back(quantization::packAngle(shootStats->getMultiShotPattern().angleSpread));
-            data.push_back(quantization::packSize(shootStats->getMultiShotPattern().offsetDistance));
-            data.push_back(quantization::packAngle(shootStats->getMultiShotPattern().angleOffset));
+            data.push_back(static_cast<uint64_t>(
+                shootStats->getMultiShotPattern().shotCount));
+            data.push_back(quantization::packAngle(
+                shootStats->getMultiShotPattern().angleSpread));
+            data.push_back(quantization::packSize(
+                shootStats->getMultiShotPattern().offsetDistance));
+            data.push_back(quantization::packAngle(
+                shootStats->getMultiShotPattern().angleOffset));
         }
     }
     return data;
