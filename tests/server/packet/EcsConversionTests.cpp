@@ -185,20 +185,21 @@ TEST_F(ECSConversionTest, ConvertColliderComponent_WithoutCollider) {
 
 TEST_F(ECSConversionTest, ConvertShootStatComponent_WithShootingStats) {
     registry->registerComponent<ShootingStatsComponent>();
-    MultiShotPattern pattern{3, 30.0f, 5.0f};
+    MultiShotPattern pattern{3, 30.0f, 5.0f, 180.0f};
     auto shootStats = std::make_shared<ShootingStatsComponent>(2.0f, pattern);
     shootStats->setCooldownTimer(1.5f);
     registry->addComponent<ShootingStatsComponent>(entity, shootStats);
 
     auto result = testLobby->convertShootStatComponent(registry, entity);
 
-    ASSERT_EQ(result.size(), 6);
+    ASSERT_EQ(result.size(), 7);
     EXPECT_EQ(result[0], static_cast<uint64_t>(SHOOTING_STATS));
     EXPECT_EQ(result[1], packFloat(2.0f));
     EXPECT_EQ(result[2], packFloat(1.5f));
     EXPECT_EQ(result[3], static_cast<uint64_t>(3));
     EXPECT_EQ(result[4], packFloat(30.0f));
     EXPECT_EQ(result[5], packFloat(5.0f));
+    EXPECT_EQ(result[6], packFloat(180.0f));
 }
 
 TEST_F(ECSConversionTest, ConvertShootStatComponent_WithoutShootingStats) {

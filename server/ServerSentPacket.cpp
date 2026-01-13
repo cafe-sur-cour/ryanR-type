@@ -17,7 +17,7 @@
 #include <nlohmann/json.hpp>
 
 #include "Server.hpp"
-#include "Constants.hpp"
+#include "constants.hpp"
 #include "Utils.hpp"
 #include "../common/debug.hpp"
 #include "../common/translationToECS.hpp"

@@ -19,7 +19,7 @@
 #include <nlohmann/json.hpp>
 
 #include "Lobby.hpp"
-#include "Constants.hpp"
+#include "constants.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
 #include "../common/ECS/entity/Entity.hpp"

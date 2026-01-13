@@ -141,7 +141,7 @@ TEST(ShootingSystemTest, MultiShotCreatesMultipleProjectiles) {
 
     auto shooter = registry->createEntity();
     auto prefab = std::make_shared<MockProjectilePrefab>();
-    MultiShotPattern tripleShot(3, 15.0f, 0.0f);
+    MultiShotPattern tripleShot{3, 15.0f, 0.0f};
     registry->addComponent(shooter, std::make_shared<ShootingStatsComponent>(1.0f, prefab, 300.0f, tripleShot));
     registry->addComponent(shooter, std::make_shared<TransformComponent>(math::Vector2f(100.0f, 100.0f)));
     registry->addComponent(shooter, std::make_shared<ShootIntentComponent>(math::Vector2f(100.0f, 100.0f)));
