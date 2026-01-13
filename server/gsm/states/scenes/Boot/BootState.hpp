@@ -19,6 +19,7 @@ public:
     ~BootState() override = default;
 
     void enter() override;
+    std::string getStateName() const override { return "Booting"; }
 };
 
 }  // namespace gsm

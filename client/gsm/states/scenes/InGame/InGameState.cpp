@@ -17,6 +17,7 @@
 #include "../../../../../common/ECS/entity/Entity.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../Settings/SettingsState.hpp"
+#include "../Pause/PauseState.hpp"
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/interfaces/IAudio.hpp"
@@ -32,7 +33,6 @@
 #include "../../../../systems/input/MovementInputSystem.hpp"
 #include "../../../../systems/input/ShootInputSystem.hpp"
 #include "../../../../systems/input/ForceInputSystem.hpp"
-#include "../../../../systems/network/KeepAliveSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
 #include "../../../../systems/animationState/AnimationStateSyncSystem.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
@@ -99,7 +99,6 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::ShootInputSystem>());
     addSystem(std::make_shared<ecs::ForceInputSystem>());
     addSystem(std::make_shared<ecs::AnimationStateSyncSystem>());
-    addSystem(std::make_shared<ecs::KeepAliveSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
     addSystem(std::make_shared<ecs::ClientEffectCleanupSystem>());
     addSystem(std::make_shared<ecs::GameZoneViewSystem>());
@@ -133,7 +132,7 @@ void InGameState::update(float deltaTime) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         if (inputProvider->isActionPressed(ecs::InputAction::MENU_BACK)) {
             if (auto stateMachine = _gsm.lock()) {
-                stateMachine->requestStatePush(std::make_shared<SettingsState>(stateMachine,
+                stateMachine->requestStatePush(std::make_shared<PauseState>(stateMachine,
                     _resourceManager));
                 return;
             }

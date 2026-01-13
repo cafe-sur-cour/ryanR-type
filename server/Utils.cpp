@@ -33,7 +33,12 @@ void Utils::parsCli(int ac, char **av,
                     << std::endl;
                 exit(84);
             }
-            config->setPort(static_cast<uint16_t>(port));
+            try {
+                config->setPort(static_cast<uint16_t>(port));
+            } catch (const std::invalid_argument &e) {
+                std::cerr << "[SERVER] Error: " << e.what() << std::endl;
+                exit(84);
+            }
         }
         if (std::string(av[i]) == "-i" && i + 1 < ac) {
             ip = av[i + 1];
@@ -63,7 +68,7 @@ void Utils::helper() {
     std::cout << "Usage: ./r-type_server [options]\n"
         << "Options:\n"
         << "\r-p <port>        Specify the port number (default: "
-            << constants::DEFAULT_SERVER_PORT << ")\n"
+            << constants::DEFAULT_SERVER_PORT << ") (5173 is reserved for HTTP server)\n"
         << "\r-i <ip_address>  Specify the IP address to bind to (default: "
             << constants::DEFAULT_SERVER_IP << ")\n"
         << "\r-tps <tps>       Specify the TPS (ticks per second) (default: "
@@ -71,7 +76,7 @@ void Utils::helper() {
         << "\r-d               Enable debug mode\n"
         << "\r-h               Display this help message\n"
         << "Example:\n"
-        << "  ./r-type_server -p 8080 -i 127.0.0.1\n";
+        << "  ./r-type_server -p 4243 -i 127.0.0.1\n";
 }
 
 std::string Utils::createAlphaNumericCode() {
