@@ -37,7 +37,7 @@ namespace constants {
         SHOOT = 4,
         STOP = 5,
         FORCE = 6,
-        NO_OP = 7,
+        HEALTHCHECK = 7,
     };
 
     constexpr char END_OFSTRING_ST = '\r';
@@ -117,6 +117,7 @@ namespace constants {
     const std::string SHOTCOUNT_FIELD = "shotCount";
     const std::string ANGLEOFFSET_FIELD = "angleOffset";
     const std::string SPREADANGLE_FIELD = "spreadAngle";
+    const std::string OFFSETDISTANCE_FIELD = "offsetDistance";
     const std::string DEFAULTBEHAVIOR_FIELD = "defaultBehavior";
     const std::string ZIGZAGAMPLITUDE_FIELD = "zigzagAmplitude";
     const std::string ZIGZAGFREQUENCY_FIELD = "zigzagFrequency";
@@ -318,20 +319,27 @@ namespace constants {
     constexpr std::uint8_t PACKET_REQUEST_GAME_RULES_UPDATE = 0x1F;
     constexpr std::uint8_t PACKET_NEW_CHAT = 0x20;
     constexpr std::uint8_t PACKET_BROADCASTED_CHAT = 0x21;
+    constexpr std::uint8_t PACKET_FORCE_LEAVE = 0x22;
 
-    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 34;
+    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 35;
     const int MAX_CLIENT_PER_LOBBY = 4;
 
     /* Lobby connection codes */
     const std::string LOBBY_LEAVE_MARKER = "__LEAVE__";
     const std::string LOBBY_LEAVE_KEYWORD = "LEAVE";
 
-    /* Scripting constant */
+    enum class ForceLeaveType {
+        CLOSED = 0,
+        KICKED = 1,
+        BANNED = 2,
+    };
+
+    /* Scripting APU constant */
     const std::string INIT_FUNCTION = "init";
     const std::string UPDATE_FUNCTION = "update";
     const std::string DEATH_FUNCTION = "death";
     const std::string ONINTERACT_FUNCTION = "OnInteract";
-    const std::string  ACTIVATE_OR_DEACTIVATE_FORCE_FUNCTION = "ActivateOrDeactivateForce";
+    const std::string ACTIVATE_OR_DEACTIVATE_FORCE_FUNCTION = "ActivateOrDeactivateForce";
     const std::string ADD_FORCE_LEVEL_FUNCTION = "addForceLevel";
 
     /* Constants for Scripting API */
@@ -358,10 +366,11 @@ namespace constants {
     const std::string SET_PROJECTILE_PREFAB_FUNCTION = "setProjectilePrefab";
     const std::string COUNT_FORCES_BY_TYPE_FUNCTION = "countForcesByType";
     const std::string GET_FORCE_POSITION_BY_TYPE_FUNCTION = "getForcePositionByType";
-    const std::string SET_GAME_ZONE_VELOCITY_FUNCTION = "setGameZoneVelocity";
     const std::string GET_GAME_ZONE_POSITION_FUNCTION = "getGameZonePosition";
     const std::string GET_GAME_ZONE_SIZE_FUNCTION = "getGameZoneSize";
     const std::string GET_GAME_ZONE_VELOCITY_FUNCTION = "getGameZoneVelocity";
+    const std::string REVERSE_SHOOT_ORIENTATION_FUNCTION = "reverseShootOrientation";
+    const std::string SET_GAME_ZONE_VELOCITY_FUNCTION = "setGameZoneVelocity";
 }
 
 #endif /* !CONSTANTS_HPP_ */

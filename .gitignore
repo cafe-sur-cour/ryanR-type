@@ -26,3 +26,10 @@ saves/
 epitech-sprites-1
 coding.md
 trickle
+vcpkg_installed/
+
+# Node.js / Frontend
+node_modules/
+frontend/node_modules/
+.env
+package-lock.json

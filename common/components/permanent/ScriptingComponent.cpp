@@ -37,7 +37,8 @@ void ecs::ScriptingComponent::init(sol::state& lua, size_t entityId) {
         }
     }
 
-    std::vector<std::string> defaults = {constants::INIT_FUNCTION, constants::UPDATE_FUNCTION};
+    std::vector<std::string> defaults = {constants::INIT_FUNCTION, constants::UPDATE_FUNCTION,
+        constants::DEATH_FUNCTION};
     defaults.insert(defaults.end(), _additionalFunctions.begin(), _additionalFunctions.end());
     for (const auto& def : defaults) {
         sol::optional<sol::protected_function> fn = _env[def];

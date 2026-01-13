@@ -19,6 +19,7 @@ public:
     ~LoadingState() override = default;
 
     void enter() override;
+    std::string getStateName() const override { return "Loading"; }
 };
 
 }  // namespace gsm

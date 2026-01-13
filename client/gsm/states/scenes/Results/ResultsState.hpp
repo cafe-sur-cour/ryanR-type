@@ -29,6 +29,7 @@ class ResultsState : public AGameState {
         void enter() override;
         void update(float deltaTime) override;
         void exit() override;
+        std::string getStateName() const override { return "Results"; }
 
     private:
         void updateUserStats();
@@ -41,6 +42,8 @@ class ResultsState : public AGameState {
         std::shared_ptr<ui::SpritePreview> _victoryAnimation;
         std::shared_ptr<ui::SpritePreview> _youDiedAnimation;
 
+        std::shared_ptr<ui::Button> _leaveButton;
+        std::shared_ptr<ui::UILayout> _bottomRightLayout;
 };
 
 }  // namespace gsm

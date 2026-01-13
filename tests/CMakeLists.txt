@@ -223,3 +223,5 @@ add_executable(JsonValidationTests
 target_link_libraries(JsonValidationTests PARSER_UTILS GTest::gtest GTest::gtest_main nlohmann_json::nlohmann_json)
 add_test(NAME JsonValidationTests COMMAND JsonValidationTests)
 
+add_subdirectory(server)
+add_subdirectory(common)
