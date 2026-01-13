@@ -33,6 +33,7 @@
 #include "../common/components/permanent/GameZoneComponent.hpp"
 #include "../common/components/permanent/ChargedShotComponent.hpp"
 #include "../common/components/permanent/AnimationStateComponent.hpp"
+#include "../common/FloatQuantization.hpp"
 
 namespace {
 
@@ -60,11 +61,11 @@ std::vector<uint64_t> rserv::Lobby::convertTransformComponent(
         auto transform = registry->getComponent<ecs::TransformComponent>(i);
         if (transform) {
             data.push_back(static_cast<uint64_t>(TRANSFORM));
-            data.push_back(packFloat(transform->getPosition().getX()));
-            data.push_back(packFloat(transform->getPosition().getY()));
-            data.push_back(packFloat(transform->getRotation()));
-            data.push_back(packFloat(transform->getScale().getX()));
-            data.push_back(packFloat(transform->getScale().getY()));
+            data.push_back(quantization::packPosition(transform->getPosition().getX()));
+            data.push_back(quantization::packPosition(transform->getPosition().getY()));
+            data.push_back(quantization::packRotation(transform->getRotation()));
+            data.push_back(quantization::packScale(transform->getScale().getX()));
+            data.push_back(quantization::packScale(transform->getScale().getY()));
         }
     }
     return data;
@@ -77,7 +78,7 @@ std::vector<uint64_t> rserv::Lobby::convertSpeedComponent(
         auto speed = registry->getComponent<ecs::SpeedComponent>(i);
         if (speed) {
             data.push_back(static_cast<uint64_t>(SPEED_COMP));
-            data.push_back(packFloat(speed->getSpeed()));
+            data.push_back(quantization::packSpeed(speed->getSpeed()));
         }
     }
     return data;
@@ -90,8 +91,8 @@ std::vector<uint64_t> rserv::Lobby::convertHealthComponent(
         auto health = registry->getComponent<ecs::HealthComponent>(i);
         if (health) {
             data.push_back(static_cast<uint64_t>(HEALTH));
-            data.push_back(packFloat(health->getHealth()));
-            data.push_back(packFloat(health->getBaseHealth()));
+            data.push_back(quantization::packHealth(health->getHealth()));
+            data.push_back(quantization::packHealth(health->getBaseHealth()));
         }
     }
     return data;
@@ -104,10 +105,10 @@ std::vector<uint64_t> rserv::Lobby::convertColliderComponent(
         auto collider = registry->getComponent<ecs::ColliderComponent>(i);
         if (collider) {
             data.push_back(static_cast<uint64_t>(COLLIDER));
-            data.push_back(packFloat(collider->getOffset().getX()));
-            data.push_back(packFloat(collider->getOffset().getY()));
-            data.push_back(packFloat(collider->getSize().getX()));
-            data.push_back(packFloat(collider->getSize().getY()));
+            data.push_back(quantization::packPosition(collider->getOffset().getX()));
+            data.push_back(quantization::packPosition(collider->getOffset().getY()));
+            data.push_back(quantization::packSize(collider->getSize().getX()));
+            data.push_back(quantization::packSize(collider->getSize().getY()));
             data.push_back(static_cast<uint64_t>(collider->getType()));
         }
     }
@@ -121,12 +122,12 @@ std::vector<uint64_t> rserv::Lobby::convertShootStatComponent(
         auto shootStats = registry->getComponent<ecs::ShootingStatsComponent>(i);
         if (shootStats) {
             data.push_back(static_cast<uint64_t>(SHOOTING_STATS));
-            data.push_back(packFloat(shootStats->getFireRate()));
-            data.push_back(packFloat(shootStats->getCooldownTimer()));
+            data.push_back(quantization::packTime(shootStats->getFireRate()));
+            data.push_back(quantization::packTime(shootStats->getCooldownTimer()));
             data.push_back(static_cast<uint64_t>(shootStats->getMultiShotPattern().shotCount));
-            data.push_back(packFloat(shootStats->getMultiShotPattern().angleSpread));
-            data.push_back(packFloat(shootStats->getMultiShotPattern().offsetDistance));
-            data.push_back(packFloat(shootStats->getMultiShotPattern().angleOffset));
+            data.push_back(quantization::packAngle(shootStats->getMultiShotPattern().angleSpread));
+            data.push_back(quantization::packSize(shootStats->getMultiShotPattern().offsetDistance));
+            data.push_back(quantization::packAngle(shootStats->getMultiShotPattern().angleOffset));
         }
     }
     return data;
@@ -152,7 +153,7 @@ std::vector<uint64_t> rserv::Lobby::convertDamageComponent(
         auto damageComp = registry->getComponent<ecs::DamageComponent>(i);
         if (damageComp) {
             data.push_back(static_cast<uint64_t>(DAMAGE));
-            data.push_back(packFloat(damageComp->getDamage()));
+            data.push_back(quantization::packDamage(damageComp->getDamage()));
         }
     }
     return data;
@@ -165,7 +166,7 @@ std::vector<uint64_t> rserv::Lobby::convertLifetimeComponent(
         auto lifetimeComp = registry->getComponent<ecs::LifetimeComponent>(i);
         if (lifetimeComp) {
             data.push_back(static_cast<uint64_t>(LIFETIME));
-            data.push_back(packFloat(lifetimeComp->getLifetime()));
+            data.push_back(quantization::packTime(lifetimeComp->getLifetime()));
         }
     }
     return data;
@@ -178,8 +179,8 @@ std::vector<uint64_t> rserv::Lobby::convertVelocityComponent(
         auto velocity = registry->getComponent<ecs::VelocityComponent>(i);
         if (velocity) {
             data.push_back(static_cast<uint64_t>(VELOCITY));
-            data.push_back(packFloat(velocity->getVelocity().getX()));
-            data.push_back(packFloat(velocity->getVelocity().getY()));
+            data.push_back(quantization::packVelocity(velocity->getVelocity().getX()));
+            data.push_back(quantization::packVelocity(velocity->getVelocity().getY()));
         }
     }
     return data;
@@ -283,10 +284,10 @@ std::vector<uint64_t> rserv::Lobby::convertGameZoneComponent(
         auto gameZoneComp = registry->getComponent<ecs::GameZoneComponent>(i);
         if (gameZoneComp) {
             data.push_back(static_cast<uint64_t>(GAME_ZONE));
-            data.push_back(packFloat(gameZoneComp->getZone().getHeight()));
-            data.push_back(packFloat(gameZoneComp->getZone().getWidth()));
-            data.push_back(packFloat(gameZoneComp->getZone().getLeft()));
-            data.push_back(packFloat(gameZoneComp->getZone().getTop()));
+            data.push_back(quantization::packSize(gameZoneComp->getZone().getHeight()));
+            data.push_back(quantization::packSize(gameZoneComp->getZone().getWidth()));
+            data.push_back(quantization::packPosition(gameZoneComp->getZone().getLeft()));
+            data.push_back(quantization::packPosition(gameZoneComp->getZone().getTop()));
         }
     }
     return data;
@@ -300,9 +301,9 @@ std::vector<uint64_t> rserv::Lobby::convertChargedShotComponent(
         auto chargedShotComp = registry->getComponent<ecs::ChargedShotComponent>(i);
         if (chargedShotComp) {
             data.push_back(static_cast<uint64_t>(CHARGED_SHOT_COMP));
-            data.push_back(packFloat(chargedShotComp->getCharge()));
-            data.push_back(packFloat(chargedShotComp->getMaxCharge()));
-            data.push_back(packFloat(chargedShotComp->getReloadTime()));
+            data.push_back(quantization::packDamage(chargedShotComp->getCharge()));
+            data.push_back(quantization::packDamage(chargedShotComp->getMaxCharge()));
+            data.push_back(quantization::packTime(chargedShotComp->getReloadTime()));
         }
     }
     return data;
