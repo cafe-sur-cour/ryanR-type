@@ -282,6 +282,7 @@ namespace constants {
     const std::string POWERUP_FORCE = "force";
     const std::string POWERUP_FLYING_FORCE = "flyingForce";
     const std::string POWERUP_SPEED = "powerUpSpeed";
+    const std::string POWERUP_CHARGE_TIME = "powerUpChargeTime";
 
     constexpr float DEFAULT_TIMER = 0.0f;
 
@@ -350,6 +351,8 @@ namespace constants {
     const std::string GET_NEAREST_PLAYER_POSITION_FUNCTION = "getNearestPlayerPosition";
     const std::string GET_ENTITY_SPEED_FUNCTION = "getEntitySpeed";
     const std::string SET_ENTITY_SPEED_FUNCTION = "setEntitySpeed";
+    const std::string GET_MAX_CHARGE_FUNCTION = "getMaxCharge";
+    const std::string SET_MAX_CHARGE_FUNCTION = "setMaxCharge";
     const std::string CREATE_SHOOT_INTENT_FUNCTION = "createShootIntent";
     const std::string SET_ANIMATION_STATE_FUNCTION = "setAnimationState";
     const std::string SPAWN_ENTITY_FUNCTION = "spawnEntity";
