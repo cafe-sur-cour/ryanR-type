@@ -1,0 +1,107 @@
+{
+    "name": "flyingFish",
+    "components": {
+        "MobTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 100.0, "y": 100.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 80.0 },
+        "HealthComponent": { "target": "both", "health": 50.0 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 100 },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/flyingFish.lua",
+            "additionalFunctions": []
+        },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "orange": {
+                    "texturePath": "assets/sprites/sea/fish/flying_fish.png",
+                    "frameWidth": 216.0,
+                    "frameHeight": 184.0,
+                    "frameCount": 10,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "yellow": {
+                    "texturePath": "assets/sprites/sea/fish/flying_fish.png",
+                    "frameWidth": 216.0,
+                    "frameHeight": 184.0,
+                    "frameCount": 10,
+                    "startWidth": 0.0,
+                    "startHeight": 184.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "orangeDark": {
+                    "texturePath": "assets/sprites/sea/fish/flying_fish.png",
+                    "frameWidth": 216.0,
+                    "frameHeight": 184.0,
+                    "frameCount": 10,
+                    "startWidth": 0.0,
+                    "startHeight": 368.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "pink": {
+                    "texturePath": "assets/sprites/sea/fish/flying_fish.png",
+                    "frameWidth": 216.0,
+                    "frameHeight": 184.0,
+                    "frameCount": 10,
+                    "startWidth": 0.0,
+                    "startHeight": 552.0,
+                    "speed": 0.1,
+                    "loop": true
+                }
+            },
+            "initialState": "orange",
+            "transitions": []
+        },
+        "ColliderComponent":
+        [
+            {
+                "target": "both",
+                "offset": { "x": -1.0, "y": -1.0 },
+                "size" : { "x": 216.0, "y": 184.0 },
+                "type": "Trigger"
+            },
+            {
+                "target": "both",
+                "offset": { "x": 0.0, "y": 0.0 },
+                "size" : { "x": 213.0, "y": 180.0 },
+                "type": "Solide"
+            }
+
+        ]
+        ,
+        "DamageComponent": {
+            "target": "both",
+            "damage": 20.0
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": []
+                },
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDamage"]
+                }
+            ]
+        },
+        "ShooterTag": { "target": "both" },
+        "DamageCooldownComponent": { "target": "both" },
+        "HealthBarComponent": { "target": "client" }
+    }
+}

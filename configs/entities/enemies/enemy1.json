@@ -5,7 +5,7 @@
         "TransformComponent": {
             "target": "both",
             "position": { "x": 100.0, "y": 100.0 },
-            "scale": { "x": 2.5, "y": 2.5 },
+            "scale": { "x": 1.0, "y": 1.0 },
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "both" },
@@ -19,7 +19,7 @@
         },
         "ProjectilePrefabComponent": {
             "target": "both",
-            "prefabName": "enemy_basic_shot"
+            "prefabName": "bat_basic_shot"
         },
         "ShootingStatsComponent": {
             "target": "both",
@@ -33,10 +33,10 @@
             "target": "client",
             "states": {
                 "idle": {
-                    "texturePath": "assets/sprites/ennemies/red_spinning.png",
-                    "frameWidth": 33.0,
-                    "frameHeight": 36.0,
-                    "frameCount": 8,
+                    "texturePath": "assets/sprites/ennemies/small_demon_idle.png",
+                    "frameWidth": 172.0,
+                    "frameHeight": 138.0,
+                    "frameCount": 5,
                     "startWidth": 0.0,
                     "startHeight": 0.0,
                     "speed": 0.1,
@@ -46,22 +46,12 @@
             "initialState": "idle",
             "transitions": []
         },
-        "ColliderComponent":
-        [
-            {
-                "target": "both",
-                "offset": { "x": -1.0, "y": -1.0 },
-                "size" : { "x": 35.0, "y": 38.0 },
-                "type": "Trigger"
-            },
-            {
-                "target": "both",
-                "offset": { "x": 0.0, "y": 0.0 },
-                "size" : { "x": 33.0, "y": 36.0 },
-                "type": "Solid"
-            }
-        ]
-        ,
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size" : { "x": 172.0, "y": 138.0 },
+            "type": "Solid"
+        },
         "DamageComponent": {
             "target": "both",
             "damage": 25.0

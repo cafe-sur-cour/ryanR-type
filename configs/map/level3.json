@@ -1,9 +1,9 @@
 {
-    "background": "background",
-    "index": 3,
-    "mapLength": 10000.0,
+    "background": "background1",
+    "index": 1,
+    "mapLength": 9000.0,
     "music": "music",
-    "name": "Level FRANQUET",
+    "name": "franquax",
     "obstacles": [
         {
             "name": "obstacle1",
@@ -15,21 +15,15 @@
                     "type": "horizontalLine"
                 },
                 {
-                    "count": 14,
-                    "fromX": 500.0,
-                    "posY": 1000.0,
+                    "count": 8,
+                    "fromX": 2321.0,
+                    "posY": 116.0,
                     "type": "horizontalLine"
                 },
                 {
                     "count": 8,
-                    "fromX": 2200.0,
-                    "posY": 100.0,
-                    "type": "horizontalLine"
-                },
-                {
-                    "count": 8,
-                    "fromX": 2200.0,
-                    "posY": 900.0,
+                    "fromX": 2374.0,
+                    "posY": 572.0,
                     "type": "horizontalLine"
                 },
                 {
@@ -40,44 +34,32 @@
                 },
                 {
                     "count": 10,
-                    "fromX": 4500.0,
-                    "posY": 920.0,
+                    "fromX": 4429.0,
+                    "posY": 762.0,
                     "type": "horizontalLine"
                 },
                 {
-                    "count": 20,
-                    "fromX": 6000.0,
-                    "posY": 680.0,
-                    "type": "horizontalLine"
-                },
-                {
-                    "count": 20,
-                    "fromX": 6000.0,
-                    "posY": 400.0,
-                    "type": "horizontalLine"
-                },
-                {
-                    "count": 15,
-                    "fromX": 799.0,
-                    "posY": 49.0,
+                    "count": 8,
+                    "fromX": 1360.0,
+                    "posY": 984.0,
                     "type": "horizontalLine"
                 },
                 {
                     "count": 5,
-                    "fromY": 400.0,
-                    "posX": 1000.0,
+                    "fromY": 404.0,
+                    "posX": 809.0,
                     "type": "verticalLine"
                 },
                 {
                     "count": 10,
-                    "fromY": -346.0,
-                    "posX": 1682.0,
+                    "fromY": -392.0,
+                    "posX": 1667.0,
                     "type": "verticalLine"
                 },
                 {
                     "count": 12,
-                    "fromY": 200.0,
-                    "posX": 3000.0,
+                    "fromY": 577.0,
+                    "posX": 3015.0,
                     "type": "verticalLine"
                 },
                 {
@@ -93,8 +75,8 @@
                     "type": "verticalLine"
                 },
                 {
-                    "posX": 500.0,
-                    "posY": 100.0,
+                    "posX": 427.0,
+                    "posY": -25.0,
                     "type": "unique"
                 }
             ]
@@ -104,22 +86,36 @@
         {
             "name": "flyingForce",
             "position": {
-                "posX": 500.0,
-                "posY": 700.0
+                "posX": 444.0,
+                "posY": 688.0
+            }
+        },
+        {
+            "name": "flyingForce",
+            "position": {
+                "posX": 3680.0,
+                "posY": 815.0
             }
         },
         {
             "name": "force",
             "position": {
-                "posX": 700.0,
-                "posY": 700.0
+                "posX": 1060.0,
+                "posY": 859.0
             }
         },
         {
-            "name": "powerUpAddLife",
+            "name": "powerUpAddForceLevel",
             "position": {
-                "posX": 398.0,
-                "posY": 668.0
+                "posX": 1649.0,
+                "posY": 675.0
+            }
+        },
+        {
+            "name": "powerUpAddForceLevel",
+            "position": {
+                "posX": 1439.0,
+                "posY": 681.0
             }
         }
     ],
@@ -131,7 +127,7 @@
                     "count": 1,
                     "distributionX": {
                         "max": 100.0,
-                        "min": 50.0,
+                        "min": 59.0,
                         "type": "random"
                     },
                     "distributionY": {
@@ -142,7 +138,7 @@
                     "type": "snake_head"
                 }
             ],
-            "gameXTrigger": 200.0
+            "gameXTrigger": 2011.0
         },
         {
             "enemies": [
@@ -158,7 +154,7 @@
                         "min": 10.0,
                         "type": "uniform"
                     },
-                    "type": "enemy3"
+                    "type": "enemy2"
                 },
                 {
                     "count": 3,
@@ -175,7 +171,187 @@
                     "type": "enemy1"
                 }
             ],
-            "gameXTrigger": 2689.0
+            "gameXTrigger": 3802.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 1,
+                    "distributionX": {
+                        "max": 100.0,
+                        "min": 90.0,
+                        "type": "uniform"
+                    },
+                    "distributionY": {
+                        "max": 100.0,
+                        "min": 0.0,
+                        "type": "uniform"
+                    },
+                    "type": "enemy1"
+                }
+            ],
+            "gameXTrigger": 2313.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 1,
+                    "distributionX": {
+                        "max": 100.0,
+                        "min": 90.0,
+                        "type": "uniform"
+                    },
+                    "distributionY": {
+                        "max": 100.0,
+                        "min": 0.0,
+                        "type": "uniform"
+                    },
+                    "type": "enemy1"
+                }
+            ],
+            "gameXTrigger": 2315.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 3,
+                    "distributionX": {
+                        "max": 100.0,
+                        "min": 90.0,
+                        "type": "uniform"
+                    },
+                    "distributionY": {
+                        "max": 70.0,
+                        "min": 20.0,
+                        "type": "uniform"
+                    },
+                    "type": "enemy1"
+                }
+            ],
+            "gameXTrigger": 3105.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 3,
+                    "distributionX": {
+                        "max": 100.0,
+                        "min": 90.0,
+                        "type": "uniform"
+                    },
+                    "distributionY": {
+                        "max": 70.0,
+                        "min": 20.0,
+                        "type": "uniform"
+                    },
+                    "type": "enemy1"
+                }
+            ],
+            "gameXTrigger": 4964.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 3,
+                    "distributionX": {
+                        "max": 15.0,
+                        "min": 10.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "enemy2"
+                },
+                {
+                    "count": 3,
+                    "distributionX": {
+                        "max": 90.0,
+                        "min": 85.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "enemy1"
+                }
+            ],
+            "gameXTrigger": 515.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 3,
+                    "distributionX": {
+                        "max": 15.0,
+                        "min": 10.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "enemy2"
+                },
+                {
+                    "count": 3,
+                    "distributionX": {
+                        "max": 90.0,
+                        "min": 85.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "enemy1"
+                }
+            ],
+            "gameXTrigger": 5204.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 3,
+                    "distributionX": {
+                        "max": 100.0,
+                        "min": 90.0,
+                        "type": "uniform"
+                    },
+                    "distributionY": {
+                        "max": 70.0,
+                        "min": 20.0,
+                        "type": "uniform"
+                    },
+                    "type": "enemy1"
+                }
+            ],
+            "gameXTrigger": 1110.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 1,
+                    "distributionX": {
+                        "max": 85.0,
+                        "min": 85.0,
+                        "type": "uniform"
+                    },
+                    "distributionY": {
+                        "max": 50.0,
+                        "min": 50.0,
+                        "type": "uniform"
+                    },
+                    "type": "boss1"
+                }
+            ],
+            "gameXTrigger": 7030.0
         }
     ]
 }

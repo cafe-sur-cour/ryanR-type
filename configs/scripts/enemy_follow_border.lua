@@ -22,8 +22,12 @@ function update(entity, deltaTime)
     local px, py = getNearestPlayerPosition(entity)
     local ex, ey = getEntityPosition(entity)
     if px > ex then
-        createShootIntent(entity, 0)
+        if (createShootIntent(entity, 0) == true) then
+            setAnimationState(entity, "attack")
+        end
     else
-        createShootIntent(entity, 180)
+        if (createShootIntent(entity, 180) == true) then
+            setAnimationState(entity, "attack")
+        end
     end
 end

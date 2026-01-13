@@ -25,11 +25,11 @@ void ecs::ScriptingComponent::init(sol::state& lua, size_t entityId) {
                 std::string(err.what()), err::ScriptingError::LOAD_FAILED);
         }
 
-        sol::table metatable = lua.create_table();
-        metatable["__index"] = lua["_G"];
-        _env[sol::metatable_key] = metatable;
+        sol::environment env(lua, sol::create, lua.globals());
         sol::protected_function chunk = script.get<sol::protected_function>();
-        sol::protected_function_result result = chunk(_env);
+        sol::set_environment(env, chunk);
+        sol::protected_function_result result = chunk();
+        _env = env;
         if (!result.valid()) {
             sol::error err = result;
             throw err::ScriptingError("Failed to run script: " +
