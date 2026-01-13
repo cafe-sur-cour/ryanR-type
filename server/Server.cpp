@@ -521,12 +521,12 @@ rserv::ServerInfo rserv::Server::getServerInfo() const {
     ServerInfo info;
     auto now = std::chrono::steady_clock::now();
 
-    info.connectedClients = this->_clients.size();
+    info.connectedClients = static_cast<int>(this->_clients.size());
 
     static auto startTime = std::chrono::steady_clock::now();
     info.uptime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime);
 
-    info.activeLobbies = this->_lobbies.size();
+    info.activeLobbies = static_cast<int>(this->_lobbies.size());
 
     info.totalPlayers = 0;
     for (const auto& lobbyPtr : this->_lobbies) {
