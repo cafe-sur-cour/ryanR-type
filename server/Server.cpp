@@ -16,7 +16,7 @@
 #include <queue>
 
 #include "Server.hpp"
-#include "Constants.hpp"
+#include "constants.hpp"
 #include "packet/DefaultPacketHandlers.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../../common/systems/systemManager/SystemManager.hpp"

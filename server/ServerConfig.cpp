@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <string>
 #include "ServerConfig.hpp"
-#include "Constants.hpp"
+#include "constants.hpp"
 
 rserv::ServerConfig::ServerConfig() :
     _state(-1), _port(constants::DEFAULT_SERVER_PORT),

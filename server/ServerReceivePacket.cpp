@@ -18,7 +18,7 @@
 
 #include "Server.hpp"
 #include "Lobby.hpp"
-#include "Constants.hpp"
+#include "constants.hpp"
 #include "../../../common/utils/SecureJsonManager.hpp"
 #include "../common/debug.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
