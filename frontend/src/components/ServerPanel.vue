@@ -106,7 +106,7 @@
         </div>
 
         <!-- Players Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <!-- Logged in Players -->
           <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
             <h2 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
@@ -132,7 +132,7 @@
                 <!-- Player stats -->
                 <div v-if="selectedPlayerIndex === index && serverInfo.playerStats && serverInfo.playerStats[index]"
                      class="mt-2 ml-4 p-3 bg-gray-800 rounded border-l-4 border-green-400">
-                  <div class="grid grid-cols-3 gap-4 text-sm">
+                  <div class="grid grid-cols-4 gap-4 text-sm">
                     <div class="text-center">
                       <p class="text-gray-400">Games Played</p>
                       <p class="text-white font-bold text-lg">{{ serverInfo.playerStats[index].games_played || 0 }}</p>
@@ -144,6 +144,12 @@
                     <div class="text-center">
                       <p class="text-gray-400">High Score</p>
                       <p class="text-white font-bold text-lg">{{ serverInfo.playerStats[index].high_score || 0 }}</p>
+                    </div>
+                    <div class="text-center">
+                      <p class="text-gray-400">Banned</p>
+                      <p :class="serverInfo.playerStats[index].banned ? 'text-red-400' : 'text-green-400'" class="font-bold text-lg">
+                        {{ serverInfo.playerStats[index].banned ? 'Yes' : 'No' }}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -200,6 +206,29 @@
               No players in game
             </div>
           </div>
+
+          <!-- Banned Players -->
+          <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+            <h2 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+              <BanIcon class="h-5 w-5 text-red-400" />
+              <span>Banned Players</span>
+            </h2>
+            <div v-if="serverInfo.bannedPlayers && serverInfo.bannedPlayers.length > 0" class="space-y-2">
+              <div v-for="(player, index) in serverInfo.bannedPlayers" :key="index"
+                   class="bg-gray-700 rounded p-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-300">{{ player }}</span>
+                  <div class="flex items-center space-x-2">
+                    <div class="w-2 h-2 bg-red-400 rounded-full"></div>
+                    <span class="text-sm text-red-400">Banned</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else class="text-gray-500 text-center py-4">
+              No banned players
+            </div>
+          </div>
         </div>
       </div>
 
@@ -236,7 +265,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import Button from './ui/Button.vue'
-import { RefreshCwIcon, ServerIcon, UsersIcon, GamepadIcon, ClockIcon, InfoIcon } from 'lucide-vue-next'
+import { RefreshCwIcon, ServerIcon, UsersIcon, GamepadIcon, ClockIcon, InfoIcon, BanIcon } from 'lucide-vue-next'
 
 interface Props {
   password: string
@@ -252,6 +281,7 @@ interface ServerInfo {
   lobbyPlayerDetails?: string[][]
   playerStats?: Array<Record<string, number>>
   inGamePlayers?: string[]
+  bannedPlayers?: string[]
 }
 
 interface ServerConfig {
