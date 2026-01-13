@@ -359,7 +359,6 @@ namespace constants {
     const std::string SET_PROJECTILE_PREFAB_FUNCTION = "setProjectilePrefab";
     const std::string COUNT_FORCES_BY_TYPE_FUNCTION = "countForcesByType";
     const std::string GET_FORCE_POSITION_BY_TYPE_FUNCTION = "getForcePositionByType";
-    const std::string RESTART_GAME_ZONE_FUNCTION = "restartGameZone";
     const std::string GET_GAME_ZONE_POSITION_FUNCTION = "getGameZonePosition";
     const std::string GET_GAME_ZONE_SIZE_FUNCTION = "getGameZoneSize";
     const std::string GET_GAME_ZONE_VELOCITY_FUNCTION = "getGameZoneVelocity";
