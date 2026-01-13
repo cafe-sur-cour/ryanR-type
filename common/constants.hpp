@@ -317,8 +317,10 @@ namespace constants {
     constexpr std::uint8_t PACKET_PROFILE = 0x1D;
     constexpr std::uint8_t PACKET_GAME_RULES = 0x1E;
     constexpr std::uint8_t PACKET_REQUEST_GAME_RULES_UPDATE = 0x1F;
+    constexpr std::uint8_t PACKET_NEW_CHAT = 0x20;
+    constexpr std::uint8_t PACKET_BROADCASTED_CHAT = 0x21;
 
-    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 32;
+    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 34;
     const int MAX_CLIENT_PER_LOBBY = 4;
 
     /* Lobby connection codes */
@@ -332,6 +334,8 @@ namespace constants {
     const std::string ONINTERACT_FUNCTION = "OnInteract";
     const std::string ACTIVATE_OR_DEACTIVATE_FORCE_FUNCTION = "ActivateOrDeactivateForce";
     const std::string ADD_FORCE_LEVEL_FUNCTION = "addForceLevel";
+
+    /* Constants for Scripting API */
     const std::string PRINT_FUNCTION = "print";
     const std::string CREATE_MOVE_INTENT_FUNCTION = "createMoveIntent";
     const std::string GET_ENTITY_POSITION_FUNCTION = "getEntityPosition";
@@ -360,6 +364,7 @@ namespace constants {
     const std::string GET_GAME_ZONE_SIZE_FUNCTION = "getGameZoneSize";
     const std::string GET_GAME_ZONE_VELOCITY_FUNCTION = "getGameZoneVelocity";
     const std::string REVERSE_SHOOT_ORIENTATION_FUNCTION = "reverseShootOrientation";
+    const std::string SET_GAME_ZONE_VELOCITY_FUNCTION = "setGameZoneVelocity";
 }
 
 #endif /* !CONSTANTS_HPP_ */

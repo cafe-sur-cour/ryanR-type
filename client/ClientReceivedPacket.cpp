@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <utility>
 #include <unordered_map>
 #include "ClientNetwork.hpp"
 #include "SettingsConfig.hpp"
@@ -17,7 +18,6 @@
 #include "../common/components/tags/LocalPlayerTag.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
 #include "../common/components/permanent/ScoreComponent.hpp"
-#include "DeathAnimationSpawner.hpp"
 #include "gsm/states/scenes/InGame/InGameState.hpp"
 #include "gsm/states/scenes/Results/ResultsState.hpp"
 #include "gsm/states/scenes/LevelComplete/LevelCompleteState.hpp"
@@ -251,7 +251,6 @@ void ClientNetwork::handleEntityDeath() {
     }
     ecs::Entity entityId = it->second;
 
-    DeathAnimationSpawner::spawnDeathAnimation(_resourceManager, registry, entityId);
 
     registry->destroyEntity(entityId);
     _serverToLocalEntityMap.erase(serverEntityId);
@@ -546,6 +545,43 @@ void ClientNetwork::handleProfile() {
     _profileData = profileData;
     _profileDataUpdated = true;
     this->_expectingProfileResponse = false;
+}
+
+void ClientNetwork::handleBroadcastedChat() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received broadcasted chat packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    if (payload.size() < 8) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] BROADCASTED_CHAT packet is invalid",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    std::string username;
+    for (size_t i = 0; i < 8; ++i) {
+        char c = static_cast<char>(payload.at(i) & 0xFF);
+        if (c == '\0')
+            break;
+        username += c;
+    }
+
+    std::string message;
+    for (size_t i = 8; i < payload.size(); ++i) {
+        char c = static_cast<char>(payload.at(i) & 0xFF);
+        if (c == '\0')
+            break;
+        message += c;
+    }
+
+    if (this->_lastMessages.size() >= 10) {
+        this->_lastMessages.erase(this->_lastMessages.begin());
+    }
+    this->_lastMessages.push_back(std::make_pair(username, message));
 }
 
 void ClientNetwork::handleGameRules() {
