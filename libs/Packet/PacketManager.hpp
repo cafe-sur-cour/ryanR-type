@@ -50,7 +50,6 @@ class PacketManager : public IPacketManager {
         void registerLength(uint8_t type, uint32_t length) override;
         void registerGameStatePackFunction(std::function<std::vector<uint8_t>(std::vector<uint64_t>, std::shared_ptr<unsigned int>)> func) override;
         void registerGameStateUnpackFunction(std::function<unsigned int(const std::vector<uint8_t>, unsigned int)> func) override;
-        void registerLengthCombEntry(uint8_t compType, uint32_t compLength, uint64_t compSize) override;
         void clearAllHandlers() override;
 
     private:
@@ -65,7 +64,6 @@ class PacketManager : public IPacketManager {
         std::map<uint8_t, uint32_t> _packetLengths;
 
         /* Pack Game State */
-        std::vector<std::tuple<uint8_t, uint32_t, uint64_t>> _lengthComb;
         std::vector<std::function<std::vector<uint8_t>(std::vector<uint64_t>, std::shared_ptr<unsigned int>)>> _packGSFunction;
 
         /* Unpack Game State */
