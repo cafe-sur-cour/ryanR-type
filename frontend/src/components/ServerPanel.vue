@@ -9,7 +9,7 @@
             <p class="text-gray-400 mt-1">Real-time server statistics and management</p>
           </div>
           <div class="flex space-x-3">
-            <Button @click="refreshData" :disabled="loading" variant="outline" class="flex items-center space-x-2">
+            <Button @click="refreshData" :disabled="loading" variant="default" class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700">
               <RefreshCwIcon class="h-4 w-4" :class="{ 'animate-spin': loading }" />
               <span>Refresh</span>
             </Button>
