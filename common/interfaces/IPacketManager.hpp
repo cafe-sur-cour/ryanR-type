@@ -38,6 +38,7 @@
 #define LENGTH_PROFILE_PACKET 40
 #define LENGTH_GAME_RULES_PACKET 3
 #define LENGTH_REQUEST_GAME_RULES_UPDATE_PACKET 2
+#define LENGTH_FORCE_LEAVE_PACKET 1
 
 #define NO_OP_PACKET 0x00
 #define CONNECTION_CLIENT_PACKET 0x01
@@ -73,6 +74,7 @@
 #define REQUEST_GAME_RULES_UPDATE_PACKET 0x1F
 #define NEW_CHAT_PACKET 0x20
 #define BROADCASTED_CHAT_PACKET 0x21
+#define FORCE_LEAVE_PACKET 0x22
 
 namespace pm {
 
@@ -105,7 +107,6 @@ namespace pm {
         virtual void registerLength(uint8_t type, uint32_t length) = 0;
         virtual void registerGameStatePackFunction(std::function<std::vector<uint8_t>(std::vector<uint64_t>, std::shared_ptr<unsigned int>)> func) = 0;
         virtual void registerGameStateUnpackFunction(std::function<unsigned int(const std::vector<uint8_t>, unsigned int)> func) = 0;
-        virtual void registerLengthCombEntry(uint8_t compType, uint32_t compLength, uint64_t compSize) = 0;
         virtual void clearAllHandlers() = 0;
 };
 } // namespace pm

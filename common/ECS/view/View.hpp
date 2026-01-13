@@ -27,9 +27,10 @@ class View {
         class Iterator {
             public:
                 Iterator(std::shared_ptr<Registry> registry, size_t entityId, size_t maxEntityId);
-                bool operator!=(const Iterator& other) const;
+                bool operator!=(const Iterator &other) const;
                 Iterator& operator++();
                 size_t operator*() const;
+                bool operator==(const Iterator &other) const;
 
             private:
                 bool hasAllComponents() const;

@@ -10,7 +10,7 @@
 
 #include "Server.hpp"
 #include "Utils.hpp"
-#include "Constants.hpp"
+#include "constants.hpp"
 
 #include "../common/Error/IError.hpp"
 

@@ -100,6 +100,8 @@ class ClientNetwork {
 
         void addToEventQueue(const NetworkEvent &event);
 
+        void clearEntitiesAndMappings();
+
         bool isConnected() const;
         bool isReady() const;
 
@@ -120,6 +122,8 @@ class ClientNetwork {
         std::atomic<size_t> _readyClients;
         std::atomic<uint8_t> _clientId;
         std::atomic<bool> _clientReadyStatus;
+
+        std::chrono::steady_clock::time_point _lastLeaveLobbyTime;
 
         void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
         void setGameStateMachine(std::shared_ptr<gsm::IGameStateMachine> gsm);
@@ -154,6 +158,7 @@ class ClientNetwork {
         void handleRegisterFail();
         void handleBroadcastedChat();
         void handleGameRules();
+        void handleForceLeave();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;

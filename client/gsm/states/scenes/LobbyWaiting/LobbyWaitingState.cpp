@@ -22,6 +22,7 @@
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../colors.hpp"
 #include "../../../../../common/GameRules.hpp"
+#include "../MainMenu/MainMenuState.hpp"
 #include "../Chat/ChatState.hpp"
 
 namespace gsm {
@@ -181,7 +182,77 @@ LobbyWaitingState::LobbyWaitingState(
     bottomRightConfig.offset = math::Vector2f(-20.0f, -20.0f);
 
     _bottomRightLayout = std::make_shared<ui::UILayout>(_resourceManager, bottomRightConfig);
-    _bottomRightLayout->setSize(math::Vector2f(80.f, 80.f));
+    _bottomRightLayout->setSize(math::Vector2f(200.f, 60.f));
+
+    _leaveButton = std::make_shared<ui::Button>(_resourceManager);
+    _leaveButton->setText("Leave");
+    _leaveButton->setSize(math::Vector2f(150.f, 50.f));
+    _leaveButton->setNormalColor(colors::BUTTON_DANGER);
+    _leaveButton->setHoveredColor(colors::BUTTON_DANGER_HOVER);
+    _leaveButton->setPressedColor(colors::BUTTON_DANGER_PRESSED);
+
+    _leaveButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->leaveLobby();
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Player requested to leave the lobby.",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
+        auto networkPtr = this->_resourceManager->get<ClientNetwork>();
+        if (networkPtr) {
+            networkPtr->setLobbyCode("");
+            networkPtr->_isConnectedToLobby = false;
+            networkPtr->_isLobbyMaster = false;
+            networkPtr->_ready = false;
+            networkPtr->clearEntitiesAndMappings();
+        }
+        auto gsmPtr = _gsm.lock();
+        if (gsmPtr) {
+            auto mainMenuState =
+            std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
+            gsmPtr->requestStateChange(mainMenuState);
+        }
+    });
+    _leaveButton->setOnActivated([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->leaveLobby();
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Player requested to leave the lobby.",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
+        auto networkPtr = this->_resourceManager->get<ClientNetwork>();
+        if (networkPtr) {
+            networkPtr->setLobbyCode("");
+            networkPtr->_isConnectedToLobby = false;
+            networkPtr->_isLobbyMaster = false;
+            networkPtr->_ready = false;
+            networkPtr->clearEntitiesAndMappings();
+        }
+        auto gsmPtr = _gsm.lock();
+        if (gsmPtr) {
+            auto mainMenuState =
+            std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
+            gsmPtr->requestStateChange(mainMenuState);
+        }
+    });
+
+    _bottomRightLayout->addElement(_leaveButton);
+    _uiManager->addElement(_bottomRightLayout);
+
+    ui::LayoutConfig topConfig;
+    topConfig.direction = ui::LayoutDirection::Horizontal;
+    topConfig.alignment = ui::LayoutAlignment::End;
+    topConfig.spacing = 10.0f;
+    topConfig.padding = math::Vector2f(0.0f, 0.0f);
+    topConfig.anchorX = ui::AnchorX::Right;
+    topConfig.anchorY = ui::AnchorY::Top;
+    topConfig.offset = math::Vector2f(-20.0f, 20.0f);
+    _topLayout = std::make_shared<ui::UILayout>(_resourceManager, topConfig);
+    _topLayout->setSize(math::Vector2f(80.f, 80.f));
 
     _chatButton = std::make_shared<ui::Button>(_resourceManager);
     _chatButton->setSize(math::Vector2f(80.f, 80.f));
@@ -203,8 +274,8 @@ LobbyWaitingState::LobbyWaitingState(
         }
     });
 
-    _bottomRightLayout->addElement(_chatButton);
-    _uiManager->addElement(_bottomRightLayout);
+    _topLayout->addElement(_chatButton);
+    _uiManager->addElement(_topLayout);
 }
 
 void LobbyWaitingState::setupLobbyMasterUI() {

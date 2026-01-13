@@ -126,6 +126,7 @@ std::vector<uint64_t> rserv::Lobby::convertShootStatComponent(
             data.push_back(static_cast<uint64_t>(shootStats->getMultiShotPattern().shotCount));
             data.push_back(packFloat(shootStats->getMultiShotPattern().angleSpread));
             data.push_back(packFloat(shootStats->getMultiShotPattern().offsetDistance));
+            data.push_back(packFloat(shootStats->getMultiShotPattern().angleOffset));
         }
     }
     return data;

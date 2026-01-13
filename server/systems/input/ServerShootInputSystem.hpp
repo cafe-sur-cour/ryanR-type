@@ -14,6 +14,7 @@
 #include "../../../common/InputMapping/InputAction.hpp"
 #include "../../initResourcesManager/ServerInputProvider.hpp"
 #include <memory>
+#include <map>
 
 namespace ecs {
 
@@ -26,6 +27,8 @@ class ServerShootInputSystem : public ASystem {
 
     private:
         void updateShootIntent(std::shared_ptr<Registry> registry, Entity entityId);
+
+        std::map<ecs::Entity, float> _cooldowns;
 };
 
 } // namespace ecs

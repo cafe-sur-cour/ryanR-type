@@ -20,6 +20,7 @@ public:
 
     void enter() override;
     void update(float deltaTime) override;
+    std::string getStateName() const override { return "Game Ended"; }
 };
 
 }  // namespace gsm

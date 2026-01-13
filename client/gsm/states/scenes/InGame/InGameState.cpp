@@ -17,6 +17,7 @@
 #include "../../../../../common/ECS/entity/Entity.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../Settings/SettingsState.hpp"
+#include "../Pause/PauseState.hpp"
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/interfaces/IAudio.hpp"
@@ -32,7 +33,6 @@
 #include "../../../../systems/input/MovementInputSystem.hpp"
 #include "../../../../systems/input/ShootInputSystem.hpp"
 #include "../../../../systems/input/ForceInputSystem.hpp"
-#include "../../../../systems/network/KeepAliveSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
 #include "../../../../systems/animationState/AnimationStateSyncSystem.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
@@ -40,6 +40,7 @@
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
 #include "../../../../systems/effects/ClientEffectCleanupSystem.hpp"
+#include "../../../../systems/effects/HideLifetimeSystem.hpp"
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
@@ -99,7 +100,6 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::ShootInputSystem>());
     addSystem(std::make_shared<ecs::ForceInputSystem>());
     addSystem(std::make_shared<ecs::AnimationStateSyncSystem>());
-    addSystem(std::make_shared<ecs::KeepAliveSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
     addSystem(std::make_shared<ecs::ClientEffectCleanupSystem>());
     addSystem(std::make_shared<ecs::GameZoneViewSystem>());
@@ -113,6 +113,7 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::ReplaySystem>());
     addSystem(std::make_shared<ecs::SoundSystem>());
     addSystem(std::make_shared<ecs::MusicSystem>());
+    addSystem(std::make_shared<ecs::HideLifetimeSystem>());
 
     auto audio = _resourceManager->get<gfx::IAudio>();
 
@@ -133,7 +134,7 @@ void InGameState::update(float deltaTime) {
         auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
         if (inputProvider->isActionPressed(ecs::InputAction::MENU_BACK)) {
             if (auto stateMachine = _gsm.lock()) {
-                stateMachine->requestStatePush(std::make_shared<SettingsState>(stateMachine,
+                stateMachine->requestStatePush(std::make_shared<PauseState>(stateMachine,
                     _resourceManager));
                 return;
             }

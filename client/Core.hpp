@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <thread>
+#include <chrono>
 #include "../common/resourceManager/ResourceManager.hpp"
 #include "ClientNetwork.hpp"
 #include "../common/interfaces/IWindow.hpp"
@@ -42,6 +43,9 @@ class Core
         std::shared_ptr<ClientNetwork> _clientNetwork;
         std::shared_ptr<Parser> _parser;
         std::thread _networkThread;
+
+        std::chrono::steady_clock::time_point _lastHealthcheckTime;
+        float _healthcheckInterval = constants::HEALTHCHECK_INTERVAL;
 
         void initNetwork();
         void initLibraries();

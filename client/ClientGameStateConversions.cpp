@@ -142,20 +142,24 @@ size_t ClientNetwork::parseColliderComponent(const std::vector<uint64_t> &payloa
 
 size_t ClientNetwork::parseShootingStatsComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
-    if (index + 5 <= payload.size()) {
+    if (index + 6 <= payload.size()) {
         float fireRate = unpackFloat(payload[index++]);
         float cooldown = unpackFloat(payload[index++]);
         uint32_t shotCount = static_cast<uint32_t>(payload[index++]);
         float angleSpread = unpackFloat(payload[index++]);
         float offsetDistance = unpackFloat(payload[index++]);
+        float angleOffset = unpackFloat(payload[index++]);
+
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Entity " + std::to_string(entityId) + " ShootingStats: fireRate(" +
             std::to_string(fireRate) + ") cooldown(" + std::to_string(cooldown) +
             ") shots(" + std::to_string(shotCount) + ") angleSpread(" +
             std::to_string(angleSpread) + ") offsetDistance(" +
-            std::to_string(offsetDistance) + ")",
+            std::to_string(offsetDistance) + ") angleOffset(" +
+            std::to_string(angleOffset) + ")",
             debug::debugType::NETWORK,
-            debug::debugLevel::INFO);
+            debug::debugLevel::INFO
+        );
     }
     return index;
 }
