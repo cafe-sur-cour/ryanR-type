@@ -546,7 +546,8 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
         if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
             user.contains(constants::PASSWORD_JSON_WARD) &&
             user[constants::USERNAME_JSON_WARD] == username) {
-            std::string storedPassword = user[constants::PASSWORD_JSON_WARD].get<std::string>();
+            std::string storedPassword =
+                user[constants::PASSWORD_JSON_WARD].get<std::string>();
             std::string decryptedPassword = utils::Encryption::decrypt(storedPassword);
             if (decryptedPassword == password) {
                 loginSuccess = true;
