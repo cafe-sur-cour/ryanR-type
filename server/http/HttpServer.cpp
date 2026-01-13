@@ -135,7 +135,7 @@ void rserv::HttpServer::infoEndpoint(const httplib::Request &req, httplib::Respo
         };
 
         res.set_content(jsonResponse.dump(), "application/json");
-    } catch (const std::exception &e) {
+    } catch (const std::exception &) {
         res.status = 500;
         res.set_content("Internal server error", "text/plain");
     }
@@ -169,7 +169,7 @@ void rserv::HttpServer::configEndpoint(const httplib::Request &req, httplib::Res
         };
 
         res.set_content(jsonResponse.dump(), "application/json");
-    } catch (const std::exception &e) {
+    } catch (const std::exception &) {
         res.status = 500;
         res.set_content("Internal server error", "text/plain");
     }
@@ -196,7 +196,7 @@ void rserv::HttpServer::commandsSuggestionsEndpoint(
         };
 
         res.set_content(jsonResponse.dump(), "application/json");
-    } catch (const std::exception &e) {
+    } catch (const std::exception &) {
         res.status = 500;
         res.set_content("Internal server error", "text/plain");
     }
@@ -223,7 +223,7 @@ void rserv::HttpServer::commandsExecuteEndpoint(
         };
 
         res.set_content(jsonResponse.dump(), "application/json");
-    } catch (const std::exception &e) {
+    } catch (const std::exception &) {
         res.status = 400;
         res.set_content("Invalid request", "text/plain");
     }
