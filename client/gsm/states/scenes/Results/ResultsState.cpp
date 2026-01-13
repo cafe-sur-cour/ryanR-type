@@ -46,22 +46,31 @@ void ResultsState::enter() {
         }
     });
 
-    std::string text = _isWin ? constants::WIN_TEXT : constants::LOSE_TEXT;
-    gfx::color_t color = _isWin ? colors::GREEN : colors::RED;
-
-    _resultText = std::make_shared<ui::Text>(_resourceManager);
-    _resultText->setText(text);
-    _resultText->setTextColor(color);
-    _resultText->setFontSize(150);
-    _resultText->setOutlineColor(gfx::color_t{0, 0, 0});
-    _resultText->setOutlineThickness(2.0f);
-
-    auto textSize = window->getTextSize(text, constants::MAIN_FONT, 150);
-    float x = (constants::MAX_WIDTH - static_cast<float>(textSize.first)) / 2.0f;
-    float y = (constants::MAX_HEIGHT - static_cast<float>(textSize.second)) / 2.0f;
-    _resultText->setPosition(math::Vector2f(x, y));
-
-    _uiManager->addElement(_resultText);
+    if (_isWin) {
+        _victoryAnimation = std::make_shared<ui::SpritePreview>(_resourceManager);
+        if (_victoryAnimation->loadPrefab(constants::VICTORY_PREFAB)) {
+            _victoryAnimation->setSize(math::Vector2f(1285.0f, 724.0f));
+            float x = (constants::MAX_WIDTH - 1285.0f) / 2.0f;
+            float y = (constants::MAX_HEIGHT - 724.0f) / 2.0f;
+            _victoryAnimation->setPosition(math::Vector2f(x, y));
+            _uiManager->addElement(_victoryAnimation);
+        } else {
+            std::cerr << "Failed to load victory animation prefab" << std::endl;
+            _victoryAnimation.reset();
+        }
+    } else {
+        _youDiedAnimation = std::make_shared<ui::SpritePreview>(_resourceManager);
+        if (_youDiedAnimation->loadPrefab(constants::LOSE_PREFAB)) {
+            _youDiedAnimation->setSize(math::Vector2f(1080.0f, 235.0f));
+            float x = (constants::MAX_WIDTH - 1080.0f) / 2.0f;
+            float y = (constants::MAX_HEIGHT - 235.0f) / 2.0f;
+            _youDiedAnimation->setPosition(math::Vector2f(x, y));
+            _uiManager->addElement(_youDiedAnimation);
+        } else {
+            std::cerr << "Failed to load youdied animation prefab" << std::endl;
+            _youDiedAnimation.reset();
+        }
+    }
 
     ui::LayoutConfig bottomRightConfig;
     bottomRightConfig.direction = ui::LayoutDirection::Vertical;
@@ -167,6 +176,13 @@ void ResultsState::update(float deltaTime) {
 
     _uiManager->update(deltaTime);
 
+    if (_victoryAnimation) {
+        _victoryAnimation->update(deltaTime);
+    }
+    if (_youDiedAnimation) {
+        _youDiedAnimation->update(deltaTime);
+    }
+
     renderUI();
 }
 
@@ -186,6 +202,8 @@ void ResultsState::renderUI() {
 
 void ResultsState::exit() {
     _resultText.reset();
+    _victoryAnimation.reset();
+    _youDiedAnimation.reset();
     _leaveButton.reset();
     _bottomRightLayout.reset();
 }
