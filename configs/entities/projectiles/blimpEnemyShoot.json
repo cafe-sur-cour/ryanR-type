@@ -64,6 +64,11 @@
                     "toSelf": ["TakeDeath"]
                 }
             ]
+        },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "musics/blimp_enemy_attack_01.wav",
+            "volume": 100.0
         }
     }
 }
