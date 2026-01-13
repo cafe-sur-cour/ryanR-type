@@ -69,8 +69,7 @@
                 }
             ]
         },
-        "HitboxRenderComponent": { "target": "client" },
-                "ProjectilePrefabComponent": {
+        "ProjectilePrefabComponent": {
             "target": "both",
             "prefabName": "basic_shot"
         },
