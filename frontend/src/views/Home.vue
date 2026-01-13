@@ -93,10 +93,10 @@
           v-if="activeTab === 'panel'"
           :password="password"
         />
-        <div v-else-if="activeTab === 'commands'" class="p-6">
-          <h2 class="text-2xl font-bold text-white mb-4">Server Commands</h2>
-          <p class="text-gray-400">Commands functionality coming soon...</p>
-        </div>
+        <Commands
+          v-else-if="activeTab === 'commands'"
+          :password="password"
+        />
       </main>
     </div>
   </div>
@@ -105,6 +105,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import ServerPanel from '../components/ServerPanel.vue'
+import Commands from '../components/Commands.vue'
 import Button from '../components/ui/Button.vue'
 import Input from '../components/ui/Input.vue'
 import { EyeIcon, EyeOffIcon } from 'lucide-vue-next'
