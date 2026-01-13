@@ -9,9 +9,12 @@
 #include "SpriteRenderingSystem.hpp"
 #include "../../components/rendering/SpriteComponent.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
+#include "../../../common/components/tags/PlayerTag.hpp"
+#include "../../../common/components/tags/LocalPlayerTag.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/resourceManager/ResourceManager.hpp"
 #include "../../../common/interfaces/IWindow.hpp"
+#include "../../colors.hpp"
 
 
 namespace ecs {
@@ -31,13 +34,22 @@ void SpriteRenderingSystem::update(std::shared_ptr<ResourceManager>
 
         if (!sprite || !transform || !sprite->isValid())
             continue;
+
+        bool hasPlayerTag = registry->hasComponent<PlayerTag>(entityId);
+        bool hasLocalPlayerTag = registry->hasComponent<LocalPlayerTag>(entityId);
+        gfx::color_t color = colors::PLAYER_LOCAL;
+
+        if (hasPlayerTag && !hasLocalPlayerTag) {
+            color = colors::PLAYER_REMOTE;
+        }
+
         if (resourceManager->has<gfx::IWindow>()) {
             auto window = resourceManager->get<gfx::IWindow>();
             const math::Vector2f& pos = transform->getPosition();
             const math::Vector2f& scale = transform->getScale();
             window->drawSprite(sprite->getTexturePath(),
                 pos.getX(), pos.getY(), scale.getX(), scale.getY(),
-                transform->getRotation());
+                transform->getRotation(), color);
         }
     }
 }

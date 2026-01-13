@@ -13,11 +13,14 @@
 #include "../../components/rendering/AnimationComponent.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
 #include "../../../common/components/permanent/VelocityComponent.hpp"
+#include "../../../common/components/tags/PlayerTag.hpp"
+#include "../../../common/components/tags/LocalPlayerTag.hpp"
 #include "../../../common/ECS/view/View.hpp"
 #include "../../../common/ECS/entity/Entity.hpp"
 #include "../../../common/interfaces/IWindow.hpp"
 #include "../../../common/Parser/Animation/AnimationConditionFactory.hpp"
 #include "../../../common/constants.hpp"
+#include "../../colors.hpp"
 
 namespace ecs {
 
@@ -127,8 +130,17 @@ void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
             auto window = resourceManager->get<gfx::IWindow>();
             const math::Vector2f& pos = transform->getPosition();
             const math::Vector2f& scale = transform->getScale();
+
+            bool hasPlayerTag = registry->hasComponent<PlayerTag>(entityId);
+            bool hasLocalPlayerTag = registry->hasComponent<LocalPlayerTag>(entityId);
+            gfx::color_t color = colors::PLAYER_LOCAL;
+
+            if (hasPlayerTag && !hasLocalPlayerTag) {
+                color = colors::PLAYER_REMOTE;
+            }
+
             window->drawSprite(clip->texturePath, pos.getX(), pos.getY(),
-                frameRect, scale.getX(), scale.getY(), transform->getRotation());
+                frameRect, scale.getX(), scale.getY(), transform->getRotation(), color);
         }
     }
 }

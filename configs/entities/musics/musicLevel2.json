@@ -1,0 +1,15 @@
+{
+    "name": "musicLevel2",
+    "components": {
+        "BackGroundMusicTag": {
+            "target": "client"
+        },
+        "MusicComponent": {
+            "target": "client",
+            "musicFile": "musics/level2.mp3",
+            "initialState": "STOPPED",
+            "volume": 100.0,
+            "loop": true
+        }
+    }
+}

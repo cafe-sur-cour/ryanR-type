@@ -15,7 +15,7 @@
         "ScriptingComponent": {
             "target": "server",
             "scriptPath": "configs/scripts/enemy_follow_player_vertical.lua",
-            "additionalFunctions": []
+            "additionalFunctions": ["death"]
         },
         "ProjectilePrefabComponent": {
             "target": "both",
@@ -74,6 +74,11 @@
         },
         "ShooterTag": { "target": "both" },
         "DamageCooldownComponent": { "target": "both" },
-        "HealthBarComponent": { "target": "client" }
+        "HealthBarComponent": { "target": "client" },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "musics/sfx_DLC_Graveyard_Devil_Shoot_03.wav",
+            "volume": 100.0
+        }
     }
 }
