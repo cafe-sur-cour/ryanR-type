@@ -47,14 +47,11 @@ function OnInteract(entity, interactorEntity)
     if isEntityPlayer(interactorEntity) and getParentId(entity) ~= interactorEntity then
         local forceCount = countForcesByType(interactorEntity, "force")
         if forceCount >= 1 then
-            print("[force] Already 1 force attached, rejecting")
             return
         end
 
-        print("[force] OnInteract - Force entity ID: " .. entity .. " Player entity ID: " .. interactorEntity)
         addPartId(interactorEntity, entity)
         setParentId(entity, interactorEntity)
-        print("[force] After setParentId, getParentId returns: " .. getParentId(entity))
         ex, _ = getEntityPosition(entity)
         ix, _ = getEntityPosition(interactorEntity)
         playerSizeX, playerSizeY = getEntitySize(getParentId(entity))
@@ -92,15 +89,11 @@ end
 
 function addForceLevel(entity)
     level = level + 1
-    print("[force] New force level: " .. level)
     if (level > 3) then
         level = 3
     end
     local parentId = getParentId(entity)
-    print("[force] Entity ID: " .. entity .. " Parent ID from getParentId: " .. parentId)
-    print("[force] isequipped: " .. tostring(isequipped) .. " attachDir: " .. attachDir)
     if isEntityPlayer(parentId) == false then
-        print("[force] Parent is not player, not changing projectile. Parent ID: " .. parentId)
         return
     end
     if level > previousLevel then

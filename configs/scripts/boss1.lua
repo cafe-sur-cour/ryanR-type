@@ -39,7 +39,6 @@ local bossState = {
 -- Fonction d'initialisation
 -- ============================================
 function init(entity)
-    print("[Boss] Initializing Boss 1 - Hilda Berg")
     local currentX, currentY = getEntityPosition(entity)
 
     local gzX, gzY = getGameZonePosition()
@@ -119,7 +118,6 @@ end
 -- Phase 2 - Placeholder
 -- ============================================
 function updatePhase2(entity, dt)
-    print("[Boss] Phase 2 not implemented yet")
     -- TODO: Implémenter Phase 2
 end
 
@@ -150,7 +148,6 @@ function updateNormalMode(entity, dt)
         end
         bossState.attackTimer = 0
         bossState.attackCount = bossState.attackCount + 1
-        print("[Boss] Attack count:", bossState.attackCount, "/", bossState.requiredAttacks)
     end
 end
 
@@ -191,7 +188,6 @@ function updateChargeMode(entity, dt)
         if bossState.attackTimer >= bossState.attackCooldown then
             if bossState.chargeCount == 0 then
                 bossState.maxCharges = math.random(1, 2)
-                print("[Boss Charge] Starting charge cycle, total charges:", bossState.maxCharges)
             end
             bossState.chargeState = "preparing"
             bossState.chargeTimer = 0
@@ -204,7 +200,6 @@ function updateChargeMode(entity, dt)
         if bossState.chargeTimer >= 1.0 then
             bossState.chargeState = "charging"
             bossState.chargeTimer = 0
-            print("[Boss Charge] Charging! Count:", bossState.chargeCount + 1, "/", bossState.maxCharges)
             setAnimationState(entity, "dash2")
         end
     elseif bossState.chargeState == "charging" then
@@ -226,10 +221,8 @@ function updateChargeMode(entity, dt)
             createMoveIntent(entity, (dirX / math.abs(dirX)) * speed, 0)
         else
             bossState.chargeCount = bossState.chargeCount + 1
-            print("[Boss Charge] Charge completed:", bossState.chargeCount, "/", bossState.maxCharges)
             if bossState.chargeCount >= bossState.maxCharges then
                 bossState.attackCount = bossState.attackCount + 1
-                print("[Boss] Attack count:", bossState.attackCount, "/", bossState.requiredAttacks)
                 bossState.chargeCount = 0
                 bossState.maxCharges = 0
             end
@@ -254,7 +247,6 @@ function switchMode(entity)
 
     local nextMode = availableModes[math.random(1, #availableModes)]
 
-    print("[Boss] Switching from", bossState.mode, "to", nextMode)
 
     bossState.mode = nextMode
     bossState.attackCount = 0
