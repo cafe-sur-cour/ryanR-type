@@ -1,0 +1,20 @@
+{
+  "components": {
+    "AnimationComponent": {
+      "target": "loading",
+      "states": {
+        "loading": {
+          "texturePath": "assets/sprites/menu/loading.png",
+          "frameWidth": 185,
+          "frameHeight": 320.0,
+          "frameCount": 46.0,
+          "startWidth": 0.0,
+          "startHeight": 0.0,
+          "speed": 0.1,
+          "loop": true
+        }
+      },
+      "initialState": "loading"
+    }
+  }
+}

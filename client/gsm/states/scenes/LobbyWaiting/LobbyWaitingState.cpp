@@ -171,17 +171,17 @@ LobbyWaitingState::LobbyWaitingState(
 
     _uiManager->addElement(_topLeftLayout);
 
-    ui::LayoutConfig bottomRightConfig;
-    bottomRightConfig.direction = ui::LayoutDirection::Horizontal;
-    bottomRightConfig.alignment = ui::LayoutAlignment::End;
-    bottomRightConfig.spacing = 10.0f;
-    bottomRightConfig.padding = math::Vector2f(0.0f, 0.0f);
-    bottomRightConfig.anchorX = ui::AnchorX::Right;
-    bottomRightConfig.anchorY = ui::AnchorY::Bottom;
-    bottomRightConfig.offset = math::Vector2f(-20.0f, -20.0f);
+    ui::LayoutConfig topRightConfig;
+    topRightConfig.direction = ui::LayoutDirection::Horizontal;
+    topRightConfig.alignment = ui::LayoutAlignment::End;
+    topRightConfig.spacing = 10.0f;
+    topRightConfig.padding = math::Vector2f(0.0f, 0.0f);
+    topRightConfig.anchorX = ui::AnchorX::Right;
+    topRightConfig.anchorY = ui::AnchorY::Top;
+    topRightConfig.offset = math::Vector2f(-20.0f, 20.0f);
 
-    _bottomRightLayout = std::make_shared<ui::UILayout>(_resourceManager, bottomRightConfig);
-    _bottomRightLayout->setSize(math::Vector2f(80.f, 80.f));
+    _topRightLayout = std::make_shared<ui::UILayout>(_resourceManager, topRightConfig);
+    _topRightLayout->setSize(math::Vector2f(80.f, 80.f));
 
     _chatButton = std::make_shared<ui::Button>(_resourceManager);
     _chatButton->setSize(math::Vector2f(80.f, 80.f));
@@ -203,8 +203,24 @@ LobbyWaitingState::LobbyWaitingState(
         }
     });
 
-    _bottomRightLayout->addElement(_chatButton);
-    _uiManager->addElement(_bottomRightLayout);
+    _topRightLayout->addElement(_chatButton);
+    _uiManager->addElement(_topRightLayout);
+
+    _loadingAnimation = std::make_shared<ui::SpritePreview>(_resourceManager);
+    if (_loadingAnimation->loadPrefab(constants::LOADING_PREFAVB)) {
+        _loadingAnimation->setSize(math::Vector2f(185.0f, 320.0f));
+        auto window = _resourceManager->get<gfx::IWindow>();
+        if (window) {
+            auto [windowWidth, windowHeight] = window->getWindowSize();
+            _loadingAnimation->setPosition(math::Vector2f(static_cast<float>(windowWidth) - 200.0f, static_cast<float>(windowHeight) - 300.0f));
+        }
+    } else {
+        std::cerr << "Failed to load loading animation prefab" << std::endl;
+        _loadingAnimation.reset();
+    }
+    if (_loadingAnimation) {
+        _uiManager->addElement(_loadingAnimation);
+    }
 }
 
 void LobbyWaitingState::setupLobbyMasterUI() {
@@ -311,6 +327,9 @@ void LobbyWaitingState::update(float deltaTime) {
     }
 
     _uiManager->update(deltaTime);
+    if (_loadingAnimation) {
+        _loadingAnimation->update(deltaTime);
+    }
     updateUIStatus();
     renderUI();
 }
@@ -383,7 +402,8 @@ void LobbyWaitingState::exit() {
     _crossfireButton.reset();
     _topLeftLayout.reset();
     _chatButton.reset();
-    _bottomRightLayout.reset();
+    _topRightLayout.reset();
+    _loadingAnimation.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
