@@ -34,6 +34,7 @@
 #include "../../../../systems/input/ShootInputSystem.hpp"
 #include "../../../../systems/input/ForceInputSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
+#include "../../../../systems/animationState/AnimationStateSyncSystem.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../../common/systems/death/DeathSystem.hpp"
@@ -97,6 +98,7 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::ShootInputSystem>());
     addSystem(std::make_shared<ecs::ForceInputSystem>());
+    addSystem(std::make_shared<ecs::AnimationStateSyncSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
     addSystem(std::make_shared<ecs::ClientEffectCleanupSystem>());
     addSystem(std::make_shared<ecs::GameZoneViewSystem>());
@@ -107,7 +109,7 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::HitboxRenderingSystem>());
     addSystem(std::make_shared<ecs::HealthBarRenderingSystem>());
     addSystem(std::make_shared<ecs::TextRenderingSystem>());
-    addSystem(std::make_shared<ecs::ReplaySystem>());
+    // addSystem(std::make_shared<ecs::ReplaySystem>());
     addSystem(std::make_shared<ecs::SoundSystem>());
     addSystem(std::make_shared<ecs::MusicSystem>());
 

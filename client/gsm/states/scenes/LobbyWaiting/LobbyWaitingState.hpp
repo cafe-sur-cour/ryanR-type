@@ -52,6 +52,9 @@ private:
     std::shared_ptr<ui::Button> _crossfireButton;
     std::shared_ptr<ui::Button> _leaveButton;
 
+    std::shared_ptr<ui::UILayout> _topLayout;
+    std::shared_ptr<ui::Button> _chatButton;
+
     bool _isLobbyMaster;
 };
 

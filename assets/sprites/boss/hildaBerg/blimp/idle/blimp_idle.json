@@ -1,0 +1,197 @@
+{
+    "spritesheet_width": 7539,
+    "spritesheet_height": 393,
+    "cell_width": 359,
+    "cell_height": 393,
+    "sprites": [
+        {
+            "filename": "blimp_idle_0001.png",
+            "order": 0,
+            "width": 359,
+            "height": 383,
+            "file_size": 79819,
+            "x": 0,
+            "y": 5
+        },
+        {
+            "filename": "blimp_idle_0002.png",
+            "order": 1,
+            "width": 355,
+            "height": 382,
+            "file_size": 82158,
+            "x": 361,
+            "y": 5
+        },
+        {
+            "filename": "blimp_idle_0003.png",
+            "order": 2,
+            "width": 351,
+            "height": 383,
+            "file_size": 82614,
+            "x": 722,
+            "y": 5
+        },
+        {
+            "filename": "blimp_idle_0004.png",
+            "order": 3,
+            "width": 348,
+            "height": 383,
+            "file_size": 77924,
+            "x": 1082,
+            "y": 5
+        },
+        {
+            "filename": "blimp_idle_0005.png",
+            "order": 4,
+            "width": 344,
+            "height": 385,
+            "file_size": 79965,
+            "x": 1443,
+            "y": 4
+        },
+        {
+            "filename": "blimp_idle_0006.png",
+            "order": 5,
+            "width": 343,
+            "height": 382,
+            "file_size": 80458,
+            "x": 1803,
+            "y": 5
+        },
+        {
+            "filename": "blimp_idle_0007.png",
+            "order": 6,
+            "width": 344,
+            "height": 388,
+            "file_size": 84109,
+            "x": 2161,
+            "y": 2
+        },
+        {
+            "filename": "blimp_idle_0008.png",
+            "order": 7,
+            "width": 340,
+            "height": 388,
+            "file_size": 79531,
+            "x": 2522,
+            "y": 2
+        },
+        {
+            "filename": "blimp_idle_0009.png",
+            "order": 8,
+            "width": 339,
+            "height": 386,
+            "file_size": 80479,
+            "x": 2882,
+            "y": 3
+        },
+        {
+            "filename": "blimp_idle_0010.png",
+            "order": 9,
+            "width": 340,
+            "height": 388,
+            "file_size": 80076,
+            "x": 3240,
+            "y": 2
+        },
+        {
+            "filename": "blimp_idle_0011.png",
+            "order": 10,
+            "width": 337,
+            "height": 385,
+            "file_size": 75948,
+            "x": 3601,
+            "y": 4
+        },
+        {
+            "filename": "blimp_idle_0012.png",
+            "order": 11,
+            "width": 338,
+            "height": 387,
+            "file_size": 77892,
+            "x": 3959,
+            "y": 3
+        },
+        {
+            "filename": "blimp_idle_0013.png",
+            "order": 12,
+            "width": 340,
+            "height": 389,
+            "file_size": 79701,
+            "x": 4317,
+            "y": 2
+        },
+        {
+            "filename": "blimp_idle_0014.png",
+            "order": 13,
+            "width": 343,
+            "height": 387,
+            "file_size": 79093,
+            "x": 4675,
+            "y": 3
+        },
+        {
+            "filename": "blimp_idle_0015.png",
+            "order": 14,
+            "width": 338,
+            "height": 390,
+            "file_size": 75759,
+            "x": 5036,
+            "y": 1
+        },
+        {
+            "filename": "blimp_idle_0016.png",
+            "order": 15,
+            "width": 345,
+            "height": 393,
+            "file_size": 75889,
+            "x": 5392,
+            "y": 0
+        },
+        {
+            "filename": "blimp_idle_0017.png",
+            "order": 16,
+            "width": 344,
+            "height": 393,
+            "file_size": 76181,
+            "x": 5751,
+            "y": 0
+        },
+        {
+            "filename": "blimp_idle_0018.png",
+            "order": 17,
+            "width": 350,
+            "height": 389,
+            "file_size": 76645,
+            "x": 6107,
+            "y": 2
+        },
+        {
+            "filename": "blimp_idle_0019.png",
+            "order": 18,
+            "width": 351,
+            "height": 390,
+            "file_size": 78353,
+            "x": 6466,
+            "y": 1
+        },
+        {
+            "filename": "blimp_idle_0020.png",
+            "order": 19,
+            "width": 356,
+            "height": 387,
+            "file_size": 80955,
+            "x": 6822,
+            "y": 3
+        },
+        {
+            "filename": "blimp_idle_0021.png",
+            "order": 20,
+            "width": 358,
+            "height": 383,
+            "file_size": 76824,
+            "x": 7180,
+            "y": 5
+        }
+    ]
+}

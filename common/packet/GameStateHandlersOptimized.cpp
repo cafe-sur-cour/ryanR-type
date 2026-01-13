@@ -14,6 +14,7 @@
 #include "../../libs/Packet/serializer/BigEndianSerialization.hpp"
 #include "../../libs/Packet/serializer/Varint.hpp"
 #include "../../common/translationToECS.hpp"
+#include "../../common/constants.hpp"
 
 using SerializerPtr = std::shared_ptr<pm::ISerializer>;
 using pm::BigEndianSerialization;
@@ -129,6 +130,7 @@ static void registerOptimizedGameStatePackers(
             pushVarint(packetData, payload.at(*i + 3));
             pushVarint(packetData, payload.at(*i + 4));
             pushVarint(packetData, payload.at(*i + 5));
+            pushVarint(packetData, payload.at(*i + 6));
             *i += 6;
         }
         return packetData;
@@ -270,6 +272,28 @@ static void registerOptimizedGameStatePackers(
             pushVarint(packetData, payload.at(*i + 3));
             pushVarint(packetData, payload.at(*i + 4));
             *i += 5;
+        }
+        return packetData;
+    });
+
+    packet->registerGameStatePackFunction([pushUChar](
+        std::vector<uint64_t> payload,
+        std::shared_ptr<unsigned int> i) -> std::vector<uint8_t> {
+        std::vector<uint8_t> packetData = {};
+        if (payload.at(*i) == ANIMATION_STATE) {
+            pushUChar(packetData, payload.at(*i));
+            *i += 1;
+            while (*i + 2 < payload.size()
+                && !(payload.at(*i) == static_cast<uint64_t>('\r')
+                && payload.at(*i + 1) == static_cast<uint64_t>('\n')
+                && payload.at(*i + 2) == static_cast<uint64_t>('\0'))) {
+                pushUChar(packetData, payload.at(*i));
+                *i += 1;
+            }
+            pushUChar(packetData, payload.at(*i));
+            pushUChar(packetData, payload.at(*i + 1));
+            pushUChar(packetData, payload.at(*i + 2));
+            *i += 3;
         }
         return packetData;
     });
@@ -434,11 +458,15 @@ static void registerOptimizedGameStateUnpackers(
                 static_cast<unsigned int>(offset)); offset += s4;
             auto [offsetDistance, s5] = readVarintAt(payload,
                 static_cast<unsigned int>(offset)); offset += s5;
+            auto [angleOffset, s6] = readVarintAt(payload,
+                static_cast<unsigned int>(offset)); offset += s6;
+
             vals.push_back(fireRate);
             vals.push_back(cooldownTimer);
             vals.push_back(shotCount);
             vals.push_back(angleSpread);
             vals.push_back(offsetDistance);
+            vals.push_back(angleOffset);
             packet->setPayload(vals);
             return static_cast<unsigned int>(offset - i);
         }
@@ -599,9 +627,12 @@ static void registerOptimizedGameStateUnpackers(
             vals.push_back(static_cast<uint64_t>(PROJECTILE_PREFAB));
             unsigned int offset = i + 1;
             while (offset + 2 < payload.size()
-                && !(payload.at(offset) == static_cast<uint8_t>('\r')
-                && payload.at(offset + 1) == static_cast<uint8_t>('\n')
-                && payload.at(offset + 2) == static_cast<uint8_t>('\0'))) {
+                && !(payload.at(offset) == static_cast<uint8_t>
+                    (constants::END_OFSTRING_ST)
+                && payload.at(offset + 1) == static_cast<uint8_t>
+                    (constants::END_OFSTRING_ND)
+                && payload.at(offset + 2) == static_cast<uint8_t>
+                    (constants::END_OFSTRING_TRD))) {
                 vals.push_back(static_cast<uint64_t>(payload.at(offset)));
                 offset++;
             }
@@ -638,6 +669,41 @@ static void registerOptimizedGameStateUnpackers(
             vals.push_back(v4);
             packet->setPayload(vals);
             return static_cast<unsigned int>(offset - i);
+        }
+        return 0;
+    });
+
+    packet->registerGameStateUnpackFunction([packet](
+        const std::vector<uint8_t> payload,
+        unsigned int i) -> unsigned int {
+        if (payload.at(i) == ANIMATION_STATE) {
+            auto vals = packet->getPayload();
+            vals.push_back(static_cast<uint64_t>(ANIMATION_STATE));
+            std::string state = "";
+            unsigned int j = i + 1;
+            while (j < payload.size()) {
+                char c = static_cast<char>(payload.at(j));
+                if (c == constants::END_OFSTRING_ST) {
+                    if (j + 2 < payload.size()
+                        && static_cast<char>(payload.at(j + 1)) ==
+                            constants::END_OFSTRING_ND
+                        && static_cast<char>(payload.at(j + 2)) ==
+                            constants::END_OFSTRING_TRD) {
+                        j += 3;
+                        break;
+                    }
+                }
+                state += c;
+                j += 1;
+            }
+            for (char c : state) {
+                vals.push_back(static_cast<uint64_t>(c));
+            }
+            vals.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
+            vals.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
+            vals.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
+            packet->setPayload(vals);
+            return j - i;
         }
         return 0;
     });

@@ -7,8 +7,9 @@
 
 #include <vector>
 #include <utility>
+#include <string>
 #include "ComponentSerializer.hpp"
-#include "../Constants.hpp"
+#include "../constants.hpp"
 
 std::vector<uint64_t> rserv::ComponentSerializer::serializePosition(uint32_t x, uint32_t y) {
     uint64_t packed = (static_cast<uint64_t>(x) << constants::BITMASK_INT) | y;
@@ -92,6 +93,32 @@ std::vector<uint64_t> rserv::ComponentSerializer::serializeGameZone(uint32_t x, 
     return {pos, size};
 }
 
+std::vector<uint64_t> rserv::ComponentSerializer::serializeAnimationState
+    (const std::string& state) {
+    std::vector<uint64_t> data;
+    for (char c : state) {
+        data.push_back(static_cast<uint64_t>(c));
+    }
+    data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ST));
+    data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_ND));
+    data.push_back(static_cast<uint64_t>(constants::END_OFSTRING_TRD));
+    return data;
+}
+
+std::string rserv::ComponentSerializer::deserializeAnimationState
+    (const std::vector<uint64_t>& data) {
+    std::string state;
+    for (uint64_t val : data) {
+        if (val == static_cast<uint64_t>(constants::END_OFSTRING_ST) ||
+            val == static_cast<uint64_t>(constants::END_OFSTRING_ND) ||
+            val == static_cast<uint64_t>(constants::END_OFSTRING_TRD)) {
+            break;
+        }
+        state += static_cast<char>(val);
+    }
+    return state;
+}
+
 rserv::EntitySnapshot rserv::ComponentSerializer::createSnapshotFromComponents(
     uint32_t entityId, const std::vector<uint64_t>& componentData) {
     EntitySnapshot snapshot;
@@ -147,7 +174,7 @@ rserv::EntitySnapshot rserv::ComponentSerializer::createSnapshotFromComponents(
             continue;
         }
 
-        if (compType == SHOOTING_STATS || compType == CHARGED_SHOT_COMP) {
+        if (compType == CHARGED_SHOT_COMP) {
             if (i + 3 < componentData.size()) {
                 snapshot.componentMask |= (1u << compType);
                 snapshot.components[compType] = {
@@ -155,6 +182,24 @@ rserv::EntitySnapshot rserv::ComponentSerializer::createSnapshotFromComponents(
                     componentData[i + 3]
                 };
                 i += 4;
+            } else {
+                i++;
+            }
+            continue;
+        }
+
+        if (compType == SHOOTING_STATS) {
+            if (i + 6 < componentData.size()) {
+                snapshot.componentMask |= (1u << compType);
+                snapshot.components[compType] = {
+                    componentData[i + 1],
+                    componentData[i + 2],
+                    componentData[i + 3],
+                    componentData[i + 4],
+                    componentData[i + 5],
+                    componentData[i + 6],
+                };
+                i += 7;
             } else {
                 i++;
             }
@@ -175,7 +220,7 @@ rserv::EntitySnapshot rserv::ComponentSerializer::createSnapshotFromComponents(
             continue;
         }
 
-        if (compType == PROJECTILE_PREFAB) {
+        if (compType == PROJECTILE_PREFAB || compType == ANIMATION_STATE) {
             if (i + 1 < componentData.size()) {
                 std::vector<uint64_t> prefabData;
                 prefabData.reserve(constants::BITMASK_INT);

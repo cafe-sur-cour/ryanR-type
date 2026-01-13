@@ -1,0 +1,159 @@
+{
+    "name": "boss1",
+    "components": {
+        "MobTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 100.0, "y": 100.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 150.0 },
+        "HealthComponent": { "target": "both", "health": 2000.0 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 100 },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/boss1.lua",
+            "additionalFunctions": ["death"]
+        },
+        "ProjectilePrefabComponent": {
+            "target": "both",
+            "prefabName": "blimpShoot"
+        },
+        "ShootingStatsComponent": {
+            "target": "both",
+            "fireRate": 5.0,
+            "projectileSpeed": 500.0,
+            "shotCount": 1,
+            "angleOffset": 0.0,
+            "spreadAngle": 0.0,
+            "distanceOffset": 0.0
+        },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/idle/blimp_idle.png",
+                    "frameWidth": 359.0,
+                    "frameHeight": 393.0,
+                    "frameCount": 21,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "summoning": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/summon/blimp_summon.png",
+                    "frameWidth": 391.0,
+                    "frameHeight": 433.0,
+                    "frameCount": 20,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.05,
+                    "loop": false
+                },
+                "dash1": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/dash/blimp_dash1.png",
+                    "frameWidth": 369.0,
+                    "frameHeight": 401.0,
+                    "frameCount": 12,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                },
+                "dash2": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/dash/blimp_dash2.png",
+                    "frameWidth": 882.0,
+                    "frameHeight": 415.0,
+                    "frameCount": 10,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.08,
+                    "loop": false
+                },
+                "dash3": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/dash/blimp_dash3.png",
+                    "frameWidth": 539.0,
+                    "frameHeight": 351.0,
+                    "frameCount": 3,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.08,
+                    "loop": true
+                },
+                "shooting": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimp/laught/blimp_shoot.png",
+                    "frameWidth": 355.0,
+                    "frameHeight": 397.0,
+                    "frameCount": 18,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.05,
+                    "loop": false
+                }
+            },
+            "initialState": "idle",
+            "transitions": [
+                {
+
+                    "from": "summoning",
+                    "to": "idle",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                },
+                {
+                    "from": "shooting",
+                    "to": "idle",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                },
+                {
+                    "from": "dash2",
+                    "to": "dash3",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                }
+            ]
+        },
+        "ColliderComponent":
+        [
+            {
+                "target": "both",
+                "offset": { "x": 0.0, "y": 0.0 },
+                "size" : { "x": 359.0, "y": 393.0 },
+                "type": "Trigger"
+            }
+        ]
+        ,
+        "DamageComponent": {
+            "target": "both",
+            "damage": 15.0
+        },
+        "DamageCooldownComponent": { "target": "both" },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDamage"]
+                },
+            {
+                "tags": ["PlayerTag"],
+                "toEntity": ["DealDamage"],
+                "toSelf": []
+            }
+            ]
+        },
+        "ShooterTag": { "target": "both" },
+        "HealthBarComponent": { "target": "client" }
+    }
+}

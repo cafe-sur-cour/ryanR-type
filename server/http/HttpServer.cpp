@@ -13,7 +13,7 @@
 #include <fstream>
 #include <sstream>
 #include <nlohmann/json.hpp>
-#include "../Constants.hpp"
+#include "../constants.hpp"
 
 rserv::HttpServer::HttpServer(
     std::function<bool()> statusChecker,

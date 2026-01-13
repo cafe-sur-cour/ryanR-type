@@ -90,9 +90,9 @@ math::Vector2f SpawnSystem::findNearestFreePosition(
         for (int xOffset = -200; xOffset <= 200; xOffset += static_cast<int>(optimizedStep)) {
             if (xOffset == 0 && yOffset == 0) continue;
 
-            float newY = originalPosition.getY() - yOffset;
+            float newY = originalPosition.getY() - static_cast<float>(yOffset);
             if (newY >= 0 && newY <= constants::MAX_HEIGHT) {
-                position.setX(originalPosition.getX() + xOffset);
+                position.setX(originalPosition.getX() + static_cast<float>(xOffset));
                 position.setY(newY);
 
                 if (isPositionFree(
@@ -101,9 +101,9 @@ math::Vector2f SpawnSystem::findNearestFreePosition(
                 }
             }
 
-            newY = originalPosition.getY() + yOffset;
+            newY = originalPosition.getY() + static_cast<float>(yOffset);
             if (newY >= 0 && newY <= constants::MAX_HEIGHT) {
-                position.setX(originalPosition.getX() + xOffset);
+                position.setX(originalPosition.getX() + static_cast<float>(xOffset));
                 position.setY(newY);
 
                 if (isPositionFree(

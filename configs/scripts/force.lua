@@ -1,4 +1,5 @@
 level = 1
+previousLevel = 0
 isequipped = false
 attachDir = 0
 playerSizeX = 0
@@ -46,10 +47,8 @@ function OnInteract(entity, interactorEntity)
     if isEntityPlayer(interactorEntity) and getParentId(entity) ~= interactorEntity then
         local forceCount = countForcesByType(interactorEntity, "force")
         if forceCount >= 1 then
-            print("[force] Already 1 force attached, rejecting")
             return
         end
-
 
         addPartId(interactorEntity, entity)
         setParentId(entity, interactorEntity)
@@ -61,13 +60,16 @@ function OnInteract(entity, interactorEntity)
             attachDir = 1
         else
             attachDir = -1
+            reverseShootOrientation(getParentId(entity))
         end
         isequipped = true
 
-        if level == 1 then
-            setProjectilePrefab(interactorEntity, "heavy_shot")
+        if level == 2 then
+            setProjectilePrefab(interactorEntity, "magnet")
         end
-
+        if (level >= 3) then
+            setProjectilePrefab(interactorEntity, "bombShot")
+        end
     end
 end
 
@@ -76,6 +78,9 @@ function ActivateOrDeactivateForce(entity, entityCaller)
         targetX, targetY = getEntityPosition(entityCaller)
         isMovingToTarget = true
     else
+        if attachDir == -1 then
+            reverseShootOrientation(getParentId(entity))
+        end
         isequipped = false
         removePartId(getParentId(entity), entity)
         setProjectilePrefab(getParentId(entity), "basic_shot")
@@ -86,3 +91,24 @@ function ActivateOrDeactivateForce(entity, entityCaller)
     end
 end
 
+function addForceLevel(entity)
+    level = level + 1
+    if (level > 3) then
+        level = 3
+    end
+    local parentId = getParentId(entity)
+    if isEntityPlayer(parentId) == false then
+        return
+    end
+    if level > previousLevel then
+        previousLevel = level
+        if level == 2 then
+            setAnimationState(entity, "level2")
+            setProjectilePrefab(parentId, "magnet")
+        end
+        if (level == 3) then
+            setAnimationState(entity, "level3")
+            setProjectilePrefab(parentId, "bombShot")
+        end
+    end
+end

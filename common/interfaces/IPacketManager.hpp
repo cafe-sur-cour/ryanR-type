@@ -45,35 +45,36 @@
 #define ACCEPTATION_PACKET 0x02
 #define DISCONNECTION_PACKET 0x03
 #define EVENT_PACKET 0x04
-#define GAME_STATE_PACKET 0x05
-#define END_GAME_PACKET 0x06
-#define CAN_START_PACKET 0x07
-#define CLIENT_READY_PACKET 0x08
-#define SPAWN_PLAYER_PACKET 0x09
-#define DEATH_PLAYER_PACKET 0x0A
-#define WHOAMI_PACKET 0x0B
-#define SERVER_STATUS_PACKET 0x0C
-#define REQUEST_LOBBY_PACKET 0x0D
-#define SEND_LOBBY_CODE_PACKET 0x0E
-#define CONNECT_TO_LOBBY 0x0F
-#define LOBBY_MASTER_REQUEST_START 0x10
-#define LOBBY_CONNECT_VALUE 0x11
-#define LEVEL_COMPLETE_PACKET 0x12
-#define NEXT_LEVEL_PACKET 0x13
-#define REGISTER_PACKET 0x14
-#define CONNECT_USER_PACKET 0x15
-#define LOGIN_PACKET 0x16
-#define GAME_STATE_BATCH_PACKET 0x17
-#define GAME_STATE_BATCH_COMPRESSED_PACKET 0x18
-#define GAME_STATE_COMPRESSED_PACKET 0x19
-#define REQUEST_LEADERBOARD_PACKET 0x1A
-#define LEADERBOARD_PACKET 0x1B
-#define REGISTER_FAIL_PACKET 0x1C
-#define REQUEST_PROFILE_PACKET 0x1D
-#define PROFILE_PACKET 0x1E
-#define GAME_RULES_PACKET 0x1F
-#define REQUEST_GAME_RULES_UPDATE_PACKET 0x20
-#define FORCE_LEAVE_PACKET 0x21
+#define END_GAME_PACKET 0x05
+#define CAN_START_PACKET 0x06
+#define CLIENT_READY_PACKET 0x07
+#define SPAWN_PLAYER_PACKET 0x08
+#define DEATH_PLAYER_PACKET 0x09
+#define WHOAMI_PACKET 0x0A
+#define SERVER_STATUS_PACKET 0x0B
+#define REQUEST_LOBBY_PACKET 0x0C
+#define SEND_LOBBY_CODE_PACKET 0x0D
+#define CONNECT_TO_LOBBY 0x0E
+#define LOBBY_MASTER_REQUEST_START 0x0F
+#define LOBBY_CONNECT_VALUE 0x10
+#define LEVEL_COMPLETE_PACKET 0x11
+#define NEXT_LEVEL_PACKET 0x12
+#define REGISTER_PACKET 0x13
+#define CONNECT_USER_PACKET 0x14
+#define LOGIN_PACKET 0x15
+#define GAME_STATE_BATCH_PACKET 0x16
+#define GAME_STATE_BATCH_COMPRESSED_PACKET 0x17
+#define GAME_STATE_COMPRESSED_PACKET 0x18
+#define REQUEST_LEADERBOARD_PACKET 0x19
+#define LEADERBOARD_PACKET 0x1A
+#define REGISTER_FAIL_PACKET 0x1B
+#define REQUEST_PROFILE_PACKET 0x1C
+#define PROFILE_PACKET 0x1D
+#define GAME_RULES_PACKET 0x1E
+#define REQUEST_GAME_RULES_UPDATE_PACKET 0x1F
+#define NEW_CHAT_PACKET 0x20
+#define BROADCASTED_CHAT_PACKET 0x21
+#define FORCE_LEAVE_PACKET 0x22
 
 namespace pm {
 
@@ -106,7 +107,6 @@ namespace pm {
         virtual void registerLength(uint8_t type, uint32_t length) = 0;
         virtual void registerGameStatePackFunction(std::function<std::vector<uint8_t>(std::vector<uint64_t>, std::shared_ptr<unsigned int>)> func) = 0;
         virtual void registerGameStateUnpackFunction(std::function<unsigned int(const std::vector<uint8_t>, unsigned int)> func) = 0;
-        virtual void registerLengthCombEntry(uint8_t compType, uint32_t compLength, uint64_t compSize) = 0;
         virtual void clearAllHandlers() = 0;
 };
 } // namespace pm

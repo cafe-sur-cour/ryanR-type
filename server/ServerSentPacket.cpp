@@ -17,7 +17,7 @@
 #include <nlohmann/json.hpp>
 
 #include "Server.hpp"
-#include "Constants.hpp"
+#include "constants.hpp"
 #include "Utils.hpp"
 #include "../common/debug.hpp"
 #include "../common/translationToECS.hpp"
@@ -471,6 +471,42 @@ bool rserv::Server::profilePacket(const net::INetworkEndpoint &endpoint) {
         "[SERVER] Sent PROFILE packet to client for username: " + username,
         debug::debugType::NETWORK, debug::debugLevel::INFO);
     this->_sequenceNumber++;
+    return true;
+}
+
+bool rserv::Server::newChatMessagePacket(const net::INetworkEndpoint &endpoint,
+    std::vector<uint8_t> message) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    std::string username = "";
+    for (const auto &client : this->_clients) {
+        if (std::get<1>(client) && std::get<1>(client)->getAddress() ==
+            endpoint.getAddress() && std::get<1>(client)->getPort() == endpoint.getPort()) {
+            username = std::get<2>(client);
+            break;
+        }
+    }
+
+    std::vector<uint64_t> payload;
+    std::vector<uint64_t> nameData = this->_packet->formatString(username);
+    payload.insert(payload.end(), nameData.begin(), nameData.end());
+    for (const auto &byte : message) {
+        payload.push_back(static_cast<uint64_t>(byte));
+    }
+
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_BROADCASTED_CHAT, payload);
+    if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Failed to broadcast NEW_CHAT message to clients",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
     return true;
 }
 

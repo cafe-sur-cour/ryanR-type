@@ -13,7 +13,7 @@
 
 namespace constants {
     /* TPS */
-    constexpr int64_t TPS = 20;
+    constexpr int64_t TPS = 60;
 
     /* Core */
     constexpr long SERVER_THREAD_SLEEP_MS = 10;
@@ -30,10 +30,7 @@ namespace constants {
     const std::string HTTP_ENV_FILE_PATH = "./server/http/.env";
     constexpr int HTTP_SERVER_PORT = 5173;
 
-    /* Packets */
-    constexpr char END_OFSTRING_ST = '\r';
-    constexpr char END_OFSTRING_ND = '\n';
-    constexpr char END_OFSTRING_TRD = '\0';
+    constexpr float SHOOT_INPUT_COOLDOWN = 0.2f;
 
     const std::string USERS_JSON_PATH = "saves/users.json";
     const std::string SCORES_JSON_PATH = "saves/scores.json";

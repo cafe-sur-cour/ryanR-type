@@ -18,6 +18,9 @@
 #include "../../components/permanent/EntityPartsComponent.hpp"
 #include "../../components/permanent/CompositeEntityComponent.hpp"
 #include "../../components/temporary/SpawnIntentComponent.hpp"
+#include "../../components/permanent/GameZoneComponent.hpp"
+#include "../../components/permanent/VelocityComponent.hpp"
+#include "../../components/permanent/SpeedComponent.hpp"
 #include "../../components/tags/PlayerTag.hpp"
 #include "../../ECS/entity/registry/Registry.hpp"
 #include "../../ECS/view/View.hpp"
@@ -27,9 +30,11 @@
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"
 #include "../../components/permanent/ProjectilePrefabComponent.hpp"
+#include "../../components/permanent/AnimationStateComponent.hpp"
 #include "../../components/tags/ForceTag.hpp"
-namespace ecs {
+#include "../../components/permanent/ShootingStatsComponent.hpp"
 
+namespace ecs {
 
 void ScriptingSystem::bindAPI() {
     lua.set_function(constants::PRINT_FUNCTION, [](const std::string& msg) {
@@ -101,11 +106,24 @@ void ScriptingSystem::bindAPI() {
     });
 
     lua.set_function(constants::CREATE_SHOOT_INTENT_FUNCTION,
-        [this](Entity e, float angleDegrees) {
+        [this](Entity e, float angle) -> bool {
         if (registry->hasComponent<ShootIntentComponent>(e))
-            return;
-        auto intent = std::make_shared<ecs::ShootIntentComponent>(angleDegrees);
+            return false;
+        auto intent = std::make_shared<ecs::ShootIntentComponent>(angle);
         registry->addComponent<ecs::ShootIntentComponent>(e, intent);
+        return true;
+    });
+
+    lua.set_function(constants::SET_ANIMATION_STATE_FUNCTION,
+        [this](Entity e, const std::string& newState) {
+        if (registry->hasComponent<AnimationStateComponent>(e)) {
+            auto animStateComp = registry->getComponent<AnimationStateComponent>(e);
+            animStateComp->setCurrentState(newState);
+            return;
+        } else {
+            auto animStateComp = std::make_shared<AnimationStateComponent>(newState);
+            registry->addComponent<AnimationStateComponent>(e, animStateComp);
+        }
     });
 
     lua.set_function(constants::GET_ENTITY_ID_FUNCTION, [](Entity e) -> size_t {
@@ -275,6 +293,89 @@ void ScriptingSystem::bindAPI() {
             }
         }
         return 0;
+    });
+
+    lua.set_function(constants::ADD_FORCE_LEVEL_FUNCTION,
+        [this](size_t entityId) {
+        if (registry->hasComponent<ecs::EntityPartsComponent>(entityId)) {
+            std::vector<size_t> partsComp =
+                registry->getComponent<ecs::EntityPartsComponent>(entityId)->partIds;
+
+            for (auto partId : partsComp) {
+                Entity part = static_cast<Entity>(partId);
+                if (registry->hasComponent<ForceTag>(part) &&
+                    registry->getComponent<ecs::ForceTag>(part)->getForceType() ==
+                        constants::FORCE_TYPE
+                    && registry->hasComponent<ecs::ScriptingComponent>(part)) {
+                    auto scriptComp = registry->getComponent<ecs::ScriptingComponent>(part);
+                    auto forceTag = registry->getComponent<ForceTag>(part);
+                    if (scriptComp->hasFunction(constants::ADD_FORCE_LEVEL_FUNCTION)) {
+                        sol::function addLevelFunc = scriptComp->
+                            getFunction(constants::ADD_FORCE_LEVEL_FUNCTION);
+                        addLevelFunc(part);
+                    }
+                }
+            }
+        }
+    });
+
+    lua.set_function(constants::SET_GAME_ZONE_VELOCITY_FUNCTION,
+        [this](float x, float y) {
+        auto gameZoneView = registry->view<GameZoneComponent, VelocityComponent>();
+        for (auto gameZoneEntity : gameZoneView) {
+            auto velocityComp = registry->getComponent<VelocityComponent>(gameZoneEntity);
+            if (velocityComp) {
+                velocityComp->setVelocity(math::Vector2f(x , y));
+            }
+        }
+    });
+
+    lua.set_function(constants::GET_GAME_ZONE_POSITION_FUNCTION,
+        [this]() -> std::tuple<float, float> {
+        auto gameZoneView = registry->view<GameZoneComponent>();
+        for (auto gameZoneEntity : gameZoneView) {
+            if (registry->hasComponent<TransformComponent>(gameZoneEntity)) {
+                auto transform = registry->getComponent<TransformComponent>(gameZoneEntity);
+                auto pos = transform->getPosition();
+                return {pos.getX(), pos.getY()};
+            }
+            auto gameZoneComp = registry->getComponent<GameZoneComponent>(gameZoneEntity);
+            auto zone = gameZoneComp->getZone();
+            return {zone.getLeft(), zone.getTop()};
+        }
+        return {0.0f, 0.0f};
+    });
+
+    lua.set_function(constants::GET_GAME_ZONE_SIZE_FUNCTION,
+        [this]() -> std::tuple<float, float> {
+        auto gameZoneView = registry->view<GameZoneComponent>();
+        for (auto gameZoneEntity : gameZoneView) {
+            auto gameZoneComp = registry->getComponent<GameZoneComponent>(gameZoneEntity);
+            auto zone = gameZoneComp->getZone();
+            return {zone.getWidth(), zone.getHeight()};
+        }
+        return {0.0f, 0.0f};
+    });
+
+    lua.set_function(constants::GET_GAME_ZONE_VELOCITY_FUNCTION,
+        [this]() -> std::tuple<float, float> {
+        auto gameZoneView = registry->view<GameZoneComponent, VelocityComponent>();
+        for (auto gameZoneEntity : gameZoneView) {
+            auto velocityComp = registry->getComponent<VelocityComponent>(gameZoneEntity);
+            auto vel = velocityComp->getVelocity();
+            return {vel.getX(), vel.getY()};
+        }
+        return {0.0f, 0.0f};
+    });
+
+    lua.set_function(constants::REVERSE_SHOOT_ORIENTATION_FUNCTION,
+        [this](size_t entityId) {
+        if (!registry->hasComponent<ShootingStatsComponent>(entityId))
+            return;
+        auto shootingStatsComp = registry->getComponent<ShootingStatsComponent>(entityId);
+        MultiShotPattern pattern = shootingStatsComp->getMultiShotPattern();
+        pattern.angleOffset += 180.0f;
+        shootingStatsComp->setMultiShotPattern(pattern);
     });
 }
 
