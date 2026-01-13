@@ -107,15 +107,15 @@
         {
             "name": "powerUpAddForceLevel",
             "position": {
-                "posX": 1998.0,
-                "posY": 393.0
+                "posX": 1649.0,
+                "posY": 675.0
             }
         },
         {
             "name": "powerUpAddForceLevel",
             "position": {
-                "posX": 4872.0,
-                "posY": 907.0
+                "posX": 1439.0,
+                "posY": 681.0
             }
         }
     ],
