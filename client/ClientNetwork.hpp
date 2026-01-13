@@ -160,6 +160,7 @@ class ClientNetwork {
         void handleProfile();
         void handleRegisterFail();
         void handleGameRules();
+        void handleForceLeave();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;

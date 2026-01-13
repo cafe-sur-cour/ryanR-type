@@ -308,13 +308,20 @@ namespace constants {
     constexpr std::uint8_t PACKET_PROFILE = 0x1E;
     constexpr std::uint8_t PACKET_GAME_RULES = 0x1F;
     constexpr std::uint8_t PACKET_REQUEST_GAME_RULES_UPDATE = 0x20;
+    constexpr std::uint8_t PACKET_FORCE_LEAVE = 0x21;
 
-    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 33;
+    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 34;
     const int MAX_CLIENT_PER_LOBBY = 4;
 
     /* Lobby connection codes */
     const std::string LOBBY_LEAVE_MARKER = "__LEAVE__";
     const std::string LOBBY_LEAVE_KEYWORD = "LEAVE";
+
+    enum class ForceLeaveType {
+        CLOSED = 0,
+        KICKED = 1,
+        BANNED = 2,
+    };
 
     /* Scripting constant */
     const std::string INIT_FUNCTION = "init";

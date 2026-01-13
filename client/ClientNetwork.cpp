@@ -82,6 +82,7 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_REGISTER_FAIL] = &ClientNetwork::handleRegisterFail;
     _packetHandlers[constants::PACKET_PROFILE] = &ClientNetwork::handleProfile;
     _packetHandlers[constants::PACKET_GAME_RULES] = &ClientNetwork::handleGameRules;
+    _packetHandlers[constants::PACKET_FORCE_LEAVE] = &ClientNetwork::handleForceLeave;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
