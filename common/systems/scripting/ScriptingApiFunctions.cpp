@@ -32,8 +32,9 @@
 #include "../../components/permanent/ProjectilePrefabComponent.hpp"
 #include "../../components/permanent/AnimationStateComponent.hpp"
 #include "../../components/tags/ForceTag.hpp"
-namespace ecs {
+#include "../../components/permanent/ShootingStatsComponent.hpp"
 
+namespace ecs {
 
 void ScriptingSystem::bindAPI() {
     lua.set_function(constants::PRINT_FUNCTION, [](const std::string& msg) {
@@ -105,10 +106,10 @@ void ScriptingSystem::bindAPI() {
     });
 
     lua.set_function(constants::CREATE_SHOOT_INTENT_FUNCTION,
-        [this](Entity e, float angleDegrees) -> bool {
+        [this](Entity e, float angle) -> bool {
         if (registry->hasComponent<ShootIntentComponent>(e))
             return false;
-        auto intent = std::make_shared<ecs::ShootIntentComponent>(angleDegrees);
+        auto intent = std::make_shared<ecs::ShootIntentComponent>(angle);
         registry->addComponent<ecs::ShootIntentComponent>(e, intent);
         return true;
     });
@@ -318,7 +319,7 @@ void ScriptingSystem::bindAPI() {
         }
     });
 
-    lua.set_function("restartGameZone",
+    lua.set_function(constants::RESTART_GAME_ZONE_FUNCTION,
         [this]() {
         auto gameZoneView = registry->view<GameZoneComponent, VelocityComponent>();
         for (auto gameZoneEntity : gameZoneView) {
@@ -329,7 +330,7 @@ void ScriptingSystem::bindAPI() {
         }
     });
 
-    lua.set_function("getGameZonePosition",
+    lua.set_function(constants::GET_GAME_ZONE_POSITION_FUNCTION,
         [this]() -> std::tuple<float, float> {
         auto gameZoneView = registry->view<GameZoneComponent>();
         for (auto gameZoneEntity : gameZoneView) {
@@ -340,7 +341,7 @@ void ScriptingSystem::bindAPI() {
         return {0.0f, 0.0f};
     });
 
-    lua.set_function("getGameZoneSize",
+    lua.set_function(constants::GET_GAME_ZONE_SIZE_FUNCTION,
         [this]() -> std::tuple<float, float> {
         auto gameZoneView = registry->view<GameZoneComponent>();
         for (auto gameZoneEntity : gameZoneView) {
@@ -351,7 +352,7 @@ void ScriptingSystem::bindAPI() {
         return {0.0f, 0.0f};
     });
 
-    lua.set_function("getGameZoneVelocity",
+    lua.set_function(constants::GET_GAME_ZONE_VELOCITY_FUNCTION,
         [this]() -> std::tuple<float, float> {
         auto gameZoneView = registry->view<GameZoneComponent, VelocityComponent>();
         for (auto gameZoneEntity : gameZoneView) {
@@ -360,6 +361,16 @@ void ScriptingSystem::bindAPI() {
             return {vel.getX(), vel.getY()};
         }
         return {0.0f, 0.0f};
+    });
+
+    lua.set_function(constants::REVERSE_SHOOT_ORIENTATION_FUNCTION,
+        [this](size_t entityId) {
+        if (!registry->hasComponent<ShootingStatsComponent>(entityId))
+            return;
+        auto shootingStatsComp = registry->getComponent<ShootingStatsComponent>(entityId);
+        MultiShotPattern pattern = shootingStatsComp->getMultiShotPattern();
+        pattern.angleOffset += 180.0f;
+        shootingStatsComp->setMultiShotPattern(pattern);
     });
 }
 
