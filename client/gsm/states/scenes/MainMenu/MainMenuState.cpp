@@ -325,6 +325,9 @@ MainMenuState::MainMenuState(
     _disconnectButton->setOnRelease([this]() {
         auto settingsConfig = this->_resourceManager->get<SettingsConfig>();
         auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            network->sendLoginPacket("", "");
+        }
         if (settingsConfig) {
             settingsConfig->setUsername("");
             settingsConfig->saveSettings();
@@ -337,6 +340,9 @@ MainMenuState::MainMenuState(
     _disconnectButton->setOnActivated([this]() {
         auto settingsConfig = this->_resourceManager->get<SettingsConfig>();
         auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            network->sendLoginPacket("", "");
+        }
         if (settingsConfig) {
             settingsConfig->setUsername("");
             settingsConfig->saveSettings();

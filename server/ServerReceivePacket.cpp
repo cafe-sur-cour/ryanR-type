@@ -522,9 +522,24 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
     std::string password = data.substr(8, 8);
     password.erase(password.find_last_not_of('\0') + 1);
 
-    if (username.empty() || password.empty()) {
+    if (username.empty()) {
+        for (auto &clientTuple : this->_clients) {
+            if (std::get<1>(clientTuple) && client.first &&
+                std::get<1>(clientTuple)->getAddress() == client.first->getAddress() &&
+                std::get<1>(clientTuple)->getPort() == client.first->getPort()) {
+                std::get<2>(clientTuple) = "";
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] User logged out",
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+                break;
+            }
+        }
+        return true;
+    }
+
+    if (password.empty()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Warning: Empty username or password",
+            "[SERVER] Warning: Empty password",
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }
