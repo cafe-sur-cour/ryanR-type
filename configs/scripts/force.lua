@@ -106,12 +106,12 @@ function addForceLevel(entity)
     if level > previousLevel then
         previousLevel = level
         if level == 2 then
-            setProjectilePrefab(parentId, "magnet")
             setAnimationState(entity, "level2")
+            setProjectilePrefab(parentId, "magnet")
         end
         if (level == 3) then
-            setProjectilePrefab(parentId, "bombShot")
             setAnimationState(entity, "level3")
+            setProjectilePrefab(parentId, "bombShot")
         end
     end
 end
