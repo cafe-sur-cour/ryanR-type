@@ -17,6 +17,7 @@
 #include "ui/core/UILayout.hpp"
 #include "../../../../input/MouseInputHandler.hpp"
 #include "../../../../colors.hpp"
+#include "../../../../ui/elements/SpritePreview.hpp"
 
 namespace gsm {
 
@@ -37,6 +38,9 @@ class ResultsState : public AGameState {
         std::unique_ptr<ui::UIManager> _uiManager;
         std::unique_ptr<MouseInputHandler> _mouseHandler;
         std::shared_ptr<ui::Text> _resultText;
+        std::shared_ptr<ui::SpritePreview> _victoryAnimation;
+        std::shared_ptr<ui::SpritePreview> _youDiedAnimation;
+
 };
 
 }  // namespace gsm
