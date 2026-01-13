@@ -48,7 +48,8 @@ void ServerShootInputSystem::update(
 
         float cooldown = constants::SHOOT_INPUT_COOLDOWN;
         if (registry->hasComponent<ShootingStatsComponent>(entityId)) {
-            cooldown = 1.0f / registry->getComponent<ShootingStatsComponent>(entityId)->getFireRate();
+            cooldown = 1.0f / 
+                registry->getComponent<ShootingStatsComponent>(entityId)->getFireRate();
         }
 
         if (_cooldowns[entityId] > cooldown) {
