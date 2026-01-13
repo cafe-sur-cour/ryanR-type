@@ -24,3 +24,10 @@ vcpkg/
 vgcore*
 saves/
 epitech-sprites-1
+vcpkg_installed/
+
+# Node.js / Frontend
+node_modules/
+frontend/node_modules/
+.env
+package-lock.json

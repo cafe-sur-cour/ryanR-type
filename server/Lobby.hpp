@@ -58,15 +58,19 @@ class Lobby {
             std::shared_ptr<ResourceManager> getResourceManager() const;
 
             std::vector<uint8_t> getConnectedClients() const;
+            std::vector<std::tuple<uint8_t, std::string>> getConnectedClientDetails() const;
             std::vector<std::shared_ptr<net::INetworkEndpoint>> getConnectedClientEndpoints() const;
             size_t getClientCount() const;
             bool isRunning() const;
             void addClient(std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string> client);
+            void removeClient(uint8_t clientId);
             void resetClientHeartbeats();
             void createPlayerEntityForClient(uint8_t clientId);
             void syncExistingEntitiesToClient(std::shared_ptr<net::INetworkEndpoint> clientEndpoint);
             std::string getLobbyCode() const;
             std::shared_ptr<net::INetwork> getNetwork() const;
+            std::string getGameState() const;
+            std::string getGameRules() const;
 
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> getEventQueue();
             bool hasEvents() const;
@@ -114,7 +118,6 @@ class Lobby {
             std::string _lobbyCode;
             std::map<uint8_t, bool> _clientsReady;
             std::map<uint8_t, ecs::Entity> _clientToEntity;
-            std::map<uint8_t, std::chrono::steady_clock::time_point> _clientLastHeartbeat;
             std::shared_ptr<pm::IPacketManager> _packet;
             uint32_t _sequenceNumber;
             std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>> _eventQueue;
@@ -126,6 +129,7 @@ class Lobby {
 
             /* ECS/Game handling variable */
             bool _gameStarted;
+            bool _playerEntitiesCreated;
             std::shared_ptr<ResourceManager> _resourceManager;
             std::shared_ptr<gsm::GameStateMachine> _gsm;
             std::chrono::steady_clock::time_point _lastGameStateTime;
@@ -141,6 +145,9 @@ class Lobby {
             ComponentDeltaTracker _deltaTracker;
             /* Functions to build game state packets */
             std::vector<std::function<std::vector<uint64_t>(std::shared_ptr<ecs::Registry>, ecs::Entity)>> _convertFunctions;
+
+            /* AOI (Area of Interest) management */
+            bool isEntityInPlayerAOI(std::shared_ptr<ecs::Registry> registry, ecs::Entity playerEntity, ecs::Entity targetEntity);
         protected:
             std::vector<uint64_t> convertTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertTransformComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);

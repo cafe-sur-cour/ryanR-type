@@ -48,13 +48,27 @@ bool rserv::Server::processConnections(std::pair<std::shared_ptr<net::INetworkEn
 bool rserv::Server::processDisconnections(uint8_t idClient) {
     for (auto &client : this->_clients) {
         if (std::get<0>(client) == idClient) {
+            if (this->_clientToLobby.find(idClient) != this->_clientToLobby.end()) {
+                auto lobby = this->_clientToLobby[idClient];
+                if (lobby) {
+                    lobby->processDisconnections(idClient);
+                }
+                this->_clientToLobby.erase(idClient);
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "Client " + std::to_string(idClient) + " removed from lobby",
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+                this->cleanupClosedLobbies();
+            }
+
             this->_clients.erase(
                 std::remove(this->_clients.begin(), this->_clients.end(), client),
                 this->_clients.end());
             this->_nextClientId--;
+            this->_clientLastHeartbeat.erase(idClient);
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "Client " + std::to_string(idClient)
-                + " disconnected and removed from the lobby",
+                + " disconnected and removed from server",
                 debug::debugType::NETWORK, debug::debugLevel::INFO);
             return true;
         }
@@ -63,6 +77,24 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
 }
 
 bool rserv::Server::requestCode(const net::INetworkEndpoint &endpoint) {
+    std::string username;
+    for (const auto& client : this->_clients) {
+        if (*std::get<1>(client) == endpoint) {
+            username = std::get<2>(client);
+            break;
+        }
+    }
+
+    if (!username.empty()) {
+        auto stats = this->loadUserStats(username);
+        if (stats[constants::BANNED_JSON_WARD] == 1) {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Banned user " + username + " tried to request lobby code",
+                debug::debugType::NETWORK, debug::debugLevel::WARNING);
+            return false;
+        }
+    }
+
     if (!this->_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Network not initialized",
@@ -177,6 +209,19 @@ bool rserv::Server::processConnectToLobby(std::pair<std::shared_ptr<net::INetwor
                 }
 
                 if (!alreadyInLobbyThread) {
+                    std::string username = std::get<2>(clientToAdd);
+                    if (!username.empty()) {
+                        auto userStats = this->loadUserStats(username);
+                        if (userStats[constants::BANNED_JSON_WARD] == 1) {
+                            debug::Debug::printDebug(this->_config->getIsDebug(),
+                                "[SERVER] Banned user " + username +
+                                    " attempted to join lobby",
+                                debug::debugType::NETWORK, debug::debugLevel::WARNING);
+                            this->lobbyConnectValuePacket(*payload.first, false);
+                            return true;
+                        }
+                    }
+
                     lobby->_clients.push_back(clientToAdd);
                 }
 
@@ -196,7 +241,6 @@ bool rserv::Server::processConnectToLobby(std::pair<std::shared_ptr<net::INetwor
 
                             actualLobby->syncExistingEntitiesToClient(
                                 std::get<1>(clientToAdd));
-                            actualLobby->createPlayerEntityForClient(clientId);
                         }
 
                         this->_clientToLobby[clientId] = actualLobby;
@@ -362,7 +406,6 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
 
     this->canStartPacket(endpoints);
     lobby->gameRulesPacket();
-    lobby->resetClientHeartbeats();
     lobby->startNetworkThread();
     lobby->startGameThread();
     debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -516,9 +559,38 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
     std::string password = data.substr(8, 8);
     password.erase(password.find_last_not_of(constants::END_OFSTRING_TRD) + 1);
 
-    if (username.empty() || password.empty()) {
+    if (username.empty()) {
+        for (auto &clientTuple : this->_clients) {
+            if (std::get<1>(clientTuple) && client.first &&
+                std::get<1>(clientTuple)->getAddress() == client.first->getAddress() &&
+                std::get<1>(clientTuple)->getPort() == client.first->getPort()) {
+                std::get<2>(clientTuple) = "";
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] User logged out",
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+                break;
+            }
+        }
+        return true;
+    }
+
+    if (password.empty()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
-            "[SERVER] Warning: Empty username or password",
+            "[SERVER] Warning: Empty password",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    bool alreadyLoggedIn = false;
+    for (const auto& clientTuple : this->_clients) {
+        if (std::get<2>(clientTuple) == username) {
+            alreadyLoggedIn = true;
+            break;
+        }
+    }
+    if (alreadyLoggedIn) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Login failed: User already logged in",
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }

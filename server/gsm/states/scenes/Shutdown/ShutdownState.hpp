@@ -19,6 +19,7 @@ public:
     ~ShutdownState() override = default;
 
     void enter() override;
+    std::string getStateName() const override { return "Shutting Down"; }
 };
 
 }  // namespace gsm

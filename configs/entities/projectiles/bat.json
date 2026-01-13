@@ -65,6 +65,11 @@
                     "toSelf": ["TakeDeath"]
                 }
             ]
+        },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "musics/mermaid_eel_attack_start_04.wav",
+            "volume": 30.0
         }
     }
 }

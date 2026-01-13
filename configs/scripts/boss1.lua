@@ -128,7 +128,6 @@ function updateNormalMode(entity, dt)
     -- Utiliser la position de spawn comme centre du mouvement en 8
     local centerX = bossState.startX
     local centerY = bossState.startY
-    
     -- Amplitudes relatives à la taille de la game zone (pour la cohérence)
     local gzWidth, gzHeight = getGameZoneSize()
     local amplitudeX = gzWidth * 0.08
@@ -145,6 +144,7 @@ function updateNormalMode(entity, dt)
         else
             spawnBlimpEnemies(entity)
             setAnimationState(entity, "summoning")
+            spawnEntity("incante", getEntityPosition(entity))
         end
         bossState.attackTimer = 0
         bossState.attackCount = bossState.attackCount + 1
@@ -159,12 +159,9 @@ function updateChargeMode(entity, dt)
     local gzWidth, gzHeight = getGameZoneSize()
     local bossWidth, bossHeight = getEntitySize(entity)
     local currentX, currentY = getEntityPosition(entity)
-    
-    -- Utiliser la position de spawn comme centre
     local centerX = bossState.startX
     local centerY = bossState.startY
     local rightQuarterWidth = gzWidth * 0.125
-    
     if bossState.chargeState == "moving" then
         bossState.chargeOscillation = bossState.chargeOscillation + dt * 2
         local verticalSpeed = 180
@@ -189,6 +186,7 @@ function updateChargeMode(entity, dt)
             if bossState.chargeCount == 0 then
                 bossState.maxCharges = math.random(1, 2)
             end
+            spawnEntity("inhale", currentX, currentY)
             bossState.chargeState = "preparing"
             bossState.chargeTimer = 0
             bossState.attackTimer = 0
@@ -201,6 +199,7 @@ function updateChargeMode(entity, dt)
             bossState.chargeState = "charging"
             bossState.chargeTimer = 0
             setAnimationState(entity, "dash2")
+            spawnEntity("exhale", currentX, currentY)
         end
     elseif bossState.chargeState == "charging" then
         local targetX = gzX + (gzWidth * 0.15)

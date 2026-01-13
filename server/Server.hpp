@@ -21,6 +21,9 @@
 #include <queue>
 #include <map>
 #include <memory>
+#include <thread>
+#include <chrono>
+#include <mutex>
 
 #include "LobbyStruct.hpp"
 #include "Lobby.hpp"
@@ -37,12 +40,12 @@
 #include "../common/resourceManager/ResourceManager.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 #include "../common/resourceManager/ResourceManager.hpp"
-#include <thread>
 #include "../common/Parser/Parser.hpp"
 #include "../common/systems/systemManager/ISystemManager.hpp"
 #include "gsm/machine/GameStateMachine.hpp"
 #include "initResourcesManager/ServerInputProvider.hpp"
 #include "Signal.hpp"
+#include "http/HttpServer.hpp"
 
 namespace rserv {
     class Server {
@@ -76,6 +79,12 @@ namespace rserv {
             std::vector<std::shared_ptr<net::INetworkEndpoint>> getConnectedClientEndpoints() const;
             size_t getClientCount() const;
 
+            uint8_t findClientIdByEndpoint(const net::INetworkEndpoint &endpoint) const;
+
+            ServerInfo getServerInfo() const;
+            std::map<std::string, int> loadUserStats(const std::string& username) const;
+            void saveUserBannedStatus(const std::string& username, bool banned) const;
+
 
             /* Received Packet Handling */
             void processIncomingPackets();
@@ -91,6 +100,7 @@ namespace rserv {
             bool processNewChatMessage(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> payload);
             bool processRequestGameRulesUpdate(std::pair<std::shared_ptr<net::INetworkEndpoint>, std::vector<uint8_t>> payload);
             void cleanupClosedLobbies();
+            void checkClientTimeouts();
 
             /* Sent Packet Handling */
             bool connectionPacket(const net::INetworkEndpoint& endpoint);
@@ -102,12 +112,20 @@ namespace rserv {
             bool leaderboardPacket(const net::INetworkEndpoint &endpoint);
             bool profilePacket(const net::INetworkEndpoint &endpoint);
             bool newChatMessagePacket(const net::INetworkEndpoint &endpoint, std::vector<uint8_t> message);
+            bool forceLeavePacket(const net::INetworkEndpoint &endpoint, constants::ForceLeaveType leaveType);
 
             uint32_t getSequenceNumber() const;
             std::shared_ptr<pm::IPacketManager> getPacketManager() const;
             std::shared_ptr<pm::IPacketManager> createNewPacketManager();
             uint32_t getNextEntityId();
             void incrementSequenceNumber();
+
+            std::string executeCommand(const std::string& command);
+            std::string closeLobby(const std::string& lobbyId);
+            std::string kickPlayer(const std::string& playerId);
+            std::string banPlayer(const std::string& playerId);
+            std::string unbanPlayer(const std::string& playerId);
+
         private:
             void loadNetworkLibrary();
             void loadBufferLibrary();
@@ -125,6 +143,7 @@ namespace rserv {
             uint8_t _nextClientId;
             uint32_t _sequenceNumber;
             uint32_t _nextEntityId;
+            std::mutex _clientsMutex;
 
             /* Lobby handling variables */
             std::vector<std::tuple<uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>> _clients;
@@ -132,8 +151,12 @@ namespace rserv {
             std::vector<std::shared_ptr<LobbyStruct>> _lobbyThreads;
             std::vector<std::shared_ptr<Lobby>> _lobbies;
             std::map<uint8_t, std::shared_ptr<Lobby>> _clientToLobby;
+            std::unique_ptr<HttpServer> _httpServer;
+
+            /* Healthcheck variables */
+            std::map<uint8_t, std::chrono::steady_clock::time_point> _clientLastHeartbeat;
 
     };
-} // namespace rserv = r-type server
+}  // namespace rserv
 
 #endif /* !SERVER_HPP_ */

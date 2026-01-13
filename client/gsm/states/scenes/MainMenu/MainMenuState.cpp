@@ -326,6 +326,9 @@ MainMenuState::MainMenuState(
     _disconnectButton->setOnRelease([this]() {
         auto settingsConfig = this->_resourceManager->get<SettingsConfig>();
         auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            network->sendLoginPacket("", "");
+        }
         if (settingsConfig) {
             settingsConfig->setUsername("");
             settingsConfig->saveSettings();
@@ -338,6 +341,9 @@ MainMenuState::MainMenuState(
     _disconnectButton->setOnActivated([this]() {
         auto settingsConfig = this->_resourceManager->get<SettingsConfig>();
         auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            network->sendLoginPacket("", "");
+        }
         if (settingsConfig) {
             settingsConfig->setUsername("");
             settingsConfig->saveSettings();
@@ -389,6 +395,14 @@ void MainMenuState::enter() {
     if (network) {
         _previousLobbyConnectedState = network->isConnectedToLobby();
         _previousLobbyMasterState = network->isLobbyMaster();
+
+        if (network->getLobbyCode() == constants::LOBBY_LEAVE_MARKER) {
+            network->setLobbyCode("");
+        }
+        network->_isConnectedToLobby = false;
+        network->_isLobbyMaster = false;
+        network->_ready = false;
+        network->_lastLeaveLobbyTime = std::chrono::steady_clock::now();
     }
 }
 
@@ -504,6 +518,24 @@ void MainMenuState::checkLobbyConnectionTransition() {
     auto network = _resourceManager->get<ClientNetwork>();
     if (!network) {
         return;
+    }
+
+    auto now = std::chrono::steady_clock::now();
+    auto timeSinceLeave = std::chrono::duration_cast<std::chrono::seconds>(
+        now - network->_lastLeaveLobbyTime).count();
+    if (timeSinceLeave < 1) {
+        _previousLobbyConnectedState = network->isConnectedToLobby();
+        _previousLobbyMasterState = network->isLobbyMaster();
+        _requestCodeButton->setState(ui::UIState::Disabled);
+        _lobbyConnectButton->setState(ui::UIState::Disabled);
+        return;
+    } else {
+        if (_requestCodeButton->getState() == ui::UIState::Disabled) {
+            _requestCodeButton->setState(ui::UIState::Normal);
+        }
+        if (_lobbyConnectButton->getState() == ui::UIState::Disabled) {
+            _lobbyConnectButton->setState(ui::UIState::Normal);
+        }
     }
 
     bool currentLobbyConnected = network->isConnectedToLobby();

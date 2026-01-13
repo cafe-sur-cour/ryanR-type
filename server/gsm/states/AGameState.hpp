@@ -14,6 +14,7 @@ class AGameState : public IGameState {
         void update(float deltaTime) override;
         void exit() override;
         std::vector<std::shared_ptr<ecs::ISystem>> getSystems() const override;
+        std::string getStateName() const override = 0;
 
     protected:
         void addSystem(std::shared_ptr<ecs::ISystem> system) override;

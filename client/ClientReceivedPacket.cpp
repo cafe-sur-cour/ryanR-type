@@ -20,6 +20,7 @@
 #include "../common/components/permanent/ScoreComponent.hpp"
 #include "gsm/states/scenes/InGame/InGameState.hpp"
 #include "gsm/states/scenes/Results/ResultsState.hpp"
+#include "gsm/states/scenes/ForceLeave/ForceLeaveState.hpp"
 #include "gsm/states/scenes/LevelComplete/LevelCompleteState.hpp"
 #include "./components/rendering/AnimationComponent.hpp"
 #include "../common/GameRules.hpp"
@@ -375,6 +376,7 @@ void ClientNetwork::handleLobbyConnectValue() {
                 debug::debugType::NETWORK,
                 debug::debugLevel::INFO);
         } else {
+            this->clearEntitiesAndMappings();
             debug::Debug::printDebug(this->_isDebug,
                 "[CLIENT] Successfully connected to lobby",
                 debug::debugType::NETWORK,
@@ -618,4 +620,36 @@ void ClientNetwork::handleGameRules() {
             ", crossfire: " + std::string(crossfire ? "ON" : "OFF"),
         debug::debugType::NETWORK,
         debug::debugLevel::INFO);
+}
+
+void ClientNetwork::handleForceLeave() {
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Received force leave packet",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
+
+    auto payload = _packet->getPayload();
+    if (payload.size() < 1) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[CLIENT] Force leave packet is invalid",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+
+    uint8_t leaveType = static_cast<uint8_t>(payload.at(0));
+    constants::ForceLeaveType forceLeaveType =
+        static_cast<constants::ForceLeaveType>(leaveType);
+
+    this->_isConnectedToLobby = false;
+    this->_isLobbyMaster = false;
+    this->_lobbyCode = "";
+    this->_ready = false;
+
+    if (this->_gsm) {
+        this->_gsm->requestStateChange(
+            std::make_shared<gsm::ForceLeaveState>
+                (this->_gsm, this->_resourceManager, forceLeaveType)
+        );
+    }
 }
