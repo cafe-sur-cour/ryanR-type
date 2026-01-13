@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2026
+** ryanR-type
+** File description:
+** Lobby
+*/
+
 #include <set>
 #include <map>
 #include <utility>
