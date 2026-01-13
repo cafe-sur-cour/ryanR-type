@@ -130,6 +130,7 @@ static void registerOptimizedGameStatePackers(
             pushVarint(packetData, payload.at(*i + 3));
             pushVarint(packetData, payload.at(*i + 4));
             pushVarint(packetData, payload.at(*i + 5));
+            pushVarint(packetData, payload.at(*i + 6));
             *i += 6;
         }
         return packetData;
@@ -457,11 +458,15 @@ static void registerOptimizedGameStateUnpackers(
                 static_cast<unsigned int>(offset)); offset += s4;
             auto [offsetDistance, s5] = readVarintAt(payload,
                 static_cast<unsigned int>(offset)); offset += s5;
+            auto [angleOffset, s6] = readVarintAt(payload,
+                static_cast<unsigned int>(offset)); offset += s6;
+
             vals.push_back(fireRate);
             vals.push_back(cooldownTimer);
             vals.push_back(shotCount);
             vals.push_back(angleSpread);
             vals.push_back(offsetDistance);
+            vals.push_back(angleOffset);
             packet->setPayload(vals);
             return static_cast<unsigned int>(offset - i);
         }

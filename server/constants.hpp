@@ -25,6 +25,8 @@ namespace constants {
     constexpr int MAX_CLIENT = 4;
     constexpr int CLIENT_TIMEOUT_SECONDS = 10;
 
+    constexpr float SHOOT_INPUT_COOLDOWN = 0.2f;
+
     const std::string USERS_JSON_PATH = "saves/users.json";
     const std::string SCORES_JSON_PATH = "saves/scores.json";
     const std::string USERNAME_JSON_WARD = "username";
