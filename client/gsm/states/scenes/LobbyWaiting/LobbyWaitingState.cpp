@@ -172,17 +172,36 @@ LobbyWaitingState::LobbyWaitingState(
 
     _uiManager->addElement(_topLeftLayout);
 
-    ui::LayoutConfig bottomRightConfig;
-    bottomRightConfig.direction = ui::LayoutDirection::Horizontal;
-    bottomRightConfig.alignment = ui::LayoutAlignment::End;
-    bottomRightConfig.spacing = 10.0f;
-    bottomRightConfig.padding = math::Vector2f(0.0f, 0.0f);
-    bottomRightConfig.anchorX = ui::AnchorX::Right;
-    bottomRightConfig.anchorY = ui::AnchorY::Bottom;
-    bottomRightConfig.offset = math::Vector2f(-20.0f, -20.0f);
+    ui::LayoutConfig topConfig;
+    topConfig.direction = ui::LayoutDirection::Horizontal;
+    topConfig.alignment = ui::LayoutAlignment::End;
+    topConfig.spacing = 10.0f;
+    topConfig.padding = math::Vector2f(0.0f, 0.0f);
+    topConfig.anchorX = ui::AnchorX::Right;
+    topConfig.anchorY = ui::AnchorY::Top;
+    topConfig.offset = math::Vector2f(-20.0f, 20.0f);
+    _topRightLayout = std::make_shared<ui::UILayout>(_resourceManager, topConfig);
+    _topRightLayout->setSize(math::Vector2f(80.f, 80.f));
 
-    _bottomRightLayout = std::make_shared<ui::UILayout>(_resourceManager, bottomRightConfig);
-    _bottomRightLayout->setSize(math::Vector2f(200.f, 60.f));
+    _chatButton = std::make_shared<ui::Button>(_resourceManager);
+    _chatButton->setSize(math::Vector2f(80.f, 80.f));
+    _chatButton->setIconPath(constants::CHAT_PATH);
+    _chatButton->setIconSize(math::Vector2f(500.f, 500.f));
+    _chatButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _chatButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _chatButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _chatButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _chatButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
 
     _leaveButton = std::make_shared<ui::Button>(_resourceManager);
     _leaveButton->setText("Leave");
@@ -240,42 +259,26 @@ LobbyWaitingState::LobbyWaitingState(
         }
     });
 
-    _bottomRightLayout->addElement(_leaveButton);
-    _uiManager->addElement(_bottomRightLayout);
+    _topRightLayout->addElement(_leaveButton);
+    _topRightLayout->addElement(_chatButton);
+    _uiManager->addElement(_topRightLayout);
 
-    ui::LayoutConfig topConfig;
-    topConfig.direction = ui::LayoutDirection::Horizontal;
-    topConfig.alignment = ui::LayoutAlignment::End;
-    topConfig.spacing = 10.0f;
-    topConfig.padding = math::Vector2f(0.0f, 0.0f);
-    topConfig.anchorX = ui::AnchorX::Right;
-    topConfig.anchorY = ui::AnchorY::Top;
-    topConfig.offset = math::Vector2f(-20.0f, 20.0f);
-    _topLayout = std::make_shared<ui::UILayout>(_resourceManager, topConfig);
-    _topLayout->setSize(math::Vector2f(80.f, 80.f));
-
-    _chatButton = std::make_shared<ui::Button>(_resourceManager);
-    _chatButton->setSize(math::Vector2f(80.f, 80.f));
-    _chatButton->setIconPath(constants::CHAT_PATH);
-    _chatButton->setIconSize(math::Vector2f(500.f, 500.f));
-    _chatButton->setNormalColor(colors::BUTTON_SECONDARY);
-    _chatButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _chatButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
-    _chatButton->setOnRelease([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
-                this->_resourceManager));
+    _loadingAnimation = std::make_shared<ui::SpritePreview>(_resourceManager);
+    if (_loadingAnimation->loadPrefab(constants::LOADING_PREFAVB)) {
+        _loadingAnimation->setSize(math::Vector2f(185.0f, 320.0f));
+        auto window = _resourceManager->get<gfx::IWindow>();
+        if (window) {
+            auto [windowWidth, windowHeight] = window->getWindowSize();
+            _loadingAnimation->setPosition(math::Vector2f(static_cast<float>(windowWidth) -
+                200.0f, static_cast<float>(windowHeight) - 300.0f));
         }
-    });
-    _chatButton->setOnActivated([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
-                this->_resourceManager));
-        }
-    });
-
-    _topLayout->addElement(_chatButton);
-    _uiManager->addElement(_topLayout);
+    } else {
+        std::cerr << "Failed to load loading animation prefab" << std::endl;
+        _loadingAnimation.reset();
+    }
+    if (_loadingAnimation) {
+        _uiManager->addElement(_loadingAnimation);
+    }
 }
 
 void LobbyWaitingState::setupLobbyMasterUI() {
@@ -382,6 +385,9 @@ void LobbyWaitingState::update(float deltaTime) {
     }
 
     _uiManager->update(deltaTime);
+    if (_loadingAnimation) {
+        _loadingAnimation->update(deltaTime);
+    }
     updateUIStatus();
     renderUI();
 }
@@ -454,7 +460,8 @@ void LobbyWaitingState::exit() {
     _crossfireButton.reset();
     _topLeftLayout.reset();
     _chatButton.reset();
-    _bottomRightLayout.reset();
+    _topRightLayout.reset();
+    _loadingAnimation.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
