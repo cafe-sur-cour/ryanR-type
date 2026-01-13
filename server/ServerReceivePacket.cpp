@@ -13,12 +13,14 @@
 #include <thread>
 #include <tuple>
 #include <fstream>
+#include <filesystem>   // NOLINT(build/c++17)
 #include <nlohmann/json.hpp>
 
 #include "Server.hpp"
 #include "Lobby.hpp"
-#include "Constants.hpp"
+#include "constants.hpp"
 #include "../../../common/utils/SecureJsonManager.hpp"
+#include "../common/utils/Encryption.hpp"
 #include "../common/debug.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
@@ -360,6 +362,7 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
                 }
             }
         }
+        std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
         std::ofstream outfile(filepath);
         bool writeSuccess = false;
         if (outfile.is_open()) {
@@ -430,10 +433,10 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
     std::string data(client.second.begin() + HEADER_SIZE, client.second.end());
 
     std::string username = data.substr(0, 8);
-    username.erase(username.find_last_not_of('\0') + 1);
+    username.erase(username.find_last_not_of(constants::END_OFSTRING_TRD) + 1);
 
     std::string password = data.substr(8, 8);
-    password.erase(password.find_last_not_of('\0') + 1);
+    password.erase(password.find_last_not_of(constants::END_OFSTRING_TRD) + 1);
 
     if (username.empty() || password.empty()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -481,14 +484,17 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
         }
     }
 
+    std::string encryptedPassword = utils::Encryption::encrypt(password);
+
     nlohmann::json newUser;
     newUser[constants::USERNAME_JSON_WARD] = username;
-    newUser[constants::PASSWORD_JSON_WARD] = password;
+    newUser[constants::PASSWORD_JSON_WARD] = encryptedPassword;
     newUser[constants::WINS_JSON_WARD] = 0;
     newUser[constants::HIGH_SCORE_JSON_WARD] = 0;
     newUser[constants::GAMES_PLAYED_JSON_WARD] = 0;
     newUser[constants::TIME_SPENT_JSON_WARD] = 0;
     users.push_back(newUser);
+    std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
     std::ofstream outfile(filepath);
     bool writeSuccess = false;
     if (outfile.is_open()) {
@@ -548,10 +554,10 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
     std::string data(client.second.begin() + HEADER_SIZE, client.second.end());
 
     std::string username = data.substr(0, 8);
-    username.erase(username.find_last_not_of('\0') + 1);
+    username.erase(username.find_last_not_of(constants::END_OFSTRING_TRD) + 1);
 
     std::string password = data.substr(8, 8);
-    password.erase(password.find_last_not_of('\0') + 1);
+    password.erase(password.find_last_not_of(constants::END_OFSTRING_TRD) + 1);
 
     if (username.empty()) {
         for (auto &clientTuple : this->_clients) {
@@ -611,10 +617,14 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
     for (const auto& user : users) {
         if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
             user.contains(constants::PASSWORD_JSON_WARD) &&
-            user[constants::USERNAME_JSON_WARD] == username &&
-            user[constants::PASSWORD_JSON_WARD] == password) {
-            loginSuccess = true;
-            break;
+            user[constants::USERNAME_JSON_WARD] == username) {
+            std::string storedPassword =
+                user[constants::PASSWORD_JSON_WARD].get<std::string>();
+            std::string decryptedPassword = utils::Encryption::decrypt(storedPassword);
+            if (decryptedPassword == password) {
+                loginSuccess = true;
+                break;
+            }
         }
     }
 
@@ -676,6 +686,27 @@ bool rserv::Server::processProfileRequest(std::shared_ptr<net::INetworkEndpoint>
     }
 
     if (!this->profilePacket(*client)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Failed to send profile packet",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    return true;
+}
+
+bool rserv::Server::processNewChatMessage(std::pair<std::shared_ptr<net::INetworkEndpoint>,
+    std::vector<uint8_t>> payload) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    std::vector<uint8_t> message;
+    message.insert(message.begin(), payload.second.begin() + HEADER_SIZE,
+        payload.second.end());
+    if (!this->newChatMessagePacket(*payload.first, message)) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Failed to send profile packet",
             debug::debugType::NETWORK, debug::debugLevel::WARNING);

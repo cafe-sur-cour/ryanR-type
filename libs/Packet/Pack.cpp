@@ -39,35 +39,14 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
         }
     }
 
-    if (type == GAME_STATE_PACKET) {
-        std::vector<uint8_t> body;
-        std::vector<uint8_t> entityIdBytes = this->_serializer->serializeVarint(payload.at(0));
-        body.insert(body.end(), entityIdBytes.begin(), entityIdBytes.end());
-
-        for (uint64_t i = 1; i < payload.size();) {
-            auto iPtr = std::make_shared<unsigned int>(static_cast<unsigned int>(i));
-            for (auto &func : this->_packGSFunction) {
-                std::vector<uint8_t> compData = func(payload, iPtr);
-                if (!compData.empty()) {
-                    body.insert(body.end(), compData.begin(), compData.end());
-                    i = *iPtr;
-                    break;
-                }
-            }
-        }
-
-        std::vector<uint8_t> compressedBody = Compression::compress(body);
-        if (!compressedBody.empty() && compressedBody.size() < body.size()) {
-            packet[6] = GAME_STATE_COMPRESSED_PACKET;
-            length = static_cast<uint32_t>(compressedBody.size());
-            temp = this->_serializer->serializeUInt(length);
+    if (type == NEW_CHAT_PACKET || type == BROADCASTED_CHAT_PACKET) {
+        length = static_cast<uint32_t>(payload.size());
+        size_t n = payload.size();
+        temp = this->_serializer->serializeUInt(length);
+        packet.insert(packet.end(), temp.begin(), temp.end());
+        for (size_t i = 0; i < n ; ++i) {
+            temp = this->_serializer->serializeUChar(payload.at(i));
             packet.insert(packet.end(), temp.begin(), temp.end());
-            packet.insert(packet.end(), compressedBody.begin(), compressedBody.end());
-        } else {
-            length = static_cast<uint32_t>(body.size());
-            temp = this->_serializer->serializeUInt(length);
-            packet.insert(packet.end(), temp.begin(), temp.end());
-            packet.insert(packet.end(), body.begin(), body.end());
         }
         return packet;
     }

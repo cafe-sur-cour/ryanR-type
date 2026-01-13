@@ -39,6 +39,11 @@ namespace constants {
         FORCE = 6,
         HEALTHCHECK = 7,
     };
+
+    constexpr char END_OFSTRING_ST = '\r';
+    constexpr char END_OFSTRING_ND = '\n';
+    constexpr char END_OFSTRING_TRD = '\0';
+
     constexpr int MAX_RETRY_CONNECTIONS = 3;
     /* Paths */
     const std::string CONFIG_PATH = "configs/entities/";
@@ -112,6 +117,7 @@ namespace constants {
     const std::string SHOTCOUNT_FIELD = "shotCount";
     const std::string ANGLEOFFSET_FIELD = "angleOffset";
     const std::string SPREADANGLE_FIELD = "spreadAngle";
+    const std::string OFFSETDISTANCE_FIELD = "offsetDistance";
     const std::string DEFAULTBEHAVIOR_FIELD = "defaultBehavior";
     const std::string ZIGZAGAMPLITUDE_FIELD = "zigzagAmplitude";
     const std::string ZIGZAGFREQUENCY_FIELD = "zigzagFrequency";
@@ -150,6 +156,7 @@ namespace constants {
     const std::string LOOP_FIELD = "loop";
     const std::string X_FIELD = "x";
     const std::string Y_FIELD = "y";
+    const std::string ANIMATIONSTATECOMPONENT = "AnimationStateComponent";
     const std::string PREFABNAME_FIELD = "prefabName";
     const std::string LIFETIME_FIELD = "lifetime";
     const std::string LIFESPAN_FIELD = "lifespan";
@@ -209,6 +216,7 @@ namespace constants {
     const std::string POSY_FIELD = "posY";
     const std::string COUNT_FIELD = "count";
     const std::string GAMEXTRIGGER_FIELD = "gameXTrigger";
+    const std::string GAME_ZONE_STOP_AT_X_FIELD = "gameZoneStopAtX";
     const std::string DISTRIBUTIONX_FIELD = "distributionX";
     const std::string DISTRIBUTIONY_FIELD = "distributionY";
     const std::string ENEMIES_FIELD = "enemies";
@@ -228,6 +236,7 @@ namespace constants {
     /* Animation conditions */
     const std::string VELOCITY_UP_CONDITION = "isVelocityUp";
     const std::string VELOCITY_DOWN_CONDITION = "isVelocityDown";
+    const std::string ANIMATION_END_CONDITION = "onAnimationEnd";
 
     /* Tags */
     const std::string CONTROLLABLETAG = "ControllableTag";
@@ -238,6 +247,7 @@ namespace constants {
     const std::string ENNEMYPROJECTILETAG = "EnnemyProjectileTag";
     const std::string PROJECTILEPASSTHROUGHTAG = "ProjectilePassThroughTag";
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
+    const std::string GAME_ZONE_STOP_TAG = "GameZoneStopTag";
     const std::string OBSTACLETAG = "ObstacleTag";
 
     /* Difficulty Multipliers */
@@ -280,37 +290,38 @@ namespace constants {
     constexpr std::uint8_t PACKET_ACCEPT = 0x02;
     constexpr std::uint8_t PACKET_DISC = 0x03;
     constexpr std::uint8_t PACKET_EVENT = 0x04;
-    constexpr std::uint8_t PACKET_GAME_STATE = 0x05;
-    constexpr std::uint8_t PACKET_END_GAME = 0x06;
-    constexpr std::uint8_t PACKET_CAN_START = 0x07;
-    constexpr std::uint8_t PACKET_CLIENT_READY = 0x08;
-    constexpr std::uint8_t PACKET_SPAWN = 0x09;
-    constexpr std::uint8_t PACKET_DEATH = 0x0A;
-    constexpr std::uint8_t PACKET_WHOAMI = 0x0B;
-    constexpr std::uint8_t PACKET_SERVER_STATUS = 0x0C;
-    constexpr std::uint8_t PACKET_REQUEST_LOBBY = 0x0D;
-    constexpr std::uint8_t PACKET_SEND_LOBBY_CODE = 0x0E;
-    constexpr std::uint8_t PACKET_CONNECT_TO_LOBBY = 0x0F;
-    constexpr std::uint8_t PACKET_LOBBY_MASTER_REQUEST_START = 0x10;
-    constexpr std::uint8_t PACKET_LOBBY_CONNECT_VALUE = 0x11;
-    constexpr std::uint8_t PACKET_LEVEL_COMPLETE = 0x12;
-    constexpr std::uint8_t PACKET_NEXT_LEVEL = 0x13;
-    constexpr std::uint8_t PACKET_REGISTER = 0x14;
-    constexpr std::uint8_t PACKET_CONNECT_USER = 0x15;
-    constexpr std::uint8_t PACKET_LOGIN = 0x16;
-    constexpr std::uint8_t PACKET_GAME_STATE_BATCH = 0x17;
-    constexpr std::uint8_t PACKET_GAME_STATE_BATCH_COMPRESSED = 0x18;
-    constexpr std::uint8_t PACKET_GAME_STATE_COMPRESSED = 0x19;
-    constexpr std::uint8_t PACKET_REQUEST_LEADERBOARD = 0x1A;
-    constexpr std::uint8_t PACKET_LEADERBOARD = 0x1B;
-    constexpr std::uint8_t PACKET_REGISTER_FAIL = 0x1C;
-    constexpr std::uint8_t PACKET_REQUEST_PROFILE = 0x1D;
-    constexpr std::uint8_t PACKET_PROFILE = 0x1E;
-    constexpr std::uint8_t PACKET_GAME_RULES = 0x1F;
-    constexpr std::uint8_t PACKET_REQUEST_GAME_RULES_UPDATE = 0x20;
-    constexpr std::uint8_t PACKET_FORCE_LEAVE = 0x21;
+    constexpr std::uint8_t PACKET_END_GAME = 0x05;
+    constexpr std::uint8_t PACKET_CAN_START = 0x06;
+    constexpr std::uint8_t PACKET_CLIENT_READY = 0x07;
+    constexpr std::uint8_t PACKET_SPAWN = 0x08;
+    constexpr std::uint8_t PACKET_DEATH = 0x09;
+    constexpr std::uint8_t PACKET_WHOAMI = 0x0A;
+    constexpr std::uint8_t PACKET_SERVER_STATUS = 0x0B;
+    constexpr std::uint8_t PACKET_REQUEST_LOBBY = 0x0C;
+    constexpr std::uint8_t PACKET_SEND_LOBBY_CODE = 0x0D;
+    constexpr std::uint8_t PACKET_CONNECT_TO_LOBBY = 0x0E;
+    constexpr std::uint8_t PACKET_LOBBY_MASTER_REQUEST_START = 0x0F;
+    constexpr std::uint8_t PACKET_LOBBY_CONNECT_VALUE = 0x10;
+    constexpr std::uint8_t PACKET_LEVEL_COMPLETE = 0x11;
+    constexpr std::uint8_t PACKET_NEXT_LEVEL = 0x12;
+    constexpr std::uint8_t PACKET_REGISTER = 0x13;
+    constexpr std::uint8_t PACKET_CONNECT_USER = 0x14;
+    constexpr std::uint8_t PACKET_LOGIN = 0x15;
+    constexpr std::uint8_t PACKET_GAME_STATE_BATCH = 0x16;
+    constexpr std::uint8_t PACKET_GAME_STATE_BATCH_COMPRESSED = 0x17;
+    constexpr std::uint8_t PACKET_GAME_STATE_COMPRESSED = 0x18;
+    constexpr std::uint8_t PACKET_REQUEST_LEADERBOARD = 0x19;
+    constexpr std::uint8_t PACKET_LEADERBOARD = 0x1A;
+    constexpr std::uint8_t PACKET_REGISTER_FAIL = 0x1B;
+    constexpr std::uint8_t PACKET_REQUEST_PROFILE = 0x1C;
+    constexpr std::uint8_t PACKET_PROFILE = 0x1D;
+    constexpr std::uint8_t PACKET_GAME_RULES = 0x1E;
+    constexpr std::uint8_t PACKET_REQUEST_GAME_RULES_UPDATE = 0x1F;
+    constexpr std::uint8_t PACKET_NEW_CHAT = 0x20;
+    constexpr std::uint8_t PACKET_BROADCASTED_CHAT = 0x21;
+    constexpr std::uint8_t PACKET_FORCE_LEAVE = 0x22;
 
-    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 34;
+    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 35;
     const int MAX_CLIENT_PER_LOBBY = 4;
 
     /* Lobby connection codes */
@@ -323,12 +334,13 @@ namespace constants {
         BANNED = 2,
     };
 
-    /* Scripting constant */
+    /* Scripting APU constant */
     const std::string INIT_FUNCTION = "init";
     const std::string UPDATE_FUNCTION = "update";
     const std::string DEATH_FUNCTION = "death";
     const std::string ONINTERACT_FUNCTION = "OnInteract";
-    const std::string  ACTIVATE_OR_DEACTIVATE_FORCE_FUNCTION = "ActivateOrDeactivateForce";
+    const std::string ACTIVATE_OR_DEACTIVATE_FORCE_FUNCTION = "ActivateOrDeactivateForce";
+    const std::string ADD_FORCE_LEVEL_FUNCTION = "addForceLevel";
 
     /* Constants for Scripting API */
     const std::string PRINT_FUNCTION = "print";
@@ -337,6 +349,7 @@ namespace constants {
     const std::string GET_NEAREST_PLAYER_POSITION_FUNCTION = "getNearestPlayerPosition";
     const std::string GET_ENTITY_SPEED_FUNCTION = "getEntitySpeed";
     const std::string CREATE_SHOOT_INTENT_FUNCTION = "createShootIntent";
+    const std::string SET_ANIMATION_STATE_FUNCTION = "setAnimationState";
     const std::string SPAWN_ENTITY_FUNCTION = "spawnEntity";
     const std::string GET_ENTITY_ID_FUNCTION = "getEntityId";
     const std::string ADD_PART_ID_FUNCTION = "addPartId";
@@ -353,6 +366,11 @@ namespace constants {
     const std::string SET_PROJECTILE_PREFAB_FUNCTION = "setProjectilePrefab";
     const std::string COUNT_FORCES_BY_TYPE_FUNCTION = "countForcesByType";
     const std::string GET_FORCE_POSITION_BY_TYPE_FUNCTION = "getForcePositionByType";
+    const std::string GET_GAME_ZONE_POSITION_FUNCTION = "getGameZonePosition";
+    const std::string GET_GAME_ZONE_SIZE_FUNCTION = "getGameZoneSize";
+    const std::string GET_GAME_ZONE_VELOCITY_FUNCTION = "getGameZoneVelocity";
+    const std::string REVERSE_SHOOT_ORIENTATION_FUNCTION = "reverseShootOrientation";
+    const std::string SET_GAME_ZONE_VELOCITY_FUNCTION = "setGameZoneVelocity";
 }
 
 #endif /* !CONSTANTS_HPP_ */

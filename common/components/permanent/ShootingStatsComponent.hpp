@@ -19,10 +19,7 @@ struct MultiShotPattern {
     int shotCount = 1;
     float angleSpread = 0.0f;
     float offsetDistance = 0.0f;
-
-    MultiShotPattern() = default;
-    MultiShotPattern(int count, float spread, float offset)
-        : shotCount(count), angleSpread(spread), offsetDistance(offset) {}
+    float angleOffset = 0.0f;
 };
 
 class ShootingStatsComponent : public AComponent {
@@ -43,18 +40,6 @@ class ShootingStatsComponent : public AComponent {
 
         float getCooldownTimer() const { return _cooldownTimer; };
         void setCooldownTimer(float timer) { _cooldownTimer = timer; };
-
-        bool canShoot() const { return _cooldownTimer <= 0.0f; };
-
-        void updateCooldown(float deltaTime) {
-            if (_cooldownTimer > 0.0f) {
-                _cooldownTimer -= deltaTime;
-            }
-        };
-
-        void resetCooldown() {
-            _cooldownTimer = 1.0f / _fireRate;
-        };
 
     private:
         float _fireRate;

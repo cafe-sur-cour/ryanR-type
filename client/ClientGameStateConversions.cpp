@@ -20,6 +20,7 @@
 #include "../common/components/permanent/ProjectilePrefabComponent.hpp"
 #include "../common/components/permanent/ChargedShotComponent.hpp"
 #include "../common/components/tags/ObstacleTag.hpp"
+#include "../common/components/permanent/AnimationStateComponent.hpp"
 #include "interpolation/NetworkStateComponent.hpp"
 
 namespace {
@@ -141,20 +142,24 @@ size_t ClientNetwork::parseColliderComponent(const std::vector<uint64_t> &payloa
 
 size_t ClientNetwork::parseShootingStatsComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
-    if (index + 5 <= payload.size()) {
+    if (index + 6 <= payload.size()) {
         float fireRate = unpackFloat(payload[index++]);
         float cooldown = unpackFloat(payload[index++]);
         uint32_t shotCount = static_cast<uint32_t>(payload[index++]);
         float angleSpread = unpackFloat(payload[index++]);
         float offsetDistance = unpackFloat(payload[index++]);
+        float angleOffset = unpackFloat(payload[index++]);
+
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Entity " + std::to_string(entityId) + " ShootingStats: fireRate(" +
             std::to_string(fireRate) + ") cooldown(" + std::to_string(cooldown) +
             ") shots(" + std::to_string(shotCount) + ") angleSpread(" +
             std::to_string(angleSpread) + ") offsetDistance(" +
-            std::to_string(offsetDistance) + ")",
+            std::to_string(offsetDistance) + ") angleOffset(" +
+            std::to_string(angleOffset) + ")",
             debug::debugType::NETWORK,
-            debug::debugLevel::INFO);
+            debug::debugLevel::INFO
+        );
     }
     return index;
 }
@@ -331,13 +336,14 @@ size_t ClientNetwork::parseProjectilePrefabComponent(const std::vector<uint64_t>
     std::string prefabName;
     while (index < payload.size()) {
         uint64_t charVal = payload[index++];
-        if (charVal == static_cast<uint64_t>('\r')) {
-            if (index < payload.size() && payload[index] == static_cast<uint64_t>('\n')) {
+        if (charVal == static_cast<uint64_t>(constants::END_OFSTRING_ST)) {
+            if (index < payload.size() && payload[index] == static_cast<uint64_t>
+                (constants::END_OFSTRING_ND)) {
                 index++;
             }
             break;
         }
-        if (charVal == static_cast<uint64_t>('\0')) {
+        if (charVal == static_cast<uint64_t>(constants::END_OFSTRING_TRD)) {
             break;
         }
         prefabName += static_cast<char>(charVal);
@@ -373,6 +379,51 @@ size_t ClientNetwork::parseGameZoneComponent(const std::vector<uint64_t> &payloa
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
     }
+    return index;
+}
+
+size_t ClientNetwork::parseAnimationStateComponent(const std::vector<uint64_t> &payload,
+    size_t index, ecs::Entity entityId) {
+    std::string state;
+    while (index < payload.size()) {
+        uint64_t charVal = payload[index++];
+        if (charVal == static_cast<uint64_t>(constants::END_OFSTRING_ST)) {
+            if (index < payload.size() && payload[index] == static_cast<uint64_t>
+                (constants::END_OFSTRING_ND)) {
+                index++;
+            }
+            break;
+        }
+        if (charVal == static_cast<uint64_t>(constants::END_OFSTRING_TRD)) {
+            break;
+        }
+        state += static_cast<char>(charVal);
+    }
+
+    auto it = _lastReceivedAnimationState.find(entityId);
+    bool isNewState = (it == _lastReceivedAnimationState.end() || it->second != state);
+
+    if (!state.empty()) {
+        if (isNewState) {
+            _lastReceivedAnimationState[entityId] = state;
+        }
+
+        auto registry = this->_resourceManager->get<ecs::Registry>();
+        if (!registry->hasComponent<ecs::AnimationStateComponent>(entityId)) {
+            auto animStateComp = std::make_shared<ecs::AnimationStateComponent>(state);
+            registry->addComponent(entityId, animStateComp);
+        } else {
+            auto animStateComp = registry->getComponent
+                <ecs::AnimationStateComponent>(entityId);
+            if (animStateComp->getCurrentState().empty()) {
+                animStateComp->setCurrentState(state);
+            }
+        }
+    }
+
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Entity " + std::to_string(entityId) + " AnimationState: " + state,
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
     return index;
 }
 

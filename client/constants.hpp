@@ -74,6 +74,7 @@ namespace constants {
     const std::string UI_BACKGROUND_EARTH_PATH = "assets/ui/earth.jpg";
     const std::string HOW_TO_PLAY_PATH = "assets/sprites/how_to_play.png";
     const std::string LEADERBOARD_PATH = "assets/sprites/leaderboard.png";
+    const std::string CHAT_PATH = "assets/sprites/chat.png";
 
     const std::string MAIN_FONT = "assets/fonts/abduction2002.ttf";
 

@@ -120,7 +120,6 @@ class IPacketManager {
 | ACCEPTATION_PACKET | 0x02 | Connection acceptance | 1 byte | 1 uint8_t (client ID) |
 | DISCONNECTION_PACKET | 0x03 | Disconnection | 4 bytes | 1 uint32_t (client ID) |
 | EVENT | 0x04 | Game event | 9 bytes | uint8_t event_type + uint64_t param |
-| GAME_STATE | 0x05 | Game state | Variable | Complex ECS component data |
 | POSITION_UPDATE | 0x06 | Position updates | Variable | Entity positions and movements |
 | HEALTH_UPDATE | 0x07 | Health updates | Variable | Entity health changes |
 | BULLET_SPAWN | 0x08 | Bullet creation | Variable | Bullet creation data |
@@ -516,20 +515,6 @@ Serialized: 2A 00 00 00
 ```
 Payload: [4, 123456789]
 Serialized: 04 00 00 00 00 00 00 00 15
-```
-
-### GAME_STATE (0x05)
-
-**Body size**: Variable
-
-**Payload Format**: Complex ECS component data
-
-**Usage**: Complete game state synchronization.
-
-**Example**:
-```
-Payload: [variable ECS data]
-Serialized: [depends on current game state]
 ```
 
 ### GAME_STATE_BATCH (0x14)

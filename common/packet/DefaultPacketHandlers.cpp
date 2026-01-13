@@ -9,7 +9,6 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include "GameStateHandlers.hpp"
 #include "GameStateHandlersOptimized.hpp"
 #include "../../libs/Packet/serializer/BigEndianSerialization.hpp"
 #include "../../libs/Packet/PacketManager.hpp"
@@ -355,6 +354,8 @@ bool registerDefaultPacketHandlers(
 
     registerSingleUCharPacket(packet, ser, FORCE_LEAVE_PACKET, LENGTH_FORCE_LEAVE_PACKET);
 
+    packet->registerLength(FORCE_LEAVE_PACKET, LENGTH_FORCE_LEAVE_PACKET);
+
     packet->registerLength(LOBBY_CONNECT_VALUE, LENGTH_CONNECT_TO_LOBBY_PACKET);
     packet->registerLength(REQUEST_LOBBY_PACKET, LENGTH_REQUEST_LOBBY_PACKET);
     packet->registerLength(SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
@@ -380,34 +381,6 @@ bool registerDefaultPacketHandlers(
     packet->registerLength(GAME_RULES_PACKET, LENGTH_GAME_RULES_PACKET);
     packet->registerLength(
         REQUEST_GAME_RULES_UPDATE_PACKET, LENGTH_REQUEST_GAME_RULES_UPDATE_PACKET);
-
-    packet->registerLength(FORCE_LEAVE_PACKET, LENGTH_FORCE_LEAVE_PACKET);
-
-    packet->registerLengthCombEntry(TRANSFORM, 41, 6);
-    packet->registerLengthCombEntry(SPEED_COMP, 9, 2);
-    packet->registerLengthCombEntry(HEALTH, 17, 3);
-    packet->registerLengthCombEntry(COLLIDER, 34, 6);
-    packet->registerLengthCombEntry(SHOOTING_STATS, 37, 6);
-    packet->registerLengthCombEntry(SCORE, 5, 2);
-    packet->registerLengthCombEntry(AI_MOVEMENT_PATTERN, 42, 7);
-    packet->registerLengthCombEntry(DAMAGE, 9, 2);
-    packet->registerLengthCombEntry(LIFETIME, 9, 2);
-    packet->registerLengthCombEntry(VELOCITY, 17, 3);
-    packet->registerLengthCombEntry(PROJECTILE_PREFAB, 0, 2);
-    packet->registerLengthCombEntry(GAME_ZONE, 33, 5);
-
-    packet->registerLengthCombEntry(PLAYER_TAG, 1, 1);
-    packet->registerLengthCombEntry(AI_MOVER_TAG, 1, 1);
-    packet->registerLengthCombEntry(AI_SHOOTER_TAG, 1, 1);
-    packet->registerLengthCombEntry(CONTROLLABLE_TAG, 1, 1);
-    packet->registerLengthCombEntry(ENEMY_PROJECTILE_TAG, 1, 1);
-    packet->registerLengthCombEntry(GAME_ZONE_COLLIDER_TAG, 1, 1);
-    packet->registerLengthCombEntry(MOB_TAG, 1, 1);
-    packet->registerLengthCombEntry(OBSTACLE_TAG, 1, 1);
-    packet->registerLengthCombEntry(PLAYER_PROJECTILE_TAG, 1, 1);
-    packet->registerLengthCombEntry(SCORE_TAG, 1, 1);
-    packet->registerLengthCombEntry(SHOOTER_TAG, 1, 1);
-    packet->registerLengthCombEntry(PROJECTILE_PASS_THROUGH_TAG, 1, 1);
 
     try {
         auto accept = packet->pack(0, 0, ACCEPTATION_PACKET, {0});

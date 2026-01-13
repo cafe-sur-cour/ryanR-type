@@ -37,10 +37,9 @@
 using namespace rserv;
 using namespace ecs;
 
-// Test class to expose protected convert methods
 class TestLobby : public Lobby {
 public:
-    TestLobby() : Lobby(nullptr, {}, "test", true) {}
+    TestLobby() : Lobby(nullptr, {}, "test", true, 50) {}
 
     using Lobby::convertTagComponent;
     using Lobby::convertTransformComponent;
@@ -186,20 +185,21 @@ TEST_F(ECSConversionTest, ConvertColliderComponent_WithoutCollider) {
 
 TEST_F(ECSConversionTest, ConvertShootStatComponent_WithShootingStats) {
     registry->registerComponent<ShootingStatsComponent>();
-    MultiShotPattern pattern{3, 30.0f, 5.0f};
+    MultiShotPattern pattern{3, 30.0f, 5.0f, 180.0f};
     auto shootStats = std::make_shared<ShootingStatsComponent>(2.0f, pattern);
     shootStats->setCooldownTimer(1.5f);
     registry->addComponent<ShootingStatsComponent>(entity, shootStats);
 
     auto result = testLobby->convertShootStatComponent(registry, entity);
 
-    ASSERT_EQ(result.size(), 6);
+    ASSERT_EQ(result.size(), 7);
     EXPECT_EQ(result[0], static_cast<uint64_t>(SHOOTING_STATS));
     EXPECT_EQ(result[1], packFloat(2.0f));
     EXPECT_EQ(result[2], packFloat(1.5f));
     EXPECT_EQ(result[3], static_cast<uint64_t>(3));
     EXPECT_EQ(result[4], packFloat(30.0f));
     EXPECT_EQ(result[5], packFloat(5.0f));
+    EXPECT_EQ(result[6], packFloat(180.0f));
 }
 
 TEST_F(ECSConversionTest, ConvertShootStatComponent_WithoutShootingStats) {
@@ -434,9 +434,9 @@ TEST_F(ECSConversionTest, ConvertProjectilePrefabComponent_WithProjectilePrefab)
         i++;
     }
     EXPECT_EQ(reconstructed, "BulletPrefab");
-    EXPECT_EQ(result[i], static_cast<uint64_t>('\r'));
-    EXPECT_EQ(result[i+1], static_cast<uint64_t>('\n'));
-    EXPECT_EQ(result[i+2], static_cast<uint64_t>('\0'));
+    EXPECT_EQ(result[i], static_cast<uint64_t>(constants::END_OFSTRING_ST));
+    EXPECT_EQ(result[i+1], static_cast<uint64_t>(constants::END_OFSTRING_ND));
+    EXPECT_EQ(result[i+2], static_cast<uint64_t>(constants::END_OFSTRING_TRD));
 }
 
 TEST_F(ECSConversionTest, ConvertProjectilePrefabComponent_WithoutProjectilePrefab) {

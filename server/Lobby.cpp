@@ -15,10 +15,11 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <filesystem>   // NOLINT(build/c++17)
 #include <nlohmann/json.hpp>
 
 #include "Lobby.hpp"
-#include "Constants.hpp"
+#include "constants.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
 #include "../common/ECS/entity/Entity.hpp"
@@ -79,8 +80,10 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertShooterTagComponent, this,
             std::placeholders::_1, std::placeholders::_2),
-        std::bind(&rserv::Lobby::convertChargedShotComponent, this,
+        std::bind(&rserv::Lobby::convertAnimationStateComponent, this,
             std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Lobby::convertChargedShotComponent, this,
+            std::placeholders::_1, std::placeholders::_2)
     };
 }
 
@@ -690,6 +693,7 @@ bool rserv::Lobby::endGamePacket(bool isWin) {
                 debug::debugType::NETWORK, debug::debugLevel::INFO);
         }
 
+        std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
         std::ofstream outFile(filepath);
         if (outFile.is_open()) {
             outFile << scores.dump(4);

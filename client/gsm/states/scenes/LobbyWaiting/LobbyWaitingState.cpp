@@ -23,6 +23,7 @@
 #include "../../../../colors.hpp"
 #include "../../../../../common/GameRules.hpp"
 #include "../MainMenu/MainMenuState.hpp"
+#include "../Chat/ChatState.hpp"
 
 namespace gsm {
 
@@ -241,6 +242,40 @@ LobbyWaitingState::LobbyWaitingState(
 
     _bottomRightLayout->addElement(_leaveButton);
     _uiManager->addElement(_bottomRightLayout);
+
+    ui::LayoutConfig topConfig;
+    topConfig.direction = ui::LayoutDirection::Horizontal;
+    topConfig.alignment = ui::LayoutAlignment::End;
+    topConfig.spacing = 10.0f;
+    topConfig.padding = math::Vector2f(0.0f, 0.0f);
+    topConfig.anchorX = ui::AnchorX::Right;
+    topConfig.anchorY = ui::AnchorY::Top;
+    topConfig.offset = math::Vector2f(-20.0f, 20.0f);
+    _topLayout = std::make_shared<ui::UILayout>(_resourceManager, topConfig);
+    _topLayout->setSize(math::Vector2f(80.f, 80.f));
+
+    _chatButton = std::make_shared<ui::Button>(_resourceManager);
+    _chatButton->setSize(math::Vector2f(80.f, 80.f));
+    _chatButton->setIconPath(constants::CHAT_PATH);
+    _chatButton->setIconSize(math::Vector2f(500.f, 500.f));
+    _chatButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _chatButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _chatButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _chatButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _chatButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+
+    _topLayout->addElement(_chatButton);
+    _uiManager->addElement(_topLayout);
 }
 
 void LobbyWaitingState::setupLobbyMasterUI() {
@@ -418,6 +453,8 @@ void LobbyWaitingState::exit() {
     _crossfireLabel.reset();
     _crossfireButton.reset();
     _topLeftLayout.reset();
+    _chatButton.reset();
+    _bottomRightLayout.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
