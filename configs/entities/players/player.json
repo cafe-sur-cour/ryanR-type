@@ -4,7 +4,7 @@
         "TransformComponent": {
             "target": "both",
             "position": { "x": 300.0, "y": 300.0 },
-            "scale": { "x": 3.0, "y": 3.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "both" },
@@ -14,40 +14,60 @@
             "target": "client",
             "states": {
                 "idle": {
-                    "texturePath": "assets/sprites/player_ship/idle.png",
-                    "frameWidth": 33.0,
-                    "frameHeight": 17.0,
-                    "frameCount": 1,
+                    "texturePath": "assets/sprites/player_ship/cuphead_plane_idle.png",
+                    "frameWidth": 112.0,
+                    "frameHeight": 101.0,
+                    "frameCount": 4,
                     "startWidth": 0.0,
-                    "startHeight": 17.0,
-                    "speed": 0.2,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
                     "loop": true
                 },
-                "up": {
-                    "texturePath": "assets/sprites/player_ship/up.png",
-                    "frameWidth": 33.0,
-                    "frameHeight": 17.0,
-                    "frameCount": 2,
+                "upTrans": {
+                    "texturePath": "assets/sprites/player_ship/plane_trans_up.png",
+                    "frameWidth": 114.0,
+                    "frameHeight": 104.0,
+                    "frameCount": 11,
                     "startWidth": 0.0,
-                    "startHeight": 17.0,
-                    "speed": 0.2,
+                    "startHeight": 0.0,
+                    "speed": 0.05,
                     "loop": false
                 },
-                "down": {
-                    "texturePath": "assets/sprites/player_ship/down.png",
-                    "frameWidth": 33.0,
-                    "frameHeight": 17.0,
-                    "frameCount": 2,
+                "downTrans": {
+                    "texturePath": "assets/sprites/player_ship/plane_trans_down.png",
+                    "frameWidth": 113.0,
+                    "frameHeight": 102.0,
+                    "frameCount": 11,
                     "startWidth": 0.0,
-                    "startHeight": 17.0,
-                    "speed": 0.2,
+                    "startHeight": 0.0,
+                    "speed": 0.05,
                     "loop": false
+                },
+                "up": {
+                    "texturePath": "assets/sprites/player_ship/plane_idle_up.png",
+                    "frameWidth": 114.0,
+                    "frameHeight": 93.0,
+                    "frameCount": 4,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.05,
+                    "loop": true
+                },
+                "down": {
+                    "texturePath": "assets/sprites/player_ship/plane_idle_down.png",
+                    "frameWidth": 110.0,
+                    "frameHeight": 104.0,
+                    "frameCount": 4,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
                 }
             },
             "transitions": [
                 {
                     "from": "idle",
-                    "to": "up",
+                    "to": "upTrans",
                     "conditions": [
                         { "param": "isVelocityUp", "equals": true }
                     ],
@@ -55,14 +75,14 @@
                 },
                 {
                     "from": "idle",
-                    "to": "down",
+                    "to": "downTrans",
                     "conditions": [
                         { "param": "isVelocityDown", "equals": true }
                     ],
                     "rewind": false
                 },
                 {
-                    "from": "up",
+                    "from": "upTrans",
                     "to": "idle",
                     "conditions": [
                         { "param": "isVelocityUp", "equals": false }
@@ -70,8 +90,40 @@
                     "rewind": true
                 },
                 {
-                    "from": "down",
+                    "from": "downTrans",
                     "to": "idle",
+                    "conditions": [
+                        { "param": "isVelocityDown", "equals": false }
+                    ],
+                    "rewind": true
+                },
+                {
+                    "from": "upTrans",
+                    "to": "up",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                },
+                {
+                    "from": "downTrans",
+                    "to": "down",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                },
+                {
+                    "from": "up",
+                    "to": "upTrans",
+                    "conditions": [
+                        { "param": "isVelocityUp", "equals": false }
+                    ],
+                    "rewind": true
+                },
+                {
+                    "from": "down",
+                    "to": "downTrans",
                     "conditions": [
                         { "param": "isVelocityDown", "equals": false }
                     ],
@@ -83,7 +135,7 @@
         "ColliderComponent": {
             "target": "both",
             "offset": { "x": 0.0, "y": 0.0 },
-            "size": { "x": 33.0, "y": 17.0 },
+            "size": { "x": 112.0, "y": 101.0 },
             "type": "Solid"
         },
         "ProjectilePrefabComponent": {

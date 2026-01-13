@@ -1,0 +1,85 @@
+{
+    "name": "starfish",
+    "components": {
+        "MobTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 100.0, "y": 100.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 80.0 },
+        "HealthComponent": { "target": "both", "health": 50.0 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 100 },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/starfish.lua",
+            "additionalFunctions": ["death"]
+        },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "pink": {
+                    "texturePath": "assets/sprites/sea/starfish/starfish_pink.png",
+                    "frameWidth": 284.0,
+                    "frameHeight": 253.0,
+                    "frameCount": 7,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "orange": {
+                    "texturePath": "assets/sprites/sea/starfish/starfish_orange.png",
+                    "frameWidth": 284.0,
+                    "frameHeight": 253.0,
+                    "frameCount": 7,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "yellow": {
+                    "texturePath": "assets/sprites/sea/starfish/starfish_yellow.png",
+                    "frameWidth": 284.0,
+                    "frameHeight": 253.0,
+                    "frameCount": 7,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                }
+            },
+            "initialState": "pink",
+            "transitions": []
+        },
+        "ColliderComponent":
+        [
+            {
+                "target": "both",
+                "offset": { "x": 0.0, "y": 0.0 },
+                "size" : { "x": 284.0, "y": 253.0 },
+                "type": "Trigger"
+            }
+
+        ]
+        ,
+        "DamageComponent": {
+            "target": "both",
+            "damage": 20.0
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDamage"]
+                }
+            ]
+        },
+        "ShooterTag": { "target": "both" },
+        "DamageCooldownComponent": { "target": "both" }
+    }
+}

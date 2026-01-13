@@ -22,6 +22,7 @@
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../colors.hpp"
 #include "../../../../../common/GameRules.hpp"
+#include "../Chat/ChatState.hpp"
 
 namespace gsm {
 
@@ -178,6 +179,32 @@ LobbyWaitingState::LobbyWaitingState(
     bottomRightConfig.anchorX = ui::AnchorX::Right;
     bottomRightConfig.anchorY = ui::AnchorY::Bottom;
     bottomRightConfig.offset = math::Vector2f(-20.0f, -20.0f);
+
+    _bottomRightLayout = std::make_shared<ui::UILayout>(_resourceManager, bottomRightConfig);
+    _bottomRightLayout->setSize(math::Vector2f(80.f, 80.f));
+
+    _chatButton = std::make_shared<ui::Button>(_resourceManager);
+    _chatButton->setSize(math::Vector2f(80.f, 80.f));
+    _chatButton->setIconPath(constants::CHAT_PATH);
+    _chatButton->setIconSize(math::Vector2f(500.f, 500.f));
+    _chatButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _chatButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _chatButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _chatButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _chatButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+
+    _bottomRightLayout->addElement(_chatButton);
+    _uiManager->addElement(_bottomRightLayout);
 }
 
 void LobbyWaitingState::setupLobbyMasterUI() {
@@ -355,6 +382,8 @@ void LobbyWaitingState::exit() {
     _crossfireLabel.reset();
     _crossfireButton.reset();
     _topLeftLayout.reset();
+    _chatButton.reset();
+    _bottomRightLayout.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }

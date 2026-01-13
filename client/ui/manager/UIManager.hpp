@@ -69,7 +69,6 @@ class UIManager {
         UIScale _globalScale = UIScale::Normal;
         std::function<void()> _onBack;
         std::function<void(bool)> _cursorCallback;
-        bool _textInputNavigationBlocked = false;
         std::set<gfx::EventType> _consumedTextKeys;
         std::set<ecs::InputAction> _blockedActions;
 

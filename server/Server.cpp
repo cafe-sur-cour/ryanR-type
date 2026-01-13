@@ -264,6 +264,8 @@ void rserv::Server::processIncomingPackets() {
         this->processLeaderboardRequest(received.first);
     } else if (this->_packet->getType() == constants::PACKET_REQUEST_PROFILE) {
         this->processProfileRequest(received.first);
+    } else if (this->_packet->getType() == constants::PACKET_NEW_CHAT) {
+        this->processNewChatMessage(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_REQUEST_GAME_RULES_UPDATE) {
         this->processRequestGameRulesUpdate(std::make_pair(received.first, received.second));
     } else {
