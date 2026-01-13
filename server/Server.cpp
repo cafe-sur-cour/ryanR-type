@@ -536,3 +536,12 @@ rserv::ServerInfo rserv::Server::getServerInfo() const {
 
     return info;
 }
+
+uint8_t rserv::Server::findClientIdByEndpoint(const net::INetworkEndpoint &endpoint) const {
+    for (const auto& client : this->_clients) {
+        if (*std::get<1>(client) == endpoint) {
+            return std::get<0>(client);
+        }
+    }
+    return 0;
+}

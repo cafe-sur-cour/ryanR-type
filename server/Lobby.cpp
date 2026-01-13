@@ -161,6 +161,20 @@ void rserv::Lobby::addClient(
     this->_clients.push_back(client);
 }
 
+void rserv::Lobby::removeClient(uint8_t clientId) {
+    std::lock_guard<std::mutex> lock(_clientsMutex);
+    auto it = std::remove_if(_clients.begin(), _clients.end(),
+        [clientId](const std::tuple<
+            uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>& client) {
+            return std::get<0>(client) == clientId;
+        });
+    _clients.erase(it, _clients.end());
+
+    _clientsReady.erase(clientId);
+    _clientToEntity.erase(clientId);
+    _deltaTracker.clearClientCache(clientId);
+}
+
 void rserv::Lobby::createPlayerEntityForClient(uint8_t clientId) {
     if (this->_resourceManager == nullptr) {
         debug::Debug::printDebug(this->getIsDebug(),

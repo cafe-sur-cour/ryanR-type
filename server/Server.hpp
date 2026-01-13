@@ -79,6 +79,8 @@ namespace rserv {
             std::vector<std::shared_ptr<net::INetworkEndpoint>> getConnectedClientEndpoints() const;
             size_t getClientCount() const;
 
+            uint8_t findClientIdByEndpoint(const net::INetworkEndpoint &endpoint) const;
+
             ServerInfo getServerInfo() const;
             std::map<std::string, int> loadUserStats(const std::string& username) const;
 
@@ -107,6 +109,7 @@ namespace rserv {
             bool connectUserPacket(const net::INetworkEndpoint &endpoint, const std::string &username);
             bool leaderboardPacket(const net::INetworkEndpoint &endpoint);
             bool profilePacket(const net::INetworkEndpoint &endpoint);
+            bool forceLeavePacket(const net::INetworkEndpoint &endpoint, constants::ForceLeaveType leaveType);
 
             uint32_t getSequenceNumber() const;
             std::shared_ptr<pm::IPacketManager> getPacketManager() const;
