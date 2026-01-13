@@ -171,6 +171,18 @@ add_executable(SerializerTests server/packet/serializer/SerializerTests.cpp)
 target_link_libraries(SerializerTests Packet GTest::gtest GTest::gtest_main)
 add_test(NAME SerializerTests COMMAND SerializerTests)
 
+add_executable(ClientGameStateConversionsTests 
+    client/ClientGameStateConversionsTests.cpp
+    client/ClientNetworkStub.cpp
+    ../client/ClientGameStateConversions.cpp
+    ../common/debug.cpp
+)
+target_link_libraries(ClientGameStateConversionsTests ECS PREFAB COLLISION_RULES PARSER DEBUG GTest::gtest GTest::gtest_main)
+target_include_directories(ClientGameStateConversionsTests PRIVATE ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/client ${CMAKE_BINARY_DIR})
+target_compile_definitions(ClientGameStateConversionsTests PUBLIC R_TYPE_CLIENT)
+add_test(NAME ClientGameStateConversionsTests COMMAND ClientGameStateConversionsTests)
+
+
 add_executable(TriggerIntentComponentTests common/ECS/component/TriggerIntentComponentTests.cpp)
 target_link_libraries(TriggerIntentComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
 add_test(NAME TriggerIntentComponentTests COMMAND TriggerIntentComponentTests)
@@ -199,14 +211,15 @@ add_executable(SpawnSystemTests common/ECS/system/SpawnSystemTests.cpp)
 target_link_libraries(SpawnSystemTests ECS PREFAB COLLISION_RULES ERROR GTest::gtest GTest::gtest_main)
 add_test(NAME SpawnSystemTests COMMAND SpawnSystemTests)
 
-add_executable(JsonLoaderTests 
+add_executable(JsonLoaderTests
     common/Parser/Utils/JsonLoaderTest.cpp
 )
 target_link_libraries(JsonLoaderTests PARSER_UTILS ERROR GTest::gtest GTest::gtest_main nlohmann_json::nlohmann_json)
 add_test(NAME JsonLoaderTests COMMAND JsonLoaderTests)
 
-add_executable(JsonValidationTests 
+add_executable(JsonValidationTests
     common/Parser/Utils/JsonValidationTest.cpp
 )
 target_link_libraries(JsonValidationTests PARSER_UTILS GTest::gtest GTest::gtest_main nlohmann_json::nlohmann_json)
 add_test(NAME JsonValidationTests COMMAND JsonValidationTests)
+
