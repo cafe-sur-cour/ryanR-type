@@ -8,6 +8,7 @@
 #include "LevelCompleteState.hpp"
 #include <memory>
 #include <string>
+#include <iostream>
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../gsm/machine/AGameStateMachine.hpp"
