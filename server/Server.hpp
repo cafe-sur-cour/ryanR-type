@@ -83,6 +83,7 @@ namespace rserv {
 
             ServerInfo getServerInfo() const;
             std::map<std::string, int> loadUserStats(const std::string& username) const;
+            void saveUserBannedStatus(const std::string& username, bool banned) const;
 
 
             /* Received Packet Handling */
@@ -121,6 +122,7 @@ namespace rserv {
             std::string closeLobby(const std::string& lobbyId);
             std::string kickPlayer(const std::string& playerId);
             std::string banPlayer(const std::string& playerId);
+            std::string unbanPlayer(const std::string& playerId);
 
         private:
             void loadNetworkLibrary();
