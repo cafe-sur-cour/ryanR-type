@@ -16,14 +16,21 @@ View<Components...>::View(std::shared_ptr<Registry> registry)
 }
 
 template <typename... Components>
-View<Components...>::Iterator::Iterator(std::shared_ptr<Registry> registry,
-                                        size_t entityId, size_t maxEntityId)
-: _registry(registry), _entityId(entityId), _maxEntityId(maxEntityId) {
+View<Components...>::Iterator::Iterator(
+    std::shared_ptr<Registry> registry,
+    size_t entityId,
+    size_t maxEntityId
+) : _registry(registry), _entityId(entityId), _maxEntityId(maxEntityId) {
 }
 
 template <typename... Components>
 bool View<Components...>::Iterator::operator!=(const Iterator& other) const {
     return _entityId != other._entityId;
+}
+
+template <typename... Components>
+bool View<Components...>::Iterator::operator==(const Iterator &other) const {
+    return _entityId == other._entityId;
 }
 
 template <typename... Components>
