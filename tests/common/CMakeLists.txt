@@ -1,5 +1,3 @@
-find_package(GTest REQUIRED)
-
 add_executable(ECSTests ECSTests.cpp)
 target_link_libraries(ECSTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main)
 add_test(NAME ECSTests COMMAND ECSTests)
