@@ -15,7 +15,6 @@
 #include <algorithm>
 #include "../Settings/SettingsState.hpp"
 #include "../Pause/PauseState.hpp"
-#include "../../../../components/rendering/HitboxRenderComponent.hpp"
 #include "../../../../systems/rendering/AnimationRenderingSystem.hpp"
 #include "../../../../systems/rendering/HitboxRenderingSystem.hpp"
 #include "../../../../systems/rendering/RectangleRenderingSystem.hpp"
@@ -29,7 +28,6 @@
 #include "../../../../systems/input/ForceInputSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
 #include "../../../../systems/animationState/AnimationStateSyncSystem.hpp"
-#include "../../../../systems/effects/ClientEffectCleanupSystem.hpp"
 #include "../../../../systems/replay/ReplaySystem.hpp"
 #include "../../../../systems/audio/MusicSystem.hpp"
 #include "../../../../systems/network/NetworkInterpolationSystem.hpp"
