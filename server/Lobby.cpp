@@ -13,6 +13,7 @@
 #include <tuple>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <filesystem>   // NOLINT(build/c++17)
@@ -22,6 +23,7 @@
 #include "constants.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
+#include "../common/components/permanent/GameZoneComponent.hpp"
 #include "../common/ECS/entity/Entity.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 
@@ -88,6 +90,8 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
         std::bind(&rserv::Lobby::convertAnimationStateComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertChargedShotComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Lobby::convertAnimationStateComponent, this,
             std::placeholders::_1, std::placeholders::_2)
     };
 }
@@ -485,6 +489,7 @@ bool rserv::Lobby::gameStatePacket() {
         uint32_t entityId;
         std::vector<uint64_t> componentData;
         EntitySnapshot snapshot;
+        bool isGameZone = false;
     };
 
     std::vector<EntityData> serializedEntities;
@@ -493,6 +498,7 @@ bool rserv::Lobby::gameStatePacket() {
         EntityData entityData;
         entityData.entityId = static_cast<uint32_t>(entityId);
         entityData.componentData.reserve(64);
+        entityData.isGameZone = registry->hasComponent<ecs::GameZoneComponent>(entityId);
         for (const auto& func : this->_convertFunctions) {
             std::vector<uint64_t> compData = func(registry, entityId);
             entityData.componentData.insert(entityData.componentData.end(),
@@ -505,6 +511,11 @@ bool rserv::Lobby::gameStatePacket() {
 
         serializedEntities.push_back(std::move(entityData));
     }
+
+    std::stable_sort(serializedEntities.begin(), serializedEntities.end(),
+        [](const EntityData& a, const EntityData& b) {
+            return a.isGameZone > b.isGameZone;
+        });
 
     constexpr size_t MAX_BATCH_SIZE = 20;
     constexpr size_t MAX_PACKET_SIZE = 1400;
