@@ -116,6 +116,12 @@ namespace rserv {
             std::shared_ptr<pm::IPacketManager> createNewPacketManager();
             uint32_t getNextEntityId();
             void incrementSequenceNumber();
+
+            std::string executeCommand(const std::string& command);
+            std::string closeLobby(const std::string& lobbyId);
+            std::string kickPlayer(const std::string& playerId);
+            std::string banPlayer(const std::string& playerId);
+
         private:
             void loadNetworkLibrary();
             void loadBufferLibrary();

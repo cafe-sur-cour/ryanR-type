@@ -18,12 +18,14 @@
 rserv::HttpServer::HttpServer(
     std::function<bool()> statusChecker,
     std::function<ServerInfo()> infoGetter,
-    std::shared_ptr<ServerConfig> serverConfig
+    std::shared_ptr<ServerConfig> serverConfig,
+    std::function<std::string(const std::string&)> commandExecutor
 ) :
     _running(false),
     _statusChecker(statusChecker),
     _infoGetter(infoGetter),
     _serverConfig(serverConfig),
+    _commandExecutor(commandExecutor),
     _server(nullptr) {
     this->loadEnv();
 }
@@ -96,6 +98,14 @@ void rserv::HttpServer::httpLoop() {
     _server->Get("/api/config", [this](const httplib::Request &req, httplib::Response &res) {
         this->configEndpoint(req, res);
     });
+    _server->Get("/api/commands/suggestions", [this](
+        const httplib::Request &req, httplib::Response &res) {
+        this->commandsSuggestionsEndpoint(req, res);
+    });
+    _server->Post("/api/commands/execute", [this](
+        const httplib::Request &req, httplib::Response &res) {
+        this->commandsExecuteEndpoint(req, res);
+    });
     _server->set_mount_point("/", "./frontend/dist");
     std::cout << "HTTP server starting on port " << constants::HTTP_SERVER_PORT << std::endl;
     _server->listen("0.0.0.0", constants::HTTP_SERVER_PORT);
@@ -161,5 +171,58 @@ void rserv::HttpServer::configEndpoint(const httplib::Request &req, httplib::Res
     } catch (const std::exception &e) {
         res.status = 500;
         res.set_content("Internal server error", "text/plain");
+    }
+}
+
+void rserv::HttpServer::commandsSuggestionsEndpoint(
+    const httplib::Request &req,
+    httplib::Response &res
+) {
+    if (!this->checkAuth(req)) {
+        res.status = 401;
+        res.set_content("Unauthorized", "text/plain");
+        return;
+    }
+
+    try {
+        nlohmann::json jsonResponse = {
+            {"suggestions", {
+                "/close <lobby_id or lobby_code>",
+                "/kick <player_id or player_name>",
+                "/ban <player_id or player_name>"
+            }}
+        };
+
+        res.set_content(jsonResponse.dump(), "application/json");
+    } catch (const std::exception &e) {
+        res.status = 500;
+        res.set_content("Internal server error", "text/plain");
+    }
+}
+
+void rserv::HttpServer::commandsExecuteEndpoint(
+    const httplib::Request &req,
+    httplib::Response &res
+) {
+    if (!this->checkAuth(req)) {
+        res.status = 401;
+        res.set_content("Unauthorized", "text/plain");
+        return;
+    }
+
+    try {
+        auto jsonBody = nlohmann::json::parse(req.body);
+        std::string command = jsonBody["command"];
+
+        std::string message = _commandExecutor(command);
+
+        nlohmann::json jsonResponse = {
+            {"message", message}
+        };
+
+        res.set_content(jsonResponse.dump(), "application/json");
+    } catch (const std::exception &e) {
+        res.status = 400;
+        res.set_content("Invalid request", "text/plain");
     }
 }

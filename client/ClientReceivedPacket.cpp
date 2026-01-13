@@ -666,7 +666,6 @@ void ClientNetwork::handleForceLeave() {
     this->_isLobbyMaster = false;
     this->_lobbyCode = "";
     this->_ready = false;
-    this->clearEntitiesAndMappings();
 
     if (this->_gsm) {
         this->_gsm->requestStateChange(

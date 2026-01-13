@@ -37,7 +37,8 @@ class HttpServer {
         HttpServer(
             std::function<bool()> statusChecker,
             std::function<ServerInfo()> infoGetter,
-            std::shared_ptr<ServerConfig> serverConfig
+            std::shared_ptr<ServerConfig> serverConfig,
+            std::function<std::string(const std::string&)> commandExecutor
         );
         ~HttpServer();
 
@@ -47,6 +48,8 @@ class HttpServer {
         void statusEndpoint(const httplib::Request &, httplib::Response &res);
         void infoEndpoint(const httplib::Request &, httplib::Response &res);
         void configEndpoint(const httplib::Request &, httplib::Response &res);
+        void commandsSuggestionsEndpoint(const httplib::Request &, httplib::Response &res);
+        void commandsExecuteEndpoint(const httplib::Request &, httplib::Response &res);
 
     private:
         void httpLoop();
@@ -58,6 +61,7 @@ class HttpServer {
         std::function<bool()> _statusChecker;
         std::function<ServerInfo()> _infoGetter;
         std::shared_ptr<ServerConfig> _serverConfig;
+        std::function<std::string(const std::string&)> _commandExecutor;
         std::unique_ptr<httplib::Server> _server;
         std::string _password;
 };

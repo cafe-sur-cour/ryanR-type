@@ -30,6 +30,11 @@ ForceLeaveState::ForceLeaveState(
 }
 
 void ForceLeaveState::enter() {
+    auto networkPtr = this->_resourceManager->get<ClientNetwork>();
+    if (networkPtr) {
+        networkPtr->clearEntitiesAndMappings();
+    }
+
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
 
     auto window = _resourceManager->get<gfx::IWindow>();
@@ -90,13 +95,13 @@ void ForceLeaveState::enter() {
     _leaveButton->setPressedColor(colors::BUTTON_DANGER_PRESSED);
 
     _leaveButton->setOnRelease([this]() {
-        auto networkPtr = this->_resourceManager->get<ClientNetwork>();
-        if (networkPtr) {
-            networkPtr->setLobbyCode("");
-            networkPtr->_isConnectedToLobby = false;
-            networkPtr->_isLobbyMaster = false;
-            networkPtr->_ready = false;
-            networkPtr->clearEntitiesAndMappings();
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            network->setLobbyCode("");
+            network->_isConnectedToLobby = false;
+            network->_isLobbyMaster = false;
+            network->_ready = false;
+            network->clearEntitiesAndMappings();
         }
         auto gsmPtr = _gsm.lock();
         if (gsmPtr) {
@@ -112,13 +117,13 @@ void ForceLeaveState::enter() {
     });
 
     _leaveButton->setOnActivated([this]() {
-        auto networkPtr = this->_resourceManager->get<ClientNetwork>();
-        if (networkPtr) {
-            networkPtr->setLobbyCode("");
-            networkPtr->_isConnectedToLobby = false;
-            networkPtr->_isLobbyMaster = false;
-            networkPtr->_ready = false;
-            networkPtr->clearEntitiesAndMappings();
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network) {
+            network->setLobbyCode("");
+            network->_isConnectedToLobby = false;
+            network->_isLobbyMaster = false;
+            network->_ready = false;
+            network->clearEntitiesAndMappings();
         }
         auto gsmPtr = _gsm.lock();
         if (gsmPtr) {
