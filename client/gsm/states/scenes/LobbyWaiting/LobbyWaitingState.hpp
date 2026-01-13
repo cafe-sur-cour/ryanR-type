@@ -15,6 +15,7 @@
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../ui/elements/Text.hpp"
+#include "../../../../ui/elements/SpritePreview.hpp"
 
 namespace gsm {
 
@@ -49,8 +50,9 @@ private:
     std::shared_ptr<ui::Text> _crossfireLabel;
     std::shared_ptr<ui::Button> _crossfireButton;
 
-    std::shared_ptr<ui::UILayout> _bottomRightLayout;
+    std::shared_ptr<ui::UILayout> _topRightLayout;
     std::shared_ptr<ui::Button> _chatButton;
+    std::shared_ptr<ui::SpritePreview> _loadingAnimation;
 
     bool _isLobbyMaster;
 };
