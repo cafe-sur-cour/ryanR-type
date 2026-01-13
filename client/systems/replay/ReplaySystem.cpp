@@ -48,9 +48,16 @@ void ReplaySystem::update(
     frameData[constants::REPLAY_RENDERABLES] = nlohmann::json::array();
 
     auto gameZoneView = registry->view<GameZoneComponent, TransformComponent>();
+    if (gameZoneView.begin() == gameZoneView.end()) {
+        return;
+    }
     auto gameZoneEntity = *gameZoneView.begin();
     auto gameZoneComp = registry->getComponent<GameZoneComponent>(gameZoneEntity);
     auto gameZoneTransform = registry->getComponent<TransformComponent>(gameZoneEntity);
+
+    if (!gameZoneComp || !gameZoneTransform) {
+        return;
+    }
 
     math::FRect gameZone = gameZoneComp->getZone();
     frameData[constants::REPLAY_GAMEZONE] = nlohmann::json{
@@ -59,10 +66,6 @@ void ReplaySystem::update(
         {constants::REPLAY_WIDTH, gameZone.getWidth()},
         {constants::REPLAY_HEIGHT, gameZone.getHeight()}
     };
-
-    math::FRect gameZoneBounds = gameZone;
-    gameZoneBounds.setLeft(gameZoneBounds.getLeft() + gameZoneTransform->getPosition().getX());
-    gameZoneBounds.setTop(gameZoneBounds.getTop() + gameZoneTransform->getPosition().getY());
 
     std::unordered_set<ecs::Entity> processedEntities;
 
