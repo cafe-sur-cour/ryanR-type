@@ -23,6 +23,8 @@ REGISTER_COMPONENT(
         Field{constants::ANGLEOFFSET_FIELD, FieldType::FLOAT, true,
               std::make_shared<FieldValue>(0.0f)},
         Field{constants::SPREADANGLE_FIELD, FieldType::FLOAT, true,
+              std::make_shared<FieldValue>(0.0f)},
+        Field{constants::OFFSETDISTANCE_FIELD, FieldType::FLOAT, true,
               std::make_shared<FieldValue>(0.0f)}
     },
     [](const std::map<std::string, std::shared_ptr<FieldValue>>& fields) {
@@ -30,7 +32,15 @@ REGISTER_COMPONENT(
         auto shotCount = std::get<int>(*fields.at(constants::SHOTCOUNT_FIELD));
         auto angleOffset = std::get<float>(*fields.at(constants::ANGLEOFFSET_FIELD));
         auto spreadAngle = std::get<float>(*fields.at(constants::SPREADANGLE_FIELD));
-        ecs::MultiShotPattern pattern(shotCount, spreadAngle, angleOffset);
+        auto distanceOffset = std::get<float>(*fields.at(constants::OFFSETDISTANCE_FIELD));
+
+        ecs::MultiShotPattern pattern{
+            shotCount,
+            spreadAngle,
+            distanceOffset,
+            angleOffset
+        };
+
         return std::make_shared<ecs::ShootingStatsComponent>(fireRate, pattern);
     }
 )
