@@ -13,6 +13,7 @@
 #include "../../../common/components/tags/PlayerTag.hpp"
 #include "../../../common/components/tags/LocalPlayerTag.hpp"
 #include "../../../common/components/permanent/HealthComponent.hpp"
+#include "../../../common/components/permanent/ShootingStatsComponent.hpp"
 #include "../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../common/components/temporary/ShootIntentComponent.hpp"
 #include "../../ClientNetwork.hpp"
@@ -37,16 +38,11 @@ void ShootInputSystem::update(
     if (!inputProvider->isActionPressed(InputAction::SHOOT))
         return;
 
-    auto playerView = registry->view<ControllableTag, ShooterTag, LocalPlayerTag>();
-
+    auto playerView = registry->view<ControllableTag, ShooterTag, LocalPlayerTag, ShootingStatsComponent>();
 
     for (auto playerId : playerView) {
         if (!isPlayerAlive(registry, playerId)) {
             continue;
-        }
-        if (!registry->hasComponent<ShootIntentComponent>(playerId)) {
-            auto shootIntentComponent = std::make_shared<ShootIntentComponent>();
-            registry->addComponent<ShootIntentComponent>(playerId, shootIntentComponent);
         }
         auto clientNetwork = resourceManager->get<ClientNetwork>();
         if (clientNetwork) {
