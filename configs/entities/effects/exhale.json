@@ -1,0 +1,22 @@
+{
+    "name": "exhale",
+    "components": {
+        "EnnemyProjectileTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+
+        "LifetimeComponent": {
+            "target": "both",
+            "lifetime": 0.2
+        },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "musics/blimp_exhale.wav",
+            "volume": 100.0
+        }
+    }
+}
