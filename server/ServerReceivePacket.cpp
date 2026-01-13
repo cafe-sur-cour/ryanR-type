@@ -575,6 +575,20 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
         return false;
     }
 
+    bool alreadyLoggedIn = false;
+    for (const auto& clientTuple : this->_clients) {
+        if (std::get<2>(clientTuple) == username) {
+            alreadyLoggedIn = true;
+            break;
+        }
+    }
+    if (alreadyLoggedIn) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Login failed: User already logged in",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
     const std::string filepath = constants::USERS_JSON_PATH;
     nlohmann::json users;
     std::ifstream file(filepath);
