@@ -380,6 +380,7 @@ void MainMenuState::enter() {
         network->_isConnectedToLobby = false;
         network->_isLobbyMaster = false;
         network->_ready = false;
+        network->_lastLeaveLobbyTime = std::chrono::steady_clock::now();
     }
 }
 
