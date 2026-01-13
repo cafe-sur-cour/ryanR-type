@@ -324,13 +324,13 @@ void ScriptingSystem::bindAPI() {
         }
     });
 
-    lua.set_function("restartGameZone",
-        [this]() {
+    lua.set_function("setGameZoneVelocity",
+        [this](float x, float y) {
         auto gameZoneView = registry->view<GameZoneComponent, VelocityComponent>();
         for (auto gameZoneEntity : gameZoneView) {
             auto velocityComp = registry->getComponent<VelocityComponent>(gameZoneEntity);
             if (velocityComp) {
-                velocityComp->setVelocity(math::Vector2f(100.0f , 0.0f));
+                velocityComp->setVelocity(math::Vector2f(x , y));
             }
         }
     });
@@ -339,6 +339,11 @@ void ScriptingSystem::bindAPI() {
         [this]() -> std::tuple<float, float> {
         auto gameZoneView = registry->view<GameZoneComponent>();
         for (auto gameZoneEntity : gameZoneView) {
+            if (registry->hasComponent<TransformComponent>(gameZoneEntity)) {
+                auto transform = registry->getComponent<TransformComponent>(gameZoneEntity);
+                auto pos = transform->getPosition();
+                return {pos.getX(), pos.getY()};
+            }
             auto gameZoneComp = registry->getComponent<GameZoneComponent>(gameZoneEntity);
             auto zone = gameZoneComp->getZone();
             return {zone.getLeft(), zone.getTop()};

@@ -5,7 +5,7 @@
         "TransformComponent": {
             "target": "both",
             "position": { "x": 0.0, "y": 0.0 },
-            "scale": { "x": 2.5, "y": 2.5 },
+            "scale": { "x": 1.0, "y": 1.0 },
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "both" },
@@ -17,9 +17,9 @@
             "target": "client",
             "states": {
                 "idle": {
-                    "texturePath": "assets/sprites/ennemies/snake_body.png",
-                    "frameWidth": 34.0,
-                    "frameHeight": 26.0,
+                    "texturePath": "assets/sprites/ennemies/wafflePart.png",
+                    "frameWidth": 82.0,
+                    "frameHeight": 84.0,
                     "frameCount": 1,
                     "startWidth": 0.0,
                     "startHeight": 0.0,
@@ -33,7 +33,7 @@
         "ColliderComponent": {
             "target": "both",
             "offset": { "x": 0.0, "y": 0.0 },
-            "size" : { "x": 34.0, "y": 26.0 },
+            "size" : { "x": 82.0, "y": 84.0 },
             "type": "Trigger"
         },
         "InteractionConfigComponent": {
