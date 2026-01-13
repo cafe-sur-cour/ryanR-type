@@ -50,6 +50,7 @@ ClientNetwork::ClientNetwork() {
 
     this->_shouldConnect = false;
     this->_connectionAttemptTime = std::chrono::steady_clock::now();
+    this->_lastLeaveLobbyTime = std::chrono::steady_clock::now() - std::chrono::seconds(10);
 
     this->_connectedClients = 0;
     this->_readyClients = 0;
@@ -83,6 +84,7 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_BROADCASTED_CHAT] =
         &ClientNetwork::handleBroadcastedChat;
     _packetHandlers[constants::PACKET_GAME_RULES] = &ClientNetwork::handleGameRules;
+    _packetHandlers[constants::PACKET_FORCE_LEAVE] = &ClientNetwork::handleForceLeave;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
@@ -405,4 +407,24 @@ bool ClientNetwork::isProfileDataUpdated() const {
 
 void ClientNetwork::clearProfileDataUpdateFlag() {
     _profileDataUpdated = false;
+}
+
+void ClientNetwork::clearEntitiesAndMappings() {
+    if (_resourceManager) {
+        auto registry = _resourceManager->get<ecs::Registry>();
+        if (registry) {
+            registry->clearAllEntities();
+            debug::Debug::printDebug(this->_isDebug,
+                "[CLIENT] Cleared all entities from client registry",
+                debug::debugType::NETWORK,
+                debug::debugLevel::INFO);
+        }
+    }
+
+    _serverToLocalEntityMap.clear();
+
+    debug::Debug::printDebug(this->_isDebug,
+        "[CLIENT] Cleared all entity mappings",
+        debug::debugType::NETWORK,
+        debug::debugLevel::INFO);
 }

@@ -14,6 +14,10 @@
 #include <utility>
 #include <cstring>
 #include <queue>
+#include <fstream>
+#include <map>
+#include <set>
+#include <sstream>
 
 #include "Server.hpp"
 #include "constants.hpp"
@@ -24,6 +28,7 @@
 #include "../common/Error/ServerErrror.hpp"
 #include "../common/debug.hpp"
 #include "../common/constants.hpp"
+#include "../common/interfaces/IPacketManager.hpp"
 #include "Signal.hpp"
 
 rserv::Server::Server() :
@@ -35,7 +40,16 @@ rserv::Server::Server() :
     this->_packet = nullptr;
     this->_lobbyThreads = {};
     this->_lobbies = {};
+    this->_clientLastHeartbeat = {};
     this->_config = std::make_shared<rserv::ServerConfig>();
+    this->_httpServer = std::make_unique<rserv::HttpServer>(
+        [this]() { return this->getState() == 1; },
+        [this]() { return this->getServerInfo(); },
+        this->_config,
+        [this](const std::string& command) { return this->executeCommand(command); }
+    );
+
+    this->_httpServer->start();
 }
 
 rserv::Server::~Server() {
@@ -103,6 +117,8 @@ void rserv::Server::start() {
     while (this->getState() == 1 && !Signal::stopFlag) {
         this->processIncomingPackets();
 
+        this->checkClientTimeouts();
+
         this->cleanupClosedLobbies();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -151,6 +167,7 @@ void rserv::Server::stop() {
     if (_network) {
         _network->stop();
     }
+    this->_httpServer->stop();
     this->setState(0);
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "[SERVER] Server stopped.",
@@ -193,28 +210,52 @@ void rserv::Server::setNetwork(std::shared_ptr<net::INetwork> network) {
     _network = network;
 }
 
-void rserv::Server::cleanupClosedLobbies() {
-    auto it = this->_lobbies.begin();
-    while (it != this->_lobbies.end()) {
-        if (it->get() && it->get()->getClientCount() == 0 && !it->get()->isRunning()) {
-            debug::Debug::printDebug(this->_config->getIsDebug(),
-                "[SERVER] Cleaning up closed lobby: " + it->get()->getLobbyCode(),
-                debug::debugType::NETWORK, debug::debugLevel::INFO);
+void rserv::Server::checkClientTimeouts() {
+    auto now = std::chrono::steady_clock::now();
+    std::vector<uint8_t> timedOutClients;
 
-            auto clientIt = this->_clientToLobby.begin();
-            while (clientIt != this->_clientToLobby.end()) {
-                if (clientIt->second == *it) {
-                    clientIt = this->_clientToLobby.erase(clientIt);
-                } else {
-                    ++clientIt;
+    {
+        std::lock_guard<std::mutex> lock(_clientsMutex);
+        for (const auto& client : this->_clients) {
+            uint8_t clientId = std::get<0>(client);
+            auto it = _clientLastHeartbeat.find(clientId);
+
+            if (it != _clientLastHeartbeat.end()) {
+                auto timeSinceLastHeartbeat =
+                std::chrono::duration_cast<std::chrono::seconds>(
+                    now - it->second).count();
+
+                if (timeSinceLastHeartbeat > constants::CLIENT_TIMEOUT_SECONDS) {
+                    debug::Debug::printDebug(this->_config->getIsDebug(),
+                        "Client " + std::to_string(clientId) +
+                            " timed out (no healthcheck for "
+                            + std::to_string(timeSinceLastHeartbeat) + "s)",
+                        debug::debugType::NETWORK, debug::debugLevel::WARNING);
+                    timedOutClients.push_back(clientId);
                 }
             }
-
-            it = this->_lobbies.erase(it);
-        } else {
-            ++it;
         }
     }
+
+    for (uint8_t clientId : timedOutClients) {
+        this->_clientLastHeartbeat.erase(clientId);
+        this->processDisconnections(clientId);
+    }
+}
+
+void rserv::Server::cleanupClosedLobbies() {
+    std::vector<std::shared_ptr<Lobby>> activeLobbies;
+
+    for (const auto& lobby : this->_lobbies) {
+        if (lobby && lobby->isRunning() && lobby->getClientCount() > 0) {
+            activeLobbies.push_back(lobby);
+        } else {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Removing closed lobby from active lobbies list",
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+        }
+    }
+    this->_lobbies = activeLobbies;
 }
 
 void rserv::Server::processIncomingPackets() {
@@ -247,10 +288,18 @@ void rserv::Server::processIncomingPackets() {
         this->processMasterStart(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_EVENT) {
         uint8_t idClient = this->_packet->getIdClient();
+        auto payload = this->_packet->getPayload();
+        constants::EventType eventType = constants::EventType::UP;
+        if (payload.size() >= 1) {
+            eventType = static_cast<constants::EventType>(payload.at(0));
+            if (eventType == constants::EventType::HEALTHCHECK) {
+                this->_clientLastHeartbeat[idClient] = std::chrono::steady_clock::now();
+            }
+        }
         auto it = this->_clientToLobby.find(idClient);
         if (it != this->_clientToLobby.end()) {
             it->second->enqueuePacket(received);
-        } else {
+        } else if (eventType != constants::EventType::HEALTHCHECK) {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER] Received event packet from unknown client: " +
                 std::to_string(idClient),
@@ -268,6 +317,12 @@ void rserv::Server::processIncomingPackets() {
         this->processNewChatMessage(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_REQUEST_GAME_RULES_UPDATE) {
         this->processRequestGameRulesUpdate(std::make_pair(received.first, received.second));
+    } else if (this->_packet->getType() == constants::PACKET_DISC) {
+        uint8_t idClient = this->_packet->getIdClient();
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Received disconnection packet from client " + std::to_string(idClient),
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+        this->processDisconnections(idClient);
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "
@@ -305,6 +360,7 @@ void rserv::Server::onClientConnected(uint8_t idClient) {
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "Client " + std::to_string(idClient) + " connected",
         debug::debugType::NETWORK, debug::debugLevel::INFO);
+    this->_clientLastHeartbeat[idClient] = std::chrono::steady_clock::now();
 }
 
 void rserv::Server::onClientDisconnected(uint8_t idClient) {
@@ -354,4 +410,402 @@ std::shared_ptr<pm::IPacketManager> rserv::Server::createNewPacketManager() {
 
 uint32_t rserv::Server::getNextEntityId() {
     return this->_nextEntityId++;
+}
+
+std::map<std::string, int> rserv::Server::loadUserStats(const std::string& username) const {
+    std::map<std::string, int> stats = {
+        {constants::GAMES_PLAYED_JSON_WARD, 0},
+        {constants::WINS_JSON_WARD, 0},
+        {constants::HIGH_SCORE_JSON_WARD, 0},
+        {constants::BANNED_JSON_WARD, 0}
+    };
+
+    const std::string filepath = constants::USERS_JSON_PATH;
+    std::ifstream file(filepath);
+    if (!file.is_open()) {
+        return stats;
+    }
+
+    nlohmann::json users;
+    try {
+        file >> users;
+        file.close();
+    } catch (const std::exception&) {
+        return stats;
+    }
+
+    if (!users.is_array()) {
+        return stats;
+    }
+
+    for (const auto& user : users) {
+        if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
+            user[constants::USERNAME_JSON_WARD].is_string() &&
+                user[constants::USERNAME_JSON_WARD] == username) {
+            if (user.contains(constants::GAMES_PLAYED_JSON_WARD) &&
+                user[constants::GAMES_PLAYED_JSON_WARD].is_number_integer()) {
+                stats[constants::GAMES_PLAYED_JSON_WARD] =
+                    user[constants::GAMES_PLAYED_JSON_WARD];
+            }
+            if (user.contains(constants::WINS_JSON_WARD) &&
+                user[constants::WINS_JSON_WARD].is_number_integer()) {
+                stats[constants::WINS_JSON_WARD] = user[constants::WINS_JSON_WARD];
+            }
+            if (user.contains(constants::HIGH_SCORE_JSON_WARD) &&
+                user[constants::HIGH_SCORE_JSON_WARD].is_number_integer()) {
+                stats[constants::HIGH_SCORE_JSON_WARD] =
+                    user[constants::HIGH_SCORE_JSON_WARD];
+            }
+            if (user.contains(constants::BANNED_JSON_WARD) &&
+                user[constants::BANNED_JSON_WARD].is_boolean()) {
+                stats[constants::BANNED_JSON_WARD] =
+                    user[constants::BANNED_JSON_WARD] ? 1 : 0;
+            }
+            break;
+        }
+    }
+
+    return stats;
+}
+
+void rserv::Server::saveUserBannedStatus(const std::string& username, bool banned) const {
+    const std::string filepath = constants::USERS_JSON_PATH;
+    std::ifstream infile(filepath);
+    nlohmann::json users;
+
+    if (infile.is_open()) {
+        try {
+            infile >> users;
+            infile.close();
+        } catch (const std::exception&) {
+            users = nlohmann::json::array();
+        }
+    } else {
+        users = nlohmann::json::array();
+    }
+
+    if (!users.is_array()) {
+        users = nlohmann::json::array();
+    }
+
+    bool userFound = false;
+    for (auto& user : users) {
+        if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
+            user[constants::USERNAME_JSON_WARD].is_string() &&
+            user[constants::USERNAME_JSON_WARD] == username) {
+            user[constants::BANNED_JSON_WARD] = banned;
+            userFound = true;
+            break;
+        }
+    }
+
+    if (!userFound) {
+        nlohmann::json newUser;
+        newUser[constants::USERNAME_JSON_WARD] = username;
+        newUser[constants::BANNED_JSON_WARD] = banned;
+        newUser[constants::GAMES_PLAYED_JSON_WARD] = 0;
+        newUser[constants::WINS_JSON_WARD] = 0;
+        newUser[constants::HIGH_SCORE_JSON_WARD] = 0;
+        newUser[constants::TIME_SPENT_JSON_WARD] = 0;
+        users.push_back(newUser);
+    }
+
+    std::ofstream outfile(filepath);
+    if (outfile.is_open()) {
+        outfile << users.dump(4);
+        outfile.close();
+    }
+}
+
+rserv::ServerInfo rserv::Server::getServerInfo() const {
+    ServerInfo info;
+    auto now = std::chrono::steady_clock::now();
+
+    info.connectedClients = static_cast<int>(this->_clients.size());
+
+    static auto startTime = std::chrono::steady_clock::now();
+    info.uptime = std::chrono::duration_cast<std::chrono::seconds>(now - startTime);
+
+    info.activeLobbies = static_cast<int>(this->_lobbies.size());
+
+    info.totalPlayers = 0;
+    for (const auto& lobbyPtr : this->_lobbies) {
+        if (lobbyPtr) {
+            info.totalPlayers += lobbyPtr->getClientCount();
+        }
+    }
+
+    for (size_t i = 0; i < this->_lobbies.size(); ++i) {
+        if (this->_lobbies[i]) {
+            std::string lobbyInfo = "Lobby " +
+                std::to_string(i + 1) + " (" + this->_lobbies[i]->getLobbyCode() + "): " +
+                this->_lobbies[i]->getGameState() +
+                " | " + this->_lobbies[i]->getGameRules();
+            info.lobbyDetails.push_back(lobbyInfo);
+
+            std::vector<std::string> lobbyPlayers;
+            auto clientDetails = this->_lobbies[i]->getConnectedClientDetails();
+            for (const auto& clientDetail : clientDetails) {
+                std::string playerInfo = "Player ID: " +
+                    std::to_string(std::get<0>(clientDetail)) +
+                    ", Username: " + std::get<1>(clientDetail);
+                lobbyPlayers.push_back(playerInfo);
+            }
+            info.lobbyPlayerDetails.push_back(lobbyPlayers);
+        }
+    }
+
+    for (const auto& client : this->_clients) {
+        std::string username = std::get<2>(client);
+        if (!username.empty()) {
+            std::string playerInfo = "Player ID: " + std::to_string(std::get<0>(client)) +
+                ", Username: " + username;
+            info.playerDetails.push_back(playerInfo);
+
+            auto stats = this->loadUserStats(username);
+            info.playerStats.push_back(stats);
+        }
+    }
+
+    std::set<std::string> inGameUsernames;
+    for (const auto& lobbyPtr : this->_lobbies) {
+        if (lobbyPtr) {
+            std::string gameState = lobbyPtr->getGameState();
+            if (gameState.find("Classic mode") != std::string::npos ||
+                gameState.find("Infinite Mode") != std::string::npos) {
+                auto clientDetails = lobbyPtr->getConnectedClientDetails();
+                for (const auto& clientDetail : clientDetails) {
+                    std::string username = std::get<1>(clientDetail);
+                    if (!username.empty()) {
+                        inGameUsernames.insert(username);
+                    }
+                }
+            }
+        }
+    }
+
+    for (const auto& client : this->_clients) {
+        std::string username = std::get<2>(client);
+        if (!username.empty() && inGameUsernames.count(username) > 0) {
+            std::string playerInfo = "Player ID: " + std::to_string(std::get<0>(client)) +
+                ", Username: " + username;
+            info.inGamePlayers.push_back(playerInfo);
+        }
+    }
+
+    const std::string filepath = constants::USERS_JSON_PATH;
+    std::ifstream file(filepath);
+    if (file.is_open()) {
+        nlohmann::json users;
+        try {
+            file >> users;
+            file.close();
+        } catch (const std::exception&) {
+        }
+
+        if (users.is_array()) {
+            for (const auto& user : users) {
+                if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
+                    user[constants::USERNAME_JSON_WARD].is_string()) {
+                    std::string username = user[constants::USERNAME_JSON_WARD];
+                    bool isBanned = user.contains(constants::BANNED_JSON_WARD) &&
+                        user[constants::BANNED_JSON_WARD].is_boolean() &&
+                        user[constants::BANNED_JSON_WARD].get<bool>();
+
+                    if (isBanned && !username.empty()) {
+                        uint8_t playerId = 0;
+                        for (const auto& client : this->_clients) {
+                            if (std::get<2>(client) == username) {
+                                playerId = std::get<0>(client);
+                                break;
+                            }
+                        }
+
+                        std::string playerInfo;
+                        if (playerId != 0) {
+                            playerInfo = "Player ID: " + std::to_string(playerId) +
+                                ", Username: " + username;
+                        } else {
+                            playerInfo = "Username: " + username + " (Offline)";
+                        }
+                        info.bannedPlayers.push_back(playerInfo);
+                    }
+                }
+            }
+        }
+    }
+
+    return info;
+}
+
+std::string rserv::Server::executeCommand(const std::string& command) {
+    std::istringstream iss(command);
+    std::string cmd;
+    iss >> cmd;
+
+    if (cmd == "/close") {
+        std::string lobbyId;
+        iss >> lobbyId;
+        return closeLobby(lobbyId);
+    } else if (cmd == "/kick") {
+        std::string playerId;
+        iss >> playerId;
+        return kickPlayer(playerId);
+    } else if (cmd == "/ban") {
+        std::string playerId;
+        iss >> playerId;
+        return banPlayer(playerId);
+    } else if (cmd == "/unban") {
+        std::string playerId;
+        iss >> playerId;
+        return unbanPlayer(playerId);
+    } else {
+        return "Unknown command";
+    }
+}
+
+std::string rserv::Server::closeLobby(const std::string& lobbyId) {
+    try {
+        size_t id = std::stoul(lobbyId);
+        if (id >= 1 && id <= _lobbies.size()) {
+            size_t index = id - 1;
+            if (_lobbies[index]) {
+                auto lobbyPtr = _lobbies[index];
+                auto connectedClients = lobbyPtr->getConnectedClients();
+                for (auto clientId : connectedClients) {
+                    lobbyPtr->removeClient(clientId);
+                    for (auto& client : _clients) {
+                        if (std::get<0>(client) == clientId) {
+                            forceLeavePacket(
+                                *std::get<1>(client), constants::ForceLeaveType::CLOSED);
+                            break;
+                        }
+                    }
+                }
+                return "Lobby " + lobbyId + " closed";
+            }
+        }
+    } catch (const std::exception&) {
+    }
+
+    for (auto& lobbyPtr : _lobbies) {
+        if (lobbyPtr && lobbyPtr->getLobbyCode() == lobbyId) {
+            auto connectedClients = lobbyPtr->getConnectedClients();
+            for (auto clientId : connectedClients) {
+                lobbyPtr->removeClient(clientId);
+                for (auto& client : _clients) {
+                    if (std::get<0>(client) == clientId) {
+                        forceLeavePacket(
+                            *std::get<1>(client), constants::ForceLeaveType::CLOSED);
+                        break;
+                    }
+                }
+            }
+            return "Lobby " + lobbyId + " closed";
+        }
+    }
+    return "Lobby not found";
+}
+
+std::string rserv::Server::kickPlayer(const std::string& playerId) {
+    uint8_t id = 0;
+
+    try {
+        id = static_cast<uint8_t>(std::stoi(playerId));
+    } catch (const std::exception&) {
+        for (const auto& client : _clients) {
+            std::string username = std::get<2>(client);
+            if (username == playerId) {
+                id = std::get<0>(client);
+                break;
+            }
+        }
+        if (id == 0) {
+            return "Player not found";
+        }
+    }
+
+    if (_clientToLobby.find(id) != _clientToLobby.end()) {
+        auto lobby = _clientToLobby[id];
+        lobby->removeClient(id);
+        for (auto& client : _clients) {
+            if (std::get<0>(client) == id) {
+                forceLeavePacket(*std::get<1>(client), constants::ForceLeaveType::KICKED);
+                return "Player " + playerId + " kicked";
+            }
+        }
+    }
+    return "Player not found";
+}
+
+std::string rserv::Server::banPlayer(const std::string& playerId) {
+    uint8_t id = 0;
+    std::string username;
+
+    try {
+        id = static_cast<uint8_t>(std::stoi(playerId));
+        for (const auto& client : _clients) {
+            if (std::get<0>(client) == id) {
+                username = std::get<2>(client);
+                break;
+            }
+        }
+    } catch (const std::exception&) {
+        username = playerId;
+        for (const auto& client : _clients) {
+            if (std::get<2>(client) == username) {
+                id = std::get<0>(client);
+                break;
+            }
+        }
+    }
+
+    if (username.empty()) {
+        return "Player not found";
+    }
+
+    saveUserBannedStatus(username, true);
+
+    if (id != 0 && _clientToLobby.find(id) != _clientToLobby.end()) {
+        auto lobby = _clientToLobby[id];
+        lobby->removeClient(id);
+        for (auto& client : _clients) {
+            if (std::get<0>(client) == id) {
+                forceLeavePacket(*std::get<1>(client), constants::ForceLeaveType::BANNED);
+                break;
+            }
+        }
+    }
+
+    return "Player " + playerId + " banned";
+}
+
+std::string rserv::Server::unbanPlayer(const std::string& playerId) {
+    std::string username = playerId;
+
+    try {
+        uint8_t id = static_cast<uint8_t>(std::stoi(playerId));
+        for (const auto& client : _clients) {
+            if (std::get<0>(client) == id) {
+                username = std::get<2>(client);
+                break;
+            }
+        }
+    } catch (const std::exception&) {
+    }
+
+    if (!username.empty()) {
+        saveUserBannedStatus(username, false);
+        return "Player " + playerId + " unbanned";
+    }
+    return "Player not found";
+}
+
+uint8_t rserv::Server::findClientIdByEndpoint(const net::INetworkEndpoint &endpoint) const {
+    for (const auto& client : this->_clients) {
+        if (*std::get<1>(client) == endpoint) {
+            return std::get<0>(client);
+        }
+    }
+    return 0;
 }

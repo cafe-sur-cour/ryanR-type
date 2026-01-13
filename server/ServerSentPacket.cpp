@@ -509,3 +509,41 @@ bool rserv::Server::newChatMessagePacket(const net::INetworkEndpoint &endpoint,
     }
     return true;
 }
+
+bool rserv::Server::forceLeavePacket(const net::INetworkEndpoint &endpoint,
+    constants::ForceLeaveType leaveType) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+
+    uint8_t clientId = findClientIdByEndpoint(endpoint);
+    if (clientId != 0 && _clientToLobby.find(clientId) != _clientToLobby.end()) {
+        auto lobby = _clientToLobby[clientId];
+        lobby->removeClient(clientId);
+        _clientToLobby.erase(clientId);
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Removed client " + std::to_string(clientId) + " from lobby",
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+    }
+
+    std::vector<uint64_t> payload;
+    payload.push_back(static_cast<uint64_t>(leaveType));
+
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_FORCE_LEAVE, payload);
+    if (!this->_network->sendTo(endpoint, packet)) {
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Failed to send FORCE_LEAVE packet to client",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    debug::Debug::printDebug(this->_config->getIsDebug(),
+        "[SERVER] Sent FORCE_LEAVE packet to client with type: " +
+        std::to_string(static_cast<int>(leaveType)),
+        debug::debugType::NETWORK, debug::debugLevel::INFO);
+    this->_sequenceNumber++;
+    return true;
+}

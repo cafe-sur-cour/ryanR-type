@@ -18,6 +18,8 @@ public:
 
     void requestStateChange(std::shared_ptr<IGameState> newState) override;
 
+    std::string getCurrentStateName() const;
+
 protected:
     std::stack<std::shared_ptr<IGameState>> _states;
 };

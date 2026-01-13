@@ -352,6 +352,10 @@ bool registerDefaultPacketHandlers(
     registerMultiUCharPacket(packet, ser,
         REQUEST_GAME_RULES_UPDATE_PACKET, LENGTH_REQUEST_GAME_RULES_UPDATE_PACKET);
 
+    registerSingleUCharPacket(packet, ser, FORCE_LEAVE_PACKET, LENGTH_FORCE_LEAVE_PACKET);
+
+    packet->registerLength(FORCE_LEAVE_PACKET, LENGTH_FORCE_LEAVE_PACKET);
+
     packet->registerLength(LOBBY_CONNECT_VALUE, LENGTH_CONNECT_TO_LOBBY_PACKET);
     packet->registerLength(REQUEST_LOBBY_PACKET, LENGTH_REQUEST_LOBBY_PACKET);
     packet->registerLength(SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);

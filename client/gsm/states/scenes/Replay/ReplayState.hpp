@@ -34,6 +34,7 @@ public:
     void enter() override;
     void update(float deltaTime) override;
     void exit() override;
+    std::string getStateName() const override { return "Replay"; }
 
 private:
     void renderUI();

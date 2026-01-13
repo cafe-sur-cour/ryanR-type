@@ -26,6 +26,7 @@ public:
     void enter() override;
     void update(float deltaTime) override;
     void exit() override;
+    std::string getStateName() const override { return "Waiting to start"; }
 
 private:
     void renderUI();
@@ -42,14 +43,16 @@ private:
     std::shared_ptr<ui::Button> _startGameButton;
 
     std::shared_ptr<ui::UILayout> _topLeftLayout;
+    std::shared_ptr<ui::UILayout> _bottomRightLayout;
     std::shared_ptr<ui::Text> _gamemodeLabel;
     std::shared_ptr<ui::Button> _gamemodeButton;
     std::shared_ptr<ui::Text> _difficultyLabel;
     std::shared_ptr<ui::Button> _difficultyButton;
     std::shared_ptr<ui::Text> _crossfireLabel;
     std::shared_ptr<ui::Button> _crossfireButton;
+    std::shared_ptr<ui::Button> _leaveButton;
 
-    std::shared_ptr<ui::UILayout> _bottomRightLayout;
+    std::shared_ptr<ui::UILayout> _topLayout;
     std::shared_ptr<ui::Button> _chatButton;
 
     bool _isLobbyMaster;
