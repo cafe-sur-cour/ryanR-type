@@ -1,0 +1,22 @@
+{
+    "name": "coral2",
+    "components": {
+        "ObstacleTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 0.5, "y": 0.5 },
+            "rotation": 0.0
+        },
+        "SpriteComponent": {
+            "target": "client",
+            "filePath": "assets/sprites/sea/coral/coral2.png"
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size" : { "x": 250.0, "y": 278.0 },
+            "type": "Solid"
+        }
+    }
+}
