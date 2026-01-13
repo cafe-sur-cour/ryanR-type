@@ -38,7 +38,8 @@ void ShootInputSystem::update(
     if (!inputProvider->isActionPressed(InputAction::SHOOT))
         return;
 
-    auto playerView = registry->view<ControllableTag, ShooterTag, LocalPlayerTag, ShootingStatsComponent>();
+    auto playerView =
+        registry->view<ControllableTag, ShooterTag, LocalPlayerTag, ShootingStatsComponent>();
 
     for (auto playerId : playerView) {
         if (!isPlayerAlive(registry, playerId)) {
