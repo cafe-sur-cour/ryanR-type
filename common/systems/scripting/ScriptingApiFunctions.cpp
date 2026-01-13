@@ -296,15 +296,11 @@ void ScriptingSystem::bindAPI() {
 
     lua.set_function(constants::ADD_FORCE_LEVEL_FUNCTION,
         [this](size_t entityId) {
-            std::cout << "[C++ addForceLevel] Function called from Lua" << std::endl;
-        std::cout << "[C++ addForceLevel] Called with entityId: " << entityId << std::endl;
         if (registry->hasComponent<ecs::EntityPartsComponent>(entityId)) {
             std::vector<size_t> partsComp =
                 registry->getComponent<ecs::EntityPartsComponent>(entityId)->partIds;
-            std::cout << "[C++ addForceLevel] Player has " << partsComp.size() << " parts" << std::endl;
 
             for (auto partId : partsComp) {
-                std::cout << "[C++ addForceLevel] Checking part: " << partId << std::endl;
                 Entity part = static_cast<Entity>(partId);
                 if (registry->hasComponent<ForceTag>(part) &&
                     registry->getComponent<ecs::ForceTag>(part)->getForceType() ==
@@ -313,18 +309,16 @@ void ScriptingSystem::bindAPI() {
                     auto scriptComp = registry->getComponent<ecs::ScriptingComponent>(part);
                     auto forceTag = registry->getComponent<ForceTag>(part);
                     if (scriptComp->hasFunction(constants::ADD_FORCE_LEVEL_FUNCTION)) {
-                        std::cout << "[C++ addForceLevel] Calling Lua function with partId: " << partId << std::endl;
                         sol::function addLevelFunc = scriptComp->
                             getFunction(constants::ADD_FORCE_LEVEL_FUNCTION);
-                        addLevelFunc(partId);
-                        std::cout << "[C++ addForceLevel] Lua function call completed" << std::endl;
+                        addLevelFunc(part);
                     }
                 }
             }
         }
     });
 
-    lua.set_function("setGameZoneVelocity",
+    lua.set_function(constants::SET_GAME_ZONE_VELOCITY_FUNCTION,
         [this](float x, float y) {
         auto gameZoneView = registry->view<GameZoneComponent, VelocityComponent>();
         for (auto gameZoneEntity : gameZoneView) {
@@ -335,7 +329,7 @@ void ScriptingSystem::bindAPI() {
         }
     });
 
-    lua.set_function("getGameZonePosition",
+    lua.set_function(constants::GET_GAME_ZONE_POSITION_FUNCTION,
         [this]() -> std::tuple<float, float> {
         auto gameZoneView = registry->view<GameZoneComponent>();
         for (auto gameZoneEntity : gameZoneView) {
@@ -351,7 +345,7 @@ void ScriptingSystem::bindAPI() {
         return {0.0f, 0.0f};
     });
 
-    lua.set_function("getGameZoneSize",
+    lua.set_function(constants::GET_GAME_ZONE_SIZE_FUNCTION,
         [this]() -> std::tuple<float, float> {
         auto gameZoneView = registry->view<GameZoneComponent>();
         for (auto gameZoneEntity : gameZoneView) {
@@ -362,7 +356,7 @@ void ScriptingSystem::bindAPI() {
         return {0.0f, 0.0f};
     });
 
-    lua.set_function("getGameZoneVelocity",
+    lua.set_function(constants::GET_GAME_ZONE_VELOCITY_FUNCTION,
         [this]() -> std::tuple<float, float> {
         auto gameZoneView = registry->view<GameZoneComponent, VelocityComponent>();
         for (auto gameZoneEntity : gameZoneView) {
