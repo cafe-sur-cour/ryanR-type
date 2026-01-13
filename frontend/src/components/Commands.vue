@@ -94,6 +94,11 @@
           </div>
         </div>
       </div>
+
+      <!-- Auto-refresh indicator -->
+      <div class="fixed bottom-0 left-1/2 transform -translate-x-1/2 text-gray-500 text-sm bg-gray-900 px-4 py-2 rounded-t">
+        Auto-refreshing every 2 seconds • Last updated: {{ lastUpdate }}
+      </div>
     </div>
   </div>
 </template>
@@ -112,6 +117,7 @@ const props = defineProps<Props>()
 const command = ref('')
 const allSuggestions = ref<string[]>([])
 const output = ref('')
+const lastUpdate = ref('')
 const overview = ref({
   activeLobbies: 0,
   loggedInPlayers: 0,
@@ -139,6 +145,7 @@ const fetchOverview = async () => {
         playerDetails: data.playerDetails || [],
         inGamePlayers: data.inGamePlayers || []
       }
+      updateLastUpdate()
     }
   } catch (error) {
     console.error('Error fetching overview:', error)
@@ -159,6 +166,10 @@ const fetchSuggestions = async () => {
   } catch (error) {
     console.error('Error fetching suggestions:', error)
   }
+}
+
+const updateLastUpdate = () => {
+  lastUpdate.value = new Date().toLocaleTimeString()
 }
 
 const executeCommand = async () => {

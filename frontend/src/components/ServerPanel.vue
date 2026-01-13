@@ -226,7 +226,7 @@
       </div>
 
       <!-- Auto-refresh indicator -->
-      <div class="text-center text-gray-500 text-sm">
+      <div class="fixed bottom-0 left-1/2 transform -translate-x-1/2 text-gray-500 text-sm bg-gray-900 px-4 py-2 rounded-t">
         Auto-refreshing every 2 seconds • Last updated: {{ lastUpdate }}
       </div>
     </div>
