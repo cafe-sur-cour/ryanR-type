@@ -96,10 +96,6 @@ class ClientNetwork {
         bool isProfileDataUpdated() const;
         void clearProfileDataUpdateFlag();
 
-        const std::string& getRegisterErrorMessage() const;
-        bool isExpectingRegisterResponse() const;
-        void clearRegisterErrorMessage();
-
         void addToEventQueue(const NetworkEvent &event);
 
         bool isConnected() const;
@@ -130,7 +126,7 @@ class ClientNetwork {
         void redoServerEndpoint();
 
     protected:
-        std::pair<int, std::chrono::steady_clock::time_point> tryConnection(const int maxRetries, int retryCount, std::chrono::steady_clock::time_point lastRetryTime);
+        std::pair<int, std::chrono::steady_clock::time_point> tryConnection(const int maxRetries, std::chrono::steady_clock::time_point lastRetryTime);
         void handlePacketType(uint8_t type);
 
     private:
@@ -139,7 +135,6 @@ class ClientNetwork {
 
         void handleNoOp();
         void handleConnectionAcceptation();
-        void handleGameState();
         void handleBatchedGameState();
         void handleEndGame();
         void handleCanStart();
@@ -181,6 +176,7 @@ class ClientNetwork {
         size_t parseProjectilePassThroughTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseProjectilePrefabComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseGameZoneComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseAnimationStateComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseChargedShotComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
 
         DLLoader<createNetworkLib_t> _networloader;
@@ -215,7 +211,10 @@ class ClientNetwork {
 
         std::unordered_map<size_t, ecs::Entity> _serverToLocalEntityMap;
 
+        std::unordered_map<ecs::Entity, std::string> _lastReceivedAnimationState;
+
         std::string _lobbyCode;
+        int _retryCount;
         bool _shouldConnect;
 
         std::vector<std::pair<std::string, std::string>> _leaderboardData;

@@ -13,6 +13,7 @@
 #include <thread>
 #include <tuple>
 #include <fstream>
+#include <filesystem>   // NOLINT(build/c++17)
 #include <nlohmann/json.hpp>
 
 #include "Server.hpp"
@@ -316,6 +317,7 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
                 }
             }
         }
+        std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
         std::ofstream outfile(filepath);
         bool writeSuccess = false;
         if (outfile.is_open()) {
@@ -387,10 +389,10 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
     std::string data(client.second.begin() + HEADER_SIZE, client.second.end());
 
     std::string username = data.substr(0, 8);
-    username.erase(username.find_last_not_of('\0') + 1);
+    username.erase(username.find_last_not_of(constants::END_OFSTRING_TRD) + 1);
 
     std::string password = data.substr(8, 8);
-    password.erase(password.find_last_not_of('\0') + 1);
+    password.erase(password.find_last_not_of(constants::END_OFSTRING_TRD) + 1);
 
     if (username.empty() || password.empty()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
@@ -446,6 +448,7 @@ bool rserv::Server::processRegistration(std::pair<std::shared_ptr<net::INetworkE
     newUser[constants::GAMES_PLAYED_JSON_WARD] = 0;
     newUser[constants::TIME_SPENT_JSON_WARD] = 0;
     users.push_back(newUser);
+    std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
     std::ofstream outfile(filepath);
     bool writeSuccess = false;
     if (outfile.is_open()) {
@@ -505,10 +508,10 @@ bool rserv::Server::processLogin(std::pair<std::shared_ptr<net::INetworkEndpoint
     std::string data(client.second.begin() + HEADER_SIZE, client.second.end());
 
     std::string username = data.substr(0, 8);
-    username.erase(username.find_last_not_of('\0') + 1);
+    username.erase(username.find_last_not_of(constants::END_OFSTRING_TRD) + 1);
 
     std::string password = data.substr(8, 8);
-    password.erase(password.find_last_not_of('\0') + 1);
+    password.erase(password.find_last_not_of(constants::END_OFSTRING_TRD) + 1);
 
     if (username.empty() || password.empty()) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
