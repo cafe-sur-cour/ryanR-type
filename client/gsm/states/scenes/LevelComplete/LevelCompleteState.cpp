@@ -24,23 +24,18 @@ LevelCompleteState::LevelCompleteState(
 }
 
 void LevelCompleteState::enter() {
-    std::string titleText = constants::LEVEL_COMPLETE_TITLE_TEXT;
     std::string subtitleText = constants::LEVEL_COMPLETE_SUB_TITLE_TEXT;
 
-    _titleText = std::make_shared<ui::Text>(_resourceManager);
-    _titleText->setText(titleText);
-    _titleText->setTextColor(colors::GREEN);
-    _titleText->setFontSize(120);
-    _titleText->setOutlineColor(colors::BLACK);
-    _titleText->setOutlineThickness(2.0f);
-
-    auto window = _resourceManager->get<gfx::IWindow>();
-    auto titleSize = window->getTextSize(titleText, constants::MAIN_FONT, 120);
-    float titleX = (constants::MAX_WIDTH - static_cast<float>(titleSize.first)) / 2.0f;
-    float titleY = (
-        constants::MAX_HEIGHT - static_cast<float>(titleSize.second)
-    ) / 2.0f - 80.0f;
-    _titleText->setPosition(math::Vector2f(titleX, titleY));
+    _victoryAnimation = std::make_shared<ui::SpritePreview>(_resourceManager);
+    if (_victoryAnimation->loadPrefab(constants::VICTORY_PREFAB)) {
+        _victoryAnimation->setSize(math::Vector2f(1285.0f, 724.0f));
+        float animX = (constants::MAX_WIDTH - 1285.0f) / 2.0f;
+        float animY = (constants::MAX_HEIGHT - 724.0f) / 2.0f - 80.0f;
+        _victoryAnimation->setPosition(math::Vector2f(animX, animY));
+    } else {
+        std::cerr << "Failed to load victory animation prefab" << std::endl;
+        _victoryAnimation.reset();
+    }
 
     _subtitleText = std::make_shared<ui::Text>(_resourceManager);
     _subtitleText->setText(subtitleText);
@@ -49,14 +44,17 @@ void LevelCompleteState::enter() {
     _subtitleText->setOutlineColor(colors::BLACK);
     _subtitleText->setOutlineThickness(1.0f);
 
+    auto window = _resourceManager->get<gfx::IWindow>();
     auto subtitleSize = window->getTextSize(
         subtitleText, constants::MAIN_FONT, 40
     );
     float subtitleX = (constants::MAX_WIDTH - static_cast<float>(subtitleSize.first)) / 2.0f;
-    float subtitleY = titleY + static_cast<float>(titleSize.second) + 40.0f;
+    float subtitleY = ((constants::MAX_HEIGHT - 724.0f) / 2.0f - 80.0f) + 724.0f + 40.0f;
     _subtitleText->setPosition(math::Vector2f(subtitleX, subtitleY));
 
-    _uiManager->addElement(_titleText);
+    if (_victoryAnimation) {
+        _uiManager->addElement(_victoryAnimation);
+    }
     _uiManager->addElement(_subtitleText);
 
     _waitingForNextLevel = true;
@@ -76,6 +74,9 @@ void LevelCompleteState::update(float deltaTime) {
     window->updateView();
 
     _uiManager->update(deltaTime);
+    if (_victoryAnimation) {
+        _victoryAnimation->update(deltaTime);
+    }
     _uiManager->render();
 
     window->display();
@@ -86,6 +87,7 @@ void LevelCompleteState::onNextLevel() {
 }
 
 void LevelCompleteState::exit() {
+    _victoryAnimation.reset();
     _uiManager.reset();
 }
 
