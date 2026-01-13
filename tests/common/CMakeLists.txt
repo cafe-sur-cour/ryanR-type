@@ -1,0 +1,15 @@
+find_package(GTest REQUIRED)
+
+add_executable(ECSTests ECSTests.cpp)
+target_link_libraries(ECSTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main)
+add_test(NAME ECSTests COMMAND ECSTests)
+
+add_executable(SpatialGridTests SpatialGridTests.cpp)
+target_link_libraries(SpatialGridTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main)
+add_test(NAME SpatialGridTests COMMAND SpatialGridTests)
+
+add_subdirectory(types)
+add_subdirectory(ECS)
+add_subdirectory(Error)
+add_subdirectory(Parser)
+add_subdirectory(Prefab)
