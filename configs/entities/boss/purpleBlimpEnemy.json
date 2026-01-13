@@ -1,0 +1,97 @@
+{
+    "name": "purpleBlimpEnemy",
+    "components": {
+        "MobTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 100.0, "y": 100.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 100.0 },
+        "HealthComponent": { "target": "both", "health": 50.0 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 100 },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/blimpEnemy.lua",
+            "additionalFunctions": []
+        },
+        "ProjectilePrefabComponent": {
+            "target": "both",
+            "prefabName": "blimpEnemyShoot"
+        },
+        "ShootingStatsComponent": {
+            "target": "both",
+            "fireRate": 0.2,
+            "projectileSpeed": 500.0,
+            "shotCount": 3,
+            "angleOffset": 0.0,
+            "spreadAngle": 10.0
+        },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimpEnemy/b/idle/b_blimp_enemy_idle.png",
+                    "frameWidth": 181.0,
+                    "frameHeight": 95.0,
+                    "frameCount": 8,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "shooting": {
+                    "texturePath": "assets/sprites/boss/hildaBerg/blimpEnemy/b/attack/b_blimp_enemy_attack.png",
+                    "frameWidth": 169.0,
+                    "frameHeight": 95.0,
+                    "frameCount": 10,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                }
+            },
+            "initialState": "idle",
+            "transitions": [
+                {
+                    "from": "shooting",
+                    "to": "idle",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                }
+            ]
+        },
+        "ColliderComponent":
+        [
+            {
+                "target": "both",
+                "offset": { "x": 0.0, "y": 0.0 },
+                "size" : { "x": 181.0, "y": 95.0 },
+                "type": "Trigger"
+            }
+
+        ]
+        ,
+        "DamageComponent": {
+            "target": "both",
+            "damage": 25.0
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDamage"]
+                }
+            ]
+        },
+        "ShooterTag": { "target": "both" },
+        "HealthBarComponent": { "target": "client" },
+        "HitboxRenderComponent": { "target": "client" }
+    }
+}

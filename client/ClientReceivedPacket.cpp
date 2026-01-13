@@ -52,65 +52,6 @@ void ClientNetwork::handleConnectionAcceptation() {
     }
 }
 
-void ClientNetwork::handleGameState() {
-    auto payload = _packet->getPayload();
-    if (payload.empty()) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Game state packet is empty",
-            debug::debugType::NETWORK,
-            debug::debugLevel::WARNING);
-        return;
-    }
-
-    if (!this->_resourceManager->has<ecs::Registry>()) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Registry not found in ResourceManager",
-            debug::debugType::NETWORK,
-            debug::debugLevel::ERROR);
-        return;
-    }
-
-    auto registry = this->_resourceManager->get<ecs::Registry>();
-    size_t index = 0;
-
-    if (index >= payload.size()) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Invalid game state packet: missing entity ID",
-            debug::debugType::NETWORK,
-            debug::debugLevel::ERROR);
-        return;
-    }
-
-    size_t serverEntityId = static_cast<size_t>(payload[index++]);
-    auto it = _serverToLocalEntityMap.find(serverEntityId);
-    if (it == _serverToLocalEntityMap.end()) {
-        debug::Debug::printDebug(this->_isDebug,
-            "[CLIENT] Entity with server ID " +
-            std::to_string(serverEntityId) + " not found in map",
-            debug::debugType::NETWORK,
-            debug::debugLevel::WARNING);
-        return;
-    }
-    ecs::Entity entityId = it->second;
-    while (index < payload.size()) {
-        uint64_t componentType = payload[index++];
-        auto parserIt = _componentParsers.find(componentType);
-        if (parserIt != _componentParsers.end()) {
-            index = (this->*(parserIt->second))(payload, index, entityId);
-        } else {
-            debug::Debug::printDebug(this->_isDebug,
-                "[CLIENT] Unknown component type: " + std::to_string(componentType),
-                debug::debugType::NETWORK,
-                debug::debugLevel::WARNING);
-        }
-    }
-    debug::Debug::printDebug(this->_isDebug,
-        "[CLIENT] Applied game state updates for entity " +
-        std::to_string(entityId),
-        debug::debugType::NETWORK,
-        debug::debugLevel::INFO);
-}
-
 void ClientNetwork::handleBatchedGameState() {
     auto batchedPayloads = _packet->getBatchedPayloads();
     if (batchedPayloads.empty()) {
@@ -239,10 +180,10 @@ void ClientNetwork::handleEntitySpawn() {
     size_t clientId = payload.at(0);
     std::string prefabName;
     for (auto it = payload.begin() + 1; it != payload.end(); ++it) {
-        if (*it == static_cast<uint64_t>('\r')) {
+        if (*it == static_cast<uint64_t>(constants::END_OFSTRING_ST)) {
             if (std::distance(it, payload.end()) >= 3 &&
-                *(it + 1) == static_cast<uint64_t>('\n') &&
-                *(it + 2) == static_cast<uint64_t>('\0')) {
+                *(it + 1) == static_cast<uint64_t>(constants::END_OFSTRING_ND) &&
+                *(it + 2) == static_cast<uint64_t>(constants::END_OFSTRING_TRD)) {
                 break;
             }
         }
@@ -506,7 +447,8 @@ void ClientNetwork::handleConnectUser() {
 
     auto payload = _packet->getPayload();
     std::string username;
-    for (size_t i = 0; i < payload.size() && payload.at(i) != '\0'; ++i) {
+    for (size_t i = 0; i < payload.size() && payload.at(i) !=
+        constants::END_OFSTRING_TRD; ++i) {
         char c = static_cast<char>(payload.at(i) & 0xFF);
         username += c;
     }
@@ -542,12 +484,12 @@ void ClientNetwork::handleLeaderboard() {
         size_t j = 0;
         for (; j < 8; ++j) {
             char c = static_cast<char>(payload.at(i + j) & 0xFF);
-            if (c != '\0')
+            if (c != constants::END_OFSTRING_TRD)
                 username += c;
         }
         for (; j < 16; ++j) {
             char c = static_cast<char>(payload.at(i + j) & 0xFF);
-            if (c != '\0')
+            if (c != constants::END_OFSTRING_TRD)
                 scoreStr += c;
         }
         if (!scoreStr.empty()) {
@@ -566,7 +508,8 @@ void ClientNetwork::handleRegisterFail() {
 
     auto payload = _packet->getPayload();
     std::string errorMessage;
-    for (size_t i = 0; i < payload.size() && payload.at(i) != '\0'; ++i) {
+    for (size_t i = 0; i < payload.size() && payload.at(i) !=
+        constants::END_OFSTRING_TRD; ++i) {
         char c = static_cast<char>(payload.at(i) & 0xFF);
         errorMessage += c;
     }
@@ -595,7 +538,7 @@ void ClientNetwork::handleProfile() {
         std::string field;
         for (size_t j = 0; j < 8; ++j) {
             char c = static_cast<char>(payload.at(i + j) & 0xFF);
-            if (c != '\0')
+            if (c != constants::END_OFSTRING_TRD)
                 field += c;
         }
         profileData.push_back(field);

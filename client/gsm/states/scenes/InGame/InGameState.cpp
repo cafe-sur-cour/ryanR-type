@@ -34,6 +34,7 @@
 #include "../../../../systems/input/ForceInputSystem.hpp"
 #include "../../../../systems/network/KeepAliveSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
+#include "../../../../systems/animationState/AnimationStateSyncSystem.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../../common/systems/death/DeathSystem.hpp"
@@ -97,6 +98,7 @@ void InGameState::enter() {
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::ShootInputSystem>());
     addSystem(std::make_shared<ecs::ForceInputSystem>());
+    addSystem(std::make_shared<ecs::AnimationStateSyncSystem>());
     addSystem(std::make_shared<ecs::KeepAliveSystem>());
     addSystem(std::make_shared<ecs::OutOfBoundsSystem>());
     addSystem(std::make_shared<ecs::ClientEffectCleanupSystem>());

@@ -60,6 +60,29 @@ Example:
 ./r-type_client -p 4242 -i 127.0.0.1 -n Player1
 ```
 
+## Runing unit tests
+
+```bash
+# Basic coverage
+./scripts/run_unit_tests.sh --coverage
+
+# Coverage with HTML report
+./scripts/run_unit_tests.sh --coverage --html
+
+# Clean previous data and generate new coverage
+./scripts/run_unit_tests.sh --clean-coverage --coverage --html
+```
+
+```bash
+# Complete analysis with all reports
+./scripts/coverage_analysis.sh
+```
+
+```bash
+# Quick summary and open HTML report
+./scripts/view_coverage.sh
+```
+
 ## Contributing
 
 For contribution guidelines, including prerequisites and commit conventions, please refer to [HOWTOCONTRIBUTE.md](HOWTOCONTRIBUTE.md).

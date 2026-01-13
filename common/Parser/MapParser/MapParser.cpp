@@ -22,6 +22,7 @@
 #include "../../../client/components/rendering/MusicComponent.hpp"
 #include "../../components/permanent/GameZoneComponent.hpp"
 #include "../../components/tags/GameEndTag.hpp"
+#include "../../components/tags/GameZoneStopTag.hpp"
 #include "../../components/tags/GameZoneColliderTag.hpp"
 #include "../../components/temporary/SpawnIntentComponent.hpp"
 #include "../../ECS/entity/factory/EntityFactory.hpp"
@@ -132,6 +133,17 @@ void MapParser::createGameEndEntity(float mapLength) {
     _registry->addComponent(gameEndEntity, std::make_shared<ecs::TransformComponent>
         (math::Vector2f(x, 0.0f)));
     _registry->addComponent(gameEndEntity, std::make_shared<ecs::ColliderComponent>(
+        math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, constants::MAX_HEIGHT),
+        ecs::CollisionType::Trigger));
+}
+
+void MapParser::createGameZoneStopEntity(float stopAtX) {
+    ecs::Entity gameZoneStopEntity = _registry->createEntity();
+
+    _registry->addComponent(gameZoneStopEntity, std::make_shared<ecs::GameZoneStopTag>());
+    _registry->addComponent(gameZoneStopEntity, std::make_shared<ecs::TransformComponent>
+        (math::Vector2f(stopAtX, 0.0f)));
+    _registry->addComponent(gameZoneStopEntity, std::make_shared<ecs::ColliderComponent>(
         math::Vector2f(0.0f, 0.0f), math::Vector2f(10.0f, constants::MAX_HEIGHT),
         ecs::CollisionType::Trigger));
 }
@@ -363,6 +375,11 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
 
         float gameViewXTrigger = wave[constants::GAMEXTRIGGER_FIELD];
 
+        float gameZoneStopAtX = -1.0f;
+        if (wave.contains(constants::GAME_ZONE_STOP_AT_X_FIELD)) {
+            gameZoneStopAtX = wave[constants::GAME_ZONE_STOP_AT_X_FIELD];
+        }
+
         if (!wave[constants::ENEMIES_FIELD].is_array()) {
             std::cerr << "Warning: Wave " << waveIndex <<
                 " enemies is not an array, skipping" << std::endl;
@@ -370,6 +387,9 @@ void MapParser::parseWaves(const nlohmann::json& waves) {
         }
 
         auto spawner = _registry->createEntity();
+
+        if (gameZoneStopAtX > 0.0f)
+            createGameZoneStopEntity(gameZoneStopAtX);
 
         for (const auto& enemyGroup : wave[constants::ENEMIES_FIELD]) {
             auto groupValidation = parser::JsonValidation::hasRequiredFields(
