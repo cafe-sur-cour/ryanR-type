@@ -78,7 +78,7 @@
                 @click="logout"
                 variant="ghost"
                 size="sm"
-                class="text-gray-300 hover:text-white"
+                class="text-red-400 hover:text-red-300 hover:bg-red-900"
               >
                 Logout
               </Button>

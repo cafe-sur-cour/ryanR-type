@@ -3,8 +3,18 @@
     <div class="max-w-6xl mx-auto space-y-6">
       <!-- Header -->
       <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
-        <h1 class="text-3xl font-bold text-white">Server Commands</h1>
-        <p class="text-gray-400 mt-1">Execute administrative commands</p>
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-3xl font-bold text-white">Server Commands</h1>
+            <p class="text-gray-400 mt-1">Execute administrative commands</p>
+          </div>
+          <div class="flex space-x-3">
+            <Button @click="refreshData" :disabled="loading" variant="default" class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700">
+              <RefreshCwIcon class="h-4 w-4" :class="{ 'animate-spin': loading }" />
+              <span>Refresh</span>
+            </Button>
+          </div>
+        </div>
       </div>
 
       <!-- Overview -->
@@ -67,7 +77,7 @@
               placeholder="Enter command..."
               class="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-            <Button @click="executeCommand" :disabled="!command.trim()" variant="default">
+            <Button @click="executeCommand" :disabled="!command.trim()" variant="default" class="bg-blue-600 hover:bg-blue-700">
               Execute
             </Button>
           </div>
@@ -106,7 +116,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import Button from './ui/Button.vue'
-import { GamepadIcon, UsersIcon, PlayIcon } from 'lucide-vue-next'
+import { GamepadIcon, UsersIcon, PlayIcon, RefreshCwIcon } from 'lucide-vue-next'
 
 interface Props {
   password: string
@@ -118,6 +128,7 @@ const command = ref('')
 const allSuggestions = ref<string[]>([])
 const output = ref('')
 const lastUpdate = ref('')
+const loading = ref(false)
 const overview = ref({
   activeLobbies: 0,
   loggedInPlayers: 0,
@@ -129,6 +140,7 @@ const overview = ref({
 const refreshInterval = ref<NodeJS.Timeout | null>(null)
 
 const fetchOverview = async () => {
+  loading.value = true
   try {
     const response = await fetch('/api/info', {
       headers: {
@@ -149,6 +161,8 @@ const fetchOverview = async () => {
     }
   } catch (error) {
     console.error('Error fetching overview:', error)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -170,6 +184,10 @@ const fetchSuggestions = async () => {
 
 const updateLastUpdate = () => {
   lastUpdate.value = new Date().toLocaleTimeString()
+}
+
+const refreshData = () => {
+  fetchOverview()
 }
 
 const executeCommand = async () => {
