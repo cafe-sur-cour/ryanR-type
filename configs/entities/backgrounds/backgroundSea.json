@@ -1,0 +1,28 @@
+{
+    "name": "backgroundSea",
+    "components": {
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "ParallaxComponent": {
+            "target": "client",
+            "baseScrollSpeed": 50.0,
+            "direction": { "x": -1.0, "y": 0.0 },
+            "layers": [
+                {
+                    "name": "background",
+                    "filePath": "assets/sprites/backgrounds/backgroundSea-modified.png",
+                    "speedMultiplier": 0.1,
+                    "scale": { "x": 1.0, "y": 1.0 },
+                    "scaleMode": "FIT_SCREEN",
+                    "sourceSize": { "x": 1690.0, "y": 950.0 },
+                    "repeat": true,
+                    "zIndex": 0
+                }
+            ]
+        }
+    }
+}
