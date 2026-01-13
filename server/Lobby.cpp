@@ -13,15 +13,17 @@
 #include <tuple>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <filesystem>   // NOLINT(build/c++17)
 #include <nlohmann/json.hpp>
 
 #include "Lobby.hpp"
-#include "Constants.hpp"
+#include "constants.hpp"
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
+#include "../common/components/permanent/GameZoneComponent.hpp"
 #include "../common/ECS/entity/Entity.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 
@@ -46,17 +48,12 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
 
     this->_clientsReady = std::map<uint8_t, bool>();
     this->_clientToEntity = std::map<uint8_t, ecs::Entity>();
-    this->_clientLastHeartbeat = std::map<uint8_t, std::chrono::steady_clock::time_point>();
-
-    auto now = std::chrono::steady_clock::now();
-    for (const auto& client : this->_clients) {
-        this->_clientLastHeartbeat[std::get<0>(client)] = now;
-    }
 
     this->_packet = nullptr;
     this->_sequenceNumber = 0;
     this->_resourceManager = nullptr;
     this->_gameStarted = false;
+    this->_playerEntitiesCreated = false;
     this->_eventQueue = std::make_shared<std::queue<std::tuple<uint8_t,
         constants::EventType, double>>>();
     this->_lastGameStateTime = std::chrono::steady_clock::now();
@@ -88,6 +85,8 @@ rserv::Lobby::Lobby(std::shared_ptr<net::INetwork> network,
         std::bind(&rserv::Lobby::convertAnimationStateComponent, this,
             std::placeholders::_1, std::placeholders::_2),
         std::bind(&rserv::Lobby::convertChargedShotComponent, this,
+            std::placeholders::_1, std::placeholders::_2),
+        std::bind(&rserv::Lobby::convertAnimationStateComponent, this,
             std::placeholders::_1, std::placeholders::_2)
     };
 }
@@ -132,6 +131,15 @@ std::vector<uint8_t> rserv::Lobby::getConnectedClients() const {
     return clientIds;
 }
 
+std::vector<std::tuple<uint8_t, std::string>> rserv::Lobby::getConnectedClientDetails() const {
+    std::vector<std::tuple<uint8_t, std::string>> clientDetails;
+    std::lock_guard<std::mutex> lock(_clientsMutex);
+    for (const auto &client : this->_clients) {
+        clientDetails.emplace_back(std::get<0>(client), std::get<2>(client));
+    }
+    return clientDetails;
+}
+
 std::vector<std::shared_ptr<net::INetworkEndpoint>>
     rserv::Lobby::getConnectedClientEndpoints() const {
     std::vector<std::shared_ptr<net::INetworkEndpoint>> endpoints;
@@ -158,19 +166,20 @@ void rserv::Lobby::addClient(
 ) {
     std::lock_guard<std::mutex> lock(_clientsMutex);
     this->_clients.push_back(client);
-    _clientLastHeartbeat[std::get<0>(client)] = std::chrono::steady_clock::now();
 }
 
-void rserv::Lobby::resetClientHeartbeats() {
+void rserv::Lobby::removeClient(uint8_t clientId) {
     std::lock_guard<std::mutex> lock(_clientsMutex);
-    auto now = std::chrono::steady_clock::now();
-    for (const auto& client : this->_clients) {
-        uint8_t clientId = std::get<0>(client);
-        _clientLastHeartbeat[clientId] = now;
-    }
-    debug::Debug::printDebug(this->getIsDebug(),
-        "[LOBBY] Reset heartbeats for all clients",
-        debug::debugType::NETWORK, debug::debugLevel::INFO);
+    auto it = std::remove_if(_clients.begin(), _clients.end(),
+        [clientId](const std::tuple<
+            uint8_t, std::shared_ptr<net::INetworkEndpoint>, std::string>& client) {
+            return std::get<0>(client) == clientId;
+        });
+    _clients.erase(it, _clients.end());
+
+    _clientsReady.erase(clientId);
+    _clientToEntity.erase(clientId);
+    _deltaTracker.clearClientCache(clientId);
 }
 
 void rserv::Lobby::createPlayerEntityForClient(uint8_t clientId) {
@@ -266,6 +275,56 @@ std::string rserv::Lobby::getLobbyCode() const {
     return this->_lobbyCode;
 }
 
+std::string rserv::Lobby::getGameState() const {
+    if (this->_gsm) {
+        return this->_gsm->getCurrentStateName();
+    }
+    return "Not Started";
+}
+
+std::string rserv::Lobby::getGameRules() const {
+    if (!this->_resourceManager->has<GameRules>()) {
+        return "Rules not available";
+    }
+
+    auto gameRules = this->_resourceManager->get<GameRules>();
+    std::string gamemodeStr;
+    std::string difficultyStr;
+    std::string crossfireStr;
+
+    switch (gameRules->getGamemode()) {
+        case GameRulesNS::Gamemode::CLASSIC:
+            gamemodeStr = "Classic";
+            break;
+        case GameRulesNS::Gamemode::INFINITE_MODE:
+            gamemodeStr = "Infinite Mode";
+            break;
+        default:
+            gamemodeStr = "Unknown";
+            break;
+    }
+
+    switch (gameRules->getDifficulty()) {
+        case GameRulesNS::Difficulty::EASY:
+            difficultyStr = "Easy";
+            break;
+        case GameRulesNS::Difficulty::NORMAL:
+            difficultyStr = "Normal";
+            break;
+        case GameRulesNS::Difficulty::HARD:
+            difficultyStr = "Hard";
+            break;
+        default:
+            difficultyStr = "Unknown";
+            break;
+    }
+
+    crossfireStr = gameRules->getCrossfire() ? "Enabled" : "Disabled";
+
+    return "Mode: " + gamemodeStr + " | Difficulty: " + difficultyStr +
+        " | Crossfire: " + crossfireStr;
+}
+
 
 /* Event Queue hadling */
 std::shared_ptr<std::queue<std::tuple<uint8_t, constants::EventType, double>>>
@@ -318,8 +377,6 @@ void rserv::Lobby::processIncomingPackets() {
     this->_packet->unpack(received.second);
     uint8_t clientId = this->_packet->getIdClient();
 
-    _clientLastHeartbeat[clientId] = std::chrono::steady_clock::now();
-
     if (this->_packet->getType() == constants::PACKET_EVENT) {
         this->processEvents(clientId);
     } else if (this->_packet->getType() == constants::PACKET_WHOAMI) {
@@ -344,7 +401,6 @@ bool rserv::Lobby::processDisconnections(uint8_t idClient) {
                 std::remove(this->_clients.begin(), this->_clients.end(), client),
                 this->_clients.end());
             this->_clientToEntity.erase(idClient);
-            this->_clientLastHeartbeat.erase(idClient);
             debug::Debug::printDebug(this->getIsDebug(),
                 "Client " + std::to_string(idClient)
                 + " disconnected and removed from the lobby",
@@ -354,8 +410,9 @@ bool rserv::Lobby::processDisconnections(uint8_t idClient) {
 
             if (shouldClose) {
                 debug::Debug::printDebug(this->getIsDebug(),
-                    "All clients disconnected. Closing lobby " + this->_lobbyCode,
+                    "All clients disconnected. Lobby will close.",
                     debug::debugType::NETWORK, debug::debugLevel::INFO);
+                _running.store(false, std::memory_order_release);
             }
             return true;
         }
@@ -485,6 +542,7 @@ bool rserv::Lobby::gameStatePacket() {
         uint32_t entityId;
         std::vector<uint64_t> componentData;
         EntitySnapshot snapshot;
+        bool isGameZone = false;
     };
 
     std::vector<EntityData> serializedEntities;
@@ -493,6 +551,7 @@ bool rserv::Lobby::gameStatePacket() {
         EntityData entityData;
         entityData.entityId = static_cast<uint32_t>(entityId);
         entityData.componentData.reserve(64);
+        entityData.isGameZone = registry->hasComponent<ecs::GameZoneComponent>(entityId);
         for (const auto& func : this->_convertFunctions) {
             std::vector<uint64_t> compData = func(registry, entityId);
             entityData.componentData.insert(entityData.componentData.end(),
@@ -505,6 +564,11 @@ bool rserv::Lobby::gameStatePacket() {
 
         serializedEntities.push_back(std::move(entityData));
     }
+
+    std::stable_sort(serializedEntities.begin(), serializedEntities.end(),
+        [](const EntityData& a, const EntityData& b) {
+            return a.isGameZone > b.isGameZone;
+        });
 
     constexpr size_t MAX_BATCH_SIZE = 20;
     constexpr size_t MAX_PACKET_SIZE = 1400;
@@ -883,7 +947,6 @@ void rserv::Lobby::setResourceManager(std::shared_ptr<ResourceManager> resourceM
             this->_resourceManager
         );
         gsm->changeState(bootState);
-        this->createPlayerEntities();
         this->_gsm = gsm;
         this->_gameStarted = true;
     } else {
@@ -995,6 +1058,25 @@ void rserv::Lobby::createPlayerEntities() {
 void rserv::Lobby::stop() {
     _running.store(false, std::memory_order_release);
 
+    if (this->_resourceManager) {
+        auto registry = this->_resourceManager->get<ecs::Registry>();
+        if (registry) {
+            registry->clearAllEntities();
+            debug::Debug::printDebug(this->getIsDebug(),
+                "[LOBBY] Cleared all entities from registry",
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+        }
+
+        if (this->_gsm) {
+            this->_gsm = nullptr;
+        }
+
+        this->_clientToEntity.clear();
+
+        this->_gameStarted = false;
+        this->_playerEntitiesCreated = false;
+    }
+
     if (this->_networkThread.joinable()) {
         this->_networkThread.join();
     }
@@ -1021,36 +1103,6 @@ void rserv::Lobby::networkLoop() {
     while (_running && !Signal::stopFlag) {
         if (this->_running == false) {
             break;
-        }
-
-        auto now = std::chrono::steady_clock::now();
-        std::vector<uint8_t> timedOutClients;
-
-        {
-            std::lock_guard<std::mutex> lock(_clientsMutex);
-            for (const auto& client : this->_clients) {
-                uint8_t clientId = std::get<0>(client);
-                auto it = _clientLastHeartbeat.find(clientId);
-
-                if (it != _clientLastHeartbeat.end()) {
-                    auto timeSinceLastHeartbeat =
-                    std::chrono::duration_cast<std::chrono::seconds>(
-                        now - it->second).count();
-
-                    if (timeSinceLastHeartbeat > constants::CLIENT_TIMEOUT_SECONDS) {
-                        debug::Debug::printDebug(this->getIsDebug(),
-                            "Client " + std::to_string(clientId) +
-                                " timed out (no activity for "
-                                + std::to_string(timeSinceLastHeartbeat) + "s)",
-                            debug::debugType::NETWORK, debug::debugLevel::WARNING);
-                        timedOutClients.push_back(clientId);
-                    }
-                }
-            }
-        }
-
-        for (uint8_t clientId : timedOutClients) {
-            this->processDisconnections(clientId);
         }
 
         {
@@ -1095,6 +1147,11 @@ void rserv::Lobby::networkLoop() {
 }
 
 void rserv::Lobby::gameLoop() {
+    if (!this->_playerEntitiesCreated) {
+        this->createPlayerEntities();
+        this->_playerEntitiesCreated = true;
+    }
+
     auto previousTime = std::chrono::high_resolution_clock::now();
 
     while (_running && !Signal::stopFlag) {

@@ -9,7 +9,6 @@
 #include "ShootingSystem.hpp"
 #include <memory>
 #include <cmath>
-#include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -56,7 +55,7 @@ void ShootingSystem::update(
         auto intent = registry->getComponent<ShootIntentComponent>(entityId);
         float baseAngle = intent ? intent->getAngle() : 0.0f;
 
-        if (!shootingStats->canShoot()) {
+        if (shootingStats->getCooldownTimer() > 0.0f) {
             continue;
         }
 
@@ -76,39 +75,37 @@ void ShootingSystem::update(
             spawnPos = spawnPos + colliderCenter;
         }
 
-        if (pattern.shotCount == 1) {
-            spawnProjectile(registry, resourceManager, prefabName, spawnPos,
-                baseAngle, entityId);
-        } else {
-            float totalSpread = pattern.angleSpread * static_cast<float>(
-                pattern.shotCount - 1
-            );
-            float startAngle = baseAngle - (totalSpread / 2.0f);
+        float totalSpread = pattern.angleSpread * static_cast<float>(
+            pattern.shotCount - 1
+        );
+        float startAngle = baseAngle - (totalSpread / 2.0f);
 
-            for (int i = 0; i < pattern.shotCount; i++) {
-                float angle = startAngle + (static_cast<float>(i) * pattern.angleSpread);
+        for (int i = 0; i < pattern.shotCount; i++) {
+            float angle = startAngle + (static_cast<float>(i) * pattern.angleSpread);
 
-                math::Vector2f offsetPosition = spawnPos;
-                if (pattern.offsetDistance > 0.0f) {
-                    float offsetAngle = angle * static_cast<float>(M_PI) / 180.0f;
-                    offsetPosition = math::Vector2f(
-                        spawnPos.getX() + pattern.offsetDistance * std::cos(offsetAngle),
-                        spawnPos.getY() + pattern.offsetDistance * std::sin(offsetAngle)
-                    );
-                }
-
-                spawnProjectile(registry, resourceManager,
-                    prefabName, offsetPosition, angle, entityId);
+            math::Vector2f offsetPosition = spawnPos;
+            if (pattern.offsetDistance > 0.0f) {
+                float offsetAngle = angle * static_cast<float>(M_PI) / 180.0f;
+                offsetPosition = math::Vector2f(
+                    spawnPos.getX() + pattern.offsetDistance * std::cos(offsetAngle),
+                    spawnPos.getY() + pattern.offsetDistance * std::sin(offsetAngle)
+                );
             }
+
+            spawnProjectile(registry, resourceManager,
+                prefabName, offsetPosition, angle, entityId);
         }
 
-        shootingStats->resetCooldown();
+        shootingStats->setCooldownTimer(1.0f / shootingStats->getFireRate());
     }
 
     auto cooldownView = registry->view<ShootingStatsComponent>();
     for (auto entityId : cooldownView) {
         auto shootingStats = registry->getComponent<ShootingStatsComponent>(entityId);
-        shootingStats->updateCooldown(deltaTime);
+        auto cooldown = shootingStats->getCooldownTimer();
+        if (cooldown > 0.0f) {
+            shootingStats->setCooldownTimer(cooldown - deltaTime);
+        }
     }
 }
 

@@ -28,6 +28,7 @@ public:
     void enter() override;
     void update(float deltaTime) override;
     void exit() override;
+    std::string getStateName() const override { return "Register"; }
 
 private:
     void renderUI();
@@ -35,16 +36,16 @@ private:
 private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
     std::unique_ptr<ui::UIManager> _uiManager;
-    
+
     std::shared_ptr<ui::Background> _background;
     std::shared_ptr<ui::UILayout> _mainLayout;
-    
+
     std::shared_ptr<ui::TextInput> _usernameInput;
     std::shared_ptr<ui::TextInput> _passwordInput;
     std::shared_ptr<ui::TextInput> _confirmPasswordInput;
-    
+
     std::shared_ptr<ui::Text> _errorMessage;
-    
+
     std::shared_ptr<ui::Button> _registerButton;
     std::shared_ptr<ui::Button> _backButton;
 };

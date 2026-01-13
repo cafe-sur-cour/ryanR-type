@@ -24,6 +24,7 @@ public:
     virtual void exit() = 0;
     virtual void addSystem(std::shared_ptr<ecs::ISystem> system) = 0;
     virtual std::vector<std::shared_ptr<ecs::ISystem>> getSystems() const = 0;
+    virtual std::string getStateName() const = 0;
 };
 
 } // namespace gsm

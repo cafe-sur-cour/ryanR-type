@@ -9,7 +9,11 @@
 #define PAUSESTATE_HPP_
 
 #include "../../base/AGameState.hpp"
-#include "resourceManager/ResourceManager.hpp"
+#include "../../../../input/MouseInputHandler.hpp"
+#include "../../../../../common/interfaces/IWindow.hpp"
+#include "../../../../../common/interfaces/IEvent.hpp"
+#include "../../../../../common/interfaces/IAudio.hpp"
+#include "../../../../../common/InputMapping/IInputProvider.hpp"
 
 namespace gsm {
 
@@ -21,6 +25,19 @@ public:
     void enter() override;
     void update(float deltaTime) override;
     void exit() override;
+    std::string getStateName() const override { return "Paused"; }
+
+private:
+    void renderUI();
+
+private:
+    std::unique_ptr<MouseInputHandler> _mouseHandler;
+    std::unique_ptr<ui::UIManager> _uiManager;
+
+    std::shared_ptr<ui::UILayout> _menuLayout;
+    std::shared_ptr<ui::Button> _resumeButton;
+    std::shared_ptr<ui::Button> _settingsButton;
+    std::shared_ptr<ui::Button> _leaveButton;
 };
 
 }  // namespace gsm

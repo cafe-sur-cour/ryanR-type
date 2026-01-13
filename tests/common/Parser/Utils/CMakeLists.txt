@@ -1,14 +1,7 @@
-add_executable(parser_utils_tests
-    JsonLoaderTest.cpp
-    JsonValidationTest.cpp
-)
+add_executable(JsonLoaderTests JsonLoaderTest.cpp)
+target_link_libraries(JsonLoaderTests PARSER_UTILS ERROR GTest::gtest GTest::gtest_main nlohmann_json::nlohmann_json)
+add_test(NAME JsonLoaderTests COMMAND JsonLoaderTests)
 
-target_link_libraries(parser_utils_tests
-    PARSER_UTILS
-    ERROR
-    GTest::gtest
-    GTest::gtest_main
-    nlohmann_json::nlohmann_json
-)
-
-add_test(NAME ParserUtilsTests COMMAND parser_utils_tests)
+add_executable(JsonValidationTests JsonValidationTest.cpp)
+target_link_libraries(JsonValidationTests PARSER_UTILS GTest::gtest GTest::gtest_main nlohmann_json::nlohmann_json)
+add_test(NAME JsonValidationTests COMMAND JsonValidationTests)
