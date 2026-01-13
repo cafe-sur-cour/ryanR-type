@@ -1,0 +1,71 @@
+{
+    "spritesheet_width": 1988,
+    "spritesheet_height": 253,
+    "cell_width": 284,
+    "cell_height": 253,
+    "sprites": [
+        {
+            "filename": "lv3-1_starfish_b_0001.png",
+            "order": 0,
+            "width": 284,
+            "height": 253,
+            "file_size": 26412,
+            "x": 0,
+            "y": 0
+        },
+        {
+            "filename": "lv3-1_starfish_b_0002.png",
+            "order": 1,
+            "width": 284,
+            "height": 253,
+            "file_size": 25327,
+            "x": 284,
+            "y": 0
+        },
+        {
+            "filename": "lv3-1_starfish_b_0003.png",
+            "order": 2,
+            "width": 284,
+            "height": 253,
+            "file_size": 24280,
+            "x": 568,
+            "y": 0
+        },
+        {
+            "filename": "lv3-1_starfish_b_0004.png",
+            "order": 3,
+            "width": 284,
+            "height": 253,
+            "file_size": 24471,
+            "x": 852,
+            "y": 0
+        },
+        {
+            "filename": "lv3-1_starfish_b_0005.png",
+            "order": 4,
+            "width": 284,
+            "height": 253,
+            "file_size": 24492,
+            "x": 1136,
+            "y": 0
+        },
+        {
+            "filename": "lv3-1_starfish_b_0006.png",
+            "order": 5,
+            "width": 284,
+            "height": 253,
+            "file_size": 24608,
+            "x": 1420,
+            "y": 0
+        },
+        {
+            "filename": "lv3-1_starfish_b_0007.png",
+            "order": 6,
+            "width": 284,
+            "height": 253,
+            "file_size": 25383,
+            "x": 1704,
+            "y": 0
+        }
+    ]
+}

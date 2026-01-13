@@ -18,7 +18,6 @@
 #include "../common/components/tags/LocalPlayerTag.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
 #include "../common/components/permanent/ScoreComponent.hpp"
-#include "DeathAnimationSpawner.hpp"
 #include "gsm/states/scenes/InGame/InGameState.hpp"
 #include "gsm/states/scenes/Results/ResultsState.hpp"
 #include "gsm/states/scenes/LevelComplete/LevelCompleteState.hpp"
@@ -252,7 +251,6 @@ void ClientNetwork::handleEntityDeath() {
     }
     ecs::Entity entityId = it->second;
 
-    DeathAnimationSpawner::spawnDeathAnimation(_resourceManager, registry, entityId);
 
     registry->destroyEntity(entityId);
     _serverToLocalEntityMap.erase(serverEntityId);
