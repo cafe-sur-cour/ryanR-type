@@ -1211,10 +1211,10 @@ bool rserv::Lobby::isEntityInPlayerAOI(std::shared_ptr<ecs::Registry> registry,
         math::FRect zone = gameZoneComp->getZone();
         math::Vector2f zonePosition = gameZoneTransform->getPosition();
 
-        float left = zonePosition.getX() + zone.getLeft();
-        float right = left + zone.getWidth();
-        float top = zonePosition.getY() + zone.getTop();
-        float bottom = top + zone.getHeight();
+        float left = zonePosition.getX() + zone.getLeft() - constants::AOI_MARGIN;
+        float right = left + zone.getWidth() + 2 * constants::AOI_MARGIN;
+        float top = zonePosition.getY() + zone.getTop() - constants::AOI_MARGIN;
+        float bottom = top + zone.getHeight() + 2 * constants::AOI_MARGIN;
 
         if (!registry->hasComponent<ecs::TransformComponent>(targetEntity)) {
             return false;
