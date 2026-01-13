@@ -15,8 +15,6 @@ add_executable(${CLIENT_BIN_NAME}
     SettingsConfig.hpp
     SettingsManager.cpp
     SettingsManager.hpp
-    DeathAnimationSpawner.cpp
-    DeathAnimationSpawner.hpp
     ../common/utils/SecureJsonManager.cpp
     ../common/utils/Encryption.cpp
 )

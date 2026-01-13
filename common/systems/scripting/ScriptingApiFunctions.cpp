@@ -311,28 +311,33 @@ void ScriptingSystem::bindAPI() {
                     if (scriptComp->hasFunction(constants::ADD_FORCE_LEVEL_FUNCTION)) {
                         sol::function addLevelFunc = scriptComp->
                             getFunction(constants::ADD_FORCE_LEVEL_FUNCTION);
-                        addLevelFunc(partId);
+                        addLevelFunc(part);
                     }
                 }
             }
         }
     });
 
-    lua.set_function("restartGameZone",
-        [this]() {
+    lua.set_function(constants::SET_GAME_ZONE_VELOCITY_FUNCTION,
+        [this](float x, float y) {
         auto gameZoneView = registry->view<GameZoneComponent, VelocityComponent>();
         for (auto gameZoneEntity : gameZoneView) {
             auto velocityComp = registry->getComponent<VelocityComponent>(gameZoneEntity);
             if (velocityComp) {
-                velocityComp->setVelocity(math::Vector2f(100.0f , 0.0f));
+                velocityComp->setVelocity(math::Vector2f(x , y));
             }
         }
     });
 
-    lua.set_function("getGameZonePosition",
+    lua.set_function(constants::GET_GAME_ZONE_POSITION_FUNCTION,
         [this]() -> std::tuple<float, float> {
         auto gameZoneView = registry->view<GameZoneComponent>();
         for (auto gameZoneEntity : gameZoneView) {
+            if (registry->hasComponent<TransformComponent>(gameZoneEntity)) {
+                auto transform = registry->getComponent<TransformComponent>(gameZoneEntity);
+                auto pos = transform->getPosition();
+                return {pos.getX(), pos.getY()};
+            }
             auto gameZoneComp = registry->getComponent<GameZoneComponent>(gameZoneEntity);
             auto zone = gameZoneComp->getZone();
             return {zone.getLeft(), zone.getTop()};
@@ -340,7 +345,7 @@ void ScriptingSystem::bindAPI() {
         return {0.0f, 0.0f};
     });
 
-    lua.set_function("getGameZoneSize",
+    lua.set_function(constants::GET_GAME_ZONE_SIZE_FUNCTION,
         [this]() -> std::tuple<float, float> {
         auto gameZoneView = registry->view<GameZoneComponent>();
         for (auto gameZoneEntity : gameZoneView) {
@@ -351,7 +356,7 @@ void ScriptingSystem::bindAPI() {
         return {0.0f, 0.0f};
     });
 
-    lua.set_function("getGameZoneVelocity",
+    lua.set_function(constants::GET_GAME_ZONE_VELOCITY_FUNCTION,
         [this]() -> std::tuple<float, float> {
         auto gameZoneView = registry->view<GameZoneComponent, VelocityComponent>();
         for (auto gameZoneEntity : gameZoneView) {
