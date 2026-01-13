@@ -18,7 +18,7 @@
       </div>
 
       <!-- Overview -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
           <div class="flex items-center space-x-3 text-center">
             <GamepadIcon class="h-8 w-8 text-purple-400" />
@@ -60,6 +60,21 @@
           <div v-if="overview.inGamePlayers.length > 0" class="mt-4">
             <ul class="text-sm text-gray-300 space-y-1">
               <li v-for="player in overview.inGamePlayers" :key="player">{{ player }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+          <div class="flex items-center space-x-3 text-center">
+            <BanIcon class="h-8 w-8 text-red-400" />
+            <div>
+              <p class="text-sm text-gray-400 text-center">Banned Players</p>
+              <p class="text-2xl font-bold text-white">{{ overview.bannedPlayers?.length || 0 }}</p>
+            </div>
+          </div>
+          <div v-if="overview.bannedPlayers && overview.bannedPlayers.length > 0" class="mt-4">
+            <ul class="text-sm text-gray-300 space-y-1">
+              <li v-for="player in overview.bannedPlayers" :key="player" class="text-red-400">{{ player }}</li>
             </ul>
           </div>
         </div>
@@ -116,7 +131,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import Button from './ui/Button.vue'
-import { GamepadIcon, UsersIcon, PlayIcon, RefreshCwIcon } from 'lucide-vue-next'
+import { GamepadIcon, UsersIcon, PlayIcon, RefreshCwIcon, BanIcon } from 'lucide-vue-next'
 
 interface Props {
   password: string
@@ -135,7 +150,8 @@ const overview = ref({
   playersInGame: 0,
   lobbyDetails: [] as string[],
   playerDetails: [] as string[],
-  inGamePlayers: [] as string[]
+  inGamePlayers: [] as string[],
+  bannedPlayers: [] as string[]
 })
 const refreshInterval = ref<NodeJS.Timeout | null>(null)
 
@@ -155,7 +171,8 @@ const fetchOverview = async () => {
         playersInGame: data.inGamePlayers ? data.inGamePlayers.length : 0,
         lobbyDetails: data.lobbyDetails || [],
         playerDetails: data.playerDetails || [],
-        inGamePlayers: data.inGamePlayers || []
+        inGamePlayers: data.inGamePlayers || [],
+        bannedPlayers: data.bannedPlayers || []
       }
       updateLastUpdate()
     }
