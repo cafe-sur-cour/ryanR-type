@@ -71,6 +71,10 @@ namespace colors {
 
     const gfx::color_t LEVEL_EDITOR_PANEL_BACKGROUND = {15, 10, 25};            // Dark with slight purple tint
     const gfx::color_t LEVEL_EDITOR_PANEL_BORDER = {200, 200, 200};             // Light gray border
+
+    /* Player colors */
+    const gfx::color_t PLAYER_LOCAL = {255, 255, 255, 255};                     // White for local player
+    const gfx::color_t PLAYER_REMOTE = {150, 150, 150, 200};                    // Grayish for remote players
 }
 
 #endif  // COLORS_HPP_
