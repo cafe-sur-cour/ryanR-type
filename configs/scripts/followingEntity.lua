@@ -14,4 +14,3 @@ function update(entity)
     local moveY = (dy / dist) * speed
     createMoveIntent(entity, moveX, moveY)
 end
-

@@ -31,3 +31,12 @@ function update(entity, deltaTime)
         end
     end
 end
+
+function death(entity)
+    local px, py = getEntityPosition(entity)
+    local entitySizeX, entitySizeY = getEntitySize(entity)
+    local explosionSizeX, explosionSizeY = getEntitySize("explode")
+    px = px + entitySizeX / 2 - 298 / 2
+    py = py + entitySizeY / 2 - 217 / 2
+    spawnEntity("explode", px, py)
+end
