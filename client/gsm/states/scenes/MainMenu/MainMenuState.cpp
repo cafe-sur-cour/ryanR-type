@@ -523,7 +523,7 @@ void MainMenuState::checkLobbyConnectionTransition() {
     auto now = std::chrono::steady_clock::now();
     auto timeSinceLeave = std::chrono::duration_cast<std::chrono::seconds>(
         now - network->_lastLeaveLobbyTime).count();
-    if (timeSinceLeave < 1.0) {
+    if (timeSinceLeave < 1) {
         _previousLobbyConnectedState = network->isConnectedToLobby();
         _previousLobbyMasterState = network->isLobbyMaster();
         _requestCodeButton->setState(ui::UIState::Disabled);

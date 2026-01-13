@@ -33,6 +33,7 @@
 #include "../../common/translationToECS.hpp"
 #include "../../common/types/Vector2f.hpp"
 #include "../../common/types/FRect.hpp"
+#include "../../common/FloatQuantization.hpp"
 
 using namespace rserv;
 using namespace ecs;
@@ -75,13 +76,6 @@ protected:
     Entity entity = 1;
 };
 
-// Helper function to pack float to uint64_t
-uint64_t packFloat(float value) {
-    uint64_t bits = 0;
-    std::memcpy(&bits, &value, sizeof(float));
-    return bits;
-}
-
 TEST_F(ECSConversionTest, ConvertTagComponent_WithPlayerTag) {
     registry->registerComponent<PlayerTag>();
     auto playerTag = std::make_shared<PlayerTag>();
@@ -109,11 +103,11 @@ TEST_F(ECSConversionTest, ConvertTransformComponent_WithTransform) {
 
     ASSERT_EQ(result.size(), 6);
     EXPECT_EQ(result[0], static_cast<uint64_t>(TRANSFORM));
-    EXPECT_EQ(result[1], packFloat(10.0f));
-    EXPECT_EQ(result[2], packFloat(20.0f));
-    EXPECT_EQ(result[3], packFloat(45.0f));
-    EXPECT_EQ(result[4], packFloat(2.0f));
-    EXPECT_EQ(result[5], packFloat(3.0f));
+    EXPECT_EQ(result[1], quantization::packPosition(10.0f));
+    EXPECT_EQ(result[2], quantization::packPosition(20.0f));
+    EXPECT_EQ(result[3], quantization::packRotation(45.0f));
+    EXPECT_EQ(result[4], quantization::packScale(2.0f));
+    EXPECT_EQ(result[5], quantization::packScale(3.0f));
 }
 
 TEST_F(ECSConversionTest, ConvertTransformComponent_WithoutTransform) {
@@ -131,7 +125,7 @@ TEST_F(ECSConversionTest, ConvertSpeedComponent_WithSpeed) {
 
     ASSERT_EQ(result.size(), 2);
     EXPECT_EQ(result[0], static_cast<uint64_t>(SPEED_COMP));
-    EXPECT_EQ(result[1], packFloat(15.5f));
+    EXPECT_EQ(result[1], quantization::packSpeed(15.5f));
 }
 
 TEST_F(ECSConversionTest, ConvertSpeedComponent_WithoutSpeed) {
@@ -150,8 +144,8 @@ TEST_F(ECSConversionTest, ConvertHealthComponent_WithHealth) {
 
     ASSERT_EQ(result.size(), 3);
     EXPECT_EQ(result[0], static_cast<uint64_t>(HEALTH));
-    EXPECT_EQ(result[1], packFloat(100.0f));
-    EXPECT_EQ(result[2], packFloat(150.0f));
+    EXPECT_EQ(result[1], quantization::packHealth(100.0f));
+    EXPECT_EQ(result[2], quantization::packHealth(150.0f));
 }
 
 TEST_F(ECSConversionTest, ConvertHealthComponent_WithoutHealth) {
@@ -170,10 +164,10 @@ TEST_F(ECSConversionTest, ConvertColliderComponent_WithCollider) {
 
     ASSERT_EQ(result.size(), 6);
     EXPECT_EQ(result[0], static_cast<uint64_t>(COLLIDER));
-    EXPECT_EQ(result[1], packFloat(5.0f));
-    EXPECT_EQ(result[2], packFloat(5.0f));
-    EXPECT_EQ(result[3], packFloat(10.0f));
-    EXPECT_EQ(result[4], packFloat(10.0f));
+    EXPECT_EQ(result[1], quantization::packPosition(5.0f));
+    EXPECT_EQ(result[2], quantization::packPosition(5.0f));
+    EXPECT_EQ(result[3], quantization::packSize(10.0f));
+    EXPECT_EQ(result[4], quantization::packSize(10.0f));
     EXPECT_EQ(result[5], static_cast<uint64_t>(ecs::CollisionType::Solid));
 }
 
@@ -194,12 +188,12 @@ TEST_F(ECSConversionTest, ConvertShootStatComponent_WithShootingStats) {
 
     ASSERT_EQ(result.size(), 7);
     EXPECT_EQ(result[0], static_cast<uint64_t>(SHOOTING_STATS));
-    EXPECT_EQ(result[1], packFloat(2.0f));
-    EXPECT_EQ(result[2], packFloat(1.5f));
+    EXPECT_EQ(result[1], quantization::packTime(2.0f));
+    EXPECT_EQ(result[2], quantization::packTime(1.5f));
     EXPECT_EQ(result[3], static_cast<uint64_t>(3));
-    EXPECT_EQ(result[4], packFloat(30.0f));
-    EXPECT_EQ(result[5], packFloat(5.0f));
-    EXPECT_EQ(result[6], packFloat(180.0f));
+    EXPECT_EQ(result[4], quantization::packAngle(30.0f));
+    EXPECT_EQ(result[5], quantization::packSize(5.0f));
+    EXPECT_EQ(result[6], quantization::packAngle(180.0f));
 }
 
 TEST_F(ECSConversionTest, ConvertShootStatComponent_WithoutShootingStats) {
@@ -235,7 +229,7 @@ TEST_F(ECSConversionTest, ConvertDamageComponent_WithDamage) {
 
     ASSERT_EQ(result.size(), 2);
     EXPECT_EQ(result[0], static_cast<uint64_t>(DAMAGE));
-    EXPECT_EQ(result[1], packFloat(25.0f));
+    EXPECT_EQ(result[1], quantization::packDamage(25.0f));
 }
 
 TEST_F(ECSConversionTest, ConvertDamageComponent_WithoutDamage) {
@@ -253,7 +247,7 @@ TEST_F(ECSConversionTest, ConvertLifetimeComponent_WithLifetime) {
 
     ASSERT_EQ(result.size(), 2);
     EXPECT_EQ(result[0], static_cast<uint64_t>(LIFETIME));
-    EXPECT_EQ(result[1], packFloat(10.0f));
+    EXPECT_EQ(result[1], quantization::packTime(10.0f));
 }
 
 TEST_F(ECSConversionTest, ConvertLifetimeComponent_WithoutLifetime) {
@@ -271,8 +265,8 @@ TEST_F(ECSConversionTest, ConvertVelocityComponent_WithVelocity) {
 
     ASSERT_EQ(result.size(), 3);
     EXPECT_EQ(result[0], static_cast<uint64_t>(VELOCITY));
-    EXPECT_EQ(result[1], packFloat(7.0f));
-    EXPECT_EQ(result[2], packFloat(-3.0f));
+    EXPECT_EQ(result[1], quantization::packVelocity(7.0f));
+    EXPECT_EQ(result[2], quantization::packVelocity(-3.0f));
 }
 
 TEST_F(ECSConversionTest, ConvertVelocityComponent_WithoutVelocity) {
@@ -455,10 +449,10 @@ TEST_F(ECSConversionTest, ConvertGameZoneComponent_WithGameZone) {
 
     ASSERT_EQ(result.size(), 5);
     EXPECT_EQ(result[0], static_cast<uint64_t>(GAME_ZONE));
-    EXPECT_EQ(result[1], packFloat(600.0f)); // height
-    EXPECT_EQ(result[2], packFloat(800.0f)); // width
-    EXPECT_EQ(result[3], packFloat(0.0f));   // left
-    EXPECT_EQ(result[4], packFloat(0.0f));   // top
+    EXPECT_EQ(result[1], quantization::packSize(600.0f)); // height
+    EXPECT_EQ(result[2], quantization::packSize(800.0f)); // width
+    EXPECT_EQ(result[3], quantization::packPosition(0.0f));   // left
+    EXPECT_EQ(result[4], quantization::packPosition(0.0f));   // top
 }
 
 TEST_F(ECSConversionTest, ConvertGameZoneComponent_WithoutGameZone) {
