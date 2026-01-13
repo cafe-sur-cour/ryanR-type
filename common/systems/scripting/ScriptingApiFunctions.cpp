@@ -105,6 +105,14 @@ void ScriptingSystem::bindAPI() {
         return 0.0f;
     });
 
+    lua.set_function(constants::SET_ENTITY_SPEED_FUNCTION,
+        [this](Entity e, float speed) {
+        if (registry->hasComponent<SpeedComponent>(e)) {
+            auto speedComp = registry->getComponent<SpeedComponent>(e);
+            speedComp->setSpeed(speed);
+        }
+    });
+
     lua.set_function(constants::CREATE_SHOOT_INTENT_FUNCTION,
         [this](Entity e, float angle) -> bool {
         if (registry->hasComponent<ShootIntentComponent>(e))

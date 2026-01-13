@@ -156,7 +156,7 @@ void MapGeneratorSystem::generateRandomPowerUp(
 ) {
     (void) resourceManager;
 
-    std::uniform_int_distribution<int> typeDist(0, 1);
+    std::uniform_int_distribution<int> typeDist(0, 2);
     std::string prefabName;
 
     int powerUpType = typeDist(_rng);
@@ -166,6 +166,9 @@ void MapGeneratorSystem::generateRandomPowerUp(
             break;
         case 1:
             prefabName = constants::POWERUP_FLYING_FORCE;
+            break;
+        case 2:
+            prefabName = constants::POWERUP_SPEED;
             break;
         default:
             prefabName = constants::POWERUP_ADD_LIFE;
