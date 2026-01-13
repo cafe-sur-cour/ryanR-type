@@ -9,7 +9,7 @@
 #include <utility>
 #include <string>
 #include "ComponentSerializer.hpp"
-#include "../Constants.hpp"
+#include "../constants.hpp"
 
 std::vector<uint64_t> rserv::ComponentSerializer::serializePosition(uint32_t x, uint32_t y) {
     uint64_t packed = (static_cast<uint64_t>(x) << constants::BITMASK_INT) | y;
@@ -174,7 +174,7 @@ rserv::EntitySnapshot rserv::ComponentSerializer::createSnapshotFromComponents(
             continue;
         }
 
-        if (compType == SHOOTING_STATS || compType == CHARGED_SHOT_COMP) {
+        if (compType == CHARGED_SHOT_COMP) {
             if (i + 3 < componentData.size()) {
                 snapshot.componentMask |= (1u << compType);
                 snapshot.components[compType] = {
@@ -182,6 +182,24 @@ rserv::EntitySnapshot rserv::ComponentSerializer::createSnapshotFromComponents(
                     componentData[i + 3]
                 };
                 i += 4;
+            } else {
+                i++;
+            }
+            continue;
+        }
+
+        if (compType == SHOOTING_STATS) {
+            if (i + 6 < componentData.size()) {
+                snapshot.componentMask |= (1u << compType);
+                snapshot.components[compType] = {
+                    componentData[i + 1],
+                    componentData[i + 2],
+                    componentData[i + 3],
+                    componentData[i + 4],
+                    componentData[i + 5],
+                    componentData[i + 6],
+                };
+                i += 7;
             } else {
                 i++;
             }
