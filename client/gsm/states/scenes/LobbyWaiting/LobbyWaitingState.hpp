@@ -44,7 +44,6 @@ private:
     std::shared_ptr<ui::Button> _startGameButton;
 
     std::shared_ptr<ui::UILayout> _topLeftLayout;
-    std::shared_ptr<ui::UILayout> _bottomRightLayout;
     std::shared_ptr<ui::Text> _gamemodeLabel;
     std::shared_ptr<ui::Button> _gamemodeButton;
     std::shared_ptr<ui::Text> _difficultyLabel;

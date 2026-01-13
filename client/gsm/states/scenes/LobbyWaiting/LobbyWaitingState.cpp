@@ -172,18 +172,41 @@ LobbyWaitingState::LobbyWaitingState(
 
     _uiManager->addElement(_topLeftLayout);
 
-    ui::LayoutConfig topRightConfig;
-    topRightConfig.direction = ui::LayoutDirection::Horizontal;
-    topRightConfig.alignment = ui::LayoutAlignment::End;
-    topRightConfig.spacing = 10.0f;
-    topRightConfig.padding = math::Vector2f(0.0f, 0.0f);
-    topRightConfig.anchorX = ui::AnchorX::Right;
-    topRightConfig.anchorY = ui::AnchorY::Top;
-    topRightConfig.offset = math::Vector2f(-20.0f, 20.0f);
+    // We'll create a single top-right horizontal layout later and add both
+    // the chat and leave buttons into it so they sit side-by-side.
 
-    _bottomRightLayout = std::make_shared<ui::UILayout>(_resourceManager, bottomRightConfig);
-    _bottomRightLayout->setSize(math::Vector2f(200.f, 60.f));
+    ui::LayoutConfig topConfig;
+    topConfig.direction = ui::LayoutDirection::Horizontal;
+    topConfig.alignment = ui::LayoutAlignment::End;
+    topConfig.spacing = 10.0f;
+    topConfig.padding = math::Vector2f(0.0f, 0.0f);
+    topConfig.anchorX = ui::AnchorX::Right;
+    topConfig.anchorY = ui::AnchorY::Top;
+    topConfig.offset = math::Vector2f(-20.0f, 20.0f);
+    _topRightLayout = std::make_shared<ui::UILayout>(_resourceManager, topConfig);
+    _topRightLayout->setSize(math::Vector2f(80.f, 80.f));
 
+    _chatButton = std::make_shared<ui::Button>(_resourceManager);
+    _chatButton->setSize(math::Vector2f(80.f, 80.f));
+    _chatButton->setIconPath(constants::CHAT_PATH);
+    _chatButton->setIconSize(math::Vector2f(500.f, 500.f));
+    _chatButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _chatButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _chatButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _chatButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _chatButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+
+    // create leave button and add both leave + chat to the same top-right layout
     _leaveButton = std::make_shared<ui::Button>(_resourceManager);
     _leaveButton->setText("Leave");
     _leaveButton->setSize(math::Vector2f(150.f, 50.f));
@@ -240,40 +263,8 @@ LobbyWaitingState::LobbyWaitingState(
         }
     });
 
-    _bottomRightLayout->addElement(_leaveButton);
-    _uiManager->addElement(_bottomRightLayout);
-
-    ui::LayoutConfig topConfig;
-    topConfig.direction = ui::LayoutDirection::Horizontal;
-    topConfig.alignment = ui::LayoutAlignment::End;
-    topConfig.spacing = 10.0f;
-    topConfig.padding = math::Vector2f(0.0f, 0.0f);
-    topConfig.anchorX = ui::AnchorX::Right;
-    topConfig.anchorY = ui::AnchorY::Top;
-    topConfig.offset = math::Vector2f(-20.0f, 20.0f);
-    _topRightLayout = std::make_shared<ui::UILayout>(_resourceManager, topConfig);
-    _topRightLayout->setSize(math::Vector2f(80.f, 80.f));
-
-    _chatButton = std::make_shared<ui::Button>(_resourceManager);
-    _chatButton->setSize(math::Vector2f(80.f, 80.f));
-    _chatButton->setIconPath(constants::CHAT_PATH);
-    _chatButton->setIconSize(math::Vector2f(500.f, 500.f));
-    _chatButton->setNormalColor(colors::BUTTON_SECONDARY);
-    _chatButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _chatButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
-    _chatButton->setOnRelease([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
-                this->_resourceManager));
-        }
-    });
-    _chatButton->setOnActivated([this]() {
-        if (auto stateMachine = this->_gsm.lock()) {
-            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
-                this->_resourceManager));
-        }
-    });
-
+    // add leave and chat to the top-right layout so they are side-by-side
+    _topRightLayout->addElement(_leaveButton);
     _topRightLayout->addElement(_chatButton);
     _uiManager->addElement(_topRightLayout);
 
@@ -292,8 +283,6 @@ LobbyWaitingState::LobbyWaitingState(
     if (_loadingAnimation) {
         _uiManager->addElement(_loadingAnimation);
     }
-    _topLayout->addElement(_chatButton);
-    _uiManager->addElement(_topLayout);
 }
 
 void LobbyWaitingState::setupLobbyMasterUI() {
