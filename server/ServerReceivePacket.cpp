@@ -75,6 +75,24 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
 }
 
 bool rserv::Server::requestCode(const net::INetworkEndpoint &endpoint) {
+    std::string username;
+    for (const auto& client : this->_clients) {
+        if (*std::get<1>(client) == endpoint) {
+            username = std::get<2>(client);
+            break;
+        }
+    }
+
+    if (!username.empty()) {
+        auto stats = this->loadUserStats(username);
+        if (stats[constants::BANNED_JSON_WARD] == 1) {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Banned user " + username + " tried to request lobby code",
+                debug::debugType::NETWORK, debug::debugLevel::WARNING);
+            return false;
+        }
+    }
+
     if (!this->_network) {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Warning: Network not initialized",
@@ -189,6 +207,19 @@ bool rserv::Server::processConnectToLobby(std::pair<std::shared_ptr<net::INetwor
                 }
 
                 if (!alreadyInLobbyThread) {
+                    std::string username = std::get<2>(clientToAdd);
+                    if (!username.empty()) {
+                        auto userStats = this->loadUserStats(username);
+                        if (userStats[constants::BANNED_JSON_WARD] == 1) {
+                            debug::Debug::printDebug(this->_config->getIsDebug(),
+                                "[SERVER] Banned user " + username +
+                                    " attempted to join lobby",
+                                debug::debugType::NETWORK, debug::debugLevel::WARNING);
+                            this->lobbyConnectValuePacket(*payload.first, false);
+                            return true;
+                        }
+                    }
+
                     lobby->_clients.push_back(clientToAdd);
                 }
 

@@ -130,7 +130,8 @@ void rserv::HttpServer::infoEndpoint(const httplib::Request &req, httplib::Respo
             {"playerDetails", info.playerDetails},
             {"lobbyPlayerDetails", info.lobbyPlayerDetails},
             {"playerStats", info.playerStats},
-            {"inGamePlayers", info.inGamePlayers}
+            {"inGamePlayers", info.inGamePlayers},
+            {"bannedPlayers", info.bannedPlayers}
         };
 
         res.set_content(jsonResponse.dump(), "application/json");
@@ -189,7 +190,8 @@ void rserv::HttpServer::commandsSuggestionsEndpoint(
             {"suggestions", {
                 "/close <lobby_id or lobby_code>",
                 "/kick <player_id or player_name>",
-                "/ban <player_id or player_name>"
+                "/ban <player_id or player_name>",
+                "/unban <player_id or player_name>"
             }}
         };
 

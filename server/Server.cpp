@@ -414,7 +414,8 @@ std::map<std::string, int> rserv::Server::loadUserStats(const std::string& usern
     std::map<std::string, int> stats = {
         {constants::GAMES_PLAYED_JSON_WARD, 0},
         {constants::WINS_JSON_WARD, 0},
-        {constants::HIGH_SCORE_JSON_WARD, 0}
+        {constants::HIGH_SCORE_JSON_WARD, 0},
+        {constants::BANNED_JSON_WARD, 0}
     };
 
     const std::string filepath = constants::USERS_JSON_PATH;
@@ -453,11 +454,65 @@ std::map<std::string, int> rserv::Server::loadUserStats(const std::string& usern
                 stats[constants::HIGH_SCORE_JSON_WARD] =
                     user[constants::HIGH_SCORE_JSON_WARD];
             }
+            if (user.contains(constants::BANNED_JSON_WARD) &&
+                user[constants::BANNED_JSON_WARD].is_boolean()) {
+                stats[constants::BANNED_JSON_WARD] =
+                    user[constants::BANNED_JSON_WARD] ? 1 : 0;
+            }
             break;
         }
     }
 
     return stats;
+}
+
+void rserv::Server::saveUserBannedStatus(const std::string& username, bool banned) const {
+    const std::string filepath = constants::USERS_JSON_PATH;
+    std::ifstream infile(filepath);
+    nlohmann::json users;
+
+    if (infile.is_open()) {
+        try {
+            infile >> users;
+            infile.close();
+        } catch (const std::exception&) {
+            users = nlohmann::json::array();
+        }
+    } else {
+        users = nlohmann::json::array();
+    }
+
+    if (!users.is_array()) {
+        users = nlohmann::json::array();
+    }
+
+    bool userFound = false;
+    for (auto& user : users) {
+        if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
+            user[constants::USERNAME_JSON_WARD].is_string() &&
+            user[constants::USERNAME_JSON_WARD] == username) {
+            user[constants::BANNED_JSON_WARD] = banned;
+            userFound = true;
+            break;
+        }
+    }
+
+    if (!userFound) {
+        nlohmann::json newUser;
+        newUser[constants::USERNAME_JSON_WARD] = username;
+        newUser[constants::BANNED_JSON_WARD] = banned;
+        newUser[constants::GAMES_PLAYED_JSON_WARD] = 0;
+        newUser[constants::WINS_JSON_WARD] = 0;
+        newUser[constants::HIGH_SCORE_JSON_WARD] = 0;
+        newUser[constants::TIME_SPENT_JSON_WARD] = 0;
+        users.push_back(newUser);
+    }
+
+    std::ofstream outfile(filepath);
+    if (outfile.is_open()) {
+        outfile << users.dump(4);
+        outfile.close();
+    }
 }
 
 rserv::ServerInfo rserv::Server::getServerInfo() const {
@@ -536,6 +591,48 @@ rserv::ServerInfo rserv::Server::getServerInfo() const {
         }
     }
 
+    const std::string filepath = constants::USERS_JSON_PATH;
+    std::ifstream file(filepath);
+    if (file.is_open()) {
+        nlohmann::json users;
+        try {
+            file >> users;
+            file.close();
+        } catch (const std::exception&) {
+        }
+
+        if (users.is_array()) {
+            for (const auto& user : users) {
+                if (user.is_object() && user.contains(constants::USERNAME_JSON_WARD) &&
+                    user[constants::USERNAME_JSON_WARD].is_string()) {
+                    std::string username = user[constants::USERNAME_JSON_WARD];
+                    bool isBanned = user.contains(constants::BANNED_JSON_WARD) &&
+                        user[constants::BANNED_JSON_WARD].is_boolean() &&
+                        user[constants::BANNED_JSON_WARD].get<bool>();
+
+                    if (isBanned && !username.empty()) {
+                        uint8_t playerId = 0;
+                        for (const auto& client : this->_clients) {
+                            if (std::get<2>(client) == username) {
+                                playerId = std::get<0>(client);
+                                break;
+                            }
+                        }
+
+                        std::string playerInfo;
+                        if (playerId != 0) {
+                            playerInfo = "Player ID: " + std::to_string(playerId) +
+                                ", Username: " + username;
+                        } else {
+                            playerInfo = "Username: " + username + " (Offline)";
+                        }
+                        info.bannedPlayers.push_back(playerInfo);
+                    }
+                }
+            }
+        }
+    }
+
     return info;
 }
 
@@ -556,6 +653,10 @@ std::string rserv::Server::executeCommand(const std::string& command) {
         std::string playerId;
         iss >> playerId;
         return banPlayer(playerId);
+    } else if (cmd == "/unban") {
+        std::string playerId;
+        iss >> playerId;
+        return unbanPlayer(playerId);
     } else {
         return "Unknown command";
     }
@@ -637,31 +738,63 @@ std::string rserv::Server::kickPlayer(const std::string& playerId) {
 
 std::string rserv::Server::banPlayer(const std::string& playerId) {
     uint8_t id = 0;
+    std::string username;
 
     try {
         id = static_cast<uint8_t>(std::stoi(playerId));
-    } catch (const std::exception&) {
         for (const auto& client : _clients) {
-            std::string username = std::get<2>(client);
-            if (username == playerId) {
+            if (std::get<0>(client) == id) {
+                username = std::get<2>(client);
+                break;
+            }
+        }
+    } catch (const std::exception&) {
+        username = playerId;
+        for (const auto& client : _clients) {
+            if (std::get<2>(client) == username) {
                 id = std::get<0>(client);
                 break;
             }
         }
-        if (id == 0) {
-            return "Player not found";
-        }
     }
 
-    if (_clientToLobby.find(id) != _clientToLobby.end()) {
+    if (username.empty()) {
+        return "Player not found";
+    }
+
+    saveUserBannedStatus(username, true);
+
+    if (id != 0 && _clientToLobby.find(id) != _clientToLobby.end()) {
         auto lobby = _clientToLobby[id];
         lobby->removeClient(id);
         for (auto& client : _clients) {
             if (std::get<0>(client) == id) {
                 forceLeavePacket(*std::get<1>(client), constants::ForceLeaveType::BANNED);
-                return "Player " + playerId + " banned";
+                break;
             }
         }
+    }
+
+    return "Player " + playerId + " banned";
+}
+
+std::string rserv::Server::unbanPlayer(const std::string& playerId) {
+    std::string username = playerId;
+
+    try {
+        uint8_t id = static_cast<uint8_t>(std::stoi(playerId));
+        for (const auto& client : _clients) {
+            if (std::get<0>(client) == id) {
+                username = std::get<2>(client);
+                break;
+            }
+        }
+    } catch (const std::exception&) {
+    }
+
+    if (!username.empty()) {
+        saveUserBannedStatus(username, false);
+        return "Player " + playerId + " unbanned";
     }
     return "Player not found";
 }
