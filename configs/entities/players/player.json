@@ -95,7 +95,8 @@
             "fireRate": 5.0,
             "shotCount": 1,
             "angleOffset": 0.0,
-            "spreadAngle": 0.0
+            "spreadAngle": 0.0,
+            "distanceOffset": 0.0
         },
         "PlayerTag": { "target": "both" },
         "ControllableTag": { "target": "both" },
