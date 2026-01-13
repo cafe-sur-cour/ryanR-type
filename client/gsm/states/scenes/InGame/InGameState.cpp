@@ -40,6 +40,7 @@
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
 #include "../../../../systems/effects/ClientEffectCleanupSystem.hpp"
+#include "../../../../systems/effects/HideLifetimeSystem.hpp"
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
@@ -112,6 +113,7 @@ void InGameState::enter() {
     // addSystem(std::make_shared<ecs::ReplaySystem>());
     addSystem(std::make_shared<ecs::SoundSystem>());
     addSystem(std::make_shared<ecs::MusicSystem>());
+    addSystem(std::make_shared<ecs::HideLifetimeSystem>());
 
     auto audio = _resourceManager->get<gfx::IAudio>();
 
