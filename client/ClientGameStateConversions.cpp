@@ -22,7 +22,6 @@
 #include "../common/components/tags/ObstacleTag.hpp"
 #include "../common/components/permanent/AnimationStateComponent.hpp"
 #include "interpolation/NetworkStateComponent.hpp"
-#include "../common/FloatQuantization.hpp"
 
 namespace {
 
@@ -48,11 +47,11 @@ size_t ClientNetwork::parseTransformComponent(const std::vector<uint64_t> &paylo
     size_t index, ecs::Entity entityId) {
     if (index + 5 > payload.size()) return index;
     auto registry = this->_resourceManager->get<ecs::Registry>();
-    float posX = quantization::unpackPosition(payload[index++]);
-    float posY = quantization::unpackPosition(payload[index++]);
-    float rotation = quantization::unpackRotation(payload[index++]);
-    float scaleX = quantization::unpackScale(payload[index++]);
-    float scaleY = quantization::unpackScale(payload[index++]);
+    float posX = unpackFloat(payload[index++]);
+    float posY = unpackFloat(payload[index++]);
+    float rotation = unpackFloat(payload[index++]);
+    float scaleX = unpackFloat(payload[index++]);
+    float scaleY = unpackFloat(payload[index++]);
     if (!registry->hasComponent<ecs::TransformComponent>(entityId)) {
         auto transform = std::make_shared<ecs::TransformComponent>(
             math::Vector2f(posX, posY),
@@ -85,7 +84,7 @@ size_t ClientNetwork::parseTransformComponent(const std::vector<uint64_t> &paylo
 size_t ClientNetwork::parseSpeedComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     if (index + 1 > payload.size()) return index;
-    float speed = quantization::unpackSpeed(payload[index++]);
+    float speed = unpackFloat(payload[index++]);
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Entity " + std::to_string(entityId) + " Speed: " + std::to_string(speed),
         debug::debugType::NETWORK,
@@ -97,8 +96,8 @@ size_t ClientNetwork::parseHealthComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     if (index + 2 > payload.size()) return index;
     auto registry = this->_resourceManager->get<ecs::Registry>();
-    float health = quantization::unpackHealth(payload[index++]);
-    float baseHealth = quantization::unpackHealth(payload[index++]);
+    float health = unpackFloat(payload[index++]);
+    float baseHealth = unpackFloat(payload[index++]);
 
     if (!registry->hasComponent<ecs::HealthComponent>(entityId)) {
         auto healthComp = std::make_shared<ecs::HealthComponent>(static_cast<float>(health));
@@ -125,10 +124,10 @@ size_t ClientNetwork::parseHealthComponent(const std::vector<uint64_t> &payload,
 size_t ClientNetwork::parseColliderComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     if (index + 5 <= payload.size()) {
-        float offsetX = quantization::unpackPosition(payload[index++]);
-        float offsetY = quantization::unpackPosition(payload[index++]);
-        float sizeX = quantization::unpackSize(payload[index++]);
-        float sizeY = quantization::unpackSize(payload[index++]);
+        float offsetX = unpackFloat(payload[index++]);
+        float offsetY = unpackFloat(payload[index++]);
+        float sizeX = unpackFloat(payload[index++]);
+        float sizeY = unpackFloat(payload[index++]);
         uint8_t colliderType = static_cast<uint8_t>(payload[index++]);
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Entity " + std::to_string(entityId) + " Collider: offset(" +
@@ -144,12 +143,12 @@ size_t ClientNetwork::parseColliderComponent(const std::vector<uint64_t> &payloa
 size_t ClientNetwork::parseShootingStatsComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     if (index + 6 <= payload.size()) {
-        float fireRate = quantization::unpackTime(payload[index++]);
-        float cooldown = quantization::unpackTime(payload[index++]);
+        float fireRate = unpackFloat(payload[index++]);
+        float cooldown = unpackFloat(payload[index++]);
         uint32_t shotCount = static_cast<uint32_t>(payload[index++]);
-        float angleSpread = quantization::unpackAngle(payload[index++]);
-        float offsetDistance = quantization::unpackSize(payload[index++]);
-        float angleOffset = quantization::unpackAngle(payload[index++]);
+        float angleSpread = unpackFloat(payload[index++]);
+        float offsetDistance = unpackFloat(payload[index++]);
+        float angleOffset = unpackFloat(payload[index++]);
 
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Entity " + std::to_string(entityId) + " ShootingStats: fireRate(" +
@@ -203,7 +202,7 @@ size_t ClientNetwork::parseDamageComponent(const std::vector<uint64_t> &payload,
 size_t ClientNetwork::parseLifetimeComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     if (index + 1 <= payload.size()) {
-        float lifetime = quantization::unpackTime(payload[index++]);
+        float lifetime = unpackFloat(payload[index++]);
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Entity " + std::to_string(entityId) + " Lifetime: " +
                 std::to_string(lifetime),
@@ -217,8 +216,8 @@ size_t ClientNetwork::parseVelocityComponent(const std::vector<uint64_t> &payloa
     size_t index, ecs::Entity entityId) {
     if (index + 2 > payload.size()) return index;
     auto registry = this->_resourceManager->get<ecs::Registry>();
-    float velX = quantization::unpackVelocity(payload[index++]);
-    float velY = quantization::unpackVelocity(payload[index++]);
+    float velX = unpackFloat(payload[index++]);
+    float velY = unpackFloat(payload[index++]);
     if (!registry->hasComponent<ecs::VelocityComponent>(entityId)) {
         auto velocity = std::make_shared<ecs::VelocityComponent>(math::Vector2f(velX, velY));
         registry->addComponent(entityId, velocity);
@@ -369,10 +368,10 @@ size_t ClientNetwork::parseProjectilePrefabComponent(const std::vector<uint64_t>
 size_t ClientNetwork::parseGameZoneComponent(const std::vector<uint64_t> &payload,
     size_t index, ecs::Entity entityId) {
     if (index + 4 <= payload.size()) {
-        float height = quantization::unpackSize(payload[index++]);
-        float width = quantization::unpackSize(payload[index++]);
-        float left = quantization::unpackPosition(payload[index++]);
-        float top = quantization::unpackPosition(payload[index++]);
+        float height = unpackFloat(payload[index++]);
+        float width = unpackFloat(payload[index++]);
+        float left = unpackFloat(payload[index++]);
+        float top = unpackFloat(payload[index++]);
         debug::Debug::printDebug(this->_isDebug,
             "[CLIENT] Entity " + std::to_string(entityId) + " GameZone: height(" +
             std::to_string(height) + ") width(" + std::to_string(width) + ") left(" +
@@ -432,9 +431,9 @@ size_t ClientNetwork::parseChargedShotComponent(
     const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId
 ) {
     if (index + 3 <= payload.size()) {
-        float charge = quantization::unpackDamage(payload[index++]);
-        float maxCharge = quantization::unpackDamage(payload[index++]);
-        float reloadTime = quantization::unpackTime(payload[index++]);
+        float charge = unpackFloat(payload[index++]);
+        float maxCharge = unpackFloat(payload[index++]);
+        float reloadTime = unpackFloat(payload[index++]);
 
         debug::Debug::printDebug(
             this->_isDebug,
