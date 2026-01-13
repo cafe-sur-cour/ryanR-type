@@ -391,6 +391,7 @@ bool rserv::Lobby::processDisconnections(uint8_t idClient) {
                 debug::Debug::printDebug(this->getIsDebug(),
                     "All clients disconnected. Lobby will close.",
                     debug::debugType::NETWORK, debug::debugLevel::INFO);
+                _running.store(false, std::memory_order_release);
             }
             return true;
         }
