@@ -172,9 +172,6 @@ LobbyWaitingState::LobbyWaitingState(
 
     _uiManager->addElement(_topLeftLayout);
 
-    // We'll create a single top-right horizontal layout later and add both
-    // the chat and leave buttons into it so they sit side-by-side.
-
     ui::LayoutConfig topConfig;
     topConfig.direction = ui::LayoutDirection::Horizontal;
     topConfig.alignment = ui::LayoutAlignment::End;
@@ -206,7 +203,6 @@ LobbyWaitingState::LobbyWaitingState(
         }
     });
 
-    // create leave button and add both leave + chat to the same top-right layout
     _leaveButton = std::make_shared<ui::Button>(_resourceManager);
     _leaveButton->setText("Leave");
     _leaveButton->setSize(math::Vector2f(150.f, 50.f));
@@ -263,7 +259,6 @@ LobbyWaitingState::LobbyWaitingState(
         }
     });
 
-    // add leave and chat to the top-right layout so they are side-by-side
     _topRightLayout->addElement(_leaveButton);
     _topRightLayout->addElement(_chatButton);
     _uiManager->addElement(_topRightLayout);
@@ -274,7 +269,8 @@ LobbyWaitingState::LobbyWaitingState(
         auto window = _resourceManager->get<gfx::IWindow>();
         if (window) {
             auto [windowWidth, windowHeight] = window->getWindowSize();
-            _loadingAnimation->setPosition(math::Vector2f(static_cast<float>(windowWidth) - 200.0f, static_cast<float>(windowHeight) - 300.0f));
+            _loadingAnimation->setPosition(math::Vector2f(static_cast<float>(windowWidth) -
+                200.0f, static_cast<float>(windowHeight) - 300.0f));
         }
     } else {
         std::cerr << "Failed to load loading animation prefab" << std::endl;
