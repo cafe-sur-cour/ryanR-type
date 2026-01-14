@@ -241,7 +241,9 @@ void InGameState::drawHealthHUD(
     size_t feedbackBaseOffsetY = 105;
 
     std::stringstream healthSs;
-    healthSs << "Health: " << static_cast<int>(health) << "/" << static_cast<int>(maxHealth);
+    float displayMaxHealth = (health > 100.0f) ? health : maxHealth;
+    healthSs << "Health: " << static_cast<int>(health) << "/" <<
+        static_cast<int>(displayMaxHealth);
     std::string healthText = healthSs.str();
 
     float healthRatio = (maxHealth > 0.0f) ? health / maxHealth : 0.0f;
