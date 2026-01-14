@@ -17,6 +17,8 @@
 #include "../../../../ui/elements/focusable/TextInput.hpp"
 #include "../../../../ui/elements/Text.hpp"
 #include <memory>
+#include "../../../../ui/elements/SpritePreview.hpp"
+
 
 namespace gsm {
 
@@ -44,6 +46,7 @@ class ConnectionState : public AGameState {
         std::shared_ptr<ui::Button> _quitButton;
         std::shared_ptr<ui::Text> _spacer;
         std::shared_ptr<ui::UILayout> _layout;
+        std::shared_ptr<ui::SpritePreview> _loadingAnimation;
         bool _wasConnected = false;
 };
 
