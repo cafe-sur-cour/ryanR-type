@@ -60,9 +60,8 @@ void HealthSystem::_handleDamageUpdates(
                 damages *= multiplier;
             }
         }
-        float health = healthComponent->getHealth();
 
-        healthComponent->setHealth(health - damages);
+        healthComponent->decreaseHealth(damages);
         healthComponent->setLastDamageSource(damageComponent->getSource());
 
         registry->removeOneComponent<DamageIntentComponent>(entityId);
