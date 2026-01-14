@@ -51,7 +51,6 @@ private:
 
     std::shared_ptr<ui::Button> _button1;
     std::shared_ptr<ui::Button> _button2;
-    std::shared_ptr<ui::Button> _button3;
     std::shared_ptr<ui::Button> _backButton;
 };
 

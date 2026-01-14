@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <sstream>
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/constants.hpp"
@@ -18,6 +19,7 @@
 #include "../../../../colors.hpp"
 #include "../../../../SettingsConfig.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
+#include "../../../../ui/elements/Image.hpp"
 
 namespace gsm {
 
@@ -57,78 +59,36 @@ HowToPlayState::HowToPlayState(
     titleConfig.alignment = ui::LayoutAlignment::Center;
     titleConfig.spacing = 0.0f;
     titleConfig.padding = math::Vector2f(0.0f, 0.0f);
-    titleConfig.anchorX = ui::AnchorX::Center;
+    titleConfig.anchorX = ui::AnchorX::Left;
     titleConfig.anchorY = ui::AnchorY::Top;
-    titleConfig.offset = math::Vector2f(0.0f, 30.0f);
+    titleConfig.offset = math::Vector2f(650.0f, 30.0f);
 
     auto titleLayout = std::make_shared<ui::UILayout>(_resourceManager, titleConfig);
     titleLayout->setSize(math::Vector2f(200.f, 250.f));
 
     _titleText = std::make_shared<ui::Text>(_resourceManager);
-    _titleText->setText("HOW TO PLAY");
+    _titleText->setText(constants::HOW_TO_PLAY_TITLE_TEXT);
     _titleText->setSize(math::Vector2f(2000.f, 250.f));
-    _titleText->setTextColor(gfx::color_t{100, 200, 255, 255});
-    _titleText->setOutlineColor(gfx::color_t{20, 60, 100, 255});
+    _titleText->setTextColor(colors::BUTTON_PRIMARY_HOVER);
+    _titleText->setOutlineColor(gfx::color_t{120, 0, 0, 255});
+    _titleText->setFontSize(56);
     _titleText->setOutlineThickness(6.0f);
 
     titleLayout->addElement(_titleText);
     _uiManager->addElement(titleLayout);
 
-    ui::LayoutConfig mainConfig;
-    mainConfig.direction = ui::LayoutDirection::Horizontal;
-    mainConfig.alignment = ui::LayoutAlignment::Center;
-    mainConfig.spacing = 50.0f;
-    mainConfig.padding = math::Vector2f(30.0f, 30.0f);
-    mainConfig.anchorX = ui::AnchorX::Center;
-    mainConfig.anchorY = ui::AnchorY::Center;
-    mainConfig.offset = math::Vector2f(0.0f, 20.0f);
-
-    auto mainLayout = std::make_shared<ui::UILayout>(_resourceManager, mainConfig);
-    mainLayout->setSize(math::Vector2f(1600.f, 450.f));
-
-    ui::LayoutConfig controlsConfig;
-    controlsConfig.direction = ui::LayoutDirection::Vertical;
-    controlsConfig.alignment = ui::LayoutAlignment::Start;
-    controlsConfig.spacing = 12.0f;
-    controlsConfig.padding = math::Vector2f(30.0f, 25.0f);
-    controlsConfig.anchorX = ui::AnchorX::Left;
-    controlsConfig.anchorY = ui::AnchorY::Center;
-    controlsConfig.offset = math::Vector2f(0.0f, 0.0f);
-
-    auto controlsSection = std::make_shared<ui::UILayout>(_resourceManager, controlsConfig);
-    controlsSection->setSize(math::Vector2f(750.f, 450.f));
-
-    auto controlsTitleBox = std::make_shared<ui::Box>(_resourceManager);
-    controlsTitleBox->setSize(math::Vector2f(690.f, 60.f));
-    controlsTitleBox->setBackgroundColor(gfx::color_t{50, 100, 150, 240});
-    controlsTitleBox->setBorderColor(gfx::color_t{100, 180, 255, 255});
-    controlsTitleBox->setBorderThickness(3.0f);
-
-    ui::LayoutConfig controlsTitleConfig;
-    controlsTitleConfig.direction = ui::LayoutDirection::Vertical;
-    controlsTitleConfig.alignment = ui::LayoutAlignment::Center;
-    controlsTitleConfig.spacing = 0.0f;
-    controlsTitleConfig.padding = math::Vector2f(0.0f, 0.0f);
-    controlsTitleConfig.anchorX = ui::AnchorX::Center;
-    controlsTitleConfig.anchorY = ui::AnchorY::Center;
-
-    auto controlsTitleLayout = std::make_shared<ui::UILayout>(_resourceManager,
-        controlsTitleConfig);
-    controlsTitleLayout->setSize(math::Vector2f(690.f, 60.f));
-
     auto controlsTitle = std::make_shared<ui::Text>(_resourceManager);
-    controlsTitle->setText("CONTROLS");
+    controlsTitle->setText(constants::CONTROLS_TITLE_TEXT);
     controlsTitle->setSize(math::Vector2f(650.f, 40.f));
-    controlsTitle->setTextColor(gfx::color_t{255, 255, 255, 255});
-    controlsTitle->setOutlineColor(gfx::color_t{50, 50, 50, 255});
+    controlsTitle->setPosition(math::Vector2f(430.0f, 250.0f));
+    controlsTitle->setTextColor(colors::BUTTON_SECONDARY_HOVER);
+    controlsTitle->setOutlineColor(gfx::color_t{120, 87, 0, 255});
     controlsTitle->setOutlineThickness(3.0f);
-
-    controlsTitleLayout->addChild(controlsTitleBox);
-    controlsTitleLayout->addElement(controlsTitle);
-    controlsSection->addElement(controlsTitleLayout);
+    controlsTitle->setFontSize(32);
+    _uiManager->addElement(controlsTitle);
 
     auto inputMappingManager = _resourceManager->get<ecs::InputMappingManager>();
-    std::vector<std::pair<std::string, gfx::color_t>> controls;
+    std::vector<std::string> controls;
 
     if (inputMappingManager) {
         auto leftKey = inputMappingManager->getKeyForRemappableAction(
@@ -153,135 +113,76 @@ HowToPlayState::HowToPlayState(
         std::string gamepadForce = "X/Y";
 
         controls = {
-            {keyboardMove + " / Left Stick : Move Ship", gfx::color_t{200, 230, 255, 255}},
-            {getControlDisplayName(shootKey) + " / " + gamepadShoot + " : Shoot",
-                gfx::color_t{255, 200, 100, 255}},
-            {getControlDisplayName(forceKey) + " / " + gamepadForce + " : Force",
-                gfx::color_t{255, 100, 200, 255}},
-            {"ESC : Menu", gfx::color_t{255, 150, 150, 255}}
+            keyboardMove + " / Left Stick : Move Ship",
+            getControlDisplayName(shootKey) + " / " + gamepadShoot + " : Shoot",
+            getControlDisplayName(forceKey) + " / " + gamepadForce + " : Force",
+            "ESC : Menu"
         };
     } else {
         controls = {
-            {"Z/Q/S/D / Left Stick : Move Ship", gfx::color_t{200, 230, 255, 255}},
-            {"SPACE / A : Shoot", gfx::color_t{255, 200, 100, 255}},
-            {"F / X/Y : Force", gfx::color_t{255, 100, 200, 255}},
-            {"ESC : Menu", gfx::color_t{255, 150, 150, 255}}
+            "Z/Q/S/D / Left Stick : Move Ship",
+            "SPACE / A : Shoot",
+            "F / X/Y : Force",
+            "ESC : Menu"
         };
     }
 
-    for (const auto& [text, color] : controls) {
-        auto controlBox = std::make_shared<ui::Box>(_resourceManager);
-        controlBox->setSize(math::Vector2f(690.f, 55.f));
-        controlBox->setBackgroundColor(gfx::color_t{30, 40, 60, 220});
-        controlBox->setBorderColor(gfx::color_t{80, 120, 160, 200});
-        controlBox->setBorderThickness(2.0f);
-
-        ui::LayoutConfig controlConfig;
-        controlConfig.direction = ui::LayoutDirection::Vertical;
-        controlConfig.alignment = ui::LayoutAlignment::Center;
-        controlConfig.spacing = 0.0f;
-        controlConfig.padding = math::Vector2f(0.0f, 0.0f);
-        controlConfig.anchorX = ui::AnchorX::Left;
-        controlConfig.anchorY = ui::AnchorY::Center;
-
-        auto controlLayout = std::make_shared<ui::UILayout>(_resourceManager, controlConfig);
-        controlLayout->setSize(math::Vector2f(690.f, 55.f));
+    float controlsXPos = 200.0f;
+    float controlsStartY = 310.0f;
+    for (size_t i = 0; i < controls.size(); ++i) {
+        auto controlImage = std::make_shared<ui::Image>(_resourceManager);
+        controlImage->setTexturePath(constants::LEADERBOARD_PLACEHOLDER_PATH);
+        controlImage->setSize(math::Vector2f(750.f, 50.f));
+        float yPos = controlsStartY + (static_cast<float>(i) * 120.0f);
+        controlImage->setPosition(math::Vector2f(controlsXPos, yPos));
+        _uiManager->addElement(controlImage);
 
         auto controlText = std::make_shared<ui::Text>(_resourceManager);
-        controlText->setText(text);
-        controlText->setSize(math::Vector2f(650.f, 35.f));
-        controlText->setTextColor(color);
-        controlText->setOutlineColor(gfx::color_t{20, 20, 40, 255});
-        controlText->setOutlineThickness(2.0f);
-
-        controlLayout->addChild(controlBox);
-        controlLayout->addElement(controlText);
-        controlsSection->addElement(controlLayout);
+        controlText->setText(controls[i]);
+        controlText->setSize(math::Vector2f(700.f, 30.f));
+        controlText->setPosition(math::Vector2f(controlsXPos + 95.0f, yPos + 40.0f));
+        controlText->setTextColor(gfx::color_t{255, 255, 255, 255});
+        controlText->setFontSize(24);
+        _uiManager->addElement(controlText);
+        _controlTexts.push_back(controlText);
     }
-
-    ui::LayoutConfig objectivesConfig;
-    objectivesConfig.direction = ui::LayoutDirection::Vertical;
-    objectivesConfig.alignment = ui::LayoutAlignment::Start;
-    objectivesConfig.spacing = 12.0f;
-    objectivesConfig.padding = math::Vector2f(30.0f, 25.0f);
-    objectivesConfig.anchorX = ui::AnchorX::Right;
-    objectivesConfig.anchorY = ui::AnchorY::Center;
-    objectivesConfig.offset = math::Vector2f(0.0f, 0.0f);
-
-    auto objectivesSection = std::make_shared<ui::UILayout>(_resourceManager,
-        objectivesConfig);
-    objectivesSection->setSize(math::Vector2f(750.f, 450.f));
-
-    auto objectivesTitleBox = std::make_shared<ui::Box>(_resourceManager);
-    objectivesTitleBox->setSize(math::Vector2f(690.f, 60.f));
-    objectivesTitleBox->setBackgroundColor(gfx::color_t{100, 50, 150, 240});
-    objectivesTitleBox->setBorderColor(gfx::color_t{180, 100, 255, 255});
-    objectivesTitleBox->setBorderThickness(3.0f);
-
-    ui::LayoutConfig objectivesTitleConfig;
-    objectivesTitleConfig.direction = ui::LayoutDirection::Vertical;
-    objectivesTitleConfig.alignment = ui::LayoutAlignment::Center;
-    objectivesTitleConfig.spacing = 0.0f;
-    objectivesTitleConfig.padding = math::Vector2f(0.0f, 0.0f);
-    objectivesTitleConfig.anchorX = ui::AnchorX::Center;
-    objectivesTitleConfig.anchorY = ui::AnchorY::Center;
-
-    auto objectivesTitleLayout = std::make_shared<ui::UILayout>(_resourceManager,
-        objectivesTitleConfig);
-    objectivesTitleLayout->setSize(math::Vector2f(690.f, 60.f));
 
     auto objectivesTitle = std::make_shared<ui::Text>(_resourceManager);
-    objectivesTitle->setText("OBJECTIVES");
-    objectivesTitle->setSize(math::Vector2f(650.f, 40.f));
-    objectivesTitle->setTextColor(gfx::color_t{255, 255, 255, 255});
-    objectivesTitle->setOutlineColor(gfx::color_t{50, 50, 50, 255});
+    objectivesTitle->setText(constants::OBJECTIVES_TITLE_TEXT);
+    objectivesTitle->setSize(math::Vector2f(800.f, 40.f));
+    objectivesTitle->setPosition(math::Vector2f(1220.0f, 250.0f));
+    objectivesTitle->setTextColor(colors::BUTTON_SECONDARY_HOVER);
+    objectivesTitle->setOutlineColor(gfx::color_t{120, 87, 0, 255});
     objectivesTitle->setOutlineThickness(3.0f);
+    objectivesTitle->setFontSize(32);
+    _uiManager->addElement(objectivesTitle);
 
-    objectivesTitleLayout->addChild(objectivesTitleBox);
-    objectivesTitleLayout->addElement(objectivesTitle);
-    objectivesSection->addElement(objectivesTitleLayout);
-
-    std::vector<std::pair<std::string, gfx::color_t>> objectives = {
-        {"> Destroy Enemy Ships", gfx::color_t{255, 100, 100, 255}},
-        {"> Survive the Waves", gfx::color_t{100, 255, 200, 255}},
-        {"> Collect Power-ups", gfx::color_t{255, 215, 0, 255}},
-        {"> Beat High Score", gfx::color_t{255, 150, 255, 255}}
+    std::vector<std::string> objectives = {
+        constants::OBJECTIVE_DESTROY_ENEMIES,
+        constants::OBJECTIVE_SURVIVE_WAVES,
+        constants::OBJECTIVE_COLLECT_POWERUPS,
+        constants::OBJECTIVE_BEAT_HIGH_SCORE
     };
 
-    for (const auto& [text, color] : objectives) {
-        auto objectiveBox = std::make_shared<ui::Box>(_resourceManager);
-        objectiveBox->setSize(math::Vector2f(690.f, 55.f));
-        objectiveBox->setBackgroundColor(gfx::color_t{40, 30, 60, 220});
-        objectiveBox->setBorderColor(gfx::color_t{120, 80, 160, 200});
-        objectiveBox->setBorderThickness(2.0f);
-
-        ui::LayoutConfig objectiveConfig;
-        objectiveConfig.direction = ui::LayoutDirection::Vertical;
-        objectiveConfig.alignment = ui::LayoutAlignment::Center;
-        objectiveConfig.spacing = 0.0f;
-        objectiveConfig.padding = math::Vector2f(0.0f, 0.0f);
-        objectiveConfig.anchorX = ui::AnchorX::Left;
-        objectiveConfig.anchorY = ui::AnchorY::Center;
-
-        auto objectiveLayout = std::make_shared<ui::UILayout>(_resourceManager,
-            objectiveConfig);
-        objectiveLayout->setSize(math::Vector2f(690.f, 55.f));
+    float objectivesXPos = 980.0f;
+    float objectivesStartY = 310.0f;
+    for (size_t i = 0; i < objectives.size(); ++i) {
+        auto objectiveImage = std::make_shared<ui::Image>(_resourceManager);
+        objectiveImage->setTexturePath(constants::LEADERBOARD_PLACEHOLDER_PATH);
+        objectiveImage->setSize(math::Vector2f(750.f, 50.f));
+        float yPos = objectivesStartY + (static_cast<float>(i) * 120.0f);
+        objectiveImage->setPosition(math::Vector2f(objectivesXPos, yPos));
+        _uiManager->addElement(objectiveImage);
 
         auto objectiveText = std::make_shared<ui::Text>(_resourceManager);
-        objectiveText->setText(text);
-        objectiveText->setSize(math::Vector2f(650.f, 35.f));
-        objectiveText->setTextColor(color);
-        objectiveText->setOutlineColor(gfx::color_t{20, 20, 40, 255});
-        objectiveText->setOutlineThickness(2.0f);
-
-        objectiveLayout->addChild(objectiveBox);
-        objectiveLayout->addElement(objectiveText);
-        objectivesSection->addElement(objectiveLayout);
+        objectiveText->setText(objectives[i]);
+        objectiveText->setSize(math::Vector2f(700.f, 30.f));
+        objectiveText->setPosition(math::Vector2f(objectivesXPos + 95.0f, yPos + 40.0f));
+        objectiveText->setTextColor(gfx::color_t{255, 255, 255, 255});
+        objectiveText->setFontSize(24);
+        _uiManager->addElement(objectiveText);
+        _objectiveTexts.push_back(objectiveText);
     }
-
-    mainLayout->addElement(controlsSection);
-    mainLayout->addElement(objectivesSection);
-    _uiManager->addElement(mainLayout);
 
     ui::LayoutConfig backLayoutConfig;
     backLayoutConfig.direction = ui::LayoutDirection::Vertical;
@@ -296,7 +197,7 @@ HowToPlayState::HowToPlayState(
     backLayout->setSize(math::Vector2f(400.f, 70.f));
 
     _backButton = std::make_shared<ui::Button>(_resourceManager);
-    _backButton->setText("BACK");
+    _backButton->setText(constants::BACK_BUTTON_TEXT_UPPER);
     _backButton->setSize(math::Vector2f(400.f, 70.f));
     _backButton->setNormalColor(colors::BUTTON_SECONDARY);
     _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
@@ -360,6 +261,14 @@ void HowToPlayState::exit() {
 
     _background.reset();
     _titleText.reset();
+    for (auto& text : _controlTexts) {
+        text.reset();
+    }
+    _controlTexts.clear();
+    for (auto& text : _objectiveTexts) {
+        text.reset();
+    }
+    _objectiveTexts.clear();
     _backButton.reset();
     _uiManager.reset();
     _mouseHandler.reset();
