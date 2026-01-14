@@ -90,6 +90,7 @@ namespace constants {
     const std::string PARALLAXCOMPONENT = "ParallaxComponent";
     const std::string GAMEZONECOMPONENT = "GameZoneComponent";
     const std::string CHARGEDSHOTCOMPONENT = "ChargedShotComponent";
+    const std::string INVULNERABLECOMPONENT = "InvulnerableComponent";
 
     /* Fields */
     const std::string SCRIPT_PATH_FIELD = "scriptPath";
@@ -99,6 +100,7 @@ namespace constants {
     const std::string DAMAGE_FIELD = "damage";
     const std::string HEALTH_FIELD = "health";
     const std::string COOLDOWN_FIELD = "cooldown";
+    const std::string ACTIVE_FIELD = "active";
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
     const std::string OFFSET_FIELD = "offset";
@@ -377,6 +379,8 @@ namespace constants {
     const std::string GET_GAME_ZONE_VELOCITY_FUNCTION = "getGameZoneVelocity";
     const std::string REVERSE_SHOOT_ORIENTATION_FUNCTION = "reverseShootOrientation";
     const std::string SET_GAME_ZONE_VELOCITY_FUNCTION = "setGameZoneVelocity";
+    const std::string GET_ENTITY_VELOCITY_FUNCTION = "getEntityVelocity";
+    const std::string SET_INVULNERABLE_FUNCTION = "setInvulnerable";
 }
 
 #endif /* !CONSTANTS_HPP_ */
