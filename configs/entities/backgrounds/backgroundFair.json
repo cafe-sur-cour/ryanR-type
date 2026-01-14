@@ -24,7 +24,7 @@
                 },
                 {
                     "name": "firstWave",
-                    "filePath": "assets/sprites/backgrounds/fairLevel/hill1.png",
+                    "filePath": "assets/sprites/backgrounds/fairLevel/hill2.png",
                     "speedMultiplier": 0.5,
                     "scale": { "x": 1.0, "y": 1.0 },
                     "scaleMode": "FIT_SCREEN",
@@ -34,7 +34,7 @@
                 },
                 {
                     "name": "secondWave",
-                    "filePath": "assets/sprites/backgrounds/fairLevel/hill2.png",
+                    "filePath": "assets/sprites/backgrounds/fairLevel/hill1.png",
                     "speedMultiplier": 1.0,
                     "scale": { "x": 1.0, "y": 1.0 },
                     "scaleMode": "FIT_SCREEN",
