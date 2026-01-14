@@ -58,8 +58,8 @@ LeaderboardState::LeaderboardState(
     _titleText = std::make_shared<ui::Text>(_resourceManager);
     _titleText->setText("LEADERBOARD");
     _titleText->setFontSize(56);
-    _titleText->setTextColor(gfx::color_t{255, 215, 0, 255});
-    _titleText->setOutlineColor(gfx::color_t{80, 60, 0, 255});
+    _titleText->setTextColor(colors::BUTTON_PRIMARY_HOVER);
+    _titleText->setOutlineColor(gfx::color_t{120, 0, 0, 255});
     _titleText->setOutlineThickness(6.0f);
 
     titleLayout->addElement(_titleText);
