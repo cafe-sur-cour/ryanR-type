@@ -89,6 +89,15 @@ namespace constants {
     const std::string LEVEL_COMPLETE_TITLE_TEXT = "LEVEL COMPLETE!";
     const std::string LEVEL_COMPLETE_SUB_TITLE_TEXT = "Going to the next level...";
 
+    /* Profile Constants */
+    const std::string PROFILE_TITLE_TEXT = "YOUR PROFILE";
+    const std::string USERNAME_LABEL = "Username: ";
+    const std::string GAMES_PLAYED_LABEL = "Games Played: ";
+    const std::string WINS_LABEL = "Wins: ";
+    const std::string HIGH_SCORE_LABEL = "High Score: ";
+    const std::string REFRESH_PROFILE_BUTTON_TEXT = "Refresh Profile";
+    const std::string BACK_BUTTON_TEXT = "Back";
+
     /* Home page input place holders */
     const std::string IP_PLACEHOLDER = "Enter an IP address";
     const std::string PORT_PLACEHOLDER = "Enter a port";
