@@ -18,7 +18,7 @@
       </div>
 
       <!-- Status Overview -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
         <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
           <div class="flex items-center space-x-3">
             <ServerIcon class="h-8 w-8 text-blue-400" />
@@ -57,6 +57,16 @@
             <div>
               <p class="text-sm text-gray-400">Uptime</p>
               <p class="text-2xl font-bold text-white">{{ formatUptime(serverInfo.uptime) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+          <div class="flex items-center space-x-3">
+            <ActivityIcon class="h-8 w-8 text-purple-400" />
+            <div>
+              <p class="text-sm text-gray-400">TPS</p>
+              <p class="text-2xl font-bold text-white">{{ serverInfo.tps || 0 }}</p>
             </div>
           </div>
         </div>
@@ -256,7 +266,7 @@
 
       <!-- Auto-refresh indicator -->
       <div class="fixed bottom-0 left-1/2 transform -translate-x-1/2 text-gray-500 text-sm bg-gray-900 px-4 py-2 rounded-t">
-        Auto-refreshing every 2 seconds • Last updated: {{ lastUpdate }}
+        Auto-refreshing every 5 seconds • Last updated: {{ lastUpdate }}
       </div>
     </div>
   </div>
@@ -265,7 +275,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import Button from './ui/Button.vue'
-import { RefreshCwIcon, ServerIcon, UsersIcon, GamepadIcon, ClockIcon, InfoIcon, BanIcon } from 'lucide-vue-next'
+import { RefreshCwIcon, ServerIcon, UsersIcon, GamepadIcon, ClockIcon, InfoIcon, BanIcon, ActivityIcon } from 'lucide-vue-next'
 
 interface Props {
   password: string
@@ -282,6 +292,7 @@ interface ServerInfo {
   playerStats?: Array<Record<string, number>>
   inGamePlayers?: string[]
   bannedPlayers?: string[]
+  tps?: number
 }
 
 interface ServerConfig {
@@ -406,7 +417,7 @@ const getInGamePlayerIndices = (): number[] => {
 const startAutoRefresh = () => {
   autoRefreshInterval.value = setInterval(() => {
     fetchServerInfo()
-  }, 2000)
+  }, 5000)
 }
 
 const stopAutoRefresh = () => {

@@ -131,7 +131,9 @@ void rserv::HttpServer::infoEndpoint(const httplib::Request &req, httplib::Respo
             {"lobbyPlayerDetails", info.lobbyPlayerDetails},
             {"playerStats", info.playerStats},
             {"inGamePlayers", info.inGamePlayers},
-            {"bannedPlayers", info.bannedPlayers}
+            {"bannedPlayers", info.bannedPlayers},
+            {"serverStatus", info.connectedClients >= 0 ? "Online" : "Offline"},
+            {"tps", info.tps}
         };
 
         res.set_content(jsonResponse.dump(), "application/json");
@@ -165,7 +167,8 @@ void rserv::HttpServer::configEndpoint(const httplib::Request &req, httplib::Res
         nlohmann::json jsonResponse = {
             {"serverIp", _serverConfig->getIp()},
             {"httpPort", constants::HTTP_SERVER_PORT},
-            {"gamePort", _serverConfig->getPort()}
+            {"gamePort", _serverConfig->getPort()},
+            {"tps", _serverConfig->getTps()}
         };
 
         res.set_content(jsonResponse.dump(), "application/json");
@@ -191,7 +194,8 @@ void rserv::HttpServer::commandsSuggestionsEndpoint(
                 "/close <lobby_id or lobby_code>",
                 "/kick <player_id or player_name>",
                 "/ban <player_id or player_name>",
-                "/unban <player_id or player_name>"
+                "/unban <player_id or player_name>",
+                "/tps <value>"
             }}
         };
 
