@@ -26,6 +26,11 @@
             "spreadAngle": 0.0,
             "distanceOffset": 0.0
         },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "musics/magicien-Spawn.wav",
+            "volume": 10.0
+        },
         "AnimationComponent": {
             "target": "client",
             "states": {
