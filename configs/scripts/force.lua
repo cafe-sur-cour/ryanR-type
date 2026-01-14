@@ -67,7 +67,7 @@ function OnInteract(entity, interactorEntity)
         if level == 2 then
             setProjectilePrefab(interactorEntity, "magnet")
         end
-        if (level >= 3) then
+        if level >= 3 then
             setProjectilePrefab(interactorEntity, "bombShot")
         end
     end
@@ -106,7 +106,7 @@ function addForceLevel(entity)
             setAnimationState(entity, "level2")
             setProjectilePrefab(parentId, "magnet")
         end
-        if (level == 3) then
+        if level == 3 then
             setAnimationState(entity, "level3")
             setProjectilePrefab(parentId, "bombShot")
         end
