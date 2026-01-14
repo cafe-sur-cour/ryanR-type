@@ -249,6 +249,7 @@ namespace constants {
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
     const std::string GAME_ZONE_STOP_TAG = "GameZoneStopTag";
     const std::string OBSTACLETAG = "ObstacleTag";
+    const std::string PLAYEROBSTACLETAG = "PlayerObstacleTag";
 
     /* Difficulty Multipliers */
     constexpr float DIFFICULTY_EASY_MULTIPLIER = 1.3f;

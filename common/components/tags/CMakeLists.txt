@@ -12,6 +12,8 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     ProjectilePassThroughTag.cpp
     ObstacleTag.hpp
     ObstacleTag.cpp
+    PlayerObstacleTag.hpp
+    PlayerObstacleTag.cpp
     ControllableTag.hpp
     ControllableTag.cpp
     ShooterTag.hpp

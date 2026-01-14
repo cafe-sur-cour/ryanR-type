@@ -23,7 +23,10 @@
             [["EnnemyProjectileTag"], ["PlayerProjectileTag"]],
 
             [["PlayerTag"], ["GameZoneColliderTag"]],
-            [["GameZoneColliderTag"], ["PlayerTag"]]
+            [["GameZoneColliderTag"], ["PlayerTag"]],
+
+            [["PlayerTag"], ["PlayerObstacleTag"]],
+            [["PlayerObstacleTag"], ["PlayerTag"]]
         ]
     },
     "trigger": {
