@@ -71,7 +71,7 @@ void ChatState::enter() {
     messagesConfig.offset = math::Vector2f(500.0f, 300.0f);
 
     _messagesContainer = std::make_shared<ui::UILayout>(_resourceManager, messagesConfig);
-    _messagesContainer->setSize(math::Vector2f(900.f, 465.f));
+    _messagesContainer->setSize(math::Vector2f(900.f, 470.f));
     _messagesContainer->setBackgroundEnabled(true);
     _messagesContainer->setBackgroundFillColor(colors::UI_BACKGROUND);
     _messagesContainer->setBackgroundOutlineColor(colors::UI_OUTLINE);
@@ -114,7 +114,7 @@ void ChatState::enter() {
     controlsConfig.padding = math::Vector2f(0.0f, 0.0f);
     controlsConfig.anchorX = ui::AnchorX::Center;
     controlsConfig.anchorY = ui::AnchorY::Bottom;
-    controlsConfig.offset = math::Vector2f(0.0f, -220.0f);
+    controlsConfig.offset = math::Vector2f(0.0f, -215.0f);
 
     auto controlsLayout = std::make_shared<ui::UILayout>(_resourceManager, controlsConfig);
     controlsLayout->setSize(math::Vector2f(900.f, 60.f));
@@ -123,12 +123,21 @@ void ChatState::enter() {
     controlsLayout->addElement(_sendButton);
 
     _backButton = std::make_shared<ui::Button>(_resourceManager);
-    _backButton->setText("Back");
-    _backButton->setSize(math::Vector2f{140, 50});
+    _backButton->setText("BACK");
+    _backButton->setSize(math::Vector2f(400.f, 70.f));
     _backButton->setNormalColor(colors::BUTTON_SECONDARY);
     _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _backButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
-    _backButton->setOnRelease([this]() { onBackButtonClicked(); });
+    _backButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePop();
+        }
+    });
+    _backButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePop();
+        }
+    });
 
     ui::LayoutConfig backButtonConfig;
     backButtonConfig.anchorX = ui::AnchorX::Center;
