@@ -1,0 +1,73 @@
+{
+    "name": "helice",
+    "components": {
+        "MobTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 100.0, "y": 100.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 80.0 },
+        "HealthComponent": { "target": "both", "health": 50.0 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 100 },
+        "ShootingStatsComponent": {
+            "target": "both",
+            "fireRate": 0.2,
+            "projectileSpeed": 500.0,
+            "shotCount": 3,
+            "angleOffset": 0.0,
+            "spreadAngle": 10.0,
+            "distanceOffset": 0.0
+        },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/ennemies/helice.png",
+                    "frameWidth": 142.0,
+                    "frameHeight": 37.0,
+                    "frameCount": 6,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                }
+            },
+            "initialState": "idle",
+            "transitions": [
+            ]
+        },
+        "ColliderComponent": [
+            {
+                "target": "both",
+                "offset": { "x": 0.0, "y": 0.0 },
+                "size" : { "x": 142.0, "y": 37.0 },
+                "type": "Trigger"
+            }
+        ],
+        "DamageComponent": {
+            "target": "both",
+            "damage": 10.0
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDeath"]
+                },
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDamage"]
+                }
+            ]
+        },
+        "ShooterTag": { "target": "both" },
+        "DamageCooldownComponent": { "target": "both" },
+        "HealthBarComponent": { "target": "client" }
+    }
+}
