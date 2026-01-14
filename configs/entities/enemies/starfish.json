@@ -62,9 +62,7 @@
                 "size" : { "x": 284.0, "y": 253.0 },
                 "type": "Trigger"
             }
-
-        ]
-        ,
+        ],
         "DamageComponent": {
             "target": "both",
             "damage": 20.0

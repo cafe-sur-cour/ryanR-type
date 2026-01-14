@@ -64,23 +64,14 @@
             "initialState": "orange",
             "transitions": []
         },
-        "ColliderComponent":
-        [
+        "ColliderComponent": [
             {
                 "target": "both",
                 "offset": { "x": -1.0, "y": -1.0 },
                 "size" : { "x": 216.0, "y": 184.0 },
                 "type": "Trigger"
-            },
-            {
-                "target": "both",
-                "offset": { "x": 0.0, "y": 0.0 },
-                "size" : { "x": 213.0, "y": 180.0 },
-                "type": "Solide"
             }
-
-        ]
-        ,
+        ],
         "DamageComponent": {
             "target": "both",
             "damage": 20.0

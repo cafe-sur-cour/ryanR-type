@@ -168,7 +168,7 @@
                         "min": 10.0,
                         "type": "uniform"
                     },
-                    "type": "enemy1"
+                    "type": "bat"
                 }
             ],
             "gameXTrigger": 3802.0
@@ -187,7 +187,7 @@
                         "min": 0.0,
                         "type": "uniform"
                     },
-                    "type": "enemy1"
+                    "type": "bat"
                 }
             ],
             "gameXTrigger": 2313.0
@@ -206,7 +206,7 @@
                         "min": 0.0,
                         "type": "uniform"
                     },
-                    "type": "enemy1"
+                    "type": "bat"
                 }
             ],
             "gameXTrigger": 2315.0
@@ -225,7 +225,7 @@
                         "min": 20.0,
                         "type": "uniform"
                     },
-                    "type": "enemy1"
+                    "type": "bat"
                 }
             ],
             "gameXTrigger": 3105.0
@@ -244,7 +244,7 @@
                         "min": 20.0,
                         "type": "uniform"
                     },
-                    "type": "enemy1"
+                    "type": "bat"
                 }
             ],
             "gameXTrigger": 4964.0
@@ -277,7 +277,7 @@
                         "min": 10.0,
                         "type": "uniform"
                     },
-                    "type": "enemy1"
+                    "type": "bat"
                 }
             ],
             "gameXTrigger": 515.0
@@ -310,7 +310,7 @@
                         "min": 10.0,
                         "type": "uniform"
                     },
-                    "type": "enemy1"
+                    "type": "bat"
                 }
             ],
             "gameXTrigger": 5204.0
@@ -329,7 +329,7 @@
                         "min": 20.0,
                         "type": "uniform"
                     },
-                    "type": "enemy1"
+                    "type": "bat"
                 }
             ],
             "gameXTrigger": 1110.0

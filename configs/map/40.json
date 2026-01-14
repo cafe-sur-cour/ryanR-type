@@ -117,7 +117,7 @@
                     "count": 2
                 },
                 {
-                    "type": "enemy1",
+                    "type": "bat",
                     "distributionX": {
                         "min": 75,
                         "max": 80,
@@ -169,7 +169,7 @@
                     "count": 1
                 },
                 {
-                    "type": "enemy1",
+                    "type": "bat",
                     "distributionX": {
                         "min": 90,
                         "max": 95,
@@ -221,7 +221,7 @@
                     "count": 1
                 },
                 {
-                    "type": "enemy1",
+                    "type": "bat",
                     "distributionX": {
                         "min": 80,
                         "max": 85,
