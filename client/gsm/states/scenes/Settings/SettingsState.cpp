@@ -34,6 +34,7 @@ SettingsState::SettingsState(
 
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
+    _uiManager->setResourceManager(_resourceManager);
 
     _uiManager->setCursorCallback([this](bool isHovering) {
         if (_resourceManager->has<gfx::IWindow>()) {

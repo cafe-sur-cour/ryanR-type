@@ -12,6 +12,7 @@
 #include <functional>
 #include <string>
 #include "../elements/focusable/TextInput.hpp"
+#include "../../../common/interfaces/IEvent.hpp"
 
 namespace ui {
 
@@ -201,6 +202,52 @@ void UIManager::handleKeyboardInput(gfx::EventType event) {
     auto focusedElement = getFocusedElement();
     if (focusedElement) {
         if (auto textInput = std::dynamic_pointer_cast<TextInput>(focusedElement)) {
+            if (event == gfx::EventType::V && _resourceManager) {
+                bool ctrlPressed = _resourceManager->get<gfx::IEvent>()->isKeyPressed(
+                                    gfx::EventType::LCTRL) ||
+                                   _resourceManager->get<gfx::IEvent>()->isKeyPressed(
+                                    gfx::EventType::RCTRL);
+                if (ctrlPressed) {
+                    std::string clipboardText =
+                        _resourceManager->get<gfx::IWindow>()->getClipboardText();
+                    if (!clipboardText.empty()) {
+                        size_t start = clipboardText.find_first_not_of(" \t\n\r\f\v");
+                        if (start != std::string::npos) {
+                            size_t end = clipboardText.find_last_not_of(" \t\n\r\f\v");
+                            std::string trimmedText =
+                            clipboardText.substr(start, end - start + 1);
+                            if (!trimmedText.empty()) {
+                                textInput->handleTextInput(trimmedText);
+                            }
+                        }
+                    }
+                    return;
+                }
+            }
+            if (event == gfx::EventType::C && _resourceManager) {
+                bool ctrlPressed = _resourceManager->get<gfx::IEvent>()->isKeyPressed(
+                                    gfx::EventType::LCTRL) ||
+                                   _resourceManager->get<gfx::IEvent>()->isKeyPressed(
+                                    gfx::EventType::RCTRL);
+                if (ctrlPressed) {
+                    std::string textToCopy = textInput->getText();
+                    if (!textToCopy.empty()) {
+                        _resourceManager->get<gfx::IWindow>()->setClipboardText(textToCopy);
+                    }
+                    return;
+                }
+            }
+            if (event == gfx::EventType::BACKSPACE && _resourceManager) {
+                bool ctrlPressed = _resourceManager->get<gfx::IEvent>()->isKeyPressed(
+                                    gfx::EventType::LCTRL) ||
+                                   _resourceManager->get<gfx::IEvent>()->isKeyPressed(
+                                    gfx::EventType::RCTRL);
+                if (ctrlPressed) {
+                    textInput->setText("");
+                    return;
+                }
+            }
+
             bool isLetterKey = (event >= gfx::EventType::A && event <= gfx::EventType::Z);
             if (isLetterKey) {
                 _consumedTextKeys.insert(event);
@@ -323,6 +370,10 @@ void UIManager::setOnBack(std::function<void()> callback) {
 
 void UIManager::setCursorCallback(std::function<void(bool)> callback) {
     _cursorCallback = callback;
+}
+
+void UIManager::setResourceManager(std::shared_ptr<ResourceManager> resourceManager) {
+    _resourceManager = resourceManager;
 }
 
 bool UIManager::isMouseHoveringAnyElement(const math::Vector2f& mousePos) const {

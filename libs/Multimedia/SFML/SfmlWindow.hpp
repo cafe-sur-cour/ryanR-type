@@ -63,6 +63,8 @@ class SfmlWindow : public gfx::IWindow {
         void setCursor(bool isHand) override;
 
         void enableFilter(const std::string& filterName);
+        std::string getClipboardText() override;
+        void setClipboardText(const std::string& text) override;
         void addFilter(const std::string& filterName);
         void removeFilter(const std::string& filterName);
         void disableAllFilters();

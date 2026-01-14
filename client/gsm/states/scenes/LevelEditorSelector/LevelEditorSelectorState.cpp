@@ -32,6 +32,7 @@ LevelEditorSelectorState::LevelEditorSelectorState(
 
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
+    _uiManager->setResourceManager(_resourceManager);
     _shouldUpdateUI = false;
     _lastLevelCount = 0;
     _shouldHideDeletePopup = false;
