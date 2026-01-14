@@ -1171,7 +1171,8 @@ void rserv::Lobby::gameLoop() {
     }
 }
 
-bool rserv::Lobby::ackLeaveLobbyPacket(const net::INetworkEndpoint &endpoint, bool canDisconnect) {
+bool rserv::Lobby::ackLeaveLobbyPacket(const net::INetworkEndpoint &endpoint,
+    bool canDisconnect) {
     if (!this->_network) {
         debug::Debug::printDebug(this->getIsDebug(),
             "[SERVER] Warning: Network not initialized",
