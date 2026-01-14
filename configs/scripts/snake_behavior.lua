@@ -123,8 +123,8 @@ end
 function death(entity)
     local px, py = getEntityPosition(entity)
     local entitySizeX, entitySizeY = getEntitySize(entity)
-    local explosionSizeX, explosionSizeY = getEntitySize("explode")
-    px = px + entitySizeX / 2 - 298 / 2
-    py = py + entitySizeY / 2 - 217 / 2
-    spawnEntity("explode", px, py)
+    local explosionSizeX, explosionSizeY = getEntitySize("explodWaffle")
+    px = px + entitySizeX / 2 - 566 / 2
+    py = py + entitySizeY / 2 - 306 / 2
+    spawnEntity("explodWaffle", px, py)
 end
