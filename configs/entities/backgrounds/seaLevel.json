@@ -38,7 +38,7 @@
                     "speedMultiplier": 1.0,
                     "scale": { "x": 1.0, "y": 1.0 },
                     "scaleMode": "FIT_SCREEN",
-                    "sourceSize": { "x": 3200.0, "y": 1600.0 },
+                    "sourceSize": { "x": 2700.0, "y": 1600.0 },
                     "repeat": true,
                     "zIndex": 2
                 },
