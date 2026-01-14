@@ -323,8 +323,10 @@ namespace constants {
     constexpr std::uint8_t PACKET_NEW_CHAT = 0x20;
     constexpr std::uint8_t PACKET_BROADCASTED_CHAT = 0x21;
     constexpr std::uint8_t PACKET_FORCE_LEAVE = 0x22;
+    constexpr std::uint8_t PACKET_LEAVE_LOBBY = 0x23;
+    constexpr std::uint8_t PACKET_ACK_LEAVE_LOBBY = 0x24;
 
-    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 35;
+    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 37;
     const int MAX_CLIENT_PER_LOBBY = 4;
 
     /* Lobby connection codes */

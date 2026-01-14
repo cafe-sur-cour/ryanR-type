@@ -216,7 +216,7 @@ bool rserv::Server::sendCodeLobbyPacket(const net::INetworkEndpoint &endpoint) {
 
         realLobby->gameRulesPacket();
     }
-
+    std::cout << "[SERVER] Created new lobby with code: " << lobbyCode << std::endl;
     this->_sequenceNumber++;
     return true;
 }

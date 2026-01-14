@@ -58,7 +58,8 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
                     "Client " + std::to_string(idClient) + " removed from lobby",
                     debug::debugType::NETWORK, debug::debugLevel::INFO);
 
-                this->cleanupClosedLobbies();
+                // Don't call cleanupClosedLobbies() immediately - let the normal cycle handle it
+                // This prevents removing lobbies that the client might reconnect to quickly
             }
 
             this->_clients.erase(

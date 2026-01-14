@@ -244,18 +244,45 @@ void rserv::Server::checkClientTimeouts() {
 }
 
 void rserv::Server::cleanupClosedLobbies() {
+    bool _hasUpdate = false;
     std::vector<std::shared_ptr<Lobby>> activeLobbies;
+    std::vector<std::shared_ptr<LobbyStruct>> activeLobbyThreads;
+    std::set<std::string> removedLobbyCodes;
 
     for (const auto& lobby : this->_lobbies) {
-        if (lobby && lobby->isRunning() && lobby->getClientCount() > 0) {
-            activeLobbies.push_back(lobby);
-        } else {
+        if (lobby && !lobby->isRunning()) {
+            _hasUpdate = true;
+            removedLobbyCodes.insert(lobby->getLobbyCode());
+            std::cout << "[SERVER] Removing stopped lobby: " << lobby->getLobbyCode() << std::endl;
             debug::Debug::printDebug(this->_config->getIsDebug(),
-                "[SERVER] Removing closed lobby from active lobbies list",
+                "[SERVER] Removing stopped lobby: " + lobby->getLobbyCode(),
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+        } else {
+            activeLobbies.push_back(lobby);
+        }
+    }
+
+    for (const auto& lobbyStruct : this->_lobbyThreads) {
+        if (lobbyStruct && removedLobbyCodes.find(lobbyStruct->_lobbyCode) == removedLobbyCodes.end()) {
+            activeLobbyThreads.push_back(lobbyStruct);
+        } else if (lobbyStruct && removedLobbyCodes.find(lobbyStruct->_lobbyCode) != removedLobbyCodes.end()) {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Removing lobby thread: " + lobbyStruct->_lobbyCode,
                 debug::debugType::NETWORK, debug::debugLevel::INFO);
         }
     }
-    this->_lobbies = activeLobbies;
+
+    if (_hasUpdate) {
+        this->_lobbies = activeLobbies;
+        this->_lobbyThreads = activeLobbyThreads;
+        std::cout << "Size after cleanup: " << this->_lobbies.size() << " lobbies remaining" << std::endl;
+        std::cout << "Size after cleanup: " << this->_lobbyThreads.size() << " lobby threads remaining." << std::endl;
+        for (const auto& lobbyStruct : this->_lobbyThreads) {
+            if (lobbyStruct) {
+                std::cout << "Remaining lobby code: " << lobbyStruct->_lobbyCode << std::endl;
+            }
+        }
+    }
 }
 
 void rserv::Server::processIncomingPackets() {
@@ -323,6 +350,28 @@ void rserv::Server::processIncomingPackets() {
             "[SERVER] Received disconnection packet from client " + std::to_string(idClient),
             debug::debugType::NETWORK, debug::debugLevel::INFO);
         this->processDisconnections(idClient);
+    } else if (this->_packet->getType() == constants::PACKET_LEAVE_LOBBY) {
+        uint8_t idClient = this->_packet->getIdClient();
+        debug::Debug::printDebug(this->_config->getIsDebug(),
+            "[SERVER] Received leave lobby packet from client " + std::to_string(idClient),
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+        auto it = this->_clientToLobby.find(idClient);
+        if (it != this->_clientToLobby.end() && it->second) {
+            it->second->processDisconnections(idClient);
+
+            if (it->second->getClientCount() == 0) {
+                it->second->stop();
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] Lobby " + it->second->getLobbyCode() + " is empty and has been stopped",
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
+            }
+            this->_clientToLobby.erase(idClient);
+        } else {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Client " + std::to_string(idClient) + " tried to leave lobby but is not in any lobby",
+                debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        }
     } else {
         debug::Debug::printDebug(this->_config->getIsDebug(),
             "[SERVER] Packet received of type "
