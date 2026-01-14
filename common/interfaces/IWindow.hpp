@@ -65,6 +65,9 @@ class IWindow {
         virtual void setFullscreen(bool fullscreen) = 0;
         virtual void setRenderQuality(float quality) = 0;
         virtual void setCursor(bool isHand) = 0;
+
+        virtual std::string getClipboardText() = 0;
+        virtual void setClipboardText(const std::string& text) = 0;
 };
 
 typedef IWindow *(*createWindow_t)();

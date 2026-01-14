@@ -11,20 +11,6 @@ sudo iptables -D OUTPUT -p udp --sport 4242
 sudo iptables -I INPUT  -p udp --dport 4242
 sudo iptables -I OUTPUT -p udp --sport 4242
 
-
-#!/bin/bash
-
-# Clear Ip Table First
-sudo iptables -Z
-
-# Remove any existing rule on udp packets on port 4242
-sudo iptables -D INPUT  -p udp --dport 4242
-sudo iptables -D OUTPUT -p udp --sport 4242
-
-# Add a rule on udp packets on port 4242
-sudo iptables -I INPUT  -p udp --dport 4242
-sudo iptables -I OUTPUT -p udp --sport 4242
-
 # Start the server with time, capture time output
 { time ./r-type_server -p 4242 -i 127.0.0.1 -tps 20; } 2> time_output.txt
 
@@ -75,3 +61,4 @@ echo "KB/s: $total_kb / $total_seconds = $kb_per_sec"
 
 # Clean up
 rm time_output.txt
+

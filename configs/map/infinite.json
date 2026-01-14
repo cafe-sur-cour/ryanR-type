@@ -1,8 +1,8 @@
 {
     "name": "Infinite",
-    "background": "background",
+    "background": "background1",
     "scrollSpeed": 100.0,
-    "music": "music",
+    "music": "musicLevel1",
     "powerUps": [],
     "mapLength": -1.0,
     "obstacles": [],
