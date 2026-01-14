@@ -205,20 +205,6 @@ void ClientNetwork::handleEntitySpawn() {
                 " mapped to local " + std::to_string(newEntity),
             debug::debugType::NETWORK,
             debug::debugLevel::INFO);
-
-        if (clientId == this->_idClient) {
-            auto registry = _resourceManager->get<ecs::Registry>();
-            registry->registerComponent<ecs::LocalPlayerTag>();
-            if (!registry->hasComponent<ecs::LocalPlayerTag>(newEntity)) {
-                registry->addComponent<ecs::LocalPlayerTag>(newEntity,
-                    std::make_shared<ecs::LocalPlayerTag>());
-            }
-            debug::Debug::printDebug(this->_isDebug,
-                "[CLIENT] Added LocalPlayerTag to entity " + std::to_string(newEntity) +
-                " for local client " + std::to_string(clientId),
-                debug::debugType::NETWORK,
-                debug::debugLevel::INFO);
-        }
     } catch (const std::exception& e) {
         debug::Debug::printDebug(this->_isDebug,
             std::string("[CLIENT] Error creating entity from prefab '")

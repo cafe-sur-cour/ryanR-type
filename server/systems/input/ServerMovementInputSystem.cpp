@@ -42,7 +42,10 @@ void ServerMovementInputSystem::update(
     auto view = registry->view<ControllableTag, PlayerTag>();
 
     for (auto entityId : view) {
-        size_t clientID = static_cast<size_t>(entityId);
+        size_t clientID = serverInputProvider->getClientIdForEntity(entityId);
+        if (clientID == 0) {
+            continue;
+        }
         float axisX = serverInputProvider->getActionAxis(InputAction::MOVE_X, clientID);
         float axisY = serverInputProvider->getActionAxis(InputAction::MOVE_Y, clientID);
         math::Vector2f movementDirection(axisX, axisY);

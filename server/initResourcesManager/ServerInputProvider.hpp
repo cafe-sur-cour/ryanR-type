@@ -35,6 +35,8 @@ class ServerInputProvider : public IInputProvider {
 
         void addClientInputMapping(size_t clientID, size_t identity, const InputMapping& mapping);
         void registerClient(size_t clientID);
+        void registerEntityForClient(size_t entityId, size_t clientID);
+        size_t getClientIdForEntity(size_t entityId) const;
         void updateInputFromEvent(size_t clientID, constants::EventType eventType, float value);
         std::vector<size_t> getConnectedClients() const;
 
@@ -44,6 +46,7 @@ class ServerInputProvider : public IInputProvider {
         std::map<size_t, std::map<ecs::InputAction, float>> _clientAxisValues;
         std::map<size_t, std::map<ecs::InputAction, std::chrono::steady_clock::time_point>> _clientInputTimestamps;
         std::set<size_t> _registeredClients;
+        std::map<size_t, size_t> _entityToClientId;
 
         static constexpr std::chrono::milliseconds INPUT_TIMEOUT = std::chrono::milliseconds(200);
 

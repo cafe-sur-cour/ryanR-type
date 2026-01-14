@@ -305,6 +305,17 @@ void rserv::Server::processIncomingPackets() {
                 std::to_string(idClient),
                 debug::debugType::NETWORK, debug::debugLevel::WARNING);
         }
+    } else if (this->_packet->getType() == constants::PACKET_WHOAMI) {
+        uint8_t idClient = this->_packet->getIdClient();
+        auto it = this->_clientToLobby.find(idClient);
+        if (it != this->_clientToLobby.end()) {
+            it->second->enqueuePacket(received);
+        } else {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Received WHOAMI packet from unknown client: " +
+                std::to_string(idClient),
+                debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        }
     } else if (this->_packet->getType() == constants::PACKET_REGISTER) {
         this->processRegistration(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_LOGIN) {

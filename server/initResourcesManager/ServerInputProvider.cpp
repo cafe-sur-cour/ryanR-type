@@ -121,4 +121,17 @@ std::vector<size_t> ServerInputProvider::getConnectedClients() const {
 void ServerInputProvider::registerClient(size_t clientID) {
     _registeredClients.insert(clientID);
 }
+
+void ServerInputProvider::registerEntityForClient(size_t entityId, size_t clientID) {
+    _entityToClientId[entityId] = clientID;
+}
+
+size_t ServerInputProvider::getClientIdForEntity(size_t entityId) const {
+    auto it = _entityToClientId.find(entityId);
+    if (it != _entityToClientId.end()) {
+        return it->second;
+    }
+    return 0;
+}
+
 }  // namespace ecs
