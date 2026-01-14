@@ -477,3 +477,11 @@ void SfmlWindow::setCursor(bool isHand) {
         _window->setMouseCursor(_cursorArrow);
     }
 }
+
+std::string SfmlWindow::getClipboardText() {
+    return sf::Clipboard::getString().toAnsiString();
+}
+
+void SfmlWindow::setClipboardText(const std::string& text) {
+    sf::Clipboard::setString(sf::String(text));
+}
