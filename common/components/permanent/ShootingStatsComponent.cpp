@@ -32,12 +32,12 @@ REGISTER_COMPONENT(
         auto shotCount = std::get<int>(*fields.at(constants::SHOTCOUNT_FIELD));
         auto angleOffset = std::get<float>(*fields.at(constants::ANGLEOFFSET_FIELD));
         auto spreadAngle = std::get<float>(*fields.at(constants::SPREADANGLE_FIELD));
-        auto distanceOffset = std::get<float>(*fields.at(constants::OFFSETDISTANCE_FIELD));
+        auto offsetDistance = std::get<float>(*fields.at(constants::OFFSETDISTANCE_FIELD));
 
         ecs::MultiShotPattern pattern{
             shotCount,
             spreadAngle,
-            distanceOffset,
+            offsetDistance,
             angleOffset
         };
 
