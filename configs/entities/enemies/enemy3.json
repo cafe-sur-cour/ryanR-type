@@ -24,7 +24,7 @@
             "shotCount": 1,
             "angleOffset": 180.0,
             "spreadAngle": 0.0,
-            "distanceOffset": 0.0
+            "offsetDistance": 0.0
         },
         "AnimationComponent": {
             "target": "client",

@@ -13,11 +13,14 @@
 #include "../../../common/components/permanent/AnimationStateComponent.hpp"
 #include "../../components/rendering/AnimationComponent.hpp"
 #include "../../../common/debug.hpp"
+
 namespace ecs {
 
-void AnimationStateSyncSystem::update(std::shared_ptr<ResourceManager> resourceManager,
-                                      std::shared_ptr<Registry> registry,
-                                      float deltaTime) {
+void AnimationStateSyncSystem::update(
+    std::shared_ptr<ResourceManager> resourceManager,
+    std::shared_ptr<Registry> registry,
+    float deltaTime
+) {
     (void)resourceManager;
     (void)deltaTime;
 
@@ -36,6 +39,7 @@ void AnimationStateSyncSystem::update(std::shared_ptr<ResourceManager> resourceM
         if (!newState.empty()) {
             animComp->setCurrentState(newState);
             animStateComp->setCurrentState("");
+            registry->removeOneComponent<AnimationStateComponent>(entity);
         }
     }
 }
