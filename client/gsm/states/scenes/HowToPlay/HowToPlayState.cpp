@@ -241,10 +241,10 @@ HowToPlayState::HowToPlayState(
     objectivesSection->addElement(objectivesTitleLayout);
 
     std::vector<std::pair<std::string, gfx::color_t>> objectives = {
-        {"> Destroy Enemy Ships", gfx::color_t{255, 100, 100, 255}},
-        {"> Survive the Waves", gfx::color_t{100, 255, 200, 255}},
-        {"> Collect Power-ups", gfx::color_t{255, 215, 0, 255}},
-        {"> Beat High Score", gfx::color_t{255, 150, 255, 255}}
+        {"Destroy Enemy Ships", gfx::color_t{255, 100, 100, 255}},
+        {"Survive the Waves", gfx::color_t{100, 255, 200, 255}},
+        {"Collect Power-ups", gfx::color_t{255, 215, 0, 255}},
+        {"Beat High Score", gfx::color_t{255, 150, 255, 255}}
     };
 
     for (const auto& [text, color] : objectives) {
