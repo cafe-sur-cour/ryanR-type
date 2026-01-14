@@ -42,8 +42,6 @@ namespace constants {
     const std::string TIME_SPENT_JSON_WARD = "time_spent";
     const std::string BANNED_JSON_WARD = "banned";
     const std::string SCORE_JSON_WARD = "scores";
-
-    const float AOI_MARGIN = 150.0f;
 }
 
 #endif /* !SERVER_CONSTANTS */
