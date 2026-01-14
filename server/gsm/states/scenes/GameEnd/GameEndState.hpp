@@ -18,7 +18,6 @@ public:
     GameEndState(std::shared_ptr<IGameStateMachine> gsm, std::shared_ptr<ResourceManager> resourceManager);
     ~GameEndState() override = default;
 
-    void enter() override;
     void update(float deltaTime) override;
     std::string getStateName() const override { return "Game Ended"; }
 };
