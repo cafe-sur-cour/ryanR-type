@@ -23,7 +23,7 @@
             "target": "client",
             "states": {
                 "idle": {
-                    "texturePath": "assets/sprites/power-up/powerup4.png",
+                    "texturePath": "assets/sprites/power-up/powerUpAddLife.png",
                     "frameWidth": 100.0,
                     "frameHeight": 100.0,
                     "frameCount": 60,

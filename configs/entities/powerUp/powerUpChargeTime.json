@@ -24,7 +24,7 @@
             "target": "client",
             "states": {
                 "idle": {
-                    "texturePath": "assets/sprites/power-up/powerup6.png",
+                    "texturePath": "assets/sprites/power-up/powerUpChargeTime.png",
                     "frameWidth": 100.0,
                     "frameHeight": 100.0,
                     "frameCount": 60,
