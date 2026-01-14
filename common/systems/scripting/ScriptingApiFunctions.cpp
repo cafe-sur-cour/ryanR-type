@@ -35,6 +35,7 @@
 #include "../../components/permanent/ShootingStatsComponent.hpp"
 #include "../../components/permanent/HealthComponent.hpp"
 #include "../../components/permanent/ChargedShotComponent.hpp"
+#include "../../components/permanent/InvulnerableComponent.hpp"
 
 namespace ecs {
 
@@ -419,9 +420,9 @@ void ScriptingSystem::bindAPI() {
     lua.set_function(constants::SET_INVULNERABLE_FUNCTION,
         [this](size_t entityId, bool isInvulnerable) {
         Entity e = static_cast<Entity>(entityId);
-        if (registry->hasComponent<ecs::HealthComponent>(e)) {
-            auto healthComp = registry->getComponent<ecs::HealthComponent>(e);
-            healthComp->setInvulnerable(isInvulnerable);
+        if (registry->hasComponent<ecs::InvulnerableComponent>(e)) {
+            auto invulnerableComp = registry->getComponent<ecs::InvulnerableComponent>(e);
+            invulnerableComp->setActive(isInvulnerable);
         }
     });
 }

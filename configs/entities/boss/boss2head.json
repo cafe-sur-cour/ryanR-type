@@ -189,6 +189,7 @@
             ]
         },
         "ShooterTag": { "target": "both" },
-        "HealthBarComponent": { "target": "client" }
+        "HealthBarComponent": { "target": "client" },
+        "InvulnerableComponent": { "target": "both", "active": true }
     }
 }

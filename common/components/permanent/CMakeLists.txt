@@ -37,4 +37,6 @@ target_sources(${ECS_LIB_NAME} PUBLIC
     ChargedShotComponent.cpp
     AnimationStateComponent.hpp
     AnimationStateComponent.cpp
+    InvulnerableComponent.hpp
+    InvulnerableComponent.cpp
 )

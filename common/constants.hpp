@@ -90,6 +90,7 @@ namespace constants {
     const std::string PARALLAXCOMPONENT = "ParallaxComponent";
     const std::string GAMEZONECOMPONENT = "GameZoneComponent";
     const std::string CHARGEDSHOTCOMPONENT = "ChargedShotComponent";
+    const std::string INVULNERABLECOMPONENT = "InvulnerableComponent";
 
     /* Fields */
     const std::string SCRIPT_PATH_FIELD = "scriptPath";
@@ -99,6 +100,7 @@ namespace constants {
     const std::string DAMAGE_FIELD = "damage";
     const std::string HEALTH_FIELD = "health";
     const std::string COOLDOWN_FIELD = "cooldown";
+    const std::string ACTIVE_FIELD = "active";
     const std::string TARGET_FIELD = "target";
     const std::string POSITION_FIELD = "position";
     const std::string OFFSET_FIELD = "offset";
