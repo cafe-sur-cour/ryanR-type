@@ -1,5 +1,5 @@
 {
-    "name": "enemy1",
+    "name": "bat",
     "components": {
         "MobTag": { "target": "both" },
         "TransformComponent": {
@@ -51,7 +51,7 @@
             "target": "both",
             "offset": { "x": 0.0, "y": 0.0 },
             "size" : { "x": 172.0, "y": 138.0 },
-            "type": "Solid"
+            "type": "Trigger"
         },
         "DamageComponent": {
             "target": "both",
