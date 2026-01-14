@@ -284,7 +284,7 @@ void InGameState::drawHealthHUD(
 void InGameState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) {
     size_t barX = 250;
     size_t barY = static_cast<size_t>(constants::MAX_HEIGHT - 35);
-    float barWidth = 100.0f;
+    float barWidth = 150.0f;
     size_t barHeight = 20;
     size_t textOffsetY = 35;
     size_t feedbackBaseOffsetY = 105;
@@ -330,7 +330,7 @@ void InGameState::drawShotChargeHUD(
     float shotCharge,
     float maxShotCharge
 ) {
-    size_t barX = 380;
+    size_t barX = 430;
     size_t barY = static_cast<size_t>(constants::MAX_HEIGHT - 35);
     float barWidth = 200.0f;
     size_t barHeight = 20;
