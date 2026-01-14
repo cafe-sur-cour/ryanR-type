@@ -69,7 +69,6 @@ ProfileState::ProfileState(
     titleLayout->addElement(_titleText);
     _uiManager->addElement(titleLayout);
 
-    // Username - Column 1
     auto usernameImage = std::make_shared<ui::Image>(_resourceManager);
     usernameImage->setTexturePath(constants::LEADERBOARD_PLACEHOLDER_PATH);
     usernameImage->setSize(math::Vector2f(600.f, 70.f));
@@ -85,7 +84,6 @@ ProfileState::ProfileState(
     _usernameText->setOutlineThickness(2.5f);
     _uiManager->addElement(_usernameText);
 
-    // Games Played - Column 1
     auto gamesImage = std::make_shared<ui::Image>(_resourceManager);
     gamesImage->setTexturePath(constants::LEADERBOARD_PLACEHOLDER_PATH);
     gamesImage->setSize(math::Vector2f(600.f, 60.f));
@@ -101,7 +99,6 @@ ProfileState::ProfileState(
     _gamesPlayedText->setOutlineThickness(2.0f);
     _uiManager->addElement(_gamesPlayedText);
 
-    // Wins - Column 2
     auto winsImage = std::make_shared<ui::Image>(_resourceManager);
     winsImage->setTexturePath(constants::LEADERBOARD_PLACEHOLDER_PATH);
     winsImage->setSize(math::Vector2f(600.f, 60.f));
@@ -117,7 +114,6 @@ ProfileState::ProfileState(
     _winsText->setOutlineThickness(2.0f);
     _uiManager->addElement(_winsText);
 
-    // High Score - Column 2
     auto scoreImage = std::make_shared<ui::Image>(_resourceManager);
     scoreImage->setTexturePath(constants::LEADERBOARD_PLACEHOLDER_PATH);
     scoreImage->setSize(math::Vector2f(600.f, 70.f));
@@ -133,7 +129,6 @@ ProfileState::ProfileState(
     _highScoreText->setOutlineThickness(2.5f);
     _uiManager->addElement(_highScoreText);
 
-    // Buttons - Right side
     _button1 = std::make_shared<ui::Button>(_resourceManager);
     _button1->setText(constants::REFRESH_PROFILE_BUTTON_TEXT);
     _button1->setSize(math::Vector2f(500.f, 60.f));

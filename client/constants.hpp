@@ -98,6 +98,28 @@ namespace constants {
     const std::string REFRESH_PROFILE_BUTTON_TEXT = "Refresh Profile";
     const std::string BACK_BUTTON_TEXT = "Back";
 
+    /* Chat Constants */
+    const std::string CHAT_TITLE_TEXT = "CHAT ROOM";
+    const std::string CHAT_NO_MESSAGES_TEXT = "No messages yet. Start the conversation!";
+    const std::string CHAT_PLACEHOLDER_TEXT = "Type your message...";
+    const std::string SEND_BUTTON_TEXT = "Send";
+    const std::string BACK_BUTTON_TEXT_UPPER = "BACK";
+
+    /* How To Play Constants */
+    const std::string HOW_TO_PLAY_TITLE_TEXT = "HOW TO PLAY";
+    const std::string CONTROLS_TITLE_TEXT = "CONTROLS";
+    const std::string OBJECTIVES_TITLE_TEXT = "OBJECTIVES";
+    const std::string OBJECTIVE_DESTROY_ENEMIES = "Destroy Enemy Ships";
+    const std::string OBJECTIVE_SURVIVE_WAVES = "Survive the Waves";
+    const std::string OBJECTIVE_COLLECT_POWERUPS = "Collect Power-ups";
+    const std::string OBJECTIVE_BEAT_HIGH_SCORE = "Beat High Score";
+
+    /* Leaderboard Constants */
+    const std::string LEADERBOARD_TITLE_TEXT = "LEADERBOARD";
+    const std::string LEADERBOARD_DEFAULT_NAME_PREFIX = "Player ";
+    const std::string LEADERBOARD_EMPTY_NAME = "---";
+    const std::string LEADERBOARD_DEFAULT_SCORE = "0";
+
     /* Home page input place holders */
     const std::string IP_PLACEHOLDER = "Enter an IP address";
     const std::string PORT_PLACEHOLDER = "Enter a port";

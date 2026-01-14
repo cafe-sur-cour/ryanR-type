@@ -67,7 +67,7 @@ HowToPlayState::HowToPlayState(
     titleLayout->setSize(math::Vector2f(200.f, 250.f));
 
     _titleText = std::make_shared<ui::Text>(_resourceManager);
-    _titleText->setText("HOW TO PLAY");
+    _titleText->setText(constants::HOW_TO_PLAY_TITLE_TEXT);
     _titleText->setSize(math::Vector2f(2000.f, 250.f));
     _titleText->setTextColor(colors::BUTTON_PRIMARY_HOVER);
     _titleText->setOutlineColor(gfx::color_t{120, 0, 0, 255});
@@ -78,7 +78,7 @@ HowToPlayState::HowToPlayState(
     _uiManager->addElement(titleLayout);
 
     auto controlsTitle = std::make_shared<ui::Text>(_resourceManager);
-    controlsTitle->setText("CONTROLS");
+    controlsTitle->setText(constants::CONTROLS_TITLE_TEXT);
     controlsTitle->setSize(math::Vector2f(650.f, 40.f));
     controlsTitle->setPosition(math::Vector2f(430.0f, 250.0f));
     controlsTitle->setTextColor(colors::BUTTON_SECONDARY_HOVER);
@@ -148,7 +148,7 @@ HowToPlayState::HowToPlayState(
     }
 
     auto objectivesTitle = std::make_shared<ui::Text>(_resourceManager);
-    objectivesTitle->setText("OBJECTIVES");
+    objectivesTitle->setText(constants::OBJECTIVES_TITLE_TEXT);
     objectivesTitle->setSize(math::Vector2f(800.f, 40.f));
     objectivesTitle->setPosition(math::Vector2f(1220.0f, 250.0f));
     objectivesTitle->setTextColor(colors::BUTTON_SECONDARY_HOVER);
@@ -158,10 +158,10 @@ HowToPlayState::HowToPlayState(
     _uiManager->addElement(objectivesTitle);
 
     std::vector<std::string> objectives = {
-        "Destroy Enemy Ships",
-        "Survive the Waves",
-        "Collect Power-ups",
-        "Beat High Score"
+        constants::OBJECTIVE_DESTROY_ENEMIES,
+        constants::OBJECTIVE_SURVIVE_WAVES,
+        constants::OBJECTIVE_COLLECT_POWERUPS,
+        constants::OBJECTIVE_BEAT_HIGH_SCORE
     };
 
     float objectivesXPos = 980.0f;
@@ -197,7 +197,7 @@ HowToPlayState::HowToPlayState(
     backLayout->setSize(math::Vector2f(400.f, 70.f));
 
     _backButton = std::make_shared<ui::Button>(_resourceManager);
-    _backButton->setText("BACK");
+    _backButton->setText(constants::BACK_BUTTON_TEXT_UPPER);
     _backButton->setSize(math::Vector2f(400.f, 70.f));
     _backButton->setNormalColor(colors::BUTTON_SECONDARY);
     _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);

@@ -5,6 +5,7 @@
 ** Image UI Element
 */
 
+#include <string>
 #include "Image.hpp"
 #include "../../../common/interfaces/IWindow.hpp"
 

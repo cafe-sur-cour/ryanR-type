@@ -57,7 +57,7 @@ LeaderboardState::LeaderboardState(
     titleLayout->setSize(math::Vector2f(200.f, 250.f));
 
     _titleText = std::make_shared<ui::Text>(_resourceManager);
-    _titleText->setText("LEADERBOARD");
+    _titleText->setText(constants::LEADERBOARD_TITLE_TEXT);
     _titleText->setFontSize(56);
     _titleText->setTextColor(colors::BUTTON_PRIMARY_HOVER);
     _titleText->setOutlineColor(gfx::color_t{120, 0, 0, 255});
@@ -117,7 +117,7 @@ LeaderboardState::LeaderboardState(
 
         auto nameText = std::make_shared<ui::Text>(_resourceManager);
         std::stringstream ss2;
-        ss2 << "Player " << (i + 1);
+        ss2 << constants::LEADERBOARD_DEFAULT_NAME_PREFIX << (i + 1);
         nameText->setText(ss2.str());
         nameText->setSize(math::Vector2f(330.f, 30.f));
         nameText->setPosition(math::Vector2f(xPos + 158.0f, yPos + 40.0f));
@@ -143,7 +143,7 @@ LeaderboardState::LeaderboardState(
     _uiManager->addElement(_mainLayout);
 
     _backButton = std::make_shared<ui::Button>(_resourceManager);
-    _backButton->setText("Back");
+    _backButton->setText(constants::BACK_BUTTON_TEXT);
     _backButton->setSize(math::Vector2f(500.f, 70.f));
     _backButton->setNormalColor(colors::BUTTON_SECONDARY);
     _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
@@ -196,8 +196,8 @@ void LeaderboardState::loadLeaderboardData() {
                 std::stringstream ss;
                 ss << (i + 1) << ".";
                 _leaderTexts[textIndex]->setText(ss.str());
-                _leaderTexts[textIndex + 1]->setText("---");
-                _leaderTexts[textIndex + 2]->setText("0");
+                _leaderTexts[textIndex + 1]->setText(constants::LEADERBOARD_EMPTY_NAME);
+                _leaderTexts[textIndex + 2]->setText(constants::LEADERBOARD_DEFAULT_SCORE);
             }
             return;
         }
@@ -208,8 +208,8 @@ void LeaderboardState::loadLeaderboardData() {
         std::stringstream ss;
         ss << (i + 1) << ".";
         _leaderTexts[textIndex]->setText(ss.str());
-        _leaderTexts[textIndex + 1]->setText("---");
-        _leaderTexts[textIndex + 2]->setText("0");
+        _leaderTexts[textIndex + 1]->setText(constants::LEADERBOARD_EMPTY_NAME);
+        _leaderTexts[textIndex + 2]->setText(constants::LEADERBOARD_DEFAULT_SCORE);
     }
 }
 
