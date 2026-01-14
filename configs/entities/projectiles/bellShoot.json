@@ -1,0 +1,80 @@
+{
+    "name": "bellShoot",
+    "components": {
+        "EnnemyProjectileTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/boss/Bishop/bell/bell_a.png",
+                    "frameWidth": 82.0,
+                    "frameHeight": 78.0,
+                    "frameCount": 5,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.04,
+                    "loop": true
+                }
+            },
+            "initialState": "idle",
+            "transitions": []
+        },
+
+
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 82.0, "y": 78.0 },
+            "type": "Trigger"
+        },
+        "DamageComponent": {
+            "target": "both",
+            "damage": 15.0
+        },
+        "SpeedComponent": {
+            "target": "both",
+            "speed": 340.0
+        },
+        "LifetimeComponent": {
+            "target": "both",
+            "lifetime": 5.0
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDeath"]
+                },
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": ["DealDeath"],
+                    "toSelf": ["TakeDeath"]
+                },
+                {
+                    "tags": ["ObstacleTag"],
+                    "toEntity": [],
+                    "toSelf": ["TakeDeath"]
+                }
+            ]
+        },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "musics/mermaid_eel_attack_start_04.wav",
+            "volume": 30.0
+        },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/followNearPlayer.lua",
+            "additionalFunctions": []
+        }
+    }
+}

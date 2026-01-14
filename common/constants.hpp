@@ -371,6 +371,8 @@ namespace constants {
     const std::string GET_GAME_ZONE_VELOCITY_FUNCTION = "getGameZoneVelocity";
     const std::string REVERSE_SHOOT_ORIENTATION_FUNCTION = "reverseShootOrientation";
     const std::string SET_GAME_ZONE_VELOCITY_FUNCTION = "setGameZoneVelocity";
+    const std::string GET_ENTITY_VELOCITY_FUNCTION = "getEntityVelocity";
+    const std::string SET_INVULNERABLE_FUNCTION = "setInvulnerable";
 }
 
 #endif /* !CONSTANTS_HPP_ */

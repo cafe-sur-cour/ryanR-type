@@ -33,6 +33,7 @@
 #include "../../components/permanent/AnimationStateComponent.hpp"
 #include "../../components/tags/ForceTag.hpp"
 #include "../../components/permanent/ShootingStatsComponent.hpp"
+#include "../../components/permanent/HealthComponent.hpp"
 
 namespace ecs {
 
@@ -65,6 +66,17 @@ void ScriptingSystem::bindAPI() {
             auto transform = registry->getComponent<TransformComponent>(e);
             transform->setRotation(rotation);
         }
+    });
+
+    lua.set_function(constants::GET_ENTITY_VELOCITY_FUNCTION,
+        [this](size_t entityId) -> std::tuple<float, float> {
+        Entity e = static_cast<Entity>(entityId);
+        if (registry->hasComponent<VelocityComponent>(e)) {
+            auto velocity = registry->getComponent<VelocityComponent>(e);
+            auto vel = velocity->getVelocity();
+            return {vel.getX(), vel.getY()};
+        }
+        return {0.0f, 0.0f};
     });
 
 
@@ -376,6 +388,15 @@ void ScriptingSystem::bindAPI() {
         MultiShotPattern pattern = shootingStatsComp->getMultiShotPattern();
         pattern.angleOffset += 180.0f;
         shootingStatsComp->setMultiShotPattern(pattern);
+    });
+
+    lua.set_function(constants::SET_INVULNERABLE_FUNCTION,
+        [this](size_t entityId, bool isInvulnerable) {
+        Entity e = static_cast<Entity>(entityId);
+        if (registry->hasComponent<ecs::HealthComponent>(e)) {
+            auto healthComp = registry->getComponent<ecs::HealthComponent>(e);
+            healthComp->setInvulnerable(isInvulnerable);
+        }
     });
 }
 
