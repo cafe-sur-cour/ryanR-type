@@ -43,7 +43,8 @@ void HealthSystem::_handleDamageUpdates(
         auto damageComponent = registry->getComponent<DamageIntentComponent>(entityId);
 
         if (registry->hasComponent<InvulnerableComponent>(entityId)) {
-            auto invulnerableComponent = registry->getComponent<InvulnerableComponent>(entityId);
+            auto invulnerableComponent = registry->getComponent
+                <InvulnerableComponent>(entityId);
             if (invulnerableComponent->isActive()) {
                 registry->removeOneComponent<DamageIntentComponent>(entityId);
                 continue;
