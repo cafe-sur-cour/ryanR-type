@@ -10,7 +10,6 @@
         "VelocityComponent": { "target": "both" },
         "SpeedComponent": { "target": "both", "speed": 500.0 },
 
-
         "AnimationComponent": {
             "target": "client",
             "states": {
@@ -18,7 +17,7 @@
                     "texturePath": "assets/sprites/popCorn.png",
                     "frameWidth": 97.0,
                     "frameHeight": 102.0,
-                    "frameCount": 12,
+                    "frameCount": 26,
                     "startWidth": 0.0,
                     "startHeight": 0.0,
                     "speed": 0.1,
@@ -28,9 +27,9 @@
                     "texturePath": "assets/sprites/popCorn.png",
                     "frameWidth": 97.0,
                     "frameHeight": 102.0,
-                    "frameCount": 10,
-                    "startWidth": 97.0,
-                    "startHeight": 0.0,
+                    "frameCount": 26,
+                    "startWidth": 0.0,
+                    "startHeight": 102.0,
                     "speed": 0.1,
                     "loop": true
                 },
@@ -38,9 +37,9 @@
                     "texturePath": "assets/sprites/popCorn.png",
                     "frameWidth": 97.0,
                     "frameHeight": 102.0,
-                    "frameCount": 12,
-                    "startWidth": 194.0,
-                    "startHeight": 0.0,
+                    "frameCount": 26,
+                    "startWidth": 0.0,
+                    "startHeight": 204.0,
                     "speed": 0.1,
                     "loop": true
                 }

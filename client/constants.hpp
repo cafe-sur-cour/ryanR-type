@@ -82,7 +82,11 @@ namespace constants {
     const std::string VICTORY_PREFAB = "configs/prefab/vicotry.json";
     const std::string LOSE_PREFAB = "configs/prefab/youdied.json";
 
-    const std::string MAIN_FONT = "assets/fonts/cuphead_font.ttf"; // cuphead_font
+    const std::string MENU_MUSIC_PATH = "assets/musics/menu.wav";
+    const std::string VICTORY_MUSIC_PATH = "assets/musics/victory-music.wav";
+    const std::string DEATH_MUSIC_PATH = "assets/musics/playerDeath.wav";
+
+    const std::string MAIN_FONT = "assets/fonts/cuphead_font.ttf";
 
     const std::string LEVEL_COMPLETE_SUB_TITLE_TEXT = "Going to the next level...";
 

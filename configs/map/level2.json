@@ -1,7 +1,7 @@
 {
     "background": "seaLevel",
     "index": 2,
-    "mapLength": 8500.0,
+    "mapLength": 8000.0,
     "music": "musicLevel2",
     "name": "Sea Level",
     "obstacles": [
@@ -168,25 +168,6 @@
                 }
             ],
             "gameXTrigger": 3233.0
-        },
-        {
-            "enemies": [
-                {
-                    "count": 1,
-                    "distributionX": {
-                        "max": 100.0,
-                        "min": 0.0,
-                        "type": "uniform"
-                    },
-                    "distributionY": {
-                        "max": 100.0,
-                        "min": 0.0,
-                        "type": "uniform"
-                    },
-                    "type": "boss2"
-                }
-            ],
-            "gameXTrigger": 6543.0
         }
     ]
 }
