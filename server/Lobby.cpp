@@ -740,8 +740,6 @@ bool rserv::Lobby::levelCompletePacket() {
         this->_sequenceNumber, constants::PACKET_LEVEL_COMPLETE, payload);
 
     if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
-        std::cout << "[SERVER NETWORK] Failed to broadcast level complete packet"
-            << std::endl;
         debug::Debug::printDebug(this->getIsDebug(),
             "[SERVER NETWORK] Failed to broadcast level complete packet",
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
@@ -757,7 +755,6 @@ bool rserv::Lobby::nextLevelPacket() {
         this->_sequenceNumber, constants::PACKET_NEXT_LEVEL, payload);
 
     if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
-        std::cout << "[SERVER NETWORK] Failed to broadcast next level packet" << std::endl;
         debug::Debug::printDebug(this->getIsDebug(),
             "[SERVER NETWORK] Failed to broadcast next level packet",
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
@@ -1201,8 +1198,6 @@ bool rserv::Lobby::ackLeaveLobbyPacket(const net::INetworkEndpoint &endpoint,
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
         return false;
     }
-    std::cout << "[SERVER] Sent ACK_LEAVE_LOBBY response to client: "
-        << (canDisconnect ? "success" : "failure") << std::endl;
     this->_sequenceNumber++;
     debug::Debug::printDebug(this->getIsDebug(),
         "[SERVER] Sent ACK_LEAVE_LOBBY response to client: " +

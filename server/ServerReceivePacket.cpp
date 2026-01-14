@@ -384,8 +384,6 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
     }
 
     for (const auto &client : _clientInfo) {
-        std::cout << "Starting game for client ID: "
-                  << static_cast<int>(std::get<0>(client)) << std::endl;
         endpoints.push_back(std::get<1>(client));
     }
 

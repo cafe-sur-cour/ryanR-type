@@ -216,7 +216,6 @@ bool rserv::Server::sendCodeLobbyPacket(const net::INetworkEndpoint &endpoint) {
 
         realLobby->gameRulesPacket();
     }
-    std::cout << "[SERVER] Created new lobby with code: " << lobbyCode << std::endl;
     this->_sequenceNumber++;
     return true;
 }
@@ -342,8 +341,6 @@ bool rserv::Server::leaderboardPacket(const net::INetworkEndpoint &endpoint) {
         payload.insert(payload.end(), emptyEntryScore.begin(),
             emptyEntryScore.end());
     }
-
-    std::cout << std::endl;
     std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
         this->_sequenceNumber, constants::PACKET_LEADERBOARD, payload);
     if (!this->_network->sendTo(endpoint, packet)) {

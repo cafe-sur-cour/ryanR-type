@@ -93,7 +93,6 @@ void ClientNetwork::disconnectionPacket() {
 }
 
 void ClientNetwork::sendDisconnectFromLobby() {
-    std::cout << "Sending disconnect from lobby packet" << std::endl;
     if (!_network) {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
             err::ClientNetworkError::INTERNAL_ERROR);
