@@ -1,0 +1,80 @@
+{
+    "name": "fireShoot",
+    "components": {
+        "EnnemyProjectileTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 0.5, "y": 0.5 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/projectiles/fireShoot.png",
+                    "frameWidth": 136.0,
+                    "frameHeight": 66.0,
+                    "frameCount": 8,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.04,
+                    "loop": true
+                }
+            },
+            "initialState": "idle",
+            "transitions": []
+        },
+
+
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 20.0 },
+            "size": { "x": 136, "y": 66.0 },
+            "type": "Trigger"
+        },
+        "DamageComponent": {
+            "target": "both",
+            "damage": 10.0
+        },
+        "SpeedComponent": {
+            "target": "both",
+            "speed": 600.0
+        },
+        "LifetimeComponent": {
+            "target": "both",
+            "lifetime": 1.0
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDeath"]
+                },
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": ["DealDeath"],
+                    "toSelf": ["TakeDeath"]
+                },
+                {
+                    "tags": ["ObstacleTag"],
+                    "toEntity": [],
+                    "toSelf": ["TakeDeath"]
+                }
+            ]
+        },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "musics/mermaid_eel_attack_start_04.wav",
+            "volume": 30.0
+        },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/rotating_projectile.lua",
+            "additionalFunctions": []
+        }
+    }
+}
