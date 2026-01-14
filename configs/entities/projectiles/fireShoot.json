@@ -1,5 +1,5 @@
 {
-    "name": "blueBullet",
+    "name": "fireBullet",
     "components": {
         "EnnemyProjectileTag": { "target": "both" },
         "TransformComponent": {
@@ -69,7 +69,7 @@
         "SoundIntentComponent": {
             "target": "client",
             "soundFile": "musics/mermaid_eel_attack_start_04.wav",
-            "volume": 30.0
+            "volume": 15.0
         }
     }
 }

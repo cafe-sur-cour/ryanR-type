@@ -68,8 +68,8 @@
         },
         "SoundIntentComponent": {
             "target": "client",
-            "soundFile": "musics/mermaid_eel_attack_start_04.wav",
-            "volume": 30.0
+            "soundFile": "musics/magicien-shoot.wav",
+            "volume": 15.0
         }
     }
 }
