@@ -30,6 +30,7 @@ ResultsState::ResultsState(
     bool isWin)
     : AGameState(gsm, resourceManager), _isWin(isWin) {
     _uiManager = std::make_unique<ui::UIManager>();
+    _uiManager->setResourceManager(_resourceManager);
 }
 
 void ResultsState::enter() {

@@ -146,8 +146,6 @@ class Lobby {
             /* Functions to build game state packets */
             std::vector<std::function<std::vector<uint64_t>(std::shared_ptr<ecs::Registry>, ecs::Entity)>> _convertFunctions;
 
-            /* AOI (Area of Interest) management */
-            bool isEntityInPlayerAOI(std::shared_ptr<ecs::Registry> registry, ecs::Entity playerEntity, ecs::Entity targetEntity);
         protected:
             std::vector<uint64_t> convertTagComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);
             std::vector<uint64_t> convertTransformComponent(std::shared_ptr<ecs::Registry> registry, ecs::Entity i);

@@ -34,6 +34,7 @@ LobbyWaitingState::LobbyWaitingState(
 ) : AGameState(gsm, resourceManager), _isLobbyMaster(isLobbyMaster) {
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
+    _uiManager->setResourceManager(_resourceManager);
 
     _uiManager->setCursorCallback([this](bool isHovering) {
         if (_resourceManager->has<gfx::IWindow>()) {
@@ -172,9 +173,6 @@ LobbyWaitingState::LobbyWaitingState(
 
     _uiManager->addElement(_topLeftLayout);
 
-    // We'll create a single top-right horizontal layout later and add both
-    // the chat and leave buttons into it so they sit side-by-side.
-
     ui::LayoutConfig topConfig;
     topConfig.direction = ui::LayoutDirection::Horizontal;
     topConfig.alignment = ui::LayoutAlignment::End;
@@ -185,6 +183,26 @@ LobbyWaitingState::LobbyWaitingState(
     topConfig.offset = math::Vector2f(-20.0f, 20.0f);
     _topRightLayout = std::make_shared<ui::UILayout>(_resourceManager, topConfig);
     _topRightLayout->setSize(math::Vector2f(80.f, 80.f));
+
+    _chatButton = std::make_shared<ui::Button>(_resourceManager);
+    _chatButton->setSize(math::Vector2f(80.f, 80.f));
+    _chatButton->setIconPath(constants::CHAT_PATH);
+    _chatButton->setIconSize(math::Vector2f(500.f, 500.f));
+    _chatButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _chatButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _chatButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _chatButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
+    _chatButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePush(std::make_unique<ChatState>(stateMachine,
+                this->_resourceManager));
+        }
+    });
 
     _chatButton = std::make_shared<ui::Button>(_resourceManager);
     _chatButton->setSize(math::Vector2f(80.f, 80.f));
@@ -263,7 +281,6 @@ LobbyWaitingState::LobbyWaitingState(
         }
     });
 
-    // add leave and chat to the top-right layout so they are side-by-side
     _topRightLayout->addElement(_leaveButton);
     _topRightLayout->addElement(_chatButton);
     _uiManager->addElement(_topRightLayout);
@@ -274,7 +291,8 @@ LobbyWaitingState::LobbyWaitingState(
         auto window = _resourceManager->get<gfx::IWindow>();
         if (window) {
             auto [windowWidth, windowHeight] = window->getWindowSize();
-            _loadingAnimation->setPosition(math::Vector2f(static_cast<float>(windowWidth) - 200.0f, static_cast<float>(windowHeight) - 300.0f));
+            _loadingAnimation->setPosition(math::Vector2f(static_cast<float>(windowWidth) -
+                200.0f, static_cast<float>(windowHeight) - 300.0f));
         }
     } else {
         std::cerr << "Failed to load loading animation prefab" << std::endl;
