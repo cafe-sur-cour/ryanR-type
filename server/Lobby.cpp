@@ -5,7 +5,6 @@
 ** Lobby
 */
 
-
 #include <set>
 #include <map>
 #include <utility>
@@ -24,9 +23,6 @@
 #include "../libs/Network/Unix/ServerNetwork.hpp"
 #include "../common/components/tags/PlayerTag.hpp"
 #include "../common/components/permanent/GameZoneComponent.hpp"
-#include "../common/components/permanent/TransformComponent.hpp"
-#include "../common/types/Vector2f.hpp"
-#include "../common/types/FRect.hpp"
 #include "../common/ECS/entity/Entity.hpp"
 #include "../common/ECS/entity/registry/Registry.hpp"
 
@@ -586,7 +582,6 @@ bool rserv::Lobby::gameStatePacket() {
 
     for (uint8_t clientId : clientIds) {
         std::shared_ptr<net::INetworkEndpoint> clientEndpoint = nullptr;
-        ecs::Entity playerEntity = 0;
         {
             std::lock_guard<std::mutex> lock(_clientsMutex);
             for (const auto& client : this->_clients) {
@@ -595,11 +590,6 @@ bool rserv::Lobby::gameStatePacket() {
                     break;
                 }
             }
-        }
-
-        auto it = this->_clientToEntity.find(clientId);
-        if (it != this->_clientToEntity.end()) {
-            playerEntity = it->second;
         }
 
         if (!clientEndpoint) {
@@ -611,11 +601,6 @@ bool rserv::Lobby::gameStatePacket() {
         size_t estimatedSize = 2;
 
         for (const auto& entityData : serializedEntities) {
-            if (playerEntity != 0 && !this->isEntityInPlayerAOI(registry, playerEntity,
-                static_cast<ecs::Entity>(entityData.entityId))) {
-                continue;
-            }
-
             std::vector<uint64_t> delta = this->_deltaTracker.createEntityDelta(
                 clientId, entityData.entityId, entityData.snapshot);
             if (delta.empty()) {
@@ -1182,49 +1167,11 @@ void rserv::Lobby::gameLoop() {
             this->_gsm->update(deltaTime);
         }
 
+        this->_statusUpdateTimer += deltaTime;
+        if (this->_statusUpdateTimer >= 2.0f) {
+            this->serverStatusPacket();
+            this->_statusUpdateTimer = 0.0f;
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
-}
-
-bool rserv::Lobby::isEntityInPlayerAOI(std::shared_ptr<ecs::Registry> registry,
-    ecs::Entity playerEntity, ecs::Entity targetEntity) {
-
-    if (playerEntity == targetEntity) {
-        return true;
-    }
-
-    if (registry->hasComponent<ecs::GameZoneComponent>(targetEntity)) {
-        return true;
-    }
-
-    auto gameZoneView = registry->view<ecs::GameZoneComponent, ecs::TransformComponent>();
-    for (auto gameZoneEntity : gameZoneView) {
-        auto gameZoneComp =
-            registry->getComponent<ecs::GameZoneComponent>(gameZoneEntity);
-        auto gameZoneTransform =
-            registry->getComponent<ecs::TransformComponent>(gameZoneEntity);
-
-        if (!gameZoneComp || !gameZoneTransform) {
-            continue;
-        }
-
-        math::FRect zone = gameZoneComp->getZone();
-        math::Vector2f zonePosition = gameZoneTransform->getPosition();
-
-        float left = zonePosition.getX() + zone.getLeft() - constants::AOI_MARGIN;
-        float right = left + zone.getWidth() + 2 * constants::AOI_MARGIN;
-        float top = zonePosition.getY() + zone.getTop() - constants::AOI_MARGIN;
-        float bottom = top + zone.getHeight() + 2 * constants::AOI_MARGIN;
-
-        if (!registry->hasComponent<ecs::TransformComponent>(targetEntity)) {
-            return false;
-        }
-
-        auto targetTransform = registry->getComponent<ecs::TransformComponent>(targetEntity);
-        math::Vector2f targetPos = targetTransform->getPosition();
-
-        return (targetPos.getX() >= left && targetPos.getX() <= right &&
-                targetPos.getY() >= top && targetPos.getY() <= bottom);
-    }
-    return true;
 }

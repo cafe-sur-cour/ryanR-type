@@ -33,6 +33,7 @@
 #include "../../components/permanent/AnimationStateComponent.hpp"
 #include "../../components/tags/ForceTag.hpp"
 #include "../../components/permanent/ShootingStatsComponent.hpp"
+#include "../../components/permanent/ChargedShotComponent.hpp"
 
 namespace ecs {
 
@@ -103,6 +104,31 @@ void ScriptingSystem::bindAPI() {
             return speedComp->getSpeed();
         }
         return 0.0f;
+    });
+
+    lua.set_function(constants::SET_ENTITY_SPEED_FUNCTION,
+        [this](Entity e, float speed) {
+        if (registry->hasComponent<SpeedComponent>(e)) {
+            auto speedComp = registry->getComponent<SpeedComponent>(e);
+            speedComp->setSpeed(speed);
+        }
+    });
+
+    lua.set_function(constants::GET_MAX_CHARGE_FUNCTION,
+        [this](Entity e) -> float {
+        if (registry->hasComponent<ChargedShotComponent>(e)) {
+            auto chargedShotComp = registry->getComponent<ChargedShotComponent>(e);
+            return chargedShotComp->getMaxCharge();
+        }
+        return 0.0f;
+    });
+
+    lua.set_function(constants::SET_MAX_CHARGE_FUNCTION,
+        [this](Entity e, float maxCharge) {
+        if (registry->hasComponent<ChargedShotComponent>(e)) {
+            auto chargedShotComp = registry->getComponent<ChargedShotComponent>(e);
+            chargedShotComp->setMaxCharge(maxCharge);
+        }
     });
 
     lua.set_function(constants::CREATE_SHOOT_INTENT_FUNCTION,
