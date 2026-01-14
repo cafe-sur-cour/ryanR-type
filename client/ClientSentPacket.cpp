@@ -92,6 +92,36 @@ void ClientNetwork::disconnectionPacket() {
     this->_sequenceNumber++;
 }
 
+void ClientNetwork::sendDisconnectFromLobby() {
+    std::cout << "Sending disconnect from lobby packet" << std::endl;
+    if (!_network) {
+        throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
+            err::ClientNetworkError::INTERNAL_ERROR);
+    }
+    if (this->_idClient == 0) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[Client] Warning: Client ID is 0, cannot send disconnection packet",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+    if (!this->_packet) {
+        debug::Debug::printDebug(this->_isDebug,
+            "[Client] Warning: Packet manager not initialized, cannot send disconnect packet",
+            debug::debugType::NETWORK,
+            debug::debugLevel::WARNING);
+        return;
+    }
+    std::vector<uint64_t> payload = {};
+    payload.push_back(static_cast<uint64_t>(this->_idClient));
+
+    std::vector<uint8_t> header = this->_packet->pack(this->_idClient,
+        this->_sequenceNumber, constants::PACKET_LEAVE_LOBBY, payload);
+
+    this->_network->sendTo(*this->_serverEndpoint, header);
+    this->_sequenceNumber++;
+}
+
 void ClientNetwork::sendWhoAmI() {
     if (!_network) {
         throw err::ClientNetworkError("[ClientNetwork] Network not initialized",
@@ -175,11 +205,6 @@ void ClientNetwork::sendLobbyConnection(std::string lobbyCode) {
     this->_lobbyCode = lobbyCode;
     this->_network->sendTo(*this->_serverEndpoint, packet);
     this->_sequenceNumber++;
-}
-
-void ClientNetwork::leaveLobby() {
-    _lastLeaveLobbyTime = std::chrono::steady_clock::now();
-    sendLobbyConnection("");
 }
 
 void ClientNetwork::sendMasterStartGame() {
