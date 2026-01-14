@@ -1,6 +1,6 @@
 {
-    "background": "seaLevel",
-    "index": 2,
+    "background": "backgroundSea",
+    "index": 1,
     "mapLength": 6500.0,
     "music": "musicLevel2",
     "name": "Sea Level",
