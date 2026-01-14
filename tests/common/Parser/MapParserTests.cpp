@@ -70,7 +70,7 @@ protected:
         prefabManager->registerPrefab("background", std::make_shared<MockPrefab>("background"));
         prefabManager->registerPrefab("wall", std::make_shared<MockPrefab>("wall"));
         prefabManager->registerPrefab("bat", std::make_shared<MockPrefab>("bat"));
-        prefabManager->registerPrefab("enemy2", std::make_shared<MockPrefab>("enemy2"));
+        prefabManager->registerPrefab("canon", std::make_shared<MockPrefab>("canon"));
         prefabManager->registerPrefab("gamezone", std::make_shared<MockPrefab>("gamezone"));
     }
 
@@ -221,7 +221,7 @@ TEST_F(MapParserTest, ParseMapWithWaves) {
                         "count": 3
                     },
                     {
-                        "type": "enemy2",
+                        "type": "canon",
                         "count": 2
                     }
                 ]

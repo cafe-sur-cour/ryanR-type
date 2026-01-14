@@ -59,6 +59,12 @@
                 "offset": { "x": 0.0, "y": 0.0 },
                 "size" : { "x": 346.0, "y": 284.0 },
                 "type": "Trigger"
+            },
+            {
+                "target": "both",
+                "offset": { "x": 0.0, "y": 0.0 },
+                "size" : { "x": 346.0, "y": 284.0 },
+                "type": "Solid"
             }
         ],
         "DamageComponent": {

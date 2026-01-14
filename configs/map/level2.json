@@ -1,9 +1,9 @@
 {
-    "background": "backgroundSea",
+    "background": "seaLevel",
     "index": 2,
     "mapLength": 6500.0,
     "music": "musicLevel2",
-    "name": "sea LEvel",
+    "name": "Sea Level",
     "obstacles": [
         {
             "name": "coral2",

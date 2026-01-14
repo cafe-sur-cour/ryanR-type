@@ -30,12 +30,20 @@
             "initialState": "idle",
             "transitions": []
         },
-        "ColliderComponent": {
-            "target": "both",
-            "offset": { "x": 0.0, "y": 0.0 },
-            "size" : { "x": 82.0, "y": 84.0 },
-            "type": "Trigger"
-        },
+        "ColliderComponent": [
+            {
+                "target": "both",
+                "offset": { "x": 0.0, "y": 0.0 },
+                "size" : { "x": 82.0, "y": 84.0 },
+                "type": "Trigger"
+            },
+            {
+                "target": "both",
+                "offset": { "x": 0.0, "y": 0.0 },
+                "size" : { "x": 82.0, "y": 84.0 },
+                "type": "Solid"
+            }
+        ],
         "InteractionConfigComponent": {
             "target": "both",
             "mappings": [
