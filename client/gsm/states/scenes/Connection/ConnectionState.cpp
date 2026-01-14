@@ -37,6 +37,7 @@ ConnectionState::ConnectionState(
 
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
+    _uiManager->setResourceManager(_resourceManager);
 
     _uiManager->setCursorCallback([this](bool isHovering) {
         if (_resourceManager->has<gfx::IWindow>()) {
@@ -73,6 +74,14 @@ ConnectionState::ConnectionState(
         navMan->setFocus(this->_portInput);
     });
 
+
+    _loadingAnimation = std::make_shared<ui::SpritePreview>(_resourceManager);
+    if (_loadingAnimation->loadPrefab(constants::LOADING_PREFAVB)) {
+        _loadingAnimation->setSize(math::Vector2f(185.0f, 320.0f));
+    } else {
+        std::cerr << "Failed to load loading animation prefab" << std::endl;
+        _loadingAnimation.reset();
+    }
     _connectButton = std::make_shared<ui::Button>(_resourceManager);
     _connectButton->setText("Connect");
     _connectButton->setSize(math::Vector2f(300.f, 108.f));
@@ -87,6 +96,17 @@ ConnectionState::ConnectionState(
                 network->setIp(ip);
                 network->setPort(port);
                 network->connect();
+                if (_loadingAnimation) {
+                    _uiManager->addElement(_loadingAnimation);
+                    auto window = _resourceManager->get<gfx::IWindow>();
+                    if (window) {
+                        auto [windowWidth, windowHeight] = window->getWindowSize();
+                        _loadingAnimation->setPosition(math::Vector2f(
+                            static_cast<float>(windowWidth) - 200.0f,
+                            static_cast<float>(windowHeight) - 300.0f
+                        ));
+                    }
+                }
             } catch ([[maybe_unused]] const std::exception& e) {
                 std::cerr << "Invalid port: " << portStr << std::endl;
             }
@@ -102,6 +122,17 @@ ConnectionState::ConnectionState(
                 network->setIp(ip);
                 network->setPort(port);
                 network->connect();
+                if (_loadingAnimation) {
+                    _uiManager->addElement(_loadingAnimation);
+                    auto window = _resourceManager->get<gfx::IWindow>();
+                    if (window) {
+                        auto [windowWidth, windowHeight] = window->getWindowSize();
+                        _loadingAnimation->setPosition(math::Vector2f(
+                            static_cast<float>(windowWidth) - 200.0f,
+                            static_cast<float>(windowHeight) - 300.0f
+                        ));
+                    }
+                }
             } catch ([[maybe_unused]] const std::exception& e) {
                 std::cerr << "Invalid port: " << portStr << std::endl;
             }
@@ -146,6 +177,11 @@ ConnectionState::ConnectionState(
     _spacer->setText("");
     _spacer->setSize(math::Vector2f(300.f, 20.f));
 
+
+    _spacer = std::make_shared<ui::Text>(_resourceManager);
+    _spacer->setText("");
+    _spacer->setSize(math::Vector2f(300.f, 20.f));
+
     ui::LayoutConfig layoutConfig;
     layoutConfig.direction = ui::LayoutDirection::Vertical;
     layoutConfig.alignment = ui::LayoutAlignment::Center;
@@ -166,6 +202,7 @@ ConnectionState::ConnectionState(
     _layout->addElement(_levelEditorButton);
     _layout->addElement(_quitButton);
 
+
     _uiManager->addElement(_layout);
 }
 
@@ -177,6 +214,10 @@ void ConnectionState::update(float deltaTime) {
     auto config = _resourceManager->get<SettingsConfig>();
     if (_uiManager->getGlobalScale() != config->getUIScale()) {
         _uiManager->setGlobalScale(config->getUIScale());
+    }
+
+    if (_loadingAnimation) {
+        _loadingAnimation->update(deltaTime);
     }
 
     auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
@@ -225,6 +266,10 @@ void ConnectionState::updateUIStatus() {
     if (network->isConnected()) {
         if (!_wasConnected) {
             _wasConnected = true;
+            if (_loadingAnimation) {
+                _uiManager->removeElement(_loadingAnimation);
+                _loadingAnimation.reset();
+            }
             if (auto stateMachine = this->_gsm.lock()) {
                 stateMachine->requestStatePush(
                     std::make_shared<MainMenuState>(stateMachine, this->_resourceManager));

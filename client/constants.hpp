@@ -71,12 +71,17 @@ namespace constants {
     const std::string KEYBINDS_FILE_PATH = "saves/keybinds.json";
     const std::string ACCESSIBILITY_FILE_PATH = "saves/accessibility.json";
     const std::string SETTINGS_FILE_PATH = "saves/settings.json";
-    const std::string UI_BACKGROUND_EARTH_PATH = "assets/ui/earth.jpg";
-    const std::string HOW_TO_PLAY_PATH = "assets/sprites/how_to_play.png";
-    const std::string LEADERBOARD_PATH = "assets/sprites/leaderboard.png";
-    const std::string CHAT_PATH = "assets/sprites/chat.png";
+    const std::string UI_BACKGROUND_EARTH_PATH = "assets/ui/background-home.png";
+    const std::string UI_BACKGROUND_CHAT = "assets/sprites/menu/chatBackgorund.png";
+    const std::string HOW_TO_PLAY_PATH = "assets/sprites/menu/how_to_play.png";
+    const std::string LEADERBOARD_PATH = "assets/sprites/menu/leaderboard.png";
+    const std::string CHAT_PATH = "assets/sprites/menu/chat.png";
 
-    const std::string MAIN_FONT = "assets/fonts/abduction2002.ttf";
+    const std::string LOADING_PREFAVB = "configs/prefab/loading_animation.json";
+    const std::string VICTORY_PREFAB = "configs/prefab/vicotry.json";
+    const std::string LOSE_PREFAB = "configs/prefab/youdied.json";
+
+    const std::string MAIN_FONT = "assets/fonts/cuphead_font.ttf"; // cuphead_font
 
     const std::string WIN_TEXT = "YOU WIN!";
     const std::string LOSE_TEXT = "YOU LOSE!";

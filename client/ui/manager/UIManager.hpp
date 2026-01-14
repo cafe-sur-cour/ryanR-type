@@ -17,6 +17,7 @@
 #include "../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../common/types/Vector2f.hpp"
 #include "../../../client/constants.hpp"
+#include "../../../common/interfaces/IEvent.hpp"
 
 namespace ui {
 
@@ -59,6 +60,8 @@ class UIManager {
 
         bool isMouseHoveringAnyElement(const math::Vector2f& mousePos) const;
 
+        void setResourceManager(std::shared_ptr<ResourceManager> resourceManager);
+
     private:
         std::vector<std::shared_ptr<UIElement>> _elements;
         std::shared_ptr<UINavigationManager> _navigationManager;
@@ -71,6 +74,7 @@ class UIManager {
         std::function<void(bool)> _cursorCallback;
         std::set<gfx::EventType> _consumedTextKeys;
         std::set<ecs::InputAction> _blockedActions;
+        std::shared_ptr<ResourceManager> _resourceManager;
 
         bool hasMouseMoved(const math::Vector2f& mousePos);
 

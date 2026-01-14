@@ -15,6 +15,7 @@
 #include "../../../../ui/manager/UIManager.hpp"
 #include "../../../../ui/core/UILayout.hpp"
 #include "../../../../ui/elements/Text.hpp"
+#include "../../../../ui/elements/SpritePreview.hpp"
 
 namespace gsm {
 
@@ -43,7 +44,6 @@ private:
     std::shared_ptr<ui::Button> _startGameButton;
 
     std::shared_ptr<ui::UILayout> _topLeftLayout;
-    std::shared_ptr<ui::UILayout> _bottomRightLayout;
     std::shared_ptr<ui::Text> _gamemodeLabel;
     std::shared_ptr<ui::Button> _gamemodeButton;
     std::shared_ptr<ui::Text> _difficultyLabel;
@@ -52,8 +52,9 @@ private:
     std::shared_ptr<ui::Button> _crossfireButton;
     std::shared_ptr<ui::Button> _leaveButton;
 
-    std::shared_ptr<ui::UILayout> _topLayout;
+    std::shared_ptr<ui::UILayout> _topRightLayout;
     std::shared_ptr<ui::Button> _chatButton;
+    std::shared_ptr<ui::SpritePreview> _loadingAnimation;
 
     bool _isLobbyMaster;
 };
