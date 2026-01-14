@@ -26,7 +26,10 @@
             [["GameZoneColliderTag"], ["PlayerTag"]],
 
             [["PlayerTag"], ["PlayerObstacleTag"]],
-            [["PlayerObstacleTag"], ["PlayerTag"]]
+            [["PlayerObstacleTag"], ["PlayerTag"]],
+
+            [["PlayerProjectileTag"], ["PlayerObstacleTag"]],
+            [["PlayerObstacleTag"], ["PlayerProjectileTag"]]
         ]
     },
     "trigger": {
@@ -59,7 +62,13 @@
             [["MobTag"], ["PlayerTag"]],
 
             [["PowerUpTag"], ["PlayerTag"]],
-            [["PlayerTag"], ["PowerUpTag"]]
+            [["PlayerTag"], ["PowerUpTag"]],
+
+            [["PlayerTag"], ["PlayerObstacleTag"]],
+            [["PlayerObstacleTag"], ["PlayerTag"]],
+
+            [["PlayerProjectileTag"], ["PlayerObstacleTag"]],
+            [["PlayerObstacleTag"], ["PlayerProjectileTag"]]
         ]
     },
     "push": {

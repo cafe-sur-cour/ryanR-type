@@ -53,7 +53,7 @@
             "mappings": [
                 {
                     "tags": ["PlayerProjectileTag"],
-                    "toEntity": [],
+                    "toEntity": ["DealDeath"],
                     "toSelf": ["TakeDeath"]
                 }
             ]

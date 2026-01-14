@@ -92,7 +92,6 @@
             ]
         },
         "ShooterTag": { "target": "both" },
-        "HealthBarComponent": { "target": "client" },
-        "HitboxRenderComponent": { "target": "client" }
+        "HealthBarComponent": { "target": "client" }
     }
 }
