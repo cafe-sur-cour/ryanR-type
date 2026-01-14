@@ -18,6 +18,7 @@
 #include <map>
 #include <set>
 #include <sstream>
+#include <algorithm>
 
 #include "Server.hpp"
 #include "constants.hpp"
@@ -358,15 +359,37 @@ void rserv::Server::processIncomingPackets() {
 
         auto it = this->_clientToLobby.find(idClient);
         if (it != this->_clientToLobby.end() && it->second) {
-            it->second->processDisconnections(idClient);
-
-            if (it->second->getClientCount() == 0) {
-                it->second->stop();
+            std::string lobbyCode = it->second->getLobbyCode();
+            auto lobby = it->second;
+            if (!lobby->isRunning()) {
                 debug::Debug::printDebug(this->_config->getIsDebug(),
-                    "[SERVER] Lobby " + it->second->getLobbyCode() + " is empty and has been stopped",
+                    "[SERVER] Lobby " + lobbyCode + " is no longer running, skipping disconnect processing",
+                    debug::debugType::NETWORK, debug::debugLevel::WARNING);
+                this->_clientToLobby.erase(idClient);
+                return;
+            }
+            for (auto& lobbyStruct : this->_lobbyThreads) {
+                if (lobbyStruct && lobbyStruct->_lobbyCode == lobbyCode) {
+                    auto& clients = lobbyStruct->_clients;
+                    clients.erase(
+                        std::remove_if(clients.begin(), clients.end(),
+                            [idClient](const auto& client) {
+                                return std::get<0>(client) == idClient;
+                            }),
+                        clients.end()
+                    );
+                    break;
+                }
+            }
+            lobby->processDisconnections(idClient);
+            this->_clientToLobby.erase(idClient);
+            if (lobby->getClientCount() == 0 && lobby->isRunning()) {
+                lobby->stop();
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] Lobby " + lobbyCode + " is empty and has been stopped",
                     debug::debugType::NETWORK, debug::debugLevel::INFO);
             }
-            this->_clientToLobby.erase(idClient);
+
         } else {
             debug::Debug::printDebug(this->_config->getIsDebug(),
                 "[SERVER] Client " + std::to_string(idClient) + " tried to leave lobby but is not in any lobby",

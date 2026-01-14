@@ -398,11 +398,14 @@ bool rserv::Lobby::processDisconnections(uint8_t idClient) {
 
     for (auto &client : this->_clients) {
         if (std::get<0>(client) == idClient) {
+            if (this->_running.load(std::memory_order_acquire)) {
+                this->ackLeaveLobbyPacket(*std::get<1>(client), true);
+            }
             this->_clients.erase(
                 std::remove(this->_clients.begin(), this->_clients.end(), client),
                 this->_clients.end());
-            this->ackLeaveLobbyPacket(*std::get<1>(client), true);
             this->_clientToEntity.erase(idClient);
+            this->_clientsReady.erase(idClient);
             debug::Debug::printDebug(this->getIsDebug(),
                 "Client " + std::to_string(idClient)
                 + " disconnected and removed from the lobby",
@@ -1049,6 +1052,13 @@ void rserv::Lobby::createPlayerEntities() {
 }
 
 void rserv::Lobby::stop() {
+    this->_running.store(false, std::memory_order_release);
+    if (this->_networkThread.joinable()) {
+        this->_networkThread.join();
+    }
+    if (this->_gameThread.joinable()) {
+        this->_gameThread.join();
+    }
     if (this->_resourceManager) {
         auto registry = this->_resourceManager->get<ecs::Registry>();
         if (registry) {
@@ -1067,14 +1077,6 @@ void rserv::Lobby::stop() {
         this->_gameStarted = false;
         this->_playerEntitiesCreated = false;
     }
-
-    if (this->_networkThread.joinable()) {
-        this->_networkThread.join();
-    }
-    if (this->_gameThread.joinable()) {
-        this->_gameThread.join();
-    }
-    this->_running.store(false, std::memory_order_release);
 }
 
 void rserv::Lobby::enqueuePacket(std::pair<std::shared_ptr<net::INetworkEndpoint>,
@@ -1173,6 +1175,18 @@ bool rserv::Lobby::ackLeaveLobbyPacket(const net::INetworkEndpoint &endpoint, bo
     if (!this->_network) {
         debug::Debug::printDebug(this->getIsDebug(),
             "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    if (!this->_packet) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[SERVER] Warning: Packet manager not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    if (!this->_running.load(std::memory_order_acquire)) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[SERVER] Warning: Lobby is no longer running, skipping ack packet",
             debug::debugType::NETWORK, debug::debugLevel::WARNING);
         return false;
     }

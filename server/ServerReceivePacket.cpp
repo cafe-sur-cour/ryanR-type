@@ -50,16 +50,13 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
         if (std::get<0>(client) == idClient) {
             if (this->_clientToLobby.find(idClient) != this->_clientToLobby.end()) {
                 auto lobby = this->_clientToLobby[idClient];
-                if (lobby) {
+                if (lobby && lobby->isRunning()) {
                     lobby->processDisconnections(idClient);
                 }
                 this->_clientToLobby.erase(idClient);
                 debug::Debug::printDebug(this->_config->getIsDebug(),
                     "Client " + std::to_string(idClient) + " removed from lobby",
                     debug::debugType::NETWORK, debug::debugLevel::INFO);
-
-                // Don't call cleanupClosedLobbies() immediately - let the normal cycle handle it
-                // This prevents removing lobbies that the client might reconnect to quickly
             }
 
             this->_clients.erase(
@@ -387,6 +384,8 @@ bool rserv::Server::processMasterStart(std::pair<std::shared_ptr<net::INetworkEn
     }
 
     for (const auto &client : _clientInfo) {
+        std::cout << "Starting game for client ID: "
+                  << static_cast<int>(std::get<0>(client)) << std::endl;
         endpoints.push_back(std::get<1>(client));
     }
 
