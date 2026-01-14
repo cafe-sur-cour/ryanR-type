@@ -76,6 +76,7 @@ namespace constants {
     const std::string HOW_TO_PLAY_PATH = "assets/sprites/menu/how_to_play.png";
     const std::string LEADERBOARD_PATH = "assets/sprites/menu/leaderboard.png";
     const std::string CHAT_PATH = "assets/sprites/menu/chat.png";
+    const std::string LEADERBOARD_PLACEHOLDER_PATH = "assets/sprites/menu/leaderboard-placeholder.png";
 
     const std::string LOADING_PREFAVB = "configs/prefab/loading_animation.json";
     const std::string VICTORY_PREFAB = "configs/prefab/vicotry.json";
