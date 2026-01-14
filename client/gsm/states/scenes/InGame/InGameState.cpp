@@ -242,7 +242,8 @@ void InGameState::drawHealthHUD(
 
     std::stringstream healthSs;
     float displayMaxHealth = (health > 100.0f) ? health : maxHealth;
-    healthSs << "Health: " << static_cast<int>(health) << "/" << static_cast<int>(displayMaxHealth);
+    healthSs << "Health: " << static_cast<int>(health) << "/" <<
+        static_cast<int>(displayMaxHealth);
     std::string healthText = healthSs.str();
 
     float healthRatio = (maxHealth > 0.0f) ? health / maxHealth : 0.0f;
