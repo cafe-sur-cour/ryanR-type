@@ -15,7 +15,7 @@
         "ScoreValueComponent": { "target": "both", "scoreValue": 150 },
         "ProjectilePrefabComponent": {
             "target": "both",
-            "prefabName": "fireBullet"
+            "prefabName": "fireShoot"
         },
         "ShootingStatsComponent": {
             "target": "both",
