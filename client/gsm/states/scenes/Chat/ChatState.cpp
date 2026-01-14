@@ -40,22 +40,24 @@ void ChatState::enter() {
     titleConfig.direction = ui::LayoutDirection::Vertical;
     titleConfig.alignment = ui::LayoutAlignment::Center;
     titleConfig.spacing = 0.0f;
-    titleConfig.padding = math::Vector2f(20.0f, 20.0f);
+    titleConfig.padding = math::Vector2f(0.0f, 0.0f);
     titleConfig.anchorX = ui::AnchorX::Left;
     titleConfig.anchorY = ui::AnchorY::Top;
-    titleConfig.offset = math::Vector2f(800.0f, 130.0f);
+    titleConfig.offset = math::Vector2f(735.0f, 30.0f);
 
     auto titleLayout = std::make_shared<ui::UILayout>(_resourceManager, titleConfig);
-    titleLayout->setSize(math::Vector2f(600.f, 80.f));
+    titleLayout->setSize(math::Vector2f(200.f, 250.f));
 
-    auto titleText = std::make_shared<ui::Text>(_resourceManager);
-    titleText->setText("Chat Room");
-    titleText->setTextColor(colors::UI_ACCENT);
-    titleText->setFontSize(56);
-    titleText->setOutlineColor(colors::UI_OUTLINE);
-    titleText->setOutlineThickness(3.0f);
+    _titleText = std::make_shared<ui::Text>(_resourceManager);
+    _titleText->setText("CHAT ROOM");
+    _titleText->setSize(math::Vector2f(2000.f, 250.f));
+    _titleText->setTextColor(colors::BUTTON_PRIMARY_HOVER);
+    _titleText->setOutlineColor(gfx::color_t{120, 0, 0, 255});
+    _titleText->setFontSize(56);
+    _titleText->setOutlineThickness(6.0f);
 
-    titleLayout->addElement(titleText);
+    titleLayout->addElement(_titleText);
+    _uiManager->addElement(titleLayout);
 
     ui::LayoutConfig messagesConfig;
     messagesConfig.direction = ui::LayoutDirection::Vertical;
@@ -68,10 +70,10 @@ void ChatState::enter() {
     messagesConfig.background.cornerRadius = 15.0f;
     messagesConfig.anchorX = ui::AnchorX::Left;
     messagesConfig.anchorY = ui::AnchorY::Top;
-    messagesConfig.offset = math::Vector2f(500.0f, 300.0f);
+    messagesConfig.offset = math::Vector2f(510.0f, 235.0f);
 
     _messagesContainer = std::make_shared<ui::UILayout>(_resourceManager, messagesConfig);
-    _messagesContainer->setSize(math::Vector2f(900.f, 470.f));
+    _messagesContainer->setSize(math::Vector2f(900.f, 475.f));
     _messagesContainer->setBackgroundEnabled(true);
     _messagesContainer->setBackgroundFillColor(colors::UI_BACKGROUND);
     _messagesContainer->setBackgroundOutlineColor(colors::UI_OUTLINE);
@@ -114,7 +116,7 @@ void ChatState::enter() {
     controlsConfig.padding = math::Vector2f(0.0f, 0.0f);
     controlsConfig.anchorX = ui::AnchorX::Center;
     controlsConfig.anchorY = ui::AnchorY::Bottom;
-    controlsConfig.offset = math::Vector2f(0.0f, -215.0f);
+    controlsConfig.offset = math::Vector2f(0.0f, -280.0f);
 
     auto controlsLayout = std::make_shared<ui::UILayout>(_resourceManager, controlsConfig);
     controlsLayout->setSize(math::Vector2f(900.f, 60.f));
