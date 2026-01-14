@@ -27,6 +27,7 @@ ForceLeaveState::ForceLeaveState(
     constants::ForceLeaveType leaveType)
     : AGameState(gsm, resourceManager), _leaveType(leaveType) {
     _uiManager = std::make_unique<ui::UIManager>();
+    _uiManager->setResourceManager(_resourceManager);
 }
 
 void ForceLeaveState::enter() {

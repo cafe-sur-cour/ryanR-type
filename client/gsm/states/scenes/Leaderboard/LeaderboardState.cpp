@@ -32,6 +32,7 @@ LeaderboardState::LeaderboardState(
 ) : AGameState(gsm, resourceManager) {
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
+    _uiManager->setResourceManager(_resourceManager);
 
     auto config = _resourceManager->get<SettingsConfig>();
     if (config) {

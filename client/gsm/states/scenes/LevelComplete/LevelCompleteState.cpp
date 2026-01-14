@@ -21,6 +21,7 @@ LevelCompleteState::LevelCompleteState(
     std::shared_ptr<ResourceManager> resourceManager)
     : AGameState(gsm, resourceManager), _waitingForNextLevel(true) {
     _uiManager = std::make_unique<ui::UIManager>();
+    _uiManager->setResourceManager(_resourceManager);
 }
 
 void LevelCompleteState::enter() {
