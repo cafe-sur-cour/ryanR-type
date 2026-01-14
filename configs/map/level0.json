@@ -1,9 +1,9 @@
 {
-    "index": 1,
-    "name": "Level 1",
+    "index": 3,
+    "name": "Level 3",
     "background": "fairLevel",
     "scrollSpeed": 100.0,
-    "music": "music",
+    "music": "musicFair",
     "powerUps": [],
     "mapLength": 6500.0,
     "obstacles": [
