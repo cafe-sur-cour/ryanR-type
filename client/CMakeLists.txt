@@ -35,7 +35,6 @@ target_link_libraries(${CLIENT_BIN_NAME}
         UI
         DEBUG
         InputNormalizer
-        NETWORK_INTERPOLATION
         AsioNetwork
         nlohmann_json::nlohmann_json
         Packet
@@ -59,7 +58,6 @@ add_subdirectory(components)
 add_subdirectory(systems)
 add_subdirectory(input)
 add_subdirectory(ui)
-add_subdirectory(interpolation)
 
 add_custom_command(TARGET ${CLIENT_BIN_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${CLIENT_BIN_NAME}> ${CMAKE_SOURCE_DIR}/

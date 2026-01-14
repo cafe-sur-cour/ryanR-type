@@ -1,7 +1,7 @@
 {
     "name": "bubble",
     "components": {
-        "ObstacleTag": { "target": "both" },
+        "PlayerObstacleTag": { "target": "both" },
         "TransformComponent": {
             "target": "both",
             "position": { "x": 0.0, "y": 0.0 },

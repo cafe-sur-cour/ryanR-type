@@ -35,7 +35,7 @@ function update(entity, deltaTime)
 
     createMoveIntent(entity, dirX, dirY)
 
-    if _G["spawn_timer_" .. entity] > 0.5 and py > gzY + 60 and py < gzY + gzHeight - 110 then
+    if _G["spawn_timer_" .. entity] > 1.0 and py > gzY + 60 and py < gzY + gzHeight - 110 then
         local randomIndex = math.random()
 
         if randomIndex <= 0.7 then

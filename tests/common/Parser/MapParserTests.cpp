@@ -69,8 +69,8 @@ protected:
         // Register some mock prefabs for testing
         prefabManager->registerPrefab("background", std::make_shared<MockPrefab>("background"));
         prefabManager->registerPrefab("wall", std::make_shared<MockPrefab>("wall"));
-        prefabManager->registerPrefab("enemy1", std::make_shared<MockPrefab>("enemy1"));
-        prefabManager->registerPrefab("enemy2", std::make_shared<MockPrefab>("enemy2"));
+        prefabManager->registerPrefab("bat", std::make_shared<MockPrefab>("bat"));
+        prefabManager->registerPrefab("canon", std::make_shared<MockPrefab>("canon"));
         prefabManager->registerPrefab("gamezone", std::make_shared<MockPrefab>("gamezone"));
     }
 
@@ -217,11 +217,11 @@ TEST_F(MapParserTest, ParseMapWithWaves) {
                 "posX": 5,
                 "enemies": [
                     {
-                        "type": "enemy1",
+                        "type": "bat",
                         "count": 3
                     },
                     {
-                        "type": "enemy2",
+                        "type": "canon",
                         "count": 2
                     }
                 ]
@@ -262,7 +262,7 @@ TEST_F(MapParserTest, ParseCompleteMap) {
                 "posX": 10,
                 "enemies": [
                     {
-                        "type": "enemy1",
+                        "type": "bat",
                         "count": 1
                     }
                 ]
@@ -363,7 +363,7 @@ TEST_F(MapParserTest, ParseMapEnemyMissingFields) {
                 "spawnLength": 10,
                 "enemies": [
                     {
-                        "type": "enemy1"
+                        "type": "bat"
                     }
                 ]
             }

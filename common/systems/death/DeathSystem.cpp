@@ -9,7 +9,6 @@
 #include <memory>
 #include <exception>
 #include <string>
-#include <iostream>
 
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../components/tags/MobTag.hpp"

@@ -122,7 +122,6 @@ void ActionFactory::initializeConditions() {
             ecs::Entity selfEntity,
             ecs::Entity otherEntity
         ) {
-            (void)otherEntity;
             auto damageComp = reg->getComponent<ecs::DamageComponent>(selfEntity);
             if (damageComp) {
                 float damage = damageComp->getDamage();
@@ -145,7 +144,7 @@ void ActionFactory::initializeConditions() {
                     }
                 }
                 reg->addComponent<ecs::DamageIntentComponent>(selfEntity,
-                    std::make_shared<ecs::DamageIntentComponent>(damage, selfEntity));
+                    std::make_shared<ecs::DamageIntentComponent>(damage, otherEntity));
                 auto cooldownComp =
                 reg->getComponent<ecs::DamageCooldownComponent>(selfEntity);
                 reg->getComponent<ecs::DamageCooldownComponent>(selfEntity);

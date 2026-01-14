@@ -12,11 +12,11 @@
         "SpeedComponent": { "target": "both", "speed": 80.0 },
         "HealthComponent": { "target": "both", "health": 50.0 },
         "ScoreValueComponent": { "target": "both", "scoreValue": 100 },
-                "AnimationComponent": {
+        "AnimationComponent": {
             "target": "client",
             "states": {
                 "pink": {
-                    "texturePath": "assets/sprites/sea/starfish/starfish_pink.png",
+                    "texturePath": "assets/sprites/sea/starfish/starfish_death.png",
                     "frameWidth": 284.0,
                     "frameHeight": 253.0,
                     "frameCount": 14,
@@ -29,16 +29,20 @@
             "initialState": "pink",
             "transitions": []
         },
-        "ColliderComponent":
-        [
+        "ColliderComponent": [
             {
                 "target": "both",
                 "offset": { "x": 50.0, "y": 50.0 },
                 "size" : { "x": 200.0, "y": 200.0 },
                 "type": "Trigger"
+            },
+            {
+                "target": "both",
+                "offset": { "x": 50.0, "y": 50.0 },
+                "size" : { "x": 200.0, "y": 200.0 },
+                "type": "Solid"
             }
-        ]
-        ,
+        ],
         "DamageComponent": {
             "target": "both",
             "damage": 20.0
@@ -54,7 +58,6 @@
             ]
         },
         "DamageCooldownComponent": { "target": "both" },
-        "HitboxRenderComponent": { "target": "client" },
         "LifetimeComponent": {
             "target": "both",
             "lifetime": 0.2

@@ -1,6 +1,6 @@
 {
-    "index": 1,
-    "name": "Level 1",
+    "index": 0,
+    "name": "40 entities",
     "background": "background",
     "scrollSpeed": 100.0,
     "music": "music",
@@ -13,7 +13,7 @@
             "gameXTrigger": 200.0,
             "enemies": [
                 {
-                    "type": "enemy2",
+                    "type": "canon",
                     "distributionX": {
                         "min": 95,
                         "max": 100,
@@ -32,7 +32,7 @@
             "gameXTrigger": 600.0,
             "enemies": [
                 {
-                    "type": "enemy2",
+                    "type": "canon",
                     "distributionX": {
                         "min": 90,
                         "max": 95,
@@ -65,7 +65,7 @@
                     "count": 2
                 },
                 {
-                    "type": "enemy2",
+                    "type": "canon",
                     "distributionX": {
                         "min": 85,
                         "max": 90,
@@ -84,7 +84,7 @@
             "gameXTrigger": 1400.0,
             "enemies": [
                 {
-                    "type": "enemy2",
+                    "type": "canon",
                     "distributionX": {
                         "min": 50,
                         "max": 55,
@@ -117,7 +117,7 @@
                     "count": 2
                 },
                 {
-                    "type": "enemy1",
+                    "type": "bat",
                     "distributionX": {
                         "min": 75,
                         "max": 80,
@@ -136,7 +136,7 @@
             "gameXTrigger": 2300.0,
             "enemies": [
                 {
-                    "type": "enemy2",
+                    "type": "canon",
                     "distributionX": {
                         "min": 45,
                         "max": 50,
@@ -169,7 +169,7 @@
                     "count": 1
                 },
                 {
-                    "type": "enemy1",
+                    "type": "bat",
                     "distributionX": {
                         "min": 90,
                         "max": 95,
@@ -188,7 +188,7 @@
             "gameXTrigger": 3300.0,
             "enemies": [
                 {
-                    "type": "enemy2",
+                    "type": "canon",
                     "distributionX": {
                         "min": 40,
                         "max": 45,
@@ -221,7 +221,7 @@
                     "count": 1
                 },
                 {
-                    "type": "enemy1",
+                    "type": "bat",
                     "distributionX": {
                         "min": 80,
                         "max": 85,
@@ -240,7 +240,7 @@
             "gameXTrigger": 4300.0,
             "enemies": [
                 {
-                    "type": "enemy2",
+                    "type": "canon",
                     "distributionX": {
                         "min": 35,
                         "max": 40,
