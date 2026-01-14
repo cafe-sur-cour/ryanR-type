@@ -190,7 +190,7 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
 
     auto titleText = std::make_shared<ui::Text>(_resourceManager);
     titleText->setText(
-        "Level Editor - Not compatible with controllers (Press BACK to return)");
+        "Level Editor - Not compatible with controllers");
     titleText->setSize(math::Vector2f(900.f, 40.f));
     levelsLayout->addElement(titleText);
 
@@ -374,7 +374,7 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
     buttonLayout->setSize(math::Vector2f(800.f, 40.f));
 
     auto prevButton = std::make_shared<ui::Button>(_resourceManager);
-    prevButton->setText("< Previous");
+    prevButton->setText("Previous");
     prevButton->setSize(math::Vector2f(180.f, 40.f));
     prevButton->setNormalColor(colors::BUTTON_SECONDARY);
     prevButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
@@ -393,7 +393,7 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
     _prevButton = prevButton;
 
     auto nextButton = std::make_shared<ui::Button>(_resourceManager);
-    nextButton->setText("Next >");
+    nextButton->setText("Next");
     nextButton->setSize(math::Vector2f(180.f, 40.f));
     nextButton->setNormalColor(colors::BUTTON_SECONDARY);
     nextButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
@@ -603,8 +603,8 @@ void LevelEditorSelectorState::showDeleteConfirmationPopup(
     _deletePopupLayout->setSize(math::Vector2f(600.f, 250.f));
 
     _deletePopupText = std::make_shared<ui::Text>(_resourceManager);
-    _deletePopupText->setText("Are you sure you want to delete\n\"" +
-        levelName + "\"?\n\nThis action cannot be undone.");
+    _deletePopupText->setText("Are you sure you want to delete\n-- " +
+        levelName + " -- ?\n\nThis action cannot be undone.");
     _deletePopupText->setSize(math::Vector2f(500.f, 100.f));
     _deletePopupText->setTextColor(gfx::color_t{255, 255, 255, 255});
     _deletePopupLayout->addElement(_deletePopupText);
@@ -761,7 +761,7 @@ void LevelEditorSelectorState::confirmDuplicate() {
             }
 
             levelData[constants::INDEX_FIELD] = nextIndex;
-            std::string newName = _pendingDuplicateName + " (copy)";
+            std::string newName = _pendingDuplicateName + " -- copy";
             levelData[constants::NAME_FIELD] = newName;
 
             std::string newFileName = constants::LEVEL_FILE_PREFIX +
