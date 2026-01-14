@@ -1,0 +1,84 @@
+{
+    "name": "boss2",
+    "components": {
+        "MobTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 100.0, "y": 100.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 150.0 },
+        "HealthComponent": { "target": "both", "health": 100.0 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 100 },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/boss2.lua",
+            "additionalFunctions": ["death"]
+        },
+        "ProjectilePrefabComponent": {
+            "target": "both",
+            "prefabName": "blimpShoot"
+        },
+        "ShootingStatsComponent": {
+            "target": "both",
+            "fireRate": 5.0,
+            "projectileSpeed": 500.0,
+            "shotCount": 1,
+            "angleOffset": 0.0,
+            "spreadAngle": 0.0,
+            "distanceOffset": 0.0
+        },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/boss/Bishop/boddy/bishop_idle_body.png",
+                    "frameWidth": 640.0,
+                    "frameHeight": 521.0,
+                    "frameCount": 18,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "hit": {
+                    "texturePath": "assets/sprites/boss/Bishop/boddy/bishop_hit_body.png",
+                    "frameWidth": 682.0,
+                    "frameHeight": 437.0,
+                    "frameCount": 18,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.05,
+                    "loop": false
+                }
+            },
+            "initialState": "idle",
+            "transitions": [
+                {
+
+                    "from": "hit",
+                    "to": "idle",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                }
+            ]
+        }
+        ,
+        "DamageComponent": {
+            "target": "both",
+            "damage": 15.0
+        },
+        "DamageCooldownComponent": { "target": "both" },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+            ]
+        },
+        "ShooterTag": { "target": "both" },
+        "HealthBarComponent": { "target": "client" }
+    }
+}

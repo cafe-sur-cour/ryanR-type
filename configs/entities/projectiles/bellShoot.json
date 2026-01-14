@@ -1,11 +1,11 @@
 {
-    "name": "fireShoot",
+    "name": "bellShoot",
     "components": {
         "EnnemyProjectileTag": { "target": "both" },
         "TransformComponent": {
             "target": "both",
             "position": { "x": 0.0, "y": 0.0 },
-            "scale": { "x": 0.5, "y": 0.5 },
+            "scale": { "x": 1.0, "y": 1.0 },
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "both" },
@@ -13,10 +13,10 @@
             "target": "client",
             "states": {
                 "idle": {
-                    "texturePath": "assets/sprites/projectiles/fireShoot.png",
-                    "frameWidth": 136.0,
-                    "frameHeight": 66.0,
-                    "frameCount": 8,
+                    "texturePath": "assets/sprites/boss/Bishop/bell/bell_a.png",
+                    "frameWidth": 82.0,
+                    "frameHeight": 78.0,
+                    "frameCount": 5,
                     "startWidth": 0.0,
                     "startHeight": 0.0,
                     "speed": 0.04,
@@ -30,21 +30,21 @@
 
         "ColliderComponent": {
             "target": "both",
-            "offset": { "x": 0.0, "y": 20.0 },
-            "size": { "x": 136, "y": 66.0 },
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 82.0, "y": 78.0 },
             "type": "Trigger"
         },
         "DamageComponent": {
             "target": "both",
-            "damage": 10.0
+            "damage": 15.0
         },
         "SpeedComponent": {
             "target": "both",
-            "speed": 600.0
+            "speed": 340.0
         },
         "LifetimeComponent": {
             "target": "both",
-            "lifetime": 1.0
+            "lifetime": 5.0
         },
         "InteractionConfigComponent": {
             "target": "both",
@@ -73,7 +73,7 @@
         },
         "ScriptingComponent": {
             "target": "server",
-            "scriptPath": "configs/scripts/rotating_projectile.lua",
+            "scriptPath": "configs/scripts/followNearPlayer.lua",
             "additionalFunctions": []
         }
     }
