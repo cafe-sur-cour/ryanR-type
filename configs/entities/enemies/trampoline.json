@@ -15,7 +15,7 @@
         "ScoreValueComponent": { "target": "both", "scoreValue": 150 },
         "ProjectilePrefabComponent": {
             "target": "both",
-            "prefabName": "bat_basic_shot"
+            "prefabName": "blueBullet"
         },
         "ShootingStatsComponent": {
             "target": "both",
