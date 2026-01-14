@@ -36,14 +36,20 @@
             "initialState": "idle",
             "transitions": []
         },
-        "ColliderComponent":
+        "ColliderComponent": [
             {
                 "target": "both",
                 "offset": { "x": 0.0, "y": 0.0 },
                 "size" : { "x": 330.0, "y": 248.0 },
                 "type": "Trigger"
+            },
+            {
+                "target": "both",
+                "offset": { "x": 0.0, "y": 0.0 },
+                "size" : { "x": 330.0, "y": 248.0 },
+                "type": "Solid"
             }
-        ,
+        ],
         "DamageComponent": {
             "target": "both",
             "damage": 1.0

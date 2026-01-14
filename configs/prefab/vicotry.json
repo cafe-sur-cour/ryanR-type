@@ -1,0 +1,20 @@
+{
+  "components": {
+    "AnimationComponent": {
+      "target": "victory",
+      "states": {
+        "victory": {
+          "texturePath": "assets/sprites/menu/victory.png",
+          "frameWidth": 1285,
+          "frameHeight": 724.0,
+          "frameCount": 10.0,
+          "startWidth": 0.0,
+          "startHeight": 0.0,
+          "speed": 0.2,
+          "loop": false
+        }
+      },
+      "initialState": "victory"
+    }
+  }
+}

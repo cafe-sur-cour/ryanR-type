@@ -16,10 +16,6 @@ GameEndState::GameEndState(std::shared_ptr<IGameStateMachine> gsm,
     : AGameState(gsm, resourceManager) {
 }
 
-void GameEndState::enter() {
-    // TODO(anyone): Initialize server game end state
-}
-
 void GameEndState::update(float deltaTime) {
     (void)deltaTime;
 }

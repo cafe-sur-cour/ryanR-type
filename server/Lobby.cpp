@@ -5,7 +5,6 @@
 ** Lobby
 */
 
-
 #include <set>
 #include <map>
 #include <utility>

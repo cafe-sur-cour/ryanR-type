@@ -47,6 +47,8 @@ class IWindow {
 
         virtual void drawSprite(const std::string& texturePath, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f, float rotation = 0.0f) = 0;
         virtual void drawSprite(const std::string& texturePath, float x, float y, const math::FRect frameRect, float scaleX = 1.0f, float scaleY = 1.0f, float rotation = 0.0f) = 0;
+        virtual void drawSprite(const std::string& texturePath, float x, float y, float scaleX, float scaleY, float rotation, color_t color) = 0;
+        virtual void drawSprite(const std::string& texturePath, float x, float y, const math::FRect frameRect, float scaleX, float scaleY, float rotation, color_t color) = 0;
 
         virtual void updateView() = 0;
         virtual void setViewCenter(float x, float y) = 0;
@@ -63,6 +65,9 @@ class IWindow {
         virtual void setFullscreen(bool fullscreen) = 0;
         virtual void setRenderQuality(float quality) = 0;
         virtual void setCursor(bool isHand) = 0;
+
+        virtual std::string getClipboardText() = 0;
+        virtual void setClipboardText(const std::string& text) = 0;
 };
 
 typedef IWindow *(*createWindow_t)();

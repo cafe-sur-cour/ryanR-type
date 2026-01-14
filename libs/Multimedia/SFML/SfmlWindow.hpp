@@ -42,6 +42,8 @@ class SfmlWindow : public gfx::IWindow {
 
         void drawSprite(const std::string& texturePath, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f, float rotation = 0.0f) override;
         void drawSprite(const std::string& texturePath, float x, float y, const math::FRect frameRect, float scaleX = 1.0f, float scaleY = 1.0f, float rotation = 0.0f) override;
+        void drawSprite(const std::string& texturePath, float x, float y, float scaleX, float scaleY, float rotation, gfx::color_t color) override;
+        void drawSprite(const std::string& texturePath, float x, float y, const math::FRect frameRect, float scaleX, float scaleY, float rotation, gfx::color_t color) override;
         std::shared_ptr<sf::RenderWindow> getSfmlWindow();
         void updateView() override;
         void setViewCenter(float x, float y) override;
@@ -61,6 +63,8 @@ class SfmlWindow : public gfx::IWindow {
         void setCursor(bool isHand) override;
 
         void enableFilter(const std::string& filterName);
+        std::string getClipboardText() override;
+        void setClipboardText(const std::string& text) override;
         void addFilter(const std::string& filterName);
         void removeFilter(const std::string& filterName);
         void disableAllFilters();

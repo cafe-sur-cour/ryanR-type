@@ -53,17 +53,20 @@
                 }
             ]
         },
-        "ColliderComponent":
-        [
+        "ColliderComponent": [
             {
                 "target": "both",
                 "offset": { "x": 0.0, "y": 0.0 },
                 "size" : { "x": 333.0, "y": 288.0 },
                 "type": "Trigger"
+            },
+            {
+                "target": "both",
+                "offset": { "x": 0.0, "y": 0.0 },
+                "size" : { "x": 333.0, "y": 288.0 },
+                "type": "Solid"
             }
-
-        ]
-        ,
+        ],
         "DamageComponent": {
             "target": "both",
             "damage": 20.0
