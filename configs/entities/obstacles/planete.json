@@ -1,0 +1,35 @@
+{
+    "name": "planete",
+    "components": {
+        "ObstacleTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 0.5, "y": 0.5 },
+            "rotation": 0.0
+        },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "death": {
+                    "texturePath": "assets/sprites/planete.png",
+                    "frameWidth": 162,
+                    "frameHeight": 123.0,
+                    "frameCount": 12,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                }
+            },
+            "initialState": "death",
+            "transitions": []
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size" : { "x": 162.0, "y": 123.0 },
+            "type": "Solid"
+        }
+    }
+}
