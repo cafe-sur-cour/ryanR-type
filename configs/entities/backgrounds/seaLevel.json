@@ -28,7 +28,7 @@
                     "speedMultiplier": 0.5,
                     "scale": { "x": 1.0, "y": 1.0 },
                     "scaleMode": "FIT_SCREEN",
-                    "sourceSize": { "x": 3072.0, "y": 1536.0 },
+                    "sourceSize": { "x": 3200.0, "y": 1600.0 },
                     "repeat": true,
                     "zIndex": 1
                 },
@@ -38,7 +38,7 @@
                     "speedMultiplier": 1.0,
                     "scale": { "x": 1.0, "y": 1.0 },
                     "scaleMode": "FIT_SCREEN",
-                    "sourceSize": { "x": 3072.0, "y": 1536.0 },
+                    "sourceSize": { "x": 2700.0, "y": 1600.0 },
                     "repeat": true,
                     "zIndex": 2
                 },
@@ -48,7 +48,7 @@
                     "speedMultiplier": 1.0,
                     "scale": { "x": 1.0, "y": 1.0 },
                     "scaleMode": "FIT_SCREEN",
-                    "sourceSize": { "x": 3072.0, "y": 1536.0 },
+                    "sourceSize": { "x": 3200.0, "y": 1600.0 },
                     "repeat": true,
                     "zIndex": 2
                 },
@@ -58,7 +58,7 @@
                     "speedMultiplier": 1.0,
                     "scale": { "x": 1.0, "y": 1.0 },
                     "scaleMode": "FIT_SCREEN",
-                    "sourceSize": { "x": 3072.0, "y": 1536.0 },
+                    "sourceSize": { "x": 3200.0, "y": 1600.0 },
                     "repeat": true,
                     "zIndex": 2
                 },
@@ -68,7 +68,7 @@
                     "speedMultiplier": 1.0,
                     "scale": { "x": 1.0, "y": 1.0 },
                     "scaleMode": "FIT_SCREEN",
-                    "sourceSize": { "x": 3072.0, "y": 1536.0 },
+                    "sourceSize": { "x": 3200.0, "y": 1600.0 },
                     "repeat": true,
                     "zIndex": 2
                 }

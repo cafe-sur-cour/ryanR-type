@@ -1,0 +1,315 @@
+{
+    "background": "fairLevel",
+    "index": 3,
+    "mapLength": 7500.0,
+    "music": "musicFair",
+    "name": "Level 3",
+    "obstacles": [],
+    "powerUps": [],
+    "scrollSpeed": 100,
+    "waves": [
+        {
+            "enemies": [
+                {
+                    "count": 2,
+                    "distributionX": {
+                        "max": 100.0,
+                        "min": 95.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "Magicien"
+                }
+            ],
+            "gameXTrigger": 200.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 2,
+                    "distributionX": {
+                        "max": 95.0,
+                        "min": 90.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "Magicien"
+                }
+            ],
+            "gameXTrigger": 600.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 2,
+                    "distributionX": {
+                        "max": 15.0,
+                        "min": 10.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "Magicien"
+                },
+                {
+                    "count": 1,
+                    "distributionX": {
+                        "max": 90.0,
+                        "min": 85.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "Magicien"
+                }
+            ],
+            "gameXTrigger": 1000.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 2,
+                    "distributionX": {
+                        "max": 55.0,
+                        "min": 50.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "Magicien"
+                }
+            ],
+            "gameXTrigger": 1400.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 2,
+                    "distributionX": {
+                        "max": 25.0,
+                        "min": 20.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "Magicien"
+                },
+                {
+                    "count": 2,
+                    "distributionX": {
+                        "max": 80.0,
+                        "min": 75.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "tranpoline"
+                }
+            ],
+            "gameXTrigger": 1800.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 2,
+                    "distributionX": {
+                        "max": 50.0,
+                        "min": 45.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "Magicien"
+                }
+            ],
+            "gameXTrigger": 2300.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 1,
+                    "distributionX": {
+                        "max": 10.0,
+                        "min": 5.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "Magicien"
+                },
+                {
+                    "count": 2,
+                    "distributionX": {
+                        "max": 95.0,
+                        "min": 90.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "tranpoline"
+                }
+            ],
+            "gameXTrigger": 2800.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 2,
+                    "distributionX": {
+                        "max": 45.0,
+                        "min": 40.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "Magicien"
+                }
+            ],
+            "gameXTrigger": 3300.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 1,
+                    "distributionX": {
+                        "max": 20.0,
+                        "min": 15.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "Magicien"
+                },
+                {
+                    "count": 2,
+                    "distributionX": {
+                        "max": 85.0,
+                        "min": 80.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "tranpoline"
+                }
+            ],
+            "gameXTrigger": 3800.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 1,
+                    "distributionX": {
+                        "max": 40.0,
+                        "min": 35.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "Magicien"
+                }
+            ],
+            "gameXTrigger": 4300.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 2,
+                    "distributionX": {
+                        "max": 30.0,
+                        "min": 25.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "Magicien"
+                }
+            ],
+            "gameXTrigger": 4800.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 1,
+                    "distributionX": {
+                        "max": 100.0,
+                        "min": 59.0,
+                        "type": "random"
+                    },
+                    "distributionY": {
+                        "max": 90.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "snake_head"
+                }
+            ],
+            "gameXTrigger": 3235.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 1,
+                    "distributionX": {
+                        "max": 100.0,
+                        "min": 0.0,
+                        "type": "uniform"
+                    },
+                    "distributionY": {
+                        "max": 100.0,
+                        "min": 0.0,
+                        "type": "uniform"
+                    },
+                    "type": "boss2"
+                }
+            ],
+            "gameXTrigger": 5560.0
+        }
+    ]
+}

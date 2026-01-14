@@ -81,6 +81,11 @@ InGameState::InGameState(
 }
 
 void InGameState::enter() {
+    if (_resourceManager->has<gfx::IAudio>()) {
+        auto audio = _resourceManager->get<gfx::IAudio>();
+        audio->stopMusic();
+    }
+
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
     _resourceManager->add<ecs::Registry>(_registry);
 

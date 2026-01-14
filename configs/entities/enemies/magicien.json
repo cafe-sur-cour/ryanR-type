@@ -1,0 +1,79 @@
+{
+    "name": "Magicien",
+    "components": {
+        "MobTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 100.0, "y": 100.0 },
+            "scale": { "x": 0.5, "y": 0.5 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 100.0 },
+        "HealthComponent": { "target": "both", "health": 50.0 },
+        "DamageCooldownComponent": { "target": "both" },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 150 },
+        "ProjectilePrefabComponent": {
+            "target": "both",
+            "prefabName": "magicien_shot"
+        },
+        "ShootingStatsComponent": {
+            "target": "both",
+            "fireRate": 0.6,
+            "projectileSpeed": 700.0,
+            "shotCount": 1,
+            "angleOffset": 180.0,
+            "spreadAngle": 0.0,
+            "distanceOffset": 0.0
+        },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "musics/magicien-Spawn.wav",
+            "volume": 10.0
+        },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/ennemies/Magicien.png",
+                    "frameWidth": 364,
+                    "frameHeight": 370,
+                    "frameCount": 18,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                }
+            },
+            "initialState": "idle",
+            "transitions": []
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size" : { "x": 364.0, "y": 370.0 },
+            "type": "Solid"
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": []
+                },
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDamage"]
+                }
+            ]
+        },
+        "ShooterTag": { "target": "both" },
+        "HealthBarComponent": { "target": "client" },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/enemy_follow_border.lua"
+        }
+    }
+}

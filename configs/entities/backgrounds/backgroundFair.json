@@ -1,0 +1,78 @@
+{
+    "name": "fairLevel",
+    "components": {
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "ParallaxComponent": {
+            "target": "client",
+            "baseScrollSpeed": 50.0,
+            "direction": { "x": -1.0, "y": 0.0 },
+            "layers": [
+                {
+                    "name": "sky",
+                    "filePath": "assets/sprites/backgrounds/fairLevel/sky6.png",
+                    "speedMultiplier": 0.1,
+                    "scale": { "x": 1.0, "y": 1.0 },
+                    "scaleMode": "FIT_SCREEN",
+                    "sourceSize": { "x": 3170.0, "y": 1600.0 },
+                    "repeat": true,
+                    "zIndex": 0
+                },
+                {
+                    "name": "firstWave",
+                    "filePath": "assets/sprites/backgrounds/fairLevel/hill2.png",
+                    "speedMultiplier": 0.5,
+                    "scale": { "x": 1.0, "y": 1.0 },
+                    "scaleMode": "FIT_SCREEN",
+                    "sourceSize": { "x": 3190.0, "y": 1600 },
+                    "repeat": true,
+                    "zIndex": 1
+                },
+                {
+                    "name": "secondWave",
+                    "filePath": "assets/sprites/backgrounds/fairLevel/hill1.png",
+                    "speedMultiplier": 1.0,
+                    "scale": { "x": 1.0, "y": 1.0 },
+                    "scaleMode": "FIT_SCREEN",
+                    "sourceSize": { "x": 3190.0, "y": 1600 },
+                    "repeat": true,
+                    "zIndex": 2
+                },
+                {
+                    "name": "secondWave",
+                    "filePath": "assets/sprites/backgrounds/fairLevel/plateforme3.png",
+                    "speedMultiplier": 1.0,
+                    "scale": { "x": 1.0, "y": 1.0 },
+                    "scaleMode": "FIT_SCREEN",
+                    "sourceSize": { "x": 3200.0, "y": 1600 },
+                    "repeat": true,
+                    "zIndex": 2
+                },
+                {
+                    "name": "secondWave",
+                    "filePath": "assets/sprites/backgrounds/fairLevel/pol2.png",
+                    "speedMultiplier": 1.0,
+                    "scale": { "x": 1.0, "y": 1.0 },
+                    "scaleMode": "FIT_SCREEN",
+                    "sourceSize": { "x": 3200.0, "y": 1600 },
+                    "repeat": true,
+                    "zIndex": 2
+                },
+                {
+                    "name": "secondWave",
+                    "filePath": "assets/sprites/backgrounds/fairLevel/cloud1.png",
+                    "speedMultiplier": 1.0,
+                    "scale": { "x": 1.0, "y": 1.0 },
+                    "scaleMode": "FIT_SCREEN",
+                    "sourceSize": { "x": 3200.0, "y": 1600 },
+                    "repeat": true,
+                    "zIndex": 2
+                }
+            ]
+        }
+    }
+}
