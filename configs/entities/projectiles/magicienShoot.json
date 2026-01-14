@@ -12,19 +12,38 @@
         "AnimationComponent": {
             "target": "client",
             "states": {
-                "idle": {
+                "start": {
                     "texturePath": "assets/sprites/projectiles/shootMagicen.png",
                     "frameWidth": 273.0,
                     "frameHeight": 273.0,
-                    "frameCount": 11,
+                    "frameCount": 3,
                     "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                },
+                "end": {
+                    "texturePath": "assets/sprites/projectiles/shootMagicen.png",
+                    "frameWidth": 273.0,
+                    "frameHeight": 273.0,
+                    "frameCount": 8,
+                    "startWidth": 819.0,
                     "startHeight": 0.0,
                     "speed": 0.04,
                     "loop": true
                 }
+
             },
-            "initialState": "idle",
-            "transitions": []
+            "initialState": "start",
+            "transitions": [
+                {
+                    "from": "start",
+                    "to": "end",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                }]
         },
 
 
