@@ -6,7 +6,7 @@
     "name": "franquax level",
     "obstacles": [
         {
-            "name": "obstacle1",
+            "name": "planete",
             "positions": [
                 {
                     "count": 10,

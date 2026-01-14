@@ -23,10 +23,10 @@
             "target": "client",
             "states": {
                 "idle": {
-                    "texturePath": "assets/sprites/ennemies/waffle.png",
-                    "frameWidth": 330.0,
-                    "frameHeight": 248.0,
-                    "frameCount": 1,
+                    "texturePath": "assets/sprites/ennemies/waffleFace.png",
+                    "frameWidth": 334.0,
+                    "frameHeight": 258.0,
+                    "frameCount": 9,
                     "startWidth": 0.0,
                     "startHeight": 0.0,
                     "speed": 0.1,
@@ -40,13 +40,13 @@
             {
                 "target": "both",
                 "offset": { "x": 0.0, "y": 0.0 },
-                "size" : { "x": 330.0, "y": 248.0 },
+                "size" : { "x": 334.0, "y": 258.0 },
                 "type": "Trigger"
             },
             {
                 "target": "both",
                 "offset": { "x": 0.0, "y": 0.0 },
-                "size" : { "x": 330.0, "y": 248.0 },
+                "size" : { "x": 334.0, "y": 258.0 },
                 "type": "Solid"
             }
         ],
