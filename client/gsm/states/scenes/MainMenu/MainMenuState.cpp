@@ -393,7 +393,6 @@ MainMenuState::MainMenuState(
 }
 
 void MainMenuState::enter() {
-    // Start menu music if not already playing
     if (_resourceManager->has<gfx::IAudio>()) {
         auto audio = _resourceManager->get<gfx::IAudio>();
         if (!audio->isMusicPlaying()) {

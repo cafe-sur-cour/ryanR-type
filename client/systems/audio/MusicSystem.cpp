@@ -57,7 +57,6 @@ void MusicSystem::update(std::shared_ptr<ResourceManager>
             audio->setMusicVolume(effectiveVolume);
         }
 
-        // Auto-start music if entity exists but music is not playing
         if (!audio->isMusicPlaying() && !musicComp->getCurrentMusic().empty()) {
             audio->setMusicVolume(effectiveVolume);
             audio->playMusic(musicComp->getCurrentMusic(), musicComp->isLooping());

@@ -42,7 +42,6 @@ void ResultsState::enter() {
     auto window = _resourceManager->get<gfx::IWindow>();
     window->setViewCenter(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
 
-    // Stop current music and play victory or death music
     if (_resourceManager->has<gfx::IAudio>()) {
         auto audio = _resourceManager->get<gfx::IAudio>();
         audio->stopMusic();

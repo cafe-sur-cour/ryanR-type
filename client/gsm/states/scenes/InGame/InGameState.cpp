@@ -81,7 +81,6 @@ InGameState::InGameState(
 }
 
 void InGameState::enter() {
-    // Stop menu music before starting game music
     if (_resourceManager->has<gfx::IAudio>()) {
         auto audio = _resourceManager->get<gfx::IAudio>();
         audio->stopMusic();

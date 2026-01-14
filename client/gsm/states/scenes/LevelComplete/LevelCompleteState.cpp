@@ -31,7 +31,6 @@ LevelCompleteState::LevelCompleteState(
 void LevelCompleteState::enter() {
     std::string subtitleText = constants::LEVEL_COMPLETE_SUB_TITLE_TEXT;
 
-    // Stop current music and play victory music
     if (_resourceManager->has<gfx::IAudio>()) {
         auto audio = _resourceManager->get<gfx::IAudio>();
         audio->stopMusic();
