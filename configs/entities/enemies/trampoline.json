@@ -68,7 +68,7 @@
         "HealthBarComponent": { "target": "client" },
         "ScriptingComponent": {
             "target": "server",
-            "scriptPath": "configs/scripts/sky_shoot.lua"
+            "scriptPath": "configs/scripts/enemy_follow_player_vertical.lua"
         }
     }
 }
