@@ -23,7 +23,10 @@
             [["EnnemyProjectileTag"], ["PlayerProjectileTag"]],
 
             [["PlayerTag"], ["GameZoneColliderTag"]],
-            [["GameZoneColliderTag"], ["PlayerTag"]]
+            [["GameZoneColliderTag"], ["PlayerTag"]],
+
+            [["PlayerTag"], ["PlayerObstacleTag"]],
+            [["PlayerObstacleTag"], ["PlayerTag"]]
         ]
     },
     "trigger": {
@@ -33,7 +36,6 @@
 
             [["PlayerTag"], ["MobTag"]],
             [["MobTag"], ["PlayerTag"]],
-
 
             [["PlayerProjectileTag"], ["ObstacleTag"]],
             [["ObstacleTag"], ["PlayerProjectileTag"]],
@@ -52,7 +54,6 @@
 
             [["MobTag"], ["PowerUpTag"]],
             [["PowerUpTag"], ["MobTag"]],
-
 
             [["PlayerTag"], ["MobTag"]],
             [["MobTag"], ["PlayerTag"]],

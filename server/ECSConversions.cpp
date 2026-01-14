@@ -35,16 +35,6 @@
 #include "../common/components/permanent/AnimationStateComponent.hpp"
 #include "../common/FloatQuantization.hpp"
 
-namespace {
-
-inline uint64_t packFloat(float value) {
-    uint64_t bits = 0;
-    std::memcpy(&bits, &value, sizeof(float));
-    return bits;
-}
-
-}
-
 std::vector<uint64_t> rserv::Lobby::convertTagComponent(
     std::shared_ptr<ecs::Registry> registry, ecs::Entity i) {
     std::vector<uint64_t> data;

@@ -13,16 +13,8 @@
 #include <string>
 #include <utility>
 #include <algorithm>
-#include "../../../../colors.hpp"
-#include "../../../../../common/ECS/entity/Entity.hpp"
-#include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../Settings/SettingsState.hpp"
 #include "../Pause/PauseState.hpp"
-#include "../../../../../common/interfaces/IWindow.hpp"
-#include "../../../../../common/interfaces/IEvent.hpp"
-#include "../../../../../common/interfaces/IAudio.hpp"
-#include "../../../../../common/InputMapping/IInputProvider.hpp"
-#include "../../../../components/rendering/HitboxRenderComponent.hpp"
 #include "../../../../systems/rendering/AnimationRenderingSystem.hpp"
 #include "../../../../systems/rendering/HitboxRenderingSystem.hpp"
 #include "../../../../systems/rendering/RectangleRenderingSystem.hpp"
@@ -30,38 +22,48 @@
 #include "../../../../systems/rendering/ParallaxRenderingSystem.hpp"
 #include "../../../../systems/rendering/SpriteRenderingSystem.hpp"
 #include "../../../../systems/rendering/HealthBarRenderingSystem.hpp"
+#include "../../../../systems/rendering/GameZoneViewSystem.hpp"
 #include "../../../../systems/input/MovementInputSystem.hpp"
 #include "../../../../systems/input/ShootInputSystem.hpp"
 #include "../../../../systems/input/ForceInputSystem.hpp"
 #include "../../../../systems/audio/SoundSystem.hpp"
 #include "../../../../systems/animationState/AnimationStateSyncSystem.hpp"
+#include "../../../../systems/replay/ReplaySystem.hpp"
+#include "../../../../systems/audio/MusicSystem.hpp"
+#include "../../../../systems/network/NetworkInterpolationSystem.hpp"
+#include "../../../../systems/effects/ClientEffectCleanupSystem.hpp"
+#include "../../../../systems/effects/HideLifetimeSystem.hpp"
+#include "../../../../components/temporary/MusicIntentComponent.hpp"
+#include "../../../../components/rendering/HitboxRenderComponent.hpp"
+#include "../../../../components/permanent/NetworkStateComponent.hpp"
+#include "../../../../colors.hpp"
+#include "../../../../ClientNetwork.hpp"
+#include "../../../../../common/ECS/entity/Entity.hpp"
+#include "../../../../../common/ECS/view/View.hpp"
+#include "../../../../../common/CollisionRules/CollisionRules.hpp"
+#include "../../../../../common/interfaces/IWindow.hpp"
+#include "../../../../../common/interfaces/IEvent.hpp"
+#include "../../../../../common/interfaces/IAudio.hpp"
+#include "../../../../../common/InputMapping/IInputProvider.hpp"
 #include "../../../../../common/systems/movement/MovementSystem.hpp"
 #include "../../../../../common/systems/movement/InputToVelocitySystem.hpp"
 #include "../../../../../common/systems/death/DeathSystem.hpp"
 #include "../../../../../common/systems/bounds/OutOfBoundsSystem.hpp"
-#include "../../../../systems/effects/ClientEffectCleanupSystem.hpp"
-#include "../../../../systems/effects/HideLifetimeSystem.hpp"
 #include "../../../../../common/systems/health/HealthSystem.hpp"
 #include "../../../../../common/systems/score/ScoreSystem.hpp"
 #include "../../../../../common/systems/interactions/TriggerSystem.hpp"
 #include "../../../../../common/systems/interactions/InteractionSystem.hpp"
-#include "../../../../../common/constants.hpp"
-#include "../../../../../common/Parser/CollisionRulesParser.hpp"
-#include "../../../../../common/CollisionRules/CollisionRules.hpp"
+#include "../../../../../common/systems/systemManager/ISystemManager.hpp"
 #include "../../../../../common/components/tags/PlayerTag.hpp"
 #include "../../../../../common/components/tags/LocalPlayerTag.hpp"
-#include "../../../../../common/ECS/view/View.hpp"
-#include "../../../../systems/replay/ReplaySystem.hpp"
 #include "../../../../../common/components/tags/ObstacleTag.hpp"
-#include "../../../../../common/systems/systemManager/ISystemManager.hpp"
-#include "../../../../systems/rendering/GameZoneViewSystem.hpp"
-#include "../../../../systems/audio/MusicSystem.hpp"
-#include "../../../../components/temporary/MusicIntentComponent.hpp"
 #include "../../../../../common/components/permanent/ScoreComponent.hpp"
 #include "../../../../../common/components/permanent/HealthComponent.hpp"
 #include "../../../../../common/components/permanent/ChargedShotComponent.hpp"
-#include "../../../../ClientNetwork.hpp"
+#include "../../../../../common/gsm/IGameStateMachine.hpp"
+#include "../../../../../common/Parser/CollisionRulesParser.hpp"
 #include "../../../../../common/Parser/Parser.hpp"
+#include "../../../../../common/constants.hpp"
 
 namespace gsm {
 
@@ -100,7 +102,11 @@ void InGameState::enter() {
         ecs::CollisionRulesParser::parseFromFile(constants::COLLISION_RULES_PATH);
     ecs::CollisionRules::initWithData(collisionData);
 
+    auto localPlayerView = _registry->view<ecs::PlayerTag, ecs::LocalPlayerTag>();
+    auto localPlayer = *localPlayerView.begin();
+    _registry->addComponent(localPlayer, std::make_shared<ecs::NetworkStateComponent>());
 
+    addSystem(std::make_shared<ecs::NetworkInterpolationSystem>());
     addSystem(std::make_shared<ecs::MovementInputSystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
     addSystem(std::make_shared<ecs::ShootInputSystem>());
@@ -284,7 +290,7 @@ void InGameState::drawHealthHUD(
 void InGameState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) {
     size_t barX = 250;
     size_t barY = static_cast<size_t>(constants::MAX_HEIGHT - 35);
-    float barWidth = 100.0f;
+    float barWidth = 150.0f;
     size_t barHeight = 20;
     size_t textOffsetY = 35;
     size_t feedbackBaseOffsetY = 105;
@@ -330,7 +336,7 @@ void InGameState::drawShotChargeHUD(
     float shotCharge,
     float maxShotCharge
 ) {
-    size_t barX = 380;
+    size_t barX = 430;
     size_t barY = static_cast<size_t>(constants::MAX_HEIGHT - 35);
     float barWidth = 200.0f;
     size_t barHeight = 20;

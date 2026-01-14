@@ -22,8 +22,7 @@ void UILayout::addElement(std::shared_ptr<UIElement> element) {
         return;
     }
 
-    auto it = std::find(_layoutElements.begin(), _layoutElements.end(),
-        element);
+    auto it = std::find(_layoutElements.begin(), _layoutElements.end(), element);
     if (it == _layoutElements.end()) {
         element->setScale(_scale);
         _layoutElements.push_back(element);

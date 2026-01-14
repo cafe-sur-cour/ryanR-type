@@ -8,9 +8,9 @@
 #ifndef NETWORKINTERPOLATIONSYSTEM_HPP_
 #define NETWORKINTERPOLATIONSYSTEM_HPP_
 
+#include "../components/permanent/NetworkStateComponent.hpp"
 #include "../../common/systems/base/ASystem.hpp"
 #include "../../common/ECS/entity/registry/Registry.hpp"
-#include "../interpolation/NetworkStateComponent.hpp"
 #include "../../common/components/permanent/TransformComponent.hpp"
 #include "../../common/components/permanent/HealthComponent.hpp"
 
@@ -21,13 +21,17 @@ class NetworkInterpolationSystem : public ASystem {
         NetworkInterpolationSystem() = default;
         ~NetworkInterpolationSystem() override = default;
 
-        void update(std::shared_ptr<ResourceManager> resourceManager,
-                   std::shared_ptr<Registry> registry,
-                   float deltaTime) override;
+        void update(
+            std::shared_ptr<ResourceManager> resourceManager,
+            std::shared_ptr<Registry> registry,
+            float deltaTime
+        ) override;
 
     private:
-        void interpolateTransform(std::shared_ptr<NetworkStateComponent> networkState,
-                std::shared_ptr<TransformComponent> transform);
+        void interpolateTransform(
+            std::shared_ptr<NetworkStateComponent> networkState,
+            std::shared_ptr<TransformComponent> transform
+        );
 };
 
 }  // namespace ecs

@@ -249,6 +249,7 @@ namespace constants {
     const std::string GAMEZONECOLLIDERTAG = "GameZoneColliderTag";
     const std::string GAME_ZONE_STOP_TAG = "GameZoneStopTag";
     const std::string OBSTACLETAG = "ObstacleTag";
+    const std::string PLAYEROBSTACLETAG = "PlayerObstacleTag";
 
     /* Difficulty Multipliers */
     constexpr float DIFFICULTY_EASY_MULTIPLIER = 1.3f;
@@ -276,8 +277,8 @@ namespace constants {
     const std::string SMALL_EXPLOSION = "small_explosion";
     const std::string BIG_EXPLOSION = "big_explosion";
     const std::string OBSTACLE_1 = "obstacle1";
-    const std::string ENEMY_1 = "enemy1";
-    const std::string ENEMY_2 = "enemy2";
+    const std::string ENEMY_1 = "bat";
+    const std::string ENEMY_2 = "canon";
     const std::string POWERUP_ADD_LIFE = "powerUpAddLife";
     const std::string POWERUP_FORCE = "force";
     const std::string POWERUP_FLYING_FORCE = "flyingForce";

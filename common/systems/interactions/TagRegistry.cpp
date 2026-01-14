@@ -17,6 +17,7 @@
 #include "../../components/tags/ControllableTag.hpp"
 #include "../../components/tags/GameZoneColliderTag.hpp"
 #include "../../components/tags/ObstacleTag.hpp"
+#include "../../components/tags/PlayerObstacleTag.hpp"
 #include "../../components/tags/ProjectilePassThroughTag.hpp"
 #include "../../components/tags/ShooterTag.hpp"
 #include "../../components/tags/ClientEffectTag.hpp"
@@ -72,4 +73,5 @@ void TagRegistry::initializeTags() {
     registerTag<ecs::ClientEffectTag>(constants::CLIENTEFFECTTAG);
     registerTag<ecs::BackGroundMusicTag>(constants::BACKGROUNDMUSICTAG);
     registerTag<ecs::PowerUpTag>(constants::POWERUP_TAG);
+    registerTag<ecs::PlayerObstacleTag>(constants::PLAYEROBSTACLETAG);
 }

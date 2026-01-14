@@ -27,22 +27,10 @@ struct NetworkTransformState {
         , timestamp(std::chrono::steady_clock::now()) {}
 };
 
-struct NetworkHealthState {
-    uint32_t health;
-    uint32_t baseHealth;
-    std::chrono::steady_clock::time_point timestamp;
-
-    NetworkHealthState()
-        : health(0)
-        , baseHealth(0)
-        , timestamp(std::chrono::steady_clock::now()) {}
-};
-
 class NetworkStateComponent : public AComponent {
     public:
         NetworkStateComponent()
             : _hasTransform(false)
-            , _hasHealth(false)
             , _interpolationTime(0.1f) {}
 
         ~NetworkStateComponent() = default;
@@ -62,28 +50,16 @@ class NetworkStateComponent : public AComponent {
         const NetworkTransformState& getPreviousTransform() const { return _previousTransform; }
         const NetworkTransformState& getCurrentTransform() const { return _currentTransform; }
 
-        void setCurrentHealth(uint32_t health, uint32_t baseHealth) {
-            if (_hasHealth) {
-                _previousHealth = _currentHealth;
-            }
-            _currentHealth.health = health;
-            _currentHealth.baseHealth = baseHealth;
-            _currentHealth.timestamp = std::chrono::steady_clock::now();
-            _hasHealth = true;
-        }
-
-        bool hasHealth() const { return _hasHealth; }
-        const NetworkHealthState& getPreviousHealth() const { return _previousHealth; }
-        const NetworkHealthState& getCurrentHealth() const { return _currentHealth; }
-
         void setInterpolationTime(float time) { _interpolationTime = time; }
         float getInterpolationTime() const { return _interpolationTime; }
 
         float getTransformInterpolationFactor() const {
-            if (!_hasTransform) return 1.0f;
+            if (!_hasTransform)
+                return 1.0f;
             auto now = std::chrono::steady_clock::now();
             auto elapsed = std::chrono::duration<float>(now - _currentTransform.timestamp).count();
-            if (elapsed >= _interpolationTime) return 1.0f;
+            if (elapsed >= _interpolationTime)
+                return 1.0f;
             return elapsed / _interpolationTime;
         }
 
@@ -91,9 +67,6 @@ class NetworkStateComponent : public AComponent {
         NetworkTransformState _previousTransform;
         NetworkTransformState _currentTransform;
         bool _hasTransform;
-        NetworkHealthState _previousHealth;
-        NetworkHealthState _currentHealth;
-        bool _hasHealth;
         float _interpolationTime;
 };
 
