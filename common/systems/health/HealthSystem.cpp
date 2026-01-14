@@ -8,6 +8,7 @@
 #include "HealthSystem.hpp"
 #include <memory>
 #include "../../components/permanent/HealthComponent.hpp"
+#include "../../components/permanent/InvulnerableComponent.hpp"
 #include "../../components/temporary/DamageIntentComponent.hpp"
 #include "../../components/temporary/DeathIntentComponent.hpp"
 #include "../../GameRules.hpp"
@@ -41,6 +42,15 @@ void HealthSystem::_handleDamageUpdates(
         auto healthComponent = registry->getComponent<HealthComponent>(entityId);
         auto damageComponent = registry->getComponent<DamageIntentComponent>(entityId);
 
+        if (registry->hasComponent<InvulnerableComponent>(entityId)) {
+            auto invulnerableComponent = registry->getComponent
+                <InvulnerableComponent>(entityId);
+            if (invulnerableComponent->isActive()) {
+                registry->removeOneComponent<DamageIntentComponent>(entityId);
+                continue;
+            }
+        }
+
         float damages = damageComponent->getDamages();
         auto gameRules = resourceManager->get<GameRules>();
         if (gameRules) {
@@ -60,9 +70,8 @@ void HealthSystem::_handleDamageUpdates(
                 damages *= multiplier;
             }
         }
-        float health = healthComponent->getHealth();
 
-        healthComponent->setHealth(health - damages);
+        healthComponent->decreaseHealth(damages);
         healthComponent->setLastDamageSource(damageComponent->getSource());
 
         registry->removeOneComponent<DamageIntentComponent>(entityId);
