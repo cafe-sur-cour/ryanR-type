@@ -100,58 +100,22 @@ void PauseState::enter() {
     _leaveButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            network->leaveLobby();
+            network->sendDisconnectFromLobby();
             debug::Debug::printDebug(network->isDebugMode(),
                 "[PauseState] Player requested to leave the lobby.",
                 debug::debugType::NETWORK,
                 debug::debugLevel::INFO);
-        }
-        auto networkPtr = this->_resourceManager->get<ClientNetwork>();
-        if (networkPtr) {
-            networkPtr->setLobbyCode("");
-            networkPtr->_isConnectedToLobby = false;
-            networkPtr->_isLobbyMaster = false;
-            networkPtr->_ready = false;
-            networkPtr->clearEntitiesAndMappings();
-        }
-
-        if (auto gsm = _gsm.lock()) {
-            gsm->requestStateChange(std::make_shared<MainMenuState>(gsm, _resourceManager));
-        }
-
-        auto IAudio = this->_resourceManager->get<gfx::IAudio>();
-        if (IAudio) {
-            IAudio->stopAllSounds();
-            IAudio->stopMusic();
         }
     });
 
     _leaveButton->setOnActivated([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            network->leaveLobby();
+            network->sendDisconnectFromLobby();
             debug::Debug::printDebug(network->isDebugMode(),
                 "[PauseState] Player requested to leave the lobby.",
                 debug::debugType::NETWORK,
                 debug::debugLevel::INFO);
-        }
-        auto networkPtr = this->_resourceManager->get<ClientNetwork>();
-        if (networkPtr) {
-            networkPtr->setLobbyCode("");
-            networkPtr->_isConnectedToLobby = false;
-            networkPtr->_isLobbyMaster = false;
-            networkPtr->_ready = false;
-            networkPtr->clearEntitiesAndMappings();
-        }
-
-        if (auto gsm = _gsm.lock()) {
-            gsm->requestStateChange(std::make_shared<MainMenuState>(gsm, _resourceManager));
-        }
-
-        auto IAudio = this->_resourceManager->get<gfx::IAudio>();
-        if (IAudio) {
-            IAudio->stopAllSounds();
-            IAudio->stopMusic();
         }
     });
     _menuLayout->addElement(_leaveButton);
@@ -165,6 +129,31 @@ void PauseState::update(float deltaTime) {
         _uiManager->setGlobalScale(config->getUIScale());
     }
 
+    auto network = this->_resourceManager->get<ClientNetwork>();
+    if (network && network->_shouldDisconnect) {
+        network->setLobbyCode("");
+        network->_isConnectedToLobby = false;
+        network->_isLobbyMaster = false;
+        network->_ready = false;
+        network->clearEntitiesAndMappings();
+
+        if (auto gsm = _gsm.lock()) {
+            gsm->requestStateChange(std::make_shared<MainMenuState>(gsm, _resourceManager));
+        }
+
+        auto IAudio = this->_resourceManager->get<gfx::IAudio>();
+        if (IAudio) {
+            IAudio->stopAllSounds();
+            IAudio->stopMusic();
+        }
+
+        network->_shouldDisconnect = false;
+
+        debug::Debug::printDebug(network->isDebugMode(),
+            "[PauseState] Disconnection ACK received; changing to MainMenuState.",
+            debug::debugType::NETWORK,
+            debug::debugLevel::INFO);
+    }
     auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
     if (eventResult == gfx::EventType::CLOSE) {
         _resourceManager->get<gfx::IWindow>()->closeWindow();

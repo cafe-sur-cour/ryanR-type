@@ -80,7 +80,6 @@ class ClientNetwork {
         void sendWhoAmI();
         void requestCode();
         void sendLobbyConnection(std::string lobbyCode);
-        void leaveLobby();
         void sendMasterStartGame();
         void sendRegisterPacket(const std::string &username, const std::string &password);
         void sendLoginPacket(const std::string &username, const std::string &password);
@@ -88,6 +87,7 @@ class ClientNetwork {
         void sendRequestProfilePacket();
         void sendMessageToServer(const std::string &message);
         void sendRequestGameRulesUpdate(uint8_t ruleType, uint8_t value);
+        void sendDisconnectFromLobby();
 
         const std::vector<std::pair<std::string, std::string>>& getLeaderboardData() const;
         bool isLeaderboardDataUpdated() const;
@@ -122,6 +122,7 @@ class ClientNetwork {
         std::atomic<size_t> _readyClients;
         std::atomic<uint8_t> _clientId;
         std::atomic<bool> _clientReadyStatus;
+        std::atomic<bool> _shouldDisconnect;
 
         std::chrono::steady_clock::time_point _lastLeaveLobbyTime;
 
@@ -159,6 +160,7 @@ class ClientNetwork {
         void handleBroadcastedChat();
         void handleGameRules();
         void handleForceLeave();
+        void handleAckLeaveLobby();
 
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;

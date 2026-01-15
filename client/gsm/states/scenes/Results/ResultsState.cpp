@@ -110,60 +110,22 @@ void ResultsState::enter() {
     _leaveButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            network->leaveLobby();
+            network->sendDisconnectFromLobby();
             debug::Debug::printDebug(network->isDebugMode(),
                 "[ResultsState] Player requested to leave the lobby.",
                 debug::debugType::NETWORK,
                 debug::debugLevel::INFO);
-        }
-        auto networkPtr = this->_resourceManager->get<ClientNetwork>();
-        if (networkPtr) {
-            networkPtr->setLobbyCode("");
-            networkPtr->_isConnectedToLobby = false;
-            networkPtr->_isLobbyMaster = false;
-            networkPtr->_ready = false;
-            networkPtr->clearEntitiesAndMappings();
-        }
-        auto gsmPtr = _gsm.lock();
-        if (gsmPtr) {
-            auto mainMenuState =
-                std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
-            gsmPtr->requestStateChange(mainMenuState);
-        }
-        auto IAudio = this->_resourceManager->get<gfx::IAudio>();
-        if (IAudio) {
-            IAudio->stopAllSounds();
-            IAudio->stopMusic();
         }
     });
 
     _leaveButton->setOnActivated([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            network->leaveLobby();
+            network->sendDisconnectFromLobby();
             debug::Debug::printDebug(network->isDebugMode(),
                 "[ResultsState] Player requested to leave the lobby.",
                 debug::debugType::NETWORK,
                 debug::debugLevel::INFO);
-        }
-        auto networkPtr = this->_resourceManager->get<ClientNetwork>();
-        if (networkPtr) {
-            networkPtr->setLobbyCode("");
-            networkPtr->_isConnectedToLobby = false;
-            networkPtr->_isLobbyMaster = false;
-            networkPtr->_ready = false;
-            networkPtr->clearEntitiesAndMappings();
-        }
-        auto gsmPtr = _gsm.lock();
-        if (gsmPtr) {
-            auto mainMenuState =
-                std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
-            gsmPtr->requestStateChange(mainMenuState);
-        }
-        auto IAudio = this->_resourceManager->get<gfx::IAudio>();
-        if (IAudio) {
-            IAudio->stopAllSounds();
-            IAudio->stopMusic();
         }
     });
 
@@ -177,7 +139,26 @@ void ResultsState::update(float deltaTime) {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
         return;
     }
-
+    auto network = this->_resourceManager->get<ClientNetwork>();
+    if (network && network->_shouldDisconnect) {
+        network->setLobbyCode("");
+        network->_isConnectedToLobby = false;
+        network->_isLobbyMaster = false;
+        network->_ready = false;
+        network->clearEntitiesAndMappings();
+        auto gsmPtr = _gsm.lock();
+        if (gsmPtr) {
+            auto mainMenuState =
+                std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
+            gsmPtr->requestStateChange(mainMenuState);
+        }
+        auto IAudio = this->_resourceManager->get<gfx::IAudio>();
+        if (IAudio) {
+            IAudio->stopAllSounds();
+            IAudio->stopMusic();
+        }
+        network->_shouldDisconnect = false;
+    }
     _uiManager->handleKeyboardInput(eventResult);
 
     math::Vector2f mousePos = _mouseHandler->getWorldMousePosition();

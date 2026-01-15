@@ -50,15 +50,13 @@ bool rserv::Server::processDisconnections(uint8_t idClient) {
         if (std::get<0>(client) == idClient) {
             if (this->_clientToLobby.find(idClient) != this->_clientToLobby.end()) {
                 auto lobby = this->_clientToLobby[idClient];
-                if (lobby) {
+                if (lobby && lobby->isRunning()) {
                     lobby->processDisconnections(idClient);
                 }
                 this->_clientToLobby.erase(idClient);
                 debug::Debug::printDebug(this->_config->getIsDebug(),
                     "Client " + std::to_string(idClient) + " removed from lobby",
                     debug::debugType::NETWORK, debug::debugLevel::INFO);
-
-                this->cleanupClosedLobbies();
             }
 
             this->_clients.erase(
