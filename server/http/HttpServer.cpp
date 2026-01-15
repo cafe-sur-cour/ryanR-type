@@ -195,6 +195,7 @@ void rserv::HttpServer::commandsSuggestionsEndpoint(
                 "/kick <player_id or player_name>",
                 "/ban <player_id or player_name>",
                 "/unban <player_id or player_name>",
+                "/godmod <player_id or player_name>",
                 "/tps <value>"
             }}
         };

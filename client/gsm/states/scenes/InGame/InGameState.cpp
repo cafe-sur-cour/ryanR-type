@@ -6,10 +6,19 @@
 */
 
 #include "InGameState.hpp"
+#ifdef _WIN32
+#include <windows.h>
+#include <psapi.h>
+#else
+#include <unistd.h>
+#endif
 #include <memory>
 #include <iostream>
 #include <sstream>
+#include <ctime>
+#include <fstream>
 #include <iomanip>
+#include <chrono>
 #include <string>
 #include <utility>
 #include <algorithm>
@@ -36,6 +45,7 @@
 #include "../../../../components/temporary/MusicIntentComponent.hpp"
 #include "../../../../components/rendering/HitboxRenderComponent.hpp"
 #include "../../../../components/permanent/NetworkStateComponent.hpp"
+#include "../../../../../common/components/permanent/VelocityComponent.hpp"
 #include "../../../../colors.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/ECS/entity/Entity.hpp"
@@ -194,10 +204,10 @@ void InGameState::update(float deltaTime) {
         }
     }
 
-    renderHUD();
+    renderHUD(deltaTime);
 }
 
-void InGameState::renderHUD() {
+void InGameState::renderHUD(float deltaTime) {
     auto window = _resourceManager->get<gfx::IWindow>();
     auto currentCenter = window->getViewCenter();
     window->setViewCenter(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
@@ -250,6 +260,7 @@ void InGameState::renderHUD() {
     drawHealthHUD(window, health, maxHealth);
     drawScoreHUD(window, score);
     drawShotChargeHUD(window, shotCharge, maxShotCharge);
+    drawInGameMetrics(window, deltaTime);
 
     window->setViewCenter(currentCenter.getX(), currentCenter.getY());
 }
@@ -405,6 +416,114 @@ void InGameState::drawShotChargeHUD(
         chargeText, colors::WHITE, chargeTextPosition,
         constants::MAIN_FONT, 20, colors::BLACK, 1.0f
     );
+}
+
+std::string getCPUUsage() {
+    static clock_t lastCPU = 0;
+    static auto lastTime = std::chrono::steady_clock::now();
+    clock_t currentCPU = clock();
+    auto currentTime = std::chrono::steady_clock::now();
+    double elapsed = std::chrono::duration<double>(currentTime - lastTime).count();
+    double cpuTime = static_cast<double>(currentCPU - lastCPU) / CLOCKS_PER_SEC;
+    lastCPU = currentCPU;
+    lastTime = currentTime;
+    if (elapsed > 0) {
+        double cpuPercent = (cpuTime / elapsed) * 100.0;
+        if (cpuPercent > 100.0) cpuPercent = 100.0;
+        return std::to_string(static_cast<int>(cpuPercent)) + "%";
+    }
+    return "0%";
+}
+
+std::string getMemoryUsage() {
+#ifdef _WIN32
+    HANDLE hProcess = GetCurrentProcess();
+    PROCESS_MEMORY_COUNTERS pmc;
+    if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
+        SIZE_T memoryKB = pmc.WorkingSetSize / 1024;
+        return std::to_string(memoryKB / 1024) + " MB";
+    }
+    return "N/A";
+#else
+    std::ifstream statm("/proc/self/statm");
+    if (!statm.is_open())
+        return "N/A";
+    int64_t pages;
+    statm >> pages;
+    statm.close();
+    int64_t pageSize = static_cast<int64_t>(SystemConfig::getPageSize());
+    int64_t memoryKB = pages * pageSize / 1024;
+    return std::to_string(memoryKB / 1024) + " MB";
+#endif
+}
+
+void InGameState::drawInGameMetrics(std::shared_ptr<gfx::IWindow> window, float deltaTime) {
+    auto config = _resourceManager->get<SettingsConfig>();
+    if (!config->isInGameMetricsEnabled()) {
+        return;
+    }
+
+    int fps = static_cast<int>(1.0f / deltaTime);
+
+    math::Vector2f playerPosition(0.0f, 0.0f);
+    math::Vector2f playerVelocity(0.0f, 0.0f);
+    bool hasPlayerData = false;
+
+    auto view = _registry->view<ecs::PlayerTag, ecs::LocalPlayerTag>();
+    for (auto entity : view) {
+        if (_registry->hasComponent<ecs::NetworkStateComponent>(entity)) {
+            auto networkComp = _registry->getComponent<ecs::NetworkStateComponent>(entity);
+            if (networkComp->hasTransform()) {
+                playerPosition = networkComp->getCurrentTransform().position;
+                hasPlayerData = true;
+            }
+        }
+        if (_registry->hasComponent<ecs::VelocityComponent>(entity)) {
+            auto velocityComp = _registry->getComponent<ecs::VelocityComponent>(entity);
+            playerVelocity = velocityComp->getVelocity();
+            hasPlayerData = true;
+        }
+        break;
+    }
+
+    std::string cpuUsage = getCPUUsage();
+    std::string memoryUsage = getMemoryUsage();
+    std::string metricsText = "";
+
+    metricsText += std::to_string(fps) + " : FPS\n";
+    if (hasPlayerData) {
+        metricsText += std::to_string(
+            static_cast<int>(playerVelocity.getX())) + ", " +
+            std::to_string(static_cast<int>(playerVelocity.getY())) + " : Vel\n";
+        metricsText += std::to_string(
+            static_cast<int>(playerPosition.getX())) + ", " +
+            std::to_string(static_cast<int>(playerPosition.getY())) + " : Pos\n";
+    }
+    metricsText += cpuUsage + " : CPU\n";
+    metricsText += memoryUsage + " : Mem";
+
+    auto textSize = window->getTextSize(metricsText, constants::MAIN_FONT, 12);
+    size_t textHeight = textSize.second;
+    size_t numLines = static_cast<size_t>(
+        std::count(metricsText.begin(), metricsText.end(), '\n')) + 1;
+    size_t totalHeight = textHeight + (numLines - 1) * 5;
+    size_t baseX = static_cast<size_t>(constants::MAX_WIDTH - 5.0f);
+    size_t baseY = static_cast<size_t>(constants::MAX_HEIGHT - totalHeight - 15.0f);
+
+    std::istringstream iss(metricsText);
+    std::string line;
+    size_t currentY = baseY;
+    while (std::getline(iss, line)) {
+        if (!line.empty()) {
+            auto lineSize = window->getTextSize(line, constants::MAIN_FONT, 12);
+            size_t lineWidth = lineSize.first;
+            size_t lineX = baseX - lineWidth;
+            std::pair<size_t, size_t> linePosition = {lineX, currentY};
+            window->drawText(line, colors::WHITE, linePosition,
+                constants::MAIN_FONT, 12, colors::BLACK, 1.0f);
+            currentY += lineSize.second + 5;
+        }
+    }
 }
 
 void InGameState::exit() {

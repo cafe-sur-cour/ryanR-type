@@ -126,6 +126,7 @@ namespace rserv {
             std::string kickPlayer(const std::string& playerId);
             std::string banPlayer(const std::string& playerId);
             std::string unbanPlayer(const std::string& playerId);
+            std::string toggleGodmod(const std::string& playerId);
 
         private:
             void loadNetworkLibrary();

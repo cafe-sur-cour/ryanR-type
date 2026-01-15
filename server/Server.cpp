@@ -31,6 +31,7 @@
 #include "../common/constants.hpp"
 #include "../common/interfaces/IPacketManager.hpp"
 #include "Signal.hpp"
+#include "../common/components/permanent/InvulnerableComponent.hpp"
 
 rserv::Server::Server() :
     _nextClientId(1), _sequenceNumber(1), _nextEntityId(1) {
@@ -513,7 +514,8 @@ std::map<std::string, int> rserv::Server::loadUserStats(const std::string& usern
         {constants::GAMES_PLAYED_JSON_WARD, 0},
         {constants::WINS_JSON_WARD, 0},
         {constants::HIGH_SCORE_JSON_WARD, 0},
-        {constants::BANNED_JSON_WARD, 0}
+        {constants::BANNED_JSON_WARD, 0},
+        {constants::GODMOD_JSON_WARD, 0}
     };
 
     const std::string filepath = constants::USERS_JSON_PATH;
@@ -653,6 +655,7 @@ rserv::ServerInfo rserv::Server::getServerInfo() const {
         }
     }
 
+    size_t playerIndex = 0;
     for (const auto& client : this->_clients) {
         std::string username = std::get<2>(client);
         if (!username.empty()) {
@@ -662,6 +665,7 @@ rserv::ServerInfo rserv::Server::getServerInfo() const {
 
             auto stats = this->loadUserStats(username);
             info.playerStats.push_back(stats);
+            playerIndex++;
         }
     }
 
@@ -688,6 +692,30 @@ rserv::ServerInfo rserv::Server::getServerInfo() const {
             std::string playerInfo = "Player ID: " + std::to_string(std::get<0>(client)) +
                 ", Username: " + username;
             info.inGamePlayers.push_back(playerInfo);
+        }
+    }
+
+    playerIndex = 0;
+    for (const auto& client : this->_clients) {
+        std::string username = std::get<2>(client);
+        if (!username.empty()) {
+            if (inGameUsernames.count(username)) {
+                auto lobbyIt = _clientToLobby.find(std::get<0>(client));
+                if (lobbyIt != _clientToLobby.end()) {
+                    auto lobby = lobbyIt->second;
+                    const auto& clientToEntity = lobby->getClientToEntity();
+                    auto entityIt = clientToEntity.find(std::get<0>(client));
+                    if (entityIt != clientToEntity.end()) {
+                        auto registry =
+                            lobby->getResourceManager()->get<ecs::Registry>();
+                        if (registry->hasComponent<
+                            ecs::InvulnerableComponent>(entityIt->second)) {
+                            info.playerStats[playerIndex][constants::GODMOD_JSON_WARD] = 1;
+                        }
+                    }
+                }
+            }
+            playerIndex++;
         }
     }
 
@@ -770,6 +798,10 @@ std::string rserv::Server::executeCommand(const std::string& command) {
         } catch (const std::exception&) {
             return "Invalid TPS value";
         }
+    } else if (cmd == "/godmod") {
+        std::string playerId;
+        iss >> playerId;
+        return toggleGodmod(playerId);
     } else {
         return "Unknown command";
     }
@@ -864,6 +896,48 @@ std::string rserv::Server::kickPlayer(const std::string& playerId) {
         }
     }
     return "Player not found";
+}
+
+std::string rserv::Server::toggleGodmod(const std::string& playerId) {
+    uint8_t id = 0;
+
+    try {
+        id = static_cast<uint8_t>(std::stoi(playerId));
+    } catch (const std::exception&) {
+        for (const auto& client : _clients) {
+            std::string username = std::get<2>(client);
+            if (username == playerId) {
+                id = std::get<0>(client);
+                break;
+            }
+        }
+        if (id == 0) {
+            return "Player not found";
+        }
+    }
+
+    if (_clientToLobby.find(id) != _clientToLobby.end()) {
+        auto lobby = _clientToLobby[id];
+        if (!lobby->isGameStarted()) {
+            return "Player not in game";
+        }
+        const auto& clientToEntity = lobby->getClientToEntity();
+        auto entityIt = clientToEntity.find(id);
+        if (entityIt != clientToEntity.end()) {
+            auto registry = lobby->getResourceManager()->get<ecs::Registry>();
+            if (registry->hasComponent<ecs::InvulnerableComponent>(entityIt->second)) {
+                registry->removeOneComponent<ecs::InvulnerableComponent>(entityIt->second);
+                return "Godmod disabled for player " + playerId;
+            } else {
+                auto invulnerableComponent =
+                    std::make_shared<ecs::InvulnerableComponent>(true);
+                registry->addComponent<
+                    ecs::InvulnerableComponent>(entityIt->second, invulnerableComponent);
+                return "Godmod enabled for player " + playerId;
+            }
+        }
+    }
+    return "Player not found or not in game";
 }
 
 std::string rserv::Server::banPlayer(const std::string& playerId) {

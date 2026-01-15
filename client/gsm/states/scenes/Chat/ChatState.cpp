@@ -12,6 +12,7 @@
 #include "../../../../constants.hpp"
 #include "../../../../colors.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
+#include "../../../../../common/InputMapping/IInputProvider.hpp"
 
 namespace gsm {
 
@@ -24,6 +25,9 @@ ChatState::ChatState(
 void ChatState::enter() {
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
+    _uiManager->setResourceManager(_resourceManager);
+    _uiManager->setNavigationEnabled(true);
+    _uiManager->setOnBack([this]() { onBackButtonClicked(); });
 
     _uiManager->setCursorCallback([this](bool isHovering) {
         if (_resourceManager->has<gfx::IWindow>()) {
@@ -33,7 +37,7 @@ void ChatState::enter() {
 
     _background = std::make_shared<ui::Background>(_resourceManager);
     _background->addLayer(constants::UI_BACKGROUND_CHAT, 0.0f, 0.0f,
-        math::Vector2f(5376.0f, 3584.0f));
+        math::Vector2f(6487.0f, 3584.0f));
     _uiManager->addElement(_background);
 
     ui::LayoutConfig titleConfig;
@@ -89,6 +93,7 @@ void ChatState::enter() {
     _messageInput->setPlaceholder(constants::CHAT_PLACEHOLDER_TEXT);
     _messageInput->setSize(math::Vector2f{800, 50});
     _messageInput->setMaxLength(45);
+    _messageInput->setOnSubmit([this](const std::string& text) { onSendMessage(text); });
     _messageInput->setOnRelease([this]() {
         auto navMan = this->_uiManager->getNavigationManager();
         navMan->enableFocus();
@@ -102,12 +107,11 @@ void ChatState::enter() {
     _sendButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
     _sendButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
     _sendButton->setOnRelease([this]() {
-        auto network = _resourceManager->get<ClientNetwork>();
-        if (network) {
-            network->sendMessageToServer(_messageInput->getText());
-            _messageInput->setText("");
-        }
+        onSendMessage(_messageInput->getText());
      });
+    _sendButton->setOnActivated([this]() {
+        onSendMessage(_messageInput->getText());
+    });
 
     ui::LayoutConfig controlsConfig;
     controlsConfig.direction = ui::LayoutDirection::Horizontal;
@@ -154,6 +158,8 @@ void ChatState::enter() {
     _uiManager->addElement(_messagesContainer);
     _uiManager->addElement(controlsLayout);
     _uiManager->addElement(backButtonLayout);
+
+    _uiManager->focusFirstElement();
 }
 
 void ChatState::update(float deltaTime) {
@@ -205,6 +211,11 @@ void ChatState::update(float deltaTime) {
 
     _uiManager->handleMouseInput(mousePos, mousePressed);
 
+    if (_resourceManager->has<ecs::IInputProvider>()) {
+        auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
+        _uiManager->handleNavigationInputs(inputProvider, deltaTime);
+    }
+
     bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
 
     auto navManager = _uiManager->getNavigationManager();
@@ -231,7 +242,12 @@ void ChatState::onBackButtonClicked() {
     }
 }
 
-void ChatState::onSendMessage() {
+void ChatState::onSendMessage(const std::string& text) {
+    auto network = _resourceManager->get<ClientNetwork>();
+    if (network && !text.empty()) {
+        network->sendMessageToServer(text);
+        _messageInput->setText("");
+    }
 }
 
 }  // namespace gsm

@@ -17,6 +17,7 @@
 #include "../../../../../common/constants.hpp"
 #include "../../../../constants.hpp"
 #include "../../../../SettingsConfig.hpp"
+#include "../../../../ClientNetwork.hpp"
 
 namespace gsm {
 
@@ -74,6 +75,13 @@ void LevelCompleteState::enter() {
     _uiManager->addElement(_subtitleText);
 
     _waitingForNextLevel = true;
+
+    if (_resourceManager->has<ClientNetwork>()) {
+        NetworkEvent stopEvent;
+        stopEvent.eventType = constants::EventType::STOP;
+        stopEvent.depth = 0.0;
+        _resourceManager->get<ClientNetwork>()->addToEventQueue(stopEvent);
+    }
 }
 
 void LevelCompleteState::update(float deltaTime) {

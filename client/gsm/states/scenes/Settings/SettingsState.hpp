@@ -50,6 +50,7 @@ private:
     void cycleScreenResolution();
     void updateTargetFPS(int fps);
     void updateRenderQuality(float quality);
+    void updateInGameMetrics(bool enabled);
     void setScreenResolution(SettingsConfig::ScreenResolution resolution);
     void updateResolutionButtonColors(SettingsConfig::ScreenResolution current);
 
@@ -122,6 +123,9 @@ private:
     std::string _rebindLabel;
     std::shared_ptr<ui::Button> _buttonToUpdate;
     gfx::EventType _originalKey = gfx::EventType::NOTHING;
+
+    std::shared_ptr<ui::ToggleSwitch> _inGameMetricsToggle;
+    std::shared_ptr<ui::Text> _inGameMetricsLabel;
 
     std::string getColorBlindnessText(int state);
     std::string getUIScaleText(ui::UIScale scale);
