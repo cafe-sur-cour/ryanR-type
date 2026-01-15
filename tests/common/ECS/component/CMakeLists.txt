@@ -93,3 +93,51 @@ add_test(NAME TriggerIntentComponentTests COMMAND TriggerIntentComponentTests)
 add_executable(InteractionConfigComponentTests InteractionConfigComponentTests.cpp)
 target_link_libraries(InteractionConfigComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
 add_test(NAME InteractionConfigComponentTests COMMAND InteractionConfigComponentTests)
+
+add_executable(ChargedShotComponentTests ChargedShotComponentTests.cpp)
+target_link_libraries(ChargedShotComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME ChargedShotComponentTests COMMAND ChargedShotComponentTests)
+
+add_executable(DamageCooldownComponentTests DamageCooldownComponentTests.cpp)
+target_link_libraries(DamageCooldownComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME DamageCooldownComponentTests COMMAND DamageCooldownComponentTests)
+
+add_executable(InvulnerableComponentTests InvulnerableComponentTests.cpp)
+target_link_libraries(InvulnerableComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME InvulnerableComponentTests COMMAND InvulnerableComponentTests)
+
+add_executable(OwnerComponentTests OwnerComponentTests.cpp)
+target_link_libraries(OwnerComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME OwnerComponentTests COMMAND OwnerComponentTests)
+
+add_executable(ProjectilePrefabComponentTests ProjectilePrefabComponentTests.cpp)
+target_link_libraries(ProjectilePrefabComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME ProjectilePrefabComponentTests COMMAND ProjectilePrefabComponentTests)
+
+add_executable(ScoreValueComponentTests ScoreValueComponentTests.cpp)
+target_link_libraries(ScoreValueComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME ScoreValueComponentTests COMMAND ScoreValueComponentTests)
+
+add_executable(ShootingStatsComponentTests ShootingStatsComponentTests.cpp)
+target_link_libraries(ShootingStatsComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME ShootingStatsComponentTests COMMAND ShootingStatsComponentTests)
+
+add_executable(ClientEffectTagTests ClientEffectTagTests.cpp)
+target_link_libraries(ClientEffectTagTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME ClientEffectTagTests COMMAND ClientEffectTagTests)
+
+add_executable(ShooterTagTests ShooterTagTests.cpp)
+target_link_libraries(ShooterTagTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME ShooterTagTests COMMAND ShooterTagTests)
+
+add_executable(PowerUpTagTests PowerUpTagTests.cpp)
+target_link_libraries(PowerUpTagTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME PowerUpTagTests COMMAND PowerUpTagTests)
+
+add_executable(InputIntentComponentTests InputIntentComponentTests.cpp)
+target_link_libraries(InputIntentComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME InputIntentComponentTests COMMAND InputIntentComponentTests)
+
+add_executable(ShootIntentComponentTests ShootIntentComponentTests.cpp)
+target_link_libraries(ShootIntentComponentTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME ShootIntentComponentTests COMMAND ShootIntentComponentTests)
