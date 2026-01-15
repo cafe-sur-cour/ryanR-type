@@ -276,6 +276,20 @@ LobbyWaitingState::LobbyWaitingState(
 }
 
 void LobbyWaitingState::setupLobbyMasterUI() {
+    ui::LayoutConfig bottomLeftConfig;
+    bottomLeftConfig.direction = ui::LayoutDirection::Vertical;
+    bottomLeftConfig.alignment = ui::LayoutAlignment::Start;
+    bottomLeftConfig.spacing = 10.0f;
+    bottomLeftConfig.padding = math::Vector2f(0.0f, 0.0f);
+    bottomLeftConfig.anchorX = ui::AnchorX::Left;
+    bottomLeftConfig.anchorY = ui::AnchorY::Bottom;
+    bottomLeftConfig.offset = math::Vector2f(20.0f, -20.0f);
+
+    _bottomLeftLayout = std::make_shared<ui::UILayout>(_resourceManager, bottomLeftConfig);
+    _bottomLeftLayout->setSize(math::Vector2f(200.f, 100.f));
+
+    _uiManager->addElement(_bottomLeftLayout);
+
     auto networkLobby = _resourceManager->get<ClientNetwork>();
     std::string lobbyCode = networkLobby ? networkLobby->getLobbyCode() : "Unknown";
 
@@ -296,6 +310,40 @@ void LobbyWaitingState::setupLobbyMasterUI() {
     _statusText->setOutlineThickness(1.0f);
     _statusText->setFontSize(24);
     _centerLayout->addElement(_statusText);
+
+    _copyCodeButton = std::make_shared<ui::Button>(_resourceManager);
+    _copyCodeButton->setText("Copy Code");
+    _copyCodeButton->setSize(math::Vector2f(150.f, 50.f));
+    _copyCodeButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _copyCodeButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _copyCodeButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _copyCodeButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        auto window = this->_resourceManager->get<gfx::IWindow>();
+        if (network && window && !network->getLobbyCode().empty()) {
+            window->setClipboardText(network->getLobbyCode());
+            _copyCodeButton->setText("Copied");
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Copied lobby code to clipboard: " +
+                    network->getLobbyCode(),
+                debug::debugType::CORE,
+                debug::debugLevel::INFO);
+        }
+    });
+    _copyCodeButton->setOnActivated([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        auto window = this->_resourceManager->get<gfx::IWindow>();
+        if (network && window && !network->getLobbyCode().empty()) {
+            window->setClipboardText(network->getLobbyCode());
+            _copyCodeButton->setText("Copied");
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Copied lobby code to clipboard: " +
+                    network->getLobbyCode(),
+                debug::debugType::CORE,
+                debug::debugLevel::INFO);
+        }
+    });
+    _bottomLeftLayout->addElement(_copyCodeButton);
 
     _startGameButton = std::make_shared<ui::Button>(_resourceManager);
     _startGameButton->setText("Start Game");
@@ -471,6 +519,8 @@ void LobbyWaitingState::exit() {
     _chatButton.reset();
     _topRightLayout.reset();
     _loadingAnimation.reset();
+    _bottomLeftLayout.reset();
+    _copyCodeButton.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }
