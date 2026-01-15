@@ -60,7 +60,7 @@ ReplayState::ReplayState(
 
     _background = std::make_shared<ui::Background>(_resourceManager);
     _background->addLayer(constants::UI_BACKGROUND_CHAT, 0.0f, 0.0f,
-        math::Vector2f(5376.0f, 3584.0f));
+        math::Vector2f(6487.0f, 3584.0f));
     _uiManager->addElement(_background);
 
     _backButton = std::make_shared<ui::Button>(_resourceManager);
@@ -94,7 +94,7 @@ void ReplayState::enter() {
     });
 
     _background->addLayer(constants::UI_BACKGROUND_CHAT, 0.0f, 0.0f,
-        math::Vector2f(5376.0f, 3584.0f));
+        math::Vector2f(6487.0f, 3584.0f));
 }
 
 void ReplayState::update(float deltaTime) {

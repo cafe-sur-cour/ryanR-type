@@ -50,6 +50,7 @@ void SettingsConfig::saveSettings(const std::string& filepath) {
     j[constants::SETTINGS_TARGET_FPS] = _targetFPS;
     j[constants::SETTINGS_RENDER_QUALITY] = _renderQuality;
     j[constants::SETTINGS_USERNAME] = _username;
+    j[constants::SETTINGS_IN_GAME_METRICS_ENABLED] = _inGameMetricsEnabled;
     std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
     std::ofstream file(filepath);
     file << j.dump(4);
@@ -77,6 +78,8 @@ void SettingsConfig::loadSettings(const std::string& filepath) {
     if (j.contains(constants::SETTINGS_RENDER_QUALITY)) _renderQuality =
         j[constants::SETTINGS_RENDER_QUALITY];
     if (j.contains(constants::SETTINGS_USERNAME)) _username = j[constants::SETTINGS_USERNAME];
+    if (j.contains(constants::SETTINGS_IN_GAME_METRICS_ENABLED)) _inGameMetricsEnabled =
+        j[constants::SETTINGS_IN_GAME_METRICS_ENABLED];
 }
 
 std::string SettingsConfig::getScreenResolutionName(ScreenResolution resolution) const {

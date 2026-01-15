@@ -51,6 +51,9 @@ public:
     float getRenderQuality() const { return _renderQuality; }
     void setRenderQuality(float quality) { _renderQuality = quality; }
 
+    bool isInGameMetricsEnabled() const { return _inGameMetricsEnabled; }
+    void setInGameMetricsEnabled(bool enabled) { _inGameMetricsEnabled = enabled; }
+
     std::string getUsername() const { return _username; }
     void setUsername(const std::string& username) { _username = username; }
 
@@ -74,6 +77,7 @@ private:
     ScreenResolution _screenResolution = ScreenResolution::RES_1920x1080;
     int _targetFPS = 60;
     float _renderQuality = 1.0f;
+    bool _inGameMetricsEnabled = false;
     std::string _username = "";
 };
 

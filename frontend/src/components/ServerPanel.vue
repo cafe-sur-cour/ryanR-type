@@ -195,7 +195,7 @@
                 <!-- Player stats -->
                 <div v-if="selectedPlayerIndex === playerIndex && serverInfo.playerStats && serverInfo.playerStats[playerIndex]"
                      class="mt-2 ml-4 p-3 bg-gray-800 rounded border-l-4 border-red-400">
-                  <div class="grid grid-cols-3 gap-4 text-sm">
+                  <div class="grid grid-cols-4 gap-4 text-sm">
                     <div class="text-center">
                       <p class="text-gray-400">Games Played</p>
                       <p class="text-white font-bold text-lg">{{ serverInfo.playerStats[playerIndex].games_played || 0 }}</p>
@@ -207,6 +207,12 @@
                     <div class="text-center">
                       <p class="text-gray-400">High Score</p>
                       <p class="text-white font-bold text-lg">{{ serverInfo.playerStats[playerIndex].high_score || 0 }}</p>
+                    </div>
+                    <div class="text-center">
+                      <p class="text-gray-400">Godmod</p>
+                      <p :class="serverInfo.playerStats[playerIndex].godmod ? 'text-yellow-400' : 'text-gray-400'" class="font-bold text-lg">
+                        {{ serverInfo.playerStats[playerIndex].godmod ? 'Yes' : 'No' }}
+                      </p>
                     </div>
                   </div>
                 </div>

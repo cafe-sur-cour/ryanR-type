@@ -58,7 +58,7 @@ MainMenuState::MainMenuState(
     _uiManager->setGlobalScale(config->getUIScale());
     _background = std::make_shared<ui::Background>(_resourceManager);
     _background->addLayer(constants::UI_BACKGROUND_EARTH_PATH, 0.0f, 0.0f,
-        math::Vector2f(5376.0f, 3584.0f));
+        math::Vector2f(6487.0f, 3584.0f));
     _uiManager->addElement(_background);
     _requestCodeButton = std::make_shared<ui::Button>(_resourceManager);
     _requestCodeButton->setText("Request Code");
@@ -69,11 +69,23 @@ MainMenuState::MainMenuState(
             network->requestCode();
         }
     });
+    _requestCodeButton->setOnActivated([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->requestCode();
+        }
+    });
+
     _lobbyCodeInput = std::make_shared<ui::TextInput>(_resourceManager);
     _lobbyCodeInput->setPlaceholder("Enter lobby code");
     _lobbyCodeInput->setMaxLength(12);
     _lobbyCodeInput->setSize(math::Vector2f(300.f, 50.f));
     _lobbyCodeInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_lobbyCodeInput);
+    });
+    _lobbyCodeInput->setOnActivated([this]() {
         auto navMan = this->_uiManager->getNavigationManager();
         navMan->enableFocus();
         navMan->setFocus(this->_lobbyCodeInput);

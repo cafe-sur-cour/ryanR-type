@@ -170,6 +170,9 @@ void TextInput::handleKeyboardInput(gfx::EventType event) {
         case gfx::EventType::ENTER:
             if (_onSubmit) _onSubmit(_text);
             break;
+        case gfx::EventType::NUMPAD_ENTER:
+            if (_onSubmit) _onSubmit(_text);
+            break;
         case gfx::EventType::LEFT: moveCursorLeft(); break;
         case gfx::EventType::RIGHT: moveCursorRight(); break;
         case gfx::EventType::UP:

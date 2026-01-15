@@ -17,6 +17,22 @@
 #include <string>
 #include <memory>
 
+#ifdef _WIN32
+#include <windows.h>
+#include <psapi.h>
+#else
+#include <unistd.h>
+#endif
+
+#ifndef _WIN32
+class SystemConfig {
+public:
+    static long getPageSize() {
+        return sysconf(_SC_PAGESIZE);
+    }
+};
+#endif
+
 namespace gsm {
 
 struct ScoreFeedback {
@@ -36,10 +52,11 @@ class InGameState : public AGameState {
         std::string getStateName() const override { return "In Game"; }
 
     private:
-        void renderHUD();
+        void renderHUD(float deltaTime);
         void drawHealthHUD(std::shared_ptr<gfx::IWindow> window, float health, float maxHealth);
         void drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score);
         void drawShotChargeHUD(std::shared_ptr<gfx::IWindow> window, float shotCharge, float maxShotCharge);
+        void drawInGameMetrics(std::shared_ptr<gfx::IWindow> window, float deltaTime);
 
     private:
         std::shared_ptr<ecs::Registry> _registry;

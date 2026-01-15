@@ -121,6 +121,13 @@ void PauseState::enter() {
     _menuLayout->addElement(_leaveButton);
 
     _uiManager->addElement(_menuLayout);
+
+    if (_resourceManager->has<ClientNetwork>()) {
+        NetworkEvent stopEvent;
+        stopEvent.eventType = constants::EventType::STOP;
+        stopEvent.depth = 0.0;
+        _resourceManager->get<ClientNetwork>()->addToEventQueue(stopEvent);
+    }
 }
 
 void PauseState::update(float deltaTime) {

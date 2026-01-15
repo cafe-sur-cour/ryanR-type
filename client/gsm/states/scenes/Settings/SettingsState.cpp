@@ -195,6 +195,20 @@ SettingsState::SettingsState(
         updateRenderQuality(value / 100.0f);
     });
 
+    _inGameMetricsToggle = std::make_shared<ui::ToggleSwitch>(resourceManager);
+    _inGameMetricsToggle->setOnText("ON");
+    _inGameMetricsToggle->setOffText("OFF");
+    _inGameMetricsToggle->setValue(config->isInGameMetricsEnabled());
+    _inGameMetricsToggle->setSize(math::Vector2f(250.f, 55.f));
+    _inGameMetricsToggle->setOnValueChanged([this](bool value) {
+        updateInGameMetrics(value);
+    });
+
+    _inGameMetricsLabel = std::make_shared<ui::Text>(resourceManager);
+    _inGameMetricsLabel->setText("In-Game Metrics");
+    _inGameMetricsLabel->setFontSize(16);
+    _inGameMetricsLabel->setSize(math::Vector2f(250.f, 25.f));
+
     _colorBlindnessButton = std::make_shared<ui::Button>(resourceManager);
     _colorBlindnessButton->setText(getColorBlindnessText(config->getColorBlindnessState()));
     _colorBlindnessButton->setSize(math::Vector2f(380.f, 55.f));
@@ -555,6 +569,9 @@ SettingsState::SettingsState(
 
     _centerColumnLayout->addElement(_fpsSlider);
     _centerColumnLayout->addElement(_renderQualitySlider);
+    _centerColumnLayout->addElement(_inGameMetricsLabel);
+    _centerColumnLayout->addElement(_inGameMetricsToggle);
+
     for (auto& button : _resolutionButtons) {
         _centerColumnLayout->addElement(button);
     }
@@ -588,7 +605,7 @@ void SettingsState::enter() {
     });
 
     _background->addLayer(constants::UI_BACKGROUND_CHAT, 0.0f, 0.0f,
-        math::Vector2f(5376.0f, 3584.0f));
+        math::Vector2f(6487.0f, 3584.0f));
 }
 
 void SettingsState::update(float deltaTime) {
@@ -852,6 +869,12 @@ void SettingsState::updateRenderQuality(float quality) {
     _settingsManager->saveSettings();
 }
 
+void SettingsState::updateInGameMetrics(bool enabled) {
+    auto config = _resourceManager->get<SettingsConfig>();
+    config->setInGameMetricsEnabled(enabled);
+    _settingsManager->saveSettings();
+}
+
 std::string SettingsState::getScreenResolutionText(
     SettingsConfig::ScreenResolution resolution
 ) {
@@ -880,6 +903,8 @@ void SettingsState::exit() {
     _resolutionButtons.clear();
     _fpsSlider.reset();
     _renderQualitySlider.reset();
+    _inGameMetricsToggle.reset();
+    _inGameMetricsLabel.reset();
 
     _moveUpLayout.reset();
     _moveUpLabel.reset();

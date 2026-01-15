@@ -34,7 +34,7 @@ public:
 private:
     void renderUI();
     void onBackButtonClicked();
-    void onSendMessage();
+    void onSendMessage(const std::string& text);
 
 private:
     std::unique_ptr<MouseInputHandler> _mouseHandler;
