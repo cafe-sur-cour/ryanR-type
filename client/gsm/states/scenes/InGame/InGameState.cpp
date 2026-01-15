@@ -9,8 +9,9 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <psapi.h>
-#endif
+#else
 #include <unistd.h>
+#endif
 #include <memory>
 #include <iostream>
 #include <sstream>
@@ -502,8 +503,8 @@ void InGameState::drawInGameMetrics(std::shared_ptr<gfx::IWindow> window, float 
     size_t numLines = static_cast<size_t>(
         std::count(metricsText.begin(), metricsText.end(), '\n')) + 1;
     size_t totalHeight = textHeight + (numLines - 1) * 5;
-    size_t baseX = constants::MAX_WIDTH - 5;
-    size_t baseY = constants::MAX_HEIGHT - totalHeight - 15;
+    size_t baseX = static_cast<size_t>(constants::MAX_WIDTH - 5.0f);
+    size_t baseY = static_cast<size_t>(constants::MAX_HEIGHT - totalHeight - 15.0f);
 
     std::istringstream iss(metricsText);
     std::string line;
