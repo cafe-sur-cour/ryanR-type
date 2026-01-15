@@ -9,7 +9,6 @@
 #define SHOOTINGSYSTEM_HPP_
 
 #include "../base/ASystem.hpp"
-#include "../../components/base/IComponent.hpp"
 #include "../../components/temporary/ShootIntentComponent.hpp"
 #include "../../components/permanent/ShootingStatsComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
