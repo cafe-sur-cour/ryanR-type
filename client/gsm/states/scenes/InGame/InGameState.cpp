@@ -484,28 +484,42 @@ void InGameState::drawInGameMetrics(std::shared_ptr<gfx::IWindow> window, float 
 
     std::string cpuUsage = getCPUUsage();
     std::string memoryUsage = getMemoryUsage();
-    std::string metricsText = "CPU: " + cpuUsage + "\n" +
-                              "Mem: " + memoryUsage + "\n" +
-                              "FPS: " + std::to_string(fps);
+    std::string metricsText = "";
+
+    metricsText += std::to_string(fps) + " : FPS\n";
     if (hasPlayerData) {
-        metricsText = "CPU: " + cpuUsage + "\n" +
-            "Mem: " + memoryUsage + "\n" +
-            "Pos: " + std::to_string(static_cast<int>(playerPosition.getX())) + ", " +
-            std::to_string(static_cast<int>(playerPosition.getY())) + "\n" +
-            "Vel: " + std::to_string(static_cast<int>(playerVelocity.getX())) + ", " +
-            std::to_string(static_cast<int>(playerVelocity.getY())) + "\n" +
-            "FPS: " + std::to_string(fps);
+        metricsText += std::to_string(
+            static_cast<int>(playerVelocity.getX())) + ", " +
+            std::to_string(static_cast<int>(playerVelocity.getY())) + " : Vel\n";
+        metricsText += std::to_string(
+            static_cast<int>(playerPosition.getX())) + ", " +
+            std::to_string(static_cast<int>(playerPosition.getY())) + " : Pos\n";
     }
+    metricsText += cpuUsage + " : CPU\n";
+    metricsText += memoryUsage + " : Mem";
 
     auto textSize = window->getTextSize(metricsText, constants::MAIN_FONT, 12);
-    size_t textWidth = textSize.first;
     size_t textHeight = textSize.second;
-    std::pair<size_t, size_t> position = {static_cast<size_t>(
-        constants::MAX_WIDTH - textWidth - 10),
-        static_cast<size_t>(constants::MAX_HEIGHT - textHeight - 10)};
+    size_t numLines = static_cast<size_t>(
+        std::count(metricsText.begin(), metricsText.end(), '\n')) + 1;
+    size_t totalHeight = textHeight + (numLines - 1) * 5;
+    size_t baseX = constants::MAX_WIDTH - 5;
+    size_t baseY = constants::MAX_HEIGHT - totalHeight - 15;
 
-    window->drawText(metricsText, colors::WHITE, position,
-        constants::MAIN_FONT, 12, colors::BLACK, 1.0f);
+    std::istringstream iss(metricsText);
+    std::string line;
+    size_t currentY = baseY;
+    while (std::getline(iss, line)) {
+        if (!line.empty()) {
+            auto lineSize = window->getTextSize(line, constants::MAIN_FONT, 12);
+            size_t lineWidth = lineSize.first;
+            size_t lineX = baseX - lineWidth;
+            std::pair<size_t, size_t> linePosition = {lineX, currentY};
+            window->drawText(line, colors::WHITE, linePosition,
+                constants::MAIN_FONT, 12, colors::BLACK, 1.0f);
+            currentY += lineSize.second + 5;
+        }
+    }
 }
 
 void InGameState::exit() {
