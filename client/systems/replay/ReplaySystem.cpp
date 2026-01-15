@@ -191,23 +191,23 @@ void ReplaySystem::update(
         nlohmann::json layersArray = nlohmann::json::array();
         for (const auto& layer : parallax->getLayers()) {
             nlohmann::json layerData;
-            layerData[constants::REPLAY_NAME] = layer.name;
-            layerData[constants::REPLAY_FILE_PATH] = layer.filePath;
-            layerData[constants::REPLAY_SPEED_MULTIPLIER] = layer.speedMultiplier;
+            layerData[constants::REPLAY_NAME] = layer->name;
+            layerData[constants::REPLAY_FILE_PATH] = layer->filePath;
+            layerData[constants::REPLAY_SPEED_MULTIPLIER] = layer->speedMultiplier;
             layerData[constants::REPLAY_SCALE] = nlohmann::json{
-                {constants::REPLAY_X, layer.scale.getX()},
-                {constants::REPLAY_Y, layer.scale.getY()}
+                {constants::REPLAY_X, layer->scale.getX()},
+                {constants::REPLAY_Y, layer->scale.getY()}
             };
-            layerData[constants::REPLAY_SCALE_MODE] = static_cast<int>(layer.scaleMode);
+            layerData[constants::REPLAY_SCALE_MODE] = static_cast<int>(layer->scaleMode);
             layerData[constants::REPLAY_SOURCE_SIZE] = nlohmann::json{
-                {constants::REPLAY_X, layer.sourceSize.getX()},
-                {constants::REPLAY_Y, layer.sourceSize.getY()}
+                {constants::REPLAY_X, layer->sourceSize.getX()},
+                {constants::REPLAY_Y, layer->sourceSize.getY()}
             };
-            layerData[constants::REPLAY_REPEAT] = layer.repeat;
-            layerData[constants::REPLAY_Z_INDEX] = layer.zIndex;
+            layerData[constants::REPLAY_REPEAT] = layer->repeat;
+            layerData[constants::REPLAY_Z_INDEX] = layer->zIndex;
             layerData[constants::REPLAY_CURRENT_OFFSET] = nlohmann::json{
-                {constants::REPLAY_X, layer.currentOffset.getX()},
-                {constants::REPLAY_Y, layer.currentOffset.getY()}
+                {constants::REPLAY_X, layer->currentOffset.getX()},
+                {constants::REPLAY_Y, layer->currentOffset.getY()}
             };
             layersArray.push_back(layerData);
         }
