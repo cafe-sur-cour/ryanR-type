@@ -27,7 +27,8 @@ void Utils::parsCli(int ac, char **av,
 
     for (int i = 1; i < ac; i++) {
         if (std::string(av[i]) == "-p" && i + 1 < ac) {
-            port = std::stoi(av[i + 1]);
+            i++;
+            port = std::stoi(av[i]);
             if (port < 1024 || port > 65535) {
                 std::cerr << "[SERVER] Error: Port must be between 1024 and 65535"
                     << std::endl;
@@ -39,14 +40,18 @@ void Utils::parsCli(int ac, char **av,
                 std::cerr << "[SERVER] Error: " << e.what() << std::endl;
                 exit(84);
             }
+            continue;
         }
         if (std::string(av[i]) == "-i" && i + 1 < ac) {
-            ip = av[i + 1];
+            i++;
+            ip = av[i];
             config->setIp(ip);
+            continue;
         }
         if (std::string(av[i]) == "-d") {
             isDebug = true;
             config->setIsDebug(isDebug);
+            continue;
         }
         if (std::string(av[i]) == "-tps" && i + 1 < ac) {
             int64_t tps = std::stoi(av[i + 1]);
@@ -55,11 +60,14 @@ void Utils::parsCli(int ac, char **av,
                 exit(84);
             }
             config->setTps(tps);
+            continue;
         }
         if (std::string(av[i]) == "-h") {
             this->helper();
             exit(0);
         }
+        std::cerr << "[SERVER] Error: Unknown argument " << av[i] << std::endl;
+        exit(84);
     }
 }
 
