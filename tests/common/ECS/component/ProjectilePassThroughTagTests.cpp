@@ -14,6 +14,7 @@ using namespace ecs;
 
 TEST(ProjectilePassThroughTagTest, DefaultConstructor) {
     ProjectilePassThroughTag tag;
+    (void)tag;
     SUCCEED();
 }
 
