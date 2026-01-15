@@ -4,8 +4,70 @@
     "mapLength": 7500.0,
     "music": "musicFair",
     "name": "Level 3",
-    "obstacles": [],
-    "powerUps": [],
+    "obstacles": [
+        {
+            "name": "planete",
+            "positions": []
+        }
+    ],
+    "powerUps": [
+        {
+            "name": "flyingForce",
+            "position": {
+                "posX": 4009.0,
+                "posY": 938.0
+            }
+        },
+        {
+            "name": "force",
+            "position": {
+                "posX": 875.0,
+                "posY": 471.0
+            }
+        },
+        {
+            "name": "powerUpAddForceLevel",
+            "position": {
+                "posX": 3535.0,
+                "posY": 335.0
+            }
+        },
+        {
+            "name": "powerUpAddForceLevel",
+            "position": {
+                "posX": 6305.0,
+                "posY": 317.0
+            }
+        },
+        {
+            "name": "powerUpAddLife",
+            "position": {
+                "posX": 2498.0,
+                "posY": 831.0
+            }
+        },
+        {
+            "name": "powerUpAddLife",
+            "position": {
+                "posX": 4709.0,
+                "posY": 175.0
+            }
+        },
+        {
+            "name": "powerUpChargeTime",
+            "position": {
+                "posX": 2497.0,
+                "posY": 81.0
+            }
+        },
+        {
+            "name": "powerUpSpeed",
+            "position": {
+                "posX": 5801.0,
+                "posY": 872.0
+            }
+        }
+    ],
     "scrollSpeed": 100,
     "waves": [
         {
@@ -283,14 +345,14 @@
                         "type": "random"
                     },
                     "distributionY": {
-                        "max": 90.0,
-                        "min": 10.0,
+                        "max": 60.0,
+                        "min": 40.0,
                         "type": "uniform"
                     },
                     "type": "snake_head"
                 }
             ],
-            "gameXTrigger": 3235.0
+            "gameXTrigger": 400.0
         },
         {
             "enemies": [
@@ -310,6 +372,25 @@
                 }
             ],
             "gameXTrigger": 5560.0
+        },
+        {
+            "enemies": [
+                {
+                    "count": 3,
+                    "distributionX": {
+                        "max": 100.0,
+                        "min": 50.0,
+                        "type": "uniform"
+                    },
+                    "distributionY": {
+                        "max": 20.0,
+                        "min": 10.0,
+                        "type": "uniform"
+                    },
+                    "type": "accorn"
+                }
+            ],
+            "gameXTrigger": 3108.0
         }
     ]
 }

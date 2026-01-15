@@ -83,6 +83,21 @@ ConnectionState::ConnectionState(
         std::cerr << "Failed to load loading animation prefab" << std::endl;
         _loadingAnimation.reset();
     }
+
+    ui::LayoutConfig bottomRightConfig;
+    bottomRightConfig.direction = ui::LayoutDirection::Vertical;
+    bottomRightConfig.alignment = ui::LayoutAlignment::End;
+    bottomRightConfig.spacing = 0.0f;
+    bottomRightConfig.padding = math::Vector2f(0.0f, 0.0f);
+    bottomRightConfig.anchorX = ui::AnchorX::Right;
+    bottomRightConfig.anchorY = ui::AnchorY::Bottom;
+    bottomRightConfig.offset = math::Vector2f(-20.0f, -20.0f);
+
+    _loadingLayout = std::make_shared<ui::UILayout>(_resourceManager, bottomRightConfig);
+    _loadingLayout->setSize(math::Vector2f(185.0f, 320.0f));
+    if (_loadingAnimation) {
+        _loadingLayout->addElement(_loadingAnimation);
+    }
     _connectButton = std::make_shared<ui::Button>(_resourceManager);
     _connectButton->setText("Connect");
     _connectButton->setSize(math::Vector2f(300.f, 108.f));
@@ -97,16 +112,8 @@ ConnectionState::ConnectionState(
                 network->setIp(ip);
                 network->setPort(port);
                 network->connect();
-                if (_loadingAnimation) {
-                    _uiManager->addElement(_loadingAnimation);
-                    auto window = _resourceManager->get<gfx::IWindow>();
-                    if (window) {
-                        auto [windowWidth, windowHeight] = window->getWindowSize();
-                        _loadingAnimation->setPosition(math::Vector2f(
-                            static_cast<float>(windowWidth) - 200.0f,
-                            static_cast<float>(windowHeight) - 300.0f
-                        ));
-                    }
+                if (_loadingLayout) {
+                    _uiManager->addElement(_loadingLayout);
                 }
             } catch ([[maybe_unused]] const std::exception& e) {
                 std::cerr << "Invalid port: " << portStr << std::endl;
@@ -123,16 +130,8 @@ ConnectionState::ConnectionState(
                 network->setIp(ip);
                 network->setPort(port);
                 network->connect();
-                if (_loadingAnimation) {
-                    _uiManager->addElement(_loadingAnimation);
-                    auto window = _resourceManager->get<gfx::IWindow>();
-                    if (window) {
-                        auto [windowWidth, windowHeight] = window->getWindowSize();
-                        _loadingAnimation->setPosition(math::Vector2f(
-                            static_cast<float>(windowWidth) - 200.0f,
-                            static_cast<float>(windowHeight) - 300.0f
-                        ));
-                    }
+                if (_loadingLayout) {
+                    _uiManager->addElement(_loadingLayout);
                 }
             } catch ([[maybe_unused]] const std::exception& e) {
                 std::cerr << "Invalid port: " << portStr << std::endl;
@@ -277,9 +276,9 @@ void ConnectionState::updateUIStatus() {
     if (network->isConnected()) {
         if (!_wasConnected) {
             _wasConnected = true;
-            if (_loadingAnimation) {
-                _uiManager->removeElement(_loadingAnimation);
-                _loadingAnimation.reset();
+            if (_loadingLayout) {
+                _uiManager->removeElement(_loadingLayout);
+                _loadingLayout.reset();
             }
             if (auto stateMachine = this->_gsm.lock()) {
                 stateMachine->requestStatePush(

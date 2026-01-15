@@ -338,6 +338,8 @@ void InGameState::drawScoreHUD(std::shared_ptr<gfx::IWindow> window, int score) 
     window->drawRoundedRectangleOutline(
         colors::WHITE, rectPosition, {static_cast<size_t>(barWidth), barHeight}, 5.0f);
 
+    if (score < 0)
+        score = 0;
     std::stringstream scoreSs;
     scoreSs << std::setfill('0') << std::setw(7) << score;
     std::string scoreText = scoreSs.str();
@@ -376,6 +378,8 @@ void InGameState::drawShotChargeHUD(
     size_t textOffsetY = 35;
 
     std::stringstream chargeSs;
+    if (maxShotCharge <= 0.0f)
+        maxShotCharge = 1.0f;
     chargeSs << "Charged Shot: " << static_cast<int>(
         shotCharge / (std::max)(0.0f, maxShotCharge) * 100
     ) << "%";

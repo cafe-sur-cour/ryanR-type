@@ -28,6 +28,7 @@ namespace constants {
     /* Texture Defaults */
     constexpr float DEFAULT_TEXTURE_WIDTH = 1920.0f;
     constexpr float DEFAULT_TEXTURE_HEIGHT = 1080.0f;
+    constexpr int LOBBY_CODE_LENGTH = 8;
 
     enum class EventType {
         UP = 0,
@@ -369,6 +370,9 @@ namespace constants {
     const std::string CREATE_DEATH_INTENT_FUNCTION = "createDeathIntent";
     const std::string IS_ENTITY_ALIVE_FUNCTION = "isEntityAlive";
     const std::string GET_PARENT_ID_FUNCTION = "getParentId";
+    const std::string GET_OWNER_FUNCTION = "getOwner";
+    const std::string SET_FIRE_RATE_FUNCTION = "setFireRate";
+    const std::string GET_FIRE_RATE_FUNCTION = "getFireRate";
     const std::string REMOVE_PART_ID_FUNCTION = "removePartId";
     const std::string IS_ENTITY_PLAYER_FUNCTION = "isEntityPlayer";
     const std::string GET_ENTITY_SIZE_FUNCTION = "getEntitySize";

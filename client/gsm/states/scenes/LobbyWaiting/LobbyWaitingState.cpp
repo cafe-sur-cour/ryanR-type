@@ -260,18 +260,25 @@ LobbyWaitingState::LobbyWaitingState(
     _loadingAnimation = std::make_shared<ui::SpritePreview>(_resourceManager);
     if (_loadingAnimation->loadPrefab(constants::LOADING_PREFAVB)) {
         _loadingAnimation->setSize(math::Vector2f(185.0f, 320.0f));
-        auto window = _resourceManager->get<gfx::IWindow>();
-        if (window) {
-            auto [windowWidth, windowHeight] = window->getWindowSize();
-            _loadingAnimation->setPosition(math::Vector2f(static_cast<float>(windowWidth) -
-                200.0f, static_cast<float>(windowHeight) - 300.0f));
-        }
     } else {
         std::cerr << "Failed to load loading animation prefab" << std::endl;
         _loadingAnimation.reset();
     }
+
+    ui::LayoutConfig bottomRightConfig;
+    bottomRightConfig.direction = ui::LayoutDirection::Vertical;
+    bottomRightConfig.alignment = ui::LayoutAlignment::End;
+    bottomRightConfig.spacing = 0.0f;
+    bottomRightConfig.padding = math::Vector2f(0.0f, 0.0f);
+    bottomRightConfig.anchorX = ui::AnchorX::Right;
+    bottomRightConfig.anchorY = ui::AnchorY::Bottom;
+    bottomRightConfig.offset = math::Vector2f(-20.0f, -20.0f);
+
+    _loadingLayout = std::make_shared<ui::UILayout>(_resourceManager, bottomRightConfig);
+    _loadingLayout->setSize(math::Vector2f(185.0f, 320.0f));
     if (_loadingAnimation) {
-        _uiManager->addElement(_loadingAnimation);
+        _loadingLayout->addElement(_loadingAnimation);
+        _uiManager->addElement(_loadingLayout);
     }
 }
 
