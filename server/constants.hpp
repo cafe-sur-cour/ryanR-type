@@ -42,6 +42,7 @@ namespace constants {
     const std::string TIME_SPENT_JSON_WARD = "time_spent";
     const std::string BANNED_JSON_WARD = "banned";
     const std::string SCORE_JSON_WARD = "scores";
+    const std::string GODMOD_JSON_WARD = "godmod";
 }
 
 #endif /* !SERVER_CONSTANTS */

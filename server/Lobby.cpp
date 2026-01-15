@@ -361,6 +361,10 @@ std::shared_ptr<ResourceManager> rserv::Lobby::getResourceManager() const {
     return this->_resourceManager;
 }
 
+const std::map<uint8_t, ecs::Entity>& rserv::Lobby::getClientToEntity() const {
+    return this->_clientToEntity;
+}
+
 
 /* Packet Processing */
 
