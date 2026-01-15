@@ -22,7 +22,7 @@ class TextComponent : public IComponent {
             const std::string& fontPath,
             gfx::color_t color = colors::WHITE
         ) : _text(text), _fontPath(fontPath), _color(color) {};
-        ~TextComponent() {};
+        ~TextComponent() = default;
 
         const std::string& getText() const { return _text; }
         const std::string& getFontPath() const { return _fontPath; }

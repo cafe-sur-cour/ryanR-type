@@ -18,9 +18,7 @@ class InputIntentComponent : public IComponent {
         InputIntentComponent(const math::Vector2f &direction = math::Vector2f(0.0f, 0.0f))
             : _direction(direction) {
         };
-        ~InputIntentComponent(){
-            _direction = math::Vector2f(0.0f, 0.0f);
-        };
+        ~InputIntentComponent() = default;
 
         math::Vector2f getDirection() const { return _direction; };
         void setDirection(const math::Vector2f &direction) { _direction = direction; };

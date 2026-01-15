@@ -16,7 +16,7 @@ namespace ecs {
 class TriggerIntentComponent : public IComponent {
     public:
         TriggerIntentComponent(Entity self = 0, Entity other = 0) : _self(self), _other(other) {};
-        ~TriggerIntentComponent() override = default;
+        ~TriggerIntentComponent() = default;
 
         Entity getSelf() const { return _self; }
         void setSelf(Entity self) { _self = self; }

@@ -15,7 +15,7 @@ namespace ecs {
 class ScoreComponent : public IComponent {
     public:
         ScoreComponent(int score = 0) : _score(score) {};
-        ~ScoreComponent() {};
+        ~ScoreComponent() = default;
 
         int getScore() const { return _score; }
         void setScore(int score) { _score = score; }
