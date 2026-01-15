@@ -8,7 +8,7 @@
 #ifndef PARALLAXCOMPONENT_HPP_
 #define PARALLAXCOMPONENT_HPP_
 
-#include "../../../common/components/base/AComponent.hpp"
+#include "../../../common/components/base/IComponent.hpp"
 #include "../../../common/types/Vector2f.hpp"
 #include "../../../common/constants.hpp"
 #include <string>
@@ -46,7 +46,7 @@ struct ParallaxLayer {
           currentOffset(0.0f, 0.0f) {}
 };
 
-class ParallaxComponent : public AComponent {
+class ParallaxComponent : public IComponent {
     public:
         ParallaxComponent()
             : _baseScrollSpeed(1.0f),
@@ -57,40 +57,16 @@ class ParallaxComponent : public AComponent {
 
         float getBaseScrollSpeed() const { return _baseScrollSpeed; }
         const math::Vector2f& getDirection() const { return _direction; }
-        const std::vector<ParallaxLayer>& getLayers() const { return _layers; }
+        std::vector<std::shared_ptr<ParallaxLayer>> &getLayers() { return _layers; }
 
         void setBaseScrollSpeed(float speed) { _baseScrollSpeed = speed; }
         void setDirection(const math::Vector2f& direction) { _direction = direction; }
-        void addLayer(const ParallaxLayer& layer) { _layers.push_back(layer); }
-        void clearLayers() { _layers.clear(); }
-
-        void updateLayerOffsets(const math::Vector2f& direction, float baseSpeed, float deltaTime) {
-            for (auto& layer : _layers) {
-                float speed = baseSpeed * layer.speedMultiplier;
-                math::Vector2f movement(
-                    direction.getX() * speed * deltaTime,
-                    direction.getY() * speed * deltaTime
-                );
-                layer.currentOffset = math::Vector2f(
-                    layer.currentOffset.getX() + movement.getX(),
-                    layer.currentOffset.getY() + movement.getY()
-                );
-            }
-        }
-
-        size_t getLayerCount() const { return _layers.size(); }
-
-        void sortLayersByZIndex() {
-            std::sort(_layers.begin(), _layers.end(),
-                [](const ParallaxLayer& a, const ParallaxLayer& b) {
-                    return a.zIndex < b.zIndex;
-                });
-        }
+        void addLayer(std::shared_ptr<ParallaxLayer> layer) { _layers.push_back(layer); }
 
     private:
         float _baseScrollSpeed;
         math::Vector2f _direction;
-        std::vector<ParallaxLayer> _layers;
+        std::vector<std::shared_ptr<ParallaxLayer>> _layers;
 };
 
 }  // namespace ecs

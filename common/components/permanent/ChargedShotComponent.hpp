@@ -8,12 +8,12 @@
 #ifndef CHARGEDSHOTCOMPONENT_HPP_
 #define CHARGEDSHOTCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include <algorithm>
 
 namespace ecs {
 
-class ChargedShotComponent : public AComponent {
+class ChargedShotComponent : public IComponent {
     public:
         ChargedShotComponent(
             const float &charge = 0,

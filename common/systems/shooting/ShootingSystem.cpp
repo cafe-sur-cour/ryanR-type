@@ -147,7 +147,7 @@ void ShootingSystem::spawnProjectile(
     auto transform = registry->getComponent<TransformComponent>(projectileEntity);
     if (transform) {
         transform->setPosition(position);
-        transform->setRotation(angle);
+        transform->setRotation(transform->getRotation() + angle);
     }
 
     float speed = 0.0f;

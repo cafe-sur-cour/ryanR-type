@@ -8,12 +8,12 @@
 #ifndef PROJECTILEPREFABCOMPONENT_HPP_
 #define PROJECTILEPREFABCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include <string>
 
 namespace ecs {
 
-class ProjectilePrefabComponent : public AComponent {
+class ProjectilePrefabComponent : public IComponent {
     public:
         ProjectilePrefabComponent(const std::string &prefabName = "")
             : _prefabName(prefabName) {};
@@ -21,6 +21,7 @@ class ProjectilePrefabComponent : public AComponent {
 
         std::string getPrefabName() const { return _prefabName; };
         void setPrefabName(const std::string &prefabName) { _prefabName = prefabName; };
+
     private:
         std::string _prefabName;
 };

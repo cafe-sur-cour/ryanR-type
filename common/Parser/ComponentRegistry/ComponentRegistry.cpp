@@ -13,24 +13,12 @@ ComponentRegistry& ComponentRegistry::getInstance() {
     return instance;
 }
 
-void ComponentRegistry::registerComponent(const ComponentMetadata& metadata) {
+void ComponentRegistry::registerComponent(const ComponentMetadata &metadata) {
     _components.insert({metadata.name, metadata});
 }
 
 bool ComponentRegistry::hasComponent(const std::string& name) const {
     return _components.find(name) != _components.end();
-}
-
-const ComponentMetadata& ComponentRegistry::getMetadata(const std::string& name) const {
-    auto it = _components.find(name);
-    if (it == _components.end()) {
-        throw std::runtime_error("Component '" + name + "' not found in registry");
-    }
-    return it->second;
-}
-
-std::type_index ComponentRegistry::getTypeIndex(const std::string& name) const {
-    return getMetadata(name).typeIndex;
 }
 
 const std::map<std::string, ComponentMetadata>& ComponentRegistry::getAllComponents() const {

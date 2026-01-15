@@ -11,7 +11,7 @@
 class ScoreIntentComponent {
     public:
         ScoreIntentComponent(int score = 0) : _score(score) {};
-        ~ScoreIntentComponent() {};
+        ~ScoreIntentComponent() = default;
 
         int getScore() const { return _score; }
         void setScore(int newScore) { _score = newScore; }

@@ -14,6 +14,7 @@ using namespace ecs;
 
 TEST(ControllableTagTest, DefaultConstructor) {
     ControllableTag tag;
+    (void)tag;
     SUCCEED();
 }
 

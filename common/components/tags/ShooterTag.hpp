@@ -8,11 +8,11 @@
 #ifndef SHOOTERTAG_HPP_
 #define SHOOTERTAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class ShooterTag : public AComponent {
+class ShooterTag : public IComponent {
     public:
         ShooterTag() = default;
         ~ShooterTag() = default;

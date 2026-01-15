@@ -8,7 +8,7 @@
 #ifndef SHOOTINGSTATSCOMPONENT_HPP_
 #define SHOOTINGSTATSCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include "../../Prefab/IPrefab.hpp"
 #include <memory>
 #include <vector>
@@ -22,7 +22,7 @@ struct MultiShotPattern {
     float angleOffset = 0.0f;
 };
 
-class ShootingStatsComponent : public AComponent {
+class ShootingStatsComponent : public IComponent {
     public:
         ShootingStatsComponent(
             float fireRate = 1.0f,

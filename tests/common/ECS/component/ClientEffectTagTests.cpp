@@ -14,6 +14,7 @@ using namespace ecs;
 
 TEST(ClientEffectTagTest, DefaultConstructor) {
     ClientEffectTag tag;
+    (void)tag;
     SUCCEED();
 }
 

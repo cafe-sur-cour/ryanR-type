@@ -8,11 +8,11 @@
 #ifndef BACKGROUNDMUSICTAG_HPP_
 #define BACKGROUNDMUSICTAG_HPP_
 
-#include "../../../common/components/base/AComponent.hpp"
+#include "../../../common/components/base/IComponent.hpp"
 
 namespace ecs {
 
-class BackGroundMusicTag : public AComponent {
+class BackGroundMusicTag : public IComponent {
     public:
         BackGroundMusicTag() = default;
         ~BackGroundMusicTag() = default;

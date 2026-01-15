@@ -8,11 +8,11 @@
 #ifndef PLAYERPROJECTILETAG_HPP_
 #define PLAYERPROJECTILETAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class PlayerProjectileTag : public AComponent {
+class PlayerProjectileTag : public IComponent {
     public:
         PlayerProjectileTag() = default;
         ~PlayerProjectileTag() = default;

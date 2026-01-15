@@ -6,22 +6,15 @@
 */
 
 #include <gtest/gtest.h>
-#include "../../common/components/base/AComponent.hpp"
+#include "../../common/components/base/IComponent.hpp"
 #include "../../common/ECS/entity/Entity.hpp"
 #include "../../common/ECS/entity/registry/Registry.hpp"
 
 using namespace ecs;
 
-/* AComponent Tests */
-
-TEST(AComponentTest, DefaultConstruction) {
-    AComponent comp;
-    // Should not crash
-}
-
 /* Registry Tests */
 
-class TestComponent : public AComponent {
+class TestComponent : public IComponent {
 public:
     TestComponent(int value) : _value(value) {}
     int getValue() const { return _value; }

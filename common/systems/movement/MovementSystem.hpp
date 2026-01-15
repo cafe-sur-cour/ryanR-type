@@ -9,7 +9,6 @@
 #define MOVEMENTSYSTEM_HPP_
 
 #include "../base/ASystem.hpp"
-#include "../../components/base/IComponent.hpp"
 #include "../../components/temporary/MovementIntentComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/SpeedComponent.hpp"

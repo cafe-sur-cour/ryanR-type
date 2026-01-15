@@ -8,7 +8,7 @@
 #ifndef COLLIDERCOMPONENT_HPP_
 #define COLLIDERCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include "../../types/FRect.hpp"
 #include "../../types/Vector2f.hpp"
 #include "../../types/OrientedRect.hpp"
@@ -26,10 +26,13 @@ enum class CollisionType {
     Push = 3
 };
 
-class ColliderComponent : public AComponent {
+class ColliderComponent : public IComponent {
     public:
-        ColliderComponent(math::Vector2f offset = math::Vector2f(0.0f, 0.0f), math::Vector2f size = math::Vector2f(0.0f, 0.0f), CollisionType type = CollisionType::Solid)
-            : _offset(offset), _size(size), _type(type) {};
+        ColliderComponent(
+            math::Vector2f offset = math::Vector2f(0.0f, 0.0f),
+            math::Vector2f size = math::Vector2f(0.0f, 0.0f),
+            CollisionType type = CollisionType::Solid
+        ) : _offset(offset), _size(size), _type(type) {};
         ~ColliderComponent() = default;
 
         math::Vector2f getOffset() const;

@@ -8,16 +8,15 @@
 #ifndef SOUNDINTENTCOMPONENT_HPP_
 #define SOUNDINTENTCOMPONENT_HPP_
 
-#include "../../../common/components/base/AComponent.hpp"
+#include "../../../common/components/base/IComponent.hpp"
 #include <string>
 
 namespace ecs {
 
-class SoundIntentComponent : public AComponent {
+class SoundIntentComponent : public IComponent {
     public:
         SoundIntentComponent(const std::string &soundPath = "", float volume = 100.0f)
-            : _soundPath(soundPath), _volume(volume) {
-        };
+            : _soundPath(soundPath), _volume(volume) {};
         ~SoundIntentComponent() = default;
 
         std::string getSoundPath() const { return _soundPath; };

@@ -8,11 +8,11 @@
 #ifndef CONTROLLABLETAG_HPP_
 #define CONTROLLABLETAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class ControllableTag : public AComponent {
+class ControllableTag : public IComponent {
     public:
         ControllableTag() = default;
         ~ControllableTag() = default;

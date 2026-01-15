@@ -1,9 +1,15 @@
 add_executable(ECSTests ECSTests.cpp)
-target_link_libraries(ECSTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main gcov)
+target_link_libraries(ECSTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main)
+if(BUILD_COVERAGE)
+    target_link_libraries(ECSTests gcov)
+endif()
 add_test(NAME ECSTests COMMAND ECSTests)
 
 add_executable(SpatialGridTests SpatialGridTests.cpp)
-target_link_libraries(SpatialGridTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main gcov)
+target_link_libraries(SpatialGridTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main)
+if(BUILD_COVERAGE)
+    target_link_libraries(SpatialGridTests gcov)
+endif()
 add_test(NAME SpatialGridTests COMMAND SpatialGridTests)
 
 add_subdirectory(types)

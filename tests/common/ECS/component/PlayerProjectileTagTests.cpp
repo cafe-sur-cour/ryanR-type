@@ -14,6 +14,7 @@ using namespace ecs;
 
 TEST(PlayerProjectileTagTest, DefaultConstructor) {
     PlayerProjectileTag tag;
+    (void)tag;
     SUCCEED();
 }
 

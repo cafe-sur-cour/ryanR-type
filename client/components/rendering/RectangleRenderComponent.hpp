@@ -8,14 +8,15 @@
 #ifndef RECTANGLERENDERCOMPONENT_HPP_
 #define RECTANGLERENDERCOMPONENT_HPP_
 
-#include "../../../common/components/base/AComponent.hpp"
+#include "../../../common/components/base/IComponent.hpp"
 #include "../../../common/interfaces/IWindow.hpp"
+#include "../../colors.hpp"
 
 namespace ecs {
 
-class RectangleRenderComponent : public AComponent {
+class RectangleRenderComponent : public IComponent {
     public:
-        RectangleRenderComponent() : _color{255, 255, 255}, _size{10.0f, 10.0f} {}
+        RectangleRenderComponent() : _color(colors::WHITE), _size{10.0f, 10.0f} {}
         RectangleRenderComponent(gfx::color_t color, float width, float height)
             : _color(color), _size{width, height} {}
 

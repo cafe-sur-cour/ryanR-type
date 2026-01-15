@@ -40,7 +40,7 @@ TEST(MovementIntentComponentTest, GettersAndSetters) {
 
 TEST(MovementIntentComponentTest, InheritsFromAComponent) {
     MovementIntentComponent comp;
-    // Should inherit from AComponent
+    // Should inherit from IComponent
 }
 
 int main(int argc, char **argv) {

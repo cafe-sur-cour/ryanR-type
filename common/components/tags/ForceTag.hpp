@@ -8,15 +8,15 @@
 #ifndef FORCETAG_HPP_
 #define FORCETAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include <string>
 
 namespace ecs {
 
-class ForceTag : public AComponent {
+class ForceTag : public IComponent {
     public:
         ForceTag(const std::string& type = "") : forceType(type) {}
-        ~ForceTag() override = default;
+        ~ForceTag() = default;
 
         std::string getForceType() const { return forceType; }
         void setForceType(const std::string& type) { forceType = type; }

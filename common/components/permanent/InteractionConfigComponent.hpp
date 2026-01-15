@@ -10,7 +10,7 @@
 
 #include <vector>
 #include <string>
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
@@ -20,7 +20,7 @@ struct InteractionMapping {
     std::vector<std::string> actionsToSelf;
 };
 
-class InteractionConfigComponent : public AComponent {
+class InteractionConfigComponent : public IComponent {
     public:
         InteractionConfigComponent(){
             _mappings = std::vector<InteractionMapping>();
