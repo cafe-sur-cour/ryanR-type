@@ -8,11 +8,11 @@
 #ifndef HEALTHBARCOMPONENT_HPP_
 #define HEALTHBARCOMPONENT_HPP_
 
-#include "../../../common/components/base/AComponent.hpp"
+#include "../../../common/components/base/IComponent.hpp"
 
 namespace ecs {
 
-class HealthBarComponent : public AComponent {
+class HealthBarComponent : public IComponent {
     public:
         HealthBarComponent() = default;
         ~HealthBarComponent() = default;

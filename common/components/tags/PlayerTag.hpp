@@ -8,11 +8,11 @@
 #ifndef PLAYERTAG_HPP_
 #define PLAYERTAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class PlayerTag : public AComponent {
+class PlayerTag : public IComponent {
     public:
         PlayerTag() = default;
         ~PlayerTag() = default;

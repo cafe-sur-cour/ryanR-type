@@ -8,12 +8,12 @@
 #ifndef DAMAGEINTENTCOMPONENT_HPP_
 #define DAMAGEINTENTCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include "../../ECS/entity/Entity.hpp"
 
 namespace ecs {
 
-class DamageIntentComponent : public AComponent {
+class DamageIntentComponent : public IComponent {
     public:
         DamageIntentComponent(float damages = 0.0f, ecs::Entity source = 0) : _damages(damages), _source(source) {};
         ~DamageIntentComponent() = default;

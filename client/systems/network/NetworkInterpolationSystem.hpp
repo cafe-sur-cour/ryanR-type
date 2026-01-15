@@ -32,6 +32,7 @@ class NetworkInterpolationSystem : public ASystem {
             std::shared_ptr<NetworkStateComponent> networkState,
             std::shared_ptr<TransformComponent> transform
         );
+        float getTransformInterpolationFactor(std::shared_ptr<NetworkStateComponent> networkState) const;
 };
 
 }  // namespace ecs

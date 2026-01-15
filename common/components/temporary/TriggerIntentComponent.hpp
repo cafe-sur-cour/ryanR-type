@@ -8,15 +8,15 @@
 #ifndef TRIGGERINTENTCOMPONENT_HPP_
 #define TRIGGERINTENTCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include "../../ECS/entity/Entity.hpp"
 
 namespace ecs {
 
-class TriggerIntentComponent : public AComponent {
+class TriggerIntentComponent : public IComponent {
     public:
         TriggerIntentComponent(Entity self = 0, Entity other = 0) : _self(self), _other(other) {};
-        ~TriggerIntentComponent() override = default;
+        ~TriggerIntentComponent() = default;
 
         Entity getSelf() const { return _self; }
         void setSelf(Entity self) { _self = self; }

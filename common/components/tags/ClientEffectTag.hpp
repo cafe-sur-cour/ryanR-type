@@ -8,11 +8,11 @@
 #ifndef CLIENTEFFECTTAG_HPP_
 #define CLIENTEFFECTTAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class ClientEffectTag : public AComponent {
+class ClientEffectTag : public IComponent {
     public:
         ClientEffectTag() = default;
         ~ClientEffectTag() = default;

@@ -40,7 +40,7 @@ void NetworkInterpolationSystem::interpolateTransform(
 ) {
     const auto& prev = networkState->getPreviousTransform();
     const auto& curr = networkState->getCurrentTransform();
-    float t = networkState->getTransformInterpolationFactor();
+    float t = getTransformInterpolationFactor(networkState);
 
     math::Vector2f interpolatedPos(
         prev.position.getX() + (curr.position.getX() - prev.position.getX()) * t,
@@ -54,6 +54,23 @@ void NetworkInterpolationSystem::interpolateTransform(
     transform->setPosition(interpolatedPos);
     transform->setRotation(interpolatedRot);
     transform->setScale(interpolatedScale);
+}
+
+float NetworkInterpolationSystem::getTransformInterpolationFactor(
+    std::shared_ptr<NetworkStateComponent> networkState
+) const {
+    if (!networkState->hasTransform())
+        return 1.0f;
+
+    auto now = std::chrono::steady_clock::now();
+    auto elapsed = std::chrono::duration<float>(
+        now - networkState->getCurrentTransform().timestamp
+    ).count();
+
+    if (elapsed >= networkState->getInterpolationTime())
+        return 1.0f;
+
+    return elapsed / networkState->getInterpolationTime();
 }
 
 }  // namespace ecs

@@ -8,12 +8,12 @@
 #ifndef DAMAGECOOLDOWNCOMPONENT_HPP_
 #define DAMAGECOOLDOWNCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include "../../constants.hpp"
 
 namespace ecs {
 
-class DamageCooldownComponent : public AComponent {
+class DamageCooldownComponent : public IComponent {
     public:
         DamageCooldownComponent(float cooldown = constants::TRIGGER_DAMAGE_COOLDOWN)
             : _cooldown(cooldown), _lastDamageTime(0.0f) {};

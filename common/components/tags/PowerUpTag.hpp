@@ -8,11 +8,11 @@
 #ifndef POWERUPTAG_HPP_
 #define POWERUPTAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class PowerUpTag : public AComponent {
+class PowerUpTag : public IComponent {
     public:
         PowerUpTag() = default;
         ~PowerUpTag() = default;

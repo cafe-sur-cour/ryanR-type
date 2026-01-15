@@ -8,16 +8,15 @@
 #ifndef OWNERCOMPONENT_HPP_
 #define OWNERCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
+#include "../ECS/entity/Entity.hpp"
 
 namespace ecs {
 
-using Entity = size_t;
-
-class OwnerComponent : public AComponent {
+class OwnerComponent : public IComponent {
     public:
         OwnerComponent(Entity owner = 0) : _owner(owner) {};
-        ~OwnerComponent() override = default;
+        ~OwnerComponent() = default;
 
         Entity getOwner() const { return _owner; }
         void setOwner(Entity owner) { _owner = owner; }

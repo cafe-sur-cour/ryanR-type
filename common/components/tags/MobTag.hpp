@@ -8,11 +8,11 @@
 #ifndef MOBTAG_HPP_
 #define MOBTAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class MobTag : public AComponent {
+class MobTag : public IComponent {
     public:
         MobTag() = default;
         ~MobTag() = default;

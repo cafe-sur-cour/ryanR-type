@@ -9,7 +9,6 @@
 #define AComposantType_HPP_
 
 #include "IComponentArray.hpp"
-#include "../../../components/base/IComponent.hpp"
 #include <vector>
 #include <memory>
 

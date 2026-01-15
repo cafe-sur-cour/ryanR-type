@@ -19,9 +19,11 @@ class ComponentRegistrar {
                 std::type_index(typeid(T)),
                 fields,
                 creator,
-                [](std::shared_ptr<ecs::Registry> registry,
-                ecs::Entity entity,
-                std::shared_ptr<ecs::IComponent> component) {
+                [](
+                    std::shared_ptr<ecs::Registry> registry,
+                    ecs::Entity entity,
+                    std::shared_ptr<ecs::IComponent> component
+                ) {
                     auto typedComponent = std::static_pointer_cast<T>(component);
                     auto cloned = std::make_shared<T>(*typedComponent);
                     registry->addComponent(entity, cloned);
@@ -43,9 +45,11 @@ class TagComponentRegistrar {
                 []([[maybe_unused]] const auto& fields) {
                     return std::make_shared<T>();
                 },
-                [](std::shared_ptr<ecs::Registry> registry,
-                ecs::Entity entity,
-                std::shared_ptr<ecs::IComponent> component) {
+                [](
+                    std::shared_ptr<ecs::Registry> registry,
+                    ecs::Entity entity,
+                    std::shared_ptr<ecs::IComponent> component
+                ) {
                     registry->addComponent(entity, std::static_pointer_cast<T>(component));
                 }
             };

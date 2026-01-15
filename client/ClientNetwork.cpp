@@ -88,20 +88,11 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_FORCE_LEAVE] = &ClientNetwork::handleForceLeave;
     _packetHandlers[constants::PACKET_ACK_LEAVE_LOBBY] = &ClientNetwork::handleAckLeaveLobby;
 
-    _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
-    _componentParsers[SPEED_COMP] = &ClientNetwork::parseSpeedComponent;
     _componentParsers[HEALTH] = &ClientNetwork::parseHealthComponent;
-    _componentParsers[COLLIDER] = &ClientNetwork::parseColliderComponent;
-    _componentParsers[SHOOTING_STATS] = &ClientNetwork::parseShootingStatsComponent;
     _componentParsers[SCORE] = &ClientNetwork::parseScoreComponent;
-    _componentParsers[DAMAGE] = &ClientNetwork::parseDamageComponent;
-    _componentParsers[LIFETIME] = &ClientNetwork::parseLifetimeComponent;
-    _componentParsers[VELOCITY] = &ClientNetwork::parseVelocityComponent;
-    _componentParsers[PROJECTILE_PREFAB] = &ClientNetwork::parseProjectilePrefabComponent;
-    _componentParsers[OBSTACLE_TAG] = &ClientNetwork::parseObstacleTagComponent;
-    _componentParsers[ANIMATION_STATE] = &ClientNetwork::parseAnimationStateComponent;
     _componentParsers[CHARGED_SHOT_COMP] = &ClientNetwork::parseChargedShotComponent;
+    _componentParsers[ANIMATION_STATE] = &ClientNetwork::parseAnimationStateComponent;
 }
 
 ClientNetwork::~ClientNetwork() {

@@ -14,6 +14,7 @@ using namespace ecs;
 
 TEST(ObstacleTagTest, DefaultConstructor) {
     ObstacleTag tag;
+    (void)tag;
     SUCCEED();
 }
 

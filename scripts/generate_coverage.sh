@@ -29,7 +29,7 @@ find . -name "*.gcov" -delete
 
 # Build the tests
 echo -e "${YELLOW}Building tests with coverage...${NC}"
-$PROJECT_ROOT/scripts/compile_project.sh --with-tests
+$PROJECT_ROOT/scripts/compile_project.sh --with-tests --with-coverage
 
 cd "$BUILD_DIR/bin"
 

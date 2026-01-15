@@ -9,17 +9,20 @@
 #define TEXTCOMPONENT_HPP_
 
 #include <string>
-#include "../../../common/components/base/AComponent.hpp"
+#include "../../../common/components/base/IComponent.hpp"
 #include "../../../common/interfaces/IWindow.hpp"
+#include "../../colors.hpp"
 
 namespace ecs {
 
-class TextComponent : public AComponent {
+class TextComponent : public IComponent {
     public:
-        TextComponent(const std::string& text, const std::string& fontPath,
-            gfx::color_t color = gfx::color_t{255, 255, 255})
-            : _text(text), _fontPath(fontPath), _color(color) {};
-        ~TextComponent() {};
+        TextComponent(
+            const std::string& text,
+            const std::string& fontPath,
+            gfx::color_t color = colors::WHITE
+        ) : _text(text), _fontPath(fontPath), _color(color) {};
+        ~TextComponent() = default;
 
         const std::string& getText() const { return _text; }
         const std::string& getFontPath() const { return _fontPath; }

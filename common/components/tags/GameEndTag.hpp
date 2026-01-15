@@ -8,17 +8,14 @@
 #ifndef GAMEENDTAG_HPP_
 #define GAMEENDTAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class GameEndTag : public AComponent {
+class GameEndTag : public IComponent {
     public:
         GameEndTag() = default;
         ~GameEndTag() = default;
-
-    protected:
-    private:
 };
 
 }  // namespace ecs

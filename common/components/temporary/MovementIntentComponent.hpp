@@ -8,12 +8,12 @@
 #ifndef MOVEMENTINTENTCOMPONENT_HPP_
 #define MOVEMENTINTENTCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include "../../types/Vector2f.hpp"
 
 namespace ecs {
 
-class MovementIntentComponent : public AComponent {
+class MovementIntentComponent : public IComponent {
     public:
         MovementIntentComponent(const math::Vector2f &direction = math::Vector2f(0.0f, 0.0f), bool active = false)
             : _direction(direction), _active(active) {

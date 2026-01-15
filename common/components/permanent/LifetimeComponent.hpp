@@ -8,11 +8,11 @@
 #ifndef LIFETIMECOMPONENT_HPP_
 #define LIFETIMECOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class LifetimeComponent : public AComponent {
+class LifetimeComponent : public IComponent {
     public:
         LifetimeComponent(float lifetime = 0.0f) : _lifetime(lifetime) {};
         ~LifetimeComponent() = default;

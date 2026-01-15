@@ -14,7 +14,7 @@
 #include <string>
 #include <memory>
 #include <algorithm>
-#include "../../../common/components/base/AComponent.hpp"
+#include "../../../common/components/base/IComponent.hpp"
 #include "../../../common/types/FRect.hpp"
 #include "../../../common/ECS/entity/Entity.hpp"
 
@@ -45,7 +45,7 @@ struct Transition {
     bool playRewind = false;
 };
 
-class AnimationComponent : public AComponent {
+class AnimationComponent : public IComponent {
     public:
         AnimationComponent()
             : _currentState(""), _timer(0.f), _isPlaying(false), _currentFrame(0), _rewindStartFrame(-1) {
