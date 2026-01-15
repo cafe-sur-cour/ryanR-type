@@ -190,7 +190,7 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
 
     auto titleText = std::make_shared<ui::Text>(_resourceManager);
     titleText->setText(
-        "Level Editor - Not compatible with controllers (Press BACK to return)");
+        "Level Editor - Not compatible with controllers - Press BACK to return");
     titleText->setSize(math::Vector2f(900.f, 40.f));
     levelsLayout->addElement(titleText);
 
@@ -374,7 +374,7 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
     buttonLayout->setSize(math::Vector2f(800.f, 40.f));
 
     auto prevButton = std::make_shared<ui::Button>(_resourceManager);
-    prevButton->setText("< Previous");
+    prevButton->setText("Previous");
     prevButton->setSize(math::Vector2f(180.f, 40.f));
     prevButton->setNormalColor(colors::BUTTON_SECONDARY);
     prevButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
@@ -393,7 +393,7 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
     _prevButton = prevButton;
 
     auto nextButton = std::make_shared<ui::Button>(_resourceManager);
-    nextButton->setText("Next >");
+    nextButton->setText("Next");
     nextButton->setSize(math::Vector2f(180.f, 40.f));
     nextButton->setNormalColor(colors::BUTTON_SECONDARY);
     nextButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
