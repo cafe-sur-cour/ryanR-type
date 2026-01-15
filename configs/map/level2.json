@@ -14,7 +14,36 @@
             "positions": []
         }
     ],
-    "powerUps": [],
+    "powerUps": [
+        {
+            "name": "force",
+            "position": {
+                "posX": 3338.0,
+                "posY": 878.0
+            }
+        },
+        {
+            "name": "powerUpChargeTime",
+            "position": {
+                "posX": 3754.0,
+                "posY": 287.0
+            }
+        },
+        {
+            "name": "powerUpSpeed",
+            "position": {
+                "posX": 1427.0,
+                "posY": 497.0
+            }
+        },
+        {
+            "name": "powerUpSpeed",
+            "position": {
+                "posX": 6673.0,
+                "posY": 802.0
+            }
+        }
+    ],
     "scrollSpeed": 100,
     "waves": [
         {
@@ -137,7 +166,7 @@
                     "count": 2,
                     "distributionX": {
                         "max": 100.0,
-                        "min": 0.0,
+                        "min": 50.0,
                         "type": "uniform"
                     },
                     "distributionY": {
@@ -148,20 +177,20 @@
                     "type": "barnacle"
                 }
             ],
-            "gameXTrigger": 1286.0
+            "gameXTrigger": 1043.0
         },
         {
             "enemies": [
                 {
-                    "count": 2,
+                    "count": 1,
                     "distributionX": {
                         "max": 100.0,
                         "min": 0.0,
                         "type": "uniform"
                     },
                     "distributionY": {
-                        "max": 100.0,
-                        "min": 90.0,
+                        "max": 50.0,
+                        "min": 40.0,
                         "type": "uniform"
                     },
                     "type": "clam"
