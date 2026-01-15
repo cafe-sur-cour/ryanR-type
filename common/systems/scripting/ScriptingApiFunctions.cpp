@@ -38,7 +38,6 @@
 #include "../../components/permanent/ChargedShotComponent.hpp"
 #include "../../components/permanent/InvulnerableComponent.hpp"
 #include "../../components/tags/MobTag.hpp"
-#include "../../components/permanent/OwnerComponent.hpp"
 
 namespace ecs {
 
