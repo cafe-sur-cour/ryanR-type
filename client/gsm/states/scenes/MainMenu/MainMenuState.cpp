@@ -518,11 +518,7 @@ void MainMenuState::updateUIStatus() {
     }
 
     if (network->getName().empty()) {
-        if (config->getUsername().empty()) {
-            _usernameButton->setText("Not logged in");
-        } else {
-            _usernameButton->setText(config->getUsername() + " (not logged in)");
-        }
+        _usernameButton->setText("Not logged in");
     } else {
         _usernameButton->setText(network->getName());
     }

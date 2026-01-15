@@ -59,17 +59,23 @@ ReplayState::ReplayState(
     _uiManager->setGlobalScale(config->getUIScale());
 
     _background = std::make_shared<ui::Background>(_resourceManager);
-    _background->addLayer(constants::UI_BACKGROUND_EARTH_PATH, 0.0f, 0.0f,
+    _background->addLayer(constants::UI_BACKGROUND_CHAT, 0.0f, 0.0f,
         math::Vector2f(5376.0f, 3584.0f));
     _uiManager->addElement(_background);
 
     _backButton = std::make_shared<ui::Button>(_resourceManager);
-    _backButton->setText("Back to Menu");
-    _backButton->setSize(math::Vector2f(300.f, 50.f));
+    _backButton->setText(constants::BACK_BUTTON_TEXT);
+    _backButton->setSize(math::Vector2f(500.f, 70.f));
+    _backButton->setPosition(math::Vector2f(650.0f, 1000.0f));
     _backButton->setNormalColor(colors::BUTTON_SECONDARY);
     _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
     _backButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
     _backButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePop();
+        }
+    });
+    _backButton->setOnActivated([this]() {
         if (auto stateMachine = this->_gsm.lock()) {
             stateMachine->requestStatePop();
         }
@@ -87,7 +93,7 @@ void ReplayState::enter() {
         }
     });
 
-    _background->addLayer(constants::UI_BACKGROUND_EARTH_PATH, 0.0f, 0.0f,
+    _background->addLayer(constants::UI_BACKGROUND_CHAT, 0.0f, 0.0f,
         math::Vector2f(5376.0f, 3584.0f));
 }
 
@@ -751,7 +757,7 @@ void ReplayState::createReplaySelectionUI() {
             #endif
 
             auto replayButton = std::make_shared<ui::Button>(_resourceManager);
-            replayButton->setText("Replay " + std::to_string(i + 1) + " (" + ss.str() + ")");
+            replayButton->setText(ss.str());
             replayButton->setSize(math::Vector2f(400.f, 40.f));
             replayButton->setNormalColor(colors::BUTTON_PRIMARY);
             replayButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);

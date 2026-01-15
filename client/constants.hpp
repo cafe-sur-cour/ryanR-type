@@ -89,9 +89,6 @@ namespace constants {
 
     const std::string MAIN_FONT = "assets/fonts/cuphead_font.ttf";
 
-    const std::string WIN_TEXT = "YOU WIN!";
-    const std::string LOSE_TEXT = "YOU LOSE!";
-    const std::string LEVEL_COMPLETE_TITLE_TEXT = "LEVEL COMPLETE!";
     const std::string LEVEL_COMPLETE_SUB_TITLE_TEXT = "Going to the next level...";
 
     /* Profile Constants */
