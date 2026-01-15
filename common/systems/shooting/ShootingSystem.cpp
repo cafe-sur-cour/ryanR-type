@@ -22,6 +22,7 @@
 #include "../../components/permanent/ChargedShotComponent.hpp"
 #include "../../components/permanent/DamageComponent.hpp"
 #include "../../constants.hpp"
+#include "../../components/permanent/CompositeEntityComponent.hpp"
 #include "../../../client/components/rendering/RectangleRenderComponent.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../ECS/entity/EntityCreationContext.hpp"
@@ -130,7 +131,18 @@ void ShootingSystem::spawnProjectile(
         prefabName, registry, ecs::EntityCreationContext::forServer()
     );
 
-    registry->addComponent(projectileEntity, std::make_shared<OwnerComponent>(shooterEntity));
+    ecs::Entity ownerEntity = shooterEntity;
+    auto shooterOwnerComp = registry->getComponent<OwnerComponent>(shooterEntity);
+    if (shooterOwnerComp) {
+        ownerEntity = shooterOwnerComp->getOwner();
+    } else {
+        auto shooterParentComp =
+            registry->getComponent<CompositeEntityComponent>(shooterEntity);
+        if (shooterParentComp) {
+            ownerEntity = shooterParentComp->getParentId();
+        }
+    }
+    registry->addComponent(projectileEntity, std::make_shared<OwnerComponent>(ownerEntity));
 
     auto transform = registry->getComponent<TransformComponent>(projectileEntity);
     if (transform) {

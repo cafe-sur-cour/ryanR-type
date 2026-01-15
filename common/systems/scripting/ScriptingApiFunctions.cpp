@@ -37,6 +37,7 @@
 #include "../../components/permanent/ChargedShotComponent.hpp"
 #include "../../components/permanent/InvulnerableComponent.hpp"
 #include "../../components/tags/MobTag.hpp"
+#include "../../components/permanent/OwnerComponent.hpp"
 
 namespace ecs {
 
@@ -455,6 +456,22 @@ void ScriptingSystem::bindAPI() {
         if (!found)
             return {0.0f, 0.0f};
         return {closestPos.getX(), closestPos.getY()};
+    });
+
+    lua.set_function("getEntityOwner", [this](size_t entityId) -> size_t {
+        Entity e = static_cast<Entity>(entityId);
+        if (registry->hasComponent<OwnerComponent>(e)) {
+            auto ownerComp = registry->getComponent<OwnerComponent>(e);
+            return static_cast<size_t>(ownerComp->getOwner());
+        }
+        return 0;
+    });
+
+    lua.set_function("setEntityOwner", [this](size_t entityId, size_t ownerId) {
+        Entity e = static_cast<Entity>(entityId);
+        Entity owner = static_cast<Entity>(ownerId);
+        auto ownerComp = std::make_shared<OwnerComponent>(owner);
+        registry->addComponent<OwnerComponent>(e, ownerComp);
     });
 }
 

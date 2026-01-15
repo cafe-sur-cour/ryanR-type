@@ -18,6 +18,7 @@
 #include "../../components/permanent/ScoreValueComponent.hpp"
 #include "../../components/permanent/ScoreComponent.hpp"
 #include "../../components/temporary/ScoreIntentComponent.hpp"
+#include "../../components/permanent/CompositeEntityComponent.hpp"
 #include "../../types/Vector2f.hpp"
 #include "../../Prefab/entityPrefabManager/EntityPrefabManager.hpp"
 #include "../../constants.hpp"
@@ -64,9 +65,18 @@ void DeathSystem::update(
         if (registry->hasComponent<ScoreValueComponent>(entityId)) {
             ecs::Entity source = deathIntent->getSource();
             if (source != 0) {
+                ecs::Entity owner = 0;
                 auto ownerComp = registry->getComponent<ecs::OwnerComponent>(source);
                 if (ownerComp) {
-                    ecs::Entity owner = ownerComp->getOwner();
+                    owner = ownerComp->getOwner();
+                } else {
+                    auto parentComp =
+                        registry->getComponent<ecs::CompositeEntityComponent>(source);
+                    if (parentComp) {
+                        owner = parentComp->getParentId();
+                    }
+                }
+                if (owner != 0) {
                     auto scoreComp = registry->getComponent<ecs::ScoreComponent>(owner);
                     if (scoreComp) {
                         auto scoreValueComp =
