@@ -194,10 +194,10 @@ void InGameState::update(float deltaTime) {
         }
     }
 
-    renderHUD();
+    renderHUD(deltaTime);
 }
 
-void InGameState::renderHUD() {
+void InGameState::renderHUD(float deltaTime) {
     auto window = _resourceManager->get<gfx::IWindow>();
     auto currentCenter = window->getViewCenter();
     window->setViewCenter(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
@@ -250,6 +250,7 @@ void InGameState::renderHUD() {
     drawHealthHUD(window, health, maxHealth);
     drawScoreHUD(window, score);
     drawShotChargeHUD(window, shotCharge, maxShotCharge);
+    drawInGameMetrics(window, deltaTime);
 
     window->setViewCenter(currentCenter.getX(), currentCenter.getY());
 }
@@ -401,6 +402,26 @@ void InGameState::drawShotChargeHUD(
         chargeText, colors::WHITE, chargeTextPosition,
         constants::MAIN_FONT, 20, colors::BLACK, 1.0f
     );
+}
+
+void InGameState::drawInGameMetrics(std::shared_ptr<gfx::IWindow> window, float deltaTime) {
+    auto config = _resourceManager->get<SettingsConfig>();
+    if (!config->isInGameMetricsEnabled()) {
+        return;
+    }
+
+    int fps = static_cast<int>(1.0f / deltaTime);
+
+    std::string metricsText = "FPS: " + std::to_string(fps);
+
+    auto textSize = window->getTextSize(metricsText, constants::MAIN_FONT, 20);
+    size_t textWidth = textSize.first;
+    std::pair<size_t, size_t> position = {static_cast<size_t>(
+        constants::MAX_WIDTH - textWidth - 10),
+        static_cast<size_t>(constants::MAX_HEIGHT - 30)};
+
+    window->drawText(metricsText, colors::WHITE, position,
+        constants::MAIN_FONT, 20, colors::BLACK, 1.0f);
 }
 
 void InGameState::exit() {

@@ -63,6 +63,7 @@ namespace constants {
     const std::string SETTINGS_TARGET_FPS = "targetFPS";
     const std::string SETTINGS_RENDER_QUALITY = "renderQuality";
     const std::string SETTINGS_USERNAME = "username";
+    const std::string SETTINGS_IN_GAME_METRICS_ENABLED = "inGameMetricsEnabled";
     const std::string KEYBIND_PRIMARY = "primary";
     const std::string KEYBIND_SECONDARY = "secondary";
     const std::string KEYBIND_TOGGLE_MODE = "toggle_mode";
