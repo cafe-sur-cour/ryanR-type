@@ -102,8 +102,10 @@ void InGameState::enter() {
     ecs::CollisionRules::initWithData(collisionData);
 
     auto localPlayerView = _registry->view<ecs::PlayerTag, ecs::LocalPlayerTag>();
-    auto localPlayer = *localPlayerView.begin();
-    _registry->addComponent(localPlayer, std::make_shared<ecs::NetworkStateComponent>());
+    if (!(localPlayerView.begin() == localPlayerView.end())) {
+        auto localPlayer = *localPlayerView.begin();
+        _registry->addComponent(localPlayer, std::make_shared<ecs::NetworkStateComponent>());
+    }
 
     addSystem(std::make_shared<ecs::NetworkInterpolationSystem>());
     addSystem(std::make_shared<ecs::MovementInputSystem>());
@@ -135,6 +137,14 @@ void InGameState::enter() {
 }
 
 void InGameState::update(float deltaTime) {
+    auto localPlayerView = _registry->view<ecs::PlayerTag, ecs::LocalPlayerTag>();
+    if (!(localPlayerView.begin() == localPlayerView.end())) {
+        auto localPlayer = *localPlayerView.begin();
+        if (!(_registry->hasComponent<ecs::NetworkStateComponent>(localPlayer)))
+            _registry->addComponent(
+                localPlayer, std::make_shared<ecs::NetworkStateComponent>());
+    }
+
     auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
     if (eventResult == gfx::EventType::CLOSE) {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
