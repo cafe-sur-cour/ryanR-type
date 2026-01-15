@@ -447,7 +447,7 @@ std::string getMemoryUsage() {
     int64_t pages;
     statm >> pages;
     statm.close();
-    int64_t pageSize = static_cast<int64_t>(sysconf(_SC_PAGESIZE));
+    int64_t pageSize = static_cast<int64_t>(SystemConfig::getPageSize());
     int64_t memoryKB = pages * pageSize / 1024;
     return std::to_string(memoryKB / 1024) + " MB";
 #endif

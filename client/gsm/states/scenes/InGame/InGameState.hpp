@@ -17,6 +17,22 @@
 #include <string>
 #include <memory>
 
+#ifdef _WIN32
+#include <windows.h>
+#include <psapi.h>
+#else
+#include <unistd.h>
+#endif
+
+#ifndef _WIN32
+class SystemConfig {
+public:
+    static long getPageSize() {
+        return sysconf(_SC_PAGESIZE);
+    }
+};
+#endif
+
 namespace gsm {
 
 struct ScoreFeedback {
