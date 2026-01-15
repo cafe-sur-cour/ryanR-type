@@ -19,6 +19,7 @@
 #include "../../components/permanent/DamageCooldownComponent.hpp"
 #include "../../GameRules.hpp"
 #include "../../resourceManager/ResourceManager.hpp"
+#include "../../components/permanent/InvulnerableComponent.hpp"
 
 const ActionFactory& ActionFactory::getInstance() {
     static ActionFactory instance;
@@ -59,6 +60,9 @@ void ActionFactory::initializeConditions() {
         ) {
             (void)resourceManager;
             (void)selfEntity;
+            if (reg->hasComponent<ecs::InvulnerableComponent>(otherEntity) &&
+                reg->getComponent<ecs::InvulnerableComponent>(otherEntity)->isActive())
+                    return;
             reg->addComponent<ecs::DeathIntentComponent>(otherEntity,
                 std::make_shared<ecs::DeathIntentComponent>(selfEntity));
         });

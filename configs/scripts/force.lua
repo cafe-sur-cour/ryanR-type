@@ -9,6 +9,7 @@ entitySizeY = 0
 targetX = 0
 targetY = 0
 isMovingToTarget = false
+originalFireRate = 0
 
 function init(entity)
 end
@@ -64,11 +65,17 @@ function OnInteract(entity, interactorEntity)
         end
         isequipped = true
 
+        originalFireRate = getFireRate(interactorEntity)
+
         if level == 2 then
             setProjectilePrefab(interactorEntity, "magnet")
         end
-        if level >= 3 then
+        if level == 3 then
             setProjectilePrefab(interactorEntity, "bombShot")
+        end
+        if level >= 4 then
+            setProjectilePrefab(interactorEntity, "beamShoot")
+            setFireRate(interactorEntity, 0.3)
         end
     end
 end
@@ -82,8 +89,12 @@ function ActivateOrDeactivateForce(entity, entityCaller)
             reverseShootOrientation(getParentId(entity))
         end
         isequipped = false
-        removePartId(getParentId(entity), entity)
-        setProjectilePrefab(getParentId(entity), "basic_shot")
+        local parentId = getParentId(entity)
+        removePartId(parentId, entity)
+        if originalFireRate > 0 then
+            setFireRate(parentId, originalFireRate)
+        end
+        setProjectilePrefab(parentId, "basic_shot")
         setParentId(entity, 0)
         attachDir = 0
         isMovingToTarget = false
@@ -93,8 +104,8 @@ end
 
 function addForceLevel(entity)
     level = level + 1
-    if (level > 3) then
-        level = 3
+    if (level > 4) then
+        level = 4
     end
     local parentId = getParentId(entity)
     if isEntityPlayer(parentId) == false then
@@ -109,6 +120,13 @@ function addForceLevel(entity)
         if level == 3 then
             setAnimationState(entity, "level3")
             setProjectilePrefab(parentId, "bombShot")
+        end
+        if level == 4 then
+            setAnimationState(entity, "level4")
+            setProjectilePrefab(parentId, "beamShoot")
+                if originalFireRate > 0 then
+                    setFireRate(parentId, 0.3)
+            end
         end
     end
 end

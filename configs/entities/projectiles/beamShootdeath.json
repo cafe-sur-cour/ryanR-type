@@ -1,0 +1,41 @@
+{
+    "name": "beamShootDeath",
+    "components": {
+        "PlayerProjectileTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 0.4, "y": 0.4 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "charging": {
+                    "texturePath": "assets/sprites/projectiles/start_beam.png",
+                    "frameWidth": 727.0,
+                    "frameHeight": 115.0,
+                    "frameCount": 8,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                }
+            },
+            "initialState": "charging",
+            "transitions": []
+        },
+        "SpeedComponent": {
+            "target": "both",
+            "speed": 1000.0
+        },
+        "LifetimeComponent": {
+            "target": "both",
+            "lifetime": 0.5
+        },
+        "HitboxRenderComponent": {
+            "target": "client"
+        }
+    }
+}
