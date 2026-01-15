@@ -8,11 +8,11 @@
 #ifndef PLAYEROBSTACLETAG_HPP_
 #define PLAYEROBSTACLETAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class PlayerObstacleTag : public AComponent {
+class PlayerObstacleTag : public IComponent {
     public:
         PlayerObstacleTag() = default;
         ~PlayerObstacleTag() = default;

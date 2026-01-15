@@ -8,11 +8,11 @@
 #ifndef ENNEMYPROJECTILETAG_HPP_
 #define ENNEMYPROJECTILETAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class EnnemyProjectileTag : public AComponent {
+class EnnemyProjectileTag : public IComponent {
     public:
         EnnemyProjectileTag() = default;
         ~EnnemyProjectileTag() = default;

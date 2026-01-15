@@ -8,11 +8,11 @@
 #ifndef GAMEZONECOLLIDERTAG_HPP_
 #define GAMEZONECOLLIDERTAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class GameZoneColliderTag : public AComponent {
+class GameZoneColliderTag : public IComponent {
     public:
         GameZoneColliderTag() = default;
         ~GameZoneColliderTag() = default;
