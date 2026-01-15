@@ -71,11 +71,22 @@ MainMenuState::MainMenuState(
             network->requestCode();
         }
     });
+    _requestCodeButton->setOnActivated([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->requestCode();
+        }
+    });
 
     _lobbyCodeInput = std::make_shared<ui::TextInput>(_resourceManager);
     _lobbyCodeInput->setPlaceholder("Enter lobby code");
     _lobbyCodeInput->setSize(math::Vector2f(300.f, 50.f));
     _lobbyCodeInput->setOnRelease([this]() {
+        auto navMan = this->_uiManager->getNavigationManager();
+        navMan->enableFocus();
+        navMan->setFocus(this->_lobbyCodeInput);
+    });
+    _lobbyCodeInput->setOnActivated([this]() {
         auto navMan = this->_uiManager->getNavigationManager();
         navMan->enableFocus();
         navMan->setFocus(this->_lobbyCodeInput);

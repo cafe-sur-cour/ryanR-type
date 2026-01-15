@@ -12,6 +12,7 @@
 #include "../../../../constants.hpp"
 #include "../../../../colors.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
+#include "../../../../../common/InputMapping/IInputProvider.hpp"
 
 namespace gsm {
 
@@ -24,6 +25,9 @@ ChatState::ChatState(
 void ChatState::enter() {
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
+    _uiManager->setResourceManager(_resourceManager);
+    _uiManager->setNavigationEnabled(true);
+    _uiManager->setOnBack([this]() { onBackButtonClicked(); });
 
     _uiManager->setCursorCallback([this](bool isHovering) {
         if (_resourceManager->has<gfx::IWindow>()) {
@@ -154,6 +158,8 @@ void ChatState::enter() {
     _uiManager->addElement(_messagesContainer);
     _uiManager->addElement(controlsLayout);
     _uiManager->addElement(backButtonLayout);
+
+    _uiManager->focusFirstElement();
 }
 
 void ChatState::update(float deltaTime) {
@@ -204,6 +210,11 @@ void ChatState::update(float deltaTime) {
         static_cast<int>(constants::MouseButton::LEFT));
 
     _uiManager->handleMouseInput(mousePos, mousePressed);
+
+    if (_resourceManager->has<ecs::IInputProvider>()) {
+        auto inputProvider = _resourceManager->get<ecs::IInputProvider>();
+        _uiManager->handleNavigationInputs(inputProvider, deltaTime);
+    }
 
     bool isHoveringUI = _uiManager->isMouseHoveringAnyElement(mousePos);
 
