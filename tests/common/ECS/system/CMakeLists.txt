@@ -1,31 +1,55 @@
 add_executable(MovementSystemTests MovementSystemTests.cpp)
-target_link_libraries(MovementSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(MovementSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main gcov)
 add_test(NAME MovementSystemTests COMMAND MovementSystemTests)
 
 add_executable(LifetimeSystemTests LifetimeSystemTests.cpp)
-target_link_libraries(LifetimeSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(LifetimeSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main gcov)
 add_test(NAME LifetimeSystemTests COMMAND LifetimeSystemTests)
 
 add_executable(HealthSystemTests HealthSystemTests.cpp)
-target_link_libraries(HealthSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(HealthSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main gcov)
 add_test(NAME HealthSystemTests COMMAND HealthSystemTests)
 
 add_executable(DeathSystemTests DeathSystemTests.cpp)
-target_link_libraries(DeathSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(DeathSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main gcov)
 add_test(NAME DeathSystemTests COMMAND DeathSystemTests)
 
 add_executable(OutOfBoundsSystemTests OutOfBoundsSystemTests.cpp)
-target_link_libraries(OutOfBoundsSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(OutOfBoundsSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main gcov)
 add_test(NAME OutOfBoundsSystemTests COMMAND OutOfBoundsSystemTests)
 
 add_executable(ScoreSystemTests ScoreSystemTests.cpp)
-target_link_libraries(ScoreSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(ScoreSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main gcov)
 add_test(NAME ScoreSystemTests COMMAND ScoreSystemTests)
 
 add_executable(TriggerSystemTests TriggerSystemTests.cpp)
-target_link_libraries(TriggerSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+target_link_libraries(TriggerSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main gcov)
 add_test(NAME TriggerSystemTests COMMAND TriggerSystemTests)
 
 add_executable(SpawnSystemTests SpawnSystemTests.cpp)
-target_link_libraries(SpawnSystemTests ECS PREFAB COLLISION_RULES ERROR GTest::gtest GTest::gtest_main)
+target_link_libraries(SpawnSystemTests ECS PREFAB COLLISION_RULES ERROR GTest::gtest GTest::gtest_main gcov)
 add_test(NAME SpawnSystemTests COMMAND SpawnSystemTests)
+
+add_executable(GameZoneStopSystemTests GameZoneStopSystemTests.cpp)
+target_link_libraries(GameZoneStopSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main gcov)
+add_test(NAME GameZoneStopSystemTests COMMAND GameZoneStopSystemTests)
+
+add_executable(InputNormalizerTests InputNormalizerTests.cpp)
+target_link_libraries(InputNormalizerTests InputNormalizer ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main gcov)
+add_test(NAME InputNormalizerTests COMMAND InputNormalizerTests)
+
+add_executable(ChargedShotSystemTests ChargedShotSystemTests.cpp)
+target_link_libraries(ChargedShotSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main gcov)
+add_test(NAME ChargedShotSystemTests COMMAND ChargedShotSystemTests)
+
+add_executable(InputToVelocitySystemTests InputToVelocitySystemTests.cpp)
+target_link_libraries(InputToVelocitySystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main gcov)
+add_test(NAME InputToVelocitySystemTests COMMAND InputToVelocitySystemTests)
+
+add_executable(IntentToVelocitySystemTests IntentToVelocitySystemTests.cpp)
+target_link_libraries(IntentToVelocitySystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main gcov)
+add_test(NAME IntentToVelocitySystemTests COMMAND IntentToVelocitySystemTests)
+
+add_executable(InteractionSystemTests InteractionSystemTests.cpp)
+target_link_libraries(InteractionSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main gcov)
+add_test(NAME InteractionSystemTests COMMAND InteractionSystemTests)

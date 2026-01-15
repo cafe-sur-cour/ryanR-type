@@ -9,19 +9,20 @@
 #define OWNERCOMPONENT_HPP_
 
 #include "../base/IComponent.hpp"
+#include "../ECS/entity/Entity.hpp"
 
 namespace ecs {
 
 class OwnerComponent : public IComponent {
     public:
-        OwnerComponent(ecs::Entity owner = 0) : _owner(owner) {};
+        OwnerComponent(Entity owner = 0) : _owner(owner) {};
         ~OwnerComponent() = default;
 
-        ecs::Entity getOwner() const { return _owner; }
-        void setOwner(ecs::Entity owner) { _owner = owner; }
+        Entity getOwner() const { return _owner; }
+        void setOwner(Entity owner) { _owner = owner; }
 
     private:
-        ecs::Entity _owner;
+        Entity _owner;
 };
 
 }  // namespace ecs
