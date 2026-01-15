@@ -9,11 +9,11 @@
 #define TRASLATION_TO_ECS_HPP_
 
 enum componentType {
-    TRANSFORM = 0x01,
-    HEALTH = 0x03,
-    SCORE = 0x06,
-    CHARGED_SHOT_COMP = 0x19,
-    ANIMATION_STATE = 0x18,
+    TRANSFORM = 0x00,
+    HEALTH = 0x01,
+    SCORE = 0x02,
+    CHARGED_SHOT_COMP = 0x03,
+    ANIMATION_STATE = 0x04,
 };
 
 #endif /* !TRASLATION_TO_ECS_HPP_ */
