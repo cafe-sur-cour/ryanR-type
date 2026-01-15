@@ -381,6 +381,7 @@ namespace constants {
     const std::string SET_GAME_ZONE_VELOCITY_FUNCTION = "setGameZoneVelocity";
     const std::string GET_ENTITY_VELOCITY_FUNCTION = "getEntityVelocity";
     const std::string SET_INVULNERABLE_FUNCTION = "setInvulnerable";
+    const std::string GET_NEAREST_ENEMY_POSITION_FUNCTION = "getNearestEnemyPosition";
 }
 
 #endif /* !CONSTANTS_HPP_ */

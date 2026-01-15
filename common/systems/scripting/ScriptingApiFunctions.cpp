@@ -36,6 +36,7 @@
 #include "../../components/permanent/HealthComponent.hpp"
 #include "../../components/permanent/ChargedShotComponent.hpp"
 #include "../../components/permanent/InvulnerableComponent.hpp"
+#include "../../components/tags/MobTag.hpp"
 
 namespace ecs {
 
@@ -424,6 +425,36 @@ void ScriptingSystem::bindAPI() {
             auto invulnerableComp = registry->getComponent<ecs::InvulnerableComponent>(e);
             invulnerableComp->setActive(isInvulnerable);
         }
+    });
+
+    lua.set_function(constants::GET_NEAREST_ENEMY_POSITION_FUNCTION,
+            [this](size_t e) -> std::tuple<float, float> {
+        Entity entity = static_cast<Entity>(e);
+        if (!registry->hasComponent<TransformComponent>(entity))
+            return {0.0f, 0.0f};
+        auto myTransform = registry->getComponent<TransformComponent>(entity);
+        auto myPos = myTransform->getPosition();
+        auto view = registry->view<TransformComponent, MobTag>();
+        float minDist = std::numeric_limits<float>::max();
+        math::Vector2f closestPos(0.0f, 0.0f);
+        bool found = false;
+        for (auto entityId : view) {
+            if (entityId == entity)
+                continue;
+            auto transform = registry->getComponent<TransformComponent>(entityId);
+            auto pos = transform->getPosition();
+            float dx = pos.getX() - myPos.getX();
+            float dy = pos.getY() - myPos.getY();
+            float dist = std::sqrt(dx * dx + dy * dy);
+            if (dist < minDist) {
+                minDist = dist;
+                closestPos = pos;
+                found = true;
+            }
+        }
+        if (!found)
+            return {0.0f, 0.0f};
+        return {closestPos.getX(), closestPos.getY()};
     });
 }
 
