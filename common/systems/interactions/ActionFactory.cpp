@@ -165,7 +165,9 @@ void ActionFactory::initializeConditions() {
             auto lifeCompOther = reg->getComponent<ecs::HealthComponent>(otherEntity);
 
             if (lifeCompSelf && lifeCompOther) {
-                lifeCompOther->setHealth(lifeCompOther->getHealth() + lifeCompSelf->getHealth());
+                lifeCompOther->setHealth(
+                    lifeCompOther->getHealth() + lifeCompSelf->getHealth()
+                );
                 lifeCompSelf->setHealth(0);
             }
         });
