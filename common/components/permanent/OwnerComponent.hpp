@@ -15,7 +15,7 @@ namespace ecs {
 class OwnerComponent : public IComponent {
     public:
         OwnerComponent(ecs::Entity owner = 0) : _owner(owner) {};
-        ~OwnerComponent() override = default;
+        ~OwnerComponent() = default;
 
         ecs::Entity getOwner() const { return _owner; }
         void setOwner(ecs::Entity owner) { _owner = owner; }

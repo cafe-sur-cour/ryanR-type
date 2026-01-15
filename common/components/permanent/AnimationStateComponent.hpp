@@ -18,7 +18,7 @@ class AnimationStateComponent : public IComponent {
     public:
         AnimationStateComponent(const std::string& initialState = "")
             : _currentState(initialState) {};
-        ~AnimationStateComponent() override = default;
+        ~AnimationStateComponent() = default;
 
         void setCurrentState(const std::string& state) { _currentState = state; }
         std::string getCurrentState() const { return _currentState; }

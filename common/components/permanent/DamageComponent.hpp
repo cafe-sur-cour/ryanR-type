@@ -15,7 +15,7 @@ namespace ecs {
 class DamageComponent : public IComponent {
     public:
         DamageComponent(float damage = 0.0f) : _damage(damage) {};
-        ~DamageComponent() override = default;
+        ~DamageComponent() = default;
 
         float getDamage() const { return _damage; }
         void setDamage(float damage) { _damage = damage; }

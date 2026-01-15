@@ -16,7 +16,7 @@ namespace ecs {
 class HealthComponent : public IComponent {
     public:
         HealthComponent(float health = 100) : _health(health), _baseHealth(health), _lastDamageSource(0) {};
-        ~HealthComponent() override = default;
+        ~HealthComponent() = default;
 
         float getHealth() const { return _health; }
         void setHealth(float health) { _health = health; };

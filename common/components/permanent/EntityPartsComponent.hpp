@@ -16,7 +16,7 @@ namespace ecs {
 class EntityPartsComponent : public IComponent {
     public:
         EntityPartsComponent() = default;
-        ~EntityPartsComponent() override = default;
+        ~EntityPartsComponent() = default;
 
         std::vector<size_t> partIds;
 };

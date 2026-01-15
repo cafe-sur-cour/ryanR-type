@@ -16,7 +16,7 @@ namespace ecs {
 class CompositeEntityComponent : public IComponent {
     public:
         CompositeEntityComponent(size_t parent_id) : parentId(parent_id) {};
-        ~CompositeEntityComponent() override = default;
+        ~CompositeEntityComponent() = default;
 
         size_t getParentId() const { return parentId; }
         void setParentId(size_t id) { parentId = id; }

@@ -16,7 +16,7 @@ namespace ecs {
 class ForceTag : public IComponent {
     public:
         ForceTag(const std::string& type = "") : forceType(type) {}
-        ~ForceTag() override = default;
+        ~ForceTag() = default;
 
         std::string getForceType() const { return forceType; }
         void setForceType(const std::string& type) { forceType = type; }

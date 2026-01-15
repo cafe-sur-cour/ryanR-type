@@ -15,7 +15,7 @@ namespace ecs {
 class ScoreValueComponent : public IComponent {
     public:
         ScoreValueComponent(int scoreValue = 0) : _scoreValue(scoreValue) {};
-        ~ScoreValueComponent() override = default;
+        ~ScoreValueComponent() = default;
 
         int getScoreValue() const { return _scoreValue; }
         void setScoreValue(int scoreValue) { _scoreValue = scoreValue; }
