@@ -34,7 +34,7 @@
         },
         "DamageComponent": {
             "target": "both",
-            "damage": 25.0
+            "damage": 0.0
         },
         "SpeedComponent": {
             "target": "both",
@@ -64,10 +64,10 @@
                 }
             ]
         },
-        "SoundIntentComponent": {
-            "target": "client",
-            "soundFile": "sounds/shooting.wav",
-            "volume": 50.0
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/bombExplosion.lua",
+            "additionalFunctions": []
         }
     }
 }
