@@ -34,7 +34,7 @@
         },
         "DamageComponent": {
             "target": "both",
-            "damage": 25.0
+            "damage": 0.0
         },
         "SpeedComponent": {
             "target": "both",
@@ -63,6 +63,11 @@
                     "toSelf": ["TakeDeath"]
                 }
             ]
+        },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/bombExplosion.lua",
+            "additionalFunctions": []
         },
         "SoundIntentComponent": {
             "target": "client",

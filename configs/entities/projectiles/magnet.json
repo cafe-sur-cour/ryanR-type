@@ -5,7 +5,7 @@
         "TransformComponent": {
             "target": "both",
             "position": { "x": 0.0, "y": 0.0 },
-            "scale": { "x": 1.3, "y": 1.3 },
+            "scale": { "x": 0.7, "y": 0.7 },
             "rotation": 0.0
         },
         "VelocityComponent": { "target": "both" },
@@ -63,6 +63,11 @@
                     "toSelf": ["TakeDeath"]
                 }
             ]
+        },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/magnet.lua",
+            "additionalFunctions": []
         },
         "SoundIntentComponent": {
             "target": "client",

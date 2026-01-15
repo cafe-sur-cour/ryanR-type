@@ -1,0 +1,60 @@
+{
+    "name": "explosionBomb",
+    "components": {
+        "PlayerProjectileTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 100.0, "y": 100.0 },
+            "scale": { "x": 1.3, "y": 1.3 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 80.0 },
+        "HealthComponent": { "target": "both", "health": 50.0 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 100 },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/projectiles/mini_bomb_explode-modified.png",
+                    "frameWidth": 150.0,
+                    "frameHeight": 149.0,
+                    "frameCount": 14,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.05,
+                    "loop": false
+                }
+            },
+            "initialState": "idle",
+            "transitions": []
+        },
+        "ColliderComponent": [
+            {
+                "target": "both",
+                "offset": { "x": 50.0, "y": 50.0 },
+                "size" : { "x": 150.0, "y": 149.0 },
+                "type": "Trigger"
+            }
+        ],
+        "DamageComponent": {
+            "target": "both",
+            "damage": 20.0
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["MobTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": []
+                }
+            ]
+        },
+        "DamageCooldownComponent": { "target": "both" },
+        "LifetimeComponent": {
+            "target": "both",
+            "lifetime": 0.5
+        }
+    }
+}
