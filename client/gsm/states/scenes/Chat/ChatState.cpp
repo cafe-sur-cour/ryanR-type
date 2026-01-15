@@ -24,7 +24,6 @@ ChatState::ChatState(
 void ChatState::enter() {
     _mouseHandler = std::make_unique<MouseInputHandler>(_resourceManager);
     _uiManager = std::make_unique<ui::UIManager>();
-    _uiManager->setResourceManager(_resourceManager);
 
     _uiManager->setCursorCallback([this](bool isHovering) {
         if (_resourceManager->has<gfx::IWindow>()) {
@@ -37,88 +36,59 @@ void ChatState::enter() {
         math::Vector2f(5376.0f, 3584.0f));
     _uiManager->addElement(_background);
 
-    ui::LayoutConfig mainConfig;
-    mainConfig.direction = ui::LayoutDirection::Vertical;
-    mainConfig.alignment = ui::LayoutAlignment::Center;
-    mainConfig.spacing = 35.0f;
-    mainConfig.padding = math::Vector2f(50.0f, 45.0f);
-    mainConfig.anchorX = ui::AnchorX::Center;
-    mainConfig.anchorY = ui::AnchorY::Center;
-    mainConfig.offset = math::Vector2f(0.0f, -30.0f);
-    mainConfig.background.enabled = true;
-    mainConfig.background.fillColor = colors::PANEL_BACKGROUND;
-    mainConfig.background.outlineColor = colors::PANEL_BORDER;
-    mainConfig.background.cornerRadius = 20.0f;
-
-    _mainLayout = std::make_shared<ui::UILayout>(_resourceManager, mainConfig);
-    _mainLayout->setSize(math::Vector2f(1200.f, 720.f));
-    _mainLayout->setBackgroundEnabled(true);
-    _mainLayout->setBackgroundFillColor(colors::PANEL_BACKGROUND);
-    _mainLayout->setBackgroundOutlineColor(colors::PANEL_BORDER);
-    _mainLayout->setBackgroundCornerRadius(20.0f);
-
     ui::LayoutConfig titleConfig;
     titleConfig.direction = ui::LayoutDirection::Vertical;
     titleConfig.alignment = ui::LayoutAlignment::Center;
     titleConfig.spacing = 0.0f;
-    titleConfig.padding = math::Vector2f(20.0f, 20.0f);
+    titleConfig.padding = math::Vector2f(0.0f, 0.0f);
+    titleConfig.anchorX = ui::AnchorX::Left;
+    titleConfig.anchorY = ui::AnchorY::Top;
+    titleConfig.offset = math::Vector2f(735.0f, 30.0f);
 
     auto titleLayout = std::make_shared<ui::UILayout>(_resourceManager, titleConfig);
-    titleLayout->setSize(math::Vector2f(1000.f, 70.f));
+    titleLayout->setSize(math::Vector2f(200.f, 250.f));
 
-    auto titleText = std::make_shared<ui::Text>(_resourceManager);
-    titleText->setText("Chat Room");
-    titleText->setTextColor(colors::UI_ACCENT);
-    titleText->setFontSize(32);
-    titleText->setOutlineColor(colors::UI_OUTLINE);
-    titleText->setOutlineThickness(2.5f);
+    _titleText = std::make_shared<ui::Text>(_resourceManager);
+    _titleText->setText(constants::CHAT_TITLE_TEXT);
+    _titleText->setSize(math::Vector2f(2000.f, 250.f));
+    _titleText->setTextColor(colors::BUTTON_PRIMARY_HOVER);
+    _titleText->setOutlineColor(gfx::color_t{120, 0, 0, 255});
+    _titleText->setFontSize(56);
+    _titleText->setOutlineThickness(6.0f);
 
-    titleLayout->addElement(titleText);
+    titleLayout->addElement(_titleText);
+    _uiManager->addElement(titleLayout);
 
     ui::LayoutConfig messagesConfig;
     messagesConfig.direction = ui::LayoutDirection::Vertical;
-    messagesConfig.alignment = ui::LayoutAlignment::Center;
-    messagesConfig.spacing = 18.0f;
-    messagesConfig.padding = math::Vector2f(35.0f, 35.0f);
+    messagesConfig.alignment = ui::LayoutAlignment::Start;
+    messagesConfig.spacing = 22.0f;
+    messagesConfig.padding = math::Vector2f(30.0f, 25.0f);
     messagesConfig.background.enabled = true;
     messagesConfig.background.fillColor = colors::UI_BACKGROUND;
     messagesConfig.background.outlineColor = colors::UI_OUTLINE;
-    messagesConfig.background.cornerRadius = 12.0f;
+    messagesConfig.background.cornerRadius = 15.0f;
+    messagesConfig.anchorX = ui::AnchorX::Left;
+    messagesConfig.anchorY = ui::AnchorY::Top;
+    messagesConfig.offset = math::Vector2f(505.0f, 235.0f);
 
     _messagesContainer = std::make_shared<ui::UILayout>(_resourceManager, messagesConfig);
-    _messagesContainer->setSize(math::Vector2f(1100.f, 420.f));
+    _messagesContainer->setSize(math::Vector2f(900.f, 475.f));
     _messagesContainer->setBackgroundEnabled(true);
     _messagesContainer->setBackgroundFillColor(colors::UI_BACKGROUND);
     _messagesContainer->setBackgroundOutlineColor(colors::UI_OUTLINE);
-    _messagesContainer->setBackgroundCornerRadius(12.0f);
+    _messagesContainer->setBackgroundCornerRadius(15.0f);
 
     auto placeholderText = std::make_shared<ui::Text>(_resourceManager);
-    placeholderText->setText("No messages yet. Start the conversation!");
+    placeholderText->setText(constants::CHAT_NO_MESSAGES_TEXT);
     placeholderText->setTextColor(gfx::color_t{150, 150, 150, 255});
-    placeholderText->setFontSize(16);
+    placeholderText->setFontSize(18);
     _messagesContainer->addElement(placeholderText);
 
-    _backButton = std::make_shared<ui::Button>(_resourceManager);
-    _backButton->setText("Back");
-    _backButton->setSize(math::Vector2f{150, 55});
-    _backButton->setNormalColor(colors::BUTTON_SECONDARY);
-    _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
-    _backButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
-    _backButton->setOnRelease([this]() { onBackButtonClicked(); });
-
-    ui::LayoutConfig backButtonConfig;
-    backButtonConfig.anchorX = ui::AnchorX::Center;
-    backButtonConfig.anchorY = ui::AnchorY::Bottom;
-    backButtonConfig.offset = math::Vector2f(0.0f, -50.0f);
-
-    auto backButtonLayout = std::make_shared<ui::UILayout>(_resourceManager, backButtonConfig);
-    backButtonLayout->setSize(math::Vector2f(150.f, 55.f));
-    backButtonLayout->addElement(_backButton);
-
     _messageInput = std::make_shared<ui::TextInput>(_resourceManager);
-    _messageInput->setPlaceholder("Type your message...");
-    _messageInput->setSize(math::Vector2f{800, 55});
-    _messageInput->setMaxLength(50);
+    _messageInput->setPlaceholder(constants::CHAT_PLACEHOLDER_TEXT);
+    _messageInput->setSize(math::Vector2f{800, 50});
+    _messageInput->setMaxLength(45);
     _messageInput->setOnRelease([this]() {
         auto navMan = this->_uiManager->getNavigationManager();
         navMan->enableFocus();
@@ -126,8 +96,8 @@ void ChatState::enter() {
     });
 
     _sendButton = std::make_shared<ui::Button>(_resourceManager);
-    _sendButton->setText("Send");
-    _sendButton->setSize(math::Vector2f{170, 55});
+    _sendButton->setText(constants::SEND_BUTTON_TEXT);
+    _sendButton->setSize(math::Vector2f{120, 50});
     _sendButton->setNormalColor(colors::BUTTON_PRIMARY);
     _sendButton->setHoveredColor(colors::BUTTON_PRIMARY_HOVER);
     _sendButton->setPressedColor(colors::BUTTON_PRIMARY_PRESSED);
@@ -142,35 +112,47 @@ void ChatState::enter() {
     ui::LayoutConfig controlsConfig;
     controlsConfig.direction = ui::LayoutDirection::Horizontal;
     controlsConfig.alignment = ui::LayoutAlignment::Center;
-    controlsConfig.spacing = 25.0f;
-    controlsConfig.padding = math::Vector2f(0.0f, 10.0f);
+    controlsConfig.spacing = 15.0f;
+    controlsConfig.padding = math::Vector2f(0.0f, 0.0f);
+    controlsConfig.anchorX = ui::AnchorX::Center;
+    controlsConfig.anchorY = ui::AnchorY::Bottom;
+    controlsConfig.offset = math::Vector2f(0.0f, -280.0f);
 
     auto controlsLayout = std::make_shared<ui::UILayout>(_resourceManager, controlsConfig);
-    controlsLayout->setSize(math::Vector2f(1000.f, 70.f));
-
-    ui::LayoutConfig messagesWrapperConfig;
-    messagesWrapperConfig.direction = ui::LayoutDirection::Vertical;
-    messagesWrapperConfig.alignment = ui::LayoutAlignment::Center;
-    messagesWrapperConfig.spacing = 0.0f;
-    messagesWrapperConfig.padding = math::Vector2f(0.0f, 0.0f);
-    messagesWrapperConfig.anchorX = ui::AnchorX::Center;
-    messagesWrapperConfig.anchorY = ui::AnchorY::Center;
-
-    auto messagesWrapper = std::make_shared<ui::UILayout>(_resourceManager,
-        messagesWrapperConfig);
-    messagesWrapper->setSize(math::Vector2f(1100.f, 450.f));
-    messagesWrapper->addElement(_messagesContainer);
-
-    _mainLayout->addElement(titleLayout);
-    _mainLayout->addElement(messagesWrapper);
+    controlsLayout->setSize(math::Vector2f(900.f, 60.f));
 
     controlsLayout->addElement(_messageInput);
     controlsLayout->addElement(_sendButton);
 
-    _mainLayout->addElement(controlsLayout);
+    _backButton = std::make_shared<ui::Button>(_resourceManager);
+    _backButton->setText(constants::BACK_BUTTON_TEXT_UPPER);
+    _backButton->setSize(math::Vector2f(400.f, 70.f));
+    _backButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _backButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _backButton->setOnRelease([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePop();
+        }
+    });
+    _backButton->setOnActivated([this]() {
+        if (auto stateMachine = this->_gsm.lock()) {
+            stateMachine->requestStatePop();
+        }
+    });
 
-    _uiManager->addElement(_background);
-    _uiManager->addElement(_mainLayout);
+    ui::LayoutConfig backButtonConfig;
+    backButtonConfig.anchorX = ui::AnchorX::Center;
+    backButtonConfig.anchorY = ui::AnchorY::Bottom;
+    backButtonConfig.offset = math::Vector2f(0.0f, -40.0f);
+
+    auto backButtonLayout = std::make_shared<ui::UILayout>(_resourceManager, backButtonConfig);
+    backButtonLayout->setSize(math::Vector2f(140.f, 50.f));
+    backButtonLayout->addElement(_backButton);
+
+    _uiManager->addElement(titleLayout);
+    _uiManager->addElement(_messagesContainer);
+    _uiManager->addElement(controlsLayout);
     _uiManager->addElement(backButtonLayout);
 }
 

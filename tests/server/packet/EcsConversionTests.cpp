@@ -40,7 +40,7 @@ using namespace ecs;
 
 class TestLobby : public Lobby {
 public:
-    TestLobby() : Lobby(nullptr, {}, "test", true, 50) {}
+    TestLobby() : Lobby(nullptr, {}, "test", true, 0) {}
 
     using Lobby::convertTagComponent;
     using Lobby::convertTransformComponent;

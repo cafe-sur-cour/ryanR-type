@@ -22,7 +22,7 @@
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/utils/SecureJsonManager.hpp"
-#include "../../../../ui/elements/Box.hpp"
+#include "../../../../ui/elements/Image.hpp"
 
 namespace gsm {
 
@@ -49,91 +49,101 @@ LeaderboardState::LeaderboardState(
     titleConfig.alignment = ui::LayoutAlignment::Center;
     titleConfig.spacing = 0.0f;
     titleConfig.padding = math::Vector2f(0.0f, 0.0f);
-    titleConfig.anchorX = ui::AnchorX::Center;
+    titleConfig.anchorX = ui::AnchorX::Left;
     titleConfig.anchorY = ui::AnchorY::Top;
-    titleConfig.offset = math::Vector2f(0.0f, 30.0f);
+    titleConfig.offset = math::Vector2f(665.0f, 30.0f);
 
     auto titleLayout = std::make_shared<ui::UILayout>(_resourceManager, titleConfig);
     titleLayout->setSize(math::Vector2f(200.f, 250.f));
 
     _titleText = std::make_shared<ui::Text>(_resourceManager);
-    _titleText->setText("LEADERBOARD");
-    _titleText->setSize(math::Vector2f(2000.f, 250.f));
-    _titleText->setTextColor(gfx::color_t{255, 215, 0, 255});
-    _titleText->setOutlineColor(gfx::color_t{80, 60, 0, 255});
+    _titleText->setText(constants::LEADERBOARD_TITLE_TEXT);
+    _titleText->setFontSize(56);
+    _titleText->setTextColor(colors::BUTTON_PRIMARY_HOVER);
+    _titleText->setOutlineColor(gfx::color_t{120, 0, 0, 255});
     _titleText->setOutlineThickness(6.0f);
 
     titleLayout->addElement(_titleText);
     _uiManager->addElement(titleLayout);
 
     ui::LayoutConfig mainConfig;
-    mainConfig.direction = ui::LayoutDirection::Vertical;
+    mainConfig.direction = ui::LayoutDirection::Horizontal;
     mainConfig.alignment = ui::LayoutAlignment::Center;
-    mainConfig.spacing = 10.0f;
+    mainConfig.spacing = 50.0f;
     mainConfig.padding = math::Vector2f(30.0f, 30.0f);
-    mainConfig.anchorX = ui::AnchorX::Center;
-    mainConfig.anchorY = ui::AnchorY::Center;
-    mainConfig.offset = math::Vector2f(0.0f, 0.0f);
+    mainConfig.anchorX = ui::AnchorX::Left;
+    mainConfig.anchorY = ui::AnchorY::Top;
+    mainConfig.offset = math::Vector2f(70.0f, 200.0f);
 
     _mainLayout = std::make_shared<ui::UILayout>(_resourceManager, mainConfig);
-    _mainLayout->setSize(math::Vector2f(800.f, 600.f));
+    _mainLayout->setSize(math::Vector2f(1600.f, 600.f));
+
+    ui::LayoutConfig leftConfig;
+    leftConfig.direction = ui::LayoutDirection::Vertical;
+    leftConfig.alignment = ui::LayoutAlignment::Center;
+    leftConfig.spacing = 60.0f;
+
+    auto leftLayout = std::make_shared<ui::UILayout>(_resourceManager, leftConfig);
+    leftLayout->setSize(math::Vector2f(750.f, 600.f));
+
+    ui::LayoutConfig rightConfig;
+    rightConfig.direction = ui::LayoutDirection::Vertical;
+    rightConfig.alignment = ui::LayoutAlignment::Center;
+    rightConfig.spacing = 60.0f;
+
+    auto rightLayout = std::make_shared<ui::UILayout>(_resourceManager, rightConfig);
+    rightLayout->setSize(math::Vector2f(750.f, 600.f));
 
     for (int i = 0; i < 10; ++i) {
-        auto entryBox = std::make_shared<ui::Box>(_resourceManager);
+        auto entryBox = std::make_shared<ui::Image>(_resourceManager);
+        entryBox->setTexturePath(constants::LEADERBOARD_PLACEHOLDER_PATH);
         entryBox->setSize(math::Vector2f(750.f, 50.f));
-        entryBox->setBackgroundColor(gfx::color_t{40, 40, 70, 220});
-        entryBox->setBorderColor(gfx::color_t{100, 100, 140, 255});
-        entryBox->setBorderThickness(2.0f);
 
-        ui::LayoutConfig entryConfig;
-        entryConfig.direction = ui::LayoutDirection::Horizontal;
-        entryConfig.alignment = ui::LayoutAlignment::Center;
-        entryConfig.spacing = 20.0f;
-        entryConfig.padding = math::Vector2f(10.0f, 10.0f);
-        entryConfig.anchorX = ui::AnchorX::Center;
-        entryConfig.anchorY = ui::AnchorY::Center;
-        entryConfig.offset = math::Vector2f(0.0f, 0.0f);
+        float xPos = (i < 5) ? 200.0f : 980.0f;
+        float yPos = 200.0f + ((i % 5) * 130.0f);
+        entryBox->setPosition(math::Vector2f(xPos, yPos));
 
-        auto entryLayout = std::make_shared<ui::UILayout>(_resourceManager, entryConfig);
-        entryLayout->setSize(math::Vector2f(750.f, 50.f));
+        _uiManager->addElement(entryBox);
 
         auto rankText = std::make_shared<ui::Text>(_resourceManager);
         std::stringstream ss;
         ss << (i + 1) << ".";
         rankText->setText(ss.str());
-        rankText->setSize(math::Vector2f(50.f, 30.f));
+        rankText->setSize(math::Vector2f(60.f, 30.f));
+        rankText->setPosition(math::Vector2f(xPos + 90.0f, yPos + 40.0f));
         rankText->setTextColor(gfx::color_t{255, 255, 255, 255});
+        rankText->setFontSize(24);
+        _uiManager->addElement(rankText);
 
         auto nameText = std::make_shared<ui::Text>(_resourceManager);
         std::stringstream ss2;
-        ss2 << "Player " << (i + 1);
+        ss2 << constants::LEADERBOARD_DEFAULT_NAME_PREFIX << (i + 1);
         nameText->setText(ss2.str());
-        nameText->setSize(math::Vector2f(400.f, 30.f));
+        nameText->setSize(math::Vector2f(330.f, 30.f));
+        nameText->setPosition(math::Vector2f(xPos + 158.0f, yPos + 40.0f));
         nameText->setTextColor(gfx::color_t{255, 255, 100, 255});
+        nameText->setFontSize(24);
+        _uiManager->addElement(nameText);
 
         auto scoreText = std::make_shared<ui::Text>(_resourceManager);
         std::stringstream ss3;
         ss3 << ((10 - i) * 1000);
         scoreText->setText(ss3.str());
-        scoreText->setSize(math::Vector2f(200.f, 30.f));
+        scoreText->setSize(math::Vector2f(180.f, 30.f));
+        scoreText->setPosition(math::Vector2f(xPos + 506.0f, yPos + 40.0f));
         scoreText->setTextColor(gfx::color_t{100, 255, 150, 255});
-
-        entryLayout->addChild(entryBox);
-        entryLayout->addElement(rankText);
-        entryLayout->addElement(nameText);
-        entryLayout->addElement(scoreText);
+        scoreText->setFontSize(24);
+        _uiManager->addElement(scoreText);
 
         _leaderTexts.push_back(rankText);
         _leaderTexts.push_back(nameText);
         _leaderTexts.push_back(scoreText);
-
-        _mainLayout->addElement(entryLayout);
     }
 
     _uiManager->addElement(_mainLayout);
 
     _backButton = std::make_shared<ui::Button>(_resourceManager);
-    _backButton->setText("Back");
+    _backButton->setText(constants::BACK_BUTTON_TEXT);
     _backButton->setSize(math::Vector2f(500.f, 70.f));
     _backButton->setNormalColor(colors::BUTTON_SECONDARY);
     _backButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
@@ -186,8 +196,8 @@ void LeaderboardState::loadLeaderboardData() {
                 std::stringstream ss;
                 ss << (i + 1) << ".";
                 _leaderTexts[textIndex]->setText(ss.str());
-                _leaderTexts[textIndex + 1]->setText("---");
-                _leaderTexts[textIndex + 2]->setText("0");
+                _leaderTexts[textIndex + 1]->setText(constants::LEADERBOARD_EMPTY_NAME);
+                _leaderTexts[textIndex + 2]->setText(constants::LEADERBOARD_DEFAULT_SCORE);
             }
             return;
         }
@@ -198,8 +208,8 @@ void LeaderboardState::loadLeaderboardData() {
         std::stringstream ss;
         ss << (i + 1) << ".";
         _leaderTexts[textIndex]->setText(ss.str());
-        _leaderTexts[textIndex + 1]->setText("---");
-        _leaderTexts[textIndex + 2]->setText("0");
+        _leaderTexts[textIndex + 1]->setText(constants::LEADERBOARD_EMPTY_NAME);
+        _leaderTexts[textIndex + 2]->setText(constants::LEADERBOARD_DEFAULT_SCORE);
     }
 }
 

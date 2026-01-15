@@ -12,6 +12,7 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include "../../../common/constants.hpp"
+#include "../../../../constants.hpp"
 #include "../../../../../common/interfaces/IEvent.hpp"
 #include "../../../../../common/interfaces/IWindow.hpp"
 #include "../../../../../common/interfaces/IAudio.hpp"
@@ -40,6 +41,21 @@ void ResultsState::enter() {
 
     auto window = _resourceManager->get<gfx::IWindow>();
     window->setViewCenter(constants::MAX_WIDTH / 2.0f, constants::MAX_HEIGHT / 2.0f);
+
+    if (_resourceManager->has<gfx::IAudio>()) {
+        auto audio = _resourceManager->get<gfx::IAudio>();
+        audio->stopMusic();
+        float musicVolume = 100.0f;
+        if (_resourceManager->has<SettingsConfig>()) {
+            musicVolume = _resourceManager->get<SettingsConfig>()->getMusicVolume();
+        }
+        audio->setMusicVolume(musicVolume);
+        if (_isWin) {
+            audio->playMusic(constants::VICTORY_MUSIC_PATH, true);
+        } else {
+            audio->playMusic(constants::DEATH_MUSIC_PATH, false);
+        }
+    }
 
     _uiManager->setCursorCallback([this](bool isHovering) {
         if (_resourceManager->has<gfx::IWindow>()) {

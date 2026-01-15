@@ -40,6 +40,8 @@ private:
     std::shared_ptr<ui::Background> _background;
     std::shared_ptr<ui::Text> _titleText;
     std::shared_ptr<ui::Button> _backButton;
+    std::vector<std::shared_ptr<ui::Text>> _controlTexts;
+    std::vector<std::shared_ptr<ui::Text>> _objectiveTexts;
 };
 
 }  // namespace gsm

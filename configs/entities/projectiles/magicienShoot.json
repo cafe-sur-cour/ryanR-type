@@ -1,0 +1,94 @@
+{
+    "name": "magicien_shot",
+    "components": {
+        "EnnemyProjectileTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 0.5, "y": 0.5 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "start": {
+                    "texturePath": "assets/sprites/projectiles/shootMagicen.png",
+                    "frameWidth": 273.0,
+                    "frameHeight": 273.0,
+                    "frameCount": 3,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                },
+                "end": {
+                    "texturePath": "assets/sprites/projectiles/shootMagicen.png",
+                    "frameWidth": 273.0,
+                    "frameHeight": 273.0,
+                    "frameCount": 8,
+                    "startWidth": 819.0,
+                    "startHeight": 0.0,
+                    "speed": 0.04,
+                    "loop": true
+                }
+
+            },
+            "initialState": "start",
+            "transitions": [
+                {
+                    "from": "start",
+                    "to": "end",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                }]
+        },
+
+
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 273, "y": 273 },
+            "type": "Trigger"
+        },
+        "DamageComponent": {
+            "target": "both",
+            "damage": 10.0
+        },
+        "SpeedComponent": {
+            "target": "both",
+            "speed": 600.0
+        },
+        "LifetimeComponent": {
+            "target": "both",
+            "lifetime": 1.0
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": ["TakeDeath"]
+                },
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": ["DealDeath"],
+                    "toSelf": ["TakeDeath"]
+                },
+                {
+                    "tags": ["ObstacleTag"],
+                    "toEntity": [],
+                    "toSelf": ["TakeDeath"]
+                }
+            ]
+        },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "musics/magicien-shoot.wav",
+            "volume": 15.0
+        }
+    }
+}

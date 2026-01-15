@@ -1,0 +1,15 @@
+{
+    "name": "musicVictory",
+    "components": {
+        "BackGroundMusicTag": {
+            "target": "client"
+        },
+        "MusicComponent": {
+            "target": "client",
+            "musicFile": "musics/victory-music.wav",
+            "initialState": "STOPPED",
+            "volume": 100.0,
+            "loop": true
+        }
+    }
+}

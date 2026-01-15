@@ -18,24 +18,11 @@
             "additionalFunctions": ["OnInteract"]
         },
 
-
-
-        "AnimationComponent": {
+        "SpriteComponent": {
             "target": "client",
-            "states": {
-                "idle": {
-                    "texturePath": "assets/sprites/power-up/powerup2.png",
-                    "frameWidth": 100.0,
-                    "frameHeight": 100.0,
-                    "frameCount": 60,
-                    "startWidth": 29.0,
-                    "startHeight": 29.0,
-                    "speed": 0.05,
-                    "loop": true
-                }
-            },
-            "initialState": "idle"
+            "filePath": "assets/sprites/power-up/powerUpSpeed.png"
         },
+
         "ColliderComponent": {
             "target": "both",
             "offset": { "x": 0.0, "y": 0.0 },

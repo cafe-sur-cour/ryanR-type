@@ -44,6 +44,7 @@ private:
     std::shared_ptr<ui::UILayout> _mainLayout;
 
     std::shared_ptr<ui::Button> _backButton;
+    std::shared_ptr<ui::Text> _titleText;
     std::shared_ptr<ui::TextInput> _messageInput;
     std::shared_ptr<ui::Button> _sendButton;
     std::shared_ptr<ui::UILayout> _messagesContainer;

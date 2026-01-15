@@ -12,4 +12,6 @@ target_sources(UI PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Panel.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SpritePreview.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SpritePreview.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Image.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Image.hpp
 )

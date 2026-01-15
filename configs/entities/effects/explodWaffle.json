@@ -1,0 +1,40 @@
+{
+    "name": "explodWaffle",
+    "components": {
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "death": {
+                    "texturePath": "assets/sprites/ennemies/waffleExplod.png",
+                    "frameWidth": 566,
+                    "frameHeight": 306.0,
+                    "frameCount": 6,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                }
+            },
+            "initialState": "death",
+            "transitions": []
+        },
+        "LifeSpanComponent": {
+            "target": "both",
+            "lifespan": 0.6
+        },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "assets/musics/clown_bulb_explosion_01.wav",
+            "volume": 100.0
+        },
+        "ClientEffectTag": {
+            "target": "client"
+        }
+    }
+}

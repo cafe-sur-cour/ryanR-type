@@ -76,17 +76,53 @@ namespace constants {
     const std::string HOW_TO_PLAY_PATH = "assets/sprites/menu/how_to_play.png";
     const std::string LEADERBOARD_PATH = "assets/sprites/menu/leaderboard.png";
     const std::string CHAT_PATH = "assets/sprites/menu/chat.png";
+    const std::string LEADERBOARD_PLACEHOLDER_PATH = "assets/sprites/menu/leaderboard-placeholder.png";
 
     const std::string LOADING_PREFAVB = "configs/prefab/loading_animation.json";
     const std::string VICTORY_PREFAB = "configs/prefab/vicotry.json";
     const std::string LOSE_PREFAB = "configs/prefab/youdied.json";
 
-    const std::string MAIN_FONT = "assets/fonts/cuphead_font.ttf"; // cuphead_font
+    const std::string MENU_MUSIC_PATH = "assets/musics/menu.wav";
+    const std::string VICTORY_MUSIC_PATH = "assets/musics/victory-music.wav";
+    const std::string DEATH_MUSIC_PATH = "assets/musics/playerDeath.wav";
+
+    const std::string MAIN_FONT = "assets/fonts/cuphead_font.ttf";
 
     const std::string WIN_TEXT = "YOU WIN!";
     const std::string LOSE_TEXT = "YOU LOSE!";
     const std::string LEVEL_COMPLETE_TITLE_TEXT = "LEVEL COMPLETE!";
     const std::string LEVEL_COMPLETE_SUB_TITLE_TEXT = "Going to the next level...";
+
+    /* Profile Constants */
+    const std::string PROFILE_TITLE_TEXT = "YOUR PROFILE";
+    const std::string USERNAME_LABEL = "Username: ";
+    const std::string GAMES_PLAYED_LABEL = "Games Played: ";
+    const std::string WINS_LABEL = "Wins: ";
+    const std::string HIGH_SCORE_LABEL = "High Score: ";
+    const std::string REFRESH_PROFILE_BUTTON_TEXT = "Refresh Profile";
+    const std::string BACK_BUTTON_TEXT = "Back";
+
+    /* Chat Constants */
+    const std::string CHAT_TITLE_TEXT = "CHAT ROOM";
+    const std::string CHAT_NO_MESSAGES_TEXT = "No messages yet. Start the conversation!";
+    const std::string CHAT_PLACEHOLDER_TEXT = "Type your message...";
+    const std::string SEND_BUTTON_TEXT = "Send";
+    const std::string BACK_BUTTON_TEXT_UPPER = "BACK";
+
+    /* How To Play Constants */
+    const std::string HOW_TO_PLAY_TITLE_TEXT = "HOW TO PLAY";
+    const std::string CONTROLS_TITLE_TEXT = "CONTROLS";
+    const std::string OBJECTIVES_TITLE_TEXT = "OBJECTIVES";
+    const std::string OBJECTIVE_DESTROY_ENEMIES = "Destroy Enemy Ships";
+    const std::string OBJECTIVE_SURVIVE_WAVES = "Survive the Waves";
+    const std::string OBJECTIVE_COLLECT_POWERUPS = "Collect Power-ups";
+    const std::string OBJECTIVE_BEAT_HIGH_SCORE = "Beat High Score";
+
+    /* Leaderboard Constants */
+    const std::string LEADERBOARD_TITLE_TEXT = "LEADERBOARD";
+    const std::string LEADERBOARD_DEFAULT_NAME_PREFIX = "Player ";
+    const std::string LEADERBOARD_EMPTY_NAME = "---";
+    const std::string LEADERBOARD_DEFAULT_SCORE = "0";
 
     /* Home page input place holders */
     const std::string IP_PLACEHOLDER = "Enter an IP address";

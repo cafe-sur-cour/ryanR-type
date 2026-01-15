@@ -1,0 +1,195 @@
+{
+    "name": "boss2head",
+    "components": {
+        "MobTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 100.0, "y": 100.0 },
+            "scale": { "x": 1.0, "y": 1.0 },
+            "rotation": 0.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "SpeedComponent": { "target": "both", "speed": 150.0 },
+        "HealthComponent": { "target": "both", "health": 500.0 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 100 },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/boss2head.lua",
+            "additionalFunctions": ["death", "OnInteract"]
+        },
+        "ProjectilePrefabComponent": {
+            "target": "both",
+            "prefabName": "bellShoot"
+        },
+        "ShootingStatsComponent": {
+            "target": "both",
+            "fireRate": 500.0,
+            "projectileSpeed": 500.0,
+            "shotCount": 4,
+            "angleOffset": 180.0,
+            "spreadAngle": 90.0,
+            "distanceOffset": 0.0
+        },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "idle": {
+                    "texturePath": "assets/sprites/boss/Bishop/head/bishop_dormant_head_idle.png",
+                    "frameWidth": 266.0,
+                    "frameHeight": 264.0,
+                    "frameCount": 8,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "idlePink": {
+                    "texturePath": "assets/sprites/boss/Bishop/head/bishop_pink_head_idle.png",
+                    "frameWidth": 269.0,
+                    "frameHeight": 268.0,
+                    "frameCount": 8,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                },
+                "shootingNormal": {
+                    "texturePath": "assets/sprites/boss/Bishop/head/bishop_shoot_head.png",
+                    "frameWidth": 266.0,
+                    "frameHeight": 309.0,
+                    "frameCount": 8,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                },
+                "ShootingPink": {
+                    "texturePath": "assets/sprites/boss/Bishop/head/bishop_shoot_head_eyes_open.png",
+                    "frameWidth": 265.0,
+                    "frameHeight": 344.0,
+                    "frameCount": 8,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                },
+                "appear": {
+                    "texturePath": "assets/sprites/boss/Bishop/head/bishop_dormant_head_appear.png",
+                    "frameWidth": 604.0,
+                    "frameHeight": 481.0,
+                    "frameCount": 10,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                },
+                "disappear": {
+                    "texturePath": "assets/sprites/boss/Bishop/head/bishop_hit_disappear_head.png",
+                    "frameWidth": 482.0,
+                    "frameHeight": 766.0,
+                    "frameCount": 12,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                },
+                "return": {
+                    "texturePath": "assets/sprites/boss/Bishop/head/bishop_hit_return_head.png",
+                    "frameWidth": 386.0,
+                    "frameHeight": 335.0,
+                    "frameCount": 3,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                },
+                "wakeup": {
+                    "texturePath": "assets/sprites/boss/Bishop/head/bishop_pink_head_wakeup.png",
+                    "frameWidth": 440.0,
+                    "frameHeight": 539.0,
+                    "frameCount": 8,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                }
+            },
+            "initialState": "appear",
+            "transitions": [
+                {
+                    "from": "wakeup",
+                    "to": "idlePink",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                },
+                {
+                    "from": "ShootingPink",
+                    "to": "idlePink",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                },
+                {
+                    "from": "shootingNormal",
+                    "to": "idle",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                },
+                {
+                    "from": "return",
+                    "to": "idle",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                },
+                {
+                    "from": "appear",
+                    "to": "idle",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                }
+            ]
+        },
+        "ColliderComponent":
+        [
+            {
+                "target": "both",
+                "offset": { "x": 0.0, "y": 0.0 },
+                "size" : { "x": 266.0, "y": 264.0 },
+                "type": "Trigger"
+            }
+        ]
+        ,
+        "DamageComponent": {
+            "target": "both",
+            "damage": 15.0
+        },
+        "DamageCooldownComponent": { "target": "both" },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["PlayerProjectileTag"],
+                    "toEntity": [],
+                    "toSelf": ["InteractionCallScripting", "DealDamage"]
+                },
+                {
+                    "tags": ["PlayerTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": []
+                }
+            ]
+        },
+        "ShooterTag": { "target": "both" },
+        "HealthBarComponent": { "target": "client" },
+        "InvulnerableComponent": { "target": "both", "active": true }
+    }
+}

@@ -69,11 +69,6 @@ void ShootingSystem::update(
         math::Vector2f spawnPos = transform->getPosition();
 
         auto collider = registry->getComponent<ColliderComponent>(entityId);
-        if (collider) {
-            math::Vector2f colliderCenter =
-                collider->getOffset() + (collider->getSize() * 0.5f);
-            spawnPos = spawnPos + colliderCenter;
-        }
 
         float totalSpread = pattern.angleSpread * static_cast<float>(
             pattern.shotCount - 1
@@ -83,12 +78,23 @@ void ShootingSystem::update(
         for (int i = 0; i < pattern.shotCount; i++) {
             float angle = startAngle + (static_cast<float>(i) * pattern.angleSpread);
 
+            float offsetAngle = angle * static_cast<float>(M_PI) / 180.0f;
+
             math::Vector2f offsetPosition = spawnPos;
+
             if (pattern.offsetDistance > 0.0f) {
-                float offsetAngle = angle * static_cast<float>(M_PI) / 180.0f;
                 offsetPosition = math::Vector2f(
                     spawnPos.getX() + pattern.offsetDistance * std::cos(offsetAngle),
                     spawnPos.getY() + pattern.offsetDistance * std::sin(offsetAngle)
+                );
+            }
+            if (collider) {
+                math::Vector2f colliderCenter = collider->getOffset() + (
+                    collider->getSize() * 0.5f
+                );
+                offsetPosition = math::Vector2f(
+                    offsetPosition.getX() + colliderCenter.getX() * std::cos(offsetAngle),
+                    offsetPosition.getY() + colliderCenter.getY() * std::sin(offsetAngle)
                 );
             }
 
@@ -117,6 +123,8 @@ void ShootingSystem::spawnProjectile(
     float angle,
     ecs::Entity shooterEntity
 ) {
+    float angleRad = angle * static_cast<float>(M_PI) / 180.0f;
+
     auto prefabManager = resourceManager->get<EntityPrefabManager>();
     Entity projectileEntity = prefabManager->createEntityFromPrefab(
         prefabName, registry, ecs::EntityCreationContext::forServer()
@@ -127,6 +135,7 @@ void ShootingSystem::spawnProjectile(
     auto transform = registry->getComponent<TransformComponent>(projectileEntity);
     if (transform) {
         transform->setPosition(position);
+        transform->setRotation(angle);
     }
 
     float speed = 0.0f;
@@ -137,7 +146,7 @@ void ShootingSystem::spawnProjectile(
 
     auto velocity = registry->getComponent<VelocityComponent>(projectileEntity);
     if (velocity) {
-        math::Vector2f projectileVelocity = calculateProjectileVelocity(angle, speed);
+        math::Vector2f projectileVelocity = calculateProjectileVelocity(angleRad, speed);
         velocity->setVelocity(projectileVelocity);
     }
 
@@ -161,11 +170,9 @@ void ShootingSystem::spawnProjectile(
 }
 
 math::Vector2f ShootingSystem::calculateProjectileVelocity(
-    float angle,
+    float angleRad,
     float speed
 ) {
-    float angleRad = angle * static_cast<float>(M_PI) / 180.0f;
-
     float vx = speed * std::cos(angleRad);
     float vy = speed * std::sin(angleRad);
 

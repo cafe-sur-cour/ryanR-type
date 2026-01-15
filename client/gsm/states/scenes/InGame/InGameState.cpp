@@ -81,6 +81,11 @@ InGameState::InGameState(
 }
 
 void InGameState::enter() {
+    if (_resourceManager->has<gfx::IAudio>()) {
+        auto audio = _resourceManager->get<gfx::IAudio>();
+        audio->stopMusic();
+    }
+
     _resourceManager->add<EntityPrefabManager>(_prefabManager);
     _resourceManager->add<ecs::Registry>(_registry);
 
@@ -241,7 +246,9 @@ void InGameState::drawHealthHUD(
     size_t feedbackBaseOffsetY = 105;
 
     std::stringstream healthSs;
-    healthSs << "Health: " << static_cast<int>(health) << "/" << static_cast<int>(maxHealth);
+    float displayMaxHealth = (health > 100.0f) ? health : maxHealth;
+    healthSs << "Health: " << static_cast<int>(health) << "/" <<
+        static_cast<int>(displayMaxHealth);
     std::string healthText = healthSs.str();
 
     float healthRatio = (maxHealth > 0.0f) ? health / maxHealth : 0.0f;

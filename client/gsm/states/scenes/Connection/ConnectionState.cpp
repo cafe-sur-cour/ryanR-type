@@ -24,6 +24,7 @@
 #include "../../../../SettingsConfig.hpp"
 #include "../MainMenu/MainMenuState.hpp"
 #include "../LevelEditorSelector/LevelEditorSelectorState.hpp"
+#include "../../../../../common/interfaces/IAudio.hpp"
 
 namespace gsm {
 
@@ -207,7 +208,17 @@ ConnectionState::ConnectionState(
 }
 
 void ConnectionState::enter() {
-    // Nothing special on enter
+    if (_resourceManager->has<gfx::IAudio>()) {
+        auto audio = _resourceManager->get<gfx::IAudio>();
+        if (!audio->isMusicPlaying()) {
+            float musicVolume = 100.0f;
+            if (_resourceManager->has<SettingsConfig>()) {
+                musicVolume = _resourceManager->get<SettingsConfig>()->getMusicVolume();
+            }
+            audio->setMusicVolume(musicVolume);
+            audio->playMusic(constants::MENU_MUSIC_PATH, true);
+        }
+    }
 }
 
 void ConnectionState::update(float deltaTime) {
