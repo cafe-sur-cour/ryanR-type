@@ -29,3 +29,27 @@ add_test(NAME TriggerSystemTests COMMAND TriggerSystemTests)
 add_executable(SpawnSystemTests SpawnSystemTests.cpp)
 target_link_libraries(SpawnSystemTests ECS PREFAB COLLISION_RULES ERROR GTest::gtest GTest::gtest_main)
 add_test(NAME SpawnSystemTests COMMAND SpawnSystemTests)
+
+add_executable(GameZoneStopSystemTests GameZoneStopSystemTests.cpp)
+target_link_libraries(GameZoneStopSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME GameZoneStopSystemTests COMMAND GameZoneStopSystemTests)
+
+add_executable(InputNormalizerTests InputNormalizerTests.cpp)
+target_link_libraries(InputNormalizerTests InputNormalizer ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME InputNormalizerTests COMMAND InputNormalizerTests)
+
+add_executable(ChargedShotSystemTests ChargedShotSystemTests.cpp)
+target_link_libraries(ChargedShotSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME ChargedShotSystemTests COMMAND ChargedShotSystemTests)
+
+add_executable(InputToVelocitySystemTests InputToVelocitySystemTests.cpp)
+target_link_libraries(InputToVelocitySystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME InputToVelocitySystemTests COMMAND InputToVelocitySystemTests)
+
+add_executable(IntentToVelocitySystemTests IntentToVelocitySystemTests.cpp)
+target_link_libraries(IntentToVelocitySystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME IntentToVelocitySystemTests COMMAND IntentToVelocitySystemTests)
+
+add_executable(InteractionSystemTests InteractionSystemTests.cpp)
+target_link_libraries(InteractionSystemTests ECS PREFAB COLLISION_RULES GTest::gtest GTest::gtest_main)
+add_test(NAME InteractionSystemTests COMMAND InteractionSystemTests)
