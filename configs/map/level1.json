@@ -107,15 +107,22 @@
         {
             "name": "powerUpAddForceLevel",
             "position": {
-                "posX": 1649.0,
-                "posY": 675.0
+                "posX": 1740.0,
+                "posY": 363.0
             }
         },
         {
             "name": "powerUpAddForceLevel",
             "position": {
-                "posX": 1439.0,
-                "posY": 681.0
+                "posX": 1435.0,
+                "posY": 389.0
+            }
+        },
+        {
+            "name": "powerUpAddForceLevel",
+            "position": {
+                "posX": 1838.0,
+                "posY": 66.0
             }
         }
     ],
@@ -127,12 +134,12 @@
                     "count": 1,
                     "distributionX": {
                         "max": 100.0,
-                        "min": 59.0,
+                        "min": 90.0,
                         "type": "random"
                     },
                     "distributionY": {
-                        "max": 90.0,
-                        "min": 10.0,
+                        "max": 60.0,
+                        "min": 40.0,
                         "type": "uniform"
                     },
                     "type": "snake_head"
