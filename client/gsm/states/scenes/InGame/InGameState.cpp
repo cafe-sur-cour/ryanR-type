@@ -133,7 +133,6 @@ void InGameState::enter() {
     ecs::Entity musicIntentEntity = _registry->createEntity();
     _registry->addComponent<ecs::MusicIntentComponent>(musicIntentEntity,
         std::make_shared<ecs::MusicIntentComponent>(ecs::PLAY, ""));
-    _resourceManager->get<ClientNetwork>()->sendWhoAmI();
 }
 
 void InGameState::update(float deltaTime) {
@@ -143,6 +142,15 @@ void InGameState::update(float deltaTime) {
         if (!(_registry->hasComponent<ecs::NetworkStateComponent>(localPlayer)))
             _registry->addComponent(
                 localPlayer, std::make_shared<ecs::NetworkStateComponent>());
+        _localPlayerFound = true;
+    }
+
+    if (!_localPlayerFound) {
+        _whoAmITimer += deltaTime;
+        if (_whoAmITimer >= constants::WHOAMI_REQUEST_INTERVAL) {
+            _resourceManager->get<ClientNetwork>()->sendWhoAmI();
+            _whoAmITimer = 0.0f;
+        }
     }
 
     auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
