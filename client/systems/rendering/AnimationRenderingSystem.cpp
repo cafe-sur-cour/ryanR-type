@@ -24,7 +24,7 @@
 
 namespace ecs {
 
-AnimationRenderingSystem::AnimationRenderingSystem() {
+AnimationRenderingSystem::AnimationRenderingSystem() : _waitTimers() {
 }
 
 void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
@@ -66,16 +66,15 @@ void AnimationRenderingSystem::update(std::shared_ptr<ResourceManager>
                                 animation->setTimer(0.0f);
                             } else {
                                 if (animation->getCurrentFrame() == 0) {
-                                    static std::unordered_map<Entity, float> waitTimers;
-                                    if (waitTimers.find(entityId) == waitTimers.end())
-                                        waitTimers[entityId] = 0.0f;
+                                    if (_waitTimers.find(entityId) == _waitTimers.end())
+                                        _waitTimers[entityId] = 0.0f;
 
-                                    waitTimers[entityId] += deltaTime;
+                                    _waitTimers[entityId] += deltaTime;
 
-                                    if (waitTimers[entityId] >= currentClip->speed) {
+                                    if (_waitTimers[entityId] >= currentClip->speed) {
                                         animation->setCurrentState(transition.to);
                                         animation->setPlayingRewind(false);
-                                        waitTimers.erase(entityId);
+                                        _waitTimers.erase(entityId);
                                     }
                                 }
                             }

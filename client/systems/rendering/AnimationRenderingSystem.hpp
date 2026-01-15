@@ -25,6 +25,9 @@ class AnimationRenderingSystem : public ASystem {
     protected:
         void update(std::shared_ptr<ResourceManager> resourceManager,
         std::shared_ptr<Registry> registry, float deltaTime) override;
+
+    private:
+        std::unordered_map<Entity, float> _waitTimers;
 };
 
 }  // namespace ecs
