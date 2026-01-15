@@ -12,16 +12,18 @@
 
 namespace ecs {
 
+using Entity = size_t;
+
 class OwnerComponent : public AComponent {
     public:
-        OwnerComponent(ecs::Entity owner = 0) : _owner(owner) {};
+        OwnerComponent(Entity owner = 0) : _owner(owner) {};
         ~OwnerComponent() override = default;
 
-        ecs::Entity getOwner() const { return _owner; }
-        void setOwner(ecs::Entity owner) { _owner = owner; }
+        Entity getOwner() const { return _owner; }
+        void setOwner(Entity owner) { _owner = owner; }
 
     private:
-        ecs::Entity _owner;
+        Entity _owner;
 };
 
 }  // namespace ecs

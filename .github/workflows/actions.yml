@@ -227,7 +227,10 @@ jobs:
       - name: RUN UNIT TESTS
         run: |
           chmod +x ./scripts/run_unit_tests.sh
-          ./scripts/run_unit_tests.sh
+          ./scripts/run_unit_tests.sh | tee test_output.log
+          if grep -q "No tests were found!!!" test_output.log; then
+            exit 1
+          fi
 
       - name: SHOW CCACHE STATS
         run: ccache --show-stats
