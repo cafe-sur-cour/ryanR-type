@@ -27,7 +27,7 @@
 #include "../../common/components/permanent/ProjectilePrefabComponent.hpp"
 #include "../../common/components/permanent/ChargedShotComponent.hpp"
 #include "../../common/components/tags/ObstacleTag.hpp"
-#include "../../client/interpolation/NetworkStateComponent.hpp"
+#include "../../client/components/permanent/NetworkStateComponent.hpp"
 
 // Helper function to pack float as uint64_t
 inline uint64_t packFloat(float value) {
