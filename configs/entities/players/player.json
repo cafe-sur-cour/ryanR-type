@@ -163,7 +163,7 @@
         "ChargedShotComponent": {
             "target": "both",
             "maxCharge": 2.0,
-            "chargeReloadTime": 1.0
+            "chargeReloadTime": 2.0
         }
     }
 }

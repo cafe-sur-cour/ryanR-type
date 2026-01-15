@@ -24,10 +24,17 @@ void ChargedShotSystem::update(
     for (auto entity : entities) {
         auto comp = registry->getComponent<ChargedShotComponent>(entity);
 
+        float reloadTime = comp->getReloadTime();
+        float maxCharge = comp->getMaxCharge();
+
+        float chargeIncrement = (reloadTime > 0.0f)
+            ? (deltaTime * maxCharge / reloadTime)
+            : deltaTime;
+
         comp->setCharge(
             (std::min)(
-                comp->getCharge() + deltaTime,
-                comp->getMaxCharge()
+                comp->getCharge() + chargeIncrement,
+                maxCharge
             )
         );
     }

@@ -145,6 +145,23 @@ void ScriptingSystem::bindAPI() {
         }
     });
 
+    lua.set_function(constants::GET_CHARGE_RELOAD_TIME_FUNCTION,
+        [this](Entity e) -> float {
+        if (registry->hasComponent<ChargedShotComponent>(e)) {
+            auto chargedShotComp = registry->getComponent<ChargedShotComponent>(e);
+            return chargedShotComp->getReloadTime();
+        }
+        return 0.0f;
+    });
+
+    lua.set_function(constants::SET_CHARGE_RELOAD_TIME_FUNCTION,
+        [this](Entity e, float reloadTime) {
+        if (registry->hasComponent<ChargedShotComponent>(e)) {
+            auto chargedShotComp = registry->getComponent<ChargedShotComponent>(e);
+            chargedShotComp->setReloadTime(reloadTime);
+        }
+    });
+
     lua.set_function(constants::CREATE_SHOOT_INTENT_FUNCTION,
         [this](Entity e, float angle) -> bool {
         if (registry->hasComponent<ShootIntentComponent>(e))

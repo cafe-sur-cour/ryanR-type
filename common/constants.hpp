@@ -358,6 +358,8 @@ namespace constants {
     const std::string SET_ENTITY_SPEED_FUNCTION = "setEntitySpeed";
     const std::string GET_MAX_CHARGE_FUNCTION = "getMaxCharge";
     const std::string SET_MAX_CHARGE_FUNCTION = "setMaxCharge";
+    const std::string GET_CHARGE_RELOAD_TIME_FUNCTION = "getChargeReloadTime";
+    const std::string SET_CHARGE_RELOAD_TIME_FUNCTION = "setChargeReloadTime";
     const std::string CREATE_SHOOT_INTENT_FUNCTION = "createShootIntent";
     const std::string SET_ANIMATION_STATE_FUNCTION = "setAnimationState";
     const std::string SPAWN_ENTITY_FUNCTION = "spawnEntity";
