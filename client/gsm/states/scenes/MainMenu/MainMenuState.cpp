@@ -56,12 +56,10 @@ MainMenuState::MainMenuState(
 
     auto config = _resourceManager->get<SettingsConfig>();
     _uiManager->setGlobalScale(config->getUIScale());
-
     _background = std::make_shared<ui::Background>(_resourceManager);
     _background->addLayer(constants::UI_BACKGROUND_EARTH_PATH, 0.0f, 0.0f,
         math::Vector2f(5376.0f, 3584.0f));
     _uiManager->addElement(_background);
-
     _requestCodeButton = std::make_shared<ui::Button>(_resourceManager);
     _requestCodeButton->setText("Request Code");
     _requestCodeButton->setSize(math::Vector2f(300.f, 50.f));
@@ -71,9 +69,9 @@ MainMenuState::MainMenuState(
             network->requestCode();
         }
     });
-
     _lobbyCodeInput = std::make_shared<ui::TextInput>(_resourceManager);
     _lobbyCodeInput->setPlaceholder("Enter lobby code");
+    _lobbyCodeInput->setMaxLength(12);
     _lobbyCodeInput->setSize(math::Vector2f(300.f, 50.f));
     _lobbyCodeInput->setOnRelease([this]() {
         auto navMan = this->_uiManager->getNavigationManager();
@@ -90,6 +88,14 @@ MainMenuState::MainMenuState(
         if (network) {
             std::string code = this->_lobbyCodeInput->getText();
             if (!code.empty()) {
+                if (code.length() != constants::LOBBY_CODE_LENGTH) {
+                    debug::Debug::printDebug(network->isDebugMode(),
+                        "[MainMenu] Cannot connect to lobby: Code must be "
+                        + std::to_string(constants::LOBBY_CODE_LENGTH) + " characters long",
+                        debug::debugType::NETWORK,
+                        debug::debugLevel::WARNING);
+                    return;
+                }
                 network->setLobbyCode(code);
                 network->sendLobbyConnection(code);
                 debug::Debug::printDebug(network->isDebugMode(),
