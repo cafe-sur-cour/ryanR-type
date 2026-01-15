@@ -6,7 +6,7 @@
         },
         "MusicComponent": {
             "target": "client",
-            "musicFile": "musics/level1.mp3",
+            "musicFile": "musics/level1.wav",
             "initialState": "STOPPED",
             "volume": 100.0,
             "loop": true
