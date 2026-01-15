@@ -57,6 +57,8 @@ class Lobby {
 
             std::shared_ptr<ResourceManager> getResourceManager() const;
 
+            const std::map<uint8_t, ecs::Entity>& getClientToEntity() const;
+
             std::vector<uint8_t> getConnectedClients() const;
             std::vector<std::tuple<uint8_t, std::string>> getConnectedClientDetails() const;
             std::vector<std::shared_ptr<net::INetworkEndpoint>> getConnectedClientEndpoints() const;

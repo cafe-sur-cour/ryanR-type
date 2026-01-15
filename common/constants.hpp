@@ -388,6 +388,8 @@ namespace constants {
     const std::string GET_ENTITY_VELOCITY_FUNCTION = "getEntityVelocity";
     const std::string SET_INVULNERABLE_FUNCTION = "setInvulnerable";
     const std::string GET_NEAREST_ENEMY_POSITION_FUNCTION = "getNearestEnemyPosition";
+    const std::string GET_ENTITY_OWNER_FUNCTION = "getEntityOwner";
+    const std::string SET_ENTITY_OWNER_FUNCTION = "setEntityOwner";
 }
 
 #endif /* !CONSTANTS_HPP_ */
