@@ -785,6 +785,7 @@ std::string rserv::Server::closeLobby(const std::string& lobbyId) {
                 auto connectedClients = lobbyPtr->getConnectedClients();
                 for (auto clientId : connectedClients) {
                     lobbyPtr->removeClient(clientId);
+                    this->_clientToLobby.erase(clientId);
                     for (auto& client : _clients) {
                         if (std::get<0>(client) == clientId) {
                             forceLeavePacket(
@@ -793,6 +794,10 @@ std::string rserv::Server::closeLobby(const std::string& lobbyId) {
                         }
                     }
                 }
+                lobbyPtr->stop();
+                debug::Debug::printDebug(this->_config->getIsDebug(),
+                    "[SERVER] Lobby " + lobbyId + " closed and stopped",
+                    debug::debugType::NETWORK, debug::debugLevel::INFO);
                 return "Lobby " + lobbyId + " closed";
             }
         }
@@ -804,6 +809,7 @@ std::string rserv::Server::closeLobby(const std::string& lobbyId) {
             auto connectedClients = lobbyPtr->getConnectedClients();
             for (auto clientId : connectedClients) {
                 lobbyPtr->removeClient(clientId);
+                this->_clientToLobby.erase(clientId);
                 for (auto& client : _clients) {
                     if (std::get<0>(client) == clientId) {
                         forceLeavePacket(
@@ -812,6 +818,10 @@ std::string rserv::Server::closeLobby(const std::string& lobbyId) {
                     }
                 }
             }
+            lobbyPtr->stop();
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Lobby " + lobbyId + " closed and stopped",
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
             return "Lobby " + lobbyId + " closed";
         }
     }
@@ -839,6 +849,13 @@ std::string rserv::Server::kickPlayer(const std::string& playerId) {
     if (_clientToLobby.find(id) != _clientToLobby.end()) {
         auto lobby = _clientToLobby[id];
         lobby->removeClient(id);
+        this->_clientToLobby.erase(id);
+        if (lobby->getClientCount() == 0 && lobby->isRunning()) {
+            lobby->stop();
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Lobby " + lobby->getLobbyCode() + " is empty and has been stopped",
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+        }
         for (auto& client : _clients) {
             if (std::get<0>(client) == id) {
                 forceLeavePacket(*std::get<1>(client), constants::ForceLeaveType::KICKED);
@@ -880,6 +897,13 @@ std::string rserv::Server::banPlayer(const std::string& playerId) {
     if (id != 0 && _clientToLobby.find(id) != _clientToLobby.end()) {
         auto lobby = _clientToLobby[id];
         lobby->removeClient(id);
+        this->_clientToLobby.erase(id);
+        if (lobby->getClientCount() == 0 && lobby->isRunning()) {
+            lobby->stop();
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Lobby " + lobby->getLobbyCode() + " is empty and has been stopped",
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+        }
         for (auto& client : _clients) {
             if (std::get<0>(client) == id) {
                 forceLeavePacket(*std::get<1>(client), constants::ForceLeaveType::BANNED);
