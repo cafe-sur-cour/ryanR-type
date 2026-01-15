@@ -311,6 +311,7 @@ bool registerDefaultPacketHandlers(
     registerOptionalULongPacket(packet, ser, REQUEST_PROFILE_PACKET);
     registerSingleUCharPacket(packet, ser, ACCEPTATION_PACKET, LENGTH_ACCEPTATION_PACKET);
     registerSingleUCharPacket(packet, ser, DISCONNECTION_PACKET, LENGTH_DISCONNECTION_PACKET);
+    registerSingleUCharPacket(packet, ser, LEAVE_LOBBY_PACKET, LENGTH_DISCONNECTION_PACKET);
 
     registerUCharULongPacket(packet, ser, EVENT_PACKET);
 
@@ -342,7 +343,8 @@ bool registerDefaultPacketHandlers(
         LENGTH_LOBBY_CODE_PACKET);
     registerSingleUCharPacket(packet, ser, LOBBY_CONNECT_VALUE,
         LENGTH_CONNECT_TO_LOBBY_PACKET);
-
+    registerSingleUCharPacket(packet, ser, ACK_LEAVE_LOBBY,
+        LENGTH_CONNECT_TO_LOBBY_PACKET);
     registerOptionalULongPacket(packet, ser, LEVEL_COMPLETE_PACKET);
     registerOptionalULongPacket(packet, ser, NEXT_LEVEL_PACKET);
     registerMultiUCharPacket(packet, ser, CONNECT_USER_PACKET, LENGTH_CONNECT_USER_PACKET);
@@ -357,6 +359,7 @@ bool registerDefaultPacketHandlers(
     packet->registerLength(FORCE_LEAVE_PACKET, LENGTH_FORCE_LEAVE_PACKET);
 
     packet->registerLength(LOBBY_CONNECT_VALUE, LENGTH_CONNECT_TO_LOBBY_PACKET);
+    packet->registerLength(ACK_LEAVE_LOBBY, LENGTH_CONNECT_TO_LOBBY_PACKET);
     packet->registerLength(REQUEST_LOBBY_PACKET, LENGTH_REQUEST_LOBBY_PACKET);
     packet->registerLength(SEND_LOBBY_CODE_PACKET, LENGTH_LOBBY_CODE_PACKET);
     packet->registerLength(CONNECT_TO_LOBBY, LENGTH_LOBBY_CODE_PACKET);
@@ -381,6 +384,7 @@ bool registerDefaultPacketHandlers(
     packet->registerLength(GAME_RULES_PACKET, LENGTH_GAME_RULES_PACKET);
     packet->registerLength(
         REQUEST_GAME_RULES_UPDATE_PACKET, LENGTH_REQUEST_GAME_RULES_UPDATE_PACKET);
+    packet->registerLength(LEAVE_LOBBY_PACKET, LENGTH_DISCONNECTION_PACKET);
 
     try {
         auto accept = packet->pack(0, 0, ACCEPTATION_PACKET, {0});

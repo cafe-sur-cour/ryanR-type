@@ -97,45 +97,15 @@ void ForceLeaveState::enter() {
 
     _leaveButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
-        if (network) {
-            network->setLobbyCode("");
-            network->_isConnectedToLobby = false;
-            network->_isLobbyMaster = false;
-            network->_ready = false;
-            network->clearEntitiesAndMappings();
-        }
-        auto gsmPtr = _gsm.lock();
-        if (gsmPtr) {
-            auto mainMenuState =
-                std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
-            gsmPtr->requestStateChange(mainMenuState);
-        }
-        auto IAudio = this->_resourceManager->get<gfx::IAudio>();
-        if (IAudio) {
-            IAudio->stopAllSounds();
-            IAudio->stopMusic();
+       if (network && network->isConnected()) {
+            network->sendDisconnectFromLobby();
         }
     });
 
     _leaveButton->setOnActivated([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
-        if (network) {
-            network->setLobbyCode("");
-            network->_isConnectedToLobby = false;
-            network->_isLobbyMaster = false;
-            network->_ready = false;
-            network->clearEntitiesAndMappings();
-        }
-        auto gsmPtr = _gsm.lock();
-        if (gsmPtr) {
-            auto mainMenuState =
-                std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
-            gsmPtr->requestStateChange(mainMenuState);
-        }
-        auto IAudio = this->_resourceManager->get<gfx::IAudio>();
-        if (IAudio) {
-            IAudio->stopAllSounds();
-            IAudio->stopMusic();
+        if (network && network->isConnected()) {
+            network->sendDisconnectFromLobby();
         }
     });
 
@@ -149,7 +119,26 @@ void ForceLeaveState::update(float deltaTime) {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
         return;
     }
-
+    auto network = this->_resourceManager->get<ClientNetwork>();
+    if (network && network->_shouldDisconnect) {
+        network->setLobbyCode("");
+        network->_isConnectedToLobby = false;
+        network->_isLobbyMaster = false;
+        network->_ready = false;
+        network->clearEntitiesAndMappings();
+        auto gsmPtr = _gsm.lock();
+        if (gsmPtr) {
+            auto mainMenuState =
+                std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
+            gsmPtr->requestStateChange(mainMenuState);
+        }
+        auto IAudio = this->_resourceManager->get<gfx::IAudio>();
+        if (IAudio) {
+            IAudio->stopAllSounds();
+            IAudio->stopMusic();
+        }
+        network->_shouldDisconnect = false;
+    }
     _uiManager->handleKeyboardInput(eventResult);
 
     math::Vector2f mousePos = _mouseHandler->getWorldMousePosition();

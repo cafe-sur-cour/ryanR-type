@@ -47,6 +47,7 @@ ClientNetwork::ClientNetwork() {
     this->_lobbyCode = "";
     this->_isConnectedToLobby = false;
     this->_isLobbyMaster = false;
+    this->_shouldDisconnect = false;
 
     this->_shouldConnect = false;
     this->_connectionAttemptTime = std::chrono::steady_clock::now();
@@ -62,7 +63,7 @@ ClientNetwork::ClientNetwork() {
     _packetHandlers[constants::PACKET_NO_OP] = &ClientNetwork::handleNoOp;
     _packetHandlers[constants::PACKET_CONNECTION] = &ClientNetwork::handleNoOp;
     _packetHandlers[constants::PACKET_ACCEPT] = &ClientNetwork::handleConnectionAcceptation;
-    _packetHandlers[constants::PACKET_DISC] = &ClientNetwork::handleNoOp;
+    _packetHandlers[constants::PACKET_DISC] = &ClientNetwork::disconnectionPacket;
     _packetHandlers[constants::PACKET_EVENT] = &ClientNetwork::handleNoOp;
     _packetHandlers[constants::PACKET_GAME_STATE_BATCH] =
         &ClientNetwork::handleBatchedGameState;
@@ -85,6 +86,7 @@ ClientNetwork::ClientNetwork() {
         &ClientNetwork::handleBroadcastedChat;
     _packetHandlers[constants::PACKET_GAME_RULES] = &ClientNetwork::handleGameRules;
     _packetHandlers[constants::PACKET_FORCE_LEAVE] = &ClientNetwork::handleForceLeave;
+    _packetHandlers[constants::PACKET_ACK_LEAVE_LOBBY] = &ClientNetwork::handleAckLeaveLobby;
 
     _componentParsers[PLAYER_TAG] = &ClientNetwork::parsePlayerTagComponent;
     _componentParsers[TRANSFORM] = &ClientNetwork::parseTransformComponent;
@@ -422,6 +424,7 @@ void ClientNetwork::clearEntitiesAndMappings() {
     }
 
     _serverToLocalEntityMap.clear();
+    _lastReceivedAnimationState.clear();
 
     debug::Debug::printDebug(this->_isDebug,
         "[CLIENT] Cleared all entity mappings",

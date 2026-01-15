@@ -380,6 +380,8 @@ void rserv::Lobby::processIncomingPackets() {
         this->processEvents(clientId);
     } else if (this->_packet->getType() == constants::PACKET_WHOAMI) {
         this->processWhoAmI(clientId);
+    } else if (this->_packet->getType() == constants::PACKET_LEAVE_LOBBY) {
+        this->processDisconnections(clientId);
     } else {
         debug::Debug::printDebug(this->getIsDebug(),
             "[SERVER] Packet received of type "
@@ -396,23 +398,18 @@ bool rserv::Lobby::processDisconnections(uint8_t idClient) {
 
     for (auto &client : this->_clients) {
         if (std::get<0>(client) == idClient) {
+            if (this->_running.load(std::memory_order_acquire)) {
+                this->ackLeaveLobbyPacket(*std::get<1>(client), true);
+            }
             this->_clients.erase(
                 std::remove(this->_clients.begin(), this->_clients.end(), client),
                 this->_clients.end());
             this->_clientToEntity.erase(idClient);
+            this->_clientsReady.erase(idClient);
             debug::Debug::printDebug(this->getIsDebug(),
                 "Client " + std::to_string(idClient)
                 + " disconnected and removed from the lobby",
                 debug::debugType::NETWORK, debug::debugLevel::INFO);
-
-            bool shouldClose = this->_clients.empty();
-
-            if (shouldClose) {
-                debug::Debug::printDebug(this->getIsDebug(),
-                    "All clients disconnected. Lobby will close.",
-                    debug::debugType::NETWORK, debug::debugLevel::INFO);
-                _running.store(false, std::memory_order_release);
-            }
             return true;
         }
     }
@@ -743,8 +740,6 @@ bool rserv::Lobby::levelCompletePacket() {
         this->_sequenceNumber, constants::PACKET_LEVEL_COMPLETE, payload);
 
     if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
-        std::cout << "[SERVER NETWORK] Failed to broadcast level complete packet"
-            << std::endl;
         debug::Debug::printDebug(this->getIsDebug(),
             "[SERVER NETWORK] Failed to broadcast level complete packet",
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
@@ -760,7 +755,6 @@ bool rserv::Lobby::nextLevelPacket() {
         this->_sequenceNumber, constants::PACKET_NEXT_LEVEL, payload);
 
     if (!this->_network->broadcast(this->getConnectedClientEndpoints(), packet)) {
-        std::cout << "[SERVER NETWORK] Failed to broadcast next level packet" << std::endl;
         debug::Debug::printDebug(this->getIsDebug(),
             "[SERVER NETWORK] Failed to broadcast next level packet",
             debug::debugType::NETWORK, debug::debugLevel::ERROR);
@@ -1055,8 +1049,13 @@ void rserv::Lobby::createPlayerEntities() {
 }
 
 void rserv::Lobby::stop() {
-    _running.store(false, std::memory_order_release);
-
+    this->_running.store(false, std::memory_order_release);
+    if (this->_networkThread.joinable()) {
+        this->_networkThread.join();
+    }
+    if (this->_gameThread.joinable()) {
+        this->_gameThread.join();
+    }
     if (this->_resourceManager) {
         auto registry = this->_resourceManager->get<ecs::Registry>();
         if (registry) {
@@ -1074,13 +1073,6 @@ void rserv::Lobby::stop() {
 
         this->_gameStarted = false;
         this->_playerEntitiesCreated = false;
-    }
-
-    if (this->_networkThread.joinable()) {
-        this->_networkThread.join();
-    }
-    if (this->_gameThread.joinable()) {
-        this->_gameThread.join();
     }
 }
 
@@ -1174,4 +1166,43 @@ void rserv::Lobby::gameLoop() {
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
+}
+
+bool rserv::Lobby::ackLeaveLobbyPacket(const net::INetworkEndpoint &endpoint,
+    bool canDisconnect) {
+    if (!this->_network) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[SERVER] Warning: Network not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    if (!this->_packet) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[SERVER] Warning: Packet manager not initialized",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    if (!this->_running.load(std::memory_order_acquire)) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[SERVER] Warning: Lobby is no longer running, skipping ack packet",
+            debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        return false;
+    }
+    std::vector<uint64_t> payload;
+    payload.push_back(static_cast<uint64_t>(canDisconnect ? 't' : 'f'));
+    std::vector<uint8_t> packet = this->_packet->pack(constants::ID_SERVER,
+        this->_sequenceNumber, constants::PACKET_ACK_LEAVE_LOBBY, payload);
+    if (!this->_network->sendTo(endpoint, packet)) {
+        debug::Debug::printDebug(this->getIsDebug(),
+            "[SERVER] Failed to send LOBBY_CONNECT_VALUE response to client",
+            debug::debugType::NETWORK, debug::debugLevel::ERROR);
+        return false;
+    }
+    this->_sequenceNumber++;
+    debug::Debug::printDebug(this->getIsDebug(),
+        "[SERVER] Sent ACK_LEAVE_LOBBY response to client: " +
+        std::string(canDisconnect ? "success" : "failure"),
+        debug::debugType::NETWORK, (canDisconnect ? debug::debugLevel::INFO :
+            debug::debugLevel::WARNING));
+    return true;
 }
