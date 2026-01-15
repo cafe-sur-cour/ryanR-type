@@ -49,6 +49,8 @@ class InGameState : public AGameState {
         int _previousHealth;
         std::vector<ScoreFeedback> _scoreFeedbacks;
         std::vector<ScoreFeedback> _healthFeedbacks;
+        float _whoAmITimer = 0.0f;
+        bool _localPlayerFound = false;
 };
 
 }  // namespace gsm

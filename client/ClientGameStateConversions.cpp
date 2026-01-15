@@ -26,16 +26,6 @@
 #include "../common/FloatQuantization.hpp"
 #include "components/permanent/NetworkStateComponent.hpp"
 
-namespace {
-
-inline float unpackFloat(uint64_t bits) {
-    float value;
-    std::memcpy(&value, &bits, sizeof(float));
-    return value;
-}
-
-}
-
 size_t ClientNetwork::parsePlayerTagComponent(
     const std::vector<uint64_t> &payload,
     size_t index,

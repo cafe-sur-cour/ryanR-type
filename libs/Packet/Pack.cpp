@@ -63,7 +63,8 @@ std::vector<uint8_t> pm::PacketManager::pack(uint8_t idClient, uint32_t sequence
             type != CAN_START_PACKET && type != DEATH_PLAYER_PACKET &&
             type != WHOAMI_PACKET && type != END_GAME_PACKET && type != REQUEST_LOBBY_PACKET
             && type != SEND_LOBBY_CODE_PACKET && type != LEVEL_COMPLETE_PACKET
-            && type != NEXT_LEVEL_PACKET && type != REQUEST_PROFILE_PACKET) {
+            && type != NEXT_LEVEL_PACKET && type != REQUEST_PROFILE_PACKET
+            && type != LEAVE_LOBBY_PACKET) {
             std::cerr << "[PACKET] Error: Unknown packet type "
                 << static_cast<int>(type) << " for packing" << std::endl;
             return std::vector<uint8_t>();

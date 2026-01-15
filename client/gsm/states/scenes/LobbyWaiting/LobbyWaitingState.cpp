@@ -235,49 +235,21 @@ LobbyWaitingState::LobbyWaitingState(
     _leaveButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            network->leaveLobby();
+            network->sendDisconnectFromLobby();
             debug::Debug::printDebug(network->isDebugMode(),
                 "[LobbyWaiting] Player requested to leave the lobby.",
                 debug::debugType::NETWORK,
                 debug::debugLevel::INFO);
-        }
-        auto networkPtr = this->_resourceManager->get<ClientNetwork>();
-        if (networkPtr) {
-            networkPtr->setLobbyCode("");
-            networkPtr->_isConnectedToLobby = false;
-            networkPtr->_isLobbyMaster = false;
-            networkPtr->_ready = false;
-            networkPtr->clearEntitiesAndMappings();
-        }
-        auto gsmPtr = _gsm.lock();
-        if (gsmPtr) {
-            auto mainMenuState =
-            std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
-            gsmPtr->requestStateChange(mainMenuState);
         }
     });
     _leaveButton->setOnActivated([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
         if (network && network->isConnected()) {
-            network->leaveLobby();
+            network->sendDisconnectFromLobby();
             debug::Debug::printDebug(network->isDebugMode(),
                 "[LobbyWaiting] Player requested to leave the lobby.",
                 debug::debugType::NETWORK,
                 debug::debugLevel::INFO);
-        }
-        auto networkPtr = this->_resourceManager->get<ClientNetwork>();
-        if (networkPtr) {
-            networkPtr->setLobbyCode("");
-            networkPtr->_isConnectedToLobby = false;
-            networkPtr->_isLobbyMaster = false;
-            networkPtr->_ready = false;
-            networkPtr->clearEntitiesAndMappings();
-        }
-        auto gsmPtr = _gsm.lock();
-        if (gsmPtr) {
-            auto mainMenuState =
-            std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
-            gsmPtr->requestStateChange(mainMenuState);
         }
     });
 
@@ -304,6 +276,20 @@ LobbyWaitingState::LobbyWaitingState(
 }
 
 void LobbyWaitingState::setupLobbyMasterUI() {
+    ui::LayoutConfig bottomLeftConfig;
+    bottomLeftConfig.direction = ui::LayoutDirection::Vertical;
+    bottomLeftConfig.alignment = ui::LayoutAlignment::Start;
+    bottomLeftConfig.spacing = 10.0f;
+    bottomLeftConfig.padding = math::Vector2f(0.0f, 0.0f);
+    bottomLeftConfig.anchorX = ui::AnchorX::Left;
+    bottomLeftConfig.anchorY = ui::AnchorY::Bottom;
+    bottomLeftConfig.offset = math::Vector2f(20.0f, -20.0f);
+
+    _bottomLeftLayout = std::make_shared<ui::UILayout>(_resourceManager, bottomLeftConfig);
+    _bottomLeftLayout->setSize(math::Vector2f(200.f, 100.f));
+
+    _uiManager->addElement(_bottomLeftLayout);
+
     auto networkLobby = _resourceManager->get<ClientNetwork>();
     std::string lobbyCode = networkLobby ? networkLobby->getLobbyCode() : "Unknown";
 
@@ -324,6 +310,40 @@ void LobbyWaitingState::setupLobbyMasterUI() {
     _statusText->setOutlineThickness(1.0f);
     _statusText->setFontSize(24);
     _centerLayout->addElement(_statusText);
+
+    _copyCodeButton = std::make_shared<ui::Button>(_resourceManager);
+    _copyCodeButton->setText("Copy Code");
+    _copyCodeButton->setSize(math::Vector2f(150.f, 50.f));
+    _copyCodeButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _copyCodeButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _copyCodeButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _copyCodeButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        auto window = this->_resourceManager->get<gfx::IWindow>();
+        if (network && window && !network->getLobbyCode().empty()) {
+            window->setClipboardText(network->getLobbyCode());
+            _copyCodeButton->setText("Copied");
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Copied lobby code to clipboard: " +
+                    network->getLobbyCode(),
+                debug::debugType::CORE,
+                debug::debugLevel::INFO);
+        }
+    });
+    _copyCodeButton->setOnActivated([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        auto window = this->_resourceManager->get<gfx::IWindow>();
+        if (network && window && !network->getLobbyCode().empty()) {
+            window->setClipboardText(network->getLobbyCode());
+            _copyCodeButton->setText("Copied");
+            debug::Debug::printDebug(network->isDebugMode(),
+                "[LobbyWaiting] Copied lobby code to clipboard: " +
+                    network->getLobbyCode(),
+                debug::debugType::CORE,
+                debug::debugLevel::INFO);
+        }
+    });
+    _bottomLeftLayout->addElement(_copyCodeButton);
 
     _startGameButton = std::make_shared<ui::Button>(_resourceManager);
     _startGameButton->setText("Start Game");
@@ -386,7 +406,22 @@ void LobbyWaitingState::update(float deltaTime) {
     if (config && _uiManager->getGlobalScale() != config->getUIScale()) {
         _uiManager->setGlobalScale(config->getUIScale());
     }
+    auto network = this->_resourceManager->get<ClientNetwork>();
+    if (network && network->_shouldDisconnect) {
+        network->setLobbyCode("");
+        network->_isConnectedToLobby = false;
+        network->_isLobbyMaster = false;
+        network->_ready = false;
+        network->clearEntitiesAndMappings();
 
+        auto gsmPtr = _gsm.lock();
+        if (gsmPtr) {
+            auto mainMenuState =
+            std::make_shared<gsm::MainMenuState>(gsmPtr, _resourceManager);
+            gsmPtr->requestStateChange(mainMenuState);
+        }
+        network->_shouldDisconnect = false;
+    }
     auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
     if (eventResult == gfx::EventType::CLOSE) {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
@@ -484,6 +519,8 @@ void LobbyWaitingState::exit() {
     _chatButton.reset();
     _topRightLayout.reset();
     _loadingAnimation.reset();
+    _bottomLeftLayout.reset();
+    _copyCodeButton.reset();
     _mouseHandler.reset();
     _uiManager.reset();
 }

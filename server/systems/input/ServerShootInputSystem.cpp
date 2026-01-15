@@ -40,7 +40,10 @@ void ServerShootInputSystem::update(
             _cooldowns[entityId] = 0;
         _cooldowns[entityId] += deltaTime;
 
-        size_t clientID = static_cast<size_t>(entityId);
+        size_t clientID = serverInputProvider->getClientIdForEntity(entityId);
+        if (clientID == 0) {
+            continue;
+        }
 
         float value = serverInputProvider->getActionAxis(InputAction::SHOOT, clientID);
         if (value <= 0.0f)

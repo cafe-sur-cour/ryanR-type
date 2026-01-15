@@ -190,7 +190,7 @@ void LevelEditorSelectorState::createLevelSelectionUI() {
 
     auto titleText = std::make_shared<ui::Text>(_resourceManager);
     titleText->setText(
-        "Level Editor - Not compatible with controllers");
+        "Level Editor - Not compatible with controllers - Press BACK to return");
     titleText->setSize(math::Vector2f(900.f, 40.f));
     levelsLayout->addElement(titleText);
 

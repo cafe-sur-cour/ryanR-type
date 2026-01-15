@@ -114,6 +114,7 @@ namespace rserv {
             bool newChatMessagePacket(const net::INetworkEndpoint &endpoint, std::vector<uint8_t> message);
             bool forceLeavePacket(const net::INetworkEndpoint &endpoint, constants::ForceLeaveType leaveType);
 
+
             uint32_t getSequenceNumber() const;
             std::shared_ptr<pm::IPacketManager> getPacketManager() const;
             std::shared_ptr<pm::IPacketManager> createNewPacketManager();

@@ -75,6 +75,8 @@
 #define NEW_CHAT_PACKET 0x20
 #define BROADCASTED_CHAT_PACKET 0x21
 #define FORCE_LEAVE_PACKET 0x22
+#define LEAVE_LOBBY_PACKET 0x23
+#define ACK_LEAVE_LOBBY 0x24
 
 namespace pm {
 

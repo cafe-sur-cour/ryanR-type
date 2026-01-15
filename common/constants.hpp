@@ -325,8 +325,10 @@ namespace constants {
     constexpr std::uint8_t PACKET_NEW_CHAT = 0x20;
     constexpr std::uint8_t PACKET_BROADCASTED_CHAT = 0x21;
     constexpr std::uint8_t PACKET_FORCE_LEAVE = 0x22;
+    constexpr std::uint8_t PACKET_LEAVE_LOBBY = 0x23;
+    constexpr std::uint8_t PACKET_ACK_LEAVE_LOBBY = 0x24;
 
-    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 35;
+    constexpr std::uint8_t MAX_INDEX_PACKET_TYPE = 37;
     const int MAX_CLIENT_PER_LOBBY = 4;
 
     /* Lobby connection codes */
@@ -381,6 +383,7 @@ namespace constants {
     const std::string SET_GAME_ZONE_VELOCITY_FUNCTION = "setGameZoneVelocity";
     const std::string GET_ENTITY_VELOCITY_FUNCTION = "getEntityVelocity";
     const std::string SET_INVULNERABLE_FUNCTION = "setInvulnerable";
+    const std::string GET_NEAREST_ENEMY_POSITION_FUNCTION = "getNearestEnemyPosition";
 }
 
 #endif /* !CONSTANTS_HPP_ */

@@ -102,8 +102,13 @@ void InGameState::enter() {
     ecs::CollisionRules::initWithData(collisionData);
 
     auto localPlayerView = _registry->view<ecs::PlayerTag, ecs::LocalPlayerTag>();
-    auto localPlayer = *localPlayerView.begin();
-    _registry->addComponent(localPlayer, std::make_shared<ecs::NetworkStateComponent>());
+    if (!(localPlayerView.begin() == localPlayerView.end())) {
+        auto localPlayer = *localPlayerView.begin();
+        _registry->addComponent(localPlayer, std::make_shared<ecs::NetworkStateComponent>());
+    }
+
+    auto systemManager = _resourceManager->get<ecs::ISystemManager>();
+    systemManager->clearAllSystems();
 
     addSystem(std::make_shared<ecs::NetworkInterpolationSystem>());
     addSystem(std::make_shared<ecs::MovementInputSystem>());
@@ -131,10 +136,26 @@ void InGameState::enter() {
     ecs::Entity musicIntentEntity = _registry->createEntity();
     _registry->addComponent<ecs::MusicIntentComponent>(musicIntentEntity,
         std::make_shared<ecs::MusicIntentComponent>(ecs::PLAY, ""));
-    _resourceManager->get<ClientNetwork>()->sendWhoAmI();
 }
 
 void InGameState::update(float deltaTime) {
+    auto localPlayerView = _registry->view<ecs::PlayerTag, ecs::LocalPlayerTag>();
+    if (!(localPlayerView.begin() == localPlayerView.end())) {
+        auto localPlayer = *localPlayerView.begin();
+        if (!(_registry->hasComponent<ecs::NetworkStateComponent>(localPlayer)))
+            _registry->addComponent(
+                localPlayer, std::make_shared<ecs::NetworkStateComponent>());
+        _localPlayerFound = true;
+    }
+
+    if (!_localPlayerFound) {
+        _whoAmITimer += deltaTime;
+        if (_whoAmITimer >= constants::WHOAMI_REQUEST_INTERVAL) {
+            _resourceManager->get<ClientNetwork>()->sendWhoAmI();
+            _whoAmITimer = 0.0f;
+        }
+    }
+
     auto eventResult = _resourceManager->get<gfx::IEvent>()->pollEvents();
     if (eventResult == gfx::EventType::CLOSE) {
         _resourceManager->get<gfx::IWindow>()->closeWindow();
@@ -383,11 +404,10 @@ void InGameState::drawShotChargeHUD(
 }
 
 void InGameState::exit() {
-    auto systemManager = _resourceManager->get<ecs::ISystemManager>();
-    for (auto& sys : _systems) {
-        systemManager->removeSystem(sys);
-    }
     _systems.clear();
+    if (_registry) {
+        _registry->clearAllEntities();
+    }
 }
 
 }  // namespace gsm

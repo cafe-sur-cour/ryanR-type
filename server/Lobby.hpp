@@ -89,6 +89,7 @@ class Lobby {
             std::vector<uint64_t> spawnPacket(size_t entity, const std::string prefabName);
             std::vector<uint64_t> deathPacket(size_t entity);
             bool serverStatusPacket();
+            bool ackLeaveLobbyPacket(const net::INetworkEndpoint &endpoint, bool canDisconnect);
 
             bool levelCompletePacket();
             bool nextLevelPacket();
