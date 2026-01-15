@@ -31,6 +31,7 @@ struct ServerInfo {
     std::vector<std::map<std::string, int>> playerStats;
     std::vector<std::string> inGamePlayers;
     std::vector<std::string> bannedPlayers;
+    int64_t tps;
 };
 
 class HttpServer {

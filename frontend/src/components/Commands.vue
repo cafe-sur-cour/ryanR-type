@@ -17,6 +17,51 @@
         </div>
       </div>
 
+      <!-- System Information -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+          <div class="flex items-center space-x-3">
+            <ServerIcon class="h-8 w-8 text-blue-400" />
+            <div>
+              <p class="text-sm text-gray-400">Server Status</p>
+              <p :class="overview.serverStatus === 'Online' ? 'text-green-400' : 'text-red-400'" class="text-xl font-bold">
+                {{ overview.serverStatus || 'Offline' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+          <div class="flex items-center space-x-3">
+            <UsersIcon class="h-8 w-8 text-green-400" />
+            <div>
+              <p class="text-sm text-gray-400">Connected Clients</p>
+              <p class="text-2xl font-bold text-white">{{ overview.connectedClients || 0 }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+          <div class="flex items-center space-x-3">
+            <ClockIcon class="h-8 w-8 text-yellow-400" />
+            <div>
+              <p class="text-sm text-gray-400">Uptime</p>
+              <p class="text-2xl font-bold text-white">{{ typeof overview.uptime === 'number' ? formatUptime(overview.uptime) : overview.uptime }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+          <div class="flex items-center space-x-3">
+            <ActivityIcon class="h-8 w-8 text-purple-400" />
+            <div>
+              <p class="text-sm text-gray-400">TPS</p>
+              <p class="text-2xl font-bold text-white">{{ overview.tps || 0 }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Overview -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
@@ -122,7 +167,7 @@
 
       <!-- Auto-refresh indicator -->
       <div class="fixed bottom-0 left-1/2 transform -translate-x-1/2 text-gray-500 text-sm bg-gray-900 px-4 py-2 rounded-t">
-        Auto-refreshing every 2 seconds • Last updated: {{ lastUpdate }}
+        Auto-refreshing every 5 seconds • Last updated: {{ lastUpdate }}
       </div>
     </div>
   </div>
@@ -131,7 +176,21 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import Button from './ui/Button.vue'
-import { GamepadIcon, UsersIcon, PlayIcon, RefreshCwIcon, BanIcon } from 'lucide-vue-next'
+import { GamepadIcon, UsersIcon, PlayIcon, RefreshCwIcon, BanIcon, ServerIcon, ClockIcon, ActivityIcon } from 'lucide-vue-next'
+
+interface OverviewInfo {
+  activeLobbies: number
+  loggedInPlayers: number
+  playersInGame: number
+  lobbyDetails: string[]
+  playerDetails: string[]
+  inGamePlayers: string[]
+  bannedPlayers: string[]
+  serverStatus: string
+  connectedClients: number
+  uptime: string | number
+  tps: number
+}
 
 interface Props {
   password: string
@@ -144,14 +203,18 @@ const allSuggestions = ref<string[]>([])
 const output = ref('')
 const lastUpdate = ref('')
 const loading = ref(false)
-const overview = ref({
+const overview = ref<OverviewInfo>({
   activeLobbies: 0,
   loggedInPlayers: 0,
   playersInGame: 0,
-  lobbyDetails: [] as string[],
-  playerDetails: [] as string[],
-  inGamePlayers: [] as string[],
-  bannedPlayers: [] as string[]
+  lobbyDetails: [],
+  playerDetails: [],
+  inGamePlayers: [],
+  bannedPlayers: [],
+  serverStatus: 'Offline',
+  connectedClients: 0,
+  uptime: 'N/A' as string | number,
+  tps: 0
 })
 const refreshInterval = ref<NodeJS.Timeout | null>(null)
 
@@ -172,7 +235,11 @@ const fetchOverview = async () => {
         lobbyDetails: data.lobbyDetails || [],
         playerDetails: data.playerDetails || [],
         inGamePlayers: data.inGamePlayers || [],
-        bannedPlayers: data.bannedPlayers || []
+        bannedPlayers: data.bannedPlayers || [],
+        serverStatus: data.serverStatus || 'Offline',
+        connectedClients: data.connectedClients || 0,
+        uptime: data.uptime || 'N/A',
+        tps: data.tps || 0
       }
       updateLastUpdate()
     }
@@ -201,6 +268,17 @@ const fetchSuggestions = async () => {
 
 const updateLastUpdate = () => {
   lastUpdate.value = new Date().toLocaleTimeString()
+}
+
+const formatUptime = (seconds?: number): string => {
+  if (!seconds) return '0s'
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const secs = seconds % 60
+
+  if (hours > 0) return `${hours}h ${minutes}m ${secs}s`
+  if (minutes > 0) return `${minutes}m ${secs}s`
+  return `${secs}s`
 }
 
 const refreshData = () => {
@@ -238,7 +316,7 @@ const executeCommand = async () => {
 onMounted(() => {
   fetchOverview()
   fetchSuggestions()
-  refreshInterval.value = setInterval(fetchOverview, 2000)
+  refreshInterval.value = setInterval(fetchOverview, 5000)
 })
 
 onUnmounted(() => {

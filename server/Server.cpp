@@ -342,6 +342,17 @@ void rserv::Server::processIncomingPackets() {
                 std::to_string(idClient),
                 debug::debugType::NETWORK, debug::debugLevel::WARNING);
         }
+    } else if (this->_packet->getType() == constants::PACKET_WHOAMI) {
+        uint8_t idClient = this->_packet->getIdClient();
+        auto it = this->_clientToLobby.find(idClient);
+        if (it != this->_clientToLobby.end()) {
+            it->second->enqueuePacket(received);
+        } else {
+            debug::Debug::printDebug(this->_config->getIsDebug(),
+                "[SERVER] Received WHOAMI packet from unknown client: " +
+                std::to_string(idClient),
+                debug::debugType::NETWORK, debug::debugLevel::WARNING);
+        }
     } else if (this->_packet->getType() == constants::PACKET_REGISTER) {
         this->processRegistration(std::make_pair(received.first, received.second));
     } else if (this->_packet->getType() == constants::PACKET_LOGIN) {
@@ -613,6 +624,8 @@ rserv::ServerInfo rserv::Server::getServerInfo() const {
 
     info.activeLobbies = static_cast<int>(this->_lobbies.size());
 
+    info.tps = this->_config->getTps();
+
     info.totalPlayers = 0;
     for (const auto& lobbyPtr : this->_lobbies) {
         if (lobbyPtr) {
@@ -744,6 +757,19 @@ std::string rserv::Server::executeCommand(const std::string& command) {
         std::string playerId;
         iss >> playerId;
         return unbanPlayer(playerId);
+    } else if (cmd == "/tps") {
+        std::string tpsStr;
+        iss >> tpsStr;
+        try {
+            int64_t newTps = std::stoll(tpsStr);
+            if (newTps < 10 || newTps > 120) {
+                return "TPS must be between 10 and 120";
+            }
+            this->_config->setTps(newTps);
+            return "TPS updated to " + std::to_string(newTps);
+        } catch (const std::exception&) {
+            return "Invalid TPS value";
+        }
     } else {
         return "Unknown command";
     }

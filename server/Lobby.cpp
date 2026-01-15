@@ -227,6 +227,17 @@ void rserv::Lobby::createPlayerEntityForClient(uint8_t clientId) {
 
     this->_clientToEntity[clientId] = playerEntity;
 
+    if (this->_resourceManager->has<ecs::ServerInputProvider>()) {
+        auto inputProvider = this->_resourceManager->get<ecs::ServerInputProvider>();
+        if (inputProvider) {
+            inputProvider->registerEntityForClient(playerEntity, clientId);
+            debug::Debug::printDebug(this->getIsDebug(),
+                "[LOBBY] Registered entity " + std::to_string(playerEntity) +
+                " for client " + std::to_string(static_cast<int>(clientId)),
+                debug::debugType::NETWORK, debug::debugLevel::INFO);
+        }
+    }
+
     debug::Debug::printDebug(this->getIsDebug(),
         "[LOBBY] Created player entity " + std::to_string(playerEntity) +
         " for client " + std::to_string(static_cast<int>(clientId)),
@@ -459,11 +470,23 @@ bool rserv::Lobby::processWhoAmI(uint8_t idClient) {
 
     auto registry = this->_resourceManager->get<ecs::Registry>();
     auto it = this->_clientToEntity.find(idClient);
+
     if (it == this->_clientToEntity.end()) {
         debug::Debug::printDebug(this->getIsDebug(),
-            "[SERVER] No player entity found for client " + std::to_string(idClient),
-            debug::debugType::NETWORK, debug::debugLevel::WARNING);
-        return false;
+            "[SERVER] No player entity found for client " + std::to_string(idClient) +
+            ", creating one now",
+            debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+        this->createPlayerEntityForClient(idClient);
+        it = this->_clientToEntity.find(idClient);
+
+        if (it == this->_clientToEntity.end()) {
+            debug::Debug::printDebug(this->getIsDebug(),
+                "[SERVER] Failed to create player entity for client "
+                    + std::to_string(idClient),
+                debug::debugType::NETWORK, debug::debugLevel::ERROR);
+            return false;
+        }
     }
 
     ecs::Entity playerEntity = it->second;
@@ -1040,6 +1063,13 @@ void rserv::Lobby::createPlayerEntities() {
         );
 
         this->_clientToEntity[clientId] = playerEntity;
+
+        if (this->_resourceManager->has<ecs::ServerInputProvider>()) {
+            auto inputProvider = this->_resourceManager->get<ecs::ServerInputProvider>();
+            if (inputProvider) {
+                inputProvider->registerEntityForClient(playerEntity, clientId);
+            }
+        }
 
         debug::Debug::printDebug(this->getIsDebug(),
             "[LOBBY] Created player entity " + std::to_string(playerEntity) +
