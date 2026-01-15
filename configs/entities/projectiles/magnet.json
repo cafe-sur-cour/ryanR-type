@@ -71,7 +71,7 @@
         },
         "SoundIntentComponent": {
             "target": "client",
-            "soundFile": "sounds/shooting.wav",
+            "soundFile": "assets/musics/sfx_DLC_KOG_Queen_CannonHitQueenDing.wav",
             "volume": 50.0
         }
     }

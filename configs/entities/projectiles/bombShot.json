@@ -68,11 +68,6 @@
             "target": "server",
             "scriptPath": "configs/scripts/bombExplosion.lua",
             "additionalFunctions": []
-        },
-        "SoundIntentComponent": {
-            "target": "client",
-            "soundFile": "sounds/shooting.wav",
-            "volume": 50.0
         }
     }
 }
