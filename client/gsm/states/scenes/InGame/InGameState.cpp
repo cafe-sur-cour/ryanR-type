@@ -10,7 +10,6 @@
 #include <windows.h>
 #include <psapi.h>
 #endif
-#include <sys/resource.h>
 #include <unistd.h>
 #include <memory>
 #include <iostream>
