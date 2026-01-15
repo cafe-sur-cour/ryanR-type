@@ -97,9 +97,6 @@ void ForceLeaveState::enter() {
 
     _leaveButton->setOnRelease([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
-    //    if (network && network->isConnected()) {
-    //         network->sendDisconnectFromLobby();
-    //     }
         if (network) {
             network->setLobbyCode("");
             network->_isConnectedToLobby = false;
@@ -123,9 +120,6 @@ void ForceLeaveState::enter() {
 
     _leaveButton->setOnActivated([this]() {
         auto network = this->_resourceManager->get<ClientNetwork>();
-        // if (network && network->isConnected()) {
-        //     network->sendDisconnectFromLobby();
-        // }
         if (network) {
             network->setLobbyCode("");
             network->_isConnectedToLobby = false;
