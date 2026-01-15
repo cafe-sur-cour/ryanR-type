@@ -8,11 +8,11 @@
 #ifndef GAMEZONESTOPTAG_HPP_
 #define GAMEZONESTOPTAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class GameZoneStopTag : public AComponent {
+class GameZoneStopTag : public IComponent {
     public:
         GameZoneStopTag() = default;
         ~GameZoneStopTag() = default;

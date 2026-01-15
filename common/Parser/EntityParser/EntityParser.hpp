@@ -12,7 +12,6 @@
 #include <vector>
 #include <memory>
 #include <map>
-#include "../../components/base/IComponent.hpp"
 #include "../ParserParam.hpp"
 #include "../ComposantParser/ComposantParser.hpp"
 #include "../../Prefab/IPrefab.hpp"

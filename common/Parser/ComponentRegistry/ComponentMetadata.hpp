@@ -15,17 +15,19 @@
 namespace parser {
 
 using ComponentCreator = std::function<std::shared_ptr<ecs::IComponent>(
-    const std::map<std::string, std::shared_ptr<FieldValue>>&)>;
+    const std::map<std::string, std::shared_ptr<FieldValue>> &
+)>;
 
 using ComponentAdder = std::function<void(
-    std::shared_ptr<ecs::Registry>, ecs::Entity, std::shared_ptr<ecs::IComponent>)>;
+    std::shared_ptr<ecs::Registry>, ecs::Entity, std::shared_ptr<ecs::IComponent>
+)>;
 
 struct ComponentMetadata {
     std::string name;                    // Name of JSON component (eg: "TransformComponent")
     std::type_index typeIndex;           // typeid of component
     std::vector<Field> fields;           // List of parsable fields
-    ComponentCreator creator;            // Creation lambda
-    ComponentAdder adder;                // Adder to registry lambda
+    ComponentCreator creator;         // Creation lambda
+    ComponentAdder adder;             // Adder to registry lambda
 };
 
 }  // namespace parser

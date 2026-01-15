@@ -9,7 +9,6 @@
 #define TRIGGERSYSTEM_HPP_
 
 #include "../base/ASystem.hpp"
-#include "../../components/base/IComponent.hpp"
 #include "../../components/temporary/TriggerIntentComponent.hpp"
 #include "../../components/permanent/TransformComponent.hpp"
 #include "../../components/permanent/ColliderComponent.hpp"

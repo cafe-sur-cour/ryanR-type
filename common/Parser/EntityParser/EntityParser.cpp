@@ -18,13 +18,16 @@
 #include "../Utils/JsonLoader.hpp"
 #include "../Utils/JsonValidation.hpp"
 
-EntityParser::EntityParser(std::shared_ptr<const std::map<std::string,
+EntityParser::EntityParser(
+    std::shared_ptr<const std::map<std::string,
     std::pair<std::type_index, std::vector<Field>>>> componentDefinitions,
     const std::map<std::type_index, ComponentCreator> &componentCreators,
     const std::map<std::type_index, ComponentAdder> &componentAdders,
-    const ShouldParseComponentCallback &shouldParseCallback) :
+    const ShouldParseComponentCallback &shouldParseCallback
+) :
     _composantParser(componentDefinitions, componentCreators, shouldParseCallback),
-    _componentAdders(componentAdders), _shouldParseCallback(shouldParseCallback) {
+    _componentAdders(componentAdders),
+    _shouldParseCallback(shouldParseCallback) {
 }
 
 EntityParser::~EntityParser() {

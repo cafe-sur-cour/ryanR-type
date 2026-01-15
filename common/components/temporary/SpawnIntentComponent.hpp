@@ -8,7 +8,7 @@
 #ifndef SPAWNINTENTCOMPONENT_HPP_
 #define SPAWNINTENTCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include <string>
 #include <optional>
 #include "../../types/Vector2f.hpp"
@@ -16,7 +16,7 @@
 
 namespace ecs {
 
-class SpawnIntentComponent : public AComponent {
+class SpawnIntentComponent : public IComponent {
     public:
         SpawnIntentComponent(
             const std::string &prefabName,

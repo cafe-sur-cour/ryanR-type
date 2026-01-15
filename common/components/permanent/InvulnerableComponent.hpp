@@ -8,11 +8,11 @@
 #ifndef INVULNERABLECOMPONENT_HPP_
 #define INVULNERABLECOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class InvulnerableComponent : public AComponent {
+class InvulnerableComponent : public IComponent {
     public:
         InvulnerableComponent(bool active = false) : _active(active) {};
         ~InvulnerableComponent()  = default;

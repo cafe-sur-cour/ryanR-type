@@ -8,7 +8,6 @@
 #include "ParallaxRenderingSystem.hpp"
 #include <memory>
 #include <cmath>
-#include <iostream>
 #include <algorithm>
 #include "../../components/rendering/ParallaxComponent.hpp"
 #include "../../../common/components/permanent/TransformComponent.hpp"
@@ -41,47 +40,56 @@ void ParallaxRenderingSystem::update(std::shared_ptr<ResourceManager> resourceMa
         if (!parallax || !transform)
             continue;
 
-        auto& layers = parallax->getLayers();
+        auto &layers = parallax->getLayers();
         const math::Vector2f& direction = parallax->getDirection();
         float baseSpeed = parallax->getBaseScrollSpeed();
         const math::Vector2f& basePosition = transform->getPosition();
 
-        parallax->updateLayerOffsets(direction, baseSpeed, deltaTime);
-
-        for (const auto& layer : layers) {
+        for (auto &layer : layers) {
+            float speed = baseSpeed * layer->speedMultiplier;
+            math::Vector2f movement(
+                direction.getX() * speed * deltaTime,
+                direction.getY() * speed * deltaTime
+            );
+            layer->currentOffset = math::Vector2f(
+                layer->currentOffset.getX() + movement.getX(),
+                layer->currentOffset.getY() + movement.getY()
+            );
             renderLayer(layer, resourceManager, basePosition, screenWidth, screenHeight);
         }
     }
 }
 
-math::Vector2f ParallaxRenderingSystem::calculateScale(const ParallaxLayer& layer,
+math::Vector2f ParallaxRenderingSystem::calculateScale(
+    std::shared_ptr<ParallaxLayer> layer,
     float screenWidth, float screenHeight) {
 
-    math::Vector2f finalScale = layer.scale;
+    math::Vector2f finalScale = layer->scale;
 
-    switch (layer.scaleMode) {
+    switch (layer->scaleMode) {
         case ParallaxScaleMode::FIT_SCREEN: {
-            float scaleX = screenWidth / layer.sourceSize.getX();
-            float scaleY = screenHeight / layer.sourceSize.getY();
+            float scaleX = screenWidth / layer->sourceSize.getX();
+            float scaleY = screenHeight / layer->sourceSize.getY();
             float uniformScale = (std::max)(scaleX, scaleY);
             finalScale = math::Vector2f(uniformScale, uniformScale);
             break;
         }
         case ParallaxScaleMode::STRETCH: {
-            float scaleX = screenWidth / layer.sourceSize.getX();
-            float scaleY = screenHeight / layer.sourceSize.getY();
+            float scaleX = screenWidth / layer->sourceSize.getX();
+            float scaleY = screenHeight / layer->sourceSize.getY();
             finalScale = math::Vector2f(scaleX, scaleY);
             break;
         }
         case ParallaxScaleMode::MANUAL:
-            finalScale = layer.scale;
+            finalScale = layer->scale;
             break;
     }
 
     return finalScale;
 }
 
-void ParallaxRenderingSystem::renderLayer(const ParallaxLayer& layer,
+void ParallaxRenderingSystem::renderLayer(
+    std::shared_ptr<ParallaxLayer> layer,
     std::shared_ptr<ResourceManager> resourceManager,
     const math::Vector2f& basePosition, float screenWidth, float screenHeight) {
 
@@ -91,15 +99,15 @@ void ParallaxRenderingSystem::renderLayer(const ParallaxLayer& layer,
     auto window = resourceManager->get<gfx::IWindow>();
     math::Vector2f scale = calculateScale(layer, screenWidth, screenHeight);
 
-    float textureWidth = layer.sourceSize.getX() * scale.getX();
-    float textureHeight = layer.sourceSize.getY() * scale.getY();
+    float textureWidth = layer->sourceSize.getX() * scale.getX();
+    float textureHeight = layer->sourceSize.getY() * scale.getY();
 
-    if (layer.repeat) {
+    if (layer->repeat) {
         math::Vector2f viewCenter = window->getViewCenter();
         float viewLeft = viewCenter.getX() - screenWidth / 2.0f;
 
-        float startX = layer.currentOffset.getX() + basePosition.getX() - viewLeft;
-        float startY = layer.currentOffset.getY() + basePosition.getY();
+        float startX = layer->currentOffset.getX() + basePosition.getX() - viewLeft;
+        float startY = layer->currentOffset.getY() + basePosition.getY();
 
         startX = std::fmod(startX, textureWidth);
         if (startX > 0) startX -= textureWidth;
@@ -115,14 +123,14 @@ void ParallaxRenderingSystem::renderLayer(const ParallaxLayer& layer,
                 float drawX = startX + (static_cast<float>(x) * textureWidth) + viewLeft;
                 float drawY = startY + (static_cast<float>(y) * textureHeight);
 
-                window->drawSprite(layer.filePath, drawX, drawY, scale.getX(), scale.getY());
+                window->drawSprite(layer->filePath, drawX, drawY, scale.getX(), scale.getY());
             }
         }
     } else {
-        float drawX = layer.currentOffset.getX() + basePosition.getX();
-        float drawY = layer.currentOffset.getY() + basePosition.getY();
+        float drawX = layer->currentOffset.getX() + basePosition.getX();
+        float drawY = layer->currentOffset.getY() + basePosition.getY();
 
-        window->drawSprite(layer.filePath, drawX, drawY, scale.getX(), scale.getY());
+        window->drawSprite(layer->filePath, drawX, drawY, scale.getX(), scale.getY());
     }
 }
 

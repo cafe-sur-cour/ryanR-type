@@ -8,11 +8,11 @@
 #ifndef OBSTACLETAG_HPP_
 #define OBSTACLETAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class ObstacleTag : public AComponent {
+class ObstacleTag : public IComponent {
     public:
         ObstacleTag() = default;
         ~ObstacleTag() = default;

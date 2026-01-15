@@ -71,7 +71,7 @@ void HealthSystem::_handleDamageUpdates(
             }
         }
 
-        healthComponent->decreaseHealth(damages);
+        healthComponent->setHealth(healthComponent->getHealth() - damages);
         healthComponent->setLastDamageSource(damageComponent->getSource());
 
         registry->removeOneComponent<DamageIntentComponent>(entityId);

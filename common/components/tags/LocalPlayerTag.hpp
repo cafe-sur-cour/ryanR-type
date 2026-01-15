@@ -8,11 +8,11 @@
 #ifndef LOCALPLAYERTAG_HPP_
 #define LOCALPLAYERTAG_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class LocalPlayerTag : public AComponent {
+class LocalPlayerTag : public IComponent {
     public:
         LocalPlayerTag() = default;
         ~LocalPlayerTag() = default;

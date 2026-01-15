@@ -8,7 +8,6 @@
 #ifndef REGISTRY_HPP_
 #define REGISTRY_HPP_
 
-#include "../../../components/base/IComponent.hpp"
 #include "../componentArray/IComponentArray.hpp"
 #include "../componentArray/AComponentArray.hpp"
 #include <memory>

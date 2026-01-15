@@ -13,10 +13,7 @@ namespace ecs {
 class IComponent {
     public:
         IComponent() = default;
-        virtual ~IComponent() = default;
-
-    protected:
-    private:
+        ~IComponent() = default;
 };
 
 } // namespace ecs

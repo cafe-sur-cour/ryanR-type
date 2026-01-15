@@ -14,6 +14,7 @@ using namespace ecs;
 
 TEST(PowerUpTagTest, DefaultConstructor) {
     PowerUpTag tag;
+    (void)tag;
     SUCCEED();
 }
 

@@ -14,6 +14,7 @@ using namespace ecs;
 
 TEST(ShooterTagTest, DefaultConstructor) {
     ShooterTag tag;
+    (void)tag;
     SUCCEED();
 }
 

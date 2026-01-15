@@ -14,6 +14,7 @@ using namespace ecs;
 
 TEST(MobTagTest, DefaultConstructor) {
     MobTag tag;
+    (void)tag;
     SUCCEED();
 }
 
