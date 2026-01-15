@@ -8,16 +8,18 @@
 #ifndef HITBOXRENDERCOMPONENT_HPP_
 #define HITBOXRENDERCOMPONENT_HPP_
 
-#include "../../../common/components/base/AComponent.hpp"
+#include "../../../common/components/base/IComponent.hpp"
 #include "../../../common/interfaces/IWindow.hpp"
+#include "../../colors.hpp"
 
 namespace ecs {
 
-class HitboxRenderComponent : public AComponent {
+class HitboxRenderComponent : public IComponent {
     public:
-        HitboxRenderComponent() : _color{255, 255, 255}, _outlineThickness(1.0f) {}
-        HitboxRenderComponent(gfx::color_t color, float outlineThickness = 1.0f)
-            : _color(color), _outlineThickness(outlineThickness) {}
+        HitboxRenderComponent() : _color{colors::WHITE}, _outlineThickness(1.0f) {}
+        HitboxRenderComponent(
+            gfx::color_t color, float outlineThickness = 1.0f
+        ) : _color(color), _outlineThickness(outlineThickness) {}
 
         ~HitboxRenderComponent() = default;
 

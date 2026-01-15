@@ -75,14 +75,6 @@ TEST(SpawnIntentComponentTest, MultipleUpdates) {
     EXPECT_EQ(comp.getPosition().getY(), 3.0f);
 }
 
-TEST(SpawnIntentComponentTest, InheritsFromAComponent) {
-    math::Vector2f pos(0.0f, 0.0f);
-    SpawnIntentComponent comp("prefab", pos);
-    AComponent* basePtr = &comp;
-    // Should compile and not crash - proves inheritance
-    (void)basePtr;
-}
-
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

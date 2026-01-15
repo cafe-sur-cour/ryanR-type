@@ -8,7 +8,7 @@
 #ifndef MUSICCOMPONENT_HPP_
 #define MUSICCOMPONENT_HPP_
 
-#include "../../../common/components/base/AComponent.hpp"
+#include "../../../common/components/base/IComponent.hpp"
 #include <string>
 
 
@@ -21,10 +21,11 @@ typedef enum MusicState {
     STOPPED = 3
 } MusicState;
 
-class MusicComponent : public AComponent {
+class MusicComponent : public IComponent {
     public:
-        MusicComponent(std::string musicFile = "", MusicState initialState = STOPPED, float volume = 100.0f, bool loop = false)
-            : _currentMusic(musicFile), _state(initialState), _volume(volume), _loop(loop) {};
+        MusicComponent(
+            std::string musicFile = "", MusicState initialState = STOPPED, float volume = 100.0f, bool loop = false
+        ) : _currentMusic(musicFile), _state(initialState), _volume(volume), _loop(loop) {};
         ~MusicComponent() = default;
 
         void playMusic() { _state = PLAYING; };

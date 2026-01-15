@@ -8,13 +8,13 @@
 #ifndef SPRITECOMPONENT_HPP_
 #define SPRITECOMPONENT_HPP_
 
-#include "../../../common/components/base/AComponent.hpp"
+#include "../../../common/components/base/IComponent.hpp"
 #include "../../../common/types/FRect.hpp"
 #include <string>
 
 namespace ecs {
 
-class SpriteComponent : public AComponent {
+class SpriteComponent : public IComponent {
     public:
         SpriteComponent() : _texturePath("") {}
         SpriteComponent(const std::string& texturePath)

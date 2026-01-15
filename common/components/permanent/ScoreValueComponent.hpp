@@ -8,11 +8,11 @@
 #ifndef SCOREVALUECOMPONENT_HPP_
 #define SCOREVALUECOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class ScoreValueComponent : public AComponent {
+class ScoreValueComponent : public IComponent {
     public:
         ScoreValueComponent(int scoreValue = 0) : _scoreValue(scoreValue) {};
         ~ScoreValueComponent() override = default;

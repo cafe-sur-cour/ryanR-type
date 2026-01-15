@@ -8,26 +8,23 @@
 #ifndef ANIMATIONSTATECOMPONENT_HPP_
 #define ANIMATIONSTATECOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include <cstddef>
 #include <string>
 
 namespace ecs {
 
-class AnimationStateComponent : public AComponent {
+class AnimationStateComponent : public IComponent {
     public:
         AnimationStateComponent(const std::string& initialState = "")
-            : currentState(initialState) {};
+            : _currentState(initialState) {};
         ~AnimationStateComponent() override = default;
 
-        void setCurrentState(const std::string& state) {
-            currentState = state;
-        }
-        std::string getCurrentState() const {
-            return currentState;
-        }
+        void setCurrentState(const std::string& state) { _currentState = state; }
+        std::string getCurrentState() const { return _currentState; }
+
     private:
-        std::string currentState;
+        std::string _currentState;
 };
 
 }  // namespace ecs

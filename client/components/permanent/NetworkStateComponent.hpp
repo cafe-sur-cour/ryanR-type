@@ -8,7 +8,7 @@
 #ifndef NETWORKSTATECOMPONENT_HPP_
 #define NETWORKSTATECOMPONENT_HPP_
 
-#include "../../common/components/base/AComponent.hpp"
+#include "../../common/components/base/IComponent.hpp"
 #include "../../common/types/Vector2f.hpp"
 #include <chrono>
 
@@ -27,7 +27,7 @@ struct NetworkTransformState {
         , timestamp(std::chrono::steady_clock::now()) {}
 };
 
-class NetworkStateComponent : public AComponent {
+class NetworkStateComponent : public IComponent {
     public:
         NetworkStateComponent()
             : _hasTransform(false)
@@ -47,21 +47,12 @@ class NetworkStateComponent : public AComponent {
         }
 
         bool hasTransform() const { return _hasTransform; }
+
         const NetworkTransformState& getPreviousTransform() const { return _previousTransform; }
         const NetworkTransformState& getCurrentTransform() const { return _currentTransform; }
 
         void setInterpolationTime(float time) { _interpolationTime = time; }
         float getInterpolationTime() const { return _interpolationTime; }
-
-        float getTransformInterpolationFactor() const {
-            if (!_hasTransform)
-                return 1.0f;
-            auto now = std::chrono::steady_clock::now();
-            auto elapsed = std::chrono::duration<float>(now - _currentTransform.timestamp).count();
-            if (elapsed >= _interpolationTime)
-                return 1.0f;
-            return elapsed / _interpolationTime;
-        }
 
     private:
         NetworkTransformState _previousTransform;

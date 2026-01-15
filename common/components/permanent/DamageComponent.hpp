@@ -8,11 +8,11 @@
 #ifndef DAMAGECOMPONENT_HPP_
 #define DAMAGECOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class DamageComponent : public AComponent {
+class DamageComponent : public IComponent {
     public:
         DamageComponent(float damage = 0.0f) : _damage(damage) {};
         ~DamageComponent() override = default;

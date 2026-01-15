@@ -8,12 +8,12 @@
 #ifndef ENTITYPARTSCOMPONENT_HPP_
 #define ENTITYPARTSCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include <vector>
 
 namespace ecs {
 
-class EntityPartsComponent : public AComponent {
+class EntityPartsComponent : public IComponent {
     public:
         EntityPartsComponent() = default;
         ~EntityPartsComponent() override = default;

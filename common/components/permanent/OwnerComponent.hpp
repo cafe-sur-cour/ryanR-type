@@ -8,11 +8,11 @@
 #ifndef OWNERCOMPONENT_HPP_
 #define OWNERCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 
 namespace ecs {
 
-class OwnerComponent : public AComponent {
+class OwnerComponent : public IComponent {
     public:
         OwnerComponent(ecs::Entity owner = 0) : _owner(owner) {};
         ~OwnerComponent() override = default;

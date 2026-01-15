@@ -8,12 +8,12 @@
 #ifndef TRANSFORMCOMPONENT_HPP_
 #define TRANSFORMCOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include "../../types/Vector2f.hpp"
 
 namespace ecs {
 
-class TransformComponent : public AComponent {
+class TransformComponent : public IComponent {
     public:
         TransformComponent(math::Vector2f position = math::Vector2f(0.0f, 0.0f), float rotation = 0.0f, math::Vector2f scale = math::Vector2f(1.0f, 1.0f))
             : _position(position), _rotation(rotation), _scale(scale) {};

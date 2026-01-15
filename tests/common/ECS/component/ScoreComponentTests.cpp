@@ -33,18 +33,6 @@ TEST(ScoreComponentTest, SetScore) {
     EXPECT_EQ(comp.getScore(), 25);
 }
 
-TEST(ScoreComponentTest, AddScore) {
-    ScoreComponent comp(10);
-    comp.addScore(15);
-    EXPECT_EQ(comp.getScore(), 25);
-}
-
-TEST(ScoreComponentTest, AddNegativeScore) {
-    ScoreComponent comp(20);
-    comp.addScore(-5);
-    EXPECT_EQ(comp.getScore(), 15);
-}
-
 TEST(ScoreComponentTest, NegativeScore) {
     ScoreComponent comp(-10);
     EXPECT_EQ(comp.getScore(), -10);

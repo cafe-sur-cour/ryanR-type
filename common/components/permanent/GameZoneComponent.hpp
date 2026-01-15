@@ -8,13 +8,13 @@
 #ifndef GAMEZONECOMPONENT_HPP_
 #define GAMEZONECOMPONENT_HPP_
 
-#include "../base/AComponent.hpp"
+#include "../base/IComponent.hpp"
 #include "../../types/FRect.hpp"
 #include "../../constants.hpp"
 
 namespace ecs {
 
-class GameZoneComponent : public AComponent {
+class GameZoneComponent : public IComponent {
     public:
         GameZoneComponent(math::FRect zone = math::FRect(0.0f, 0.0f, constants::MAX_WIDTH, constants::MAX_HEIGHT))
             : _zone(zone) {};

@@ -8,7 +8,7 @@
 #ifndef MUSICINTENTCOMPONENT_HPP_
 #define MUSICINTENTCOMPONENT_HPP_
 
-#include "../../../common/components/base/AComponent.hpp"
+#include "../../../common/components/base/IComponent.hpp"
 #include <string>
 
 namespace ecs {
@@ -19,11 +19,10 @@ typedef enum MusicAction {
     CHANGE = 2
 } MusicAction;
 
-class MusicIntentComponent : public AComponent {
+class MusicIntentComponent : public IComponent {
     public:
         MusicIntentComponent(MusicAction action = PLAY, const std::string &musicPath = "", float volume = 100.0f)
-            : _action(action), _musicPath(musicPath), _volume(volume) {
-        };
+            : _action(action), _musicPath(musicPath), _volume(volume) {};
         ~MusicIntentComponent() = default;
 
         MusicAction getAction() const { return _action; };
