@@ -46,9 +46,9 @@ TEST_F(ChargedShotSystemTest, EntityWithChargedShot_IncreasesCharge) {
     // Update with deltaTime
     chargedShotSystem->update(resourceManager, registry, 0.1f);
 
-    // Check charge increased
+    // Check charge increased (0.1 * maxCharge / reloadTime = 0.1 * 1.0 / 2.0 = 0.05)
     auto updatedChargedShot = registry->getComponent<ChargedShotComponent>(entityId);
-    EXPECT_FLOAT_EQ(updatedChargedShot->getCharge(), 0.1f);
+    EXPECT_FLOAT_EQ(updatedChargedShot->getCharge(), 0.05f);
 }
 
 TEST_F(ChargedShotSystemTest, ChargeAccumulates_OverMultipleUpdates) {
@@ -63,9 +63,9 @@ TEST_F(ChargedShotSystemTest, ChargeAccumulates_OverMultipleUpdates) {
     chargedShotSystem->update(resourceManager, registry, 0.2f);
     chargedShotSystem->update(resourceManager, registry, 0.15f);
 
-    // Check charge accumulated
+    // Check charge accumulated ((0.1 + 0.2 + 0.15) * maxCharge / reloadTime = 0.45 * 2.0 / 3.0 = 0.3)
     auto updatedChargedShot = registry->getComponent<ChargedShotComponent>(entityId);
-    EXPECT_FLOAT_EQ(updatedChargedShot->getCharge(), 0.45f);
+    EXPECT_FLOAT_EQ(updatedChargedShot->getCharge(), 0.3f);
 }
 
 TEST_F(ChargedShotSystemTest, ChargeCapped_AtMaxCharge) {
@@ -117,13 +117,13 @@ TEST_F(ChargedShotSystemTest, MultipleEntities_AllUpdated) {
 
     // Check all entities updated
     auto updated1 = registry->getComponent<ChargedShotComponent>(entity1Id);
-    EXPECT_FLOAT_EQ(updated1->getCharge(), 0.1f);
+    EXPECT_FLOAT_EQ(updated1->getCharge(), 0.05f);
 
     auto updated2 = registry->getComponent<ChargedShotComponent>(entity2Id);
-    EXPECT_FLOAT_EQ(updated2->getCharge(), 0.6f);
+    EXPECT_NEAR(updated2->getCharge(), 0.5667f, 0.0001f);
 
     auto updated3 = registry->getComponent<ChargedShotComponent>(entity3Id);
-    EXPECT_FLOAT_EQ(updated3->getCharge(), 0.9f);
+    EXPECT_NEAR(updated3->getCharge(), 0.8667f, 0.0001f);
 }
 
 TEST_F(ChargedShotSystemTest, ZeroDeltaTime_NoChange) {

@@ -21,6 +21,8 @@ TEST(DeathIntentComponentTest, DefaultConstructor) {
 TEST(DeathIntentComponentTest, CopyConstructor) {
     DeathIntentComponent comp1;
     DeathIntentComponent comp2(comp1);
+
+    (void)comp2; // To avoid unused variable warning
     EXPECT_TRUE(true); // Marker component, no data to check
 }
 
