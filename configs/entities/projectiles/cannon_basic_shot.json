@@ -65,6 +65,11 @@
                     "toSelf": ["TakeDeath"]
                 }
             ]
+        },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "musics/sfx_DLC_KOG_Queen_CannonShoot_02.wav",
+            "volume": 50.0
         }
     }
 }
