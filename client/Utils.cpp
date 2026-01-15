@@ -44,22 +44,22 @@ void Utils::parseCli(
     for (int i = 1; i < ac; i++) {
         std::string arg = av[i];
         if (arg == "-p" && i + 1 < ac) {
-            port = std::stoi(av[i + 1]);
+            i++;
+            port = std::stoi(av[i]);
             if (port < 1024 || port > 65535) {
                 std::cerr << "[SERVER] Error: Port must be between 1024 and 65535"
                     << std::endl;
                 exit(84);
             }
-            i++;
         } else if (arg == "-i" && i + 1 < ac) {
-            ip = av[i + 1];
             i++;
+            ip = av[i];
         } else if (arg == "-h") {
             this->helper();
             exit(0);
         } else if (arg == "-n" && i + 1 < ac) {
-            clientNetwork->setName(av[i + 1]);
             i++;
+            clientNetwork->setName(av[i]);
         } else if (arg == "-d") {
             debugMode = true;
         } else {

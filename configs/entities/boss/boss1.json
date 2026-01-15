@@ -97,7 +97,6 @@
             "initialState": "idle",
             "transitions": [
                 {
-
                     "from": "summoning",
                     "to": "idle",
                     "conditions": [

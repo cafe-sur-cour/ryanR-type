@@ -1,0 +1,88 @@
+{
+    "name": "beamShoot",
+    "components": {
+        "PlayerProjectileTag": { "target": "both" },
+        "TransformComponent": {
+            "target": "both",
+            "position": { "x": 0.0, "y": 0.0 },
+            "scale": { "x": 0.3, "y": 0.3 },
+            "rotation": 40.0
+        },
+        "VelocityComponent": { "target": "both" },
+        "AnimationComponent": {
+            "target": "client",
+            "states": {
+                "charging": {
+                    "texturePath": "assets/sprites/projectiles/beam_start.png",
+                    "frameWidth": 727.0,
+                    "frameHeight": 115.0,
+                    "frameCount": 8,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": false
+                },
+                "idle": {
+                    "texturePath": "assets/sprites/projectiles/beam.png",
+                    "frameWidth": 752.0,
+                    "frameHeight": 157.0,
+                    "frameCount": 13,
+                    "startWidth": 0.0,
+                    "startHeight": 0.0,
+                    "speed": 0.1,
+                    "loop": true
+                }
+            },
+            "initialState": "charging",
+            "transitions": [
+                {
+                    "from": "charging",
+                    "to": "idle",
+                    "conditions": [
+                        { "param": "onAnimationEnd", "equals": true }
+                    ],
+                    "rewind": false
+                }
+            ]
+        },
+        "ColliderComponent": {
+            "target": "both",
+            "offset": { "x": 0.0, "y": 0.0 },
+            "size": { "x": 752.0, "y": 157.0 },
+            "type": "Trigger"
+        },
+        "DamageComponent": {
+            "target": "both",
+            "damage": 25.0
+        },
+        "SpeedComponent": {
+            "target": "both",
+            "speed": 1000.0
+        },
+        "LifetimeComponent": {
+            "target": "both",
+            "lifetime": 3.0
+        },
+        "InteractionConfigComponent": {
+            "target": "both",
+            "mappings": [
+                {
+                    "tags": ["MobTag"],
+                    "toEntity": ["DealDamage"],
+                    "toSelf": []
+                },
+                {
+                    "tags": ["EnnemyProjectileTag"],
+                    "toEntity": ["DealDeath"],
+                    "toSelf": []
+                }
+            ]
+        },
+        "ScriptingComponent": {
+            "target": "server",
+            "scriptPath": "configs/scripts/beamShoot.lua",
+            "additionalFunctions": []
+        },
+        "InvulnerableComponent": { "target": "both", "active": true }
+    }
+}

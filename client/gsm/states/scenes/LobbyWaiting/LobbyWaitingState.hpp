@@ -55,6 +55,7 @@ private:
     std::shared_ptr<ui::UILayout> _topRightLayout;
     std::shared_ptr<ui::Button> _chatButton;
     std::shared_ptr<ui::SpritePreview> _loadingAnimation;
+    std::shared_ptr<ui::UILayout> _loadingLayout;
 
     std::shared_ptr<ui::UILayout> _bottomLeftLayout;
     std::shared_ptr<ui::Button> _copyCodeButton;

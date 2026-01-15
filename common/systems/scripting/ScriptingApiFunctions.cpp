@@ -17,6 +17,7 @@
 #include "ScriptingSystem.hpp"
 #include "../../components/permanent/EntityPartsComponent.hpp"
 #include "../../components/permanent/CompositeEntityComponent.hpp"
+#include "../../components/permanent/OwnerComponent.hpp"
 #include "../../components/temporary/SpawnIntentComponent.hpp"
 #include "../../components/permanent/GameZoneComponent.hpp"
 #include "../../components/permanent/VelocityComponent.hpp"
@@ -257,6 +258,34 @@ void ScriptingSystem::bindAPI() {
             return comp->getParentId();
         }
         return 0;
+    });
+
+    lua.set_function(constants::GET_OWNER_FUNCTION, [this](size_t entityId) -> size_t {
+        Entity e = static_cast<Entity>(entityId);
+        if (registry->hasComponent<OwnerComponent>(e)) {
+            auto ownerComp = registry->getComponent<OwnerComponent>(e);
+            return static_cast<size_t>(ownerComp->getOwner());
+        }
+        return 0;
+    });
+
+    lua.set_function(constants::SET_FIRE_RATE_FUNCTION,
+        [this](size_t entityId, float fireRate) {
+        Entity e = static_cast<Entity>(entityId);
+        if (registry->hasComponent<ShootingStatsComponent>(e)) {
+            auto shootingStats = registry->getComponent<ShootingStatsComponent>(e);
+            shootingStats->setFireRate(fireRate);
+        }
+    });
+
+    lua.set_function(constants::GET_FIRE_RATE_FUNCTION,
+        [this](size_t entityId) -> float {
+        Entity e = static_cast<Entity>(entityId);
+        if (registry->hasComponent<ShootingStatsComponent>(e)) {
+            auto shootingStats = registry->getComponent<ShootingStatsComponent>(e);
+            return shootingStats->getFireRate();
+        }
+        return 0.0f;
     });
 
     lua.set_function(constants::REMOVE_PART_ID_FUNCTION,

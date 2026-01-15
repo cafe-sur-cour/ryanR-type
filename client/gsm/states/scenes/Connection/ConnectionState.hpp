@@ -47,6 +47,7 @@ class ConnectionState : public AGameState {
         std::shared_ptr<ui::Text> _spacer;
         std::shared_ptr<ui::UILayout> _layout;
         std::shared_ptr<ui::SpritePreview> _loadingAnimation;
+        std::shared_ptr<ui::UILayout> _loadingLayout;
         bool _wasConnected = false;
 };
 
