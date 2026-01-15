@@ -1,11 +1,11 @@
 add_executable(Vector2fTests Vector2fTests.cpp)
-target_link_libraries(Vector2fTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main)
+target_link_libraries(Vector2fTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main gcov)
 add_test(NAME Vector2fTests COMMAND Vector2fTests)
 
 add_executable(FRectTests FRectTests.cpp)
-target_link_libraries(FRectTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main)
+target_link_libraries(FRectTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main gcov)
 add_test(NAME FRectTests COMMAND FRectTests)
 
 add_executable(ChronoTests ChronoTests.cpp)
-target_link_libraries(ChronoTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main)
+target_link_libraries(ChronoTests ECS PREFAB COLLISION_RULES PARSER GTest::gtest GTest::gtest_main gcov)
 add_test(NAME ChronoTests COMMAND ChronoTests)
