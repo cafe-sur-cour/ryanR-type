@@ -25,6 +25,7 @@ class ASystemManager : public ISystemManager {
         void updateAllSystems(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<Registry> registry, float deltaTime) override;
         void addSystem(std::shared_ptr<ISystem> system) override;
         void removeSystem(std::shared_ptr<ISystem> system) override;
+        void clearAllSystems() override;
 
     private:
         std::vector<std::shared_ptr<ISystem>> _systems;

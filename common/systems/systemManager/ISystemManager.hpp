@@ -22,6 +22,7 @@ class ISystemManager {
         virtual void updateAllSystems(std::shared_ptr<ResourceManager> resourceManager, std::shared_ptr<Registry> registry, float deltaTime) = 0;
         virtual void addSystem(std::shared_ptr<ISystem> system) = 0;
         virtual void removeSystem(std::shared_ptr<ISystem> system) = 0;
+        virtual void clearAllSystems() = 0;
 };
 
 }  // namespace ecs

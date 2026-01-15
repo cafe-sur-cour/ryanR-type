@@ -35,4 +35,8 @@ void ASystemManager::removeSystem(std::shared_ptr<ISystem> system) {
         std::remove(_systems.begin(), _systems.end(), system), _systems.end());
 }
 
+void ASystemManager::clearAllSystems() {
+    _systems.clear();
+}
+
 }  // namespace ecs
