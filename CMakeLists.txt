@@ -61,8 +61,6 @@ elseif(WIN32)
     add_compile_options(/W4 /WX /permissive-)
 endif()
 
-enable_testing()
-
 if(BUILD_CLIENT)
     set(ASSETS_DIR ${CMAKE_SOURCE_DIR}/assets)
 
@@ -94,6 +92,7 @@ if(BUILD_SERVER)
 endif()
 
 if(BUILD_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 
