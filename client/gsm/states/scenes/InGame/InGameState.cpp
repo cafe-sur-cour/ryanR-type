@@ -105,6 +105,9 @@ void InGameState::enter() {
     auto localPlayer = *localPlayerView.begin();
     _registry->addComponent(localPlayer, std::make_shared<ecs::NetworkStateComponent>());
 
+    auto systemManager = _resourceManager->get<ecs::ISystemManager>();
+    systemManager->clearAllSystems();
+
     addSystem(std::make_shared<ecs::NetworkInterpolationSystem>());
     addSystem(std::make_shared<ecs::MovementInputSystem>());
     addSystem(std::make_shared<ecs::InputToVelocitySystem>());
@@ -383,11 +386,10 @@ void InGameState::drawShotChargeHUD(
 }
 
 void InGameState::exit() {
-    auto systemManager = _resourceManager->get<ecs::ISystemManager>();
-    for (auto& sys : _systems) {
-        systemManager->removeSystem(sys);
-    }
     _systems.clear();
+    if (_registry) {
+        _registry->clearAllEntities();
+    }
 }
 
 }  // namespace gsm
