@@ -165,29 +165,11 @@ class ClientNetwork {
         typedef size_t (ClientNetwork::*ComponentParser)(const std::vector<uint64_t> &, size_t, ecs::Entity);
         std::map<uint64_t, ComponentParser> _componentParsers;
 
-        size_t parsePlayerTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseTransformComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseSpeedComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseHealthComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseColliderComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseShootingStatsComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseScoreComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseDamageComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseLifetimeComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseVelocityComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseControllableTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseEnemyProjectileTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseGameZoneColliderTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseMobTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseObstacleTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parsePlayerProjectileTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseScoreTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseShooterTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseProjectilePassThroughTagComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseProjectilePrefabComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseGameZoneComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
-        size_t parseAnimationStateComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
         size_t parseChargedShotComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
+        size_t parseAnimationStateComponent(const std::vector<uint64_t> &payload, size_t index, ecs::Entity entityId);
 
         DLLoader<createNetworkLib_t> _networloader;
         DLLoader<createBuffer_t> _bufferloader;
