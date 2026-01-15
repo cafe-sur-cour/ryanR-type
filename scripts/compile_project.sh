@@ -7,12 +7,17 @@ fi
 
 build_tests=false
 build_debug=false
+test_coverage=false
 target=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         --with-tests)
             build_tests=true
+            shift
+            ;;
+        --with-coverage)
+            test_coverage=true
             shift
             ;;
         --debug)
@@ -38,10 +43,14 @@ done
 build_client_option="ON"
 build_server_option="ON"
 build_tests_option="OFF"
+build_coverage_option="OFF"
 preset="release-unix"
 
 if [ "$build_tests" = true ]; then
     build_tests_option="ON"
+    if [ "$test_coverage" = true ]; then
+        build_coverage_option="ON"
+    fi
 fi
 
 # No need to change preset; we'll override CMAKE_BUILD_TYPE below
@@ -77,7 +86,7 @@ case "$target" in
 esac
 
 # Build the cmake command with conditional CMAKE_BUILD_TYPE
-cmake_cmd="cmake --preset \"$preset\" -DBUILD_TESTS=\"$build_tests_option\" -DBUILD_CLIENT=\"$build_client_option\" -DBUILD_SERVER=\"$build_server_option\""
+cmake_cmd="cmake --preset \"$preset\" -DBUILD_TESTS=\"$build_tests_option\" -DBUILD_CLIENT=\"$build_client_option\" -DBUILD_SERVER=\"$build_server_option\" -DBUILD_COVERAGE=\"$build_coverage_option\""
 if [ "$build_debug" = true ]; then
     cmake_cmd="$cmake_cmd -DCMAKE_BUILD_TYPE=Debug"
 fi

@@ -1,3 +1,6 @@
 add_executable(BufferTests CircularBufferTest.cpp)
-target_link_libraries(BufferTests Buffer GTest::gtest GTest::gtest_main gcov)
+target_link_libraries(BufferTests Buffer GTest::gtest GTest::gtest_main)
+if(BUILD_COVERAGE)
+    target_link_libraries(BufferTests gcov)
+endif()
 add_test(NAME BufferTests COMMAND BufferTests)
