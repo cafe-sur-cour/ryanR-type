@@ -1,3 +1,4 @@
+add_subdirectory(SplashScreen)
 add_subdirectory(MainMenu)
 add_subdirectory(Settings)
 add_subdirectory(Replay)

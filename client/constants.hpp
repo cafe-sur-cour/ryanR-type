@@ -200,6 +200,12 @@ namespace constants {
     const std::string OBSTACLES_DIRECTORY = "configs/entities/obstacles";
     const std::string POWERUPS_DIRECTORY = "configs/entities/powerUp";
     const std::string ENEMIES_DIRECTORY = "configs/entities/enemies";
+
+    /* Splash Screen Constants */
+    const float SPLASHSCREEN_GROW_DURATION = 1.0f;
+    const float SPLASHSCREEN_TOTAL_DURATION = 5.0f;
+    const float SPLASHSCREEN_START_FONT_SIZE = 10.0f;
+    const float SPLASHSCREEN_TARGET_FONT_SIZE = 150.0f;
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
