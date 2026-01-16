@@ -141,11 +141,11 @@ Please see our [Contributing Guide](../HOW-TO-CONTRIBUTE/htc-intro.md) for detai
 
 ## 📄 Additional Resources
 
-- **[Client Documentation](../CLIENT/client-intro.md)**: Client implementation details
-- **[Server Documentation](../SERVER/server-intro.md)**: Server architecture and protocols
-- **[ECS Documentation](../ECS/)**: Entity-Component-System framework
-- **[Network Protocol](../NETWORK/)**: PSJM protocol specification
-- **[Security](../SECURITY/)**: Security considerations
+- **[Client Documentation](../category/client-documentation/)**: Client implementation details
+- **[Server Documentation](../category/server-documentation/)**: Server architecture and protocols
+- **[ECS Documentation](../category/ecs-documentation/)**: Entity-Component-System framework
+- **[Network Protocol](../category/network-documentation/)**: PSJM protocol specification
+- **[Security](../category/security/)**: Security considerations
 
 ---
 
