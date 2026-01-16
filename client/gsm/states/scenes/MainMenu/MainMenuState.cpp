@@ -27,6 +27,7 @@
 #include "../HowToPlay/HowToPlayState.hpp"
 #include "../Connection/ConnectionState.hpp"
 #include "../Leaderboard/LeaderboardState.hpp"
+#include "../Credits/CreditsState.hpp"
 #include "../Chat/ChatState.hpp"
 #include "../../../../ClientNetwork.hpp"
 #include "../../../../../common/debug.hpp"
@@ -271,6 +272,34 @@ MainMenuState::MainMenuState(
         }
     });
 
+    _creditsButton = std::make_shared<ui::Button>(_resourceManager);
+    _creditsButton->setSize(math::Vector2f(80.f, 80.f));
+    _creditsButton->setIconPath(constants::CREDITS_PATH);
+    _creditsButton->setIconSize(math::Vector2f(500.f, 500.f));
+    _creditsButton->setNormalColor(colors::BUTTON_SECONDARY);
+    _creditsButton->setHoveredColor(colors::BUTTON_SECONDARY_HOVER);
+    _creditsButton->setPressedColor(colors::BUTTON_SECONDARY_PRESSED);
+    _creditsButton->setOnRelease([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->sendRequestLeaderboardPacket();
+            if (auto stateMachine = this->_gsm.lock()) {
+                stateMachine->requestStatePush(std::make_shared<CreditsState>(stateMachine,
+                    this->_resourceManager));
+            }
+        }
+    });
+    _creditsButton->setOnActivated([this]() {
+        auto network = this->_resourceManager->get<ClientNetwork>();
+        if (network && network->isConnected()) {
+            network->sendRequestLeaderboardPacket();
+            if (auto stateMachine = this->_gsm.lock()) {
+                stateMachine->requestStatePush(std::make_shared<CreditsState>(stateMachine,
+                    this->_resourceManager));
+            }
+        }
+    });
+
     _leaderboardButton = std::make_shared<ui::Button>(_resourceManager);
     _leaderboardButton->setSize(math::Vector2f(80.f, 80.f));
     _leaderboardButton->setIconPath(constants::LEADERBOARD_PATH);
@@ -394,6 +423,7 @@ MainMenuState::MainMenuState(
         }
     });
 
+    _headerLayout->addElement(_creditsButton);
     _headerLayout->addElement(_leaderboardButton);
     _headerLayout->addElement(_howToPlayButton);
     _headerLayout->addElement(_disconnectButton);
