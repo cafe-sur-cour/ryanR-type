@@ -11,7 +11,9 @@
 #include "../../../../colors.hpp"
 #include "../../../../constants.hpp"
 #include "../../../../../common/interfaces/IWindow.hpp"
+#include "../../../../../common/interfaces/IAudio.hpp"
 #include "../../../../../common/gsm/IGameStateMachine.hpp"
+#include "../../../../SettingsConfig.hpp"
 #include "../Connection/ConnectionState.hpp"
 
 namespace gsm {
@@ -66,6 +68,15 @@ SplashScreenState::SplashScreenState(
 void SplashScreenState::enter() {
     _animationTime = 0.0f;
     _currentFontSize = _startFontSize;
+
+    if (_resourceManager->has<gfx::IAudio>()) {
+        auto audio = _resourceManager->get<gfx::IAudio>();
+        if (!audio->isMusicPlaying()) {
+            float musicVolume = 100.0f;
+            audio->setMusicVolume(musicVolume);
+            audio->playMusic(constants::SPLASH_MUSIC_PATH, false);
+        }
+    }
 }
 
 void SplashScreenState::update(float deltaTime) {
