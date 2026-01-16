@@ -10,9 +10,9 @@
         },
         "VelocityComponent": { "target": "both" },
         "SpeedComponent": { "target": "both", "speed": 100.0 },
-        "HealthComponent": { "target": "both", "health": 50.0 },
+        "HealthComponent": { "target": "both", "health": 75.0 },
         "DamageCooldownComponent": { "target": "both" },
-        "ScoreValueComponent": { "target": "both", "scoreValue": 150 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 200 },
         "ProjectilePrefabComponent": {
             "target": "both",
             "prefabName": "magicien_shot"

@@ -10,9 +10,9 @@
         },
         "VelocityComponent": { "target": "both" },
         "SpeedComponent": { "target": "both", "speed": 120.0 },
-        "HealthComponent": { "target": "both", "health": 200.0 },
+        "HealthComponent": { "target": "both", "health": 150.0 },
         "DamageCooldownComponent": { "target": "both" },
-        "ScoreValueComponent": { "target": "both", "scoreValue": 500 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 600 },
         "ScriptingComponent": {
             "target": "server",
             "scriptPath": "configs/scripts/snake_behavior.lua",

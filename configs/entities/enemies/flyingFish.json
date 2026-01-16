@@ -10,8 +10,8 @@
         },
         "VelocityComponent": { "target": "both" },
         "SpeedComponent": { "target": "both", "speed": 80.0 },
-        "HealthComponent": { "target": "both", "health": 50.0 },
-        "ScoreValueComponent": { "target": "both", "scoreValue": 100 },
+        "HealthComponent": { "target": "both", "health": 25.0 },
+        "ScoreValueComponent": { "target": "both", "scoreValue": 50 },
         "ScriptingComponent": {
             "target": "server",
             "scriptPath": "configs/scripts/flyingFish.lua",
