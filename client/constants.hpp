@@ -129,7 +129,7 @@ namespace constants {
     const std::string CREDITS_TITLE_TEXT = "CREDITS";
     const std::vector<std::string> CREDITS_DEVS = {
         "Eliott Tesnier",
-        "Alban Roussée",
+        "Alban Roussee",
         "Marin Lamy",
         "Albane Merian",
         "Matisse Marsac"
