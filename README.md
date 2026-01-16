@@ -47,8 +47,8 @@
 ./r-type_server -p 8080 -i 0.0.0.0
 
 # Clients connect to the server
-./r-type_client -p 8080 -i <server_ip> -n Alice
-./r-type_client -p 8080 -i <server_ip> -n Bob
+./r-type_client -p 8080 -i <server_ip>
+./r-type_client -p 8080 -i <server_ip>
 ```
 
 ## Installing Ryan R-Type
@@ -124,13 +124,12 @@ Example:
 Arguments:
 - `-p <port>`: Specify the port of the server (default: 4242) (optional)
 - `-i <ip_address>`: Specify the IP address of the server (default: 127.0.0.1) (optional)
-- `-n <name>`: Specify the name of the client (optional)
 - `-d`: Enable debug mode (optional)
 - `-h`: Display help message (optional)
 
 Example:
 ```bash
-./r-type_client -p 4242 -i 127.0.0.1 -n Player1
+./r-type_client -p 4242 -i 127.0.0.1
 ```
 
 ## 🔧 Troubleshooting
