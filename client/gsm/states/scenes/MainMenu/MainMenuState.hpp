@@ -52,6 +52,7 @@ private:
     std::shared_ptr<ui::Button> _devButton;
     std::shared_ptr<ui::Button> _howToPlayButton;
     std::shared_ptr<ui::Button> _leaderboardButton;
+    std::shared_ptr<ui::Button> _creditsButton;
     std::shared_ptr<ui::Button> _registerButton;
     std::shared_ptr<ui::Button> _loginButton;
     std::shared_ptr<ui::Button> _disconnectButton;
