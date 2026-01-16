@@ -8,6 +8,7 @@
 #ifndef CLIENT_CONSTANTS_HPP_
 #define CLIENT_CONSTANTS_HPP_
 
+#include <vector>
 #include "../common/constants.hpp"
 
 namespace constants {
@@ -79,6 +80,7 @@ namespace constants {
     const std::string LEADERBOARD_PATH = "assets/sprites/menu/leaderboard.png";
     const std::string CHAT_PATH = "assets/sprites/menu/chat.png";
     const std::string LEADERBOARD_PLACEHOLDER_PATH = "assets/sprites/menu/leaderboard-placeholder.png";
+    const std::string CREDITS_PATH = "assets/sprites/menu/credits.png";
 
     const std::string LOADING_PREFAVB = "configs/prefab/loading_animation.json";
     const std::string VICTORY_PREFAB = "configs/prefab/vicotry.json";
@@ -122,6 +124,16 @@ namespace constants {
     const std::string LEADERBOARD_DEFAULT_NAME_PREFIX = "Player ";
     const std::string LEADERBOARD_EMPTY_NAME = "---";
     const std::string LEADERBOARD_DEFAULT_SCORE = "0";
+
+    /* Credits Constants */
+    const std::string CREDITS_TITLE_TEXT = "CREDITS";
+    const std::vector<std::string> CREDITS_DEVS = {
+        "Eliott Tesnier",
+        "Alban Roussée",
+        "Marin Lamy",
+        "Albane Merian",
+        "Matisse Marsac"
+    };
 
     /* Home page input place holders */
     const std::string IP_PLACEHOLDER = "Enter an IP address";
