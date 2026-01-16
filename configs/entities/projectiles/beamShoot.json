@@ -83,6 +83,11 @@
             "scriptPath": "configs/scripts/beamShoot.lua",
             "additionalFunctions": []
         },
-        "InvulnerableComponent": { "target": "both", "active": true }
+        "InvulnerableComponent": { "target": "both", "active": true },
+        "SoundIntentComponent": {
+            "target": "client",
+            "soundFile": "assets/musics/laserbeam-96510.wav",
+            "volume": 100.0
+        }
     }
 }

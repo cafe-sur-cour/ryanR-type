@@ -18,6 +18,10 @@
             "offset": { "x": 0.0, "y": 0.0 },
             "size": { "x": 10.0, "y": 10.0 },
             "type": "Trigger"
+        },
+        "DamageComponent": {
+            "target": "both",
+            "damage": 15.0
         }
     }
 }

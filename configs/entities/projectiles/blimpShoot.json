@@ -35,7 +35,7 @@
         },
         "DamageComponent": {
             "target": "both",
-            "damage": 10.0
+            "damage": 15.0
         },
         "SpeedComponent": {
             "target": "both",
