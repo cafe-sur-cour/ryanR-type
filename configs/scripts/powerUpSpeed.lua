@@ -7,7 +7,9 @@ end
 function OnInteract(entity, interactorEntity)
     if isEntityPlayer(interactorEntity) then
         local currentSpeed = getEntitySpeed(interactorEntity)
-        setEntitySpeed(interactorEntity, currentSpeed + 200.0)
+        if (currentSpeed < 800) then
+            setEntitySpeed(interactorEntity, currentSpeed + 100.0)
+        end
         createDeathIntent(entity)
     end
 end

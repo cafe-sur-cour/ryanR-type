@@ -122,6 +122,9 @@ void PauseState::enter() {
 
     _uiManager->addElement(_menuLayout);
 
+    _uiManager->setNavigationEnabled(true);
+    _uiManager->focusFirstElement();
+
     if (_resourceManager->has<ClientNetwork>()) {
         NetworkEvent stopEvent;
         stopEvent.eventType = constants::EventType::STOP;
@@ -189,6 +192,8 @@ void PauseState::update(float deltaTime) {
                 return;
             }
         }
+
+        _uiManager->handleNavigationInputs(inputProvider, deltaTime);
     }
 
     _uiManager->update(deltaTime);
