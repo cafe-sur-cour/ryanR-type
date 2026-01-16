@@ -6,19 +6,62 @@ sidebar_position: 2
 
 **R-Type** offers a comprehensive gaming experience with modern technical implementations.
 
-## 🚀 Multiplayer Experience
+## 🌐 Network & Online Features
 
-### Real-time Multiplayer
-- **Up to 4 players**: Cooperative gameplay with lobby system
-- **Client-server architecture**: Dedicated server with authoritative game state
-- **Network synchronization**: Smooth gameplay with minimal latency
-- **Cross-platform support**: Windows, Linux, and macOS compatibility
+### Multiplayer & Lobby System
+- **Up to 4 players**: Coop, multi-instance, multiple simultaneous lobbies
+- **Lobby codes**: Create/join via unique code
+- **Lobby master**: Controls game start and manages players
+- **Ready/not ready**: Player readiness status
+- **Kick/Ban/Mute**: Lobby moderation
+- **Client-entity mapping**: Network/player association
+- **Disconnection/reconnection management**
 
-### Lobby System
-- **Unique lobby codes**: Create or join games with 8-character alphanumeric codes
-- **Lobby master**: First player controls game start
-- **Player status**: Ready/not ready state management
-- **Dynamic lobbies**: Multiple concurrent game sessions
+### Login & Authentication
+- **Player accounts**: Login/register, server-side verification
+- **Security**: Credential validation, timeout, rate limiting
+
+### Leaderboard & Score
+- **Local/remote ranking**: Leaderboard available in-game and via API
+- **Score queries**: Display scores and stats
+- **Achievement tracking**: Success and progression
+
+### Text Chat
+- **Send/receive messages**: Real-time chat in lobby and in-game
+- **Broadcast**: Global or private messages
+- **Recent message management**
+
+### Admin Web Panel & HTTP API
+ - **Web dashboard**: Hosted on the server's IP, accessible via a dedicated port (default: 8080)
+ - **REST endpoints**: Lobbies, stats, configuration, profiles
+ - **Admin tools**: Management panel, moderation, runtime configuration
+ - **Interactive commands**: Send commands from the panel to interact with games, lobbies, and players (kick, ban, change settings, etc.)
+
+### GameRules & Gamemodes
+ - **Game modes**: Classic, Infinite, etc. (Each lobby/instance can have its own gamemode and rules)
+ - **Difficulty**: Easy, Normal, Hard
+ - **Advanced options**: Crossfire, customizable rules
+
+### Player Profile
+- **Profile view**: Individual stats, history
+- **API requests**: Retrieve and display player data
+
+### Replay System
+- **Game recording**: Save and view replays
+
+### Protocols & Network Security
+- **Custom UDP**: Low-latency protocol
+- **Delta compression**: Packet optimization
+- **Reliability**: Acknowledgements, loss management
+- **Input validation**: Server-side security
+- **Event management**: Event queue, synchronization, packet handling
+
+### Monitoring & Statistics
+- **Performance**: Latency, tick time, server monitoring
+- **Network statistics**: Packet loss, bandwidth, player stats
+
+### Extensibility
+- **Modularity**: Easily add new modes, rules, network features
 
 ## 🔧 Technical Excellence
 
