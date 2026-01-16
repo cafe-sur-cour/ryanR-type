@@ -58,6 +58,41 @@ Lobby Creation → Player Joining → Game Start → Game Loop → Game End → 
                    Send Status     CAN_START   State      Winner
 ```
 
+### Multi-instance (Lobby) — implementation details
+
+The server runs multiple concurrent game instances using a lobby abstraction. Below are the concrete behaviors and implementation notes (source references in `server/`):
+
+- **Lobby creation flow**
+  - Client requests a new lobby by sending a `REQUEST_LOBBY` packet (see `PACKET_REQUEST_LOBBY` / `ServerReceivePacket::requestCode`).
+  - The server generates a unique alphanumeric lobby code (`Utils::createAlphaNumericCode`) and returns it using `PACKET_SEND_LOBBY_CODE` (`Server::sendCodeLobbyPacket`).
+  - A lightweight `LobbyStruct` is pushed to the server's `_lobbyThreads` immediately; when a real lobby instance is required a `Lobby` object is created and added to `_lobbies`. The `Lobby` is initialized with its own `PacketManager` and `ResourceManager`.
+
+- **Joining a lobby**
+  - Clients join by sending `CONNECT_TO_LOBBY` with the lobby code. The server verifies the code exists and the lobby isn't full, then replies with `PACKET_LOBBY_CONNECT_VALUE` indicating success/failure (`ServerReceivePacket::processConnectToLobby`).
+  - On success the client is added to the `LobbyStruct`'s `_clients` list and the authoritative `Lobby` receives the client via `Lobby::addClient()`; the server maps the client ID to the lobby (`_clientToLobby`) and calls `Lobby::syncExistingEntitiesToClient()` to send current game state.
+  - Banned users are rejected during the join flow (server checks `saves/users.json`).
+
+- **Threading model & lifecycle**
+  - Each active `Lobby` runs its own threads: a `networkLoop` and a `gameLoop`. Threads are started when the lobby master requests game start (`Server::processMasterStart` → `Lobby::startNetworkThread()` and `Lobby::startGameThread()`).
+  - The main `Server` loop handles incoming UDP packets and routes lobby-related packets into the proper lobby by enqueueing packets (see `Server::processIncomingPackets()` and `Lobby::enqueuePacket` / `Lobby::processIncomingPackets`).
+  - When a lobby becomes empty the server stops it: `Server` monitors and calls `Lobby::stop()`; resources and threads are cleaned up in `Server::cleanupClosedLobbies()`.
+
+- **Limits & constants**
+  - Maximum players per lobby is defined in code as `constants::MAX_CLIENT_PER_LOBBY` (value: 4). The server checks this when accepting joins.
+  - There is no explicit hard-coded maximum number of concurrent lobbies — practical limits depend on available CPU/memory and the number of threads created per lobby.
+
+- **Start / stop semantics**
+  - Lobby creation returns a lobby code immediately; the authoritative `Lobby` object and its game threads are only started when the lobby master triggers the start sequence.
+  - If the last player leaves a lobby, the server will stop the lobby and remove its threads/structures automatically.
+
+- **Operational notes / best practices**
+  - The server binds a single UDP port (default `-p 4242`) so running multiple server processes on the same host requires different ports or containerization.
+  - For horizontal scaling (many simultaneous lobbies) run multiple server instances behind a load balancer or partition players by region/port; the current architecture keeps all lobbies in a single process and uses per-lobby threads.
+  - Monitor `active lobbies`, `players per lobby`, and `tick time per lobby` from the built-in HTTP/management endpoint (`HttpServer`) for operational visibility (`Server::getServerInfo`).
+
+See server sources for authoritative behavior: `server/Server.cpp`, `server/ServerReceivePacket.cpp`, `server/ServerSentPacket.cpp`, `server/Lobby.cpp`, `server/Lobby.hpp`.
+
+
 ## Network Protocol
 
 The server implements the PSJM protocol, handling the following packet types:
@@ -94,11 +129,13 @@ The server can be configured through `ServerConfig`:
 ```cpp
 struct ServerConfig {
     uint16_t port;           // Server port (default: 4242)
-    size_t maxPlayers;       // Maximum concurrent players
-    float tickRate;          // Updates per second (default: 20)
-    std::string mapPath;     // Path to map configuration
+    std::string ip;          // IP address to bind to (default: 127.0.0.1)
+    int64_t tps;             // Ticks per second (default: 20)
+    bool isDebug;            // Debug mode flag (default: false)
 };
 ```
+
+Note: Maximum concurrent players is fixed at 4 (MAX_CLIENT constant).
 
 ## Game State Management
 
@@ -211,23 +248,29 @@ Key metrics tracked:
 # Default configuration
 ./r-type_server
 
-# Custom port and map
-./r-type_server --port 8080 --map configs/map/level_02.json
+# Custom port and IP
+./r-type_server -p 8080 -i 0.0.0.0
 
-# Verbose logging
-./r-type_server --verbose
+# With custom TPS and debug mode
+./r-type_server -p 4242 -i 127.0.0.1 -tps 30 -d
 ```
 
 ### Command Line Options
 
 ```
+Usage: ./r-type_server [options]
 Options:
-  --port PORT        Server port (default: 4242)
-  --max-players N    Maximum players (default: 4)
-  --map PATH         Map configuration file
-  --tick-rate HZ     Update frequency (default: 20)
-  --verbose          Enable debug logging
+  -p <port>        Specify the port number (default: 4242) (5173 is reserved for HTTP server)
+  -i <ip_address>  Specify the IP address to bind to (default: 127.0.0.1)
+  -tps <tps>       Specify the TPS (ticks per second) (default: 20)
+  -d               Enable debug mode
+  -h               Display this help message
+
+Example:
+  ./r-type_server -p 4243 -i 127.0.0.1
 ```
+
+Note: The maximum number of clients is fixed at 4 (MAX_CLIENT constant).
 
 ## Security Considerations
 

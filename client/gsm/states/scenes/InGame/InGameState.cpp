@@ -508,7 +508,8 @@ void InGameState::drawInGameMetrics(std::shared_ptr<gfx::IWindow> window, float 
         std::count(metricsText.begin(), metricsText.end(), '\n')) + 1;
     size_t totalHeight = textHeight + (numLines - 1) * 5;
     size_t baseX = static_cast<size_t>(constants::MAX_WIDTH - 5.0f);
-    size_t baseY = static_cast<size_t>(constants::MAX_HEIGHT - totalHeight - 15.0f);
+    size_t baseY = static_cast<size_t>(constants::MAX_HEIGHT -
+        static_cast<float>(totalHeight) - 15.0f);
 
     std::istringstream iss(metricsText);
     std::string line;
