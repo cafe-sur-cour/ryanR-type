@@ -11,8 +11,7 @@
 #include <memory>
 #include <string>
 #include "initResourcesManager/initResourcesManager.hpp"
-#include "gsm/states/scenes/MainMenu/MainMenuState.hpp"
-#include "gsm/states/scenes/Connection/ConnectionState.hpp"
+#include "gsm/states/scenes/SplashScreen/SplashScreenState.hpp"
 #include "../common/debug.hpp"
 #include "../../common/Signal/Signal.hpp"
 #include "../../common/interfaces/IWindow.hpp"
@@ -95,9 +94,9 @@ Core::~Core() {
 }
 
 void Core::initFirstScene() {
-    std::shared_ptr<gsm::ConnectionState> connectionState =
-        std::make_shared<gsm::ConnectionState>(_gsm, _resourceManager);
-    _gsm->changeState(connectionState);
+    std::shared_ptr<gsm::SplashScreenState> splashScreenState =
+        std::make_shared<gsm::SplashScreenState>(_gsm, _resourceManager);
+    _gsm->changeState(splashScreenState);
 }
 
 void Core::run() {

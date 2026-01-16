@@ -87,6 +87,7 @@ namespace constants {
     const std::string MENU_MUSIC_PATH = "assets/musics/menu.wav";
     const std::string VICTORY_MUSIC_PATH = "assets/musics/victory-music.wav";
     const std::string DEATH_MUSIC_PATH = "assets/musics/playerDeath.wav";
+    const std::string SPLASH_MUSIC_PATH = "assets/sounds/splash/splash.wav";
 
     const std::string MAIN_FONT = "assets/fonts/cuphead_font.ttf";
 
@@ -200,6 +201,17 @@ namespace constants {
     const std::string OBSTACLES_DIRECTORY = "configs/entities/obstacles";
     const std::string POWERUPS_DIRECTORY = "configs/entities/powerUp";
     const std::string ENEMIES_DIRECTORY = "configs/entities/enemies";
+
+    /* Splash Screen Constants */
+    const float SPLASHSCREEN_GROW_DURATION = 1.0f;
+    const float SPLASHSCREEN_TOTAL_DURATION = 6.0f;
+    const float SPLASHSCREEN_START_FONT_SIZE = 10.0f;
+    const float SPLASHSCREEN_TARGET_FONT_SIZE = 150.0f;
+    const std::string SPLASH_MAIN_TITLE_TEXT = "R-Cup";
+    const std::string SPLASH_SUBTITLE_TEXT = "By RyanR-Type";
+    constexpr float SPLASH_TITLE_OUTLINE_THICKNESS = 5.0f;
+    constexpr float SPLASH_SUBTITLE_OUTLINE_THICKNESS = 2.0f;
+    constexpr float SPLASH_TEXT_PADDING = 20.0f;
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */
