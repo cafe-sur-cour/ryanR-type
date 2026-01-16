@@ -54,7 +54,8 @@ void Utils::parsCli(int ac, char **av,
             continue;
         }
         if (std::string(av[i]) == "-tps" && i + 1 < ac) {
-            int64_t tps = std::stoi(av[i + 1]);
+            i++;
+            int64_t tps = std::stoi(av[i]);
             if (tps <= 0) {
                 std::cerr << "[SERVER] Error: TPS must be greater than 0" << std::endl;
                 exit(84);

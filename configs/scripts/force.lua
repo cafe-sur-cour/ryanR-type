@@ -130,3 +130,21 @@ function addForceLevel(entity)
         end
     end
 end
+
+function death(entity)
+    if isequipped == true then
+        ActivateOrDeactivateForce(entity, getParentId(entity))
+    end
+    level = 1
+    previousLevel = 0
+    isequipped = false
+    attachDir = 0
+    playerSizeX = 0
+    playerSizeY = 0
+    entitySizeX = 0
+    entitySizeY = 0
+    targetX = 0
+    targetY = 0
+    isMovingToTarget = false
+    originalFireRate = 0
+end

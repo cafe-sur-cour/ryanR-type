@@ -137,6 +137,9 @@ Client and Server packet types (complete list used by the codebase):
    | 0x1F   | REQUEST_GAME_RULES_UPDATE_PACKET | Client requests an update for game rules  |
    | 0x20   | NEW_CHAT_PACKET                  | Client sends a chat message               |
    | 0x21   | BROADCASTED_CHAT_PACKET          | Server broadcasts chat message to all     |
+   | 0x22   | FORCE_LEAVE_PACKET               | Server forces client to leave lobby       |
+   | 0x23   | LEAVE_LOBBY_PACKET               | Client leaves lobby                       |
+   | 0x24   | ACK_LEAVE_LOBBY                  | Server acknowledges lobby leave           |
    +--------+----------------------------------+-------------------------------------------+
 ```
 
@@ -211,6 +214,11 @@ Client and Server packet types (complete list used by the codebase):
 
    - Message content (variable length string)
    - Variable length payload
+
+4.1.14 LEAVE_LOBBY_PACKET (0x23) – Client leaves lobby
+
+   - Empty payload
+   - Fixed length: 0 bytes
 
 **4.2 Server Details**
 
@@ -327,6 +335,16 @@ Client and Server packet types (complete list used by the codebase):
 
    - Contains sender username (8 bytes) and message content (variable)
    - Variable length payload
+
+4.2.21 FORCE_LEAVE_PACKET (0x22) – Server forces client to leave
+
+   - Reason code (1 byte): 0=Closed, 1=Kicked, 2=Banned
+   - Fixed length: 1 byte
+
+4.2.22 ACK_LEAVE_LOBBY (0x24) – Server acknowledges lobby leave
+
+   - Empty payload
+   - Fixed length: 0 bytes
 
 Notes:
 - The canonical constant names and packet lengths are defined in `common/interfaces/IPacketManager.hpp`.
