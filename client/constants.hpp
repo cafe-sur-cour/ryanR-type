@@ -206,6 +206,11 @@ namespace constants {
     const float SPLASHSCREEN_TOTAL_DURATION = 5.0f;
     const float SPLASHSCREEN_START_FONT_SIZE = 10.0f;
     const float SPLASHSCREEN_TARGET_FONT_SIZE = 150.0f;
+    const std::string SPLASH_MAIN_TITLE_TEXT = "R-Cup";
+    const std::string SPLASH_SUBTITLE_TEXT = "By RyanR-Type";
+    constexpr float SPLASH_TITLE_OUTLINE_THICKNESS = 5.0f;
+    constexpr float SPLASH_SUBTITLE_OUTLINE_THICKNESS = 2.0f;
+    constexpr float SPLASH_TEXT_PADDING = 20.0f;
 }
 
 #endif /* !CLIENT_CONSTANTS_HPP_ */

@@ -24,27 +24,29 @@ SplashScreenState::SplashScreenState(
     _uiManager->setResourceManager(_resourceManager);
 
     _titleText = std::make_shared<ui::Text>(_resourceManager);
-    _titleText->setText("R-Cup");
+    _titleText->setText(constants::SPLASH_MAIN_TITLE_TEXT);
     _titleText->setFontSize(static_cast<unsigned int>(_startFontSize));
     _titleText->setTextColor(colors::RED);
     _titleText->setOutlineColor(colors::BLACK);
-    _titleText->setOutlineThickness(5.0f);
+    _titleText->setOutlineThickness(constants::SPLASH_TITLE_OUTLINE_THICKNESS);
 
     _subtitleText = std::make_shared<ui::Text>(_resourceManager);
-    _subtitleText->setText("By RyanR-Type");
+    _subtitleText->setText(constants::SPLASH_SUBTITLE_TEXT);
     _subtitleText->setFontSize(static_cast<unsigned int>(_startFontSize / 2.0f));
     _subtitleText->setTextColor(colors::YELLOW);
     _subtitleText->setOutlineColor(colors::BLACK);
-    _subtitleText->setOutlineThickness(2.0f);
+    _subtitleText->setOutlineThickness(constants::SPLASH_SUBTITLE_OUTLINE_THICKNESS);
 
     auto window = _resourceManager->get<gfx::IWindow>();
     auto titleSize = window->getTextSize(
-        "R-Cup", constants::MAIN_FONT, static_cast<size_t>(_startFontSize));
+        constants::SPLASH_MAIN_TITLE_TEXT,
+        constants::MAIN_FONT, static_cast<size_t>(_startFontSize));
     auto subtitleSize = window->getTextSize(
-        "By RyanR-Type", constants::MAIN_FONT, static_cast<size_t>(_startFontSize / 2.0f));
+        constants::SPLASH_SUBTITLE_TEXT,
+        constants::MAIN_FONT, static_cast<size_t>(_startFontSize / 2.0f));
 
     float totalHeight = static_cast<float>(titleSize.second) +
-        static_cast<float>(subtitleSize.second) + 20.0f;
+        static_cast<float>(subtitleSize.second) + constants::SPLASH_TEXT_PADDING;
     float startY = constants::WINDOW_HEIGHT / 2.0f - totalHeight / 2.0f;
 
     _titleText->setPosition(math::Vector2f(
@@ -85,12 +87,14 @@ void SplashScreenState::update(float deltaTime) {
 
         auto window = _resourceManager->get<gfx::IWindow>();
         auto titleSize = window->getTextSize(
-            "R-Cup", constants::MAIN_FONT, static_cast<size_t>(_currentFontSize));
+            constants::SPLASH_MAIN_TITLE_TEXT,
+            constants::MAIN_FONT, static_cast<size_t>(_currentFontSize));
         auto subtitleSize = window->getTextSize(
-            "By RyanR-Type", constants::MAIN_FONT, static_cast<size_t>(subtitleFontSize));
+            constants::SPLASH_SUBTITLE_TEXT,
+            constants::MAIN_FONT, static_cast<size_t>(subtitleFontSize));
 
         float totalHeight = static_cast<float>(titleSize.second) +
-        static_cast<float>(subtitleSize.second) + 20.0f;
+        static_cast<float>(subtitleSize.second) + constants::SPLASH_TEXT_PADDING;
         float startY = constants::WINDOW_HEIGHT / 2.0f - totalHeight / 2.0f;
 
         _titleText->setPosition(math::Vector2f(
@@ -100,7 +104,7 @@ void SplashScreenState::update(float deltaTime) {
 
         _subtitleText->setPosition(math::Vector2f(
             constants::WINDOW_WIDTH / 2.0f - static_cast<float>(subtitleSize.first) / 2.0f,
-            startY + static_cast<float>(titleSize.second) + 20.0f
+            startY + static_cast<float>(titleSize.second) + constants::SPLASH_TEXT_PADDING
         ));
     }
 
