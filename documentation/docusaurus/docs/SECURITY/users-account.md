@@ -292,7 +292,7 @@ User accounts are stored in `saves/users.json` with the following structure:
 **Related Documentation:**
 - [RFC Protocol Documentation](../SERVER/rfc.md)
 - [Network Architecture](../../static/pdfs/R-Type-Doc.pdf)
-- [Error Handling](./error-handling.md)
+- [Error Handling](./error_handling.md)
 
 **Code Locations:**
 - Encryption: `common/utils/Encryption.hpp` & `Encryption.cpp`
