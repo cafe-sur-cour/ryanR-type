@@ -34,7 +34,7 @@ inline float dequantizeFloat(int32_t quantized, float precision) {
 
 inline uint64_t packQuantizedFloat(float value, float precision) {
     int32_t quantized = quantizeFloat(value, precision);
-    uint64_t result;
+    uint64_t result = 0;
     std::memcpy(&result, &quantized, sizeof(int32_t));
     return result;
 }
