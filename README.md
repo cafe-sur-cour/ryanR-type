@@ -37,7 +37,7 @@
 ./r-type_server
 
 # In another terminal, start the client
-./r-type_client -n Player1
+./r-type_client
 ```
 
 ### Multiplayer Setup
