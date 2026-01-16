@@ -101,10 +101,17 @@ void MapGeneratorSystem::generateObstaclesAt(
     float ceilingY2 = floorY2 + minPassageHeight + ceilingNoise2 * 400.0f;
     ceilingY2 = (std::min)(ceilingY2, 1000.0f);
 
+    float floorNoise3 = noise(x * 0.1f + 400.0f);
+    float ceilingNoise3 = noise(x * 0.1f + 500.0f);
+    float floorY3 = floorNoise3 * 450.0f;
+    float ceilingY3 = floorY3 + minPassageHeight + ceilingNoise3 * 400.0f;
+    ceilingY3 = (std::min)(ceilingY3, 1000.0f);
+
     for (int row = 0; row < numRows; ++row) {
         float y = static_cast<float>(row) * obstacleSize - obstacleSize / 2.0f;
 
-        if ((y < floorY || y > ceilingY) && (y < floorY2 || y > ceilingY2)) {
+        if ((y < floorY || y > ceilingY) && (y < floorY2 || y > ceilingY2) &&
+            (y < floorY3 || y > ceilingY3)) {
             ecs::Entity obstacle = prefabManager->createEntityFromPrefab(
                 constants::OBSTACLE_1, registry, ecs::EntityCreationContext::forServer());
             auto transform = registry->getComponent<ecs::TransformComponent>(obstacle);
