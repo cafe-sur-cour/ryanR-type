@@ -15,10 +15,10 @@
 #include "Utils.hpp"
 
 int main(int ac, char **av) {
-    Core core;
-    Utils utils;
-
     try {
+        Core core;
+        Utils utils;
+
         utils.parseCli(ac, av, core.getNetwork());
         core.startNetwork();
         core.initFirstScene();

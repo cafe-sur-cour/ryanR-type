@@ -50,8 +50,6 @@ rserv::Server::Server() :
         this->_config,
         [this](const std::string& command) { return this->executeCommand(command); }
     );
-
-    this->_httpServer->start();
 }
 
 rserv::Server::~Server() {
@@ -73,6 +71,10 @@ rserv::Server::~Server() {
     }
     this->_lobbyThreads.clear();
     this->_lobbies.clear();
+
+    if (this->_httpServer) {
+        this->_httpServer->stop();
+    }
 }
 
 
@@ -98,6 +100,8 @@ void rserv::Server::init() {
     debug::Debug::printDebug(this->_config->getIsDebug(),
         "[SERVER] Server initialized on port " + std::to_string(this->getPort()),
         debug::debugType::NETWORK, debug::debugLevel::INFO);
+
+    this->_httpServer->start();
 }
 
 void rserv::Server::start() {
